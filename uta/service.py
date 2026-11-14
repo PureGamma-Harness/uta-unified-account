@@ -473,11 +473,8 @@ class ExchangeService:
         market = self._market(connection)
         if symbol not in market.instruments:
             raise ServiceError("unknown_instrument", "instrument is not in the trusted market snapshot")
-        halted = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"] == "true"
-        if halted and not reduce_only:
-            raise ServiceError("trading_halted", "new exposure is halted", 409)
         if not reduce_only:
-            self._require_unfrozen(connection, account_id)
+            self._require_exposure_allowed(connection, account_id)
         live = self._live_orders(connection, account_id)
         if len(live) >= 1000:
             raise ServiceError("order_limit", "account has too many outstanding orders", 409)
@@ -511,6 +508,12 @@ class ExchangeService:
         state = connection.execute("SELECT state FROM uta_liquidation_accounts WHERE account_id=?", (account_id,)).fetchone()
         if state is not None and state["state"] != "NORMAL":
             raise ServiceError("account_frozen", "account is frozen by the risk supervisor", 409)
+
+    def _require_exposure_allowed(self, connection, account_id: str) -> None:
+        """Shared halt/freeze policy for order, matching and credit writers."""
+        if connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"] == "true":
+            raise ServiceError("trading_halted", "new exposure is halted", 409)
+        self._require_unfrozen(connection, account_id)
 
     @staticmethod
     def _check_reduction_surplus(current: dict, projected: dict) -> None:
@@ -606,9 +609,7 @@ class ExchangeService:
         fee = self._fill_fee(connection, account_id, order_id, quantity, price)
         market = self._market(connection)
         if not row["reduce_only"]:
-            if connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"] == "true":
-                raise ServiceError("trading_halted", "new exposure is halted", 409)
-            self._require_unfrozen(connection, account_id)
+            self._require_exposure_allowed(connection, account_id)
         filled = _exact(Fraction(Decimal(row["filled_quantity"])) + Fraction(quantity))
         status = "FILLED" if filled == Decimal(row["quantity"]) else "PARTIALLY_FILLED"
         next_notional = _exact(Fraction(Decimal(row["fee_notional"])) + abs(Fraction(quantity)) * Fraction(price))
