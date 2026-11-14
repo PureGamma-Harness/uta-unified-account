@@ -1,6 +1,9 @@
 """Independent accounting and admission checks for the persistent UTA path."""
 import os
 import random
+import subprocess
+import sys
+from pathlib import Path
 import tempfile
 import unittest
 from concurrent.futures import ThreadPoolExecutor
@@ -70,21 +73,60 @@ class ExchangeAccountingInvariants(unittest.TestCase):
                 totals[posting.asset] = totals.get(posting.asset, Fraction(0)) + Fraction(posting.amount)
             self.assertTrue(all(total == 0 for total in totals.values()))
 
-    def test_accepted_fill_and_retry_survive_stale_market_and_global_halt(self):
-        self.service.submit_order("alice", "in-flight", "BTC-PERP", D("1"), D("100"))
+    def test_successful_fill_retry_survives_stale_market_and_global_halt(self):
+        self.service.submit_order("alice", "executed", "BTC-PERP", D("1"), D("100"))
+        self.service.apply_fill("alice", "executed", "confirmed", D("1"), D("100"))
+        self.service.submit_order("alice", "unexecuted", "BTC-PERP", D("1"), D("100"))
         self.service.set_kill_switch(True)
         self.now += timedelta(minutes=1)
-        self.assertEqual(self.service.apply_fill("alice", "in-flight", "confirmed",
-                                                 D("1"), D("100"))["status"], "FILLED")
         before = self.service.account("alice")
         events = self.service.events(limit=1000)
-        self.assertEqual(self.make_service().apply_fill("alice", "in-flight", "confirmed",
+        self.assertEqual(self.make_service().apply_fill("alice", "executed", "confirmed",
                                                        D("1.00"), D("100.00"))["status"], "FILLED")
-        self.assertEqual(self.service.account("alice"), before)
-        self.assertEqual(self.service.events(limit=1000), events)
-        with self.assertRaises(ServiceError):
-            self.service.submit_order("alice", "new-risk", "BTC-PERP", D("1"), D("100"))
-        self.assertEqual(self.service.account("alice"), before)
+        for operation in (
+            lambda: self.service.apply_fill("alice", "unexecuted", "new", D("1"), D("100")),
+            lambda: self.service.submit_order("alice", "new-risk", "BTC-PERP", D("1"), D("100")),
+        ):
+            with self.assertRaises(ServiceError):
+                operation()
+            self.assertEqual(self.service.account("alice"), before)
+            self.assertEqual(self.service.events(limit=1000), events)
+
+    def test_process_exit_before_commit_recovers_entire_fill_atomically(self):
+        self.service.submit_order("alice", "crash", "BTC-PERP", D("1"), D("100"))
+        before = self.service.account("alice")
+        orders = self.service.orders("alice")
+        journal = self.service.ledger.journal()
+        events = self.service.events(limit=1000)
+        code = r"""
+import os, sys
+from datetime import datetime
+from decimal import Decimal as D
+from uta.service import ExchangeService
+from uta.storage import Database
+service = ExchangeService(Database(sys.argv[1]), {"USD":8}, clock=lambda: datetime.fromisoformat(sys.argv[2]))
+original = service._event
+
+def exit_before_commit(connection, kind, account_id, payload):
+    if kind == "FILL_APPLIED":
+        os._exit(77)
+    original(connection, kind, account_id, payload)
+
+service._event = exit_before_commit
+service.apply_fill("alice", "crash", "crash-fill", D("1"), D("100"))
+"""
+        import uta.service
+        package_root = str(Path(uta.service.__file__).resolve().parent.parent)
+        result = subprocess.run([sys.executable, "-c", code, self.path, self.now.isoformat()],
+                                cwd=package_root, capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 77, result.stderr)
+        restarted = self.make_service()
+        self.assertEqual(restarted.account("alice"), before)
+        self.assertEqual(restarted.orders("alice"), orders)
+        self.assertEqual(restarted.ledger.journal(), journal)
+        self.assertEqual(restarted.events(limit=1000), events)
+        restarted.apply_fill("alice", "crash", "crash-fill", D("1"), D("100"))
+        self.assertEqual(D(restarted.account("alice")["balances"]["USD"]), D("999.96"))
 
     def test_rejected_fill_and_conflicting_retry_leave_no_partial_state(self):
         self.service.submit_order("alice", "order", "BTC-PERP", D("1"), D("100"))
