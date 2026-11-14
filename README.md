@@ -66,7 +66,7 @@ python benchmarks/run_benchmark.py --help
 
 当前短测用于瓶颈诊断，**未满足每秒万条持久接纳/万笔清算成交、持续至少 30 分钟的生产门槛**。原始证据和口径见 [性能基线](docs/performance-baseline.md)，进程/磁盘满及形式化假设见 [故障验收](docs/fault-acceptance.md)。不把业务拒绝、尝试次数或纯模拟成交计入真实持久吞吐。
 
-本轮完整交付、361 项测试、安装后验收、失败记录与回滚说明见 [M1 验收报告](docs/milestone-m1.md)。
+本轮完整交付、合入并发 main 后的 402 项测试、安装后验收、失败记录及回滚说明见 [M1 验收报告](docs/milestone-m1.md)。
 
 ## 交付顺序
 

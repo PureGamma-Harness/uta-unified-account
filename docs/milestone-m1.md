@@ -2,7 +2,15 @@
 
 状态：**软件合成验收通过，生产验收 BLOCKED**。范围为单节点 Cross、合成 USD 结算、BTC 多币种抵押/显式借贷、现货及线性限价撮合。它不是 USDT/USDC 真实产品批准，也不是完整 PM。
 
-## 可复跑证据
+## 合入并发 main 后的最终状态
+
+本轮工作期间 main 新增 `f8d72ef`。已通过 merge 保留其原始场景 PM 模型、模拟器、控制台、store、全部测试与性能数据。研究场景计算独立保存在 `scenario_margin.py` 并保持原导出兼容；Cross 实盘门禁仍不允许 PM。两个数据库增加权威类型及结构校验，拒绝误开，修复默认账本常量和不可变账户 JSON 兼容。
+
+最终运行代码 `f6c439f59e386e678c87765b935169b775995f94`：**402 项通过、0 failures/errors/skips，25.95 秒**。[完整结果](../evidence/runs/m1-main-integrated/summary.json)及[逐项日志](../evidence/runs/m1-main-integrated/unittest.txt)包含原 main 和新功能全部用例。安装 wheel 后再次通过交易验收和四片研究场景，控制台 HTML 资源完整；全部 34 个运行模块与源码一致，见[安装证据](../evidence/runs/m1-main-integrated/wheel-smoke.json)。初版证据保留如下，不冒充合并后的运行结果。
+
+已发布的六条原基准使用 **未修改的 main@f8d72ef** 同规模复跑，技术错误均为零：纯计算 11,488.8/s，4 库持久检查 817.10/s（其中持久提交 612.82/s），fused 模拟清算 431.17/s。详见 [复跑报告](main-baseline-rerun.md)。它们是原脚本的组件/closed-loop/模拟口径，不是新的真实双侧撮合、开放环持续生产吞吐。
+
+## 初版可复跑证据（保留历史）
 
 - 运行代码提交：`ec5fee919844d50d42a414ec9d3ec38e42e021b7`。
 - 环境：Python 3.12.14、SQLite 3.53.1、Linux x86_64；硬件/资源与性能试验各自完整记录。
