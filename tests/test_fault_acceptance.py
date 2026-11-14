@@ -12,6 +12,7 @@ import tempfile
 from time import perf_counter
 import unittest
 
+from uta.credit import CreditService
 from uta.market import MarketSnapshot
 from uta.matching import Matcher
 from uta.models import AssetSpec, InstrumentSpec
@@ -332,6 +333,84 @@ os._exit(77)
             events = [json.loads(row[0]) for row in connection.execute(
                 "SELECT payload FROM uta_events WHERE event_type='MATCH_CONFIRMED'")]
             self.assertEqual([event["trade_id"] for event in events], [receipt["trade_id"]])
+
+
+class CreditFaultAcceptanceTests(_FaultFixture, unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.credit = CreditService(self.service)
+        self.credit.configure_asset_limit("USD", D(500))
+        self.credit.configure_limit("alice", "USD", D(200))
+        self.credit.fund_pool("capital", "USD", D(500), source_reference="synthetic:funding:line-1")
+        self.credit.borrow("alice", "borrow", "USD", D(100))
+        self.credit.accrue_interest("alice", "interest", "USD", D(5))
+
+    def financial(self):
+        with self.database.transaction() as connection:
+            commands = [tuple(row) for row in connection.execute(
+                "SELECT * FROM credit_commands ORDER BY scope,command_id")]
+        return self.state(), commands
+
+    def test_stale_and_halted_repayment_reduces_same_asset_debt_without_new_credit(self):
+        self.now += timedelta(minutes=1)
+        self.service.set_kill_switch(True)
+        before = self.financial()
+        with self.assertRaises(ServiceError):
+            self.credit.borrow("alice", "not-borrowed", "USD", D(1))
+        self.assertEqual(self.financial(), before)
+        original_net = D(self.service.account("alice")["balances"]["USD"]) - D(105)
+        repayment = self.credit.repay("alice", "repay", "USD", D(15))
+        self.assertEqual((repayment["interest_repaid"], repayment["principal_repaid"]), ("5", "10"))
+        actual = self.service.account("alice")
+        self.assertEqual(actual["liabilities"]["USD"], {"principal": "90", "interest": "0", "total": "90"})
+        self.assertEqual(D(actual["balances"]["USD"]), D(1085))
+        self.assertEqual(D(actual["balances"]["USD"]) - D(90), original_net)
+        before_retry = self.financial()
+        restarted = CreditService(self.reopen(Database(self.path)))
+        self.assertEqual(restarted.repay("alice", "repay", "USD", D("15.00")), repayment)
+        self.assertEqual(self.financial(), before_retry)
+        self.assertEqual(restarted.verify()["nonzero_liabilities"], 1)
+
+    def test_repayment_process_exit_before_commit_rolls_back_cash_debt_and_receipt(self):
+        code = r'''
+import os, sys
+from datetime import datetime
+from decimal import Decimal as D
+from uta.credit import CreditService
+from uta.service import ExchangeService
+from uta.storage import Database
+s = ExchangeService(Database(sys.argv[1]), {"USD":8}, clock=lambda:datetime.fromisoformat(sys.argv[2]))
+credit = CreditService(s)
+original = s._event
+def crash(connection, kind, account_id, payload):
+    if kind == "CREDIT_REPAID":
+        os._exit(79)
+    return original(connection, kind, account_id, payload)
+s._event = crash
+credit.repay("alice", "repay-crash", "USD", D(15))
+'''
+        before = self.financial()
+        result = self.child(code)
+        self.assertEqual(result.returncode, 79, result.stderr)
+        self.service = self.reopen(Database(self.path))
+        self.credit = CreditService(self.service)
+        self.assertEqual(self.financial(), before)
+        self.credit.repay("alice", "repay-crash", "USD", D(15))
+        once = self.financial()
+        self.credit.repay("alice", "repay-crash", "USD", D(15))
+        self.assertEqual(self.financial(), once)
+        self.assertEqual(self.credit.verify()["nonzero_liabilities"], 1)
+
+    def test_external_pool_funding_proof_cannot_be_credited_under_a_new_command_id(self):
+        before = self.financial()
+        with self.assertRaises(ServiceError) as rejected:
+            self.credit.fund_pool("second-command", "USD", D(500),
+                                  source_reference="synthetic:funding:line-1")
+        self.assertEqual(rejected.exception.code, "duplicate_external_reference")
+        self.assertEqual(rejected.exception.status, 409)
+        self.assertEqual(self.financial(), before)
+        self.credit.fund_pool("capital", "USD", D("500.0"), source_reference="synthetic:funding:line-1")
+        self.assertEqual(self.financial(), before)
 
 
 if __name__ == "__main__":
