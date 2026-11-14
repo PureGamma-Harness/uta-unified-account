@@ -1,4 +1,4 @@
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D, Inexact, localcontext
@@ -299,6 +299,38 @@ class AdmissionTests(unittest.TestCase):
         self.assertTrue(callback_done.wait(3))
         self.assertEqual(self.submit(batcher, "after-callback").result(5)["status"], "OPEN")
         self.assertEqual(batcher.stats()["callback_failures"], 1)
+
+    def test_callback_cannot_wait_for_unpublished_same_worker_future(self):
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        self.database.armed = True
+        first, second = self.submit(batcher, "first"), self.submit(batcher, "second")
+        callback_done = Event()
+        observations = []
+        def callback(completed):
+            # Already published results remain readable from the owner thread.
+            observations.append(completed.result()["order_id"])
+            self.assertIsNone(completed.exception())
+            for wait in (second.result, second.exception):
+                for timeout in (None, .01):
+                    with self.assertRaises(RuntimeError):
+                        wait(timeout=timeout)
+                for timeout in (0, -1):
+                    with self.assertRaises(FutureTimeout):
+                        wait(timeout=timeout)
+            callback_done.set()
+        try:
+            self.assertTrue(self.database.before_commit.wait(3))
+            first.add_done_callback(callback)
+        finally:
+            self.database.armed = False
+            self.database.release_commit.set()
+        self.assertEqual(second.result(5)["order_id"], "second")
+        self.assertTrue(callback_done.wait(3))
+        batcher.close()
+        self.assertEqual(observations, ["first"])
+        self.assertTrue(first.done() and second.done())
+        self.assertEqual(batcher.stats()["callback_failures"], 0)
+        self.assertFalse(batcher.stats()["worker_alive"])
 
     def test_financial_results_are_independent_of_callers_decimal_context(self):
         with localcontext() as context:

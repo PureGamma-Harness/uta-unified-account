@@ -24,8 +24,9 @@ from .storage import StorageError
 
 class AdmissionFuture(Future):
     """A normal Future with process-local monotonic diagnostics, not a receipt."""
-    def __init__(self):
+    def __init__(self, *, owner_thread=None):
         super().__init__()
+        self._owner_thread = owner_thread
         self._admission_enqueued_ns = None
         self._admission_started_ns = None
         self._admission_completed_ns = None
@@ -41,6 +42,19 @@ class AdmissionFuture(Future):
     @property
     def admission_completed_ns(self):
         return self._admission_completed_ns
+
+    def _check_owner_wait(self, timeout):
+        if (current_thread() is self._owner_thread and not self.done()
+                and (timeout is None or not timeout <= 0)):
+            raise RuntimeError("admission callbacks cannot wait for an unfinished Future owned by the same worker")
+
+    def result(self, timeout=None):
+        self._check_owner_wait(timeout)
+        return super().result(timeout=timeout)
+
+    def exception(self, timeout=None):
+        self._check_owner_wait(timeout)
+        return super().exception(timeout=timeout)
 
 
 @dataclass(frozen=True)
@@ -157,7 +171,7 @@ class AdmissionBatcher:
             if len(self._queue) >= limit:
                 self._counts["overloaded"] += 1
                 return self._error("admission_overloaded", "admission queue is full; retry using the original command ID")
-            future = AdmissionFuture()
+            future = AdmissionFuture(owner_thread=self._thread)
             future._admission_enqueued_ns = monotonic_ns()
             self._queue.append(_Command(kind, arguments, reduce_only, future))
             self._condition.notify()
