@@ -9,7 +9,10 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
 from enum import Enum
+from fractions import Fraction
 from typing import Protocol
+
+from .models import RiskInputError, _decimal
 
 
 class Risk(Protocol):
@@ -66,10 +69,11 @@ class LiquidationController:
 
     def __init__(self, account_id: str, *, max_age: timedelta = timedelta(seconds=10),
                  recovery_buffer: Decimal = Decimal("1.10")) -> None:
-        if not account_id or max_age <= timedelta(0):
+        if (not isinstance(account_id, str) or not account_id.strip()
+                or len(account_id) > 128 or not isinstance(max_age, timedelta)
+                or max_age <= timedelta(0)):
             raise ValueError("account_id and a positive max_age are required")
-        if not isinstance(recovery_buffer, Decimal) or not recovery_buffer.is_finite() or recovery_buffer < 1:
-            raise ValueError("recovery_buffer must be a finite Decimal >= 1")
+        _decimal("recovery buffer", recovery_buffer, minimum=Decimal(1))
         self.account_id = account_id
         self.max_age = max_age
         self.recovery_buffer = recovery_buffer
@@ -95,7 +99,8 @@ class LiquidationController:
     def _valid(self, snapshot: TimedRisk | None, now: datetime) -> bool:
         if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:
             return False
-        if snapshot is None or not snapshot.complete or not isinstance(snapshot.observed_at, datetime):
+        if (not isinstance(snapshot, TimedRisk) or snapshot.complete is not True
+                or not isinstance(snapshot.observed_at, datetime)):
             return False
         observed = snapshot.observed_at
         if observed.tzinfo is None or observed.utcoffset() is None:
@@ -110,9 +115,10 @@ class LiquidationController:
             return False
         try:
             equity, mm = snapshot.risk.equity, snapshot.risk.maintenance_margin
-            return (isinstance(equity, Decimal) and isinstance(mm, Decimal)
-                    and equity.is_finite() and mm.is_finite() and mm >= 0)
-        except AttributeError:
+            _decimal("liquidation equity", equity)
+            _decimal("liquidation maintenance margin", mm, minimum=Decimal(0))
+            return True
+        except (AttributeError, RiskInputError):
             return False
 
     def next_action(self, snapshot: TimedRisk | None, *, now: datetime,
@@ -140,7 +146,7 @@ class LiquidationController:
                 return None
             self._cycle += 1
             self.phase = self._active_phase = Phase.CANCEL_ORDERS
-        elif equity > mm * self.recovery_buffer:
+        elif Fraction(equity) > Fraction(mm) * Fraction(self.recovery_buffer):
             self.phase = self._active_phase = Phase.RECOVERED
             self._can_trade = True
             return None
@@ -153,13 +159,21 @@ class LiquidationController:
             if reduction is None:
                 self._sequence -= 1
                 return None
-            if (not reduction.symbol or not isinstance(reduction.position_size, Decimal)
+            if (not isinstance(reduction, PositionReduction)
+                    or not isinstance(reduction.symbol, str) or not reduction.symbol.strip()
+                    or len(reduction.symbol) > 128 or not isinstance(reduction.position_size, Decimal)
                     or not isinstance(reduction.quantity, Decimal)
                     or not reduction.position_size.is_finite() or not reduction.quantity.is_finite()
                     or reduction.position_size == 0 or reduction.quantity <= 0
                     or reduction.quantity > abs(reduction.position_size)):
                 self._sequence -= 1
                 raise ValueError("invalid position reduction")
+            try:
+                _decimal("reduction position size", reduction.position_size)
+                _decimal("reduction quantity", reduction.quantity, positive=True)
+            except RiskInputError:
+                self._sequence -= 1
+                raise
             side = "sell" if reduction.position_size > 0 else "buy"
             self._pending = Action(action_id, ActionType.REDUCE_POSITION,
                                    reduction.symbol, side, reduction.quantity, True)
@@ -172,6 +186,8 @@ class LiquidationController:
         external venue uses the action ID as an idempotency key and reconcile
         ambiguous outcomes before retrying. This simulator does not do that.
         """
+        if not isinstance(action_id, str) or not action_id or type(success) is not bool:
+            raise ValueError("action_id and a boolean success are required")
         if action_id in self._completed:
             return False
         if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:
