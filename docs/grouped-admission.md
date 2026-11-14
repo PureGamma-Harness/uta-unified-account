@@ -50,6 +50,8 @@ Future 回调必须短而非阻塞；同一 worker 内递归 submit 返回 `admi
 
 `stats()` 提供 `worker_alive/accepting/queued/running`、`committed_batches/committed_commands`、业务/行情拒绝、技术失败、过载和 pending cancellation。`committed_commands` 是返回了命令结果的处理次数，含幂等重试，不是唯一新订单数，不能拿它直接充当持久成功吞吐。
 
-Future 的只读 `admission_enqueued_ns/admission_started_ns/admission_completed_ns` 是进程内单调时钟诊断，不进入财务回执。started 是设为 running 后、取得批事务前，因此包含写锁等待；completed 在发布结果前且已通过 COMMIT。跨进程不能直接比较这些时间，客户端/负载工具的观察完成时间是更保守上界。
+Future 的只读 `admission_enqueued_ns/admission_started_ns/admission_completed_ns` 是进程内单调时钟诊断，不进入财务回执。started 是设为 running 后、取得批事务前，因此包含写锁等待。成功和排队业务/行情拒绝的 completed 在外层 COMMIT 后；技术异常、预校验及队列拒绝也有异常完成时间，因此不能仅凭时间戳推断已落盘。跨进程不能直接比较这些时间，客户端/负载工具的观察完成时间是更保守上界。
+
+批提交器属于一个明确的 `ExchangeService` 本地权威，不会自动把命令经过 `ShardRouter` 的全局屏障。不能将私有分片 service 直接接入它后声称仍受 router 协议保护。多节点、跨分片组提交、账户优先队列和复制协议仍需独立实现与验收。
 
 `tests/test_admission.py` 验证共享提交、真实提交前不可见回执、预期业务隔离、技术整批失败、原 ID 恢复、同组顺序、pending cancellation、队列上界、关闭排空、同 ID 并发、只减仓 ID 保护、低 Decimal 上下文及回调隔离。独立故障组另测真实 SQLite FULL、deferred FK COMMIT 失败、进程退出及结果未知。所有资金与订单均为合成数据；不由此授予生产、HA 或万笔容量资格。

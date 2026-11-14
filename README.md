@@ -25,6 +25,7 @@ python -m unittest discover -s tests -v
 python -m uta acceptance
 python formal/explore_reservation.py
 python formal/explore_settlement.py
+python formal/explore_group_commit.py
 ```
 
 `acceptance` 在临时目录使用合成资金，不访问外部账户；输出明确包含 `production_approved: false`。完整测试包含真实 loopback HTTP 和子进程故障，需要运行环境允许本地 socket。
@@ -67,6 +68,8 @@ python benchmarks/run_benchmark.py --help
 当前短测用于瓶颈诊断，**未满足每秒万条持久接纳/万笔清算成交、持续至少 30 分钟的生产门槛**。原始证据和口径见 [性能基线](docs/performance-baseline.md)，进程/磁盘满及形式化假设见 [故障验收](docs/fault-acceptance.md)。不把业务拒绝、尝试次数或纯模拟成交计入真实持久吞吐。
 
 本轮完整交付、合入并发 main 后的 402 项测试、安装后验收、失败记录及回滚说明见 [M1 验收报告](docs/milestone-m1.md)。
+
+后续 [分片实验报告](docs/milestone-sharding.md) 和 [分组持久准入报告](docs/milestone-grouped.md) 保留各自独立验收记录。最新集成通过 503 项测试，新增 opt-in 有界批提交、真实 HTTP、独立故障/金融验证及真实双侧清算探针。单次同配置短测为 464→744 条持久接纳/秒，所有生产容量门槛仍未通过；原始数据、适用边界和部署回退均在报告中。
 
 ## 交付顺序
 

@@ -1,0 +1,54 @@
+{
+  "safe": {
+    "result": "invariants_hold",
+    "reachable_states": 48
+  },
+  "unsafe_split_commit": {
+    "result": "counterexample",
+    "reachable_states": 8,
+    "violation": "a confirmed trade must have exactly one settlement on each side",
+    "trace": [
+      "begin(trade-1)",
+      "publish_buy_before_sell"
+    ]
+  },
+  "unsafe_duplicate_retry": {
+    "result": "counterexample",
+    "reachable_states": 28,
+    "violation": "a confirmed trade must have exactly one settlement on each side",
+    "trace": [
+      "begin(trade-1)",
+      "stage_buy",
+      "stage_sell",
+      "stage_unique_receipt",
+      "atomic_commit",
+      "retry_without_dedup(trade-1)"
+    ]
+  },
+  "unsafe_cross_asset_netting": {
+    "result": "counterexample",
+    "reachable_states": 14,
+    "violation": "journal postings must balance independently for USD",
+    "trace": [
+      "begin(trade-1)",
+      "stage_buy",
+      "stage_sell",
+      "stage_unique_receipt",
+      "atomic_commit"
+    ]
+  },
+  "assumptions": [
+    "two orders",
+    "two one-unit trades",
+    "one atomic writer",
+    "durable commits",
+    "no execution before authorization"
+  ],
+  "not_verified": [
+    "HA/replication",
+    "liveness",
+    "network partitions",
+    "code/model equivalence",
+    "arbitrary portfolio size"
+  ]
+}
