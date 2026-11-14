@@ -16,9 +16,11 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
+from threading import Lock
 from types import MappingProxyType
 from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
+import weakref
 
 from .ledger import JournalEvent, Ledger, LedgerError, Posting
 
@@ -27,27 +29,79 @@ class StorageError(RuntimeError):
     """The persistent store cannot satisfy its transaction contract."""
 
 
+_DATABASES: weakref.WeakSet = weakref.WeakSet()
+
+
+def _after_fork() -> None:
+    # Keeper connections never execute application transactions. Discard their
+    # child-process copies before SQLite is used again, and reset inherited
+    # Python locks even when another parent thread held one at fork time.
+    for database in list(_DATABASES):
+        database._keeper_lock = Lock()
+        database._drop_keeper()
+
+
+if hasattr(os, "register_at_fork"):
+    os.register_at_fork(after_in_child=_after_fork)
+
+
 class Database:
-    """Open a new, independently owned SQLite connection for every transaction.
+    """Open an independently owned SQLite connection for every transaction.
 
     ``transaction`` acquires the write lock before any reads (BEGIN IMMEDIATE),
     preventing read/check/write races across service instances and processes.
     Callers must not commit or roll back the yielded connection themselves.
     File-backed databases are required so every connection sees the same state.
+    A query-only keeper prevents closing each transaction from becoming the last
+    WAL connection and forcing a checkpoint. It never executes business writes.
+    Use ``close`` or the Database context manager to release it deterministically.
     """
 
-    def __init__(self, path: str | Path, *, timeout: float = 10.0):
+    def __init__(self, path: str | Path, *, timeout: float = 10.0,
+                 keep_wal_open: bool = True):
         if (not isinstance(path, (str, Path)) or not str(path).strip()
                 or str(path) == ":memory:" or str(path).startswith("file:")):
             raise StorageError("a filesystem database path is required; memory/URI databases are unsupported")
         if (isinstance(timeout, bool) or not isinstance(timeout, (float, int))
                 or not math.isfinite(timeout) or not 0 < timeout <= 300):
             raise StorageError("timeout must be a finite positive number of at most 300 seconds")
+        if type(keep_wal_open) is not bool:
+            raise StorageError("keep_wal_open must be a boolean")
         candidate = Path(path).expanduser().absolute()
         # Resolve the parent only: resolving the final component would silently
         # follow a database symlink before it can be rejected below.
         self.path = str(candidate.parent.resolve() / candidate.name)
         self.timeout = float(timeout)
+        self.keep_wal_open = keep_wal_open
+        self._keeper_lock = Lock()
+        self._keeper = None
+        self._keeper_finalizer = None
+        self._identity = None
+        self._closed = False
+        _DATABASES.add(self)
+
+    def __enter__(self):
+        if self._closed:
+            raise StorageError("database is closed")
+        return self
+
+    def __exit__(self, *exception):
+        self.close()
+
+    def _drop_keeper(self) -> None:
+        if self._keeper_finalizer is not None:
+            self._keeper_finalizer()
+        self._keeper = self._keeper_finalizer = None
+
+    def close(self) -> None:
+        """Stop new transactions and release the idle WAL keeper.
+
+        Transactions already admitted retain their own connections and must be
+        drained by the caller before shutdown. Closing cannot roll them back.
+        """
+        with self._keeper_lock:
+            self._closed = True
+            self._drop_keeper()
 
     def _private_file(self) -> tuple[int, int]:
         """Create private state independently of umask and reject unsafe reuse.
@@ -57,7 +111,10 @@ class Database:
         """
         flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
         try:
-            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
+            if self._identity is not None:
+                descriptor = os.open(self.path, flags)
+            else:
+                descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
         except FileExistsError:
             descriptor = os.open(self.path, flags)
         except OSError as exc:
@@ -72,7 +129,13 @@ class Database:
             os.close(descriptor)
 
     def _connect(self) -> sqlite3.Connection:
+        if self._closed:
+            raise StorageError("database is closed")
         identity = self._private_file()
+        with self._keeper_lock:
+            if self._identity is not None and identity != self._identity:
+                raise StorageError("database file was replaced; reopen after reconciliation")
+            self._identity = identity
         connection = sqlite3.connect(self.path, timeout=self.timeout, isolation_level=None)
         try:
             info = os.stat(self.path, follow_symlinks=False)
@@ -85,6 +148,21 @@ class Database:
             if mode.lower() != "wal":
                 raise StorageError("the database filesystem does not support WAL mode")
             connection.execute("PRAGMA synchronous = FULL")
+            if self.keep_wal_open:
+                with self._keeper_lock:
+                    if self._closed:
+                        raise StorageError("database is closed")
+                    if self._keeper is None:
+                        keeper = sqlite3.connect(self.path, timeout=self.timeout,
+                                                 isolation_level=None, check_same_thread=False)
+                        try:
+                            keeper.execute("PRAGMA query_only=ON")
+                            keeper.execute("SELECT 1 FROM sqlite_schema LIMIT 1").fetchall()
+                        except BaseException:
+                            keeper.close()
+                            raise
+                        self._keeper = keeper
+                        self._keeper_finalizer = weakref.finalize(self, keeper.close)
             return connection
         except BaseException:
             connection.close()
