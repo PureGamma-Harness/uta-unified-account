@@ -165,7 +165,7 @@ class LiquidationController:
                     or not isinstance(reduction.quantity, Decimal)
                     or not reduction.position_size.is_finite() or not reduction.quantity.is_finite()
                     or reduction.position_size == 0 or reduction.quantity <= 0
-                    or reduction.quantity > abs(reduction.position_size)):
+                    or reduction.quantity > reduction.position_size.copy_abs()):
                 self._sequence -= 1
                 raise ValueError("invalid position reduction")
             try:
