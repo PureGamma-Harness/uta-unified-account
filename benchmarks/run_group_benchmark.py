@@ -95,7 +95,7 @@ def _service(path):
     return ExchangeService(Database(path, timeout=2), {"USD": 8}, max_price_age=timedelta(seconds=30))
 
 
-def _environment():
+def _environment(directory):
     def command(*parts):
         return subprocess.check_output(parts, cwd=ROOT, text=True).strip()
     quota = {}
@@ -112,6 +112,7 @@ def _environment():
             "cgroup_limits": quota, "source_root": str(ROOT),
             "generator_sha256": sha256(Path(__file__).read_bytes()).hexdigest(),
             "source_sha256": {p.name: sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT / "uta").glob("*.py"))},
+            "filesystem": command("df", "-T", str(directory)),
             "storage": "local SQLite WAL/FULL; each batch COMMIT retains FULL synchronous; no replication",
             "timing": "planned monotonic arrival to post-COMMIT observation; p99 histogram upper bound width <=0.1%",
             "queue_model": "one shared outstanding budget across dispatcher queue, database calls, batch queues and result collection"}
@@ -165,6 +166,10 @@ def _verify(paths, accounts, recorder):
     for shard, path in enumerate(paths):
         reopened = _service(path)
         with reopened.database.transaction() as conn:
+            journal_mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
+            synchronous = conn.execute("PRAGMA synchronous").fetchone()[0]
+            if journal_mode != "wal" or synchronous != 2:
+                raise RuntimeError("probe did not preserve SQLite WAL/FULL")
             orders = conn.execute("SELECT account_id,order_id,symbol,quantity,limit_price,status,filled_quantity FROM uta_orders").fetchall()
             ids = {(r["account_id"], r["order_id"]) for r in orders}
             accepted = [json.loads(row[0]) for row in conn.execute("SELECT payload FROM uta_events WHERE event_type='ORDER_ACCEPTED'")]
@@ -189,7 +194,8 @@ def _verify(paths, accounts, recorder):
         all_orders.update(ids)
         reports.append({"shard": shard, "unique_orders": len(ids), "acceptance_events": len(accepted),
                         "ledger_events": ledger_events, "all_orders_remain_open": True,
-                        "independent_live_reserves_verified": True})
+                        "independent_live_reserves_verified": True,
+                        "journal_mode": journal_mode, "synchronous": synchronous})
     if not recorder.durable <= all_orders or all_orders - recorder.durable - recorder.unknown:
         raise RuntimeError("database effects disagree with post-COMMIT success receipts")
     return reports, {"unacknowledged_orders_found": len((all_orders - recorder.durable) & recorder.unknown),
@@ -199,7 +205,7 @@ def _verify(paths, accounts, recorder):
 def run(configuration: Configuration, directory: Path):
     configuration.validate()
     directory.mkdir(parents=True, exist_ok=False)
-    environment = _environment()
+    environment = _environment(directory)
     (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
     setup_started = time.monotonic_ns()
     paths, services = [], []
