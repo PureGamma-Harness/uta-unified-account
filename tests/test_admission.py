@@ -217,6 +217,28 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(len(self.exchange.orders("alice")), 1)
         self.assertEqual(self.exchange.risk("alice")["open_order_margin"], "10.04")
 
+    def test_cancel_reserve_remains_bounded_without_overtaking_queued_submit(self):
+        batcher = self.batcher(max_batch_size=1, queue_capacity=1, cancel_reserve=1)
+        self.database.armed = True
+        first = self.submit(batcher, "first")
+        try:
+            self.assertTrue(self.database.before_commit.wait(3))
+            queued = self.submit(batcher, "queued")
+            self.code(self.submit(batcher, "ordinary-full"), "admission_overloaded")
+            cancel = batcher.cancel_order("alice", "queued")
+            self.assertFalse(cancel.done())
+            self.code(batcher.cancel_order("alice", "first"), "admission_overloaded")
+            self.assertEqual(batcher.stats()["queued"], 2)
+            self.assertEqual(batcher.stats()["total_queue_capacity"], 2)
+        finally:
+            self.database.armed = False
+            self.database.release_commit.set()
+        batcher.close()
+        self.assertEqual(first.result()["status"], "OPEN")
+        self.assertEqual(queued.result()["status"], "OPEN")
+        self.assertEqual(cancel.result()["status"], "CANCELLED")
+        self.assertEqual(self.exchange.order("alice", "queued")["status"], "CANCELLED")
+
     def test_input_validation_and_liquidation_id_protection_match_core(self):
         batcher = self.batcher()
         self.code(batcher.submit_order("alice", "bad", "BTC-PERP", 1.0, D(100)), "invalid_input")
@@ -258,7 +280,8 @@ class AdmissionTests(unittest.TestCase):
     def test_configuration_bounds_and_thread_start_failure_do_not_write(self):
         before = self.state()
         for kwargs in ({"max_batch_size": True}, {"max_batch_size": 257}, {"max_delay_ms": float("nan")},
-                       {"max_delay_ms": -1}, {"queue_capacity": 0}, {"queue_capacity": 65537}):
+                       {"max_delay_ms": -1}, {"queue_capacity": 0}, {"queue_capacity": 65537},
+                       {"cancel_reserve": True}, {"cancel_reserve": -1}, {"cancel_reserve": 4097}):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
                 AdmissionBatcher(self.exchange, **kwargs)
         with patch("uta.admission.Thread.start", side_effect=RuntimeError("no threads")):

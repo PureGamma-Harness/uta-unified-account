@@ -17,6 +17,8 @@ with AdmissionBatcher(exchange, max_batch_size=32,
 
 构造完成即启动一个非 daemon worker；必须使用 context manager 或 `close(wait=True)`。批大小为整数 1..256，收集等待为有限 0..1000ms，pending queue 为整数 1..65536。队列中的业务按同一 FIFO 顺序处理，同一账户不乱序。每批最多 `max_batch_size` 条，队列与当前批次均有上界；队列已满立即返回 `admission_overloaded` 503，不阻塞调用者等空位。
 
+`cancel_reserve` 额外保留撤单入队槽，默认 16、允许整数 0..4096。普通新单在总队列长度达到 `queue_capacity` 后即拒绝；撤单可继续使用最多 `queue_capacity+cancel_reserve` 的总上界。只有一条 FIFO，撤单不会越过前面尚未执行的同账户新单；它不是优先调度，也没有实时撤单 SLO。总内存命令上界为上述队列总上界加当前最多一个批次。统计明确输出两个容量及总容量。
+
 `submit_order()` 与 `cancel_order()` 返回 `concurrent.futures.Future` 的子类。共享原服务的输入校验、产品目录、行情时效、暂停/账户冻结、风险/订单预占及幂等检查。保留 `liq:` ID 的伪造和客户撤单限制。输入不合法、队列已满或 worker 关闭属于未入队错误，立即返回失败 Future；入队不表示已接纳或预占成功。
 
 ## 事务与确认协议
@@ -26,6 +28,7 @@ with AdmissionBatcher(exchange, max_batch_size=32,
 - 预期业务错误只回滚该 SAVEPOINT，后面的命令继续以之前已成功命令产生的状态计算。
 - 缺失/过期行情的预期 503 单列为 `market_rejected`，不计业务拒绝或成功；同组不需要行情的撤单仍可提交。
 - SQLite、Ledger、Storage 错误链、配置/存储损坏以及未知程序异常均使整个批次退出。不会因 SQLite FULL 自动回滚后已丢失 SAVEPOINT 而继续接纳后续命令。
+- 固化规则与持久行情参数矛盾的 `margin_rule_conflict` 即使是 HTTP 409 也属于配置/数据损坏，整批失败，不能伪装成客户业务拒绝。
 - 外层 COMMIT 返回之前，不发布该组任何成功回执或排队业务拒绝。约束失败不能让前几个 Future 误报接纳。
 
 发生技术异常时所有该组 Future 返回 `admission_batch_failed` 503，提示按原业务 ID 查询或重试。**这个代码不无条件承诺“确定未提交”**：事务已知回滚时没有副作用；若真实 COMMIT 后回执通道或数据库包装层才报错，则结果未知，持久状态可能已经生效。重新用原账户/订单 ID 查询、提交相同内容可以得到原状态；不得换一个新 ID 盲目重发。

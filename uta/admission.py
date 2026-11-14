@@ -53,7 +53,8 @@ class _Command:
 
 _FATAL_CODES = {"storage_unavailable", "storage_corrupt", "configuration_corrupt",
                 "configuration_conflict", "invalid_configuration", "invalid_clock",
-                "schema_version", "wrong_authority", "ledger_rejected", "precision_error"}
+                "schema_version", "wrong_authority", "ledger_rejected", "precision_error",
+                "margin_rule_conflict"}
 _EXPECTED_UNAVAILABLE = {"market_unavailable", "market_incomplete"}
 
 
@@ -83,7 +84,7 @@ class AdmissionBatcher:
     must be nonblocking and cannot submit/close this same worker recursively.
     """
     def __init__(self, exchange: ExchangeService, *, max_batch_size: int = 32,
-                 max_delay_ms: float = 2, queue_capacity: int = 1024):
+                 max_delay_ms: float = 2, queue_capacity: int = 1024, cancel_reserve: int = 16):
         if not isinstance(exchange, ExchangeService):
             raise ValueError("exchange must be an ExchangeService")
         if type(max_batch_size) is not int or not 1 <= max_batch_size <= 256:
@@ -93,8 +94,11 @@ class AdmissionBatcher:
             raise ValueError("max_delay_ms must be finite and in 0..1000")
         if type(queue_capacity) is not int or not 1 <= queue_capacity <= 65536:
             raise ValueError("queue_capacity must be an integer in 1..65536")
+        if type(cancel_reserve) is not int or not 0 <= cancel_reserve <= 4096:
+            raise ValueError("cancel_reserve must be an integer in 0..4096")
         self.exchange = exchange
         self.max_batch_size, self.max_delay_ms, self.queue_capacity = max_batch_size, max_delay_ms, queue_capacity
+        self.cancel_reserve = cancel_reserve
         self._condition = Condition()
         self._queue = deque()
         self._accepting = True
@@ -142,7 +146,8 @@ class AdmissionBatcher:
         with self._condition:
             if not self._accepting:
                 return self._error("admission_closed", "admission worker is closed")
-            if len(self._queue) >= self.queue_capacity:
+            limit = self.queue_capacity + (self.cancel_reserve if kind == "cancel" else 0)
+            if len(self._queue) >= limit:
                 self._counts["overloaded"] += 1
                 return self._error("admission_overloaded", "admission queue is full; retry using the original command ID")
             future = AdmissionFuture()
@@ -154,7 +159,9 @@ class AdmissionBatcher:
     def stats(self) -> dict:
         with self._condition:
             return {**self._counts, "queued": len(self._queue), "running": self._running,
-                    "accepting": self._accepting, "worker_alive": self._thread.is_alive()}
+                    "accepting": self._accepting, "worker_alive": self._thread.is_alive(),
+                    "queue_capacity": self.queue_capacity, "cancel_reserve": self.cancel_reserve,
+                    "total_queue_capacity": self.queue_capacity + self.cancel_reserve}
 
     def close(self, wait: bool = True) -> None:
         if type(wait) is not bool:
