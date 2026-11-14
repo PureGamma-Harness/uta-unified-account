@@ -34,6 +34,8 @@ sys.path.insert(0, str(ROOT))
 from benchmarks.run_benchmark import LatencyHistogram
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
+from uta.portfolio import CollateralRule, CollateralTier, LinearMarginRule, PortfolioRules
+from uta.products import ProductCatalog, ProductKind, ProductSpec, TradingStatus
 from uta.service import ExchangeService, ServiceError
 from uta.storage import Database
 
@@ -41,6 +43,7 @@ from uta.storage import Database
 @dataclass(frozen=True)
 class Configuration:
     mode: str = "sync"
+    policy: str = "configured_cross"
     duration: float = 5
     rate: float = 1000
     accounts: int = 100
@@ -55,6 +58,8 @@ class Configuration:
     def validate(self):
         if self.mode not in ("sync", "batch"):
             raise ValueError("mode must be sync or batch")
+        if self.policy not in ("configured_cross", "legacy_reference"):
+            raise ValueError("policy must be configured_cross or legacy_reference")
         for name in ("duration", "rate", "timeout_ms", "drain_seconds"):
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -91,8 +96,21 @@ def capacity_gates(duration, durable_rate, counts, p99_ms):
             "scope": "funded admission-only component; excludes matching, liquidation and market-feed capacity"}
 
 
-def _service(path):
-    return ExchangeService(Database(path, timeout=2), {"USD": 8}, max_price_age=timedelta(seconds=30))
+def _policy(mode):
+    if mode == "legacy_reference":
+        return {}
+    catalog = ProductCatalog(1, {"BTC-PERP": ProductSpec("BTC-PERP", ProductKind.LINEAR_PERPETUAL,
+        "BTC", "USD", "USD", Decimal(".01"), Decimal(".001"), Decimal(".01"),
+        status=TradingStatus.ACTIVE)})
+    rules = PortfolioRules(1,
+        {"USD": CollateralRule("USD", (CollateralTier(None, Decimal(1)),), Decimal(1))}, {},
+        {"tier-1": LinearMarginRule("tier-1", Decimal(".1"), Decimal(".05"))}, Decimal(0))
+    return {"product_catalog": catalog, "portfolio_rules": rules}
+
+
+def _service(path, policy="configured_cross"):
+    return ExchangeService(Database(path, timeout=2), {"USD": 8}, max_price_age=timedelta(seconds=30),
+                           **_policy(policy))
 
 
 def _environment(directory):
@@ -159,12 +177,12 @@ class Recorder:
         self.source.close()
 
 
-def _verify(paths, accounts, recorder):
+def _verify(paths, accounts, recorder, policy):
     """Independently check every accepted ID, event, balance and live reserve."""
     all_orders = set()
     reports = []
     for shard, path in enumerate(paths):
-        reopened = _service(path)
+        reopened = _service(path, policy)
         with reopened.database.transaction() as conn:
             journal_mode = conn.execute("PRAGMA journal_mode").fetchone()[0]
             synchronous = conn.execute("PRAGMA synchronous").fetchone()[0]
@@ -206,12 +224,14 @@ def run(configuration: Configuration, directory: Path):
     configuration.validate()
     directory.mkdir(parents=True, exist_ok=False)
     environment = _environment(directory)
+    environment["policy"] = configuration.policy
+    environment["effective_policy"] = {key: json.loads(model.to_json()) for key, model in _policy(configuration.policy).items()}
     (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
     setup_started = time.monotonic_ns()
     paths, services = [], []
     for shard in range(configuration.shards):
         path = directory / f"shard-{shard}.sqlite3"
-        service = _service(path)
+        service = _service(path, configuration.policy)
         for index in range(shard, configuration.accounts, configuration.shards):
             account_id = f"probe-{index}"
             service.create_account(account_id)
@@ -359,7 +379,7 @@ def run(configuration: Configuration, directory: Path):
         raise RuntimeError("result recording failed: " + collector_error[0])
     if set(recorder.outcomes) != set(range(offered)):
         raise RuntimeError("offered arrivals were lost or duplicated")
-    checks, unknown_resolution = _verify(paths, configuration.accounts, recorder)
+    checks, unknown_resolution = _verify(paths, configuration.accounts, recorder, configuration.policy)
     elapsed = max(configuration.duration, (max(finished, recorder.completed_ns) - started) / 1e9)
     drain = max(0, (finished - (started + int(configuration.duration * 1e9))) / 1e9)
     counts = dict(recorder.counts)
@@ -395,6 +415,7 @@ def run(configuration: Configuration, directory: Path):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("sync", "batch"), default="sync")
+    parser.add_argument("--policy", choices=("configured_cross", "legacy_reference"), default="configured_cross")
     parser.add_argument("--duration", type=float, default=5)
     parser.add_argument("--rate", type=float, default=1000)
     for name, default in (("accounts", 100), ("shards", 1), ("workers", 4),
