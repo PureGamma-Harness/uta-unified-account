@@ -12,8 +12,10 @@ from decimal import Decimal
 from hashlib import sha256
 import json
 import math
+import os
 from pathlib import Path
 import sqlite3
+import stat
 from types import MappingProxyType
 from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
@@ -41,12 +43,41 @@ class Database:
         if (isinstance(timeout, bool) or not isinstance(timeout, (float, int))
                 or not math.isfinite(timeout) or not 0 < timeout <= 300):
             raise StorageError("timeout must be a finite positive number of at most 300 seconds")
-        self.path = str(Path(path).expanduser().resolve())
+        candidate = Path(path).expanduser().absolute()
+        # Resolve the parent only: resolving the final component would silently
+        # follow a database symlink before it can be rejected below.
+        self.path = str(candidate.parent.resolve() / candidate.name)
         self.timeout = float(timeout)
 
+    def _private_file(self) -> tuple[int, int]:
+        """Create private state independently of umask and reject unsafe reuse.
+
+        State must be kept in an operator-controlled directory. File checks
+        protect accidental exposure/replacement; the service OS user is trusted.
+        """
+        flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
+        try:
+            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
+        except FileExistsError:
+            descriptor = os.open(self.path, flags)
+        except OSError as exc:
+            raise StorageError("database path cannot be opened safely") from exc
+        try:
+            info = os.fstat(descriptor)
+            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                    or stat.S_IMODE(info.st_mode) & 0o077):
+                raise StorageError("database must be a private regular file owned by the service user")
+            return info.st_dev, info.st_ino
+        finally:
+            os.close(descriptor)
+
     def _connect(self) -> sqlite3.Connection:
+        identity = self._private_file()
         connection = sqlite3.connect(self.path, timeout=self.timeout, isolation_level=None)
         try:
+            info = os.stat(self.path, follow_symlinks=False)
+            if (info.st_dev, info.st_ino) != identity or not stat.S_ISREG(info.st_mode):
+                raise StorageError("database path changed while opening")
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             connection.execute(f"PRAGMA busy_timeout = {int(self.timeout * 1000)}")
