@@ -76,3 +76,5 @@ python benchmarks/run_benchmark.py --help
 4. P2 / P3：多结算与交割/反向，再扩展期权全量重估与合资格 PM 抵消，逐批重新验收。
 
 在相应门槛关闭前保持产品禁用。贡献约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，公开提交仅使用合成或获授权脱敏数据，不提交密钥、客户账单和私人流水。
+
+本轮同步了远端 main@02549e5 的研究文档更新；[研究命令业务流程](docs/workflows.md)、[场景模型](docs/risk-model.md) 与 [研究验证](docs/verification.md) 描述 simulator/store，认证交易与分批生产门槛仍以本页和 target-architecture.md 为准。
