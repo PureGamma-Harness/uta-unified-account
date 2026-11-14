@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 
@@ -84,6 +85,17 @@ class AutomationTests(unittest.TestCase):
         document.write_bytes(b" " * (1024 * 1024 + 1))
         with self.assertRaises(ValueError):
             load_policy(document, document)
+
+    def test_unexpected_background_failure_persists_halt_for_operator_recovery(self):
+        worker = ExchangeWorker(self.exchange)
+        def fail():
+            worker._stop.set()
+            raise RuntimeError("synthetic worker failure")
+        with patch.object(worker, "run_once", side_effect=fail):
+            worker._run()
+        self.assertEqual(worker.last_report, {"state": "blocked", "reason": "worker_failure",
+                                             "emergency_halt_committed": True})
+        self.assertTrue(self.reopen().readiness()["halted"])
 
 
 if __name__ == "__main__":

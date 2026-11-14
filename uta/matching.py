@@ -295,16 +295,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--database", required=True)
     parser.add_argument("--symbol", required=True)
     parser.add_argument("--asset-scale", action="append", default=[], metavar="ASSET=DIGITS")
+    parser.add_argument("--catalog", help="same persisted product catalog as the account authority")
+    parser.add_argument("--risk-rules", help="same persisted Cross policy as the account authority")
     parser.add_argument("--max-matches", type=int, default=100)
     parser.add_argument("--loop", action="store_true", help="poll the local book until interrupted")
     parser.add_argument("--interval", type=float, default=.1)
     args = parser.parse_args(argv)
     from .__main__ import _scales
     from .storage import Database, StorageError
+    from .configuration import load_policy
     try:
         if not .01 <= args.interval <= 60:
             raise ValueError("interval must be in .01..60 seconds")
-        matcher = Matcher(ExchangeService(Database(args.database), _scales(args.asset_scale)))
+        matcher = Matcher(ExchangeService(Database(args.database), _scales(args.asset_scale),
+                                         **load_policy(args.catalog, args.risk_rules)))
         while True:
             print(json.dumps(matcher.match_once(args.symbol, args.max_matches), separators=(",", ":")), flush=True)
             if not args.loop:

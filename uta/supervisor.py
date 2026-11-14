@@ -106,7 +106,18 @@ class ExchangeWorker:
             except Exception:
                 # Do not leak balances, credentials or raw requests into logs.
                 # Mutations themselves fail/rollback at their authority boundary.
-                self.last_report = {"state": "blocked", "reason": "worker_failure"}
+                # Unexpected loss of automation requires an explicit operator
+                # recovery; do not keep authorizing new exposure indefinitely.
+                halted = False
+                try:
+                    self.exchange.set_kill_switch(True)
+                    halted = True
+                except Exception:
+                    # Unavailable storage cannot acknowledge a halt. Readiness
+                    # still fails and the original commands cannot falsely commit.
+                    pass
+                self.last_report = {"state": "blocked", "reason": "worker_failure",
+                                    "emergency_halt_committed": halted}
             self._stop.wait(self.interval)
 
     def stop(self) -> None:
