@@ -54,7 +54,7 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | --- | --- | --- | --- |
 | `GET /healthz` | 无 | 公开 | `200 {"status":"ok"}`，只证明进程可应答 |
 | `GET /readyz` | 无 | 任意有效凭据 | `200` 或 `503`，对象含 `ready`、`reason`；正常行情存在时还含 `halted`、`market_version` |
-| `GET /metrics` | 无 | risk/admin | `200`，网关请求、客户端错误、服务错误及连接拒绝计数的 JSON 对象 |
+| `GET /metrics` | 无 | risk/admin | `200`，网关请求、客户端错误、服务错误及连接拒绝计数；挂载自动化 worker 时附 `worker` 最近报告 |
 | `POST /v1/accounts` | `{"account_id":"alice"}` | admin | `201`，账户对象 |
 | `GET /v1/accounts/{account_id}` | 无 | reader/trader/risk/admin | `200`，账户对象 |
 | `GET /v1/accounts/{account_id}/risk` | 无 | reader/trader/risk/admin | `200`，风险对象，要求新鲜行情 |
@@ -71,7 +71,7 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | `POST /v1/credit/pool` | `{"command_id":"capital1","asset":"BTC","amount":"100","source_reference":"capital:line1"}` | admin | `200`，经过外部对账确认的池资金记账结果 |
 | `POST /v1/accounts/{account_id}/orders` | `{"order_id":"o1","symbol":"BTC-PERP","quantity":"0.1","limit_price":"21000","reduce_only":false}` | trader/admin | `201`，原子保证金检查及占用后的订单对象 |
 | `POST /v1/accounts/{account_id}/orders/{order_id}/cancel` | `{}` | trader/admin | `200`，订单当前对象；本地撤单只释放剩余占用 |
-| `POST /v1/accounts/{account_id}/orders/{order_id}/fills` | `{"fill_id":"f1","quantity":"0.05","price":"20990"}` | admin | `200`，成交后的订单对象 |
+| `POST /v1/accounts/{account_id}/orders/{order_id}/fills` | `{"fill_id":"f1","quantity":"0.05","price":"20990"}` | admin | 仅 legacy reference 模式可返回 `200`；配置产品目录时返回 `409 paired_execution_required`，须用真实双边撮合 |
 | `GET /v1/accounts/{account_id}/spot-orders` | 无 | reader/trader/risk/admin | `200`，账户现货订单数组 |
 | `POST /v1/accounts/{account_id}/spot-orders` | `{"order_id":"s1","symbol":"BTC-SPOT","quantity":"1","limit_price":"100"}` | trader/admin | `201`，实际锁定现货资产后的订单对象；没有 reduce_only 参数 |
 | `POST /v1/accounts/{account_id}/spot-orders/{order_id}/cancel` | `{}` | trader/admin | `200`，终止剩余现货订单并释放剩余资产锁 |
@@ -83,6 +83,8 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | `PUT /v1/kill-switch` | `{"enabled":true}` | risk/admin | `200 {"enabled":true}` |
 
 `/readyz` 在全局暂停、行情缺失/过期或存储不可用时返回 `503`。这不是禁止所有安全操作的总开关：撤单、资金补充和符合检查的只减仓仍可能允许。新数据库的全局交易开关默认开启，即暂停新增敞口；恢复后保持持久化开关状态。
+
+若挂载 `exchange.worker`，其最近报告为 `not_started` 或全局 `worker_failure` 时 readiness 也返回 `503`，并通过 `worker_reason` 指明原因。单个账户或订单的 `blocked` 不单独导致全局不可用。客户 readiness 响应不包含其他账户的计划或阻断详情；完整最近报告仅在 risk/admin 的 metrics 中可见。未挂载 worker 时保持基础存储、行情和交易开关检查。
 
 行情输入示例：
 
@@ -141,7 +143,7 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 
 如果请求超时、连接断开或响应丢失，结果是未知状态。用原 ID 和原内容重试；也可通过账户、订单及事件查询核对，不能改用新 ID 再提交一次。对于取消与成交并发，数据库事务决定本地先后：已取消的剩余订单不再接受新成交，已成交部分保留。
 
-`fills` 是**本地执行之前的原子授权及结算命令**，会再次检查订单终态、数量、限价、只减仓约束、行情和风险。它不是接收“外部交易所已经不可逆成交”的回报接口。不能先在外部执行，再期待该命令一定成功。对外交易需要独立的持久化发送、未知结果对账和回报接入协议。
+配置产品目录时，REST `fills` 被 `paired_execution_required` 拒绝，即使持有 admin 令牌也不能通过它建立单腿成交；真实撮合器在同一事务内检查和结算双方。仅 legacy reference 兼容模式中的 `fills` 是**本地执行之前的原子授权及结算命令**，会再次检查订单终态、数量、限价、只减仓约束、行情和风险。它不是接收“外部交易所已经不可逆成交”的回报接口。不能先在外部执行，再期待该命令一定成功。对外交易需要独立的持久化发送、未知结果对账和回报接入协议。
 
 ## 错误
 
@@ -158,7 +160,7 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | `408` | `request_timeout` | 请求正文读取超时；已送出的业务请求须按原 ID 核对 |
 | `409` | `idempotency_conflict`、`market_conflict`、`market_regression`、`configuration_conflict`、`duplicate_external_reference` | 身份内容冲突、重复注资凭据、限额配置冲突或行情倒退，需调查来源 |
 | `409` | `trading_halted`、`account_frozen`、`insufficient_margin`、`unsafe_reduction`、`reduce_only_violation` | 风险或运营门禁拒绝；重算状态，避免绕过门禁改大权限重试 |
-| `409` | `order_closed`、`invalid_fill`、`liquidation_order_protected`、`order_limit`、`position_limit`、`precision_error`、`ledger_rejected` | 订单状态、执行、数量或账务精度不满足约束；受保护清算单由风险监督器管理 |
+| `409` | `order_closed`、`invalid_fill`、`paired_execution_required`、`liquidation_order_protected`、`order_limit`、`position_limit`、`precision_error`、`ledger_rejected` | 订单状态、执行、数量或账务精度不满足约束；配置产品使用真实双边撮合，受保护清算单由风险监督器管理 |
 | `409` | `credit_disabled`、`credit_limit`、`credit_pool_empty`、`insufficient_cash`、`no_principal`、`repayment_exceeds_debt` | 信用门禁、流动性、可用现金或债务余额不满足要求 |
 | `411` / `413` / `415` / `417` / `431` | `length_required`、`body_too_large`、`unsupported_media_type`、`unsupported_expectation`、`headers_too_large` | 修正 HTTP framing、长度、正文类型或请求头 |
 | `500` | `internal_error` | 服务故障，保存业务 ID 并核对结果；不要根据内部错误猜测请求未生效 |

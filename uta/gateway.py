@@ -364,10 +364,27 @@ class _Handler(BaseHTTPRequestHandler):
                     raise ValueError("invalid readiness response")
             except Exception:
                 return 503, {"ready": False, "reason": "service_unavailable"}
+            worker = getattr(service, "worker", None)
+            if worker is not None:
+                report = getattr(worker, "last_report", None)
+                reason = None
+                if not isinstance(report, dict) or report.get("reason") == "worker_failure":
+                    reason = "worker_failure"
+                elif report.get("state") == "not_started" or report.get("reason") == "not_started":
+                    reason = "worker_not_started"
+                if reason:
+                    state = {**state, "ready": False, "worker_reason": reason}
+                    if state.get("reason") in (None, "ready", "ok"):
+                        state["reason"] = reason
             return (200 if state["ready"] else 503), state
         if method == "GET" and path == "/metrics":
             self._permit(principal, "risk")
-            return 200, self.server.counters()
+            result: dict[str, Any] = self.server.counters()
+            worker = getattr(service, "worker", None)
+            if worker is not None:
+                report = getattr(worker, "last_report", None)
+                result["worker"] = dict(report) if isinstance(report, dict) else {"state": "blocked", "reason": "worker_failure"}
+            return 200, result
         if method == "GET" and path == "/v1/events":
             self._permit(principal, "reader", "trader", "risk")
             after, limit = _event_cursor(query)
@@ -489,6 +506,8 @@ class _Handler(BaseHTTPRequestHandler):
                         return 200, service.cancel_order(account_id, order_id)
                     if parts[6] == "fills":
                         self._permit(principal)
+                        if getattr(service, "product_catalog", None) is not None:
+                            raise _RequestError(409, "paired_execution_required", "configured products require paired execution through the matcher")
                         data = _fields(payload, {"fill_id", "quantity", "price"})
                         return 200, service.apply_fill(
                             account_id, order_id, _identifier(data["fill_id"]),

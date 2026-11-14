@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
+from types import SimpleNamespace
 import unittest
 
 from uta.credit import CreditService
@@ -13,6 +14,7 @@ from uta.gateway import Credential, make_server
 from uta.market import MarketSnapshot
 from uta.matching import Matcher
 from uta.models import AssetSpec, InstrumentSpec
+from uta.portfolio import CollateralRule, CollateralTier, LinearMarginRule, PortfolioRules
 from uta.products import ProductCatalog, ProductKind, ProductSpec, TradingStatus
 from uta.service import ExchangeService
 from uta.spot import SpotExchange
@@ -202,6 +204,50 @@ class ProductGatewayTests(unittest.TestCase):
         for method, path, payload in cases:
             self.expect(400, method, path, payload)
         self.assertEqual(self.financial(), before)
+
+    def test_configured_catalog_rejects_standalone_rest_fill_but_real_paired_match_succeeds(self):
+        product = ProductSpec("BTC-PERP", ProductKind.LINEAR_PERPETUAL, "BTC", "USD", "USD",
+                              D(".01"), D(".01"), D(1), status=TradingStatus.ACTIVE)
+        catalog = ProductCatalog(1, {product.symbol: product})
+        rules = PortfolioRules(1, {"USD": CollateralRule("USD", (CollateralTier(None, D(1)),), D(".5"))},
+                               {}, {"tier-1": LinearMarginRule("tier-1", D(".1"), D(".05"))}, D(0))
+        configured = ExchangeService(Database(Path(self.directory.name) / "configured.sqlite3"),
+                                     {"USD": 8}, clock=lambda: self.now,
+                                     product_catalog=catalog, portfolio_rules=rules)
+        configured.matcher = Matcher(configured)
+        configured.publish_market(MarketSnapshot(1, self.now, {"USD": AssetSpec(D(1), D(1))},
+            {"BTC-PERP": InstrumentSpec(D(100), D(".1"), D(".05"))}))
+        configured.set_kill_switch(False)
+        for account in ("alice", "bob"):
+            configured.create_account(account)
+            configured.deposit(account, "usd", "USD", D(1000))
+        self.server.service = configured
+        for account, token, quantity in (("alice", ALICE, "1"), ("bob", BOB, "-1")):
+            self.expect(201, "POST", f"/v1/accounts/{account}/orders", {"order_id": "paired", "symbol": "BTC-PERP", "quantity": quantity, "limit_price": "100"}, token=token)
+        before = configured.accounts(), configured.ledger.journal(), configured.events(limit=1000)
+        fill = {"fill_id": "manual", "quantity": "1", "price": "100"}
+        self.expect(403, "POST", "/v1/accounts/alice/orders/paired/fills", fill, token=ALICE)
+        rejected = self.expect(409, "POST", "/v1/accounts/alice/orders/paired/fills", fill)
+        self.assertEqual(rejected["error"]["code"], "paired_execution_required")
+        self.assertEqual((configured.accounts(), configured.ledger.journal(), configured.events(limit=1000)), before)
+        self.assertEqual(self.expect(200, "POST", "/v1/matching", {"symbol": "BTC-PERP"})["confirmed_trades"], 1)
+        self.assertEqual(configured.matcher.verify(strict=True)["paired_fills"], 2)
+
+    def test_worker_health_does_not_expose_accounts_or_promote_one_account_block_to_outage(self):
+        worker = self.service.worker = SimpleNamespace(last_report={"state": "not_started"})
+        initial = self.expect(503, "GET", "/readyz", token=ALICE)
+        self.assertEqual(initial["worker_reason"], "worker_not_started")
+        self.assertEqual(self.expect(200, "GET", "/metrics", token=RISK)["worker"], worker.last_report)
+        worker.last_report = {"state": "running", "plans": [{"account_id": "bob", "state": "BLOCKED"}],
+                              "blocked": [{"account_id": "bob", "code": "insufficient_margin"}]}
+        healthy = self.expect(200, "GET", "/readyz", token=ALICE)
+        self.assertNotIn("bob", json.dumps(healthy))
+        self.assertEqual(self.expect(200, "GET", "/metrics", token=RISK)["worker"], worker.last_report)
+        self.expect(403, "GET", "/metrics", token=READER)
+        worker.last_report = {"state": "blocked", "reason": "worker_failure"}
+        self.assertEqual(self.expect(503, "GET", "/readyz", token=ALICE)["worker_reason"], "worker_failure")
+        self.service.worker = None
+        self.assertTrue(self.expect(200, "GET", "/readyz", token=ALICE)["ready"])
 
 
 if __name__ == "__main__":
