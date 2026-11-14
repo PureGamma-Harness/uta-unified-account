@@ -1,5 +1,6 @@
 """Record a reproducible full unittest run without third-party test dependencies."""
 import argparse
+from contextlib import redirect_stderr, redirect_stdout
 from datetime import datetime, timezone
 from hashlib import sha256
 import json
@@ -28,7 +29,8 @@ def main():
     suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))
     beginning = time.perf_counter()
     with (args.output / "unittest.txt").open("x", encoding="utf-8") as log:
-        result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)
+        with redirect_stdout(log), redirect_stderr(log):
+            result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)
     elapsed = time.perf_counter() - beginning
     report = {"code_commit": sha, "started_at": started, "finished_at": datetime.now(timezone.utc).isoformat(),
               "command": "python tools/run_validation.py --output " + str(args.output),
