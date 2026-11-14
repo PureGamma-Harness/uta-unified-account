@@ -7,6 +7,7 @@
 - 独立生成器按固定 monotonic 计划到达，不等待前一个结果。调度落后仍保留原计划时间，不把计划改成实际派发时刻。
 - sync 与 batch 使用相同共享 outstanding 上界，包含派发队列、运行命令、批准入队列和结果收集。每片 batch queue 不是额外可无限放大的缓冲。
 - 所有账户预先拥有合成 USD 100,000,000；单一 BTC-PERP，数量 0.001、限价/mark 100、IM .1、MM .05、费用 .0004。全部有效订单在充足抵押下应被接纳；业务拒绝、技术失败、过载、未知及迟到各自保留，不计作成功吞吐。
+- 默认 `--policy configured_cross`：持久化版本 1 产品目录与 PortfolioRules，USD 全额抵押/LTV1、无可借币配置、总借款上限0，BTC-PERP 单乘数、quantity step .001、tick .01、最小名义 .01、tier-1 IM/MM .1/.05。此数据的数值与基础参考模型相同，但实际通过 `_check_product`、统一 Cross `_risk` 路径。只有显式 `--policy legacy_reference` 才使用旧路径，结果标签不同，不能混合比较。
 - 轮转账户分配固定，不用热点策略变化掩盖比较。配置限制每账户最多 900 个计划存活订单，防止 1000 挂单限制污染此短测。
 - 输出按计划到达至成功 COMMIT 后 Future/函数可观察完成计时。内部 `admission_started_ns` 与 receipt 发布时刻仅是诊断；后者是 COMMIT 后上界，不能叫硬件刷盘的精确时间。
 - batch 的 Future callback 只把结果放入 collector，不在 writer 内提交其他命令。同步模式采用相同 dispatcher 数；批准入每片一个 writer。报告完整记录这两种线程拓扑，不将单进程线程结果推广为多节点容量。

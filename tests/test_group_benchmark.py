@@ -15,7 +15,7 @@ from uta.service import ExchangeService, ServiceError
 
 class GroupBenchmarkTests(unittest.TestCase):
     def test_bounds_prevent_fake_long_feed_or_order_limit_results(self):
-        for config in (Configuration(mode="other"), Configuration(rate=float("nan")),
+        for config in (Configuration(mode="other"), Configuration(policy="other"), Configuration(rate=float("nan")),
                        Configuration(duration=1800), Configuration(drain_seconds=11),
                        Configuration(accounts=1, duration=10, rate=100),
                        Configuration(shards=2, accounts=1), Configuration(queue_capacity=True),
@@ -60,6 +60,8 @@ class GroupBenchmarkTests(unittest.TestCase):
             summary = run(Configuration(duration=.2, rate=30, accounts=4, shards=2), directory)
             rows = self.check_results(directory, summary)
             self.assertEqual(summary["offered_arrivals"], 6)
+            self.assertEqual(summary["environment"]["policy"], "configured_cross")
+            self.assertIn("portfolio_rules", summary["environment"]["effective_policy"])
             self.assertEqual(summary["counts"]["durable_accepted"], 6)
             self.assertEqual(len(summary["durability_checks"]), 2)
             ordered = sorted(rows, key=lambda row: row["sequence"])
@@ -101,6 +103,14 @@ class GroupBenchmarkTests(unittest.TestCase):
             self.assertEqual(process.returncode, 0, process.stderr)
             summary = json.loads(process.stdout)
             self.assertFalse(summary["gates"]["passed"])
+            self.assertEqual(summary["counts"]["durable_accepted"], 2)
+
+    def test_legacy_is_explicit_and_cannot_be_confused_with_configured_cross(self):
+        with TemporaryDirectory() as temporary:
+            summary = run(Configuration(policy="legacy_reference", duration=.1, rate=20, accounts=2),
+                          Path(temporary) / "legacy")
+            self.assertEqual(summary["environment"]["policy"], "legacy_reference")
+            self.assertEqual(summary["environment"]["effective_policy"], {})
             self.assertEqual(summary["counts"]["durable_accepted"], 2)
 
     def test_lost_success_receipt_is_unknown_and_not_counted_as_acknowledged_capacity(self):
