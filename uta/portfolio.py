@@ -8,7 +8,7 @@ down to their configured quantity step, and display ratios are half-even.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from fractions import Fraction
 import json
@@ -141,12 +141,13 @@ class LoanAccount:
     positions: Mapping[str, LinearExposure] = field(default_factory=dict)
     order_margin: Decimal = Decimal(0)
     mode: AccountMode = AccountMode.CROSS
+    cash_deficits: Mapping[str, Decimal] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if not isinstance(self.mode, AccountMode):
             raise PortfolioError("mode must be an AccountMode")
         _decimal("order margin", self.order_margin, minimum=Decimal(0))
-        for field_name in ("gross_assets", "principal", "interest", "frozen_assets"):
+        for field_name in ("gross_assets", "principal", "interest", "frozen_assets", "cash_deficits"):
             amounts = _mapping(field_name, getattr(self, field_name))
             for asset, amount in amounts.items():
                 _identifier("asset", asset)
@@ -249,18 +250,19 @@ class CrossRisk:
     catalog_version: int
     market_version: int
     market_id: str
+    cash_deficit_value: Decimal = Decimal(0)
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "borrowable", MappingProxyType(dict(self.borrowable)))
 
 
 def _inputs(account: LoanAccount, market: MarketSnapshot, catalog: ProductCatalog,
-            rules: PortfolioRules, now: datetime) -> None:
+            rules: PortfolioRules, now: datetime, max_age: timedelta = timedelta(seconds=5)) -> None:
     if not isinstance(account, LoanAccount) or not isinstance(market, MarketSnapshot) or not isinstance(catalog, ProductCatalog) or not isinstance(rules, PortfolioRules):
         raise PortfolioError("risk inputs require their validated model types")
     if account.mode is not AccountMode.CROSS:
         raise UnsupportedProduct("phase1_account_mode_unsupported: Isolated and PM are disabled")
-    market.validate(now=now)
+    market.validate(now=now, max_age=max_age)
     usd = market.assets.get("USD")
     if catalog.settlement_asset != "USD" or usd is None or usd.price != 1 or usd.collateral_factor != 1:
         raise UnsupportedProduct("phase1_settlement_unsupported: USD must be worth one USD without haircut")
@@ -270,17 +272,18 @@ def _inputs(account: LoanAccount, market: MarketSnapshot, catalog: ProductCatalo
 
 
 def calculate_cross_risk(account: LoanAccount, market: MarketSnapshot, catalog: ProductCatalog,
-                         rules: PortfolioRules, *, now: datetime) -> CrossRisk:
+                         rules: PortfolioRules, *, now: datetime,
+                         max_age: timedelta = timedelta(seconds=5)) -> CrossRisk:
     """Quote loans as if proceeds leave collateral immediately (conservative).
 
     This calculator has no mutation, borrowing, settlement, or order side effect.
     The service must evaluate it within the same transaction as a financial
     mutation. A quote is not authorization to borrow or withdraw.
     """
-    _inputs(account, market, catalog, rules, now)
+    _inputs(account, market, catalog, rules, now, max_age)
     accounting_assets = collateral = loan_value = frozen_value = Fraction(0)
-    principal_value = interest_value = spot_im = spot_mm = Fraction(0)
-    assets = set(account.gross_assets) | set(account.principal) | set(account.interest) | set(account.frozen_assets)
+    principal_value = interest_value = cash_deficit_value = spot_im = spot_mm = Fraction(0)
+    assets = set(account.gross_assets) | set(account.principal) | set(account.interest) | set(account.frozen_assets) | set(account.cash_deficits)
     prices = {}
     for asset in assets | set(rules.borrow_limits):
         if asset not in market.assets:
@@ -303,6 +306,7 @@ def calculate_cross_risk(account: LoanAccount, market: MarketSnapshot, catalog: 
         interest = Fraction(account.interest.get(asset, Decimal(0))) * price
         principal_value += principal
         interest_value += interest
+        cash_deficit_value += Fraction(account.cash_deficits.get(asset, Decimal(0))) * price
         if principal or interest:
             limit = rules.borrow_limits.get(asset)
             if limit is None:
@@ -324,7 +328,7 @@ def calculate_cross_risk(account: LoanAccount, market: MarketSnapshot, catalog: 
         pnl += marked - Fraction(exposure.cost_basis)
         linear_im += abs(marked) * Fraction(margin.initial_margin_rate)
         linear_mm += abs(marked) * Fraction(margin.maintenance_margin_rate)
-    debt = principal_value + interest_value
+    debt = principal_value + interest_value + cash_deficit_value
     accounting_equity = accounting_assets - debt + pnl
     risk_equity = collateral - debt + pnl
     im, mm = spot_im + linear_im, spot_mm + linear_mm
@@ -353,7 +357,7 @@ def calculate_cross_risk(account: LoanAccount, market: MarketSnapshot, catalog: 
                                           principal_value, interest_value, debt, pnl, frozen_value, im, mm,
                                           Fraction(account.order_margin), available)),
                      borrowable, status, rules.rule_id, rules.version, catalog.version, market.version,
-                     f"market-{market.version}@{market.observed_at.isoformat()}")
+                     f"market-{market.version}@{market.observed_at.isoformat()}", _decimal_exact(cash_deficit_value))
 
 
 @dataclass(frozen=True)
@@ -412,11 +416,12 @@ def scenario_reference(account: LoanAccount, market: MarketSnapshot, catalog: Pr
             raise UnsupportedProduct("reporting_unit_shock_unsupported: USD is the fixed reporting unit; settlement depeg is a later-batch model")
         loss = Fraction(0)
         units = {}
-        for asset in set(account.gross_assets) | set(account.principal) | set(account.interest):
+        for asset in set(account.gross_assets) | set(account.principal) | set(account.interest) | set(account.cash_deficits):
             price = Fraction(market.assets[asset].price)
             shock = Fraction(scenario.asset_shocks.get(asset, Decimal(0)))
             gross = Fraction(account.gross_assets.get(asset, Decimal(0))) - Fraction(account.frozen_assets.get(asset, Decimal(0)))
-            liability = Fraction(account.principal.get(asset, Decimal(0))) + Fraction(account.interest.get(asset, Decimal(0)))
+            liability = (Fraction(account.principal.get(asset, Decimal(0))) + Fraction(account.interest.get(asset, Decimal(0)))
+                         + Fraction(account.cash_deficits.get(asset, Decimal(0))))
             rule = rules.collaterals.get(asset)
             base = (rule.discounted(gross * price) if rule else 0) - liability * price
             stressed = (rule.discounted(gross * price * (1 + shock)) if rule else 0) - liability * price * (1 + shock)

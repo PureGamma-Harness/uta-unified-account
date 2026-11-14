@@ -15,6 +15,8 @@
 
 目录描述能力与服务执行能力分开验收：目录允许第一批产品的元数据，并不意味着某个运行中的服务已经实现该产品的撮合或结算。真实请求必须经过运行服务的产品门禁与财务事务。未实现的 spot 结算、非 1 合约乘数、借贷或账户模式，运行服务应继续拒绝，直至对应执行路径及测试完成。
 
+实际 `ExchangeService` 的第一批模式要求成对提供 `product_catalog` 与 `portfolio_rules`。perpetual 下单与成交入口均接入该目录，只接受已启用的单 USD 结算线性永续、乘数为 1；现货从此入口报 `unsupported_product`，非 1 乘数报 `unsupported_multiplier`。inverse/future/options 等返回 `product_rejected` 并保留具体 phase1 unsupported 原因。目录和规则版本被固化在同一数据库，重启更换或缺省降级被拒绝；现货结算由独立模块验收。
+
 每个 `ProductSpec` 包含 symbol、product kind、underlying、quote、settlement、乘数、价格 tick、数量 step、最小名义金额、risk tier、expiry、funding interval、交易状态及 eligible hedge 列表。expiry 对 dated future / option 必填，其余类型不得填；funding interval 只能属于永续产品。期权行权价、波动率曲面及执行/指派属于未启用的后续产品模型。
 
 `funding_interval_seconds` 只是元数据，不宣称已经收付资金费。`risk_tier` 指向版本化的显式保证金规则，不会自动从名称推断费率。线性合约名义金额为 `abs(quantity) × price × multiplier`；step、tick 必须精确整除，最小名义金额允许等于门槛，不能以四舍五入偷偷修正不合格订单。

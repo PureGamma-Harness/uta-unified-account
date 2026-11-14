@@ -20,6 +20,8 @@ from typing import Callable, Mapping
 from .ledger import LedgerError, Posting
 from .market import MarketSnapshot
 from .models import RiskInputError
+from .portfolio import LinearExposure, LoanAccount, PortfolioRules, calculate_cross_risk
+from .products import AccountMode, ProductCatalog, ProductError, ProductKind
 from .storage import Database, DurableLedger
 
 
@@ -95,10 +97,28 @@ class ExchangeService:
     system. The global halt starts enabled and survives process restarts.
     """
 
+    @property
+    def product_catalog(self) -> ProductCatalog | None:
+        return self._product_catalog
+
+    @property
+    def portfolio_rules(self) -> PortfolioRules | None:
+        return self._portfolio_rules
+
     def __init__(self, database: Database, scales: Mapping[str, int], *,
                  max_price_age: timedelta = timedelta(seconds=5),
                  clock: Callable[[], datetime] | None = None,
-                 fee_rate: Decimal = Decimal("0.0004")):
+                 fee_rate: Decimal = Decimal("0.0004"),
+                 product_catalog: ProductCatalog | None = None,
+                 portfolio_rules: PortfolioRules | None = None):
+        if (product_catalog is None) != (portfolio_rules is None):
+            raise ServiceError("invalid_configuration", "product_catalog and portfolio_rules must be configured together")
+        if product_catalog is not None and (not isinstance(product_catalog, ProductCatalog) or not isinstance(portfolio_rules, PortfolioRules)):
+            raise ServiceError("invalid_configuration", "catalog and margin policy require validated model types")
+        if product_catalog is not None:
+            usd_rule = portfolio_rules.collaterals.get("USD")
+            if product_catalog.settlement_asset != "USD" or usd_rule is None or any(tier.factor != 1 for tier in usd_rule.tiers):
+                raise ServiceError("invalid_configuration", "phase1 requires fixed USD settlement and undiscounted USD collateral")
         if "USD" not in scales or type(scales["USD"]) is not int or not 2 <= scales["USD"] <= 8:
             raise ServiceError("invalid_configuration", "USD scale must be an integer from 2 through 8")
         if (not isinstance(max_price_age, timedelta) or max_price_age <= timedelta(0)
@@ -108,6 +128,7 @@ class ExchangeService:
         if not _ZERO <= fee_rate <= Decimal("0.01"):
             raise ServiceError("invalid_configuration", "fee_rate must be between zero and 0.01")
         self.database = database
+        self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
         self.scales = dict(scales)
         self.ledger = DurableLedger(database, scales)
         self.max_price_age, self.fee_rate = max_price_age, fee_rate
@@ -124,6 +145,18 @@ class ExchangeService:
             if previous is not None and previous["value"] != policy:
                 raise ServiceError("configuration_conflict", "persisted trading policy differs from configured policy", 409)
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('policy',?)", (policy,))
+            risk_policy = _json({"mode": "legacy_reference"} if product_catalog is None else {
+                "mode": "phase1_cross", "catalog": json.loads(product_catalog.to_json()),
+                "rules": json.loads(portfolio_rules.to_json()),
+            })
+            previous_risk = connection.execute("SELECT value FROM uta_config WHERE key='risk_policy'").fetchone()
+            if previous_risk is not None and previous_risk["value"] != risk_policy:
+                raise ServiceError("configuration_conflict", "persisted product or portfolio policy differs; implicit downgrade and rule changes are forbidden", 409)
+            if previous_risk is None and product_catalog is not None:
+                existing = connection.execute("SELECT 1 FROM uta_positions UNION SELECT 1 FROM uta_orders UNION SELECT 1 FROM uta_liabilities LIMIT 1").fetchone()
+                if existing is not None:
+                    raise ServiceError("configuration_conflict", "existing legacy financial state requires an explicit policy migration", 409)
+            connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('risk_policy',?)", (risk_policy,))
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('halted','true')")
 
     @staticmethod
@@ -213,13 +246,76 @@ class ExchangeService:
     def _customer(account_id: str) -> str:
         return "customer:" + account_id
 
+    def _policy_versions(self) -> dict:
+        if self.product_catalog is None:
+            return {"risk_mode": "legacy_reference"}
+        return {"risk_mode": "phase1_cross", "rule_id": self.portfolio_rules.rule_id,
+                "rule_version": self.portfolio_rules.version, "catalog_version": self.product_catalog.version}
+
+    @staticmethod
+    def _halted(connection) -> bool:
+        row = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+        if row is None or row["value"] not in ("true", "false"):
+            raise ServiceError("configuration_corrupt", "kill switch configuration is missing or invalid", 503)
+        return row["value"] != "false"
+
+    def _validate_policy_market(self, market: MarketSnapshot) -> None:
+        if self.product_catalog is None:
+            return
+        for asset in self.portfolio_rules.borrow_limits:
+            if asset not in market.assets:
+                raise ServiceError("market_incomplete", "configured borrow quotes require a price for every borrowable asset", 503)
+        for symbol, product in self.product_catalog.products.items():
+            if product.kind is not ProductKind.LINEAR_PERPETUAL or symbol not in market.instruments:
+                continue
+            margin = self.portfolio_rules.linear_margin.get(product.risk_tier)
+            spec = market.instruments[symbol]
+            if margin is None:
+                raise ServiceError("invalid_configuration", "catalog risk tier has no configured linear margin rule", 503)
+            if (spec.initial_margin_rate, spec.maintenance_margin_rate) != (margin.initial_margin_rate, margin.maintenance_margin_rate):
+                raise ServiceError("margin_rule_conflict", "market margin rates conflict with the authoritative versioned portfolio rules", 409)
+
+    def _check_product(self, symbol: str, quantity: Decimal, price: Decimal, *,
+                       reduce_only: bool, partial_fill: bool = False) -> None:
+        if self.product_catalog is None:
+            return
+        try:
+            product = self.product_catalog.require_supported(symbol, mode=AccountMode.CROSS, reduce_only=reduce_only)
+            if product.kind is not ProductKind.LINEAR_PERPETUAL:
+                raise ServiceError("unsupported_product", "the perpetual execution path accepts only linear perpetual products", 409)
+            if product.multiplier != 1:
+                raise ServiceError("unsupported_multiplier", "perpetual settlement currently requires multiplier one", 409)
+            if partial_fill:
+                if (Fraction(quantity) / Fraction(product.quantity_step)).denominator != 1:
+                    raise ProductError("quantity_step_violation")
+                if (Fraction(price) / Fraction(product.price_tick)).denominator != 1:
+                    raise ProductError("price_tick_violation")
+            else:
+                self.product_catalog.check_order(symbol, quantity, price, mode=AccountMode.CROSS, reduce_only=reduce_only)
+        except RiskInputError as exc:
+            raise ServiceError("product_rejected", str(exc), 409) from exc
+
+    def _locked_assets(self, connection, account_id: str) -> dict[str, Decimal]:
+        """Shared spot cash locks; absent optional spot schema means no locks."""
+        exists = connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_spot_orders'").fetchone()
+        if exists is None:
+            return {}
+        totals = {}
+        for row in connection.execute("SELECT reserved_asset,reserved_amount FROM uta_spot_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED')", (account_id,)):
+            value = Fraction(Decimal(row["reserved_amount"]))
+            if value < 0:
+                raise ServiceError("storage_corrupt", "negative spot lock", 503)
+            totals[row["reserved_asset"]] = totals.get(row["reserved_asset"], Fraction(0)) + value
+        return {asset: _exact(value) for asset, value in totals.items() if value}
+
     def _available_asset(self, connection, account_id: str, asset: str) -> Decimal:
-        """Settled cash available to debit; asset-lock modules must extend this.
+        """Settled cash available to debit after shared spot order locks.
 
         Perpetual order margin is a reporting-currency constraint and callers
         must additionally check projected account risk before a cash debit.
         """
-        return self.ledger.balance(self._customer(account_id), asset, connection=connection)
+        cash = self.ledger.balance(self._customer(account_id), asset, connection=connection)
+        return _exact(Fraction(cash) - Fraction(self._locked_assets(connection, account_id).get(asset, _ZERO)))
 
     @staticmethod
     def _require_account(connection, account_id: str):
@@ -241,6 +337,7 @@ class ExchangeService:
             snapshot = MarketSnapshot.from_json(row["payload"])
             if fresh:
                 snapshot.validate(now=self._now(), max_age=self.max_price_age)
+            self._validate_policy_market(snapshot)
             return snapshot
         except RiskInputError as exc:
             raise ServiceError("market_unavailable", "trusted market snapshot is invalid or stale", 503) from exc
@@ -278,7 +375,16 @@ class ExchangeService:
             raise ServiceError("market_incomplete", "missing instrument for an outstanding order", 503) from exc
         mark, limit = Fraction(spec.mark_price), Fraction(Decimal(order["limit_price"]))
         loss = max(Fraction(0), remaining * (limit - mark))
-        im = Fraction(0) if order["reduce_only"] else abs(remaining) * max(mark, limit) * Fraction(spec.initial_margin_rate)
+        im_rate = spec.initial_margin_rate
+        if self.product_catalog is not None:
+            try:
+                product = self.product_catalog.require_risk_supported(order["symbol"])
+                if product.kind is not ProductKind.LINEAR_PERPETUAL or product.multiplier != 1:
+                    raise ServiceError("unsupported_product", "stored perpetual order has an unsupported contract definition", 503)
+                im_rate = self.portfolio_rules.linear_margin[product.risk_tier].initial_margin_rate
+            except (RiskInputError, KeyError) as exc:
+                raise ServiceError("risk_unavailable", "outstanding order has no supported configured margin rule", 503) from exc
+        im = Fraction(0) if order["reduce_only"] else abs(remaining) * max(mark, limit) * Fraction(im_rate)
         previous_notional = Fraction(Decimal(order["fee_notional"])) if "fee_notional" in order.keys() else Fraction(0)
         charged = Fraction(Decimal(order["charged_fee"])) if "charged_fee" in order.keys() else Fraction(0)
         # Charge one cumulative ceiling, including the already-paid rounding
@@ -292,6 +398,39 @@ class ExchangeService:
         balances = {asset: self.ledger.balance(self._customer(account_id), asset, connection=connection)
                     for asset in self.scales}
         balances["USD"] = _exact(Fraction(balances["USD"]) + Fraction(balance_delta))
+        frozen = self._locked_assets(connection, account_id)
+        if self.product_catalog is not None:
+            self._validate_policy_market(market)
+            liabilities = list(connection.execute("SELECT asset,principal,interest FROM uta_liabilities WHERE account_id=?", (account_id,)))
+            reserve = sum((Fraction(self._reserve(order, market)) for order in self._live_orders(connection, account_id)
+                           if order["order_id"] != reserve_exclude), Fraction(0))
+            try:
+                account = LoanAccount(
+                    gross_assets={asset: amount for asset, amount in balances.items() if amount > 0},
+                    principal={row["asset"]: Decimal(row["principal"]) for row in liabilities if Decimal(row["principal"])},
+                    interest={row["asset"]: Decimal(row["interest"]) for row in liabilities if Decimal(row["interest"])},
+                    frozen_assets=frozen,
+                    positions={symbol: LinearExposure(symbol, quantity, cost)
+                               for symbol, (quantity, cost) in (self._positions(connection, account_id) if positions is None else positions).items()},
+                    order_margin=_exact(reserve), mode=AccountMode.CROSS,
+                    cash_deficits={asset: amount.copy_abs() for asset, amount in balances.items() if amount < 0},
+                )
+                calculated = calculate_cross_risk(account, market, self.product_catalog, self.portfolio_rules,
+                                                   now=self._now(), max_age=self.max_price_age)
+            except RiskInputError as exc:
+                raise ServiceError("risk_unavailable", str(exc), 503) from exc
+            equity, mm = Fraction(calculated.risk_equity), Fraction(calculated.maintenance_margin)
+            with localcontext(Context(prec=34, rounding=ROUND_HALF_EVEN)):
+                ratio = _text(Decimal(equity.numerator * mm.denominator) / Decimal(equity.denominator * mm.numerator)) if mm else None
+            result = {name: _text(getattr(calculated, name)) for name in (
+                "accounting_equity", "collateral_value", "risk_equity", "loan_value", "principal_value", "interest_value",
+                "cash_deficit_value", "debt_value", "unrealized_pnl", "frozen_value", "initial_margin", "maintenance_margin", "available_margin")}
+            result.update(account_version=self._require_account(connection, account_id)["version"],
+                          equity=result["risk_equity"], open_order_margin=_text(calculated.order_margin),
+                          margin_ratio=ratio, market_version=market.version, observed_at=market.observed_at.isoformat(),
+                          market_id=calculated.market_id, borrowable={asset: _text(amount) for asset, amount in calculated.borrowable.items()},
+                          status=calculated.status, **self._policy_versions())
+            return result
         equity = Fraction(0)
         for asset, balance in balances.items():
             if not balance:
@@ -300,6 +439,11 @@ class ExchangeService:
                 raise ServiceError("market_incomplete", "missing collateral specification for account balance", 503)
             spec = market.assets[asset]
             equity += Fraction(balance) * Fraction(spec.price) * (Fraction(spec.collateral_factor) if balance > 0 else 1)
+        for asset, amount in frozen.items():
+            if asset not in market.assets or amount > max(balances.get(asset, _ZERO), _ZERO):
+                raise ServiceError("risk_unavailable", "spot locks exceed priced account assets", 503)
+            spec = market.assets[asset]
+            equity -= Fraction(amount) * Fraction(spec.price) * Fraction(spec.collateral_factor)
         for debt in connection.execute("SELECT asset,principal,interest FROM uta_liabilities WHERE account_id=?", (account_id,)):
             total = Fraction(Decimal(debt["principal"])) + Fraction(Decimal(debt["interest"]))
             if total:
@@ -323,13 +467,14 @@ class ExchangeService:
         return {"account_version": account_version, "equity": _text(_exact(equity)), "initial_margin": _text(_exact(im)),
                 "maintenance_margin": _text(_exact(mm)), "open_order_margin": _text(_exact(reserve)),
                 "available_margin": _text(_exact(equity - im - reserve)), "margin_ratio": ratio,
-                "market_version": market.version, "observed_at": market.observed_at.isoformat()}
+                "market_version": market.version, "observed_at": market.observed_at.isoformat(), **self._policy_versions()}
 
     def _order(self, row, market: MarketSnapshot | None = None) -> dict:
         result = {key: row[key] for key in ("account_id", "order_id", "symbol", "quantity", "limit_price",
                                            "filled_quantity", "status", "version", "created_at")}
         result["reduce_only"] = bool(row["reduce_only"])
         result["reserved_margin"] = _text(self._reserve(row, market)) if market is not None and row["status"] in _LIVE else "0"
+        result.update(self._policy_versions())
         return result
 
     def _account(self, connection, account_id: str) -> dict:
@@ -371,6 +516,7 @@ class ExchangeService:
         if any(spec.maintenance_margin_rate <= 0 or spec.initial_margin_rate <= 0
                for spec in snapshot.instruments.values()):
             raise ServiceError("invalid_market", "trading instruments require strictly positive maintenance and initial margin rates")
+        self._validate_policy_market(snapshot)
         payload = snapshot.to_json()
         with self._transaction() as connection:
             # A queued publisher may have waited for another writer; freshness
@@ -471,6 +617,8 @@ class ExchangeService:
                 raise ServiceError("idempotency_conflict", "order ID was reused with different content", 409)
             return self._order(previous, self._market(connection, fresh=False))
         market = self._market(connection)
+        self._halted(connection)  # Corrupt control state blocks reductions too.
+        self._check_product(symbol, quantity, limit_price, reduce_only=reduce_only)
         if symbol not in market.instruments:
             raise ServiceError("unknown_instrument", "instrument is not in the trusted market snapshot")
         if not reduce_only:
@@ -511,7 +659,7 @@ class ExchangeService:
 
     def _require_exposure_allowed(self, connection, account_id: str) -> None:
         """Shared halt/freeze policy for order, matching and credit writers."""
-        if connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"] == "true":
+        if self._halted(connection):
             raise ServiceError("trading_halted", "new exposure is halted", 409)
         self._require_unfrozen(connection, account_id)
 
@@ -608,6 +756,8 @@ class ExchangeService:
         next_positions, pnl = self._project_fill(positions, row["symbol"], quantity, price)
         fee = self._fill_fee(connection, account_id, order_id, quantity, price)
         market = self._market(connection)
+        self._halted(connection)
+        self._check_product(row["symbol"], quantity, price, reduce_only=bool(row["reduce_only"]), partial_fill=True)
         if not row["reduce_only"]:
             self._require_exposure_allowed(connection, account_id)
         filled = _exact(Fraction(Decimal(row["filled_quantity"])) + Fraction(quantity))
@@ -740,7 +890,7 @@ class ExchangeService:
                 state = "LIQUIDATING" if equity <= mm else "NORMAL"
             result = {"account_id": account_id, "state": state, "cycle": cycle, "revision": revision,
                       "market_version": market.version, "source_account_version": risk["account_version"],
-                      "created_orders": [], "cancelled_orders": [], "replanned": False}
+                      "created_orders": [], "cancelled_orders": [], "replanned": False, **self._policy_versions()}
             if state == "NORMAL":
                 for order in self._live_orders(connection, account_id):
                     if order["order_id"].startswith("liq:"):
@@ -773,6 +923,7 @@ class ExchangeService:
                         price = market.instruments[symbol].mark_price
                         _amount(quantity, "liquidation quantity", nonzero=True)
                         _amount(price, "liquidation price", positive=True)
+                        self._check_product(symbol, quantity, price, reduce_only=True)
                         projected_positions, pnl = self._project_fill(positions, symbol, quantity, price)
                         fee = self._fee(quantity, price)
                         projected = self._risk(connection, account_id, market, positions=projected_positions,
@@ -838,18 +989,19 @@ class ExchangeService:
             raise ServiceError("invalid_input", "enabled must be a boolean")
         value = "true" if enabled else "false"
         with self._transaction() as connection:
-            old = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"]
+            previous = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+            old = previous["value"] if previous is not None else None
             if old != value:
-                connection.execute("UPDATE uta_config SET value=? WHERE key='halted'", (value,))
+                connection.execute("INSERT INTO uta_config VALUES ('halted',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (value,))
                 self._event(connection, "KILL_SWITCH_CHANGED", None, {"enabled": enabled})
             return {"enabled": enabled}
 
     def readiness(self) -> dict:
         try:
             with self._transaction() as connection:
-                halted = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()["value"] == "true"
+                halted = self._halted(connection)
                 market = self._market(connection)
                 return {"ready": not halted, "halted": halted, "market_version": market.version,
-                        "reason": "trading_halted" if halted else "ready"}
+                        "reason": "trading_halted" if halted else "ready", **self._policy_versions()}
         except (ServiceError, sqlite3.DatabaseError, LedgerError):
             return {"ready": False, "reason": "storage_or_market_unavailable"}
