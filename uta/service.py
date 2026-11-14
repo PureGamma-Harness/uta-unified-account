@@ -832,6 +832,18 @@ class ExchangeService:
             market = self._market(connection, fresh=False) if rows else None
             return [self._order(row, market) for row in rows]
 
+    def order(self, account_id: str, order_id: str) -> dict:
+        """Reconcile one original client order ID, including after a timeout."""
+        _name(account_id, "account_id")
+        _name(order_id, "order_id")
+        with self._transaction() as connection:
+            self._require_account(connection, account_id)
+            row = connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?",
+                                     (account_id, order_id)).fetchone()
+            if row is None:
+                raise ServiceError("order_not_found", "unknown order", 404)
+            return self._order(row, self._market(connection, fresh=False))
+
     def _cancel_locked(self, connection, row, reason: str) -> dict:
         version = self._bump(connection, row["account_id"])
         connection.execute("UPDATE uta_orders SET status='CANCELLED',version=? WHERE account_id=? AND order_id=?",
@@ -882,15 +894,39 @@ class ExchangeService:
                                    for symbol, (q, cost) in sorted(positions.items())]).encode()).hexdigest()
             risk = self._risk(connection, account_id, market)
             equity, mm = Fraction(Decimal(risk["equity"])), Fraction(Decimal(risk["maintenance_margin"]))
+            cancelled_spot = []
+            if equity <= mm or Decimal(risk["available_margin"]) < 0 or previous_state != "NORMAL":
+                has_spot = connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_spot_orders'").fetchone()
+                if has_spot is not None:
+                    # Locks remove collateral from risk, but releasing a pending
+                    # order is not an economic loss. Revalue after release before
+                    # deciding whether any position actually needs liquidation.
+                    from .spot import cancel_all_spot_orders
+                    cancelled_spot = cancel_all_spot_orders(self, connection, account_id, "risk_supervisor")
+                    risk = self._risk(connection, account_id, market)
+                    equity, mm = Fraction(Decimal(risk["equity"])), Fraction(Decimal(risk["maintenance_margin"]))
+            has_debt = any(Fraction(Decimal(row["principal"])) + Fraction(Decimal(row["interest"])) > 0
+                           for row in connection.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id=?", (account_id,)))
+            loan_blocked = False
             if not positions:
-                state = "BANKRUPT" if equity < 0 else "NORMAL"
+                if equity < 0:
+                    state = "BANKRUPT"
+                elif has_debt and (equity <= mm or previous_state != "NORMAL" and equity <= mm * Fraction(11, 10)):
+                    # Loan-only distress has no perpetual position to reduce.
+                    # Freeze until a real repayment/conversion adapter or a cash
+                    # injection resolves it; never invent a forced spot fill.
+                    state, loan_blocked = "BLOCKED", True
+                else:
+                    state = "NORMAL"
             elif previous_state != "NORMAL":
                 state = "NORMAL" if equity > mm * Fraction(11, 10) else "LIQUIDATING"
             else:
                 state = "LIQUIDATING" if equity <= mm else "NORMAL"
             result = {"account_id": account_id, "state": state, "cycle": cycle, "revision": revision,
                       "market_version": market.version, "source_account_version": risk["account_version"],
-                      "created_orders": [], "cancelled_orders": [], "replanned": False, **self._policy_versions()}
+                      "created_orders": [], "cancelled_orders": [], "cancelled_spot_orders": cancelled_spot,
+                      "equity": risk["equity"], "maintenance_margin": risk["maintenance_margin"],
+                      "replanned": False, **self._policy_versions()}
             if state == "NORMAL":
                 for order in self._live_orders(connection, account_id):
                     if order["order_id"].startswith("liq:"):
@@ -902,6 +938,17 @@ class ExchangeService:
                     result["cancelled_orders"].append(self._cancel_locked(connection, order, "account_bankrupt"))
                 self._liquidation_state(connection, account_id, state, cycle, revision,
                                         market.version, digest, previous_state)
+            elif loan_blocked:
+                if previous_state == "NORMAL":
+                    cycle += 1
+                if previous_state != "BLOCKED":
+                    revision += 1
+                reason = "loan_liquidation_adapter_required"
+                for order in self._live_orders(connection, account_id):
+                    result["cancelled_orders"].append(self._cancel_locked(connection, order, reason))
+                self._liquidation_state(connection, account_id, state, cycle, revision,
+                                        market.version, digest, previous_state, reason=reason)
+                result.update(cycle=cycle, revision=revision, reason=reason)
             elif (previous is not None and previous_state in ("LIQUIDATING", "BLOCKED")
                   and previous["plan_market_version"] == market.version
                   and previous["plan_position_digest"] == digest
