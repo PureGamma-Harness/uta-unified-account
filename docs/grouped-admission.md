@@ -44,7 +44,7 @@ with AdmissionBatcher(exchange, max_batch_size=32,
 
 `close(wait=False)` 停止新入队并唤醒 worker，已入队任务仍排空；`close(wait=True)` 等待排空与回执发布后返回，可以重复调用。`wait` 必须是 bool。CLI/HTTP 关闭应先停止接收新请求、排空已接收的 HTTP 请求，再关闭批提交 worker。
 
-Future 回调必须短而非阻塞；同一 worker 内递归 submit 返回 `admission_reentrant`，递归 close 抛错，避免自等待死锁。即使回调抛 `SystemExit`，也不会阻断其他已提交回执或杀掉 writer；该异常计入 `callback_failures`。调用者不得直接手工完成返回的 Future。
+Future 回调必须短而非阻塞；同一 worker 内递归 submit 返回 `admission_reentrant`，递归 close 抛错，避免自等待死锁。回调调用同一 worker 尚未发布的 Future 的 `result()` / `exception()` 时，潜在阻塞等待直接抛 `RuntimeError`；`timeout<=0` 仍保持标准非阻塞 `TimeoutError`，已完成结果和普通线程等待保持标准语义。即使回调抛 `SystemExit`，也不会阻断其他已提交回执或杀掉 writer；该异常计入 `callback_failures`。调用者不得直接手工完成返回的 Future。
 
 ## 诊断与验证
 
