@@ -10,6 +10,8 @@
 
 每个分片另存不可变的 layout hash 和 shard index。截为空文件、丢失 identity 或用另一片的数据库替换，都拒绝启动并保持暂停；不会通过自动建表把损坏的恢复点当作全新账户库。此前未带 identity 的实验布局也需要明确的离线迁移，不能隐式接纳。
 
+identity 还保存初始化完成封印；金融 schema 初始化后未封印便崩溃的分片，重启时拒绝自动补齐。所有 router 创建的分片连接都在 `BEGIN IMMEDIATE` 后、任何业务操作前，在同一事务核对 layout/index/完成位。运行中的丢失、截空或换片不会通过下一次连接自动建库或写到错误的风险组；检测后持久保持全局暂停。这些检查不能为了吞吐跳过。
+
 ```python
 from decimal import Decimal
 from uta.sharding import ShardRouter
@@ -38,6 +40,8 @@ router.deposit('alice', 'synthetic:funding:001', 'USD', Decimal('1000'))
 
 `fund_credit_pool(shard, ...)` 先在控制库永久绑定外部资金来源 reference 到指定分片、命令、币种和金额，再执行该片的幂等入账。相同 reference 不能在另一片重复入账。中间崩溃只允许重试原分片的同一命令，不释放或改派来源；这不是两库原子事务，恢复必须保留来源 registry 与各片账本的一致历史。
 
+每次启动、解除暂停及新增资金池注资前，逐片核对所有 `pool_funded` 业务回执与 global source claims：币种、金额、命令 ID 和归属分片必须精确一致，来源不得跨片重复。单独恢复较旧 control 导致任何已入账资金缺少或不匹配 claim 时，保持暂停并返回 `funding_registry_conflict`；禁止自动重建、删除或改派 claim。已持久 claim 尚未在本片提交，允许保持 pending，仅原片原命令可恢复重试。
+
 `match_once(shard, symbol)` 使用现有同库 `Matcher`，两条成交腿仍在同一分片事务中结算。不同分片的对手订单不会互相成交，因此它不是一个跨片共享的交易所订单簿。`require_same_shard` 和跨片 transfer 返回 `cross_shard_unsupported`；同片 transfer 也尚未实现。不能把每片吞吐相加后声称实现全局价格时间优先。
 
 事件游标是 `{shard, sequence}`，每片独立递增，返回项带对应 cursor。消费者必须分别保存每片水位并按业务 ID 去重；没有虚构的全局 sequence 或全局事件总序。
@@ -65,6 +69,8 @@ router.deposit('alice', 'synthetic:funding:001', 'USD', Decimal('1000'))
 每轮 offered 为 5000，完成加过载恰好等于 offered。没有业务拒单、技术失败或未知结果，唯一订单数量与 `ORDER_ACCEPTED` 事件数量逐片相等。超过软期限的提交仍保留为持久接纳，但另行计数，不冒充按时响应。吞吐分母分别为 8.024/7.312/6.768 秒，包含排空成本；按时接纳率仅为 66.17/95.19/165.92 每秒。
 
 三轮的 gates 都失败，Phase 1 matching acceptance 都为 false。增加分片在这一次短测中有改善，但远未达到 10k；一轮/配置不足以给出统计置信区间或证明扩展率。当前最多只有四核 cgroup CPU 配额，控制路径、进程 IPC、磁盘同步和同片竞争都会限制进一步增益。此结果支持继续检查路由成本和固定风险组布局，不支持上线 HA 或跨片交易。
+
+上述性能记录早于独立故障审查要求的逐事务 identity guard、初始化封印和跨库资金来源对账修复，只代表所记录的旧 commit，不代表修复后候选版本的容量。修复后需在新的固定版本重新测量；不得回写或沿用旧数字声称新版本通过。
 
 原始 `arrivals.jsonl.gz`、summary/environment、SHA-256 manifest 和源码校验保存在上述结果目录。SQLite 测试库留在本地并从版本库排除；提交的 raw 记录可复算所有唯一结果、延迟和产品/分片分布。运行目录本身会让 `git status` 显示 untracked dirty，因此另有 `source-verification.json` 将关键模块及生成器 hash 与固定提交逐一比较，不能只根据 dirty 布尔值猜测源码是否被改过。
 

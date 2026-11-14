@@ -34,6 +34,59 @@ def _json(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
+_INTEGRITY_FAULTS = {"shard_unavailable", "shard_identity_conflict", "funding_registry_conflict"}
+
+
+class _BoundShardDatabase(Database):
+    """Never create a missing shard; bind identity inside every transaction."""
+
+    def __init__(self, path, index, layout_hash, *, bootstrap=False):
+        super().__init__(path)
+        self._index, self._layout_hash = index, layout_hash
+        self._bootstrap = bootstrap
+
+    def _private_file(self):
+        if self._bootstrap and not os.path.lexists(self.path):
+            return super()._private_file()
+        try:
+            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+        except OSError as exc:
+            raise ServiceError("shard_unavailable", "persisted shard cannot be safely opened; automatic creation is forbidden", 503) from exc
+        try:
+            details = os.fstat(descriptor)
+            if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or
+                details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):
+                raise ServiceError("shard_unavailable", "persisted shard is missing, empty or unsafe", 503)
+            return details.st_dev, details.st_ino
+        finally:
+            os.close(descriptor)
+
+    @contextmanager
+    def transaction(self):
+        with super().transaction() as connection:
+            try:
+                if self._bootstrap:
+                    connection.execute("CREATE TABLE IF NOT EXISTS router_shard_identity (singleton INTEGER PRIMARY KEY CHECK(singleton=1), shard INTEGER NOT NULL, layout_hash TEXT NOT NULL, initialized INTEGER NOT NULL CHECK(initialized IN (0,1)))")
+                    connection.execute("INSERT OR IGNORE INTO router_shard_identity VALUES (1,?,?,0)", (self._index, self._layout_hash))
+                    connection.execute("""CREATE TRIGGER IF NOT EXISTS router_shard_identity_no_update BEFORE UPDATE ON router_shard_identity
+                        WHEN OLD.initialized != 0 OR NEW.initialized != 1 OR OLD.shard != NEW.shard OR OLD.layout_hash != NEW.layout_hash
+                        BEGIN SELECT RAISE(ABORT,'shard identity is immutable'); END""")
+                    connection.execute("CREATE TRIGGER IF NOT EXISTS router_shard_identity_no_delete BEFORE DELETE ON router_shard_identity BEGIN SELECT RAISE(ABORT,'shard identity is immutable'); END")
+                row = connection.execute("SELECT shard,layout_hash,initialized FROM router_shard_identity WHERE singleton=1").fetchone()
+            except sqlite3.DatabaseError as exc:
+                raise ServiceError("shard_identity_conflict", "persisted shard identity is missing or invalid", 503) from exc
+            if row is None or tuple(row)[:2] != (self._index, self._layout_hash):
+                raise ServiceError("shard_identity_conflict", "shard identity differs from the expected layout and index", 503)
+            if not self._bootstrap and row[2] != 1:
+                raise ServiceError("shard_unavailable", "shard initialization never completed; automatic completion is forbidden", 503)
+            yield connection
+
+    def finish_bootstrap(self):
+        with self.transaction() as connection:
+            connection.execute("UPDATE router_shard_identity SET initialized=1 WHERE singleton=1 AND initialized=0")
+        self._bootstrap = False
+
+
 class ShardRouter:
     """Immutable account routing with durable fail-closed publication barriers.
 
@@ -93,18 +146,17 @@ class ShardRouter:
                 for index in range(shard_count):
                     if not fresh:
                         self._verify_identity(index)
-                    service = ExchangeService(Database(self._path(index)), scales, fee_rate=fee_rate,
-                        max_price_age=max_price_age, clock=clock, product_catalog=product_catalog,
-                        portfolio_rules=portfolio_rules)
+                    database = _BoundShardDatabase(self._path(index), index, sha256(self._descriptor.encode()).hexdigest(), bootstrap=fresh)
+                    service = ExchangeService(database,
+                        scales, fee_rate=fee_rate, max_price_age=max_price_age, clock=clock,
+                        product_catalog=product_catalog, portfolio_rules=portfolio_rules)
                     if fresh:
-                        with service.database.transaction() as connection:
-                            connection.execute("CREATE TABLE router_shard_identity (singleton INTEGER PRIMARY KEY CHECK(singleton=1), shard INTEGER NOT NULL, layout_hash TEXT NOT NULL)")
-                            connection.execute("INSERT INTO router_shard_identity VALUES (1,?,?)", (index, sha256(self._descriptor.encode()).hexdigest()))
-                            for action in ("UPDATE", "DELETE"):
-                                connection.execute(f"CREATE TRIGGER router_shard_identity_no_{action.lower()} BEFORE {action} ON router_shard_identity BEGIN SELECT RAISE(ABORT,'shard identity is immutable'); END")
+                        database.finish_bootstrap()
                     self._services.append(service)
-            except BaseException:
-                self._write_state({**self._state(), "halted": True, "error": "shard_initialization_failed"})
+                self._reconcile_funding()
+            except BaseException as exc:
+                self._write_state({**self._state(), "halted": True,
+                    "error": exc.code if isinstance(exc, ServiceError) else "shard_initialization_failed"})
                 raise
 
     def _path(self, index):
@@ -120,9 +172,11 @@ class ShardRouter:
     def _verify_identity(self, index):
         connection = sqlite3.connect(self._path(index).as_uri() + "?mode=ro", uri=True)
         try:
-            row = connection.execute("SELECT shard,layout_hash FROM router_shard_identity WHERE singleton=1").fetchone()
-            if row is None or tuple(row) != (index, sha256(self._descriptor.encode()).hexdigest()):
+            row = connection.execute("SELECT shard,layout_hash,initialized FROM router_shard_identity WHERE singleton=1").fetchone()
+            if row is None or tuple(row)[:2] != (index, sha256(self._descriptor.encode()).hexdigest()):
                 raise ServiceError("shard_identity_conflict", "shard database does not belong to this layout and index", 503)
+            if row[2] != 1:
+                raise ServiceError("shard_unavailable", "shard initialization did not complete; offline recovery is required", 503)
         except sqlite3.DatabaseError as exc:
             raise ServiceError("shard_identity_conflict", "persisted shard identity is missing or invalid", 503) from exc
         finally:
@@ -176,6 +230,57 @@ class ShardRouter:
         with self.control.transaction() as connection:
             connection.execute("UPDATE router_state SET payload=? WHERE singleton=1", (_json(state),))
 
+    def _freeze(self, reason):
+        # Call only after releasing a shared gate, or while already owning the
+        # exclusive control lock. Persist the global stop before local attempts.
+        state = self._state()
+        self._write_state({**state, "halted": True, "error": reason})
+        for service in self._services:
+            try:
+                service.set_kill_switch(True)
+            except Exception:
+                pass  # A damaged shard cannot invalidate the durable global stop.
+
+    def _reconcile_funding(self):
+        """Read-only exact reconciliation; missing claims are never rebuilt.
+
+        A durable claim with no local commit is intentionally allowed pending.
+        Every local funding receipt, however, requires the exact global claim.
+        Caller holds the exclusive router lock during startup/funding/activation.
+        """
+        with self.control.transaction() as connection:
+            claims = {row[0]: row[1] for row in connection.execute("SELECT source_reference,command FROM router_pool_sources")}
+        codec = Ledger(self.layout["scales"])
+        try:
+            for reference, encoded in claims.items():
+                command = json.loads(encoded)
+                _name(reference, "source_reference")
+                if not isinstance(command, list) or len(command) != 4 or type(command[0]) is not int:
+                    raise ValueError("invalid funding claim")
+                self._index(command[0])
+                _name(command[1], "command_id")
+                _name(command[2], "asset")
+                if not isinstance(command[3], str) or codec._units(command[2], Decimal(command[3])) <= 0 or encoded != _json(command):
+                    raise ValueError("invalid funding claim")
+            observed = set()
+            for index, service in enumerate(self._services):
+                with service.database.transaction() as connection:
+                    if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='credit_commands'").fetchone() is None:
+                        continue
+                    rows = connection.execute("SELECT scope,command_id,asset,amount,source_reference FROM credit_commands WHERE kind='pool_funded'").fetchall()
+                    for row in rows:
+                        reference = row["source_reference"]
+                        expected = _json([index, row["command_id"], row["asset"], row["amount"]])
+                        if row["scope"] != "pool" or reference in observed or claims.get(reference) != expected:
+                            raise ValueError("local funding receipt has no unique exact global claim")
+                        observed.add(reference)
+        except ServiceError as exc:
+            if exc.code in {"shard_identity_conflict", "shard_unavailable"}:
+                raise
+            raise ServiceError("funding_registry_conflict", "global funding claims do not reconcile with shard receipts", 503) from exc
+        except (ValueError, TypeError, ArithmeticError) as exc:
+            raise ServiceError("funding_registry_conflict", "global funding claims do not reconcile with shard receipts", 503) from exc
+
     def shard_for(self, account_id):
         _name(account_id, "account_id")
         return int.from_bytes(sha256(account_id.encode("utf-8")).digest(), "big") % self.layout["shard_count"]
@@ -193,11 +298,17 @@ class ShardRouter:
 
     @contextmanager
     def _gate(self, *, exposure=False):
-        with self._lock():
-            state = self._state()
-            if exposure and (state["halted"] or state["publishing"]):
-                raise ServiceError("router_halted", "global control is halted or market publication is incomplete", 503)
-            yield
+        try:
+            with self._lock():
+                state = self._state()
+                if exposure and (state["halted"] or state["publishing"]):
+                    raise ServiceError("router_halted", "global control is halted or market publication is incomplete", 503)
+                yield
+        except ServiceError as exc:
+            if exc.code in _INTEGRITY_FAULTS:
+                with self._lock(exclusive=True):
+                    self._freeze(exc.code)
+            raise
 
     def create_account(self, account_id):
         with self._gate():
@@ -251,6 +362,15 @@ class ShardRouter:
             return CreditService(self._services[self._index(shard)]).configure_asset_limit(asset, limit)
 
     def fund_credit_pool(self, shard, command_id, asset, amount, *, source_reference):
+        try:
+            return self._fund_credit_pool(shard, command_id, asset, amount, source_reference=source_reference)
+        except ServiceError as exc:
+            if exc.code in _INTEGRITY_FAULTS:
+                with self._lock(exclusive=True):
+                    self._freeze(exc.code)
+            raise
+
+    def _fund_credit_pool(self, shard, command_id, asset, amount, *, source_reference):
         shard = self._index(shard)
         _name(source_reference, "source_reference")
         _name(command_id, "command_id")
@@ -263,6 +383,7 @@ class ShardRouter:
         # command. It is never released/reallocated after an ambiguous outcome.
         with self._lock(exclusive=True):
             self._state()
+            self._reconcile_funding()
             with self.control.transaction() as connection:
                 existing = connection.execute("SELECT command FROM router_pool_sources WHERE source_reference=?", (source_reference,)).fetchone()
                 if existing is not None and existing[0] != command:
@@ -321,7 +442,17 @@ class ShardRouter:
             raise ServiceError("invalid_input", "enabled must be boolean")
         with self._lock(exclusive=True):
             state = self._state()
+            # Any activation validation failure must retain a durable stop,
+            # including when an operator repeats activation on an active layout.
+            state.update(halted=True, error=None)
+            self._write_state(state)
             if not enabled:
+                try:
+                    self._reconcile_funding()
+                except ServiceError as exc:
+                    if exc.code in _INTEGRITY_FAULTS:
+                        self._freeze(exc.code)
+                    raise
                 if state["publishing"] or state["market_version"] is None:
                     raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
                 for service in self._services:
@@ -331,8 +462,6 @@ class ShardRouter:
                             raise ServiceError("market_barrier_mismatch", "shard market does not match global barrier", 503)
             # Persist halted first. Only after all shards successfully activate
             # is the global gate opened in its final durable commit.
-            state.update(halted=True, error=None)
-            self._write_state(state)
             try:
                 for service in self._services:
                     service.set_kill_switch(enabled)
@@ -345,6 +474,7 @@ class ShardRouter:
             return dict(state)
 
     def diagnostics(self):
+        integrity_fault = None
         with self._lock():
             state = self._state()
             shards = []
@@ -354,8 +484,16 @@ class ShardRouter:
                     with service._transaction() as connection:
                         sequence = connection.execute("SELECT COALESCE(MAX(sequence),0) FROM uta_events").fetchone()[0]
                     shards.append({"shard": index, "event_sequence": sequence, **readiness})
-                except Exception:
+                except Exception as exc:
+                    if isinstance(exc, ServiceError) and exc.code in _INTEGRITY_FAULTS:
+                        integrity_fault = exc.code
                     shards.append({"shard": index, "ready": False, "reason": "shard_unavailable"})
-            return {"experimental": True, "state": state, "shards": shards,
+            result = {"experimental": True, "state": state, "shards": shards,
                     "ready": not state["halted"] and not state["publishing"] and all(
                         row["ready"] and row.get("market_version") == state["market_version"] for row in shards)}
+        if integrity_fault:
+            with self._lock(exclusive=True):
+                self._freeze(integrity_fault)
+                result["state"] = self._state()
+                result["ready"] = False
+        return result

@@ -175,6 +175,25 @@ class ShardingTests(unittest.TestCase):
         self.assert_code("funding_source_conflict", restarted.fund_credit_pool, 1, "fund", "USD", D(10), source_reference="proof:one")
         self.assertEqual(restarted.fund_credit_pool(0, "fund", "USD", D(10), source_reference="proof:one")["amount"], "10")
 
+    def test_unsealed_initialization_is_not_completed_on_restart(self):
+        from uta.service import ExchangeService
+        path = Path(self.temporary.name) / "unsealed"
+        original = ExchangeService.__init__
+        def stop_before_seal(service, *args, **kwargs):
+            original(service, *args, **kwargs)
+            raise OSError("injected before initialization seal")
+        with patch.object(ExchangeService, "__init__", stop_before_seal), self.assertRaises(OSError):
+            ShardRouter(path, 1, {"USD": 8}, clock=lambda: self.now)
+        self.assert_code("shard_unavailable", ShardRouter, path, 1, {"USD": 8}, clock=lambda: self.now)
+        with sqlite3.connect(path / "shard-0000.sqlite3") as connection:
+            self.assertEqual(connection.execute("SELECT initialized FROM router_shard_identity").fetchone()[0], 0)
+
+    def test_diagnostics_detected_runtime_identity_fault_persists_global_stop(self):
+        self.activate()
+        shutil.copyfile(self.router._path(0), self.router._path(1))
+        self.assertFalse(self.router.diagnostics()["ready"])
+        self.assertTrue(self.router._state()["halted"])
+
 
 if __name__ == "__main__":
     unittest.main()
