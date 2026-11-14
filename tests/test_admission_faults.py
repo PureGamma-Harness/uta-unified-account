@@ -170,6 +170,21 @@ class GroupedAdmissionFaultTests(unittest.TestCase):
         self.assertEqual(self.state(), before)
         self.assertEqual(engine.stats()["committed_batches"], 0)
 
+    def test_undeclared_409_policy_error_cannot_be_treated_as_safe_business_rejection(self):
+        before = self.state()
+        original = self.service._admit_order
+        def fail(connection, account_id, order_id, *args, **kwargs):
+            result = original(connection, account_id, order_id, *args, **kwargs)
+            if order_id == "two":
+                raise ServiceError("new_unclassified_policy_error", "synthetic unknown policy failure", 409)
+            return result
+        with patch.object(self.service, "_admit_order", side_effect=fail):
+            engine = self.batcher()
+            first, second = self.submit(engine, "one"), self.submit(engine, "two")
+            self.fatal(first)
+            self.fatal(second)
+        self.assertEqual(self.state(), before)
+
     def test_error_after_real_commit_is_unknown_and_original_ids_resolve_once(self):
         engine = self.batcher()
         self.database.lose_commit_response = True
@@ -224,6 +239,26 @@ class GroupedAdmissionFaultTests(unittest.TestCase):
         self.assertEqual(cancellation.result(timeout=5)["status"], "CANCELLED")
         self.assertEqual([o["order_id"] for o in self.service.orders("alice")], ["old"])
         self.assertEqual(engine.stats()["committed_batches"], 1)
+
+    def test_market_expiring_after_an_earlier_admission_aborts_before_commit_checkpoint(self):
+        self.service.submit_order("alice", "old", "BTC-PERP", D(1), D(100))
+        before = self.state()
+        original_cancel = self.service._cancel_order
+        def expire(connection, *args, **kwargs):
+            result = original_cancel(connection, *args, **kwargs)
+            self.now += timedelta(seconds=6)
+            return result
+        with patch.object(self.service, "_cancel_order", side_effect=expire):
+            engine = self.batcher()
+            first = self.submit(engine, "new")
+            cancellation = engine.cancel_order("alice", "old")
+            self.fatal(first)
+            self.fatal(cancellation)
+        self.assertEqual(self.state(), before)
+        # A cancellation-only retry remains available during the outage. A
+        # later replay of that closed ID is not a fresh exposure decision.
+        self.assertEqual(engine.cancel_order("alice", "old").result(timeout=5)["status"], "CANCELLED")
+        self.assertEqual(self.submit(engine, "old").result(timeout=5)["status"], "CANCELLED")
 
     def test_real_sqlite_full_rejects_whole_batch_and_ids_can_retry_after_recovery(self):
         with self.database.transaction() as conn:
@@ -308,6 +343,42 @@ class GroupedAdmissionFaultTests(unittest.TestCase):
         self.assertEqual(observed, ["admission_reentrant"])
         self.assertEqual(engine.stats()["callback_failures"], 1)
         self.assertEqual([order["order_id"] for order in self.service.orders("alice")], ["one", "two"])
+
+    def test_reserved_cancel_capacity_is_bounded_and_does_not_overtake_queued_orders(self):
+        self.service.submit_order("alice", "old", "BTC-PERP", D(1), D(100))
+        entered, release = Event(), Event()
+        original_submit, original_cancel = self.service._admit_order, self.service._cancel_order
+        calls = []
+        def submit(connection, account_id, order_id, *args, **kwargs):
+            calls.append(("submit", order_id))
+            if order_id == "running":
+                entered.set()
+                if not release.wait(5):
+                    raise RuntimeError("test did not release admission")
+            return original_submit(connection, account_id, order_id, *args, **kwargs)
+        def cancel(connection, account_id, order_id, *args, **kwargs):
+            calls.append(("cancel", order_id))
+            return original_cancel(connection, account_id, order_id, *args, **kwargs)
+        with patch.object(self.service, "_admit_order", side_effect=submit), \
+                patch.object(self.service, "_cancel_order", side_effect=cancel):
+            engine = self.batcher(max_batch_size=1, max_delay_ms=0, queue_capacity=1, cancel_reserve=1)
+            running = self.submit(engine, "running")
+            self.assertTrue(entered.wait(5))
+            queued = self.submit(engine, "queued")
+            protected_cancel = engine.cancel_order("alice", "old")
+            self.assertFalse(protected_cancel.done(), "reserved slot must accept cancellation behind the queue")
+            for overloaded in (self.submit(engine, "not-admitted"), engine.cancel_order("alice", "not-admitted")):
+                with self.assertRaises(ServiceError) as failure:
+                    overloaded.result(timeout=.5)
+                self.assertEqual(failure.exception.code, "admission_overloaded")
+            self.assertEqual(engine.stats()["queued"], 2)
+            release.set()
+            self.assertEqual(running.result(timeout=5)["status"], "OPEN")
+            self.assertEqual(queued.result(timeout=5)["status"], "OPEN")
+            self.assertEqual(protected_cancel.result(timeout=5)["status"], "CANCELLED")
+            engine.close()
+        self.assertEqual(calls, [("submit", "running"), ("submit", "queued"), ("cancel", "old")])
+        self.assertEqual(D(self.service.account("alice")["open_order_margin"]), D("20.08"))
 
     def test_process_exit_at_batch_boundaries_and_lost_receipts_recover_exactly_once(self):
         code = r'''
