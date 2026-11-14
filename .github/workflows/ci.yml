@@ -50,3 +50,10 @@ jobs:
           "$RUNNER_TEMP/uta-smoke/bin/python" -m uta acceptance
           "$RUNNER_TEMP/uta-smoke/bin/uta" --help
           "$RUNNER_TEMP/uta-smoke/bin/uta-ops" --help
+      - name: Retain installable review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uta-wheel-python-${{ matrix.python-version }}
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 14
