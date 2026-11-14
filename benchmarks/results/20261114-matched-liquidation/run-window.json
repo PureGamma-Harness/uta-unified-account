@@ -1,0 +1,145 @@
+{
+  "code_commit": "53db0155022a8ffd7787f3168ec0a2503bab7ae7",
+  "started_at": "2026-11-14T22:06:31.254519+00:00",
+  "scope": "20case diagnostic only; in-process API, not REST/TLS or production capacity",
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "filesystem": "Filesystem     Type    1K-blocks   Used Available Use% Mounted on\noverlay        overlay  32978704 229948  31054652   1% /",
+  "runs": [
+    {
+      "name": "full",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "benchmarks/run_matched_liquidation.py",
+        "--cases",
+        "20",
+        "--duration",
+        "1",
+        "--workers",
+        "2",
+        "--shards",
+        "1",
+        "--queue-capacity",
+        "64",
+        "--drain-seconds",
+        "20",
+        "--liquidity",
+        "full",
+        "--output",
+        "/workspace/uta-liquidation-perf/benchmarks/results/20261114-matched-liquidation/full",
+        "--smoke"
+      ],
+      "started_at": "2026-11-14T22:06:31.256043+00:00",
+      "finished_at": "2026-11-14T22:06:32.842309+00:00",
+      "returncode": 0,
+      "committed_fills": 40,
+      "rate": 38.918884262178416,
+      "closed_accounts": 20,
+      "unresolved": 0,
+      "counts": {
+        "processed": 20,
+        "deadline_exceeded": 0,
+        "execution_blocked": 0,
+        "unknown_committed_trades": 0,
+        "unknown": 0
+      },
+      "latency_ms": {
+        "scheduled_case_to_complete": {
+          "p50": 28.112782,
+          "p95": 32.871745,
+          "p99": 36.027869,
+          "p99_9": 36.027869
+        },
+        "shock_to_first_confirmed_trade": {
+          "p50": 478.032495,
+          "p95": 925.08862,
+          "p99": 976.399712,
+          "p99_9": 976.399712
+        },
+        "shock_to_each_confirmed_trade": {
+          "p50": 489.566966,
+          "p95": 936.519477,
+          "p99": 988.064234,
+          "p99_9": 988.064234
+        },
+        "shock_to_recovered": {
+          "p50": 491.729601,
+          "p95": 938.992881,
+          "p99": 990.412333,
+          "p99_9": 990.412333
+        }
+      },
+      "preparation_seconds": 0.4085974,
+      "execution_and_drain_seconds": 1.027778693,
+      "verification_seconds": 0.055476478
+    },
+    {
+      "name": "none",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "benchmarks/run_matched_liquidation.py",
+        "--cases",
+        "4",
+        "--duration",
+        "1",
+        "--workers",
+        "2",
+        "--shards",
+        "1",
+        "--queue-capacity",
+        "64",
+        "--drain-seconds",
+        "20",
+        "--liquidity",
+        "none",
+        "--output",
+        "/workspace/uta-liquidation-perf/benchmarks/results/20261114-matched-liquidation/none",
+        "--smoke"
+      ],
+      "started_at": "2026-11-14T22:06:32.842563+00:00",
+      "finished_at": "2026-11-14T22:06:33.848096+00:00",
+      "returncode": 0,
+      "committed_fills": 0,
+      "rate": 0.0,
+      "closed_accounts": 0,
+      "unresolved": 4,
+      "counts": {
+        "processed": 4,
+        "deadline_exceeded": 0,
+        "execution_blocked": 0,
+        "unknown_committed_trades": 0,
+        "unknown": 0
+      },
+      "latency_ms": {
+        "scheduled_case_to_complete": {
+          "p50": 5.237005,
+          "p95": 5.989076,
+          "p99": 5.989076,
+          "p99_9": 5.989076
+        },
+        "shock_to_first_confirmed_trade": {
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_9": null
+        },
+        "shock_to_each_confirmed_trade": {
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_9": null
+        },
+        "shock_to_recovered": {
+          "p50": null,
+          "p95": null,
+          "p99": null,
+          "p99_9": null
+        }
+      },
+      "preparation_seconds": 0.095033396,
+      "execution_and_drain_seconds": 0.806136912,
+      "verification_seconds": 0.011172428
+    }
+  ],
+  "production_approved": false,
+  "finished_at": "2026-11-14T22:06:33.848209+00:00"
+}

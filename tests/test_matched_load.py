@@ -1,6 +1,7 @@
 from dataclasses import replace
 from decimal import Decimal as D
 import hashlib
+import gzip
 import json
 from pathlib import Path
 import subprocess
@@ -96,6 +97,33 @@ class MatchedLoadTests(unittest.TestCase):
         self.assertGreater(result["unresolved_accounts"], 0)
         self.assertLess(result["unique_committed_liquidation_trades"], 24)
         self.assertFalse(result["gates"]["passed"])
+
+    def test_archived_probe_counts_receipts_sizes_hashes_and_unfilled_risk(self):
+        root = Path(__file__).resolve().parents[1] / "benchmarks/results/20261114-matched-liquidation"
+        for name, cases, fills in (("full", 20, 40), ("none", 4, 0)):
+            directory = root / name
+            manifest = json.loads((directory / "manifest.json").read_text())
+            for filename, metadata in manifest["files"].items():
+                content = (directory / filename).read_bytes()
+                self.assertEqual(hashlib.sha256(content).hexdigest(), metadata["sha256"])
+                self.assertEqual(len(content), metadata["bytes"])
+            summary = json.loads((directory / "summary.json").read_text())
+            rows = [json.loads(line) for line in gzip.decompress((directory / "arrivals.jsonl.gz").read_bytes()).splitlines()]
+            case_rows = [row for row in rows if row["kind"] == "case"]
+            trade_rows = [row for row in rows if row["kind"] == "liquidation_trade"]
+            self.assertEqual(len(case_rows), cases)
+            self.assertEqual(len({row["case"] for row in case_rows}), cases)
+            self.assertEqual(len(trade_rows), fills)
+            self.assertEqual(len({row["receipt"]["trade_id"] for row in trade_rows}), fills)
+            self.assertEqual(summary["unique_committed_liquidation_trades"], fills)
+            self.assertEqual(summary["two_sided_settlement_legs"], fills * 2)
+            self.assertTrue(all(D(row["receipt"]["quantity"]) == 45 for row in trade_rows))
+            self.assertEqual(sum(D(a["quantity"]) for a in summary["final_victim_accounts"].values()), D(cases * 90 - fills * 45))
+            self.assertFalse(summary["gates"]["passed"])
+            if fills:
+                self.assertTrue(all(D(a["balance_usd"]) == D("93.16") for a in summary["final_victim_accounts"].values()))
+            else:
+                self.assertEqual(summary["unresolved_accounts"], cases)
 
     def test_cli_smoke_success_is_not_capacity_success_and_default_exit_is_gate_failure(self):
         root = Path(__file__).resolve().parents[1]
