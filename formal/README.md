@@ -2,6 +2,27 @@
 
 `Reservation.tla` 抽象三个订单对同一固定容量的并发请求。每个请求先读取版本，再原子校验当前版本和剩余容量并预占；释放后版本递增。不同订单可以同时进入 pending，但只有基于当前版本的请求可以提交。模型检查配置断言类型正确、总预占不超过容量，且仅 held 状态持有与请求量相等的预占。
 
+## 订单状态与原子操作
+
+```mermaid
+stateDiagram-v2
+    [*] --> idle
+    idle --> pending: Begin，记录版本与申请量
+    pending --> held: Commit，当前版本且容量充足，版本加一
+    pending --> rejected: Reject，版本失效或容量不足
+    held --> released: Release，释放预占，版本加一
+    rejected --> [*]
+    released --> [*]
+```
+
+状态与守卫对应 [Reservation.tla](Reservation.tla) 的 `Begin`、`Commit`、`Reject`、`Release`。`rejected` 与 `released` 是单次生命周期的终态；图中未画出的停滞步由 `[][Next]_vars` 允许。它不是持久化模拟器的订单状态图，后者见 [订单生命周期](../docs/workflows.md)。
+
+| 不变量 | 含义 |
+| --- | --- |
+| `TypeOK` | 阶段、数量、预占和版本均在模型规定的类型范围内 |
+| `NoOvercommit` | 所有订单预占总和不超过固定 Capacity |
+| `HeldMatchesReservation` | held 的预占等于申请量且为正，其他状态无预占 |
+
 示例运行（须自行安装官方 `tla2tools.jar`，仓库不附带该文件）：
 
 ```sh

@@ -2,6 +2,32 @@
 
 一个可在本地运行和回放的统一交易账户。六场景组合保证金模型覆盖 USD、BTC、ETH 抵押及负债、BTC/ETH 线性永续合约。下单、模拟成交、清算成交和资金分录通过同一账户版本提交到 SQLite。
 
+## 阅读导航
+
+| 文档 | 解决的问题 |
+| --- | --- |
+| [事务与分片架构](docs/architecture.md) | 模块依赖、账户事务、版本与回执如何一起提交 |
+| [关键业务流程](docs/workflows.md) | 经典账户如何导入，下单和清算如何推进，重启后如何回放 |
+| [本地运行与 API](docs/simulator.md) | 命令格式、状态、错误码与重试方式 |
+| [风险模型](docs/risk-model.md) | 六场景 PM、订单预占及旧版固定费率公式的适用范围 |
+| [验证与证据](docs/verification.md) | 可复算案例、测试覆盖和未验证的边界 |
+| [性能测试](docs/performance.md) | 计算、提交、清算成交的不同计数口径 |
+| [有界预占模型](formal/README.md) | 固定容量抽象的状态转换与证明边界 |
+
+```mermaid
+flowchart LR
+    Input["本地交易台 / Python 调用"] --> Sim["账户命令与版本校验"]
+    Classic["经典账户快照"] --> Import["校验与转换"]
+    Import --> Sim
+    Sim --> PM["六场景 PM / 订单预占"]
+    Sim --> Trade["模拟成交 / 清算 / 分录校验"]
+    PM --> Commit["SQLite 快照与命令回执"]
+    Trade --> Commit
+    Commit --> Replay["按命令回放与核对"]
+```
+
+图中是当前持久化模拟链路，入口与事务位于 [uta/simulator.py](uta/simulator.py) 和 [uta/store.py](uta/store.py)。每次命令的状态与回执在同一事务内提交；行情与成交由本地操作者提供。
+
 ## 运行本地交易台
 
 需要 Python 3.10+，无需安装依赖。
