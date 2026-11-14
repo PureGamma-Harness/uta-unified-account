@@ -132,6 +132,8 @@ def _environment(directory):
             "source_sha256": {p.name: sha256(p.read_bytes()).hexdigest() for p in sorted((ROOT / "uta").glob("*.py"))},
             "filesystem": command("df", "-T", str(directory)),
             "storage": "local SQLite WAL/FULL; each batch COMMIT retains FULL synchronous; no replication",
+            "sqlite_busy_timeout_seconds": 2,
+            "market_max_age_seconds": 30,
             "timing": "planned monotonic arrival to post-COMMIT observation; p99 histogram upper bound width <=0.1%",
             "queue_model": "one shared outstanding budget across dispatcher queue, database calls, batch queues and result collection"}
 
@@ -283,6 +285,19 @@ def run(configuration: Configuration, directory: Path):
                 row["outcome"] = "business_rejected"
         elif error is not None:
             row["error_type"] = type(error).__name__
+        if error is not None:
+            chain, seen = [error], set()
+            while chain and len(seen) < 16:
+                current = chain.pop()
+                if current is None or id(current) in seen:
+                    continue
+                seen.add(id(current))
+                code = getattr(current, "sqlite_errorcode", None)
+                if code is not None:
+                    row["sqlite_errorcode"] = code
+                    row["sqlite_errorname"] = getattr(current, "sqlite_errorname", None)
+                    break
+                chain.extend((current.__cause__, current.__context__))
         return row
 
     def callback(future, row):

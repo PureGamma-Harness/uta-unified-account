@@ -12,6 +12,7 @@
 - 输出按计划到达至成功 COMMIT 后 Future/函数可观察完成计时。内部 `admission_started_ns` 与 receipt 发布时刻仅是诊断；后者是 COMMIT 后上界，不能叫硬件刷盘的精确时间。
 - batch 的 Future callback 只把结果放入 collector，不在 writer 内提交其他命令。同步模式采用相同 dispatcher 数；批准入每片一个 writer。报告完整记录这两种线程拓扑，不将单进程线程结果推广为多节点容量。
 - 只支持 arrival/drain 各不超过 10 秒的探针，初始合成价格有效期 30 秒，无运行中行情 feeder。软 drain 预算超时不会杀死可能写入的线程；必须等所有承诺命令有最终结果，实际超额使 gate 失败。
+- 所有模式的 SQLite busy timeout 固定为 **2 秒**，与服务默认 10 秒有区别；它不是 1000ms 软响应期限。出现 503 或未知结果不能事后通过调大超时将原数据改为成功。可取得的底层 SQLite 错误码/名称单独保留；没有记录的历史错误不能仅凭耗时推断其准确原因。
 
 ## 持久性核验
 
