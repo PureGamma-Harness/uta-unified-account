@@ -26,10 +26,13 @@ with AdmissionBatcher(exchange, max_batch_size=32,
 一个批次使用原 `exchange._transaction()` 的 `BEGIN IMMEDIATE`、WAL/FULL 和外层 COMMIT。每个命令有独立 SAVEPOINT；其状态变更、版本和事件复用原 `_admit_order` / `_cancel_order`，不复制金融计算。
 
 - 预期业务错误只回滚该 SAVEPOINT，后面的命令继续以之前已成功命令产生的状态计算。
+- 业务错误使用显式 code allowlist，不以“所有 409 都是客户错误”推断；未知 ServiceError code 归整批技术失败，新增业务 code 需要审查并补测试。
 - 缺失/过期行情的预期 503 单列为 `market_rejected`，不计业务拒绝或成功；同组不需要行情的撤单仍可提交。
 - SQLite、Ledger、Storage 错误链、配置/存储损坏以及未知程序异常均使整个批次退出。不会因 SQLite FULL 自动回滚后已丢失 SAVEPOINT 而继续接纳后续命令。
 - 固化规则与持久行情参数矛盾的 `margin_rule_conflict` 即使是 HTTP 409 也属于配置/数据损坏，整批失败，不能伪装成客户业务拒绝。
 - 外层 COMMIT 返回之前，不发布该组任何成功回执或排队业务拒绝。约束失败不能让前几个 Future 误报接纳。
+
+有真正新接纳（包括 reduce-only 新挂单）的组，在最后一个命令处理完毕、退出事务体前再次检查行情时效；若处理期间行情已过期，则整个组不提交并返回技术不可用回执。纯撤单和原 ID 无写入重试不强求新鲜行情。这个检查仅保证 COMMIT 前最后一个应用检查点仍有效；操作系统暂停、落盘或网络返回耗时没有绝对上界，不能宣称收到回执时行情绝不过期。
 
 发生技术异常时所有该组 Future 返回 `admission_batch_failed` 503，提示按原业务 ID 查询或重试。**这个代码不无条件承诺“确定未提交”**：事务已知回滚时没有副作用；若真实 COMMIT 后回执通道或数据库包装层才报错，则结果未知，持久状态可能已经生效。重新用原账户/订单 ID 查询、提交相同内容可以得到原状态；不得换一个新 ID 盲目重发。
 

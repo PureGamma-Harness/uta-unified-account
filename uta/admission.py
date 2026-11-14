@@ -56,6 +56,12 @@ _FATAL_CODES = {"storage_unavailable", "storage_corrupt", "configuration_corrupt
                 "schema_version", "wrong_authority", "ledger_rejected", "precision_error",
                 "margin_rule_conflict"}
 _EXPECTED_UNAVAILABLE = {"market_unavailable", "market_incomplete"}
+_BUSINESS_CODES = {"account_frozen", "account_not_found", "idempotency_conflict",
+                   "insufficient_margin", "invalid_input", "liquidation_order_protected",
+                   "order_closed", "order_limit", "order_not_found", "position_limit",
+                   "product_rejected", "reduce_only_violation", "trading_halted",
+                   "unknown_instrument", "unsafe_reduction", "unsupported_multiplier",
+                   "unsupported_product"}
 
 
 def _business_rejection(error: ServiceError) -> bool:
@@ -71,7 +77,8 @@ def _business_rejection(error: ServiceError) -> bool:
             return False
         pending.extend((current.__cause__, current.__context__))
     return (error.code not in _FATAL_CODES
-            and (400 <= error.status < 500 or error.code in _EXPECTED_UNAVAILABLE))
+            and (error.code in _BUSINESS_CODES and 400 <= error.status < 500
+                 or error.code in _EXPECTED_UNAVAILABLE and error.status == 503))
 
 
 class AdmissionBatcher:
@@ -216,9 +223,11 @@ class AdmissionBatcher:
         outcomes = []
         try:
             with self.exchange._transaction() as connection:
+                new_admission = False
                 for index, command in enumerate(commands):
                     savepoint = "admission_" + str(index)
                     connection.execute("SAVEPOINT " + savepoint)
+                    changes_before = connection.total_changes
                     try:
                         if command.kind == "submit":
                             result = self.exchange._admit_order(connection, *command.arguments,
@@ -234,6 +243,14 @@ class AdmissionBatcher:
                     else:
                         connection.execute("RELEASE SAVEPOINT " + savepoint)
                         outcomes.append((result, None))
+                        if command.kind == "submit" and connection.total_changes > changes_before:
+                            new_admission = True
+                if new_admission:
+                    # Time may advance while later commands run. Revalidate at
+                    # the last application checkpoint before COMMIT; replay and
+                    # cancellation-only groups retain their outage behavior.
+                    # This cannot bound an OS pause or fsync latency afterwards.
+                    self.exchange._market(connection)
             # The COMMIT (including deferred constraints) completed above.
         except BaseException as exc:
             with self._condition:

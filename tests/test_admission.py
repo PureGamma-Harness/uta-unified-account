@@ -171,6 +171,37 @@ class AdmissionTests(unittest.TestCase):
         restarted = self.reopen()
         self.assertEqual(restarted.submit_order("alice", "order", "BTC-PERP", D(1), D(100))["status"], "CANCELLED")
 
+    def test_expiring_market_before_commit_rolls_back_new_admission_and_cancel(self):
+        self.exchange.submit_order("alice", "old", "BTC-PERP", D(1), D(100))
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        before = self.state()
+        original = self.exchange._cancel_order
+        def advance_clock(*args, **kwargs):
+            result = original(*args, **kwargs)
+            self.now += timedelta(seconds=6)
+            return result
+        with patch.object(self.exchange, "_cancel_order", side_effect=advance_clock):
+            admitted = self.submit(batcher, "new")
+            cancelled = batcher.cancel_order("alice", "old")
+            self.code(admitted, "admission_batch_failed")
+            self.code(cancelled, "admission_batch_failed")
+        self.assertEqual(self.state(), before)
+        self.assertEqual(batcher.stats()["committed_batches"], 0)
+
+    def test_stale_idempotent_replay_does_not_require_new_market(self):
+        original = self.exchange.submit_order("alice", "old", "BTC-PERP", D(1), D(100))
+        self.now += timedelta(seconds=6)
+        batcher = self.batcher()
+        self.assertEqual(self.submit(batcher, "old").result(3), original)
+
+    def test_unknown_service_code_is_not_silently_classified_as_business(self):
+        batcher = self.batcher()
+        before = self.state()
+        with patch.object(self.exchange, "_admit_order", side_effect=ServiceError("new_configuration_damage", "unknown invariant", 409)):
+            self.code(self.submit(batcher), "admission_batch_failed")
+        self.assertEqual(self.state(), before)
+        self.assertEqual(batcher.stats()["business_rejected"], 0)
+
     def test_pending_future_cancellation_has_no_financial_effect(self):
         batcher = self.batcher(max_batch_size=1, queue_capacity=2)
         self.database.armed = True
