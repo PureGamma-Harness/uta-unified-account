@@ -10,7 +10,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import hashlib
 import json
@@ -50,6 +50,7 @@ class Configuration:
     min_duration: float = 1800
     max_p99_ms: float = 100
     profile: bool = False
+    router_mode: bool = False
 
     def validate(self):
         if self.scenario not in {"compute", "order", "liquidation"}:
@@ -68,6 +69,8 @@ class Configuration:
             raise ValueError("account_skew must be between zero and one")
         if int(self.duration * self.rate) < 1:
             raise ValueError("scenario must offer at least one arrival")
+        if self.router_mode and (self.scenario != "order" or self.duration > 10 or self.drain_seconds > 10):
+            raise ValueError("router probe requires order scenario, duration <=10s and drain <=10s; no long matching acceptance")
 
 
 class LatencyHistogram:
@@ -122,10 +125,26 @@ def _service(path):
     return ExchangeService(Database(path, timeout=2), {"USD": 8})
 
 
+def _router(directory, shard_count):
+    from uta.sharding import ShardRouter
+    # This is a short capacity probe with one fresh initial synthetic market,
+    # not a market-feed throughput test. All shard counts use identical policy.
+    return ShardRouter(directory, shard_count, {"USD": 8}, max_price_age=timedelta(seconds=30))
+
+
 def _setup(configuration, directory):
     paths = []
     if configuration.scenario != "order":
         return paths
+    if configuration.router_mode:
+        router = _router(directory / "authority", configuration.shards)
+        router.publish_market(_snapshot(1))
+        for account in range(configuration.accounts):
+            customer = f"benchmark-{account}"
+            router.create_account(customer)
+            router.deposit(customer, "synthetic-funding", "USD", Decimal("100000000"))
+        router.set_kill_switch(False)
+        return [str(router._path(index)) for index in range(configuration.shards)]
     for shard in range(configuration.shards):
         path = directory / f"shard-{shard}.sqlite3"
         service = _service(path)
@@ -163,7 +182,8 @@ def _worker(number, configuration, paths, pending, output, profile_path):
         import cProfile
         profiler = cProfile.Profile()
     try:
-        services = [_service(path) for path in paths]
+        router = _router(Path(paths[0]).parent, configuration.shards) if configuration.router_mode else None
+        services = [_service(path) for path in paths] if router is None else []
         from uta.models import Account, AssetSpec, InstrumentSpec, Position
         from uta.risk import calculate_risk, RiskSnapshot
         from uta.liquidation import LiquidationController, TimedRisk, PositionReduction
@@ -196,8 +216,9 @@ def _worker(number, configuration, paths, pending, output, profile_path):
                                            reduction=PositionReduction("BTC-PERP", Decimal(1), Decimal(".1")))
                     outcome = "simulation_completed"
                 else:
-                    service = services[account_index % configuration.shards]
                     customer, order_id = f"benchmark-{account_index}", f"order-{sequence}"
+                    service = router if router is not None else services[account_index % configuration.shards]
+                    row["shard"] = router.shard_for(customer) if router is not None else account_index % configuration.shards
                     symbol, price = PRODUCTS[sequence % len(PRODUCTS)]
                     service.submit_order(customer, order_id, symbol, Decimal(".001"), Decimal(price))
                     committed = True
@@ -263,7 +284,8 @@ def environment(paths):
             "working_tree_dirty": bool(command("git", "status", "--porcelain")),
             "generator_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             "source_sha256": {name: hashlib.sha256((source / "uta" / name).read_bytes()).hexdigest()
-                              for name in ("service.py", "storage.py", "models.py", "market.py", "risk.py", "liquidation.py")},
+                              for name in ("service.py", "storage.py", "models.py", "market.py", "risk.py", "liquidation.py", "sharding.py")
+                              if (source / "uta" / name).exists()},
             "source": str(source), "python": sys.version, "platform": platform.platform(),
             "cpu_model": cpu, "cpu_count": os.cpu_count(), "memory_kib": memory_kib,
             "cgroup_limits": cgroup,
@@ -311,7 +333,7 @@ def run(configuration: Configuration, directory: Path):
     processes = [ctx.Process(target=_worker, args=(number, configuration, paths, pending, results,
                                                   str(directory / f"worker-{number}.prof")))
                  for number in range(configuration.workers)]
-    feeder = ctx.Process(target=_feeder, args=(paths, results, stopped)) if paths else None
+    feeder = ctx.Process(target=_feeder, args=(paths, results, stopped)) if paths and not configuration.router_mode else None
     raw = (directory / "arrivals.jsonl").open("x", encoding="utf-8")
     fatal_collector = []
     last_completion = [0]
@@ -433,6 +455,8 @@ def run(configuration: Configuration, directory: Path):
                     "accepted_events_in_database": connection.execute(
                     "SELECT COUNT(*) FROM uta_events WHERE event_type='ORDER_ACCEPTED'").fetchone()[0]})
         summary = {"configuration": asdict(configuration), "environment": metadata,
+                   "routing": "real ShardRouter SHA-256 + flock/control gate" if configuration.router_mode else "direct independent databases; idealized shard bound",
+                   "market_feed": "one initial fresh snapshot, 30s age policy; excludes fanout throughput" if configuration.router_mode else "synthetic 0.5s feeder",
                    "scope": {"compute": "three-position risk arithmetic only",
                              "order": "durable local admission + cancellation, no fill/matching",
                              "liquidation": "in-memory cancellation/reduction state-machine simulation"}[configuration.scenario],
@@ -476,6 +500,7 @@ def main(argv=None):
                                 ("max-p99-ms", float, 100)):
         parser.add_argument("--" + name, type=kind, default=default)
     parser.add_argument("--profile", action="store_true", help="write per-worker cProfile artifacts (adds overhead)")
+    parser.add_argument("--router-mode", action="store_true", help="short real ShardRouter probe; duration/drain <=10s, no feeder")
     parser.add_argument("--smoke", action="store_true", help="tool check only; does not turn failed gates into a pass")
     args = vars(parser.parse_args(argv))
     directory, smoke = args.pop("output"), args.pop("smoke")
