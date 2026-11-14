@@ -135,8 +135,14 @@ class ServiceTests(unittest.TestCase):
         self.assertFalse(self.service.readiness()["ready"])
         self.assert_code("market_unavailable", self.order, "new")
         self.assertEqual(self.order(quantity="10")["order_id"], "buy")
-        # Existing ordinary local orders can settle during market outage.
+        before = self.service.events(limit=1000)
+        self.assert_code("market_unavailable", self.fill, quantity="10")
+        self.assertEqual(self.service.events(limit=1000), before)
+        self.service.publish_market(self.market(3, mark="200"))
         self.fill(quantity="10")
+        self.now += timedelta(seconds=6)
+        # A previously committed fill can be retried even during an outage.
+        self.assertEqual(self.fill(quantity="10")["status"], "FILLED")
         self.assertEqual(self.service.account("alice")["positions"]["BTC-PERP"]["quantity"], "10")
         self.assertEqual(self.service.cancel_order("alice", "buy")["status"], "FILLED")
 
@@ -145,6 +151,7 @@ class ServiceTests(unittest.TestCase):
         self.service.set_kill_switch(True)
         restarted = self.reopen()
         self.assertFalse(restarted.readiness()["ready"])
+        self.assert_code("trading_halted", self.fill)
         self.assert_code("trading_halted", restarted.submit_order, "alice", "blocked", "BTC-PERP", D(1), D(100))
         self.now += timedelta(seconds=10)
         cancelled = restarted.cancel_order("alice", "buy")
@@ -229,6 +236,29 @@ class ServiceTests(unittest.TestCase):
         self.service.deposit("alice", "btc", "BTC", D("1"))
         incomplete = MarketSnapshot(2, self.now, {"USD": AssetSpec(D(1), D(1))}, self.market().instruments)
         self.assert_code("market_incomplete", self.service.publish_market, incomplete)
+
+    def test_local_execution_rechecks_latest_risk_after_market_revaluation(self):
+        self.service.create_account("small")
+        self.service.deposit("small", "d", "USD", D("0.1004"))
+        self.service.publish_market(self.market(2, mark="1"))
+        self.service.submit_order("small", "short", "BTC-PERP", D(-1), D(1))
+        self.service.publish_market(self.market(3, mark="2"))
+        before = self.service.account("small"), self.service.events(limit=1000)
+        self.assert_code("insufficient_margin", self.service.apply_fill, "small", "short", "bad", D(-1), D(1))
+        self.assertEqual((self.service.account("small"), self.service.events(limit=1000)), before)
+
+    def test_partial_fill_does_not_reserve_previously_charged_rounding_again(self):
+        path = Path(self.directory.name) / "cent.sqlite3"
+        service = ExchangeService(Database(path), {"USD": 2}, clock=lambda: self.now)
+        service.create_account("a")
+        service.publish_market(self.market(mark="1"))
+        service.set_kill_switch(False)
+        service.deposit("a", "d", "USD", D("0.11"))
+        service.submit_order("a", "buy", "BTC-PERP", D(1), D(1))
+        for index in range(100):
+            service.apply_fill("a", "buy", str(index), D("0.01"), D(1))
+        self.assertEqual(service.account("a")["balances"]["USD"], "0.1")
+        self.assertEqual(service.risk("a")["available_margin"], "0")
 
 
 if __name__ == "__main__":
