@@ -52,6 +52,8 @@ python -m uta.matching --database /var/lib/uta/exchange.sqlite3 \
 
 原有 `python -m uta serve --port 8080` 保留为**不认证的本机纯计算演示**，接收调用者提供的参考输入，不连接持久交易账本，不应作为交易入口或公网服务。
 
+并发 main 新增的研究功能也完整保留：`python -m uta lab --db research.sqlite3` 启动本机模拟控制台，`python -m uta scenario --shards 4` 执行并重开回放，`python -m uta replay --db research.sqlite3` 验证模拟事件。研究库与认证交易库是两个不同权威，禁止混用同一路径，程序会拒绝不符的库。场景 PM 参考能力不授予生产 PM 权限；见 [研究说明](docs/research-lab.md) 和 [原口径基准复跑](docs/main-baseline-rerun.md)。
+
 ## 证据与验收
 
 本系统政策不等于 Bybit、Binance 或 CME 的生产参数。参见 [证据库](docs/evidence-register.md)、[规则矩阵](evidence/rules.csv)、[目标架构](docs/target-architecture.md)、[账务规格](docs/accounting-spec.md)、[保证金规则](docs/margin-rules.md)、[清算及违约](docs/liquidation-rules.md)。金融负责人签核和真实资金审批尚未完成。
