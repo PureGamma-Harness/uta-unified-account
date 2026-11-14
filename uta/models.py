@@ -62,12 +62,20 @@ class Position:
     symbol: str
     quantity: Decimal
     entry_price: Decimal
+    entry_notional: Decimal | None = None
 
     def __post_init__(self) -> None:
         if not self.symbol:
             raise RiskInputError("position symbol is required")
         _decimal("position quantity", self.quantity)
         _decimal("entry price", self.entry_price, positive=True)
+        if self.entry_notional is not None:
+            _decimal("signed entry notional", self.entry_notional)
+            if (self.quantity == 0 and self.entry_notional != 0) or (
+                self.quantity != 0 and (self.entry_notional == 0
+                    or self.entry_notional.is_signed() != self.quantity.is_signed())
+            ):
+                raise RiskInputError("entry notional must match position direction")
 
 
 @dataclass(frozen=True)

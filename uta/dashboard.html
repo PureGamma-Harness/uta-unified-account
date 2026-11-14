@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>UTA · Risk Console</title>
+<style>
+:root{color-scheme:dark;--bg:#0c1115;--panel:#131b20;--line:#27343c;--text:#e8f0f0;--muted:#a0b2bc;--cyan:#72e2c5;--red:#ff9898;--amber:#ffcb7c;--mono:"IBM Plex Mono","DejaVu Sans Mono",monospace;--sans:Inter,system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 var(--sans)}
+button,input,select{font:inherit}
+button,input,select{min-height:38px;border:1px solid var(--line);border-radius:6px;padding:6px 10px;background:var(--bg);color:var(--text)}
+input,select{width:100%;font-family:var(--mono)}
+button{cursor:pointer;white-space:nowrap}
+button:hover:enabled{border-color:var(--cyan)}
+button:disabled{opacity:.51;cursor:default}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.primary{background:var(--cyan);color:#081915;border-color:var(--cyan);font-weight:700}
+.danger{border-color:#725253;color:var(--red)}
+.wrapper{max-width:1440px;margin:auto;padding:0 26px 32px}
+header{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:22px 0;border-bottom:1px solid var(--line)}
+.brand{display:flex;gap:12px;align-items:center}
+.brand-mark{display:grid;place-items:center;width:40px;height:40px;color:var(--cyan);border:1px solid #376459;background:#112826;border-radius:9px;font:700 13px var(--mono)}
+h1,h2,h3,p{margin:0}
+h1{font-size:21px;letter-spacing:-.03em}
+h2{font-size:15px;letter-spacing:-.01em}
+h3,.label{font-size:12px}
+.subtitle{color:var(--muted);font-size:12px}
+.toolbar{display:flex;align-items:end;gap:8px;flex-wrap:wrap}
+label{display:grid;gap:4px;color:var(--muted);font-size:12px}
+.account-input{width:160px}
+.account-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:18px 0 12px}
+.account-meta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;color:var(--muted);font:12px var(--mono)}
+.health{border:1px solid var(--line);border-radius:4px;padding:4px 7px;color:var(--muted);font:700 11px var(--mono)}
+.health[data-status="HEALTHY"]{border-color:#34574f;color:var(--cyan);background:#142d27}
+.health[data-status="BREACH"],.health[data-status="INSOLVENT"]{border-color:#725253;color:var(--red);background:#351b21}
+.health[data-status="STALE"]{color:var(--amber);border-color:#745c42;background:#272017}
+.notice{min-height:34px;color:var(--muted);overflow-wrap:anywhere;padding:4px 0 12px}
+.notice[data-error="true"]{color:var(--red)}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.metric{padding:13px 14px;min-width:0;border-right:1px solid var(--line)}
+.metric:last-child{border-right:0}
+.metric .label{color:var(--muted);display:block}
+.metric strong{font:500 clamp(15px,2vw,22px) var(--mono);display:block;overflow-wrap:anywhere;margin-top:4px}
+.metric:first-child strong{color:var(--cyan)}
+.grid{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(0,1fr);gap:14px;margin-top:14px;align-items:start}
+.stack{display:grid;gap:14px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.panel-body{padding:12px 14px}
+.binding{font:12px var(--mono);color:var(--cyan);text-align:right;overflow-wrap:anywhere}
+.scenarios{padding:0 14px}
+.scenarios summary{color:var(--muted);cursor:pointer;padding:10px 0;font-size:12px}
+.scenarios pre{margin:0 0 12px;max-height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted);font:12px var(--mono)}
+table{border-collapse:collapse;width:100%;text-align:left}
+th,td{padding:8px 12px;border-bottom:1px solid var(--line)}
+tr:last-child td{border-bottom:0}
+th{color:var(--muted);font-size:11px;font-weight:600;white-space:nowrap}
+td{font:12px var(--mono);white-space:nowrap}
+td:first-child{color:#f0fbfc}
+td[data-empty]{font:12px var(--sans);color:var(--muted)!important}
+td[data-state="OPEN"]{color:var(--cyan)}
+td[data-state="CANCELED"]{color:var(--muted)}
+.scroll{overflow:auto}
+.command-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 10px}
+.form-button{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.market-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:10px}
+.row-actions{display:flex;gap:6px}
+.row-actions button{min-height:32px;font-size:11px;padding:4px 7px}
+.journal{max-height:300px}
+.event-details{font:12px var(--mono);white-space:normal;overflow-wrap:anywhere;min-width:160px}
+.event-details summary{cursor:pointer}
+.event-details pre{font:11px/1.4 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+#fill-form{margin-top:12px;padding:12px 14px;border-top:1px solid var(--line)}
+[hidden]{display:none!important}
+@media(max-width:1030px){.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.metric:nth-child(-n+3){border-bottom:1px solid var(--line)}.metric:nth-child(3){border-right:0}}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+@media(max-width:580px){.wrapper{padding:0 12px 18px}header{align-items:flex-start;flex-direction:column;padding:15px 0}.toolbar{width:100%}.account-input{max-width:100%;flex:1}.market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.metric{padding:9px 8px}.metric .label{font-size:11px}.account-meta{gap:8px}th,td{padding:8px}}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<header>
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true">UTA</span>
+    <div><h1>Risk Console</h1><p class="subtitle">Local exchange simulator · USD reporting</p></div>
+  </div>
+  <form id="load-form" class="toolbar">
+    <label class="account-input">Account ID<input id="account-id" value="demo" maxlength="64" pattern="[A-Za-z0-9][A-Za-z0-9_.\-]{0,63}" title="1–64 letters, digits, dots, underscores or dashes, starting with a letter or digit" required spellcheck="false" autocomplete="off"></label>
+    <button type="submit">Load account</button>
+    <button type="button" class="primary" id="bootstrap">Create demo</button>
+  </form>
+</header>
+<main>
+  <div class="account-header">
+    <h2 id="account-title">Account overview</h2>
+    <div class="account-meta">
+      <span id="health" class="health">NO ACCOUNT</span>
+      <span id="version">Version —</span>
+      <span id="as-of">Prices —</span>
+    </div>
+  </div>
+  <p class="notice" id="notice" role="status" aria-live="polite"></p>
+  <section class="metrics" aria-label="Margin overview">
+    <div class="metric"><span class="label">Risk equity</span><strong id="equity">—</strong></div>
+    <div class="metric"><span class="label">Available margin</span><strong id="available_margin">—</strong></div>
+    <div class="metric"><span class="label">Initial margin</span><strong id="initial_margin">—</strong></div>
+    <div class="metric"><span class="label">Maintenance margin</span><strong id="maintenance_margin">—</strong></div>
+    <div class="metric"><span class="label">Order reserve</span><strong id="open_order_margin">—</strong></div>
+    <div class="metric"><span class="label">Equity / maintenance</span><strong id="margin_ratio">—</strong></div>
+  </section>
+  <div class="grid">
+    <div class="stack">
+      <section class="panel" aria-labelledby="collateral-title">
+        <div class="panel-head"><h2 id="collateral-title">Collateral &amp; liabilities</h2></div>
+        <div class="scroll"><table><thead><tr><th scope="col">Asset</th><th scope="col">Gross balance</th><th scope="col">Liability</th><th scope="col">USD price</th></tr></thead><tbody id="collateral"></tbody></table></div>
+      </section>
+      <section class="panel" aria-labelledby="positions-title">
+        <div class="panel-head"><h2 id="positions-title">Positions</h2></div>
+        <div class="scroll"><table><thead><tr><th scope="col">Instrument</th><th scope="col">Quantity</th><th scope="col">Entry price</th><th scope="col">Mark price</th></tr></thead><tbody id="positions"></tbody></table></div>
+      </section>
+      <section class="panel" aria-labelledby="orders-title">
+        <div class="panel-head"><h2 id="orders-title">Orders</h2><span class="subtitle" id="order-count"></span></div>
+        <div class="scroll"><table><thead><tr><th scope="col">Instrument</th><th scope="col">Remaining</th><th scope="col">Limit price</th><th scope="col">Status</th><th scope="col">Actions</th></tr></thead><tbody id="orders"></tbody></table></div>
+        <form id="fill-form" hidden>
+          <div class="command-grid">
+            <label>Fill quantity<input id="fill-quantity" required inputmode="decimal" maxlength="19"></label>
+            <label>Fill price<input id="fill-price" required inputmode="decimal" maxlength="19"></label>
+          </div>
+          <div class="form-button"><button type="button" id="close-fill">Close</button><button type="submit" class="primary">Record fill</button></div>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="journal-title">
+        <div class="panel-head"><h2 id="journal-title">Command journal</h2><span class="subtitle" id="event-count"></span></div>
+        <div class="scroll journal"><table><thead><tr><th scope="col">Version</th><th scope="col">Command</th><th scope="col">Result</th></tr></thead><tbody id="events"></tbody></table></div>
+      </section>
+    </div>
+    <div class="stack">
+      <section class="panel" aria-labelledby="risk-title">
+        <div class="panel-head"><h2 id="risk-title">Portfolio margin</h2><span id="worst-scenario" class="binding">—</span></div>
+        <details class="scenarios" id="scenarios" hidden><summary>Scenario results</summary><pre id="scenario-results"></pre></details>
+      </section>
+      <section class="panel" aria-labelledby="place-title">
+        <div class="panel-head"><h2 id="place-title">Place limit order</h2></div>
+        <form id="order-form" class="panel-body">
+          <div class="command-grid">
+            <label>Instrument<select id="symbol" required><option value="">Select instrument</option></select></label>
+            <label>Side<select id="side"><option value="Buy">Buy</option><option value="Sell">Sell</option></select></label>
+            <label>Quantity<input id="quantity" inputmode="decimal" maxlength="19" required placeholder="0.1"></label>
+            <label>Limit price<input id="limit-price" inputmode="decimal" maxlength="19" required></label>
+            <label>Fee rate<input id="fee-rate" value="0.0004" inputmode="decimal" maxlength="19" required></label>
+          </div>
+          <div class="form-button"><button type="submit" class="primary" data-command>Place order</button></div>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="prices-title">
+        <div class="panel-head"><h2 id="prices-title">Market snapshot</h2></div>
+        <form id="market-form" class="panel-body">
+          <p class="subtitle">Submit a complete set of collateral prices and contract marks to simulate a market update.</p>
+          <div id="market-inputs" class="market-grid"></div>
+          <div class="form-button"><button type="submit" data-command>Apply prices</button>
+            <button type="submit" value="liquidate" data-command>Apply prices and liquidate</button></div>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="liquidation-title">
+        <div class="panel-head"><h2 id="liquidation-title">Liquidation</h2></div>
+        <div class="panel-body">
+          <p class="subtitle">Advance one step on an account below its maintenance requirement.</p>
+          <div class="form-button"><button type="button" class="danger" id="liquidate" data-command>Run liquidation step</button></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+</div>
+<script>
+"use strict";
+const byId = (id) => document.getElementById(id);
+const formIds = ["load-form", "order-form", "market-form", "fill-form"];
+const riskFields = ["equity", "available_margin", "initial_margin", "maintenance_margin", "open_order_margin", "margin_ratio"];
+const accountInput = byId("account-id");
+let accountId = "";
+let current = null;
+let fillOrderId = null;
+let busy = false;
+
+function message(value, isError = false) {
+  const notice = byId("notice");
+  notice.textContent = value;
+  notice.dataset.error = String(isError);
+}
+
+function controls() {
+  const unavailable = busy || !current;
+  for (const id of formIds) {
+    for (const element of byId(id).elements) {
+      element.disabled = id === "load-form" ? busy : unavailable;
+    }
+  }
+  for (const button of document.querySelectorAll("[data-command]")) {
+    button.disabled = unavailable;
+  }
+  const tradingAllowed = current?.health === "HEALTHY";
+  byId("order-form").querySelector("button").disabled = unavailable || !tradingAllowed;
+  byId("fill-form").querySelector("button[type=submit]").disabled = unavailable || !tradingAllowed;
+  for (const button of document.querySelectorAll("[data-fill]")) {
+    button.disabled = unavailable || !tradingAllowed;
+  }
+  byId("liquidate").disabled = unavailable || !["BREACH", "INSOLVENT"].includes(current?.health);
+}
+
+async function request(path, payload) {
+  const options = payload === undefined
+    ? { cache: "no-store" }
+    : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), cache: "no-store" };
+  const response = await fetch(path, options);
+  const data = await response.json();
+  if (!response.ok) {
+    const detail = typeof data.error === "string" ? data.error : data.error?.message;
+    const error = new Error(detail || data.message || "Request failed (HTTP " + response.status + ")");
+    error.status = response.status;
+    throw error;
+  }
+  return data;
+}
+
+function accountPath(id = accountId) {
+  return "/v1/accounts/" + encodeURIComponent(id);
+}
+
+function entries(object) {
+  return Object.entries(object || {});
+}
+
+function textValue(value) {
+  return value === null || value === undefined ? "—" : String(value);
+}
+
+function table(id, rows, empty, columns) {
+  const target = byId(id);
+  target.replaceChildren();
+  if (rows.length === 0) {
+    const row = target.insertRow();
+    const cell = row.insertCell();
+    cell.colSpan = columns;
+    cell.dataset.empty = "true";
+    cell.textContent = empty;
+    return;
+  }
+  for (const values of rows) {
+    const row = target.insertRow();
+    for (const value of values) {
+      const cell = row.insertCell();
+      if (value instanceof Node) cell.append(value);
+      else cell.textContent = textValue(value);
+    }
+  }
+}
+
+function selection(marks) {
+  const symbol = byId("symbol");
+  const previous = symbol.value;
+  symbol.replaceChildren();
+  for (const key of Object.keys(marks)) {
+    const option = document.createElement("option");
+    option.value = key;
+    option.textContent = key;
+    symbol.append(option);
+  }
+  if (Object.hasOwn(marks, previous)) symbol.value = previous;
+  byId("limit-price").value = marks[symbol.value] ?? "";
+}
+
+function priceInputs(prices, marks) {
+  const inputs = byId("market-inputs");
+  inputs.replaceChildren();
+  for (const [kind, quotes] of [["prices", prices], ["marks", marks]]) {
+    for (const [key, value] of entries(quotes)) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      label.textContent = key + (kind === "prices" ? " price" : " mark");
+      input.dataset.kind = kind;
+      input.dataset.key = key;
+      input.value = value;
+      input.required = true;
+      input.maxLength = 19;
+      input.inputMode = "decimal";
+      label.append(input);
+      inputs.append(label);
+    }
+  }
+}
+
+function closeFill() {
+  fillOrderId = null;
+  byId("fill-form").hidden = true;
+}
+
+function orderActions(orderId, order) {
+  const actions = document.createElement("div");
+  actions.className = "row-actions";
+  if (order.status !== "OPEN") return actions;
+  for (const [label, handler] of [
+    ["Fill", () => {
+      fillOrderId = orderId;
+      byId("fill-quantity").value = String(order.remaining).replace(/^-/, "");
+      byId("fill-price").value = order.limit_price;
+      byId("fill-form").hidden = false;
+      byId("fill-quantity").focus();
+    }],
+    ["Cancel", () => runCommand({ type: "cancel_order", order_id: orderId })],
+  ]) {
+    const button = document.createElement("button");
+    button.textContent = label;
+    button.type = "button";
+    button.dataset.command = "";
+    if (label === "Fill") button.dataset.fill = "";
+    button.setAttribute("aria-label", label + " " + order.symbol + " order " + orderId);
+    button.addEventListener("click", handler);
+    actions.append(button);
+  }
+  return actions;
+}
+
+function render(view, events) {
+  const state = view?.state || {};
+  const risk = view?.risk || {};
+  const health = view?.health || "NO ACCOUNT";
+  const prices = state.prices || {};
+  const marks = state.marks || {};
+  const balances = state.balances || {};
+  const liabilities = state.liabilities || {};
+  current = view;
+  closeFill();
+  byId("account-title").textContent = view ? "Account / " + accountId : "Account overview";
+  byId("health").textContent = health;
+  byId("health").dataset.status = health;
+  byId("version").textContent = "Version " + textValue(state.version);
+  byId("as-of").textContent = "Prices " + textValue(state.as_of);
+  for (const field of riskFields) {
+    const value = textValue(risk[field]);
+    const element = byId(field);
+    element.textContent = value;
+    element.title = value;
+  }
+  const worstScenario = risk.worst_scenario;
+  byId("worst-scenario").textContent = textValue(
+    typeof worstScenario === "object" ? worstScenario?.name : worstScenario
+  );
+  byId("scenarios").hidden = !risk.scenarios;
+  byId("scenario-results").textContent = risk.scenarios ? JSON.stringify(risk.scenarios, null, 2) : "";
+  const assets = [...new Set([...Object.keys(prices), ...Object.keys(balances), ...Object.keys(liabilities)])].sort();
+  table("collateral", assets.map((key) => [key, balances[key] ?? "0", liabilities[key] ?? "0", prices[key]]), "No asset balances", 4);
+  table("positions", entries(state.positions).map(([key, value]) => [key, value.quantity, value.entry_price, marks[key]]), "No open positions", 4);
+  const orders = entries(state.orders).sort(([, first], [, second]) => {
+    return (second.closed_version ?? Number.MAX_SAFE_INTEGER) - (first.closed_version ?? Number.MAX_SAFE_INTEGER);
+  });
+  byId("order-count").textContent = view ? orders.filter(([, order]) => order.status === "OPEN").length + " open" : "";
+  table("orders", orders.map(([id, order]) => [order.symbol, order.remaining, order.limit_price, order.status, orderActions(id, order)]), "No orders", 5);
+  for (const row of byId("orders").rows) {
+    if (row.cells.length === 5) row.cells[3].dataset.state = row.cells[3].textContent;
+  }
+  byId("event-count").textContent = view ? events.length + " recorded" : "";
+  table("events", [...events].reverse().map((event) => {
+    const details = document.createElement("details");
+    details.className = "event-details";
+    const summary = document.createElement("summary");
+    summary.textContent = event.result?.action || event.command_id || "View event";
+    const pre = document.createElement("pre");
+    pre.textContent = JSON.stringify(event, null, 2);
+    details.append(summary, pre);
+    return [event.version ?? event.result?.version ?? event.sequence, event.command?.type ?? event.type ?? "bootstrap", details];
+  }), "No recorded commands", 3);
+  selection(marks);
+  priceInputs(prices, marks);
+  controls();
+}
+
+async function loadAccount(id) {
+  const [view, journal] = await Promise.all([
+    request(accountPath(id)),
+    request(accountPath(id) + "/events"),
+  ]);
+  accountId = id;
+  render(view, journal.events || []);
+}
+
+async function runCommand(command) {
+  if (busy || !current) return;
+  let submitted = false;
+  busy = true;
+  controls();
+  try {
+    const commandId = crypto.randomUUID();
+    const result = await request(accountPath() + "/commands", {
+      command_id: commandId,
+      expected_version: current.state.version,
+      command,
+    });
+    submitted = true;
+    await loadAccount(accountId);
+    message("Recorded " + command.type.replaceAll("_", " ") + " at version " + (result.version ?? current.state.version) + ".");
+  } catch (error) {
+    if (submitted) {
+      render(null, []);
+      message("Command recorded, but refresh failed. Load the account again. " + error.message, true);
+    } else if (error.status === 409) {
+      try {
+        await loadAccount(accountId);
+        message(error.message + " Account refreshed.", true);
+      } catch (refreshError) {
+        render(null, []);
+        message(error.message + " Refresh failed. Load the account again.", true);
+      }
+    } else if (!error.status) {
+      render(null, []);
+      message("Command status could not be confirmed. Load the account before retrying. " + error.message, true);
+    } else {
+      message(error.message, true);
+    }
+  } finally {
+    busy = false;
+    controls();
+  }
+}
+
+async function openAccount(create = false, initial = false) {
+  if (busy || !accountInput.reportValidity()) return;
+  const id = accountInput.value.trim();
+  if (!id) return message("Enter an account ID.", true);
+  busy = true;
+  controls();
+  try {
+    if (create) await request("/v1/bootstrap", { account_id: id });
+    await loadAccount(id);
+    message(create ? "Demo account created." : "Account loaded.");
+  } catch (error) {
+    render(null, []);
+    message(initial && error.status === 404 ? "Create a demo account to start the simulation." : error.message, !(initial && error.status === 404));
+  } finally {
+    busy = false;
+    controls();
+  }
+}
+
+function positiveAmount(value) {
+  return /^\d{1,12}(?:\.\d{1,6})?$/.test(value) && /[1-9]/.test(value);
+}
+
+byId("load-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  openAccount();
+});
+byId("bootstrap").addEventListener("click", () => openAccount(true));
+byId("symbol").addEventListener("change", () => {
+  byId("limit-price").value = current?.state?.marks?.[byId("symbol").value] ?? "";
+});
+byId("order-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const amount = byId("quantity").value.trim();
+  if (!positiveAmount(amount)) return message("Enter a positive quantity with up to 6 decimal places. Choose Buy or Sell for direction.", true);
+  const quantity = (byId("side").value === "Sell" ? "-" : "") + amount;
+  runCommand({ type: "place_order", symbol: byId("symbol").value, quantity, limit_price: byId("limit-price").value.trim(), fee_rate: byId("fee-rate").value.trim() });
+});
+byId("market-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const type = event.submitter?.value === "liquidate" ? "mark_and_liquidate" : "set_prices";
+  const update = { type, prices: Object.create(null), marks: Object.create(null) };
+  for (const input of byId("market-inputs").querySelectorAll("input")) {
+    update[input.dataset.kind][input.dataset.key] = input.value.trim();
+  }
+  runCommand(update);
+});
+byId("close-fill").addEventListener("click", closeFill);
+byId("fill-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  if (!fillOrderId) return;
+  const quantity = byId("fill-quantity").value.trim();
+  if (!positiveAmount(quantity)) return message("Enter a positive fill quantity with up to 6 decimal places.", true);
+  runCommand({ type: "fill_order", order_id: fillOrderId, quantity, price: byId("fill-price").value.trim() });
+});
+byId("liquidate").addEventListener("click", () => runCommand({ type: "liquidate" }));
+render(null, []);
+openAccount(false, true);
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "compute": {
+    "counts": {
+      "accepted": 139010,
+      "maintenance_breaches": 17133,
+      "requests": 160000,
+      "risk_rejections": 20990,
+      "worst_scenario_btc_down_eth_up": 75296,
+      "worst_scenario_collateral_gap_down": 47056,
+      "worst_scenario_market_down": 37648
+    },
+    "errors": 0,
+    "latencies": {
+      "scenario_pm_and_order_check": {
+        "attempts": 160000,
+        "p50_ms": 0.616,
+        "p95_ms": 0.947,
+        "p99_ms": 1.338
+      }
+    },
+    "rates_per_second": {
+      "requests": 10809.43
+    },
+    "wall_seconds": 14.801891
+  },
+  "cpu_count": 9,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "workers": 8,
+  "workload": "linear-pm-synthetic-v1"
+}

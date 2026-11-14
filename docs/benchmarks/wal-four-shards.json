@@ -1,0 +1,100 @@
+{
+  "admission": {
+    "counts": {
+      "admission_requests": 320,
+      "orders_committed": 240,
+      "reopened_accounts_verified": 320,
+      "risk_rejections": 80,
+      "staged_accounts": 320
+    },
+    "errors": 0,
+    "latencies": {
+      "durable_order_check": {
+        "attempts": 320,
+        "p50_ms": 3.968,
+        "p95_ms": 12.618,
+        "p99_ms": 38.035
+      }
+    },
+    "rates_per_second": {
+      "admission_requests": 624.89,
+      "orders_committed": 468.67
+    },
+    "wall_seconds": 0.51209
+  },
+  "compute": {
+    "counts": {
+      "accepted": 10422,
+      "maintenance_breaches": 1285,
+      "requests": 12000,
+      "risk_rejections": 1578,
+      "worst_scenario_btc_down_eth_up": 5648,
+      "worst_scenario_collateral_gap_down": 3528,
+      "worst_scenario_market_down": 2824
+    },
+    "errors": 0,
+    "latencies": {
+      "scenario_pm_and_order_check": {
+        "attempts": 12000,
+        "p50_ms": 0.323,
+        "p95_ms": 0.806,
+        "p99_ms": 1.163
+      }
+    },
+    "rates_per_second": {
+      "requests": 7410.23
+    },
+    "wall_seconds": 1.619384
+  },
+  "cpu_count": 9,
+  "durable": {
+    "counts": {
+      "account_liquidations_completed": 320,
+      "accounts_not_completed": 0,
+      "end_health_INSOLVENT": 320,
+      "end_positions_flat": 320,
+      "liquidation_cancellations_committed": 320,
+      "liquidation_commands_committed": 640,
+      "liquidation_fills_committed": 320,
+      "maintenance_breaches": 320,
+      "market_updates_committed": 320,
+      "position_reductions_committed": 320,
+      "reopened_accounts_verified": 320,
+      "staged_accounts": 320
+    },
+    "errors": 0,
+    "latencies": {
+      "durable_liquidation_step": {
+        "attempts": 640,
+        "p50_ms": 6.584,
+        "p95_ms": 14.452,
+        "p99_ms": 39.415
+      },
+      "durable_market_update": {
+        "attempts": 320,
+        "p50_ms": 5.063,
+        "p95_ms": 13.203,
+        "p99_ms": 38.507
+      },
+      "verified_account_lifecycle": {
+        "attempts": 320,
+        "p50_ms": 32.867,
+        "p95_ms": 59.346,
+        "p99_ms": 84.766
+      }
+    },
+    "rates_per_second": {
+      "account_liquidations_completed": 108.5,
+      "liquidation_commands_committed": 217.0,
+      "liquidation_fills_committed": 108.5,
+      "market_updates_committed": 108.5
+    },
+    "wall_seconds": 2.949367
+  },
+  "durable_shards": 4,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "workers": 4,
+  "workload": "linear-pm-synthetic-v1"
+}

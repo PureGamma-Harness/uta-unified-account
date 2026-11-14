@@ -1,0 +1,58 @@
+{
+  "batch": {
+    "counts": {
+      "account_liquidations_completed": 320,
+      "accounts_not_completed": 0,
+      "end_health_INSOLVENT": 320,
+      "liquidation_cancellations_committed": 320,
+      "liquidation_commands_committed": 640,
+      "liquidation_fills_committed": 320,
+      "maintenance_breaches": 320,
+      "market_updates_committed": 320,
+      "reopened_accounts_verified": 320,
+      "staged_accounts": 320
+    },
+    "errors": 0,
+    "latencies": {
+      "group_liquidation_cancel": {
+        "attempts": 12,
+        "p50_ms": 68.561,
+        "p95_ms": 350.883,
+        "p99_ms": 350.883
+      },
+      "group_liquidation_fill": {
+        "attempts": 12,
+        "p50_ms": 92.806,
+        "p95_ms": 107.844,
+        "p99_ms": 107.844
+      },
+      "group_market_update": {
+        "attempts": 12,
+        "p50_ms": 75.665,
+        "p95_ms": 852.873,
+        "p99_ms": 852.873
+      },
+      "verified_cohort_lifecycle": {
+        "attempts": 12,
+        "p50_ms": 365.768,
+        "p95_ms": 1078.091,
+        "p99_ms": 1078.091
+      }
+    },
+    "rates_per_second": {
+      "account_liquidations_completed": 200.52,
+      "liquidation_commands_committed": 401.05,
+      "liquidation_fills_committed": 200.52,
+      "market_updates_committed": 200.52
+    },
+    "wall_seconds": 1.595813
+  },
+  "batch_size": 32,
+  "cpu_count": 9,
+  "durable_shards": 4,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "workers": 4,
+  "workload": "linear-pm-synthetic-v1"
+}

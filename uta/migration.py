@@ -14,6 +14,8 @@ import json
 from threading import RLock
 from typing import Any, Mapping
 
+from .models import RiskInputError, _decimal as _validate_risk_decimal
+
 
 class MigrationError(ValueError):
     """Snapshot or migration violates a safety precondition."""
@@ -32,14 +34,17 @@ def _name(value: Any, name: str) -> str:
 
 def _decimal(value: Any, name: str, *, positive: bool = False, signed: bool = False) -> Decimal:
     # Floats and implicit integer coercions can hide loss of exchange precision.
-    if not isinstance(value, str):
-        raise MigrationError(f"{name} must be a decimal string")
+    if not isinstance(value, str) or len(value) > 128:
+        raise MigrationError(f"{name} must be a decimal string of at most 128 characters")
     try:
         result = Decimal(value)
     except InvalidOperation as exc:
         raise MigrationError(f"{name} is not a decimal") from exc
-    if not result.is_finite() or (not signed and result < 0) or (positive and result <= 0):
-        raise MigrationError(f"{name} is outside its permitted range")
+    try:
+        _validate_risk_decimal(name, result, minimum=None if signed else Decimal(0),
+                               positive=positive)
+    except RiskInputError as exc:
+        raise MigrationError(str(exc)) from exc
     return result
 
 

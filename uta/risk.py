@@ -93,7 +93,9 @@ def calculate_risk(account: Account, asset_specs: Mapping[str, AssetSpec],
             raise RiskInputError(f"missing instrument specification: {symbol}") from exc
         if not isinstance(spec, InstrumentSpec):
             raise RiskInputError(f"invalid instrument specification: {symbol}")
-        pnl += Fraction(position.quantity) * (Fraction(spec.mark_price) - Fraction(position.entry_price))
+        entry_notional = (Fraction(position.entry_notional) if position.entry_notional is not None else
+                          Fraction(position.quantity) * Fraction(position.entry_price))
+        pnl += Fraction(position.quantity) * Fraction(spec.mark_price) - entry_notional
         notional = abs(Fraction(position.quantity)) * Fraction(spec.mark_price)
         initial_margin += notional * Fraction(spec.initial_margin_rate)
         maintenance_margin += notional * Fraction(spec.maintenance_margin_rate)
