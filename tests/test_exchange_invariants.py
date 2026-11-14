@@ -145,6 +145,28 @@ service.apply_fill("alice", "crash", "crash-fill", D("1"), D("100"))
         self.assertEqual(self.service.account("alice"), after)
         self.assertEqual(self.service.events(limit=1000), events)
 
+    def test_execution_rechecks_current_margin_before_creating_new_exposure(self):
+        self.service.create_account("limited")
+        self.service.deposit("limited", "fund", "USD", D("11"))
+        self.service.submit_order("limited", "old", "BTC-PERP", D("1"), D("100"))
+        self.now += timedelta(seconds=1); self.publish("90")
+        before = self.service.account("limited")
+        events = self.service.events(limit=1000)
+        with self.assertRaises(ServiceError):
+            self.service.apply_fill("limited", "old", "adverse", D("1"), D("100"))
+        self.assertEqual(self.service.account("limited"), before)
+        self.assertEqual(self.service.events(limit=1000), events)
+
+    def test_partial_execution_keeps_remaining_order_margin_in_its_risk_gate(self):
+        self.service.create_account("limited")
+        self.service.deposit("limited", "fund", "USD", D("20.08"))
+        self.service.submit_order("limited", "old", "BTC-PERP", D("2"), D("100"))
+        self.now += timedelta(seconds=1); self.publish("95")
+        before = self.service.account("limited")
+        with self.assertRaises(ServiceError):
+            self.service.apply_fill("limited", "old", "partial", D("1"), D("100"))
+        self.assertEqual(self.service.account("limited"), before)
+
     def test_current_market_revalues_outstanding_order_reservations(self):
         self.service.create_account("limited")
         self.service.deposit("limited", "fund", "USD", D("20"))
