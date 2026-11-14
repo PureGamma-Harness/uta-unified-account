@@ -343,13 +343,19 @@ class _Handler(BaseHTTPRequestHandler):
         except (UnicodeError, ValueError, RecursionError):
             raise _RequestError(400, "invalid_json", "invalid JSON document") from None
 
+    def _component(self, name: str):
+        component = getattr(self.server.service, name, None)
+        if component is None:
+            raise _RequestError(501, "feature_unavailable", "requested service component is not configured")
+        return component
+
     def _route(self, principal: Credential, path: str, query: str, payload: Any, body: bytes):
         service = self.server.service
         method = self.command
         parts = path.split("/")
         account_events = (len(parts) == 5 and parts[:3] == ["", "v1", "accounts"]
                           and parts[4] == "events")
-        if query and not (method == "GET" and (path == "/v1/events" or account_events)):
+        if query and not (method == "GET" and (path in ("/v1/events", "/v1/trades") or account_events)):
             raise _RequestError(400, "invalid_query", "query parameters are not supported for this route")
         if method == "GET" and path == "/readyz":
             try:
@@ -368,6 +374,31 @@ class _Handler(BaseHTTPRequestHandler):
             if principal.role in ("admin", "risk"):
                 return 200, service.events(after=after, limit=limit)
             return 200, service.account_events(principal.account_id, after=after, limit=limit)
+        if method == "GET" and path == "/v1/trades":
+            self._permit(principal, "risk")
+            after, limit = _event_cursor(query)
+            return 200, self._component("matcher").trades(after=after, limit=limit)
+        if method == "POST" and path in ("/v1/matching", "/v1/spot-matching"):
+            self._permit(principal)
+            data = _fields(payload, {"symbol"}, {"max_matches"})
+            symbol = _identifier(data["symbol"], market=True)
+            maximum = data.get("max_matches", 100)
+            if type(maximum) is not int or not 1 <= maximum <= 1000:
+                raise _RequestError(400, "invalid_fields", "max_matches must be an integer in 1..1000")
+            component = self._component("matcher" if path == "/v1/matching" else "spot")
+            return 200, component.match_once(symbol, max_matches=maximum)
+        if method == "PUT" and path == "/v1/credit/asset-limit":
+            self._permit(principal, "risk")
+            data = _fields(payload, {"asset", "limit"})
+            asset, limit = _identifier(data["asset"], market=True), _decimal(data["limit"])
+            return 200, self._component("credit").configure_asset_limit(asset, limit)
+        if method == "POST" and path == "/v1/credit/pool":
+            self._permit(principal)
+            data = _fields(payload, {"command_id", "asset", "amount", "source_reference"})
+            command_id = _identifier(data["command_id"])
+            asset, amount = _identifier(data["asset"], market=True), _decimal(data["amount"])
+            reference = _identifier(data["source_reference"], market=True)
+            return 200, self._component("credit").fund_pool(command_id, asset, amount, source_reference=reference)
         if method == "POST" and path == "/v1/accounts":
             self._permit(principal)
             data = _fields(payload, {"account_id"})
@@ -397,10 +428,39 @@ class _Handler(BaseHTTPRequestHandler):
                     return 200, service.risk(account_id)
                 if len(parts) == 5 and parts[4] == "orders":
                     return 200, service.orders(account_id)
+                if len(parts) == 6 and parts[4] == "orders":
+                    return 200, service.order(account_id, _identifier(parts[5]))
+                if len(parts) == 5 and parts[4] == "spot-orders":
+                    return 200, self._component("spot").orders(account_id)
                 if len(parts) == 5 and parts[4] == "events":
                     after, limit = _event_cursor(query)
                     return 200, service.account_events(account_id, after=after, limit=limit)
+            if method == "PUT" and len(parts) == 5 and parts[4] == "credit-limits":
+                self._permit(principal, "risk")
+                data = _fields(payload, {"asset", "limit"})
+                asset, limit = _identifier(data["asset"], market=True), _decimal(data["limit"])
+                return 200, self._component("credit").configure_limit(account_id, asset, limit)
             if method == "POST":
+                if len(parts) == 5 and parts[4] in ("loans", "repayments", "interest"):
+                    self._permit(principal, "funding" if parts[4] != "interest" else "admin")
+                    data = _fields(payload, {"command_id", "asset", "amount"})
+                    command_id = _identifier(data["command_id"])
+                    asset, amount = _identifier(data["asset"], market=True), _decimal(data["amount"])
+                    credit = self._component("credit")
+                    operation = {"loans": credit.borrow, "repayments": credit.repay,
+                                 "interest": credit.accrue_interest}[parts[4]]
+                    return 200, operation(account_id, command_id, asset, amount)
+                if len(parts) == 5 and parts[4] == "spot-orders":
+                    self._permit(principal, "trader")
+                    data = _fields(payload, {"order_id", "symbol", "quantity", "limit_price"})
+                    order_id, symbol = _identifier(data["order_id"]), _identifier(data["symbol"], market=True)
+                    quantity, price = _decimal(data["quantity"]), _decimal(data["limit_price"])
+                    return 201, self._component("spot").submit_order(account_id, order_id, symbol, quantity, price)
+                if len(parts) == 7 and parts[4] == "spot-orders" and parts[6] == "cancel":
+                    self._permit(principal, "trader")
+                    _fields(payload, set())
+                    order_id = _identifier(parts[5])
+                    return 200, self._component("spot").cancel_order(account_id, order_id)
                 if len(parts) == 5 and parts[4] == "supervise":
                     self._permit(principal, "risk")
                     _fields(payload, set())

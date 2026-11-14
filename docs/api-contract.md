@@ -2,7 +2,7 @@
 
 这份契约对应 `uta.gateway` 与持久化交易服务。API 只监听 IPv4 loopback；远程访问必须经过 TLS 反向代理，并配置连接与速率限制。`python -m uta serve` 仍是独立的无认证演示接口，不属于这里的 `/v1` 交易接口。
 
-当前支持线性 USD 结算合约的账户、保证金占用、订单、本地成交授权及结算、风险监督和持久化事件查询。完整 PM、期权保证金、外部交易所成交回报接入、WebSocket 推送、HMAC 请求签名及 nonce 防重放没有在此接口实现。行情新鲜度、交易开关与风险检查不等于真实交易所的生产验收。
+当前支持线性 USD 结算合约的账户、保证金占用、订单、本地双边撮合及结算、风险监督和持久化事件查询；配置相应组件后还提供资金池借贷、利息记账、还款和 USD 报价现货撮合。完整 PM、期权保证金、外部交易所成交回报接入、WebSocket 推送、HMAC 请求签名及 nonce 防重放没有在此接口实现。行情新鲜度、交易开关与风险检查不等于真实交易所的生产验收。
 
 ## 认证与权限
 
@@ -26,11 +26,11 @@
 | --- | --- | --- |
 | `reader` | 必须绑定一个账户 | 读取自身账户、风险、订单、事件；读取 readiness |
 | `trader` | 必须绑定一个账户 | reader 的操作，以及自身提交订单、撤单 |
-| `funding` | 必须绑定一个账户 | 自身入金记账；读取 readiness；不具备账户查询、交易或行情修改权限 |
-| `risk` | 不绑定单个账户 | 任意账户的只读诊断、事件、metrics；发布行情、设置全局交易开关、运行账户风险监督 |
+| `funding` | 必须绑定一个账户 | 自身入金、借款、还款记账；读取 readiness；不具备账户查询、交易或行情修改权限 |
+| `risk` | 不绑定单个账户 | 任意账户的只读诊断、事件、metrics、成交审计；发布行情、配置信用限额、设置全局交易开关、运行账户风险监督 |
 | `admin` | 全部账户 | 所有接口，包括账户引导与本地成交授权；应减少日常使用 |
 
-入金权限表示可信资金凭据的记账权限，不能用客户提供的未经核实记录代替真实资金对账。当前借贷、还款及现货信用操作由独立服务负责；只有相应服务接口明确接入网关后，才构成 HTTP 能力。
+入金及资金池注资权限表示可信资金凭据的记账权限，不能用客户提供的未经核实记录代替真实资金对账。应用须显式挂载 `exchange.credit=CreditService(exchange)`、`exchange.matcher=Matcher(exchange)`；现货还需要 `exchange.spot=SpotExchange(exchange,catalog)`。未配置所需组件时，已授权的请求返回 `501 feature_unavailable`，不会临时创建组件或假造结果。越权请求先返回 `403`，不披露组件是否存在。
 
 同一账户可以配置多个不同令牌。轮换时，先同时装载旧、新令牌，验证新令牌后移除旧令牌。Python 服务集成可调用 `server.replace_credentials(credentials)` 原子替换；无效替换保留原配置。已经完成认证的请求继续执行，后续认证采用新配置。HTTP 没有修改令牌的接口；仅修改配置文件不会自动热加载，CLI 部署需要按运维流程重启或显式接入加载器。
 
@@ -59,12 +59,25 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | `GET /v1/accounts/{account_id}` | 无 | reader/trader/risk/admin | `200`，账户对象 |
 | `GET /v1/accounts/{account_id}/risk` | 无 | reader/trader/risk/admin | `200`，风险对象，要求新鲜行情 |
 | `GET /v1/accounts/{account_id}/orders` | 无 | reader/trader/risk/admin | `200`，该账户订单数组，包含终态订单 |
+| `GET /v1/accounts/{account_id}/orders/{order_id}` | 无 | reader/trader/risk/admin | `200`，原订单 ID 的当前对象；行情过期仍可重查 |
 | `GET /v1/accounts/{account_id}/events` | `after=0&limit=100` | reader/trader/risk/admin | `200`，按该账户过滤的事件数组 |
 | `GET /v1/events` | `after=0&limit=100` | reader/trader/risk/admin | reader/trader 只返回绑定账户事件；risk/admin 返回全局事件 |
 | `POST /v1/accounts/{account_id}/deposits` | `{"event_id":"d1","asset":"USD","amount":"1000"}` | funding/admin | `200`，入金后的账户对象 |
+| `POST /v1/accounts/{account_id}/loans` | `{"command_id":"loan1","asset":"BTC","amount":"1"}` | funding/admin | `200`，实际资金池放款及总负债结果 |
+| `POST /v1/accounts/{account_id}/repayments` | `{"command_id":"repay1","asset":"BTC","amount":"1"}` | funding/admin | `200`，使用可用现货现金还款后的本金、利息及分配明细 |
+| `POST /v1/accounts/{account_id}/interest` | `{"command_id":"interest1","asset":"BTC","amount":"0.001"}` | admin | `200`，明确利息事件记账结果；不会推断利率或自动复利 |
+| `PUT /v1/accounts/{account_id}/credit-limits` | `{"asset":"BTC","limit":"10"}` | risk/admin | `200`，首次设置不可变账户总负债限额；修改已设值返回 409 |
+| `PUT /v1/credit/asset-limit` | `{"asset":"BTC","limit":"100"}` | risk/admin | `200`，首次设置不可变资产合计总负债限额 |
+| `POST /v1/credit/pool` | `{"command_id":"capital1","asset":"BTC","amount":"100","source_reference":"capital:line1"}` | admin | `200`，经过外部对账确认的池资金记账结果 |
 | `POST /v1/accounts/{account_id}/orders` | `{"order_id":"o1","symbol":"BTC-PERP","quantity":"0.1","limit_price":"21000","reduce_only":false}` | trader/admin | `201`，原子保证金检查及占用后的订单对象 |
 | `POST /v1/accounts/{account_id}/orders/{order_id}/cancel` | `{}` | trader/admin | `200`，订单当前对象；本地撤单只释放剩余占用 |
 | `POST /v1/accounts/{account_id}/orders/{order_id}/fills` | `{"fill_id":"f1","quantity":"0.05","price":"20990"}` | admin | `200`，成交后的订单对象 |
+| `GET /v1/accounts/{account_id}/spot-orders` | 无 | reader/trader/risk/admin | `200`，账户现货订单数组 |
+| `POST /v1/accounts/{account_id}/spot-orders` | `{"order_id":"s1","symbol":"BTC-SPOT","quantity":"1","limit_price":"100"}` | trader/admin | `201`，实际锁定现货资产后的订单对象；没有 reduce_only 参数 |
+| `POST /v1/accounts/{account_id}/spot-orders/{order_id}/cancel` | `{}` | trader/admin | `200`，终止剩余现货订单并释放剩余资产锁 |
+| `POST /v1/matching` | `{"symbol":"BTC-PERP","max_matches":100}` | admin | `200`，实际双边线性撮合结果及持久化成交回执 |
+| `POST /v1/spot-matching` | `{"symbol":"BTC-SPOT","max_matches":100}` | admin | `200`，实际双边现货撮合及资产交割回执 |
+| `GET /v1/trades` | `after=0&limit=100` | risk/admin | `200`，有界的全局线性撮合回执审计数组；不包含现货回执 |
 | `POST /v1/accounts/{account_id}/supervise` | `{}` | risk/admin | `200`，风险监督结果；不接受客户端指定平仓数量、价格或风险结论 |
 | `PUT /v1/market` | 下方完整行情对象 | risk/admin | `200 {"version":1,"observed_at":"..."}` |
 | `PUT /v1/kill-switch` | `{"enabled":true}` | risk/admin | `200 {"enabled":true}` |
@@ -94,6 +107,12 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 
 订单对象包含 `account_id`、`order_id`、`symbol`、`quantity`、`limit_price`、`reduce_only`、`filled_quantity`、`status`、`version`、`created_at`、`reserved_margin`。状态为 `OPEN`、`PARTIALLY_FILLED`、`FILLED` 或 `CANCELLED`。只有明确提交成功或重查确认才可认定订单已被接受；保证金占用不代表已经成交。
 
+现货订单单独使用 `(account_id, order_id)` 命名空间，包含 `base_asset`、`quote_asset`、`reserved_asset`、`reserved_amount` 等资产锁字段。正数量买入、负数量卖出；买单锁定报价货币及预期费用，卖单锁定基础资产，匹配后实际交割两种资产。还款和其他现货订单不能重复使用已锁现金。撤单只能释放剩余锁，不能回滚已交割部分。
+
+借款必须有实际已记账的资金池流动性、明确的账户与资产总限额，以及新鲜行情下通过的总负债风险检查；不会因为余额不足自动借款。本金与利息分开记账、按足额负债估值。还款优先支付利息，再偿还本金；不能超过欠款或使用已锁现金，交易暂停时仍可进行。信用配置限额允许零来禁用新借款，首次设置后只能相同值重试，不能用 PUT 静默覆盖。
+
+撮合调用的 `max_matches` 是 `1..1000` 的 JSON 整数，可省略，默认 100。结果包含 `confirmed_trades`、`trades`、`cancelled_orders`、`blocked`；只有实际对手方订单同时通过检查、双边结算和回执一起提交后，才增加成交数。单边或未交叉订单簿不会按标记价造出成交；瞬时风险门禁可能通过 `200` 结果中的 `blocked` 报告。全局回执包含对手账户身份，仅 risk/admin 可查询；客户从自身事件读取成交。`/v1/trades` 的 `after/limit` 按撮合回执自己的递增 `sequence` 分页，与事件 cursor 相互独立。
+
 监督结果包含 `account_id`、`state`、`cycle`、`revision`、`created_orders`、`cancelled_orders`、`replanned`；新鲜行情下还返回 `market_version` 和账户版本依据。`state` 为 `NORMAL`、`LIQUIDATING`、`BLOCKED` 或 `BANKRUPT`。行情不可用时返回 `BLOCKED`，并保留已有计划。`created_orders` 是本地只减仓订单，不是成交证明；后续撮合和账务事件才证明执行。`BANKRUPT` 状态本身不代表已完成保险基金赔付或 ADL。
 
 事件对象包含 `sequence`、`event_type`、`account_id`、`payload`、`created_at`。`after` 为排他的全局序号，允许 `0..2^63-1`；`limit` 为 `1..1000`。客户查询在数据库中先按账户过滤，再应用 limit；序号存在间隙是正常行为，不会包含其他账户或全局控制事件。处理完一页后保存最后一条的 `sequence`；空页保持原 cursor 并稍后重试。当前是 HTTP 拉取，没有 WebSocket 或推送交付保证。
@@ -108,6 +127,11 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | 入金 | `(account_id, event_id)` | 相同资产、相同规范数值不重复记账；内容不同返回 `409 idempotency_conflict` |
 | 提交订单 | `(account_id, order_id)` | 同合约、数量、限价、reduce_only 返回该订单当前状态；终态 ID 不重新打开；内容不同返回 409 |
 | 本地成交授权 | `(account_id, fill_id)` | 同订单、数量、价格不重复成交、扣费或记盈亏；换订单或内容返回 409 |
+| 现货订单 | 现货命名空间的 `(account_id, order_id)` | 同合约、数量、限价返回当前状态；终态不重开；不同内容返回 409 |
+| 借款、还款、计息 | 共享的 `(account_id, command_id)` | 同一操作类型及规范内容返回已存记账结果；换类型或内容返回 409，不得跨方法复用 ID |
+| 资金池注资 | 全局池 `command_id`，另对 `source_reference` 唯一约束 | 同内容重试不重复注资；换命令 ID 复用同一外部凭据行仍返回 409 |
+| 信用限额设置 | 账户/资产或全局资产配置身份 | 同值重试不增加事件；不同值返回 `configuration_conflict` |
+| 双边撮合批次 | 每次实际成交的持久化 trade ID | 不重放已结算双边成交；再次调用可以撮合剩余或新到订单，不保证返回同一批次结果 |
 | 撤单 | `(account_id, order_id)` 的当前状态 | 重复撤单返回当前终态，不重复释放占用，也不撤销已成交部分 |
 | 行情发布 | 全局 `version` | 同版本同规范内容不重复发布；不同内容返回 `market_conflict`；过期或倒退输入仍拒绝 |
 | 交易开关 | 目标 boolean | 重复设置同一状态不产生额外状态变化 |
@@ -132,11 +156,13 @@ Bearer 本身不阻止令牌被盗后的请求重放。下文的业务幂等键�
 | `403` | `forbidden` | 角色或账户范围不允许操作 |
 | `404` | `not_found`、`account_not_found`、`order_not_found` | 路由或已授权账户资源不存在 |
 | `408` | `request_timeout` | 请求正文读取超时；已送出的业务请求须按原 ID 核对 |
-| `409` | `idempotency_conflict`、`market_conflict`、`market_regression` | 身份内容冲突或行情倒退，需调查来源 |
+| `409` | `idempotency_conflict`、`market_conflict`、`market_regression`、`configuration_conflict`、`duplicate_external_reference` | 身份内容冲突、重复注资凭据、限额配置冲突或行情倒退，需调查来源 |
 | `409` | `trading_halted`、`account_frozen`、`insufficient_margin`、`unsafe_reduction`、`reduce_only_violation` | 风险或运营门禁拒绝；重算状态，避免绕过门禁改大权限重试 |
 | `409` | `order_closed`、`invalid_fill`、`liquidation_order_protected`、`order_limit`、`position_limit`、`precision_error`、`ledger_rejected` | 订单状态、执行、数量或账务精度不满足约束；受保护清算单由风险监督器管理 |
+| `409` | `credit_disabled`、`credit_limit`、`credit_pool_empty`、`insufficient_cash`、`no_principal`、`repayment_exceeds_debt` | 信用门禁、流动性、可用现金或债务余额不满足要求 |
 | `411` / `413` / `415` / `417` / `431` | `length_required`、`body_too_large`、`unsupported_media_type`、`unsupported_expectation`、`headers_too_large` | 修正 HTTP framing、长度、正文类型或请求头 |
 | `500` | `internal_error` | 服务故障，保存业务 ID 并核对结果；不要根据内部错误猜测请求未生效 |
+| `501` | `feature_unavailable` | 该部署没有挂载请求所需的信用、现货或撮合组件 |
 | `503` | `storage_unavailable`、`market_unavailable`、`market_incomplete`、`schema_version`、`invalid_clock` | 可用性或可信输入不满足条件；退避、修复依赖并保留原业务 ID |
 
 未支持的 HTTP 方法通常返回 `501 invalid_http`。`503 /readyz` 的对象结构和过载连接的空正文是上述错误结构的例外。新增服务能力可以扩展业务 code；客户端须对未知 code 保持失败处理，不能默认为成功。
