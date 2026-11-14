@@ -31,7 +31,7 @@ _NUMBER = re.compile(r"[+-]?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z
 
 @dataclass(frozen=True)
 class Credential:
-    """One opaque token, scoped either to administration or one account.
+    """One opaque token with a role and optional account scope.
 
     Generate tokens with ``secrets.token_urlsafe(32)`` or a stronger source.
     Tokens are intentionally omitted from repr/log output.
@@ -44,13 +44,13 @@ class Credential:
     def __post_init__(self) -> None:
         if not isinstance(self.token, str) or not _TOKEN.fullmatch(self.token):
             raise ValueError("bearer tokens require 32..258 ASCII token characters")
-        if self.role not in ("admin", "trader"):
-            raise ValueError("credential role must be admin or trader")
-        if self.role == "trader":
+        if self.role not in ("admin", "reader", "funding", "risk", "trader"):
+            raise ValueError("credential role must be admin, reader, funding, risk or trader")
+        if self.role in ("reader", "funding", "trader"):
             if not isinstance(self.account_id, str) or not _ID.fullmatch(self.account_id):
-                raise ValueError("trader credentials require a valid account_id")
+                raise ValueError("account-scoped credentials require a valid account_id")
         elif self.account_id is not None:
-            raise ValueError("admin credentials must not have an account_id")
+            raise ValueError("admin and risk credentials must not have an account_id")
 
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -144,6 +144,23 @@ def _decimal(value: Any) -> Decimal:
     return result
 
 
+def _event_cursor(query: str) -> tuple[int, int]:
+    try:
+        pairs = parse_qsl(query, keep_blank_values=True, strict_parsing=True,
+                          max_num_fields=2)
+        options = dict(pairs)
+        if len(options) != len(pairs) or options.keys() - {"after", "limit"}:
+            raise ValueError("unsupported query")
+        if any(not re.fullmatch(r"[0-9]{1,19}", v, flags=re.ASCII) for v in options.values()):
+            raise ValueError("invalid integer")
+        after, limit = int(options.get("after", "0")), int(options.get("limit", "100"))
+        if not 0 <= after <= 2**63 - 1 or not 1 <= limit <= 1000:
+            raise ValueError("invalid cursor")
+    except ValueError:
+        raise _RequestError(400, "invalid_query", "invalid event cursor or limit") from None
+    return after, limit
+
+
 class _GatewayServer(ThreadingMixIn, HTTPServer):
     # server_close() drains admitted requests during orderly shutdown. Socket
     # deadlines and the service's database busy timeout bound ordinary waits.
@@ -154,13 +171,31 @@ class _GatewayServer(ThreadingMixIn, HTTPServer):
 
     def __init__(self, address, service, credentials, *, max_workers, request_timeout):
         self.service = service
-        self.credentials = credentials
+        self._credential_lock = Lock()
+        self._credentials = credentials
         self.request_timeout = request_timeout
         self._slots = BoundedSemaphore(max_workers)
         self._counter_lock = Lock()
         self._counts: dict[str, int] = {"requests": 0, "rejected_connections": 0,
                                        "client_errors": 0, "server_errors": 0}
         super().__init__(address, _Handler)
+
+    @property
+    def credentials(self) -> tuple[Credential, ...]:
+        with self._credential_lock:
+            return self._credentials
+
+    def replace_credentials(self, credentials: Iterable[Credential]) -> None:
+        """Atomically rotate a validated credential set, preserving it on error.
+
+        A configuration may contain overlapping old/new tokens for one account.
+        Already authenticated requests finish with their captured principal;
+        subsequent authentication uses the replacement set. No HTTP endpoint
+        exposes this operation or the credential values.
+        """
+        replacement = _credentials(credentials)
+        with self._credential_lock:
+            self._credentials = replacement
 
     def _count(self, key: str) -> None:
         with self._counter_lock:
@@ -287,13 +322,13 @@ class _Handler(BaseHTTPRequestHandler):
         return selected
 
     @staticmethod
-    def _admin(principal: Credential) -> None:
-        if principal.role != "admin":
-            raise _RequestError(403, "forbidden", "administrator authorization is required")
+    def _permit(principal: Credential, *roles: str) -> None:
+        if principal.role != "admin" and principal.role not in roles:
+            raise _RequestError(403, "forbidden", "credential role does not permit this operation")
 
     @staticmethod
     def _account(principal: Credential, account_id: str) -> None:
-        if principal.role != "admin" and principal.account_id != account_id:
+        if principal.role not in ("admin", "risk") and principal.account_id != account_id:
             raise _RequestError(403, "forbidden", "account access is forbidden")
 
     def _payload(self, length: int) -> tuple[Any, bytes]:
@@ -311,7 +346,10 @@ class _Handler(BaseHTTPRequestHandler):
     def _route(self, principal: Credential, path: str, query: str, payload: Any, body: bytes):
         service = self.server.service
         method = self.command
-        if query and not (method == "GET" and path == "/v1/events"):
+        parts = path.split("/")
+        account_events = (len(parts) == 5 and parts[:3] == ["", "v1", "accounts"]
+                          and parts[4] == "events")
+        if query and not (method == "GET" and (path == "/v1/events" or account_events)):
             raise _RequestError(400, "invalid_query", "query parameters are not supported for this route")
         if method == "GET" and path == "/readyz":
             try:
@@ -322,30 +360,20 @@ class _Handler(BaseHTTPRequestHandler):
                 return 503, {"ready": False, "reason": "service_unavailable"}
             return (200 if state["ready"] else 503), state
         if method == "GET" and path == "/metrics":
-            self._admin(principal)
+            self._permit(principal, "risk")
             return 200, self.server.counters()
         if method == "GET" and path == "/v1/events":
-            self._admin(principal)
-            try:
-                pairs = parse_qsl(query, keep_blank_values=True, strict_parsing=True,
-                                  max_num_fields=2)
-                options = dict(pairs)
-                if len(options) != len(pairs) or options.keys() - {"after", "limit"}:
-                    raise ValueError("unsupported query")
-                if any(not re.fullmatch(r"[0-9]{1,18}", v, flags=re.ASCII) for v in options.values()):
-                    raise ValueError("invalid integer")
-                after, limit = int(options.get("after", "0")), int(options.get("limit", "100"))
-                if not 1 <= limit <= 1000:
-                    raise ValueError("invalid limit")
-            except ValueError:
-                raise _RequestError(400, "invalid_query", "invalid event cursor or limit") from None
-            return 200, service.events(after=after, limit=limit)
+            self._permit(principal, "reader", "trader", "risk")
+            after, limit = _event_cursor(query)
+            if principal.role in ("admin", "risk"):
+                return 200, service.events(after=after, limit=limit)
+            return 200, service.account_events(principal.account_id, after=after, limit=limit)
         if method == "POST" and path == "/v1/accounts":
-            self._admin(principal)
+            self._permit(principal)
             data = _fields(payload, {"account_id"})
             return 201, service.create_account(_identifier(data["account_id"]))
         if method == "PUT" and path == "/v1/market":
-            self._admin(principal)
+            self._permit(principal, "risk")
             from .market import MarketSnapshot
             try:
                 snapshot = MarketSnapshot.from_json(body.decode("utf-8"))
@@ -353,29 +381,37 @@ class _Handler(BaseHTTPRequestHandler):
                 raise _RequestError(400, "invalid_market", "invalid market snapshot") from None
             return 200, service.publish_market(snapshot)
         if method == "PUT" and path == "/v1/kill-switch":
-            self._admin(principal)
+            self._permit(principal, "risk")
             data = _fields(payload, {"enabled"})
             if type(data["enabled"]) is not bool:
                 raise _RequestError(400, "invalid_fields", "enabled must be a boolean")
             return 200, service.set_kill_switch(data["enabled"])
-        parts = path.split("/")
         if len(parts) >= 4 and parts[:3] == ["", "v1", "accounts"]:
             account_id = _identifier(parts[3])
             self._account(principal, account_id)
             if method == "GET":
+                self._permit(principal, "reader", "trader", "risk")
                 if len(parts) == 4:
                     return 200, service.account(account_id)
                 if len(parts) == 5 and parts[4] == "risk":
                     return 200, service.risk(account_id)
                 if len(parts) == 5 and parts[4] == "orders":
                     return 200, service.orders(account_id)
+                if len(parts) == 5 and parts[4] == "events":
+                    after, limit = _event_cursor(query)
+                    return 200, service.account_events(account_id, after=after, limit=limit)
             if method == "POST":
+                if len(parts) == 5 and parts[4] == "supervise":
+                    self._permit(principal, "risk")
+                    _fields(payload, set())
+                    return 200, service.supervise_account(account_id)
                 if len(parts) == 5 and parts[4] == "deposits":
-                    self._admin(principal)
+                    self._permit(principal, "funding")
                     data = _fields(payload, {"event_id", "asset", "amount"})
                     return 200, service.deposit(account_id, _identifier(data["event_id"]),
                                                 _identifier(data["asset"], market=True), _decimal(data["amount"]))
                 if len(parts) == 5 and parts[4] == "orders":
+                    self._permit(principal, "trader")
                     data = _fields(payload, {"order_id", "symbol", "quantity", "limit_price"},
                                    {"reduce_only"})
                     reduce_only = data.get("reduce_only", False)
@@ -388,10 +424,11 @@ class _Handler(BaseHTTPRequestHandler):
                 if len(parts) == 7 and parts[4] == "orders":
                     order_id = _identifier(parts[5])
                     if parts[6] == "cancel":
+                        self._permit(principal, "trader")
                         _fields(payload, set())
                         return 200, service.cancel_order(account_id, order_id)
                     if parts[6] == "fills":
-                        self._admin(principal)
+                        self._permit(principal)
                         data = _fields(payload, {"fill_id", "quantity", "price"})
                         return 200, service.apply_fill(
                             account_id, order_id, _identifier(data["fill_id"]),

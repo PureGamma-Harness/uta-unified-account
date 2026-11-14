@@ -18,8 +18,12 @@ from uta.gateway import Credential, load_credentials, make_server
 ADMIN = "A" * 43
 ALICE = "B" * 43
 BOB = "C" * 43
+READER = "R" * 43
+FUNDING = "F" * 43
+RISK = "K" * 43
 CREDENTIALS = (Credential(ADMIN, "admin"), Credential(ALICE, "trader", "alice"),
-               Credential(BOB, "trader", "bob"))
+               Credential(BOB, "trader", "bob"), Credential(READER, "reader", "alice"),
+               Credential(FUNDING, "funding", "alice"), Credential(RISK, "risk"))
 
 
 class FakeService:
@@ -70,6 +74,12 @@ class FakeService:
     def events(self, *, after, limit):
         return self._record("events", after=after, limit=limit)
 
+    def account_events(self, account_id, *, after, limit):
+        return self._record("account_events", account_id, after=after, limit=limit)
+
+    def supervise_account(self, account_id):
+        return self._record("supervise_account", account_id)
+
 
 class CredentialTests(unittest.TestCase):
     def test_file_permissions_scope_and_secret_repr(self):
@@ -107,7 +117,8 @@ class CredentialTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_credentials(path)
         for values in ((ADMIN, "owner", None), (ADMIN, "trader", "../alice"),
-                       ("é" * 43, "admin", None)):
+                       ("é" * 43, "admin", None), (ADMIN, "funding", None),
+                       (ADMIN, "reader", None), (ADMIN, "risk", "alice")):
             with self.assertRaises(ValueError):
                 Credential(*values)
 
@@ -188,11 +199,77 @@ class GatewayTests(unittest.TestCase):
                   ("POST", "/v1/accounts/alice/deposits", {"event_id": "d", "asset": "USD", "amount": "10"}),
                   ("POST", "/v1/accounts/alice/orders/o/fills", {"fill_id": "f", "quantity": "1", "price": "1"}),
                   ("PUT", "/v1/market", {}), ("PUT", "/v1/kill-switch", {"enabled": True}),
-                  ("GET", "/v1/events", None), ("GET", "/metrics", None)]
+                  ("POST", "/v1/accounts/alice/supervise", {}), ("GET", "/metrics", None)]
         for method, path, payload in routes:
             with self.subTest(path=path):
                 self.assertEqual(self.request(method, path, payload, token=ALICE)[0], 403)
         self.assertEqual(self.service.calls, [])
+
+    def test_reader_and_trader_events_are_account_filtered_before_pagination(self):
+        for token in (READER, ALICE):
+            self.assertEqual(self.request("GET", "/v1/events?after=12&limit=2", token=token)[0], 200)
+            self.assertEqual(self.service.calls[-1], ("account_events", ("alice",), {"after": 12, "limit": 2}))
+            self.assertEqual(self.request("GET", "/v1/accounts/alice/events?after=5", token=token)[0], 200)
+            self.assertEqual(self.service.calls[-1], ("account_events", ("alice",), {"after": 5, "limit": 100}))
+            before = len(self.service.calls)
+            self.assertEqual(self.request("GET", "/v1/accounts/bob/events", token=token)[0], 403)
+            self.assertEqual(len(self.service.calls), before)
+        for suffix in ("", "/risk", "/orders"):
+            self.assertEqual(self.request("GET", "/v1/accounts/alice" + suffix, token=READER)[0], 200)
+        writes = [("POST", "/v1/accounts/alice/orders", {}),
+                  ("POST", "/v1/accounts/alice/orders/o/cancel", {}),
+                  ("POST", "/v1/accounts/alice/deposits", {}),
+                  ("POST", "/v1/accounts/alice/supervise", {})]
+        for method, path, payload in writes:
+            self.assertEqual(self.request(method, path, payload, token=READER)[0], 403)
+        self.assertNotIn("events", [call[0] for call in self.service.calls])
+
+    def test_funding_is_account_bound_and_cannot_trade_or_change_prices(self):
+        deposit = {"event_id": "d1", "asset": "USD", "amount": "10"}
+        self.assertEqual(self.request("POST", "/v1/accounts/alice/deposits", deposit, token=FUNDING)[0], 200)
+        self.assertEqual(self.service.calls[-1], ("deposit", ("alice", "d1", "USD", Decimal("10")), {}))
+        before = len(self.service.calls)
+        self.assertEqual(self.request("POST", "/v1/accounts/bob/deposits", deposit, token=FUNDING)[0], 403)
+        for method, path, payload in [("GET", "/v1/accounts/alice", None),
+                                      ("GET", "/v1/events", None),
+                                      ("PUT", "/v1/market", {}),
+                                      ("PUT", "/v1/kill-switch", {"enabled": False}),
+                                      ("POST", "/v1/accounts/alice/orders", {}),
+                                      ("POST", "/v1/accounts/alice/orders/o/cancel", {}),
+                                      ("POST", "/v1/accounts/alice/orders/o/fills", {}),
+                                      ("POST", "/v1/accounts/alice/supervise", {})]:
+            self.assertEqual(self.request(method, path, payload, token=FUNDING)[0], 403)
+        self.assertEqual(len(self.service.calls), before)
+
+    def test_risk_can_diagnose_and_supervise_but_cannot_adjust_funds_or_manual_fills(self):
+        for suffix in ("", "/risk", "/orders", "/events"):
+            self.assertEqual(self.request("GET", "/v1/accounts/bob" + suffix, token=RISK)[0], 200)
+        self.assertEqual(self.request("GET", "/v1/events", token=RISK)[0], 200)
+        self.assertEqual(self.service.calls[-1][0], "events")
+        self.assertEqual(self.request("GET", "/metrics", token=RISK)[0], 200)
+        self.assertEqual(self.request("PUT", "/v1/kill-switch", {"enabled": True}, token=RISK)[0], 200)
+        self.assertEqual(self.request("POST", "/v1/accounts/bob/supervise", {}, token=RISK)[0], 200)
+        self.assertEqual(self.service.calls[-1], ("supervise_account", ("bob",), {}))
+        self.assertEqual(self.request("POST", "/v1/accounts/bob/supervise", {"quantity": "100"}, token=RISK)[0], 400)
+        before = len(self.service.calls)
+        for path in ("/v1/accounts", "/v1/accounts/bob/deposits", "/v1/accounts/bob/orders",
+                     "/v1/accounts/bob/orders/o/cancel", "/v1/accounts/bob/orders/o/fills"):
+            self.assertEqual(self.request("POST", path, {}, token=RISK)[0], 403)
+        self.assertEqual(len(self.service.calls), before)
+
+    def test_overlapping_credentials_and_atomic_rotation(self):
+        replacement = Credential("N" * 43, "trader", "alice")
+        self.server.replace_credentials((*CREDENTIALS, replacement))
+        for token in (ALICE, replacement.token):
+            self.assertEqual(self.request("GET", "/v1/accounts/alice", token=token)[0], 200)
+        previous = self.server.credentials
+        for invalid in ((), (replacement, replacement)):
+            with self.assertRaises(ValueError):
+                self.server.replace_credentials(invalid)
+            self.assertEqual(self.server.credentials, previous)
+        self.server.replace_credentials(tuple(c for c in previous if c.token != ALICE))
+        self.assertEqual(self.request("GET", "/v1/accounts/alice", token=ALICE)[0], 401)
+        self.assertEqual(self.request("GET", "/v1/accounts/alice", token=replacement.token)[0], 200)
 
     def test_admin_cash_fills_halt_and_bounded_audit_cursor(self):
         self.assertEqual(self.request("POST", "/v1/accounts", {"account_id": "alice"})[0], 201)
@@ -221,7 +298,7 @@ class GatewayTests(unittest.TestCase):
             self.assertEqual(status, 503)
             self.assertNotIn("secret", str(body))
 
-    def test_only_admin_can_publish_a_typed_market_snapshot(self):
+    def test_only_pricing_roles_can_publish_a_typed_market_snapshot(self):
         market = {"version": 7, "observed_at": "2026-11-14T14:00:00+00:00",
                   "assets": {"USD": {"price": "1", "collateral_factor": "1"}},
                   "instruments": {"BTC/USD": {"mark_price": "21000", "initial_margin_rate": "0.1",
@@ -229,6 +306,7 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(self.request("PUT", "/v1/market", market, token=ALICE)[0], 403)
         self.assertEqual(self.service.calls, [])
         self.assertEqual(self.request("PUT", "/v1/market", market)[0], 200)
+        self.assertEqual(self.request("PUT", "/v1/market", market, token=RISK)[0], 200)
         published = self.service.calls[-1][1][0]
         self.assertEqual(published.version, 7)
         self.assertEqual(published.instruments["BTC/USD"].mark_price, Decimal("21000"))
