@@ -1,0 +1,14 @@
+{
+  "description": "Hand-calculated examples of the project's fixed-rate linear model. Synthetic inputs; not official exchange data.",
+  "assets": {"USDT": ["1", "1"], "BTC": ["50000", "0.8"], "ETH": ["2000", "0.9"]},
+  "instruments": {"BTC-PERP": ["50000", "0.1", "0.05"], "ETH-PERP": ["2000", "0.2", "0.1"]},
+  "account": {
+    "balances": {"USDT": "1000", "BTC": "0.02", "ETH": "-0.1"},
+    "liabilities": {"BTC": "0.005"},
+    "positions": {"BTC-PERP": ["0.1", "48000"], "ETH-PERP": ["-1", "2200"]},
+    "reserve": "100"
+  },
+  "expected": {"equity": "1750", "initial": "900", "maintenance": "450", "available": "750"},
+  "order": {"symbol": "BTC-PERP", "quantity": "-0.15", "execution": "49900", "fee_rate": "0.001",
+            "expected_equity": "1727.515", "expected_initial": "650", "expected_available": "977.515", "accepted": true}
+}
