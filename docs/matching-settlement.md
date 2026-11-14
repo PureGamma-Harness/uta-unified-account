@@ -61,7 +61,7 @@ python -m uta.matching --database /var/lib/uta/exchange.sqlite3 --symbol BTC-PER
 | MATCH-006 | 清算只按实际确认成交减少风险，不假设流动性 | `MatchingTests.test_confirmed_partial_liquidation_survives_restart_and_reconciles_four_sides` |
 | MATCH-007 | 过期行情和暂停安全阻断执行 | `MatchingTests.test_halt_and_stale_preserve_unexecuted_orders_and_margin` |
 
-`Matcher.verify(strict=True)` 独立核对撮合回执、双方订单与成交、逐笔分录及审计事件；严格模式拒绝绕过双侧撮合的手工成交。导入的创世仓位和经典账户来源余额仍须另外核对源系统，不能由本检查替代。
+`Matcher.verify(strict=True)` 核对撮合回执、双方订单与成交、逐笔分录及审计事件；严格模式拒绝绕过双侧撮合的手工成交。完整四侧对账还必须执行 [独立仓位重放](reconciliation-spec.md) 的 `reconcile_exchange(exchange)`，以核验订单累计量、仓位数量、成本、费用及有效导入创世状态。外部源资金与写入者失效仍须额外证据。
 
 人工可复算清算例：账户以 1,000 USD 开仓买入 90 单位、成交价 100、手续费率 0.0004，现金为 996.40。标记价降到 90 时权益为 96.40、MM 为 405。真实对手方分两次各买入 45 单位，清算账户每次实现亏损 450、手续费 1.62，最终现金 93.16、仓位为零。测试中开仓和两笔减仓均有真实双侧订单、独立成交回执和资金分录；重启后剩余未成交量保持。
 

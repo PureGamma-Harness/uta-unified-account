@@ -34,10 +34,16 @@ class Matcher:
     never a caller timestamp. No cross-database or multi-shard atomicity is claimed.
     """
 
-    def __init__(self, exchange: ExchangeService):
+    def __init__(self, exchange: ExchangeService, *, initialize: bool = True):
         if not isinstance(exchange, ExchangeService):
             raise ValueError("exchange must be an ExchangeService")
+        if type(initialize) is not bool:
+            raise ValueError("initialize must be boolean")
         self.exchange = exchange
+        if not initialize:
+            # Reconciliation must never recreate missing guards before checking
+            # them, or its attempt to inspect corruption could mask the problem.
+            return
         with exchange._transaction() as connection:
             for statement in (
                 "CREATE TABLE IF NOT EXISTS uta_matching_schema (singleton INTEGER PRIMARY KEY CHECK(singleton=1),version INTEGER NOT NULL)",
@@ -192,7 +198,7 @@ class Matcher:
             return [self._receipt(row) for row in connection.execute(
                 "SELECT * FROM uta_matches WHERE sequence>? ORDER BY sequence LIMIT ?", (after, limit))]
 
-    def verify(self, *, strict: bool = False) -> dict:
+    def verify(self, *, strict: bool = False, connection: sqlite3.Connection | None = None) -> dict:
         """Reconcile receipts, both fills, orders, journals and match audit events.
 
         ``strict=True`` also rejects standalone manually authorized fills. This
@@ -201,7 +207,7 @@ class Matcher:
         """
         if type(strict) is not bool:
             raise ValueError("strict must be boolean")
-        with self.exchange._transaction() as connection:
+        with self.exchange.database._using(connection) as connection:
             ledger_events = self.exchange.ledger.verify(connection=connection)
             triggers = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger'")}
             if not {"uta_matches_no_update", "uta_matches_no_delete"} <= triggers:
