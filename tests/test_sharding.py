@@ -5,6 +5,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import sqlite3
+import shutil
 from tempfile import TemporaryDirectory
 from threading import Event
 import unittest
@@ -157,6 +158,22 @@ class ShardingTests(unittest.TestCase):
         self.assert_code("shard_unavailable", self.reopen)
         self.assertFalse(self.router._path(1).exists())
         self.assertTrue(self.router._state()["halted"])
+
+    def test_empty_or_exchanged_database_cannot_impersonate_a_persisted_shard(self):
+        self.router._path(1).write_bytes(b"")
+        self.assert_code("shard_unavailable", self.reopen)
+        self.assertEqual(self.router._path(1).stat().st_size, 0)
+        shutil.copyfile(self.router._path(0), self.router._path(1))
+        self.assert_code("shard_identity_conflict", self.reopen)
+        self.assertTrue(self.router._state()["halted"])
+
+    def test_funding_proof_claim_survives_ambiguous_local_funding_failure(self):
+        with patch("uta.sharding.CreditService.fund_pool", side_effect=OSError("injected after proof claim")):
+            with self.assertRaises(OSError):
+                self.router.fund_credit_pool(0, "fund", "USD", D(10), source_reference="proof:one")
+        restarted = self.reopen()
+        self.assert_code("funding_source_conflict", restarted.fund_credit_pool, 1, "fund", "USD", D(10), source_reference="proof:one")
+        self.assertEqual(restarted.fund_credit_pool(0, "fund", "USD", D(10), source_reference="proof:one")["amount"], "10")
 
 
 if __name__ == "__main__":

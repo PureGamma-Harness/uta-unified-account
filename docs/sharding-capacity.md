@@ -8,6 +8,8 @@
 
 私有目录保存 `router.sqlite3`、`router.lock` 和固定编号的分片数据库。不可变 layout descriptor 包括格式版本、分片数量、hash 版本、全部资产精度及风险政策 hash。政策 hash 覆盖手续费、行情最大年龄、产品目录和组合规则。重启时任何变化都被拒绝，不能把增加分片数当作在线扩容；重新分片需要独立的停机迁移与对账方案。已存在的分片缺失时停止并持久保持全局暂停，不会创建一个空库冒充恢复成功。
 
+每个分片另存不可变的 layout hash 和 shard index。截为空文件、丢失 identity 或用另一片的数据库替换，都拒绝启动并保持暂停；不会通过自动建表把损坏的恢复点当作全新账户库。此前未带 identity 的实验布局也需要明确的离线迁移，不能隐式接纳。
+
 ```python
 from decimal import Decimal
 from uta.sharding import ShardRouter

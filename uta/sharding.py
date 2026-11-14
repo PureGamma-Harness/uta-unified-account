@@ -85,20 +85,48 @@ class ShardRouter:
                     connection.execute("INSERT INTO router_state VALUES (1,?)", (_json({
                         "halted": True, "publishing": False, "epoch": 0, "market_version": None,
                         "market_digest": None, "watermarks": {}, "error": None}),))
-            if not fresh and any(not self._path(index).exists() for index in range(shard_count)):
+            if not fresh and any(not self._intact_file(index) for index in range(shard_count)):
                 state = self._state()
                 self._write_state({**state, "halted": True, "error": "missing_shard"})
                 raise ServiceError("shard_unavailable", "a persisted shard is missing; automatic recreation is forbidden", 503)
             try:
-                self._services = [ExchangeService(Database(self._path(index)), scales, fee_rate=fee_rate,
-                    max_price_age=max_price_age, clock=clock, product_catalog=product_catalog,
-                    portfolio_rules=portfolio_rules) for index in range(shard_count)]
+                for index in range(shard_count):
+                    if not fresh:
+                        self._verify_identity(index)
+                    service = ExchangeService(Database(self._path(index)), scales, fee_rate=fee_rate,
+                        max_price_age=max_price_age, clock=clock, product_catalog=product_catalog,
+                        portfolio_rules=portfolio_rules)
+                    if fresh:
+                        with service.database.transaction() as connection:
+                            connection.execute("CREATE TABLE router_shard_identity (singleton INTEGER PRIMARY KEY CHECK(singleton=1), shard INTEGER NOT NULL, layout_hash TEXT NOT NULL)")
+                            connection.execute("INSERT INTO router_shard_identity VALUES (1,?,?)", (index, sha256(self._descriptor.encode()).hexdigest()))
+                            for action in ("UPDATE", "DELETE"):
+                                connection.execute(f"CREATE TRIGGER router_shard_identity_no_{action.lower()} BEFORE {action} ON router_shard_identity BEGIN SELECT RAISE(ABORT,'shard identity is immutable'); END")
+                    self._services.append(service)
             except BaseException:
                 self._write_state({**self._state(), "halted": True, "error": "shard_initialization_failed"})
                 raise
 
     def _path(self, index):
         return self.directory / f"shard-{index:04d}.sqlite3"
+
+    def _intact_file(self, index):
+        try:
+            details = self._path(index).stat(follow_symlinks=False)
+            return stat.S_ISREG(details.st_mode) and details.st_size > 0
+        except OSError:
+            return False
+
+    def _verify_identity(self, index):
+        connection = sqlite3.connect(self._path(index).as_uri() + "?mode=ro", uri=True)
+        try:
+            row = connection.execute("SELECT shard,layout_hash FROM router_shard_identity WHERE singleton=1").fetchone()
+            if row is None or tuple(row) != (index, sha256(self._descriptor.encode()).hexdigest()):
+                raise ServiceError("shard_identity_conflict", "shard database does not belong to this layout and index", 503)
+        except sqlite3.DatabaseError as exc:
+            raise ServiceError("shard_identity_conflict", "persisted shard identity is missing or invalid", 503) from exc
+        finally:
+            connection.close()
 
     @contextmanager
     def _lock(self, *, exclusive=False):
