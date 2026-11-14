@@ -1,6 +1,7 @@
 import gzip
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 import subprocess
 import sys
@@ -124,6 +125,31 @@ class GroupBenchmarkTests(unittest.TestCase):
             self.assertEqual(summary["unique_durable_accepted_per_s"], 0)
             self.assertEqual(summary["unknown_resolution"]["unacknowledged_orders_found"], 2)
             self.assertFalse(summary["gates"]["passed"])
+
+    def test_archived_probes_preserve_every_arrival_and_failed_gate(self):
+        root = Path(__file__).resolve().parents[1] / "benchmarks/results"
+        cohorts = (("20261114-group-cross", 5, 5000), ("20261114-group-cross-final", 2, 25000))
+        for name, runs, offered in cohorts:
+            cohort = root / name
+            window = json.loads((cohort / "run-window.json").read_text())
+            self.assertEqual(len(window["runs"]), runs)
+            for entry in window["runs"]:
+                directory = cohort / entry["label"]
+                manifest = json.loads((directory / "manifest.json").read_text())
+                for filename, evidence in manifest["files"].items():
+                    raw = (directory / filename).read_bytes()
+                    self.assertEqual(hashlib.sha256(raw).hexdigest(), evidence["sha256"])
+                    self.assertEqual(len(raw), evidence["bytes"])
+                summary = json.loads((directory / "summary.json").read_text())
+                with gzip.open(directory / "arrivals.jsonl.gz", "rt") as stream:
+                    rows = [json.loads(line) for line in stream]
+                self.assertEqual(len(rows), offered)
+                self.assertEqual(len({row["sequence"] for row in rows}), offered)
+                for outcome, count in Counter(row["outcome"] for row in rows).items():
+                    self.assertEqual(summary["counts"][outcome], count)
+                self.assertFalse(summary["gates"]["passed"])
+                self.assertFalse(summary["gates"]["phase1_exchange_acceptance_passed"])
+                self.assertEqual(summary["environment"]["policy"], "configured_cross")
 
 
 if __name__ == "__main__":
