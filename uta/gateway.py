@@ -145,6 +145,11 @@ def _decimal(value: Any) -> Decimal:
 
 
 def _event_cursor(query: str) -> tuple[int, int]:
+    # CPython 3.10 strict parse_qsl rejects an empty query, while newer
+    # versions return no pairs. No query means the documented defaults; keep
+    # strict parsing for every nonempty query instead of relaxing validation.
+    if query == "":
+        return 0, 100
     try:
         pairs = parse_qsl(query, keep_blank_values=True, strict_parsing=True,
                           max_num_fields=2)
