@@ -1,0 +1,526 @@
+{
+  "safe": {
+    "result": "invariants_hold",
+    "reachable_states": 85,
+    "explored_transitions": 166,
+    "terminal_states": 10
+  },
+  "unsafe_early_success_before_commit": {
+    "result": "counterexample",
+    "reachable_states": 17,
+    "violation": "success receipt has no corresponding committed reservation",
+    "trace": [
+      {
+        "action": "begin_group(0, 1)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "stage_reservation(0)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "publish_success(0)_BEFORE_COMMIT",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 1,
+          "sent_rejection": 0,
+          "historical_success": 1
+        }
+      }
+    ]
+  },
+  "unsafe_rejection_before_failed_commit": {
+    "result": "counterexample",
+    "reachable_states": 24,
+    "violation": "queued business rejection was published for an uncommitted or failed group",
+    "trace": [
+      {
+        "action": "begin_group(0, 1)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "stage_reservation(0)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "business_reject_capacity(1)",
+        "state": {
+          "phase": "ready",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "publish_business_rejection_then_COMMIT_fails",
+        "state": {
+          "phase": "failed",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 2,
+          "historical_success": 0
+        }
+      }
+    ]
+  },
+  "unsafe_failed_group_leaks_writes": {
+    "result": "counterexample",
+    "reachable_states": 24,
+    "violation": "financial state changed without a successful atomic COMMIT",
+    "trace": [
+      {
+        "action": "begin_group(0, 1)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "stage_reservation(0)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "business_reject_capacity(1)",
+        "state": {
+          "phase": "ready",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "COMMIT_failure_but_staged_writes_survive",
+        "state": {
+          "phase": "failed",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            1,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      }
+    ]
+  },
+  "unsafe_retry_duplicate_reserve": {
+    "result": "counterexample",
+    "reachable_states": 55,
+    "violation": "staged retry duplicates a reservation or exceeds margin capacity",
+    "trace": [
+      {
+        "action": "begin_group(0, 1)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            0,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "stage_reservation(0)",
+        "state": {
+          "phase": "processing",
+          "attempt": 1,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "business_reject_capacity(1)",
+        "state": {
+          "phase": "ready",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            0,
+            0
+          ],
+          "committed": [
+            0,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "atomic_COMMIT",
+        "state": {
+          "phase": "committed",
+          "attempt": 1,
+          "order": 0,
+          "processed": 2,
+          "durable": [
+            1,
+            0
+          ],
+          "committed": [
+            1,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 2,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "process_exit_after_COMMIT_or_lost_response",
+        "state": {
+          "phase": "idle",
+          "attempt": 1,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            1,
+            0
+          ],
+          "committed": [
+            1,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "retry_same_business_IDs(0, 1)",
+        "state": {
+          "phase": "processing",
+          "attempt": 2,
+          "order": 0,
+          "processed": 0,
+          "durable": [
+            1,
+            0
+          ],
+          "committed": [
+            1,
+            0
+          ],
+          "staged": [
+            1,
+            0
+          ],
+          "accepted": 0,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      },
+      {
+        "action": "idempotent_replay(0)",
+        "state": {
+          "phase": "processing",
+          "attempt": 2,
+          "order": 0,
+          "processed": 1,
+          "durable": [
+            1,
+            0
+          ],
+          "committed": [
+            1,
+            0
+          ],
+          "staged": [
+            2,
+            0
+          ],
+          "accepted": 1,
+          "rejected": 0,
+          "sent_success": 0,
+          "sent_rejection": 0,
+          "historical_success": 0
+        }
+      }
+    ]
+  },
+  "bounds": {
+    "business_IDs": 2,
+    "reservation_per_ID": 1,
+    "margin_capacity": 1,
+    "group_size": 2,
+    "maximum_attempts": 2,
+    "atomic_writers": 1
+  },
+  "assumptions": [
+    "same business ID and immutable content on retry",
+    "one atomic database writer; successful WAL COMMIT is durable",
+    "no financial execution outside the transaction",
+    "no reservation release in this bounded model"
+  ],
+  "not_verified": [
+    "implementation/model equivalence",
+    "HA or replication",
+    "power-loss durability of actual hardware",
+    "liveness or arbitrary queue fairness",
+    "arbitrary portfolios, IDs or retry counts",
+    "market freshness and matching"
+  ]
+}

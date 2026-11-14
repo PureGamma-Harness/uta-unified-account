@@ -1,0 +1,21 @@
+2026-11-14T22:39:22.1887953Z FAIL: test_risk_can_diagnose_and_supervise_but_cannot_adjust_funds_or_manual_fills (test_gateway.GatewayTests)
+2026-11-14T22:39:22.1889127Z ----------------------------------------------------------------------
+2026-11-14T22:39:22.1889810Z Traceback (most recent call last):
+2026-11-14T22:39:22.1899191Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_gateway.py", line 246, in test_risk_can_diagnose_and_supervise_but_cannot_adjust_funds_or_manual_fills
+2026-11-14T22:39:22.1900954Z     self.assertEqual(self.request("GET", "/v1/accounts/bob" + suffix, token=RISK)[0], 200)
+2026-11-14T22:39:22.1901709Z AssertionError: 400 != 200
+2026-11-14T22:39:22.1901999Z
+2026-11-14T22:39:22.1902437Z ======================================================================
+2026-11-14T22:39:22.1903555Z FAIL: test_missing_components_fail_explicitly_after_authorization_without_mutation (test_gateway_products.ProductGatewayTests)
+2026-11-14T22:39:22.1904812Z ----------------------------------------------------------------------
+2026-11-14T22:39:22.1905517Z Traceback (most recent call last):
+2026-11-14T22:39:22.1906981Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_gateway_products.py", line 142, in test_missing_components_fail_explicitly_after_authorization_without_mutation
+2026-11-14T22:39:22.1908126Z     self.assertEqual(self.expect(501, method, path, payload, token=token)["error"]["code"], "feature_unavailable")
+2026-11-14T22:39:22.1909000Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_gateway_products.py", line 77, in expect
+2026-11-14T22:39:22.1909560Z     self.assertEqual(status, expected, result)
+2026-11-14T22:39:22.1910105Z AssertionError: 400 != 501 : {'error': {'code': 'invalid_query', 'message': 'invalid event cursor or limit'}}
+2026-11-14T22:39:22.1910469Z
+2026-11-14T22:39:22.1910621Z ----------------------------------------------------------------------
+2026-11-14T22:39:22.1910972Z Ran 503 tests in 40.160s
+2026-11-14T22:39:22.1911199Z
+2026-11-14T22:39:22.1911300Z FAILED (failures=2)

@@ -1,6 +1,7 @@
 """Reference calculations and the authenticated durable exchange foundation."""
 import argparse
 import json
+import math
 import re
 import signal
 import sqlite3
@@ -83,6 +84,12 @@ def main():
     parser.add_argument('--catalog', help='versioned product catalog JSON file')
     parser.add_argument('--risk-rules', help='matching versioned Cross risk rules JSON file')
     parser.add_argument('--automate', action='store_true', help='run local risk supervision and real paired matching')
+    parser.add_argument('--batch-admission', action='store_true', help='opt in to bounded grouped order/cancel commits')
+    parser.add_argument('--admission-batch-size', type=int, default=32, help='grouped commands per commit (1..256)')
+    parser.add_argument('--admission-delay-ms', type=float, default=2, help='maximum batch collection delay (0..1000ms)')
+    parser.add_argument('--admission-queue-capacity', type=int, default=1024, help='pending grouped command limit (1..65536)')
+    parser.add_argument('--admission-cancel-reserve', type=int, default=16, help='extra bounded FIFO cancellation slots (0..4096)')
+    parser.add_argument('--admission-timeout', type=float, default=2, help='HTTP grouped-result wait deadline (.001..60s)')
     parser.add_argument('--asset-scale', action='append', metavar='ASSET=DIGITS',
                         help='asset minor-unit scale; repeat for all assets (default: USD=8)')
     args = parser.parse_args()
@@ -90,6 +97,14 @@ def main():
         parser.error('port must be between 0 and 65535')
     if not 1 <= args.shards <= 64:
         parser.error('shards must be between 1 and 64')
+    if (not 1 <= args.admission_batch_size <= 256
+            or not math.isfinite(args.admission_delay_ms) or not 0 <= args.admission_delay_ms <= 1000
+            or not 1 <= args.admission_queue_capacity <= 65536
+            or not 0 <= args.admission_cancel_reserve <= 4096
+            or not math.isfinite(args.admission_timeout) or not .001 <= args.admission_timeout <= 60):
+        parser.error('invalid grouped admission bounds: batch 1..256, delay 0..1000ms, queue 1..65536, cancel reserve 0..4096, timeout .001..60s')
+    if args.batch_admission and args.command != 'exchange':
+        parser.error('--batch-admission is supported only for exchange')
     if args.command == 'exchange':
         if not args.database or not args.credentials:
             parser.error('exchange requires --database and --credentials')
@@ -112,14 +127,22 @@ def main():
                 from .spot import SpotExchange
                 service.spot = SpotExchange(service, service.product_catalog)
             service.ledger.verify()
-            server = make_server(service, args.host, 8080 if args.port is None else args.port, credentials=credentials)
+            server = make_server(service, args.host, 8080 if args.port is None else args.port,
+                                 credentials=credentials, admission_timeout=args.admission_timeout)
         except (ValueError, OSError, StorageError, sqlite3.Error) as exc:
             parser.error(str(exc))
         def stop(signum, frame):
             raise KeyboardInterrupt
         previous = signal.signal(signal.SIGTERM, stop)
         worker = None
+        admission = None
         try:
+            if args.batch_admission:
+                from .admission import AdmissionBatcher
+                admission = AdmissionBatcher(service, max_batch_size=args.admission_batch_size,
+                    max_delay_ms=args.admission_delay_ms, queue_capacity=args.admission_queue_capacity,
+                    cancel_reserve=args.admission_cancel_reserve)
+                service.admission = admission
             if args.automate:
                 from .supervisor import ExchangeWorker
                 worker = ExchangeWorker(service)
@@ -128,15 +151,14 @@ def main():
             print(json.dumps({'service': 'uta-exchange', 'host': args.host,
                               'port': server.server_address[1],
                               'automated': args.automate,
+                              'batch_admission': args.batch_admission,
                               'mode': 'local-order-book; no external order routing'}), flush=True)
             server.serve_forever()
         except KeyboardInterrupt:
             pass
         finally:
             try:
-                if worker is not None:
-                    worker.stop()
-                server.server_close()
+                _drain_exchange(server, worker, admission)
             finally:
                 signal.signal(signal.SIGTERM, previous)
     elif args.command in ('lab', 'scenario', 'replay'):
@@ -165,6 +187,21 @@ def main():
         serve(8080 if args.port is None else args.port)
     else:
         demo()
+
+
+def _drain_exchange(server, worker=None, admission=None):
+    """Release every owned component even if another component fails to stop."""
+    try:
+        if worker is not None:
+            worker.stop()
+    finally:
+        try:
+            # Admitted handlers can still enqueue. Keep the batcher accepting
+            # until HTTP has drained, then flush its remaining commands.
+            server.server_close()
+        finally:
+            if admission is not None:
+                admission.close(wait=True)
 
 
 def _scales(entries):

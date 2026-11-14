@@ -1,0 +1,47 @@
+usage: uta [-h] [--port PORT] [--db DB] [--shards SHARDS] [--account ACCOUNT]
+           [--host HOST] [--database DATABASE] [--credentials CREDENTIALS]
+           [--catalog CATALOG] [--risk-rules RISK_RULES] [--automate]
+           [--batch-admission] [--admission-batch-size ADMISSION_BATCH_SIZE]
+           [--admission-delay-ms ADMISSION_DELAY_MS]
+           [--admission-queue-capacity ADMISSION_QUEUE_CAPACITY]
+           [--admission-cancel-reserve ADMISSION_CANCEL_RESERVE]
+           [--admission-timeout ADMISSION_TIMEOUT]
+           [--asset-scale ASSET=DIGITS]
+           [{demo,serve,exchange,acceptance,lab,scenario,replay}]
+
+UTA research and durable exchange foundation
+
+positional arguments:
+  {demo,serve,exchange,acceptance,lab,scenario,replay}
+
+options:
+  -h, --help            show this help message and exit
+  --port PORT           loopback port (exchange/serve: 8080, research lab:
+                        8765)
+  --db DB               research simulator database; distinct from --database
+                        exchange authority
+  --shards SHARDS       research simulator shard count (1..64)
+  --account ACCOUNT     research scenario/replay account
+  --host HOST           exchange bind address; use a TLS reverse proxy
+  --database DATABASE   persistent SQLite database on local storage
+  --credentials CREDENTIALS
+                        private credential JSON file, owned by the service
+                        user
+  --catalog CATALOG     versioned product catalog JSON file
+  --risk-rules RISK_RULES
+                        matching versioned Cross risk rules JSON file
+  --automate            run local risk supervision and real paired matching
+  --batch-admission     opt in to bounded grouped order/cancel commits
+  --admission-batch-size ADMISSION_BATCH_SIZE
+                        grouped commands per commit (1..256)
+  --admission-delay-ms ADMISSION_DELAY_MS
+                        maximum batch collection delay (0..1000ms)
+  --admission-queue-capacity ADMISSION_QUEUE_CAPACITY
+                        pending grouped command limit (1..65536)
+  --admission-cancel-reserve ADMISSION_CANCEL_RESERVE
+                        extra bounded FIFO cancellation slots (0..4096)
+  --admission-timeout ADMISSION_TIMEOUT
+                        HTTP grouped-result wait deadline (.001..60s)
+  --asset-scale ASSET=DIGITS
+                        asset minor-unit scale; repeat for all assets
+                        (default: USD=8)

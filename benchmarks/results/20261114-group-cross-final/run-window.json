@@ -1,0 +1,150 @@
+{
+  "source_commit": "c527face784c420202d64b63dd2f8c6f46ab33c9",
+  "started_at": "2026-11-14T22:14:27.602410+00:00",
+  "workload": "final fixed candidate; admission-only configured Cross; orders stay OPEN and reserved",
+  "runs": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "benchmarks/run_group_benchmark.py",
+        "--mode",
+        "sync",
+        "--batch-size",
+        "1",
+        "--duration",
+        "5",
+        "--rate",
+        "5000",
+        "--accounts",
+        "100",
+        "--workers",
+        "4",
+        "--queue-capacity",
+        "1024",
+        "--batch-delay-ms",
+        "2",
+        "--drain-seconds",
+        "10",
+        "--timeout-ms",
+        "1000",
+        "--output",
+        "benchmarks/results/20261114-group-cross-final/sync",
+        "--smoke"
+      ],
+      "started_at": "2026-11-14T22:14:27.602444+00:00",
+      "finished_at": "2026-11-14T22:14:36.174596+00:00",
+      "returncode": 0,
+      "label": "sync",
+      "rate": 463.75625216886885,
+      "on_time_rate": 86.3171785367121,
+      "p99_ms": 2327.865726,
+      "p99_9_ms": 2377.242868,
+      "counts": {
+        "durable_accepted": 3503,
+        "overload": 21496,
+        "accepted_late": 2851,
+        "unknown": 1,
+        "drain_budget_exceeded": 0
+      },
+      "unknown_resolution": {
+        "unacknowledged_orders_found": 0,
+        "unknown_ids_without_order_on_reopen": 1
+      },
+      "batch_stats": [],
+      "gates": {
+        "passed": false,
+        "requirements": {
+          "min_duration_seconds": 1800,
+          "min_unique_durable_admissions_per_s": 10000,
+          "temporary_p99_target_ms": 100
+        },
+        "phase1_exchange_acceptance_passed": false,
+        "production_approved": false,
+        "scope": "funded admission-only component; excludes matching, liquidation and market-feed capacity"
+      },
+      "measured_seconds": 7.553536979,
+      "setup_seconds": 0.450567758
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "benchmarks/run_group_benchmark.py",
+        "--mode",
+        "batch",
+        "--batch-size",
+        "64",
+        "--duration",
+        "5",
+        "--rate",
+        "5000",
+        "--accounts",
+        "100",
+        "--workers",
+        "4",
+        "--queue-capacity",
+        "1024",
+        "--batch-delay-ms",
+        "2",
+        "--drain-seconds",
+        "10",
+        "--timeout-ms",
+        "1000",
+        "--output",
+        "benchmarks/results/20261114-group-cross-final/batch-64",
+        "--smoke"
+      ],
+      "started_at": "2026-11-14T22:14:36.175563+00:00",
+      "finished_at": "2026-11-14T22:14:43.852559+00:00",
+      "returncode": 0,
+      "label": "batch-64",
+      "rate": 744.1129142940176,
+      "on_time_rate": 220.86850219781937,
+      "p99_ms": 1807.741482,
+      "p99_9_ms": 1836.88329,
+      "counts": {
+        "durable_accepted": 4939,
+        "overload": 20061,
+        "accepted_late": 3473,
+        "drain_budget_exceeded": 0
+      },
+      "unknown_resolution": {
+        "unacknowledged_orders_found": 0,
+        "unknown_ids_without_order_on_reopen": 0
+      },
+      "batch_stats": [
+        {
+          "committed_batches": 78,
+          "committed_commands": 4939,
+          "business_rejected": 0,
+          "market_rejected": 0,
+          "cancelled_pending": 0,
+          "technical_failed": 0,
+          "overloaded": 0,
+          "callback_failures": 0,
+          "queued": 0,
+          "running": 0,
+          "accepting": false,
+          "worker_alive": false,
+          "queue_capacity": 1024,
+          "cancel_reserve": 16,
+          "total_queue_capacity": 1040
+        }
+      ],
+      "gates": {
+        "passed": false,
+        "requirements": {
+          "min_duration_seconds": 1800,
+          "min_unique_durable_admissions_per_s": 10000,
+          "temporary_p99_target_ms": 100
+        },
+        "phase1_exchange_acceptance_passed": false,
+        "production_approved": false,
+        "scope": "funded admission-only component; excludes matching, liquidation and market-feed capacity"
+      },
+      "measured_seconds": 6.63743352,
+      "setup_seconds": 0.435924595
+    }
+  ],
+  "production_approved": false,
+  "finished_at": "2026-11-14T22:14:43.853529+00:00"
+}

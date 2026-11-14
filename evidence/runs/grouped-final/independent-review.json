@@ -1,0 +1,29 @@
+{
+  "reviewed_code_commit": "47941422647b0113296776dd5cf1eae384c686ec",
+  "recorded_at": "2026-11-14T22:32:50.595876+00:00",
+  "reviewer": "independent group_validation Agent; not a human signatory",
+  "scope": [
+    "grouped-admission.md",
+    "grouped-performance.md",
+    "grouped-validation.md",
+    "grouped-faults.md",
+    "grouped-final/summary.json and unittest log/source hash",
+    "final configured Cross sync/batch counts and throughput",
+    "operations backup/rollback and API unknown-result protocol",
+    "matched full/none summary consistency"
+  ],
+  "engineering_delivery_blockers": [],
+  "observations": [
+    "503 tests and all recorded runtime source hashes match",
+    "both final admission runs account for exactly 25000 planned arrivals",
+    "full-response latency includes fast overload rejects; integrated documentation now explicitly labels all and adds accepted P99/P99.9",
+    "matched full records40 unique liquidation trades/80 settlement legs; no-liquidity retains4 accounts/360 units"
+  ],
+  "production_approved": false,
+  "blocked": [
+    "sustained10000/s and1800s",
+    "replication and cross-AZ failure",
+    "formal RPO/RTO",
+    "financial signoff and real-funds enablement"
+  ]
+}

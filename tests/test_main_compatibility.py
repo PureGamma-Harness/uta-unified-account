@@ -1,4 +1,5 @@
 """Compatibility contracts between the research lab and durable exchange core."""
+from contextlib import closing
 from decimal import Decimal as D, Inexact, localcontext
 import json
 import os
@@ -67,7 +68,7 @@ class MainCompatibilityTests(unittest.TestCase):
 
     @staticmethod
     def logical_dump(path):
-        with sqlite3.connect(path) as connection:
+        with closing(sqlite3.connect(path)) as connection, connection:
             return tuple(connection.iterdump())
 
     def test_research_database_cannot_be_opened_as_exchange_and_remains_unchanged(self):
@@ -112,7 +113,7 @@ class MainCompatibilityTests(unittest.TestCase):
             original = Store(path)
             original.create("alice", {"units": 17})
             events = original.events("alice")
-            with sqlite3.connect(path) as connection:
+            with closing(sqlite3.connect(path)) as connection, connection:
                 connection.execute("DROP TABLE uta_authority")
             reopened = Store(path)
             self.assertEqual(reopened.read("alice"), {"units": 17, "version": 0})
@@ -126,7 +127,7 @@ class MainCompatibilityTests(unittest.TestCase):
             original.create_account("alice")
             original.deposit("alice", "deposit", "USD", D("17"))
             account, events = original.account("alice"), original.events()
-            with sqlite3.connect(path) as connection:
+            with closing(sqlite3.connect(path)) as connection, connection:
                 connection.execute("DROP TABLE uta_authority")
             reopened = ExchangeService(Database(path), {"USD": 8})
             self.assertEqual(reopened.account("alice"), account)

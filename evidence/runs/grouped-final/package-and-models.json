@@ -1,0 +1,147 @@
+{
+  "code_commit": "47941422647b0113296776dd5cf1eae384c686ec",
+  "started_at": "2026-11-14T22:29:42.459298+00:00",
+  "finished_at": "2026-11-14T22:29:45.768468+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_group_commit.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "output": "group-model.json",
+      "exit_code": 0,
+      "duration_seconds": 0.03068855399988024
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_reservation.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "output": "reservation-model.json",
+      "exit_code": 0,
+      "duration_seconds": 0.05397911199997907
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_settlement.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "output": "settlement-model.json",
+      "exit_code": 0,
+      "duration_seconds": 0.03063436399997954
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "uta",
+        "acceptance"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "output": "source-acceptance.json",
+      "exit_code": 0,
+      "duration_seconds": 0.33175759100004143
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "uta",
+        "formal",
+        "tests"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "output": "compileall.txt",
+      "exit_code": 0,
+      "duration_seconds": 0.03511452900011136
+    },
+    {
+      "argv": [
+        "/tmp/uta-group-installed-606cpqy0/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "/tmp/uta-group-wheel/uta_reference_exchange-0.2.0-py3-none-any.whl"
+      ],
+      "cwd": "/tmp",
+      "output": "wheel-install.txt",
+      "exit_code": 0,
+      "duration_seconds": 0.3364210599997932
+    },
+    {
+      "argv": [
+        "/tmp/uta-group-installed-606cpqy0/bin/python",
+        "-m",
+        "uta",
+        "acceptance"
+      ],
+      "cwd": "/tmp",
+      "output": "installed-acceptance.json",
+      "exit_code": 0,
+      "duration_seconds": 0.310244860000239
+    },
+    {
+      "argv": [
+        "/tmp/uta-group-installed-606cpqy0/bin/python",
+        "-m",
+        "uta",
+        "scenario",
+        "--shards",
+        "4"
+      ],
+      "cwd": "/tmp",
+      "output": "installed-research.txt",
+      "exit_code": 0,
+      "duration_seconds": 0.12200297900017176
+    },
+    {
+      "argv": [
+        "/tmp/uta-group-installed-606cpqy0/bin/uta",
+        "exchange",
+        "--help"
+      ],
+      "cwd": "/tmp",
+      "output": "installed-cli.txt",
+      "exit_code": 0,
+      "duration_seconds": 0.06933173500010525
+    },
+    {
+      "argv": [
+        "/tmp/uta-group-installed-606cpqy0/bin/python",
+        "-c",
+        "import hashlib,json,pathlib,uta,uta.admission,uta.gateway; p=pathlib.Path(uta.__file__).parent; print(json.dumps({\"installed_at\":str(p),\"files\":{str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in p.rglob(\"*\") if f.is_file() and (f.suffix==\".py\" or f.name==\"dashboard.html\")}},sort_keys=True,indent=2))"
+      ],
+      "cwd": "/tmp",
+      "output": "installed-files.json",
+      "exit_code": 0,
+      "duration_seconds": 0.0828513239998756
+    }
+  ],
+  "build_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "pip",
+    "wheel",
+    ".",
+    "--no-deps",
+    "--no-build-isolation",
+    "--wheel-dir",
+    "/tmp/uta-group-wheel"
+  ],
+  "wheel": {
+    "filename": "uta_reference_exchange-0.2.0-py3-none-any.whl",
+    "sha256": "507af5b766a882d1d8660df68a76319f0b4a512298af832ff15ea33f4c343592",
+    "size": 167632
+  },
+  "installed_file_count": 37,
+  "source_matches_installed": true,
+  "passed": true,
+  "production_approved": false
+}

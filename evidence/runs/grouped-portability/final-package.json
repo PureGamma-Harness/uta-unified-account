@@ -1,0 +1,96 @@
+{
+  "code_commit": "d0bb68261f1e165307ee1d223f60cf14e98e57ea",
+  "started_at": "2026-11-14T22:43:47.734243+00:00",
+  "finished_at": "2026-11-14T22:43:51.771287+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "pip",
+        "wheel",
+        ".",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "/tmp/uta-final-wheel-q1e17mr7"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.9050255669999387,
+      "output": "final-wheel-build.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-final-installed-54hln3z8/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "/tmp/uta-final-wheel-q1e17mr7/uta_reference_exchange-0.2.0-py3-none-any.whl"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.43649510200020813,
+      "output": "final-wheel-install.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-final-installed-54hln3z8/bin/python",
+        "-c",
+        "import pathlib,hashlib,json,uta,uta.gateway,uta.admission; p=pathlib.Path(uta.__file__).parent; assert uta.gateway._event_cursor(\"\")==(0,100); print(json.dumps({\"installed_at\":str(p),\"files\":{str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in p.rglob(\"*\") if f.is_file() and (f.suffix==\".py\" or f.name==\"dashboard.html\")}},sort_keys=True,indent=2))"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.10294646100010141,
+      "output": "final-installed-files.json"
+    },
+    {
+      "argv": [
+        "/tmp/uta-final-installed-54hln3z8/bin/python",
+        "-m",
+        "uta",
+        "acceptance"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.37850557899992054,
+      "output": "final-installed-acceptance.json"
+    },
+    {
+      "argv": [
+        "/tmp/uta-final-installed-54hln3z8/bin/python",
+        "-m",
+        "uta",
+        "scenario",
+        "--shards",
+        "4"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.1997817550000036,
+      "output": "final-installed-research.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-final-installed-54hln3z8/bin/uta",
+        "exchange",
+        "--help"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.0897100090001004,
+      "output": "final-installed-cli.txt"
+    }
+  ],
+  "wheel": {
+    "filename": "uta_reference_exchange-0.2.0-py3-none-any.whl",
+    "sha256": "bc39659e83723a762991a54c0838faf838026c644a3f1dbbcae1806269b721d3",
+    "size": 167959
+  },
+  "installed_file_count": 37,
+  "source_matches_installed": true,
+  "passed": true,
+  "production_approved": false
+}

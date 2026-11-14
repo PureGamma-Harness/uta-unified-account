@@ -1,0 +1,114 @@
+{
+  "scope": "synthetic single-host real paired liquidation; short diagnostic, no external venue or HA",
+  "configuration": {
+    "cases": 4,
+    "duration": 1.0,
+    "workers": 2,
+    "shards": 1,
+    "queue_capacity": 64,
+    "drain_seconds": 20.0,
+    "timeout_ms": 1000,
+    "liquidity": "none"
+  },
+  "offered_cases": 4,
+  "counts": {
+    "processed": 4,
+    "deadline_exceeded": 0,
+    "execution_blocked": 0,
+    "unknown_committed_trades": 0,
+    "unknown": 0
+  },
+  "worker_errors": [],
+  "unique_committed_liquidation_trades": 0,
+  "observed_acknowledged_trades": 0,
+  "two_sided_settlement_legs": 0,
+  "unique_committed_liquidation_fills_per_s": 0.0,
+  "triggered_accounts": 4,
+  "processed_cases": 4,
+  "fully_closed_accounts": 0,
+  "unresolved_accounts": 4,
+  "remaining_position_quantity": "360",
+  "final_victim_accounts": {
+    "0": {
+      "quantity": "90",
+      "balance_usd": "996.4"
+    },
+    "1": {
+      "quantity": "90",
+      "balance_usd": "996.4"
+    },
+    "2": {
+      "quantity": "90",
+      "balance_usd": "996.4"
+    },
+    "3": {
+      "quantity": "90",
+      "balance_usd": "996.4"
+    }
+  },
+  "preparation_seconds": 0.095033396,
+  "worker_startup_after_shock_seconds": 0.006894916,
+  "arrival_window_seconds": 1.0,
+  "arrival_rate_per_s": 4.0,
+  "execution_and_drain_seconds": 0.806136912,
+  "throughput_denominator_seconds": 1.0,
+  "verification_seconds": 0.011172428,
+  "latency_ms": {
+    "scheduled_case_to_complete": {
+      "p50": 5.237005,
+      "p95": 5.989076,
+      "p99": 5.989076,
+      "p99_9": 5.989076
+    },
+    "shock_to_first_confirmed_trade": {
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "p99_9": null
+    },
+    "shock_to_each_confirmed_trade": {
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "p99_9": null
+    },
+    "shock_to_recovered": {
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "p99_9": null
+    }
+  },
+  "reconciliation": [
+    {
+      "shard": 0,
+      "status": "passed",
+      "matching_only": true,
+      "accounts": 8,
+      "orders": 12,
+      "fills": 8,
+      "positions": 8,
+      "active_imports": 0,
+      "ledger_events": 16,
+      "matches": 4,
+      "paired_fills": 8,
+      "unpaired_fills": 0,
+      "nonzero_liabilities": 0
+    }
+  ],
+  "gates": {
+    "checks": {
+      "duration_at_least_1800s": false,
+      "unique_committed_liquidation_fills_at_least_10000_per_s": false,
+      "full_counterparty_liquidity": false,
+      "no_unresolved_accounts": false,
+      "no_technical_unknown_overload_or_deadline_failures": true
+    },
+    "passed": false,
+    "production_approved": false,
+    "phase1_exchange_acceptance_passed": false
+  },
+  "production_approved": false,
+  "liquidity_model": "one common instrument per shard, real FIFO counterparties; each order quantity45",
+  "trigger_timing": "all cases share a real pre-load shock; arrival pump delays are included in shock latencies"
+}

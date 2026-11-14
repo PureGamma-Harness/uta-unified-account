@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "benchmarks/run_group_benchmark.py",
+    "--mode",
+    "batch",
+    "--batch-size",
+    "64",
+    "--duration",
+    "5",
+    "--rate",
+    "1000",
+    "--accounts",
+    "100",
+    "--workers",
+    "4",
+    "--queue-capacity",
+    "1024",
+    "--batch-delay-ms",
+    "2",
+    "--drain-seconds",
+    "10",
+    "--timeout-ms",
+    "1000",
+    "--output",
+    "benchmarks/results/20261114-group-cross/batch-64",
+    "--smoke"
+  ],
+  "started_at": "2026-11-14T22:10:49.772019+00:00",
+  "finished_at": "2026-11-14T22:10:57.382401+00:00",
+  "returncode": 0
+}

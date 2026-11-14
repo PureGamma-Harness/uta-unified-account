@@ -6,6 +6,7 @@ prices always come from the service, never from a trader's risk calculation.
 """
 from __future__ import annotations
 
+from concurrent.futures import CancelledError, wait
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 from hmac import compare_digest
@@ -174,11 +175,13 @@ class _GatewayServer(ThreadingMixIn, HTTPServer):
     request_queue_size = 64
     allow_reuse_address = True
 
-    def __init__(self, address, service, credentials, *, max_workers, request_timeout):
+    def __init__(self, address, service, credentials, *, max_workers, request_timeout,
+                 admission_timeout):
         self.service = service
         self._credential_lock = Lock()
         self._credentials = credentials
         self.request_timeout = request_timeout
+        self.admission_timeout = admission_timeout
         self._slots = BoundedSemaphore(max_workers)
         self._counter_lock = Lock()
         self._counts: dict[str, int] = {"requests": 0, "rejected_connections": 0,
@@ -354,6 +357,30 @@ class _Handler(BaseHTTPRequestHandler):
             raise _RequestError(501, "feature_unavailable", "requested service component is not configured")
         return component
 
+    def _order_command(self, operation: str, *arguments, **keywords):
+        """Keep each HTTP command's result behind the grouped COMMIT boundary.
+
+        Cancelling a waiting Future only removes a command which has not begun.
+        Once running, a timeout cannot undo or reject the financial operation.
+        The original command ID remains the recovery key in that case.
+        """
+        admission = getattr(self.server.service, "admission", None)
+        if admission is None:
+            return getattr(self.server.service, operation)(*arguments, **keywords)
+        future = getattr(admission, operation)(*arguments, **keywords)
+        completed, _ = wait((future,), timeout=self.server.admission_timeout)
+        if future in completed:
+            try:
+                return future.result()
+            except CancelledError:
+                raise _RequestError(503, "admission_queue_timeout",
+                                    "command was cancelled before execution; retry with its original ID") from None
+        if future.cancel():
+            raise _RequestError(503, "admission_queue_timeout",
+                                "command did not begin before the deadline; retry with its original ID")
+        raise _RequestError(503, "command_result_unknown",
+                            "command may commit; query or retry its original ID and content")
+
     def _route(self, principal: Credential, path: str, query: str, payload: Any, body: bytes):
         service = self.server.service
         method = self.command
@@ -381,6 +408,17 @@ class _Handler(BaseHTTPRequestHandler):
                     state = {**state, "ready": False, "worker_reason": reason}
                     if state.get("reason") in (None, "ready", "ok"):
                         state["reason"] = reason
+            admission = getattr(service, "admission", None)
+            if admission is not None:
+                try:
+                    health = admission.stats()
+                    healthy = health.get("worker_alive") is True and health.get("accepting") is True
+                except Exception:
+                    healthy = False
+                if not healthy:
+                    state = {**state, "ready": False, "admission_reason": "admission_unavailable"}
+                    if state.get("reason") in (None, "ready", "ok"):
+                        state["reason"] = "admission_unavailable"
             return (200 if state["ready"] else 503), state
         if method == "GET" and path == "/metrics":
             self._permit(principal, "risk")
@@ -389,6 +427,9 @@ class _Handler(BaseHTTPRequestHandler):
             if worker is not None:
                 report = getattr(worker, "last_report", None)
                 result["worker"] = dict(report) if isinstance(report, dict) else {"state": "blocked", "reason": "worker_failure"}
+            admission = getattr(service, "admission", None)
+            if admission is not None:
+                result["admission"] = admission.stats()
             return 200, result
         if method == "GET" and path == "/v1/events":
             self._permit(principal, "reader", "trader", "risk")
@@ -499,7 +540,7 @@ class _Handler(BaseHTTPRequestHandler):
                     reduce_only = data.get("reduce_only", False)
                     if type(reduce_only) is not bool:
                         raise _RequestError(400, "invalid_fields", "reduce_only must be a boolean")
-                    return 201, service.submit_order(
+                    return 201, self._order_command("submit_order",
                         account_id, _identifier(data["order_id"]), _identifier(data["symbol"], market=True),
                         _decimal(data["quantity"]), _decimal(data["limit_price"]),
                         reduce_only=reduce_only)
@@ -508,7 +549,7 @@ class _Handler(BaseHTTPRequestHandler):
                     if parts[6] == "cancel":
                         self._permit(principal, "trader")
                         _fields(payload, set())
-                        return 200, service.cancel_order(account_id, order_id)
+                        return 200, self._order_command("cancel_order", account_id, order_id)
                     if parts[6] == "fills":
                         self._permit(principal)
                         if getattr(service, "product_catalog", None) is not None:
@@ -537,7 +578,7 @@ class _Handler(BaseHTTPRequestHandler):
                 status, result = self._route(principal, parsed.path, parsed.query, payload, body)
             self._reply(status, result)
         except _RequestError as exc:
-            self.server._count("client_errors")
+            self.server._count("server_errors" if exc.status >= 500 else "client_errors")
             self._reply(exc.status, {"error": {"code": exc.code, "message": exc.message}})
         except (TimeoutError, socket.timeout):
             self.server._count("client_errors")
@@ -571,7 +612,7 @@ class _Handler(BaseHTTPRequestHandler):
 
 def make_server(service, host: str = "127.0.0.1", port: int = 8080, *,
                 credentials: Iterable[Credential], max_workers: int = 16,
-                request_timeout: float = 5.0) -> HTTPServer:
+                request_timeout: float = 5.0, admission_timeout: float = 2.0) -> HTTPServer:
     """Construct a bounded internal server; the caller owns its lifecycle.
 
     Bind only to an IPv4 loopback address. Remote access requires a separate
@@ -589,5 +630,8 @@ def make_server(service, host: str = "127.0.0.1", port: int = 8080, *,
         raise ValueError("max_workers must be an integer in 1..256")
     if (type(request_timeout) not in (int, float) or not 0.1 <= request_timeout <= 60):
         raise ValueError("request_timeout must be in 0.1..60 seconds")
+    if (type(admission_timeout) not in (int, float) or not .001 <= admission_timeout <= 60):
+        raise ValueError("admission_timeout must be finite and in .001..60 seconds")
     return _GatewayServer((str(address), port), service, _credentials(credentials),
-                          max_workers=max_workers, request_timeout=request_timeout)
+                          max_workers=max_workers, request_timeout=request_timeout,
+                          admission_timeout=admission_timeout)

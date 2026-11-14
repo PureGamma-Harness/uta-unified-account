@@ -1,0 +1,178 @@
+{
+  "scope": "synthetic single-host real paired liquidation; short diagnostic, no external venue or HA",
+  "configuration": {
+    "cases": 20,
+    "duration": 1.0,
+    "workers": 2,
+    "shards": 1,
+    "queue_capacity": 64,
+    "drain_seconds": 20.0,
+    "timeout_ms": 1000,
+    "liquidity": "full"
+  },
+  "offered_cases": 20,
+  "counts": {
+    "processed": 20,
+    "deadline_exceeded": 0,
+    "execution_blocked": 0,
+    "unknown_committed_trades": 0,
+    "unknown": 0
+  },
+  "worker_errors": [],
+  "unique_committed_liquidation_trades": 40,
+  "observed_acknowledged_trades": 40,
+  "two_sided_settlement_legs": 80,
+  "unique_committed_liquidation_fills_per_s": 38.918884262178416,
+  "triggered_accounts": 20,
+  "processed_cases": 20,
+  "fully_closed_accounts": 20,
+  "unresolved_accounts": 0,
+  "remaining_position_quantity": "0",
+  "final_victim_accounts": {
+    "0": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "1": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "2": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "3": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "4": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "5": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "6": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "7": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "8": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "9": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "10": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "11": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "12": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "13": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "14": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "15": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "16": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "17": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "18": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    },
+    "19": {
+      "quantity": "0",
+      "balance_usd": "93.16"
+    }
+  },
+  "preparation_seconds": 0.4085974,
+  "worker_startup_after_shock_seconds": 0.010663548,
+  "arrival_window_seconds": 1.0,
+  "arrival_rate_per_s": 20.0,
+  "execution_and_drain_seconds": 1.027778693,
+  "throughput_denominator_seconds": 1.027778693,
+  "verification_seconds": 0.055476478,
+  "latency_ms": {
+    "scheduled_case_to_complete": {
+      "p50": 28.112782,
+      "p95": 32.871745,
+      "p99": 36.027869,
+      "p99_9": 36.027869
+    },
+    "shock_to_first_confirmed_trade": {
+      "p50": 478.032495,
+      "p95": 925.08862,
+      "p99": 976.399712,
+      "p99_9": 976.399712
+    },
+    "shock_to_each_confirmed_trade": {
+      "p50": 489.566966,
+      "p95": 936.519477,
+      "p99": 988.064234,
+      "p99_9": 988.064234
+    },
+    "shock_to_recovered": {
+      "p50": 491.729601,
+      "p95": 938.992881,
+      "p99": 990.412333,
+      "p99_9": 990.412333
+    }
+  },
+  "reconciliation": [
+    {
+      "shard": 0,
+      "status": "passed",
+      "matching_only": true,
+      "accounts": 40,
+      "orders": 120,
+      "fills": 120,
+      "positions": 0,
+      "active_imports": 0,
+      "ledger_events": 160,
+      "matches": 60,
+      "paired_fills": 120,
+      "unpaired_fills": 0,
+      "nonzero_liabilities": 0
+    }
+  ],
+  "gates": {
+    "checks": {
+      "duration_at_least_1800s": false,
+      "unique_committed_liquidation_fills_at_least_10000_per_s": false,
+      "full_counterparty_liquidity": true,
+      "no_unresolved_accounts": true,
+      "no_technical_unknown_overload_or_deadline_failures": true
+    },
+    "passed": false,
+    "production_approved": false,
+    "phase1_exchange_acceptance_passed": false
+  },
+  "production_approved": false,
+  "liquidity_model": "one common instrument per shard, real FIFO counterparties; each order quantity45",
+  "trigger_timing": "all cases share a real pre-load shock; arrival pump delays are included in shock latencies"
+}
