@@ -85,6 +85,17 @@ def _percentiles(values):
             for name, q in (("p50", .5), ("p95", .95), ("p99", .99), ("p99_9", .999))}
 
 
+def _first_recoveries(records):
+    # Parallel post-fill health checks may both observe NORMAL. The first
+    # confirmed observation defines recovery, not the last callback delivered.
+    recovered = {}
+    for row in records:
+        if row["kind"] == "recovered":
+            case, at = row["case"], row["at_ns"]
+            recovered[case] = min(at, recovered.get(case, at))
+    return recovered
+
+
 def _environment(configuration):
     root = Path(__file__).resolve().parents[1]
     def git(*args):
@@ -311,7 +322,7 @@ def run(configuration, directory):
     first = defaultdict(list)
     for row in trades:
         first[row["case"]].append(row["committed_observed_ns"] - row["trigger_ns"])
-    recovered = {row["case"]: row["at_ns"] for row in records if row["kind"] == "recovered"}
+    recovered = _first_recoveries(records)
     recovery_durations = [at - triggers[case % configuration.shards] for case, at in recovered.items()]
     summary = {"scope": "synthetic single-host real paired liquidation; short diagnostic, no external venue or HA",
         "configuration": asdict(configuration), "offered_cases": configuration.cases,

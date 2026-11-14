@@ -10,7 +10,7 @@ from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
-from benchmarks.run_matched_liquidation import Configuration, capacity_gates, run
+from benchmarks.run_matched_liquidation import Configuration, _first_recoveries, capacity_gates, run
 from uta.service import ExchangeService
 
 
@@ -124,6 +124,14 @@ class MatchedLoadTests(unittest.TestCase):
                 self.assertTrue(all(D(a["balance_usd"]) == D("93.16") for a in summary["final_victim_accounts"].values()))
             else:
                 self.assertEqual(summary["unresolved_accounts"], cases)
+
+    def test_parallel_duplicate_health_observations_use_first_recovery(self):
+        records = [{"kind": "recovered", "case": 1, "at_ns": 30},
+                   {"kind": "case", "case": 1},
+                   {"kind": "recovered", "case": 1, "at_ns": 10},
+                   {"kind": "recovered", "case": 2, "at_ns": 20},
+                   {"kind": "recovered", "case": 1, "at_ns": 50}]
+        self.assertEqual(_first_recoveries(records), {1: 10, 2: 20})
 
     def test_cli_smoke_success_is_not_capacity_success_and_default_exit_is_gate_failure(self):
         root = Path(__file__).resolve().parents[1]
