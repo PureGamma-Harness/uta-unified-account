@@ -24,7 +24,7 @@ def _require(condition: bool, message: str) -> None:
         raise RuntimeError("acceptance failed: " + message)
 
 
-def run_acceptance() -> dict:
+def _foundation_acceptance() -> dict:
     now = datetime(2026, 11, 14, tzinfo=timezone.utc)
     scales = {"USD": 8}
     checks = []
@@ -75,6 +75,14 @@ def run_acceptance() -> dict:
         return {"status": "passed", "scope": "synthetic single-node functional foundation",
                 "production_approved": False, "checks": checks,
                 "ledger_events": ledger_events, "outbox_events": delivered}
+
+
+def run_acceptance() -> dict:
+    from .vertical import run_vertical_acceptance
+    result = _foundation_acceptance()
+    result["vertical"] = run_vertical_acceptance()
+    result["checks"].append("M1 classic / credit / spot / paired perpetual / liquidation / restart / reconciliation")
+    return result
 
 
 if __name__ == "__main__":

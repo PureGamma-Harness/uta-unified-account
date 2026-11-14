@@ -1,0 +1,45 @@
+{
+  "borrow_limits": {
+    "BTC": {
+      "initial_margin_rate": "0.1",
+      "maintenance_margin_rate": "0.05",
+      "max_principal": "1E+3",
+      "quantity_step": "1E-8"
+    },
+    "USD": {
+      "initial_margin_rate": "0.1",
+      "maintenance_margin_rate": "0.05",
+      "max_principal": "1E+5",
+      "quantity_step": "0.01"
+    }
+  },
+  "collaterals": {
+    "BTC": {
+      "loan_to_value": "0.5",
+      "tiers": [
+        {
+          "factor": "0.8",
+          "up_to": null
+        }
+      ]
+    },
+    "USD": {
+      "loan_to_value": "1",
+      "tiers": [
+        {
+          "factor": "1",
+          "up_to": null
+        }
+      ]
+    }
+  },
+  "linear_margin": {
+    "tier-1": {
+      "initial_margin_rate": "0.1",
+      "maintenance_margin_rate": "0.05"
+    }
+  },
+  "max_total_debt": "1E+6",
+  "rule_id": "UTA-CROSS-LOAN-v1",
+  "version": 1
+}

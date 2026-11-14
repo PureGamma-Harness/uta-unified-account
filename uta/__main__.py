@@ -41,6 +41,9 @@ def main():
     parser.add_argument('--host', default='127.0.0.1', help='exchange bind address; use a TLS reverse proxy')
     parser.add_argument('--database', help='persistent SQLite database on local storage')
     parser.add_argument('--credentials', help='private credential JSON file, owned by the service user')
+    parser.add_argument('--catalog', help='versioned product catalog JSON file')
+    parser.add_argument('--risk-rules', help='matching versioned Cross risk rules JSON file')
+    parser.add_argument('--automate', action='store_true', help='run local risk supervision and real paired matching')
     parser.add_argument('--asset-scale', action='append', metavar='ASSET=DIGITS',
                         help='asset minor-unit scale; repeat for all assets (default: USD=8)')
     args = parser.parse_args()
@@ -54,10 +57,19 @@ def main():
             scales = _scales(args.asset_scale)
             from .gateway import load_credentials, make_server
             from .service import ExchangeService
+            from .configuration import load_policy
+            from .credit import CreditService
+            from .matching import Matcher
             # Validate credentials before creating or opening financial state.
             credentials = load_credentials(args.credentials)
+            policy = load_policy(args.catalog, args.risk_rules)
             database = Database(args.database)
-            service = ExchangeService(database, scales)
+            service = ExchangeService(database, scales, **policy)
+            service.credit = CreditService(service)
+            service.matcher = Matcher(service)
+            if service.product_catalog is not None:
+                from .spot import SpotExchange
+                service.spot = SpotExchange(service, service.product_catalog)
             service.ledger.verify()
             server = make_server(service, args.host, args.port, credentials=credentials)
         except (ValueError, OSError, StorageError, sqlite3.Error) as exc:
@@ -65,15 +77,24 @@ def main():
         def stop(signum, frame):
             raise KeyboardInterrupt
         previous = signal.signal(signal.SIGTERM, stop)
+        worker = None
         try:
+            if args.automate:
+                from .supervisor import ExchangeWorker
+                worker = ExchangeWorker(service)
+                service.worker = worker
+                worker.start()
             print(json.dumps({'service': 'uta-exchange', 'host': args.host,
                               'port': server.server_address[1],
+                              'automated': args.automate,
                               'mode': 'local-order-book; no external order routing'}), flush=True)
             server.serve_forever()
         except KeyboardInterrupt:
             pass
         finally:
             try:
+                if worker is not None:
+                    worker.stop()
                 server.server_close()
             finally:
                 signal.signal(signal.SIGTERM, previous)
