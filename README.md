@@ -1,96 +1,74 @@
-# UTA Reference Exchange
+# UTA / Portfolio Margin Engineering Platform
 
-一个开源的统一交易账户（Unified Trading Account，UTA）参考实现，探索如何在既有经典账户之上建立可核对的账户镜像，并把资产、负债、合约持仓纳入共同的保证金检查与清算流程。
+统一交易账户与组合保证金平台的可审查工程实现。保留精确参考计算、手算案例和事件回放，逐步交付权威账本、现货借贷、多币种抵押、交易前风控、本地撮合、结算、清算及恢复工具。
 
-> 风险模型是简化的线性保证金模型，并不是任何交易所的实际 Portfolio Margin（PM）规则，也未实现生产级撮合、资金安全、风控或清算系统。
+**当前是合成数据的单节点工程验收版本，尚未通过生产验收。** 第一批产品、万笔持续吞吐、多节点容灾和真实资金启用各有独立门槛；PM、期权、反向及交割产品默认禁止启用。参见 [验收门槛](docs/acceptance-gates.md)、[差距分析](docs/gap-analysis.md) 和 [产品矩阵](docs/product-support.md)。
 
-## 核心能力
+## 已实现的工程主链路
 
-- **统一账户数据模型**：用 `Decimal` 表示余额、负债、线性合约仓位、标记价格、抵押品折扣和保证金参数。
-- **保证金检查**：计算折扣后权益、未实现盈亏、初始及维持保证金、订单占用和可用保证金；通过模拟即时成交评估下单影响。
-- **清算流程模拟**：根据风险快照提出撤单与只减仓建议；数据不完整、过期或倒退时阻断；动作确认与去重均在内存中模拟。
-- **经典账户镜像**：为经典账户数据映射、同步和对账建立参考流程，支持发现缺失或不一致数据。
-- **独立账本与保证金预留示例**：提供按资产平衡的双分录事件重放，以及单进程内带版本检查的线程安全预留。两者均为内存模块，尚未接入订单 API、镜像或风险引擎。
+- **持久账本**：逐币双分录、精确 minor units、幂等事件、不可改流水、哈希链及独立回放。账户、订单占用、仓位、费用和 outbox 在同一 SQLite WAL/FULL 事务提交。
+- **交易风控**：持久限价预占、部分成交累计计费、最新行情下的执行前风险复核、累计只减仓约束、暂停与账户冻结。并发连接不能重复花费同一保证金。
+- **本地双侧撮合**：数值价格/时间优先、maker 价格、真实对手订单和唯一回执，两侧结算原子提交。无对手盘不生成成交；未宣称跨分片原子性。
+- **借贷**：已注资资金池、资产/账户限额、本金与利息分离、同币还款、债务投影对账。保留总资产与总负债，不先净额化再折扣。
+- **经典账户迁移**：摘要校验、原子导入资产/负债/仓位、冻结保护、持久回执及受限补偿回退。不支持的冻结或在途订单明确拒绝；真实源 fencing 与增量切换仍是生产缺口。
+- **风险规则**：不可变版本行情、时效检查、Cross 规则、阶梯抵押、借款限额和压力参考。未实现的产品、对冲与 PM 模式不能通过配置开启。
+- **清算**：持久计划、监督冻结和撤单、只减仓、本地实际部分清算成交及重启恢复。保险基金与 ADL 自动处置未启用。
+- **接口与运维**：账户隔离、reader/trader/funding/risk/admin 分权、私有事件分页、凭据轮换、健康检查、安装包、SIGTERM 排空、一致备份与离线恢复。
 
-上述功能均是原型。尤其是：当前保证金计算没有场景扫描或资产间风险抵消，因此**不等同于完整 PM 组合保证金引擎**。设计与生产化缺口见 [架构设计](docs/architecture.md) 和 [风险模型及限制](docs/risk-model.md)。
+## 运行与测试
 
-项目当前的明确范围是多币种抵押品和以 USD 为报告单位的线性永续仓位。模型支持分别输入资产总额和负债；两者需要不同折扣时，先净额化会产生不同结果。镜像与风险引擎没有自动连接，也没有验证真实交易所结果。不得将示例结果作为任何账户的实际安全结论。
+Python 3.10–3.13，运行时只使用标准库。
 
-## 快速开始
-
-需要 Python 3.10 或更新版本；核心代码仅使用 Python 标准库。
-
-```bash
-# 运行风险、下单检查和清算建议示例
+```sh
 python -m uta demo
-
-# 运行测试
 python -m unittest discover -s tests -v
+python -m uta acceptance
+python formal/explore_reservation.py
+python formal/explore_settlement.py
 ```
 
-本地 JSON 演示 API：
+`acceptance` 在临时目录使用合成资金，不访问外部账户；输出明确包含 `production_approved: false`。完整测试包含真实 loopback HTTP 和子进程故障，需要运行环境允许本地 socket。
 
-```bash
-python -m uta serve --port 8080
+安装与认证服务：
+
+```sh
+python -m pip install .
+python -m uta exchange \
+  --database /var/lib/uta/exchange.sqlite3 \
+  --credentials /etc/uta/credentials.json \
+  --host 127.0.0.1 --port 8080
 ```
 
-另开终端：
+先按 [部署与恢复手册](docs/operations.md) 创建专用用户、私有目录和凭据。新数据库默认暂停新增风险；发布可信新鲜行情并经运营确认后再解除暂停。当前默认单一合成 USD 结算，真实 USDT/USDC 不能通过重命名示例币种获得验收。
 
-```bash
-curl http://127.0.0.1:8080/health
-curl http://127.0.0.1:8080/sample -o sample.json
-curl -X POST http://127.0.0.1:8080/risk -H 'Content-Type: application/json' --data-binary @sample.json
+本地撮合可独立轮询同一权威数据库：
+
+```sh
+python -m uta.matching --database /var/lib/uta/exchange.sqlite3 \
+  --symbol BTC-PERP --loop
 ```
 
-`GET /sample` 返回示例账户输入；`POST /risk` 计算风险；`POST /order-check` 使用相同输入，额外提供 `order` 对象来模拟订单。财务数值使用十进制字符串。服务仅供本机演示，**没有身份验证，不应暴露在公网或处理真实敏感数据**。
+这条命令只撮合已接纳的对手订单，不创建资金或价格。受产品/规则配置管理的数据库必须使用相同配置打开，不能缺省降级。见 [API 契约](docs/api-contract.md) 和 [撮合结算](docs/matching-settlement.md)。
 
-下面是独立的风险计算示例。数值仅用于解释计算，不代表交易所参数或投资建议。
+原有 `python -m uta serve --port 8080` 保留为**不认证的本机纯计算演示**，接收调用者提供的参考输入，不连接持久交易账本，不应作为交易入口或公网服务。
 
-```python
-from decimal import Decimal as D
-from uta.models import Account, AssetSpec, InstrumentSpec, Position
-from uta.risk import calculate_risk, check_order
+## 证据与验收
 
-account = Account(
-    balances={"USDT": D("10000")},
-    positions={"BTC-PERP": Position("BTC-PERP", D("0.1"), D("95000"))},
-    open_order_margin=D("100"),
-)
-assets = {"USDT": AssetSpec(price=D("1"), collateral_factor=D("1"))}
-instruments = {"BTC-PERP": InstrumentSpec(
-    mark_price=D("100000"), initial_margin_rate=D("0.10"),
-    maintenance_margin_rate=D("0.05"),
-)}
+本系统政策不等于 Bybit、Binance 或 CME 的生产参数。参见 [证据库](docs/evidence-register.md)、[规则矩阵](evidence/rules.csv)、[目标架构](docs/target-architecture.md)、[账务规格](docs/accounting-spec.md)、[保证金规则](docs/margin-rules.md)、[清算及违约](docs/liquidation-rules.md)。金融负责人签核和真实资金审批尚未完成。
 
-snapshot = calculate_risk(account, assets, instruments)
-print(snapshot.equity, snapshot.initial_margin, snapshot.maintenance_margin)
-# 权益 10500、初始保证金 1000、维持保证金 500
+开放环工具区分纯计算、持久接纳及模拟清算，保留计划到达时间、逐请求结果、profile、环境与校验清单：
 
-result = check_order(account, assets, instruments, symbol="BTC-PERP",
-                     quantity=D("0.01"), execution_price=D("100000"),
-                     fee_rate=D("0.0004"))
-print(result.accepted, result.projected_available_margin)
+```sh
+python benchmarks/run_benchmark.py --help
 ```
 
-输入必须由调用方保证来自新鲜且一致的账户和价格快照。订单检查本身不会原子地预留保证金，也不会提交订单。
+当前短测用于瓶颈诊断，**未满足每秒万条持久接纳/万笔清算成交、持续至少 30 分钟的生产门槛**。原始证据和口径见 [性能基线](docs/performance-baseline.md)，进程/磁盘满及形式化假设见 [故障验收](docs/fault-acceptance.md)。不把业务拒绝、尝试次数或纯模拟成交计入真实持久吞吐。
 
-## 参考处理流程
+## 交付顺序
 
-```mermaid
-flowchart TD
-    Classic["经典账户数据"] --> Mirror["映射、镜像与对账"]
-    Mirror --> Snapshot["统一账户快照"]
-    Market["价格与风险参数"] --> Snapshot
-    Snapshot --> Risk["权益与保证金计算"]
-    Risk --> Order["订单保证金检查"]
-    Risk --> Liquidation["清算状态机模拟"]
-    Liquidation --> Actions["撤单 / 只减仓建议"]
-```
+1. M0：持久基础、证据与差距、测试、部署恢复。
+2. M1：经典导入、现货借贷、线性双侧撮合、部分清算、重启与逐笔对账的合成纵向链路。
+3. P1：首批产品的真实规则/资金交接、容量、容灾、独立金融和上线审批。
+4. P2 / P3：多结算与交割/反向，再扩展期权全量重估与合资格 PM 抵消，逐批重新验收。
 
-这张图展示目标职责；目前镜像输出尚未自动转换为风险引擎输入，调用方需单独完成映射与核对。项目也未接入真实交易所、持久化消息总线或自动下单。
-
-## 开源贡献
-
-欢迎提交 issue、讨论设计与 pull request。涉及风险公式时，请提供假设、数值示例和边界测试；涉及某一交易所的规则时，请链接其官方文档并说明适用版本、地区与账户类型。切勿提交 API 密钥、客户数据或真实订单信息。
-
-验证范围与手算案例见 [验证与证据](docs/verification.md)；贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+在相应门槛关闭前保持产品禁用。贡献约定见 [CONTRIBUTING.md](CONTRIBUTING.md)，公开提交仅使用合成或获授权脱敏数据，不提交密钥、客户账单和私人流水。
