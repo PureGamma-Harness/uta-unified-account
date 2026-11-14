@@ -1,0 +1,63 @@
+{
+  "runs": [
+    {
+      "variant": "before",
+      "pair": 1,
+      "durable_per_s": 356.57400817711743,
+      "accepted": 2835,
+      "p99_ms": 2935.377097,
+      "service_p99_ms": 82.21835,
+      "gate_passed": false
+    },
+    {
+      "variant": "before",
+      "pair": 2,
+      "durable_per_s": 355.85374550937166,
+      "accepted": 2773,
+      "p99_ms": 2854.366475,
+      "service_p99_ms": 81.972187,
+      "gate_passed": false
+    },
+    {
+      "variant": "before",
+      "pair": 3,
+      "durable_per_s": 374.1038819761351,
+      "accepted": 2861,
+      "p99_ms": 2742.499978,
+      "service_p99_ms": 56.631473,
+      "gate_passed": false
+    },
+    {
+      "variant": "after",
+      "pair": 1,
+      "durable_per_s": 377.81716649555324,
+      "accepted": 2951,
+      "p99_ms": 2809.082487,
+      "service_p99_ms": 82.465251,
+      "gate_passed": false
+    },
+    {
+      "variant": "after",
+      "pair": 2,
+      "durable_per_s": 357.00830311806516,
+      "accepted": 2806,
+      "p99_ms": 2865.801079,
+      "service_p99_ms": 82.21835,
+      "gate_passed": false
+    },
+    {
+      "variant": "after",
+      "pair": 3,
+      "durable_per_s": 386.138239492764,
+      "accepted": 2904,
+      "p99_ms": 2709.802899,
+      "service_p99_ms": 82.136213,
+      "gate_passed": false
+    }
+  ],
+  "decision": "keeper remains opt-in; default is independent connections",
+  "reason": "small inconsistent improvement does not meet a production optimization threshold",
+  "production_approved": false,
+  "required_durable_per_s": 10000,
+  "required_duration_s": 1800
+}
