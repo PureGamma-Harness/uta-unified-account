@@ -30,6 +30,8 @@ jobs:
         run: python -m compileall -q uta formal tests
       - name: Run demo
         run: python -m uta demo
+      - name: Run transactional acceptance scenario
+        run: python -m uta acceptance
       - name: Explore bounded reservation model
         run: python formal/explore_reservation.py
       - name: Build installable wheel
@@ -43,5 +45,6 @@ jobs:
           "$RUNNER_TEMP/uta-smoke/bin/python" -m pip install --no-deps dist/*.whl
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/uta-smoke/bin/python" -m uta demo
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m uta acceptance
           "$RUNNER_TEMP/uta-smoke/bin/uta" --help
           "$RUNNER_TEMP/uta-smoke/bin/uta-ops" --help
