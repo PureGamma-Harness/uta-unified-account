@@ -104,6 +104,19 @@ class ServiceFinanceTests(unittest.TestCase):
             service.submit_order("alice", "second", "X", D("0.01"), D("2"))
         self.assertEqual(rejected.exception.code, "insufficient_margin")
 
+    def test_repriced_pending_order_cannot_authorize_an_insolvent_local_execution(self):
+        service = self.service(fee="0.0004", funds="0.1004")
+        service.submit_order("alice", "sell", "X", D("-1"), D("1"))
+        service.publish_market(MarketSnapshot(2, self.now, {"USD": AssetSpec(D("1"), D("1"))},
+                                              {"X": InstrumentSpec(D("2"), D("0.1"), D("0.05"))}))
+        self.assertLess(D(service.risk("alice")["available_margin"]), 0)
+        before = (service.account("alice"), service.orders("alice"),
+                  service.ledger.journal(), service.events(limit=1000))
+        with self.assertRaises(ServiceError):
+            service.apply_fill("alice", "sell", "unsafe", D("-1"), D("1"))
+        self.assertEqual((service.account("alice"), service.orders("alice"),
+                          service.ledger.journal(), service.events(limit=1000)), before)
+
     def test_low_decimal_context_cannot_change_money_or_input_limits(self):
         service = self.service()
         with localcontext() as context:
