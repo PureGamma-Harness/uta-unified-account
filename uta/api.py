@@ -4,7 +4,8 @@ This server has no authentication, persistence, price feeds, order routing or
 concurrency control. It must not be exposed to a network or used for trading.
 All prices and balances are supplied by the requester; use decimal strings.
 """
-from dataclasses import asdict, is_dataclass
+from dataclasses import fields, is_dataclass
+from collections.abc import Mapping
 from decimal import Decimal, InvalidOperation, DecimalException
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -67,14 +68,16 @@ def parse_account(payload):
 
 def json_value(value):
     if is_dataclass(value):
-        return {k: json_value(v) for k, v in asdict(value).items()}
+        # Walk fields directly: asdict deep-copies values and cannot copy the
+        # MappingProxyType used by immutable validated account snapshots.
+        return {field.name: json_value(getattr(value, field.name)) for field in fields(value)}
     if isinstance(value, Decimal):
         return str(value)
     if isinstance(value, datetime):
         return value.isoformat()
     if isinstance(value, Enum):
         return value.value
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         return {k: json_value(v) for k, v in value.items()}
     if isinstance(value, (tuple, list)):
         return [json_value(v) for v in value]

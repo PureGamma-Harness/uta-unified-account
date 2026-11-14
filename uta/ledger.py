@@ -40,15 +40,21 @@ class Ledger:
     It is not a substitute for an accounting chart or external reconciliation.
     """
 
+    # The durable exchange ledger and credit codec retain the default 38-digit
+    # contract. Research simulators may independently request a wider journal.
     _LIMIT = 10 ** 38
 
-    def __init__(self, scales: Mapping[str, int]):
+    def __init__(self, scales: Mapping[str, int], *, unit_digits: int = 38):
         if not scales:
             raise LedgerError("at least one asset scale is required")
         if any(not isinstance(asset, str) or not asset.strip()
                or type(scale) is not int or not 0 <= scale <= 18
                for asset, scale in scales.items()):
             raise LedgerError("asset scales require a name and integer scale 0..18")
+        if type(unit_digits) is not int or not 38 <= unit_digits <= 60:
+            raise LedgerError("journal unit digits must be between 38 and 60")
+        self._unit_digits = unit_digits
+        self._limit = 10 ** unit_digits
         self._scales = MappingProxyType(dict(scales))
         self._balances: dict[tuple[str, str], int] = {}
         self._events: list[JournalEvent] = []
@@ -61,7 +67,7 @@ class Ledger:
         if not isinstance(amount, Decimal) or not amount.is_finite():
             raise LedgerError("amount must be a finite Decimal")
         parts = amount.as_tuple()
-        if len(parts.digits) > 38 or not -38 <= parts.exponent <= 38:
+        if len(parts.digits) > self._unit_digits or not -38 <= parts.exponent <= 38:
             raise LedgerError("amount exceeds supported precision")
         coefficient = int(''.join(str(d) for d in parts.digits))
         shift = parts.exponent + self._scales[asset]
@@ -72,7 +78,7 @@ class Ledger:
             units, remainder = divmod(coefficient, divisor)
             if remainder:
                 raise LedgerError(f"amount exceeds {asset} scale")
-        if units >= self._LIMIT:
+        if units >= self._limit:
             raise LedgerError("amount exceeds supported range")
         return -units if parts.sign else units
 
@@ -113,7 +119,7 @@ class Ledger:
                 return existing[1]
             changes = {key: self._balances.get(key, 0) + delta
                        for key, delta in deltas.items()}
-            if any(abs(value) >= self._LIMIT for value in changes.values()):
+            if any(abs(value) >= self._limit for value in changes.values()):
                 raise LedgerError("balance exceeds supported range")
             event = JournalEvent(event_id, len(self._events) + 1, tuple(
                 Posting(account, asset, self._amount(asset, units))

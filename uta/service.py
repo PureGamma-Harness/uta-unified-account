@@ -130,6 +130,10 @@ class ExchangeService:
         self.database = database
         self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
         self.scales = dict(scales)
+        # The research simulator uses different uta_accounts/uta_events schemas.
+        # Claim compatible storage before DurableLedger can create any tables.
+        with database.transaction() as connection:
+            self._claim_authority(connection)
         self.ledger = DurableLedger(database, scales)
         self.max_price_age, self.fee_rate = max_price_age, fee_rate
         self.clock = clock or (lambda: datetime.now(timezone.utc))
@@ -158,6 +162,26 @@ class ExchangeService:
                     raise ServiceError("configuration_conflict", "existing legacy financial state requires an explicit policy migration", 409)
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('risk_policy',?)", (risk_policy,))
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('halted','true')")
+
+    @staticmethod
+    def _claim_authority(connection: sqlite3.Connection) -> None:
+        expected = {"uta_accounts": {"account_id", "version"},
+                    "uta_events": {"sequence", "event_type", "account_id", "payload", "created_at"},
+                    "uta_authority": {"singleton", "kind"}}
+        existing = {row["name"]: row["type"] for row in connection.execute(
+            "SELECT name,type FROM sqlite_master WHERE name IN ('uta_accounts','uta_events','uta_authority')")}
+        for table, kind in existing.items():
+            columns = {row["name"] for row in connection.execute(f"PRAGMA table_info({table})")}
+            if kind != "table" or columns != expected[table]:
+                raise ServiceError("wrong_authority", "database is not a compatible exchange authority; use a separate research database", 409)
+        if "uta_authority" in existing:
+            rows = connection.execute("SELECT singleton,kind FROM uta_authority").fetchall()
+            if len(rows) != 1 or rows[0]["singleton"] != 1 or rows[0]["kind"] != "exchange":
+                raise ServiceError("wrong_authority", "database belongs to another authority", 409)
+        else:
+            connection.execute("CREATE TABLE uta_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1), "
+                               "kind TEXT NOT NULL CHECK(kind IN ('exchange','research')))")
+            connection.execute("INSERT INTO uta_authority VALUES (1,'exchange')")
 
     @staticmethod
     def _schema(connection: sqlite3.Connection) -> None:

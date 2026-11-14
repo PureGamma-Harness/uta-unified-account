@@ -1,6 +1,6 @@
 # 第一批 Cross 与借贷规则
 
-规则 ID：`UTA-CROSS-LOAN-v1`。这是本项目明确选择的保守政策，不复刻 Bybit、Binance 或其他交易所。实现位于 `uta/portfolio.py`；人工复算用例在 `tests/test_portfolio.py`。所有配置有独立规则版本，输出同时携带规则、产品目录和行情版本及行情观察时间。
+规则 ID：`UTA-CROSS-LOAN-v1`。这是本项目明确选择的保守政策，不复刻 Bybit、Binance 或其他交易所。实现位于 `uta/portfolio.py`；人工复算用例在 `tests/test_cross_margin.py`。所有配置有独立规则版本，输出同时携带规则、产品目录和行情版本及行情观察时间。
 
 金融规则负责人：**待指定、未签字**。独立验证负责人：**待指定、未签字**。自动测试通过不等于真实人员签字、交易所公式对齐或生产验收。第一批以后的产品和账户模式不能通过修改配置来开启。
 
@@ -68,3 +68,6 @@
 配置及财务输入只接受有限 `Decimal`，JSON 财务值必须是十进制字符串。内部加减乘除使用精确 `Fraction`，不依赖调用方 Decimal 的精度、舍入模式或 Inexact/Rounded traps。计算结果不隐式货币舍入；借款额度唯一有方向的舍入为按数量步长向下取整。真实结算的币种精度和不利方向舍入由持久化交易服务负责，不能在展示层替代。
 
 缺少价格、借款限额、抵押规则、风险档位，过期行情、未知产品和未支持模式均报错；不会把无法计算的风险当作零。
+
+
+兼容保留的研究模拟器场景模型位于 `uta/scenario_margin.py`，由 `uta/portfolio.py` 重导出其原有接口，原有测试保留在 `tests/test_portfolio.py`。该研究模型不具有生产交易准入权限，不能开启 `AccountMode.PM`；第一批 Cross 规则及其独立人工用例位于本文件所述模块和 `tests/test_cross_margin.py`。

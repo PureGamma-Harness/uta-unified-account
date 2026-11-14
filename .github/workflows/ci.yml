@@ -30,6 +30,8 @@ jobs:
         run: python -m compileall -q uta formal tests
       - name: Run demo
         run: python -m uta demo
+      - name: Preserve and replay research scenario
+        run: python -m uta scenario --shards 4
       - name: Run transactional acceptance scenario
         run: python -m uta acceptance
       - name: Explore bounded reservation model
@@ -48,6 +50,7 @@ jobs:
           cd "$RUNNER_TEMP"
           "$RUNNER_TEMP/uta-smoke/bin/python" -m uta demo
           "$RUNNER_TEMP/uta-smoke/bin/python" -m uta acceptance
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m uta scenario --shards 4
           "$RUNNER_TEMP/uta-smoke/bin/uta" --help
           "$RUNNER_TEMP/uta-smoke/bin/uta-ops" --help
       - name: Retain installable review artifact

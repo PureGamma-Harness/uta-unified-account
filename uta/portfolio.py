@@ -444,3 +444,10 @@ def scenario_reference(account: LoanAccount, market: MarketSnapshot, catalog: Pr
     requirement = _decimal_exact(max(Fraction(worst), Fraction(minimum_floor)) + Fraction(liquidity_addon) + Fraction(credit_addon))
     return ScenarioReference(worst_id, worst, MappingProxyType(losses), minimum_floor, liquidity_addon,
                              credit_addon, requirement, rules.rule_id, rules.version, MappingProxyType(unit_losses))
+
+
+# Compatibility exports for the research simulator's versioned scenario model.
+# This model has no authority to enable AccountMode.PM or production trading.
+from .scenario_margin import (
+    MODEL_VERSION, PortfolioRisk, ScenarioResult, calculate_portfolio, position_im_bound,
+)
