@@ -618,6 +618,16 @@ class ExchangeService:
 
     def submit_order(self, account_id: str, order_id: str, symbol: str,
                      quantity: Decimal, limit_price: Decimal, *, reduce_only: bool = False) -> dict:
+        self._validate_order_command(account_id, order_id, symbol, quantity, limit_price,
+                                     reduce_only=reduce_only)
+        with self._transaction() as connection:
+            return self._admit_order(connection, account_id, order_id, symbol, quantity, limit_price,
+                                     reduce_only=reduce_only)
+
+    @staticmethod
+    def _validate_order_command(account_id: str, order_id: str, symbol: str,
+                                quantity: Decimal, limit_price: Decimal, *, reduce_only: bool = False) -> None:
+        """Shared input boundary for synchronous and grouped admission."""
         for value, field in ((account_id, "account_id"), (order_id, "order_id"), (symbol, "symbol")):
             _name(value, field)
         _amount(quantity, "quantity", nonzero=True)
@@ -626,9 +636,6 @@ class ExchangeService:
             raise ServiceError("invalid_input", "reduce_only must be a boolean")
         if order_id.startswith("liq:"):
             raise ServiceError("invalid_input", "liq: order IDs are reserved for the risk supervisor")
-        with self._transaction() as connection:
-            return self._admit_order(connection, account_id, order_id, symbol, quantity, limit_price,
-                                     reduce_only=reduce_only)
 
     def _admit_order(self, connection, account_id: str, order_id: str, symbol: str,
                      quantity: Decimal, limit_price: Decimal, *, reduce_only: bool = False) -> dict:
@@ -695,21 +702,29 @@ class ExchangeService:
             raise ServiceError("unsafe_reduction", "reduce-only execution would worsen maintenance margin surplus", 409)
 
     def cancel_order(self, account_id: str, order_id: str) -> dict:
+        self._validate_cancel_command(account_id, order_id)
+        with self._transaction() as connection:
+            return self._cancel_order(connection, account_id, order_id)
+
+    @staticmethod
+    def _validate_cancel_command(account_id: str, order_id: str) -> None:
         _name(account_id, "account_id")
         _name(order_id, "order_id")
         if order_id.startswith("liq:"):
             raise ServiceError("liquidation_order_protected", "only the risk supervisor may cancel a liquidation order", 409)
-        with self._transaction() as connection:
-            self._require_account(connection, account_id)
+
+    def _cancel_order(self, connection, account_id: str, order_id: str) -> dict:
+        """Cancel validated caller input while joining an existing transaction."""
+        self._require_account(connection, account_id)
+        row = connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?", (account_id, order_id)).fetchone()
+        if row is None:
+            raise ServiceError("order_not_found", "unknown order", 404)
+        if row["status"] in _LIVE:
+            version = self._bump(connection, account_id)
+            connection.execute("UPDATE uta_orders SET status='CANCELLED',version=? WHERE account_id=? AND order_id=?", (version, account_id, order_id))
             row = connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?", (account_id, order_id)).fetchone()
-            if row is None:
-                raise ServiceError("order_not_found", "unknown order", 404)
-            if row["status"] in _LIVE:
-                version = self._bump(connection, account_id)
-                connection.execute("UPDATE uta_orders SET status='CANCELLED',version=? WHERE account_id=? AND order_id=?", (version, account_id, order_id))
-                row = connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?", (account_id, order_id)).fetchone()
-                self._event(connection, "ORDER_CANCELLED", account_id, self._order(row))
-            return self._order(row)
+            self._event(connection, "ORDER_CANCELLED", account_id, self._order(row))
+        return self._order(row)
 
     def _project_fill(self, positions: dict, symbol: str, quantity: Decimal, price: Decimal) -> tuple[dict, Decimal]:
         result = dict(positions)
