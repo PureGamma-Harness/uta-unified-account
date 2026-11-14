@@ -16,6 +16,8 @@ import json
 from .bridge import shadow_to_account
 from .ledger import Posting
 from .migration import MigrationError, ShadowAccount
+from .models import RiskInputError
+from .products import AccountMode, ProductKind
 from .risk import calculate_risk
 from .service import ExchangeService, ServiceError, _amount, _exact, _json, _name, _text
 
@@ -140,6 +142,14 @@ class ClassicImporter:
             for symbol, position in account.positions.items():
                 if symbol not in market.instruments:
                     raise ServiceError("migration_product", "only known linear USD instruments can be imported", 409)
+                if service.product_catalog is not None:
+                    try:
+                        product = service.product_catalog.require_risk_supported(symbol, mode=AccountMode.CROSS)
+                    except RiskInputError as exc:
+                        raise ServiceError("migration_product", "catalog does not support this existing exposure", 409) from exc
+                    if (product.kind is not ProductKind.LINEAR_PERPETUAL or product.multiplier != 1
+                            or product.settlement_asset != "USD" or product.quote_asset != "USD"):
+                        raise ServiceError("migration_product", "migration requires linear perpetual USD products with multiplier one", 409)
                 _amount(position.quantity, "migration position quantity", nonzero=True)
                 _amount(position.entry_price, "migration entry price", positive=True)
             self._empty_destination(conn, shadow.account_id)
@@ -178,13 +188,40 @@ class ClassicImporter:
                 ON CONFLICT(account_id) DO UPDATE SET state='BLOCKED',cycle=0,revision=0,
                 plan_market_version=NULL,plan_position_digest=NULL""", (shadow.account_id,))
             version = service._bump(conn, shadow.account_id)
-            # Compare two independently structured calculation paths at the same
-            # market point before handing over authority. No risk value is netted.
-            expected = calculate_risk(account, market.assets, market.instruments)
             actual = service._risk(conn, shadow.account_id, market)
-            if any(Decimal(actual[name]) != getattr(expected, name)
-                   for name in ("equity", "initial_margin", "maintenance_margin", "open_order_margin", "available_margin")):
-                raise ServiceError("migration_reconciliation", "imported risk differs from reconciled source", 409)
+            expected_assets = {asset: _text(amount) for asset, amount in account.balances.items()}
+            expected_debt = {asset: {"principal": _text(_exact(principal[asset])),
+                                     "interest": _text(_exact(interest[asset]))}
+                             for asset in sorted(principal.keys() | interest.keys()) if principal[asset] or interest[asset]}
+            expected_positions = {symbol: {"quantity": _text(position.quantity),
+                                            "cost_basis": _text(_exact(Fraction(position.quantity) * Fraction(position.entry_price)))}
+                                  for symbol, position in sorted(account.positions.items())}
+            self._check_unchanged(conn, {"account_id": shadow.account_id, "assets": expected_assets,
+                                         "liabilities": expected_debt, "positions": expected_positions})
+            if service.product_catalog is None:
+                # The legacy reference has identical fixed-rate risk semantics.
+                # Keep its historical full-risk comparison for reference users.
+                expected = calculate_risk(account, market.assets, market.instruments)
+                if any(Decimal(actual[name]) != getattr(expected, name)
+                       for name in ("equity", "initial_margin", "maintenance_margin", "open_order_margin", "available_margin")):
+                    raise ServiceError("migration_reconciliation", "imported risk differs from reconciled source", 409)
+                reconciliation_basis = "legacy_reference_risk"
+            else:
+                # Source accounting and configured Cross margin are different
+                # contracts: borrow IM/MM and tiered haircuts must not cause a
+                # valid, already-confirmed source balance to disappear. Reconcile
+                # unhaircutted accounting equity with an independent cash-flow
+                # expression; the configured calculator reports its own margin.
+                expected_accounting = sum((Fraction(amount) * Fraction(market.assets[asset].price)
+                                           for asset, amount in account.balances.items()), Fraction(0))
+                expected_accounting -= sum((Fraction(amount) * Fraction(market.assets[asset].price)
+                                            for asset, amount in account.liabilities.items()), Fraction(0))
+                expected_accounting += sum((Fraction(position.quantity) * Fraction(market.instruments[symbol].mark_price)
+                                             - Fraction(position.quantity) * Fraction(position.entry_price)
+                                             for symbol, position in account.positions.items()), Fraction(0))
+                if Fraction(Decimal(actual["accounting_equity"])) != expected_accounting:
+                    raise ServiceError("migration_reconciliation", "imported accounting equity differs from gross source components", 409)
+                reconciliation_basis = "configured_gross_accounting_equity"
             receipt = {
                 "command_id": command_id, "account_id": shadow.account_id,
                 "source_version": shadow.source_version, "source_digest": shadow.source_digest,
@@ -196,14 +233,8 @@ class ClassicImporter:
                 "ledger_event_id": ledger_id,
                 "journal_postings": [{"account": posting.account, "asset": posting.asset,
                                       "amount": _text(posting.amount)} for posting in postings],
-                "assets": {asset: _text(amount) for asset, amount in account.balances.items()},
-                "liabilities": {asset: {"principal": _text(_exact(principal[asset])),
-                                         "interest": _text(_exact(interest[asset]))}
-                                for asset in sorted(principal.keys() | interest.keys()) if principal[asset] or interest[asset]},
-                "positions": {symbol: {"quantity": _text(position.quantity),
-                                        "cost_basis": _text(_exact(Fraction(position.quantity) * Fraction(position.entry_price)))}
-                              for symbol, position in sorted(account.positions.items())},
-                "risk_at_import": actual,
+                "assets": expected_assets, "liabilities": expected_debt, "positions": expected_positions,
+                "risk_at_import": actual, "reconciliation_basis": reconciliation_basis,
             }
             encoded = _json(receipt)
             conn.execute("INSERT INTO migration_imports VALUES (?,?,?,?,?)",

@@ -16,7 +16,7 @@
 | 目标已发生财务变更 | `destination_not_empty` |
 | 风险权益为负的合法源快照 | 保留已存在的资产与债务，先冻结；监督器将其判定为破产或继续处置 |
 
-“已知线性合约”指现有 `ExchangeService` 的 `MarketSnapshot.instruments`。该目录目前只有线性 USD 结算语义，不能用同一个符号配置其他乘数、币种或产品。接入版本化产品目录后，应由目录进一步证明产品资格。源数量和入场价也须满足服务当前的最多 8 位小数与数值范围。
+“已知线性合约”在旧参考模式中指 `MarketSnapshot.instruments` 的线性 USD 结算语义。配置版本化 `ProductCatalog` 后，每个已有仓位还必须经过 `require_risk_supported(..., CROSS)`，且产品类型必须为线性永续、乘数为 1、报价及结算均为 USD。不能用行情中的同一个符号把期权、反向、现货或不同乘数的仓位伪装成线性仓位。已停牌但仍可估值的合格旧仓位可以导入；账户仍先 BLOCKED，并不因此获得交易资格。源数量和入场价也须满足服务当前的最多 8 位小数与数值范围。
 
 ## 规则追溯
 
@@ -34,6 +34,8 @@
 | MIG-008 | 未发生导入后变更时才能用新分录补偿；保留原移交事件，不允许删除账本 | `test_compensating_handback_preserves_original_history_and_deduplicates`、`test_new_activity_requires_forward_recovery_and_cannot_be_database_rolled_back` |
 | MIG-009 | 金融计算与调用方 Decimal 精度、舍入及陷阱无关 | `test_import_and_compensation_ignore_decimal_precision_and_traps` |
 | MIG-010 | 回执和补偿记录不可原地修改；重放核对摘要及原始、补偿分录 | `test_receipts_immutable_and_verify_detects_dropped_guard_and_corruption` |
+| MIG-011 | 配置目录后的导入必须同时通过已有暴露估值资格、线性类型、乘数及结算币门禁；停牌不丢弃旧仓位 | `test_same_market_symbol_cannot_smuggle_option_inverse_spot_or_multiplier_positions`、`test_unlisted_symbol_is_rejected_even_if_market_retains_a_price`、`test_existing_halted_supported_exposure_is_imported_frozen_and_can_be_valued` |
+| MIG-012 | 会计分量逐项对账；不同规则模型的 IM/MM 不能直接等同。配置模式按独立 gross 会计权益表达式核对，并保留规则版本和实际保证金 | `test_versioned_loan_margin_can_differ_from_legacy_without_discarding_source_finances`、`test_imported_cross_debt_repayment_preserves_cashflow_and_reduces_configured_loan_margin` |
 
 工程签字：迁移组已实现并执行对应测试；金融规则复核与独立验收状态由集成验收报告记录。此文件不伪造人工审批或真实资金上线签字。
 
@@ -44,6 +46,10 @@
 借款本金使用负余额科目 `liability:principal:{account_id}`，对应 `system:credit-principal-receivable`；利息使用 `liability:interest:{account_id}`，对应 `system:credit-interest-receivable`。`uta_liabilities` 分别保存非负本金与利息，供风险和 CreditService 还款核对。导入旧源债务不要求本系统曾发放该笔借款。CreditService 仍须以逐客户、逐币种负债分录为准。
 
 举例：源 gross USD 现金为 1,150、BTC 现金为 2；USD 借款本金 300、利息 0.25。BTC 标价 200，抵押因子 0.5；线性仓位 0.1，入场价 200、标记价 220，IM 10%、MM 5%。则会计现金分量保持 1,150 USD、2 BTC；风险权益为 `1150 + 2*200*0.5 - 300 - 0.25 + 0.1*(220-200) = 1051.75 USD`，仓位 IM 2.2 USD、MM 1.1 USD。不能把 USD 现金先净成 849.75 再处理抵押政策。
+
+配置版 Cross 风险包含借贷 IM/MM 和阶梯抵押规则，与旧固定费率参考模型不是同一保证金口径。导入先逐项核对现金、本金、利息、仓位数量及精确成本，再用 `gross_assets * price - gross_debt * price + quantity * mark - cost` 独立核对会计权益。`risk_at_import` 保留实际风险权益、IM/MM、`rule_id`、`rule_version`、`catalog_version` 及 `market_version`；`reconciliation_basis` 明确采用配置版会计权益还是旧参考风险全字段对比。
+
+配置手算例：gross USD 1,000、BTC 2，BTC 标价 200；USD 本金 100、利息 1；线性仓位 2、入场价 100、标记价 110。BTC 抵押按首 100 USD 的 0.9、其余 300 USD 的 0.5 计为 240 USD；会计权益为 `1000+400-101+20=1319`，风险权益为 `1000+240-101+20=1159`。线性 IM/MM 为 22/11，借贷费率 20%/10% 再计 20.2/10.1，合计 IM/MM 为 42.2/21.1。不能因为旧参考模型没有这部分借贷保证金就拒绝已确认的源资产。导入债务即使高于新借款限额也保留原分量并冻结，限额只决定此后的新增借款资格。
 
 ## 操作接口与未知结果处理
 
@@ -97,6 +103,7 @@ handback = importer.reverse_import(
 
 ```sh
 python -m unittest discover -s tests -p test_cutover.py -v
+python -m unittest discover -s tests -p test_cutover_configured.py -v
 ```
 
 覆盖手算示例、六个独立服务连接争用、事务插入故障、账务和仓位已写后杀进程、重启重试、不可变回执、精度污染、负权益、拒绝隐含在途数据和补偿边界。仍未验证真实源增量适配、跨接口时差、外部 fence 有效性、挂单/条件单迁移、母子账户切换、跨可用区权威移交、真实资金或 30 分钟生产容量，因此不得据此宣布真实迁移验收通过。
