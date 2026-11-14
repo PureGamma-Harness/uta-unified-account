@@ -7,6 +7,7 @@ is no automatic borrowing, fabricated interest clock, isolated margin, or PM.
 from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
+from fractions import Fraction
 import json
 import sqlite3
 
@@ -259,6 +260,19 @@ class CreditService:
             market = self.exchange._market(connection)
             if asset not in market.assets:
                 raise ServiceError("market_incomplete", "borrowed asset has no trusted price", 503)
+            rules = getattr(self.exchange, "portfolio_rules", None)
+            if rules is not None:
+                rule = rules.borrow_limits.get(asset)
+                if rule is None:
+                    raise ServiceError("credit_disabled", "asset is not enabled by the versioned borrow policy", 409)
+                if (Fraction(self._value(asset, units)) / Fraction(rule.quantity_step)).denominator != 1:
+                    raise ServiceError("invalid_input", "borrow amount violates the configured quantity step")
+                before = self.exchange._risk(connection, account_id, market)
+                quotes = before.get("borrowable")
+                if not isinstance(quotes, dict) or asset not in quotes:
+                    raise ServiceError("credit_policy_unavailable", "versioned risk did not provide a borrow quote", 503)
+                if self._value(asset, units) > Decimal(quotes[asset]):
+                    raise ServiceError("credit_limit", "borrow exceeds collateral LTV or the versioned debt policy", 409)
             principal, interest = self._debt(connection, account_id, asset)
             account_limit = connection.execute("SELECT units FROM credit_account_limits WHERE account_id=? AND asset=?",
                                                (account_id, asset)).fetchone()
@@ -288,6 +302,13 @@ class CreditService:
             self.exchange._market(connection)
             version = self.exchange._bump(connection, account_id)
             result = self._result(account_id, command_id, asset, amount_text, principal, interest, version, event_id)
+            result["risk_evidence"] = {
+                "market_version": market.version, "market_observed_at": market.observed_at.isoformat(),
+                "borrowable_before": quotes[asset] if rules is not None else None,
+                **{key: projected[key] for key in ("equity", "initial_margin", "maintenance_margin",
+                                                  "open_order_margin", "available_margin", "rule_id",
+                                                  "rule_version", "catalog_version") if key in projected},
+            }
             return self._record(connection, scope, command_id, "borrowed", asset, amount_text, result)
 
     def accrue_interest(self, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:

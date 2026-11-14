@@ -10,6 +10,8 @@ from unittest.mock import patch
 from uta.credit import CreditService
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
+from uta.portfolio import BorrowLimits, CollateralRule, CollateralTier, LinearMarginRule, PortfolioRules
+from uta.products import ProductCatalog, ProductKind, ProductSpec, TradingStatus
 from uta.service import ExchangeService, ServiceError
 from uta.storage import Database
 
@@ -273,6 +275,49 @@ class CreditTests(unittest.TestCase):
         with self.exchange.database.transaction() as connection:
             self.assertEqual(connection.execute("SELECT version FROM credit_schema").fetchone()[0], 1)
 
+    def configured_credit(self, *, ltv="0.1", max_total="1000", max_principal="10"):
+        path = Path(self.directory.name) / f"rules-{ltv}-{max_total}-{max_principal}.sqlite3"
+        catalog = ProductCatalog(1, {"BTC-PERP": ProductSpec("BTC-PERP", ProductKind.LINEAR_PERPETUAL,
+            "BTC", "USD", "USD", D("0.01"), D("0.01"), D("1"), status=TradingStatus.ACTIVE)})
+        rules = PortfolioRules(1,
+            {"USD": CollateralRule("USD", (CollateralTier(None, D("1")),), D(ltv)),
+             "BTC": CollateralRule("BTC", (CollateralTier(None, D("0.8")),), D("0.5"))},
+            {"BTC": BorrowLimits("BTC", D(max_principal), D("0.2"), D("0.1"), D("0.1"))},
+            {"tier-1": LinearMarginRule("tier-1", D("0.1"), D("0.05"))}, D(max_total))
+        exchange = ExchangeService(Database(path), {"USD": 8, "BTC": 8}, clock=lambda: self.now,
+                                   product_catalog=catalog, portfolio_rules=rules)
+        exchange.create_account("alice")
+        exchange.publish_market(self.market())
+        exchange.set_kill_switch(False)
+        exchange.deposit("alice", "initial", "USD", D("1000"))
+        credit = CreditService(exchange)
+        credit.configure_asset_limit("BTC", D("100"))
+        credit.configure_limit("alice", "BTC", D("10"))
+        credit.fund_pool("capital", "BTC", D("50"), source_reference="synthetic:rules:capital")
+        return exchange, credit
+
+    def test_configured_rules_ltv_and_quantity_step_gate_actual_borrow(self):
+        exchange, credit = self.configured_credit()
+        self.assertEqual(D(exchange.risk("alice")["borrowable"]["BTC"]), D("1"))
+        self.assert_code("credit_limit", credit.borrow, "alice", "ltv-bypass", "BTC", D("1.1"))
+        self.assert_code("invalid_input", credit.borrow, "alice", "step-bypass", "BTC", D("0.01"))
+        result = credit.borrow("alice", "loan", "BTC", D("1"))
+        self.assertEqual(result["principal"], "1")
+        self.assertEqual(D(result["risk_evidence"]["borrowable_before"]), D("1"))
+        self.assertEqual(result["risk_evidence"]["market_version"], 1)
+        self.assertEqual(result["risk_evidence"]["rule_version"], 1)
+        risk = exchange.risk("alice")
+        self.assertEqual((risk["equity"], risk["initial_margin"], risk["maintenance_margin"]), ("980", "20", "10"))
+        self.assert_code("credit_limit", credit.borrow, "alice", "more", "BTC", D("0.5"))
+
+    def test_configured_total_debt_and_rule_principal_limits_cannot_be_bypassed(self):
+        for policy, quote in (({"ltv": "1", "max_total": "50"}, D("0.5")),
+                              ({"ltv": "1", "max_principal": "0.2"}, D("0.2"))):
+            with self.subTest(policy=policy):
+                exchange, credit = self.configured_credit(**policy)
+                self.assertEqual(D(exchange.risk("alice")["borrowable"]["BTC"]), quote)
+                self.assert_code("credit_limit", credit.borrow, "alice", "bypass", "BTC", quote + D("0.1"))
+                self.assertEqual(exchange.account("alice")["liabilities"], {})
 
 
 if __name__ == "__main__":
