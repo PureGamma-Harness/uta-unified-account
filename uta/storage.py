@@ -52,13 +52,14 @@ class Database:
     preventing read/check/write races across service instances and processes.
     Callers must not commit or roll back the yielded connection themselves.
     File-backed databases are required so every connection sees the same state.
-    A query-only keeper prevents closing each transaction from becoming the last
-    WAL connection and forcing a checkpoint. It never executes business writes.
-    Use ``close`` or the Database context manager to release it deterministically.
+    An optional query-only keeper prevents closing each transaction from becoming
+    the last WAL connection. It is disabled by default: measured gains on this
+    workload do not justify changing the default connection lifecycle. When used,
+    release it with ``close`` or the Database context manager.
     """
 
     def __init__(self, path: str | Path, *, timeout: float = 10.0,
-                 keep_wal_open: bool = True):
+                 keep_wal_open: bool = False):
         if (not isinstance(path, (str, Path)) or not str(path).strip()
                 or str(path) == ":memory:" or str(path).startswith("file:")):
             raise StorageError("a filesystem database path is required; memory/URI databases are unsupported")

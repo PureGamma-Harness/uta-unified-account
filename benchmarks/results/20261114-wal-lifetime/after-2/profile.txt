@@ -1,0 +1,72 @@
+Sat Nov 14 15:04:45 2026    /tmp/uta-perf-after-2/worker-0.prof
+Sat Nov 14 15:04:45 2026    /tmp/uta-perf-after-2/worker-1.prof
+
+         4328857 function calls (4264171 primitive calls) in 15.891 seconds
+
+   Ordered by: internal time
+   List reduced from 255 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    98210    9.432    0.000    9.432    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+     5612    2.954    0.001    2.954    0.001 {method 'commit' of 'sqlite3.Connection' objects}
+     5612    0.227    0.000    0.227    0.000 {method 'close' of 'sqlite3.Connection' objects}
+     5612    0.140    0.000    0.205    0.000 {built-in method _sqlite3.connect}
+     5616    0.136    0.000    0.136    0.000 {built-in method posix.read}
+   115397    0.114    0.000    0.244    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/fractions.py:186(__new__)
+     2808    0.112    0.000    0.112    0.000 {method '__enter__' of '_multiprocessing.SemLock' objects}
+    61732    0.098    0.000    0.230    0.000 /workspace/uta-perf/uta/models.py:29(_decimal)
+570809/548361    0.091    0.000    0.167    0.000 {built-in method builtins.isinstance}
+    56120    0.082    0.000    0.082    0.000 {method 'fullmatch' of 're.Pattern' objects}
+     5639    0.082    0.000    0.504    0.000 /workspace/uta-perf/uta/service.py:273(_reserve)
+    22475    0.077    0.000    0.140    0.000 /workspace/uta-perf/uta/service.py:65(_exact)
+     2806    0.068    0.000    0.730    0.000 /workspace/uta-perf/uta/service.py:289(_risk)
+     5612    0.060    0.000    1.252    0.000 /workspace/uta-perf/uta/storage.py:131(_connect)
+   134688    0.058    0.000    0.107    0.000 {method 'as_tuple' of 'decimal.Decimal' objects}
+     5612    0.054    0.000    0.054    0.000 {built-in method posix.open}
+   351506    0.049    0.000    0.049    0.000 {built-in method __new__ of type object at 0x144d380}
+     2806    0.048    0.000    0.597    0.000 /workspace/uta-perf/uta/market.py:154(from_json)
+     2806    0.047    0.000    2.484    0.001 /workspace/uta-perf/uta/service.py:463(_admit_order)
+    84531    0.046    0.000    0.202    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/fractions.py:613(forward)
+    42090    0.045    0.000    0.045    0.000 {method 'fetchone' of 'sqlite3.Cursor' objects}
+     5612    0.045    0.000    0.045    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:205(iterencode)
+    30866    0.043    0.000    0.226    0.000 /workspace/uta-perf/uta/market.py:46(_number)
+    95809    0.039    0.000    0.051    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/fractions.py:317(_from_coprime_ints)
+    39446    0.038    0.000    0.069    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/fractions.py:742(_mul)
+
+
+Sat Nov 14 15:04:45 2026    /tmp/uta-perf-after-2/worker-0.prof
+Sat Nov 14 15:04:45 2026    /tmp/uta-perf-after-2/worker-1.prof
+
+         4328857 function calls (4264171 primitive calls) in 15.891 seconds
+
+   Ordered by: cumulative time
+   List reduced from 255 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+30866/16836    0.023    0.000   12.768    0.001 {built-in method builtins.next}
+    11224    0.013    0.000   12.501    0.001 /workspace/uta-perf/uta/service.py:192(_transaction)
+    11224    0.027    0.000   12.448    0.001 /workspace/uta-perf/uta/storage.py:171(transaction)
+2807/2806    0.030    0.000   11.081    0.004 /workspace/uta-perf/uta/service.py:449(submit_order)
+14030/8418    0.009    0.000    9.562    0.001 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:132(__enter__)
+    98210    9.432    0.000    9.432    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+     2806    0.029    0.000    4.421    0.002 /workspace/uta-perf/uta/service.py:525(cancel_order)
+2810/2808    0.018    0.000    3.917    0.001 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/queues.py:98(get)
+14030/8418    0.012    0.000    3.230    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:141(__exit__)
+     5612    2.954    0.001    2.954    0.001 {method 'commit' of 'sqlite3.Connection' objects}
+     2806    0.047    0.000    2.484    0.001 /workspace/uta-perf/uta/service.py:463(_admit_order)
+     5612    0.060    0.000    1.252    0.000 /workspace/uta-perf/uta/storage.py:131(_connect)
+     2806    0.068    0.000    0.730    0.000 /workspace/uta-perf/uta/service.py:289(_risk)
+     2806    0.011    0.000    0.649    0.000 /workspace/uta-perf/uta/service.py:236(_market)
+     2806    0.048    0.000    0.597    0.000 /workspace/uta-perf/uta/market.py:154(from_json)
+     5639    0.082    0.000    0.504    0.000 /workspace/uta-perf/uta/service.py:273(_reserve)
+     2806    0.016    0.000    0.350    0.000 /workspace/uta-perf/uta/storage.py:389(balance)
+     8418    0.030    0.000    0.277    0.000 /workspace/uta-perf/uta/service.py:328(_order)
+     5612    0.022    0.000    0.248    0.000 /workspace/uta-perf/uta/storage.py:188(_using)
+   115397    0.114    0.000    0.244    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/fractions.py:186(__new__)
+    61732    0.098    0.000    0.230    0.000 /workspace/uta-perf/uta/models.py:29(_decimal)
+     5612    0.227    0.000    0.227    0.000 {method 'close' of 'sqlite3.Connection' objects}
+    30866    0.043    0.000    0.226    0.000 /workspace/uta-perf/uta/market.py:46(_number)
+     5612    0.011    0.000    0.216    0.000 /workspace/uta-perf/uta/service.py:208(_event)
+     5612    0.140    0.000    0.205    0.000 {built-in method _sqlite3.connect}
+
+

@@ -18,6 +18,7 @@ class StoragePerformanceTests(unittest.TestCase):
         self.path = Path(directory.name) / "database.sqlite3"
 
     def database(self, **kwargs):
+        kwargs.setdefault("keep_wal_open", True)
         database = Database(self.path, **kwargs)
         self.addCleanup(database.close)
         return database
@@ -55,7 +56,7 @@ class StoragePerformanceTests(unittest.TestCase):
         database.close()  # Repeated shutdown is idempotent.
 
     def test_unreferenced_database_closes_keeper_without_global_reference_leak(self):
-        database = Database(self.path)
+        database = Database(self.path, keep_wal_open=True)
         with database.transaction():
             pass
         keeper = database._keeper
@@ -65,6 +66,14 @@ class StoragePerformanceTests(unittest.TestCase):
         self.assertIsNone(reference())
         with self.assertRaises(sqlite3.ProgrammingError):
             keeper.execute("SELECT 1")
+
+    def test_default_lifecycle_has_no_keeper_and_configuration_is_strict(self):
+        with Database(self.path) as database:
+            with database.transaction():
+                pass
+            self.assertIsNone(database._keeper)
+        with self.assertRaises(StorageError):
+            Database(self.path, keep_wal_open=1)
 
     def test_keeper_can_be_disabled_and_file_replacement_never_switches_authority(self):
         database = self.database(keep_wal_open=False)
