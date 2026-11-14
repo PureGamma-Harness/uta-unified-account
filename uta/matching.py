@@ -8,6 +8,7 @@ reference matching service, not a replicated matching engine or venue adapter.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from decimal import Decimal
 from fractions import Fraction
 from hashlib import sha256
@@ -209,6 +210,9 @@ class Matcher:
             raise ValueError("strict must be boolean")
         with self.exchange.database._using(connection) as connection:
             ledger_events = self.exchange.ledger.verify(connection=connection)
+            schema = connection.execute("SELECT version FROM uta_matching_schema WHERE singleton=1").fetchone()
+            if schema is None or schema["version"] != 1:
+                raise ServiceError("matching_corruption", "matching schema version is invalid", 503)
             triggers = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger'")}
             if not {"uta_matches_no_update", "uta_matches_no_delete"} <= triggers:
                 raise ServiceError("matching_corruption", "match receipt protection is missing", 503)
@@ -216,7 +220,17 @@ class Matcher:
             paired = set()
             events = connection.execute("SELECT payload FROM uta_events WHERE event_type='MATCH_CONFIRMED'").fetchall()
             try:
-                event_ids = [json.loads(row["payload"])["trade_id"] for row in events]
+                event_payloads = [json.loads(row["payload"]) for row in events]
+                event_ids = [payload["trade_id"] for payload in event_payloads]
+                event_counts = Counter(event_ids)
+                audit = {payload["trade_id"]: payload for payload in event_payloads}
+                private = {}
+                for row in connection.execute("SELECT account_id,payload FROM uta_events WHERE event_type='TRADE_CONFIRMED'"):
+                    payload = json.loads(row["payload"])
+                    key = row["account_id"], payload["fill_id"]
+                    if key in private:
+                        raise ValueError("duplicate private trade confirmation")
+                    private[key] = payload
             except (ValueError, KeyError, TypeError) as exc:
                 raise ServiceError("matching_corruption", "match audit payload is invalid", 503) from exc
             journal = {event.event_id: event for event in self.exchange.ledger.journal(connection=connection)}
@@ -224,8 +238,17 @@ class Matcher:
                 quantity, price = Decimal(match["quantity"]), Decimal(match["price"])
                 if (match["sequence"] != expected or quantity <= 0 or price <= 0
                         or match["buy_account_id"] == match["sell_account_id"]
-                        or event_ids.count(match["trade_id"]) != 1):
+                        or event_counts[match["trade_id"]] != 1
+                        or audit[match["trade_id"]] != dict(match)):
                     raise ServiceError("matching_corruption", "match sequence, quantity or audit correspondence failed", 503)
+                original_buy = {"account_id": match["buy_account_id"], "order_id": match["buy_order_id"],
+                                "filled_quantity": match["buy_filled_before"]}
+                original_sell = {"account_id": match["sell_account_id"], "order_id": match["sell_order_id"],
+                                 "filled_quantity": match["sell_filled_before"]}
+                identity = self._identity(match["symbol"], original_buy, original_sell, quantity, price)
+                if (match["trade_id"] != "match:" + identity or match["buy_fill_id"] != "match:" + identity + ":b"
+                        or match["sell_fill_id"] != "match:" + identity + ":s"):
+                    raise ServiceError("matching_corruption", "match business identifiers disagree with their canonical inputs", 503)
                 for side, signed in (("buy", quantity), ("sell", quantity.copy_negate())):
                     account_id, order_id, fill_id = (match[side + "_account_id"], match[side + "_order_id"], match[side + "_fill_id"])
                     fill = connection.execute("SELECT * FROM uta_fills WHERE account_id=? AND fill_id=?", (account_id, fill_id)).fetchone()
@@ -238,6 +261,11 @@ class Matcher:
                     if (account_id, fill_id) in paired:
                         raise ServiceError("matching_corruption", "one fill belongs to more than one match", 503)
                     paired.add((account_id, fill_id))
+                    expected_private = {"trade_id": match["trade_id"], "symbol": match["symbol"], "side": side,
+                                        "order_id": order_id, "fill_id": fill_id, "quantity": match["quantity"],
+                                        "price": match["price"], "market_version": match["market_version"]}
+                    if private.get((account_id, fill_id)) != expected_private:
+                        raise ServiceError("matching_corruption", "private trade confirmation differs from its match", 503)
                     pnl, fee = Decimal(fill["realized_pnl"]), Decimal(fill["fee"])
                     event = journal.get(_key("fill", account_id, fill_id))
                     expected_postings = []
@@ -252,6 +280,8 @@ class Matcher:
                         raise ServiceError("matching_corruption", "match fill and journal postings disagree", 503)
             if set(event_ids) != {row["trade_id"] for row in rows}:
                 raise ServiceError("matching_corruption", "orphaned match audit event", 503)
+            if set(private) != paired:
+                raise ServiceError("matching_corruption", "orphaned private trade confirmation", 503)
             total_fills = connection.execute("SELECT COUNT(*) FROM uta_fills").fetchone()[0]
             unpaired = total_fills - len(paired)
             if strict and unpaired:

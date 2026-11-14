@@ -155,6 +155,30 @@ class ReconciliationTests(unittest.TestCase):
             reconcile_exchange(self.exchange)
         self.assertIn("checksum", str(caught.exception))
 
+    def test_private_trade_confirmation_and_global_match_payload_are_verified(self):
+        self.pair()
+        for event_type in ("TRADE_CONFIRMED", "MATCH_CONFIRMED"):
+            with self.subTest(event_type=event_type):
+                with self.exchange._transaction() as connection:
+                    row = connection.execute("SELECT sequence,payload FROM uta_events WHERE event_type=? LIMIT 1", (event_type,)).fetchone()
+                    original = row["payload"]
+                    connection.execute("DROP TRIGGER uta_events_no_update")
+                    connection.execute("UPDATE uta_events SET payload=replace(payload,'100','101') WHERE sequence=?", (row["sequence"],))
+                with self.assertRaises(ServiceError):
+                    reconcile_exchange(self.exchange)
+                with self.exchange._transaction() as connection:
+                    connection.execute("UPDATE uta_events SET payload=? WHERE sequence=?", (original, row["sequence"]))
+                    connection.execute("""CREATE TRIGGER uta_events_no_update BEFORE UPDATE ON uta_events
+                        BEGIN SELECT RAISE(ABORT,'events are immutable'); END""")
+        self.assertEqual(reconcile_exchange(self.exchange)["status"], "passed")
+
+    def test_unknown_gross_liability_asset_is_rejected_without_initializing_credit(self):
+        with self.exchange._transaction() as connection:
+            connection.execute("INSERT INTO uta_liabilities VALUES ('alice','UNKNOWN','1','0')")
+        with self.assertRaises(ServiceError) as caught:
+            reconcile_exchange(self.exchange)
+        self.assertIn("unknown", str(caught.exception))
+
     def test_low_context_and_production_projection_replacement_cannot_change_reference_replay(self):
         self.pair(quantity="1.23456789")
         self.pair(buy="bob", sell="alice", quantity=".23456789", identifier="partial")
