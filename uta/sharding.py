@@ -121,6 +121,7 @@ class ShardRouter:
         self._services = []
         with self._lock(exclusive=True):
             with self.control.transaction() as connection:
+                self._claim_control_authority(connection)
                 connection.execute("CREATE TABLE IF NOT EXISTS router_layout (singleton INTEGER PRIMARY KEY CHECK(singleton=1), descriptor TEXT NOT NULL)")
                 connection.execute("CREATE TABLE IF NOT EXISTS router_state (singleton INTEGER PRIMARY KEY CHECK(singleton=1), payload TEXT NOT NULL)")
                 connection.execute("CREATE TABLE IF NOT EXISTS router_pool_sources (source_reference TEXT PRIMARY KEY, command TEXT NOT NULL)")
@@ -158,6 +159,22 @@ class ShardRouter:
                 self._write_state({**self._state(), "halted": True,
                     "error": exc.code if isinstance(exc, ServiceError) else "shard_initialization_failed"})
                 raise
+
+    @staticmethod
+    def _claim_control_authority(connection):
+        tables = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        if tables & {"uta_accounts", "ledger_schema", "uta_schema"}:
+            raise ServiceError("wrong_authority", "router control cannot share a research or exchange authority database", 409)
+        if "uta_authority" in tables:
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(uta_authority)")}
+            if columns != {"singleton", "kind"}:
+                raise ServiceError("wrong_authority", "invalid router control authority marker", 503)
+            rows = [tuple(row) for row in connection.execute("SELECT singleton,kind FROM uta_authority")]
+            if rows != [(1, "router_control")]:
+                raise ServiceError("wrong_authority", "database belongs to a different authority", 409)
+        else:
+            connection.execute("CREATE TABLE uta_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1), kind TEXT NOT NULL)")
+            connection.execute("INSERT INTO uta_authority VALUES (1,'router_control')")
 
     def _path(self, index):
         return self.directory / f"shard-{index:04d}.sqlite3"
@@ -207,6 +224,9 @@ class ShardRouter:
         connection = sqlite3.connect(Path(self.control.path).as_uri() + "?mode=ro", uri=True)
         try:
             connection.execute("PRAGMA query_only=ON")
+            authority = connection.execute("SELECT singleton,kind FROM uta_authority").fetchall()
+            if authority != [(1, "router_control")]:
+                raise ServiceError("wrong_authority", "control database authority changed", 503)
             row = connection.execute("SELECT descriptor,payload FROM router_layout JOIN router_state USING(singleton) WHERE singleton=1").fetchone()
             if row is None or row[0] != self._descriptor:
                 raise ServiceError("layout_corruption", "router layout or control state is unavailable", 503)
