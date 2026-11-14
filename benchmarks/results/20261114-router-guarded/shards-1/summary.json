@@ -1,0 +1,134 @@
+{
+  "configuration": {
+    "scenario": "order",
+    "duration": 5.0,
+    "rate": 1000.0,
+    "workers": 4,
+    "shards": 1,
+    "accounts": 100,
+    "account_skew": 0,
+    "queue_capacity": 1024,
+    "timeout_ms": 1000.0,
+    "drain_seconds": 5.0,
+    "min_accepted_rate": 10000,
+    "min_duration": 1800,
+    "max_p99_ms": 100,
+    "profile": false,
+    "router_mode": true
+  },
+  "environment": {
+    "commit_sha": "eb2d58bb7a5a1925d1c2cf8be11af2b89754b4ca",
+    "working_tree_dirty": true,
+    "generator_sha256": "277c63ebf7bd210a609e5ae7465db4088726d031c8adf0a07c9fb36b61f2147a",
+    "source_sha256": {
+      "service.py": "821427059333bdb0f3ef56e33224073711a79c357b3e7d798bbf9120b626b3ec",
+      "storage.py": "ad0c34e97be43fa3a0ba648a84664f37a9944524dd4ab2802f20bdf0686c8feb",
+      "models.py": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+      "market.py": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+      "risk.py": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264",
+      "liquidation.py": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f",
+      "sharding.py": "aa32d89e90739266ec3f7005022cb65ef150d3244e6ab8886e006922c05cc571"
+    },
+    "source": "/workspace/uta-unified-account",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "cpu_count": 5,
+    "memory_kib": 18440100,
+    "cgroup_limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    },
+    "cpu_affinity_count": 5,
+    "storage": [
+      {
+        "path": "/workspace/uta-unified-account/benchmarks/results/20261114-router-guarded/shards-1/authority/shard-0000.sqlite3",
+        "journal_mode": "wal",
+        "synchronous_configured": "FULL (every Database connection)",
+        "sqlite_version": "3.53.1",
+        "filesystem": "Filesystem     Type    1K-blocks   Used Available Use% Mounted on\noverlay        overlay  32978704 164080  31120520   1% /workspace"
+      }
+    ],
+    "multiprocessing_start_method": "spawn"
+  },
+  "routing": "real ShardRouter SHA-256 + flock/control gate",
+  "market_feed": "one initial fresh snapshot, 30s age policy; excludes fanout throughput",
+  "scope": "durable local admission + cancellation, no fill/matching",
+  "offered_arrivals": 5000,
+  "arrival_window_s": 5.0,
+  "completion_window_s": 8.361195487,
+  "counts": {
+    "received_unique": 5000,
+    "durable_committed_acknowledged": 2576,
+    "deadline_exceeded": 2129,
+    "successful_on_time": 447,
+    "durable_accepted": 2576,
+    "overload": 2424,
+    "business_rejected": 0,
+    "technical_failed": 0,
+    "unknown": 0,
+    "worker_fatal": 0,
+    "duplicate_results": 0
+  },
+  "successful_completions_per_s": 53.46125451737091,
+  "unique_durable_accepted_per_s": 308.0899141761688,
+  "on_time_durable_accepted_per_s": 53.46125451737091,
+  "acknowledged_durable_commits_per_s": 308.0899141761688,
+  "final_source_commit_sha": "eb2d58bb7a5a1925d1c2cf8be11af2b89754b4ca",
+  "product_distribution": {
+    "BTC-PERP": 1667,
+    "ETH-PERP": 1667,
+    "SOL-PERP": 1666
+  },
+  "durability_checks": [
+    {
+      "shard": "/workspace/uta-unified-account/benchmarks/results/20261114-router-guarded/shards-1/authority/shard-0000.sqlite3",
+      "unique_orders_in_database": 2576,
+      "accepted_events_in_database": 2576
+    }
+  ],
+  "latency_ms": {
+    "all": {
+      "p50": 2857.220842,
+      "p95": 3496.451112,
+      "p99": 3524.520818,
+      "p99_9": 3734.879322
+    },
+    "successful": {
+      "p50": 515.151548,
+      "p95": 956.376661,
+      "p99": 994.392846,
+      "p99_9": 999.374764
+    },
+    "durable": {
+      "p50": 2857.220842,
+      "p95": 3496.451112,
+      "p99": 3524.520818,
+      "p99_9": 3734.879322
+    },
+    "service": {
+      "p50": 4.115974,
+      "p95": 45.817715,
+      "p99": 181.995376,
+      "p99_9": 634.195455
+    }
+  },
+  "quantile_method": "log histogram upper bounds; <=0.1% relative bin width; raw ns exact",
+  "timeout_semantics": "soft scheduled-arrival deadline; late durable commits remain recorded",
+  "gates": {
+    "passed": false,
+    "failures": [
+      "duration below required minimum",
+      "unique successful durable admission rate below required minimum",
+      "p99 latency above threshold or unavailable",
+      "technical failures, timeouts, unknown results or overload occurred"
+    ],
+    "min_accepted_per_s": 10000,
+    "min_duration_s": 1800,
+    "max_p99_ms": 100,
+    "latency_policy": "temporary benchmark target; user has not supplied a production latency SLO",
+    "scope": "synthetic durable admission plus local cancellation only; excludes matching",
+    "phase1_exchange_acceptance_passed": false,
+    "phase1_blocker": "No real matching workload or production acceptance is implemented by this benchmark"
+  }
+}
