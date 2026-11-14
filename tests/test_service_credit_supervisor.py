@@ -6,7 +6,9 @@ import unittest
 from unittest.mock import patch
 
 from uta.credit import CreditService
+from uta.cutover import ClassicImporter
 from uta.market import MarketSnapshot
+from uta.migration import build_shadow
 from uta.models import AssetSpec, InstrumentSpec
 from uta.portfolio import BorrowLimits, CollateralRule, CollateralTier, LinearMarginRule, PortfolioRules
 from uta.products import ProductCatalog, ProductKind, ProductSpec, TradingStatus
@@ -33,15 +35,24 @@ class CreditSupervisorTests(unittest.TestCase):
             {"BTC": BorrowLimits("BTC", D(100), D("0.2"), D("0.1"), D("0.01"))},
             {"tier-1": LinearMarginRule("tier-1", D("0.1"), D("0.05"))}, D(100000))
         self.exchange = self.reopen()
-        self.exchange.create_account("alice")
-        self.exchange.deposit("alice", "cash", "USD", D(100))
         self.publish()
         self.exchange.set_kill_switch(False)
+        # These scenarios deliberately retain more existing gross debt than a
+        # NEW conservative LTV quote permits. Import that source obligation; do
+        # not weaken the new-loan gate merely to manufacture a distressed book.
+        shadow = build_shadow({"account_id": "alice", "version": 1, "captured_at": self.now.isoformat(),
+            "compartments": {
+                "spot": {"balances": [{"asset": "USD", "free": "100", "locked": "0", "borrowed": "0", "interest": "0"}]},
+                "margin": {"balances": [{"asset": "BTC", "free": "1", "locked": "0", "borrowed": "1", "interest": "0"}]},
+                "futures": {"balances": [], "positions": []}}}, now=self.now)
+        ClassicImporter(self.exchange).import_shadow(shadow, "existing-loan",
+            source_fence_reference="synthetic-existing-obligation", open_orders=[], conditional_orders=[],
+            pending_settlements=[], transfers_in_flight=[])
+        self.exchange.supervise_account("alice")
         self.credit = CreditService(self.exchange)
         self.credit.configure_asset_limit("BTC", D(100))
         self.credit.configure_limit("alice", "BTC", D(10))
         self.credit.fund_pool("capital", "BTC", D(50), source_reference="synthetic:credit-risk-pool")
-        self.credit.borrow("alice", "borrow", "BTC", D(1))
 
     def reopen(self):
         return ExchangeService(Database(self.path), {"USD": 8, "BTC": 8},
