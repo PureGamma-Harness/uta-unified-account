@@ -69,7 +69,7 @@ python benchmarks/run_benchmark.py --help
 
 本轮完整交付、合入并发 main 后的 402 项测试、安装后验收、失败记录及回滚说明见 [M1 验收报告](docs/milestone-m1.md)。
 
-后续 [分片实验报告](docs/milestone-sharding.md) 和 [分组持久准入报告](docs/milestone-grouped.md) 保留各自独立验收记录。最新集成通过 503 项测试，新增 opt-in 有界批提交、真实 HTTP、独立故障/金融验证及真实双侧清算探针。单次同配置短测为 464→744 条持久接纳/秒，所有生产容量门槛仍未通过；原始数据、适用边界和部署回退均在报告中。
+后续 [分片实验报告](docs/milestone-sharding.md) 和 [分组持久准入报告](docs/milestone-grouped.md) 保留各自独立验收记录。最新集成通过 506 项测试及 Python 3.10–3.13 CI，新增 opt-in 有界批提交、真实 HTTP、独立故障/金融验证及真实双侧清算探针。单次同配置短测为 464→744 条持久接纳/秒，所有生产容量门槛仍未通过；原始数据、适用边界和部署回退均在报告中。
 
 ## 交付顺序
 

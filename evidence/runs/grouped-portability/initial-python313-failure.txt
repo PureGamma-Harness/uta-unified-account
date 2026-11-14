@@ -1,0 +1,24 @@
+2026-11-14T22:35:29.2082129Z ERROR: test_same_underlying_opposite_positions_never_offset_other_unit_losses (test_portfolio_reference.IndependentStressReferenceTests.test_same_underlying_opposite_positions_never_offset_other_unit_losses)
+2026-11-14T22:35:29.2083829Z ----------------------------------------------------------------------
+2026-11-14T22:35:29.2084368Z Traceback (most recent call last):
+2026-11-14T22:35:29.2092281Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_portfolio_reference.py", line 397, in test_same_underlying_opposite_positions_never_offset_other_unit_losses
+2026-11-14T22:35:29.2093802Z     replace(result, pm_activatable=True)
+2026-11-14T22:35:29.2094212Z     ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-14T22:35:29.2094968Z   File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/dataclasses.py", line 1645, in replace
+2026-11-14T22:35:29.2095710Z     return _replace(obj, **changes)
+2026-11-14T22:35:29.2096432Z   File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/dataclasses.py", line 1663, in _replace
+2026-11-14T22:35:29.2097240Z     raise TypeError(f'field {f.name} is declared with '
+2026-11-14T22:35:29.2097758Z                     f'init=False, it cannot be specified with '
+2026-11-14T22:35:29.2098198Z                     f'replace()')
+2026-11-14T22:35:29.2098829Z TypeError: field pm_activatable is declared with init=False, it cannot be specified with replace()
+2026-11-14T22:35:29.2099398Z 
+2026-11-14T22:35:29.2099606Z ----------------------------------------------------------------------
+2026-11-14T22:35:29.2100084Z Ran 503 tests in 40.642s
+2026-11-14T22:35:29.2100301Z 
+2026-11-14T22:35:29.2100422Z FAILED (errors=1)
+2026-11-14T22:35:29.2101914Z FAULT_EVIDENCE {"fixture": "single-node-process-exit", "outcome": "acknowledged", "recovery_ms": 4.348, "verified_journal_events": 2, "lost_confirmed_commands": 0, "duplicate_business_effects": 0, "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"}
+2026-11-14T22:35:29.2105107Z FAULT_EVIDENCE {"fixture": "single-node-process-exit", "outcome": "unknown", "recovery_ms": 4.584, "verified_journal_events": 3, "lost_confirmed_commands": 0, "duplicate_business_effects": 0, "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"}
+2026-11-14T22:35:29.2430377Z ##[error]Process completed with exit code 1.
+2026-11-14T22:35:29.2618717Z Post job cleanup.
+2026-11-14T22:35:29.3486806Z [command]/usr/bin/git version
+2026-11-14T22:35:29.3534665Z git version 2.56.1

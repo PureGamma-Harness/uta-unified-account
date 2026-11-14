@@ -1,0 +1,15 @@
+{
+  "source": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/43649153821/job/132613513642",
+  "run_id": 43649153821,
+  "job_id": 132613513642,
+  "head_sha": "4008b46888ea03c5763ac644f070155c17a78f78",
+  "tests": 503,
+  "failures": 2,
+  "failed_tests": [
+    "test_gateway.GatewayTests.test_risk_can_diagnose_and_supervise_but_cannot_adjust_funds_or_manual_fills",
+    "test_gateway_products.ProductGatewayTests.test_missing_components_fail_explicitly_after_authorization_without_mutation"
+  ],
+  "cause": "Python3.10 parse_qsl with strict_parsing=True rejects an entirely empty query; documented default event/trade cursor was unexpectedly HTTP400",
+  "intended_behavior": "Only empty query uses after0/limit100 defaults. Nonempty queries remain strict and authorization remains required.",
+  "production_approved": false
+}

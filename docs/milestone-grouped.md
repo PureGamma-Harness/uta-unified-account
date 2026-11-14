@@ -4,7 +4,7 @@
 
 ## 候选、兼容性与分工
 
-最终全仓测试代码为 `47941422647b0113296776dd5cf1eae384c686ec`，包含远端 `main@02549e5` 的文档更新、已有研究能力和此前两个交付分支。后续本报告、CI 与证据归档提交不改变本次已验运行模块，内容 SHA-256 可逐项比较。
+最终验收代码为 `d0bb68261f1e165307ee1d223f60cf14e98e57ea`，包含远端 `main@02549e5` 的文档更新、已有研究能力、此前两个交付分支及跨 Python 版本修复。后续本报告与证据归档提交不改变本次已验运行模块，内容 SHA-256 可逐项比较。首次集成的 `4794142` / 503 项结果另行保留，不冒充最终版本。
 
 实现、API、故障、独立金融验证、准入性能和真实清算负载六个并行工作流分别提交代码，由集成负责人归并。此前的账户/账本、风险、迁移和分片交付继续保留。独立组的验证与否决结论见 [金融验证](grouped-validation.md) 和 [故障验证](grouped-faults.md)；这是工程 Agent 审查，未冒充具名金融负责人或外部审计签字。
 
@@ -18,14 +18,20 @@
 - 撤单有额外有界保留槽，保持 FIFO。排队超时只有在取消 Future 成功时才可报告本次未执行；已运行超时报告结果未知，原 ID 查询/重试收敛。
 - 启停、readiness、队列指标和 SIGTERM 排空接入真实 HTTP。回调重入、同 worker 等待尚未发布的回执及异常不能悄然丢失其他已提交回执。
 
-最终测试 **503 项通过，0 failures/errors/skips，37.35 秒**。比此前分片候选增加 75 项：引擎 19、独立故障 14、独立金融不变量 12、真实 HTTP/CLI 12、准入工具 9、实际清算工具 9。完整记录包含每条测试、源码哈希、解释器/SQLite 版本和执行时间：
+首次集成 **503 项通过，0 failures/errors/skips，37.35 秒**，比当时分片候选增加 75 项：引擎 19、独立故障 14、独立金融不变量 12、真实 HTTP/CLI 12、准入工具 9、实际清算工具 9。后续补充 3 项公共游标兼容回归，最终 **506 项**在本地 Python 3.10 与 3.12、远端 Python 3.10–3.13 均通过。完整记录包含每条测试、源码哈希、解释器/SQLite 版本和执行时间：
 
-- [测试结果](../evidence/runs/grouped-final/summary.json) 与 [逐项原始输出](../evidence/runs/grouped-final/unittest.txt)
+- 最终 [Python 3.10 结果](../evidence/runs/grouped-portability/python310-final/summary.json) / [逐项输出](../evidence/runs/grouped-portability/python310-final/unittest.txt) 与 [Python 3.12 结果](../evidence/runs/grouped-portability/python312-final/summary.json) / [逐项输出](../evidence/runs/grouped-portability/python312-final/unittest.txt)：506 项各通过，40.23 / 39.01 秒，无失败或跳过。
+- [GitHub CI 矩阵原始元数据及选取日志](../evidence/runs/grouped-portability/github-ci.json)：PR #3 在 `d0bb682` 上的四个版本全部完成成功；[实际运行](https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/43649548467)涵盖编译、参考模型、真实合成纵向验收和源码目录之外的 wheel 安装验收。PR #1 / #2 的回补版本各 405 / 431 项也在四版本矩阵全过。
+- 首次 [503 项结果](../evidence/runs/grouped-final/summary.json) 与 [历史逐项输出](../evidence/runs/grouped-final/unittest.txt)，以及 [测试夹具清理后的中间结果](../evidence/runs/grouped-portability/summary.json)均保留，不能替代上述最终候选。
 - [独立有界组提交模型](../evidence/runs/grouped-final/group-model.json)：85 状态、166 转换；四个故意不安全变体均找到反例。另复跑已有预占/双侧结算模型。枚举不证明实现等价、任意规模、硬件耐久性或活性。
-- [安装与模型执行记录](../evidence/runs/grouped-final/package-and-models.json)：在源码目录之外安装 wheel，逐文件核对运行模块与 dashboard，复跑完整合成纵向验收、研究 scenario 和 CLI；原始输出均同目录保存。
+- [最终安装记录](../evidence/runs/grouped-portability/final-package.json)：在源码目录之外安装 wheel，37 个运行模块/dashboard 文件与最终源码全部匹配，复跑完整合成纵向验收、研究 scenario、CLI 及空游标行为。最终 wheel SHA-256 为 `bc39659e83723a762991a54c0838faf838026c644a3f1dbbcae1806269b721d3`；这是 d0bb682 评审构建，不是稳定发行。首次安装与模型执行历史见 [原记录](../evidence/runs/grouped-final/package-and-models.json)。
 - [规则追溯矩阵](../evidence/rules.csv) 新增 `GROUP-001..006`，明确这些是本系统本地政策，没有声称交易所内部行为已经验证。
 
 发现并修复的实际问题包括：固化风险参数损坏被误归为普通 409、组处理跨越行情有效期仍可接纳、满新单队列挤掉撤单，以及 Future 回调自等待。独立测试保留原预期，没有用放宽断言换通过。
+
+跨版本 CI 另暴露两项真实失败，原错误日志在 [兼容性证据](../evidence/runs/grouped-portability/)保留：Python 3.13 标准库对 `init=False` 字段的 `dataclasses.replace` 改抛 TypeError，测试接受明确的两种标准库拒绝类型并继续断言 PM 不可启用；Python 3.10 严格 `parse_qsl` 拒绝空查询，API 现在只为空查询显式使用 `(after=0, limit=100)`，非空的 19 类非法查询仍拒绝，原 HTTP 的 200/501 预期不变。这两项通用修复已回补前两个 PR。
+
+同时为 9 个测试文件中的 19 个 SQLite 观察连接增加显式关闭，保留原事务上下文的提交/回滚语义。生产连接拥有者已有 finally.close，未把延迟 GC 警告的触发行误认成生产创建位置。最终候选 3.13 CI 没有 unclosed database 警告；前两个分支仅回补兼容修复，其旧夹具警告仍在所存日志保留，不代表已经修复或验证整个生产环境的所有资源问题。
 
 ## 性能证据与未通过项
 

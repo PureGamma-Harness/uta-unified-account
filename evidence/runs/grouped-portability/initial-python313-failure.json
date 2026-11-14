@@ -1,0 +1,16 @@
+{
+  "source": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/43648824371/job/132612500560",
+  "run_id": 43648824371,
+  "job_id": 132612500560,
+  "head_sha": "128e197b1ea742fb4c34d2fb89425a8d734ab583",
+  "tested_merge_sha": "2ba560680d9ed7e453f7ee2bf8679d8b096bac9c",
+  "python": "3.13.18",
+  "tests": 503,
+  "errors": 1,
+  "failed_test": "test_portfolio_reference.IndependentStressReferenceTests.test_same_underlying_opposite_positions_never_offset_other_unit_losses",
+  "cause": "Python3.13 dataclasses.replace raises TypeError instead of ValueError when a field has init=False",
+  "fix": "Accept only ValueError/TypeError at this specific stdlib rejection; explicitly verify pm_activatable remains false",
+  "runtime_modules_changed": false,
+  "excerpt": "Selected original error/summary lines with timestamps; full public job log linked above",
+  "production_approved": false
+}
