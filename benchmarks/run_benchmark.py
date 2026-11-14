@@ -12,7 +12,6 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from decimal import Decimal
-import importlib.util
 import hashlib
 import json
 import math
@@ -28,8 +27,11 @@ import threading
 import time
 import traceback
 
-if importlib.util.find_spec("uta") is None:
-    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+# Always benchmark the selected checkout, rather than an unrelated installed
+# uta wheel. The override supports development worktrees; the resolved module
+# source and hashes are recorded in every environment report.
+sys.path.insert(0, str(Path(os.environ.get("UTA_BENCH_SOURCE_ROOT",
+                                        Path(__file__).resolve().parent.parent)).resolve()))
 
 
 @dataclass(frozen=True)

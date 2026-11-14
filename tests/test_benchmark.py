@@ -1,4 +1,7 @@
 from dataclasses import replace
+from collections import Counter
+import gzip
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -66,6 +69,28 @@ class BenchmarkTests(unittest.TestCase):
             self.assertEqual(sum(row["accepted_events_in_database"] for row in summary["durability_checks"]), 3)
             self.assertTrue(all(row["journal_mode"] == "wal" for row in summary["environment"]["storage"]))
             self.assertFalse(summary["gates"]["phase1_exchange_acceptance_passed"])
+
+    def test_recorded_raw_evidence_hashes_unique_ids_and_result_counts(self):
+        evidence = Path(__file__).resolve().parent.parent / "benchmarks" / "results"
+        directories = sorted(evidence.glob("20261114-v1-*"))
+        self.assertEqual(len(directories), 2)
+        for directory in directories:
+            with self.subTest(directory=directory):
+                manifest = json.loads((directory / "manifest.json").read_text())
+                for name, expected in manifest["files"].items():
+                    data = (directory / name).read_bytes()
+                    self.assertEqual(hashlib.sha256(data).hexdigest(), expected["sha256"])
+                    self.assertEqual(len(data), expected["bytes"])
+                summary = json.loads((directory / "summary.json").read_text())
+                with gzip.open(directory / "arrivals.jsonl.gz", "rt") as source:
+                    arrivals = [row for line in source if (row := json.loads(line))["kind"] == "arrival"]
+                self.assertEqual(len(arrivals), summary["offered_arrivals"])
+                self.assertEqual(len({row["sequence"] for row in arrivals}), summary["offered_arrivals"])
+                outcomes = Counter(row["outcome"] for row in arrivals)
+                for name, count in outcomes.items():
+                    self.assertEqual(count, summary["counts"][name])
+                self.assertFalse(summary["gates"]["passed"])
+                self.assertFalse(summary["gates"]["phase1_exchange_acceptance_passed"])
 
     def _run(self, output, scenario, *extra):
         script = Path(__file__).resolve().parent.parent / "benchmarks" / "run_benchmark.py"

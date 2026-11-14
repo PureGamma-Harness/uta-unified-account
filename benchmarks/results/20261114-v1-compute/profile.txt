@@ -1,0 +1,90 @@
+Sat Nov 14 14:49:50 2026    benchmarks/results/20261114-v1-compute/worker-0.prof
+Sat Nov 14 14:49:50 2026    benchmarks/results/20261114-v1-compute/worker-1.prof
+
+         20566614 function calls (20232909 primitive calls) in 11.242 seconds
+
+   Ordered by: internal time
+   List reduced from 81 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+73977/13409    1.284    0.000    0.066    0.000 {method 'acquire' of '_multiprocessing.SemLock' objects}
+  1131464    1.123    0.000    2.448    0.000 fractions.py:186(__new__)
+    39016    1.089    0.000    7.560    0.000 risk.py:65(calculate_risk)
+3589472/3433408    0.607    0.000    1.170    0.000 {built-in method builtins.isinstance}
+  1326544    0.573    0.000    0.757    0.000 fractions.py:317(_from_coprime_ints)
+   156064    0.549    0.000    0.835    0.000 risk.py:16(_decimal_exact)
+  1209496    0.542    0.000    2.414    0.000 fractions.py:613(forward)
+   546224    0.438    0.000    0.885    0.000 fractions.py:742(_mul)
+    78036    0.371    0.000    0.371    0.000 {built-in method posix.read}
+   975400    0.349    0.000    0.349    0.000 {method 'as_integer_ratio' of 'decimal.Decimal' objects}
+  2458008    0.343    0.000    0.343    0.000 {built-in method __new__ of type object at 0x144d380}
+   429176    0.261    0.000    0.540    0.000 fractions.py:710(_add)
+39020/39018    0.230    0.000    2.409    0.000 queues.py:98(get)
+   975400    0.213    0.000    0.399    0.000 <frozen abc>:117(__instancecheck__)
+    39018    0.211    0.000    0.211    0.000 {method '__enter__' of '_multiprocessing.SemLock' objects}
+  1794736    0.204    0.000    0.204    0.000 {built-in method math.gcd}
+   975400    0.186    0.000    0.186    0.000 {built-in method _abc._abc_instancecheck}
+    73979    0.186    0.000    0.186    0.000 {method 'release' of '_multiprocessing.SemLock' objects}
+   780320    0.183    0.000    0.183    0.000 risk.py:35(<genexpr>)
+    34961    0.163    0.000    0.163    0.000 {built-in method posix.write}
+    39016    0.160    0.000    2.737    0.000 queues.py:86(put)
+    39016    0.148    0.000    0.286    0.000 risk.py:39(_ratio)
+   195080    0.129    0.000    0.266    0.000 fractions.py:726(_sub)
+    78036    0.096    0.000    0.589    0.000 connection.py:390(_recv)
+    34963    0.094    0.000    0.126    0.000 reduction.py:38(__init__)
+    34963    0.092    0.000    0.092    0.000 {method 'dump' of '_pickle.Pickler' objects}
+390160/273112    0.079    0.000    0.208    0.000 {built-in method builtins.abs}
+    34963    0.074    0.000    0.304    0.000 reduction.py:48(dumps)
+    39018    0.071    0.000    1.381    0.000 connection.py:429(_recv_bytes)
+    34961    0.066    0.000    1.097    0.000 connection.py:182(send_bytes)
+   117048    0.064    0.000    0.143    0.000 fractions.py:855(__abs__)
+    73979    0.064    0.000    0.064    0.000 {method 'update' of 'dict' objects}
+    34961    0.056    0.000    0.867    0.000 connection.py:406(_send_bytes)
+    78032    0.054    0.000    0.284    0.000 models.py:23(_mapping)
+    39018    0.052    0.000    1.479    0.000 connection.py:208(recv_bytes)
+
+
+Sat Nov 14 14:49:50 2026    benchmarks/results/20261114-v1-compute/worker-0.prof
+Sat Nov 14 14:49:50 2026    benchmarks/results/20261114-v1-compute/worker-1.prof
+
+         20566614 function calls (20232909 primitive calls) in 11.242 seconds
+
+   Ordered by: cumulative time
+   List reduced from 81 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    39016    1.089    0.000    7.560    0.000 risk.py:65(calculate_risk)
+    39016    0.160    0.000    2.737    0.000 queues.py:86(put)
+  1131464    1.123    0.000    2.448    0.000 fractions.py:186(__new__)
+  1209496    0.542    0.000    2.414    0.000 fractions.py:613(forward)
+39020/39018    0.230    0.000    2.409    0.000 queues.py:98(get)
+    39018    0.052    0.000    1.479    0.000 connection.py:208(recv_bytes)
+    39018    0.071    0.000    1.381    0.000 connection.py:429(_recv_bytes)
+3589472/3433408    0.607    0.000    1.170    0.000 {built-in method builtins.isinstance}
+    34961    0.066    0.000    1.097    0.000 connection.py:182(send_bytes)
+   546224    0.438    0.000    0.885    0.000 fractions.py:742(_mul)
+    34961    0.056    0.000    0.867    0.000 connection.py:406(_send_bytes)
+   156064    0.549    0.000    0.835    0.000 risk.py:16(_decimal_exact)
+  1326544    0.573    0.000    0.757    0.000 fractions.py:317(_from_coprime_ints)
+    78036    0.096    0.000    0.589    0.000 connection.py:390(_recv)
+   429176    0.261    0.000    0.540    0.000 fractions.py:710(_add)
+    39018    0.021    0.000    0.439    0.000 synchronize.py:94(__enter__)
+   975400    0.213    0.000    0.399    0.000 <frozen abc>:117(__instancecheck__)
+    78036    0.371    0.000    0.371    0.000 {built-in method posix.read}
+   975400    0.349    0.000    0.349    0.000 {method 'as_integer_ratio' of 'decimal.Decimal' objects}
+  2458008    0.343    0.000    0.343    0.000 {built-in method __new__ of type object at 0x144d380}
+    34963    0.074    0.000    0.304    0.000 reduction.py:48(dumps)
+    39016    0.148    0.000    0.286    0.000 risk.py:39(_ratio)
+    78032    0.054    0.000    0.284    0.000 models.py:23(_mapping)
+   195080    0.129    0.000    0.266    0.000 fractions.py:726(_sub)
+    39018    0.211    0.000    0.211    0.000 {method '__enter__' of '_multiprocessing.SemLock' objects}
+390160/273112    0.079    0.000    0.208    0.000 {built-in method builtins.abs}
+  1794736    0.204    0.000    0.204    0.000 {built-in method math.gcd}
+    34961    0.022    0.000    0.191    0.000 connection.py:381(_send)
+   975400    0.186    0.000    0.186    0.000 {built-in method _abc._abc_instancecheck}
+    73979    0.186    0.000    0.186    0.000 {method 'release' of '_multiprocessing.SemLock' objects}
+    78032    0.035    0.000    0.186    0.000 typing.py:1221(__instancecheck__)
+   780320    0.183    0.000    0.183    0.000 risk.py:35(<genexpr>)
+    34961    0.163    0.000    0.163    0.000 {built-in method posix.write}
+    78032    0.047    0.000    0.151    0.000 typing.py:1492(__subclasscheck__)
+   117048    0.064    0.000    0.143    0.000 fractions.py:855(__abs__)
