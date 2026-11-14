@@ -1,0 +1,47 @@
+{
+  "batch": {
+    "counts": {
+      "account_liquidations_completed": 320,
+      "accounts_not_completed": 0,
+      "end_health_INSOLVENT": 320,
+      "liquidation_cancellations_committed": 320,
+      "liquidation_commands_committed": 320,
+      "liquidation_fills_committed": 320,
+      "maintenance_breaches": 320,
+      "market_updates_committed": 320,
+      "reopened_accounts_verified": 320,
+      "staged_accounts": 320
+    },
+    "errors": 0,
+    "latencies": {
+      "group_mark_and_liquidate": {
+        "attempts": 12,
+        "p50_ms": 91.751,
+        "p95_ms": 477.31,
+        "p99_ms": 477.31
+      },
+      "verified_cohort_lifecycle": {
+        "attempts": 12,
+        "p50_ms": 140.6,
+        "p95_ms": 547.187,
+        "p99_ms": 547.187
+      }
+    },
+    "rates_per_second": {
+      "account_liquidations_completed": 431.17,
+      "liquidation_commands_committed": 431.17,
+      "liquidation_fills_committed": 431.17,
+      "market_updates_committed": 431.17
+    },
+    "wall_seconds": 0.742169
+  },
+  "batch_size": 32,
+  "cpu_count": 5,
+  "durable_shards": 4,
+  "fused": true,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "workers": 4,
+  "workload": "linear-pm-synthetic-v1"
+}

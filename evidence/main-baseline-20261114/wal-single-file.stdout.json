@@ -1,0 +1,53 @@
+{
+  "cpu_count": 5,
+  "durable": {
+    "counts": {
+      "account_liquidations_completed": 320,
+      "accounts_not_completed": 0,
+      "end_health_INSOLVENT": 320,
+      "end_positions_flat": 320,
+      "liquidation_cancellations_committed": 320,
+      "liquidation_commands_committed": 640,
+      "liquidation_fills_committed": 320,
+      "maintenance_breaches": 320,
+      "market_updates_committed": 320,
+      "position_reductions_committed": 320,
+      "reopened_accounts_verified": 320,
+      "staged_accounts": 320
+    },
+    "errors": 0,
+    "latencies": {
+      "durable_liquidation_step": {
+        "attempts": 640,
+        "p50_ms": 3.578,
+        "p95_ms": 35.984,
+        "p99_ms": 106.402
+      },
+      "durable_market_update": {
+        "attempts": 320,
+        "p50_ms": 2.423,
+        "p95_ms": 11.747,
+        "p99_ms": 81.397
+      },
+      "verified_account_lifecycle": {
+        "attempts": 320,
+        "p50_ms": 17.534,
+        "p95_ms": 93.581,
+        "p99_ms": 243.739
+      }
+    },
+    "rates_per_second": {
+      "account_liquidations_completed": 97.17,
+      "liquidation_commands_committed": 194.34,
+      "liquidation_fills_committed": 97.17,
+      "market_updates_committed": 97.17
+    },
+    "wall_seconds": 3.29317
+  },
+  "durable_shards": 1,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "workers": 4,
+  "workload": "linear-pm-synthetic-v1"
+}
