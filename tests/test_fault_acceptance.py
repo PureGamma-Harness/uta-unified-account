@@ -13,6 +13,7 @@ from time import perf_counter
 import unittest
 
 from uta.market import MarketSnapshot
+from uta.matching import Matcher
 from uta.models import AssetSpec, InstrumentSpec
 from uta.service import ExchangeService, ServiceError
 from uta.storage import Database
@@ -44,7 +45,7 @@ def _exceptions(error):
         pending.extend((current.__cause__, current.__context__))
 
 
-class FaultAcceptanceTests(unittest.TestCase):
+class _FaultFixture:
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
@@ -73,6 +74,8 @@ class FaultAcceptanceTests(unittest.TestCase):
                                *arguments], cwd=package_root, capture_output=True,
                               text=True, timeout=20)
 
+
+class FaultAcceptanceTests(_FaultFixture, unittest.TestCase):
     def test_sqlite_full_rolls_back_every_projection_and_same_id_can_retry(self):
         with self.database.transaction() as connection:
             self.database.max_pages = connection.execute("PRAGMA page_count").fetchone()[0]
@@ -215,6 +218,120 @@ os._exit(74)
         self.assertEqual(report["unsafe_split_commit"]["result"], "counterexample")
         self.assertEqual(report["unsafe_duplicate_retry"]["result"], "counterexample")
         self.assertEqual(report["unsafe_cross_asset_netting"]["result"], "counterexample")
+
+
+class MatchingFaultAcceptanceTests(_FaultFixture, unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.service.create_account("bob")
+        self.service.deposit("bob", "seed", "USD", D(1000))
+        self.service.submit_order("alice", "buy", "BTC-PERP", D(1), D(100))
+        self.service.submit_order("bob", "sell", "BTC-PERP", D(-1), D(100))
+        self.matcher = Matcher(self.service)
+
+    def financial(self):
+        accounts = self.service.accounts()
+        with self.database.transaction() as connection:
+            fills = [tuple(row) for row in connection.execute(
+                "SELECT * FROM uta_fills ORDER BY account_id,fill_id")]
+        return (accounts, {a["account_id"]: self.service.orders(a["account_id"]) for a in accounts},
+                self.service.ledger.journal(), self.service.events(limit=1000),
+                self.matcher.trades(limit=1000), fills)
+
+    def test_process_exit_after_second_side_or_receipt_cannot_publish_half_a_trade(self):
+        code = r'''
+import os, sys
+from datetime import datetime
+from uta.matching import Matcher
+from uta.service import ExchangeService
+from uta.storage import Database
+s = ExchangeService(Database(sys.argv[1]), {"USD":8}, clock=lambda:datetime.fromisoformat(sys.argv[2]))
+matcher = Matcher(s)
+original = s._event
+def crash(connection, kind, account_id, payload):
+    if sys.argv[3] == "second-side" and kind == "FILL_APPLIED" and account_id == "bob":
+        os._exit(75)
+    if sys.argv[3] == "receipt" and kind == "MATCH_CONFIRMED":
+        os._exit(76)
+    return original(connection, kind, account_id, payload)
+s._event = crash
+matcher.match_once("BTC-PERP", max_matches=1)
+'''
+        for point, exit_code in (("second-side", 75), ("receipt", 76)):
+            with self.subTest(crash_point=point):
+                before = self.financial()
+                result = self.child(code, point)
+                self.assertEqual(result.returncode, exit_code, result.stderr)
+                self.service = self.reopen(Database(self.path))
+                self.matcher = Matcher(self.service)
+                self.assertEqual(self.financial(), before)
+                self.assertEqual(self.matcher.verify(strict=True)["paired_fills"], 0)
+        self.assertEqual(self.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
+        self.assertEqual(self.matcher.verify(strict=True)["paired_fills"], 2)
+
+    def test_receipt_storage_failure_rolls_back_both_legs_and_original_book_remains(self):
+        before = self.financial()
+        with self.database.transaction() as connection:
+            connection.execute("""CREATE TRIGGER injected_receipt_failure BEFORE INSERT ON uta_matches
+                BEGIN SELECT RAISE(ABORT,'injected receipt storage failure'); END""")
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.matcher.match_once("BTC-PERP")
+        self.assertEqual(self.financial(), before)
+        with self.database.transaction() as connection:
+            connection.execute("DROP TRIGGER injected_receipt_failure")
+        self.assertEqual(self.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
+        self.assertEqual(self.matcher.verify(strict=True)["matches"], 1)
+
+    def test_response_lost_after_match_commit_recovers_two_sides_without_duplicate_execution(self):
+        code = r'''
+import os, sys
+from datetime import datetime
+from uta.matching import Matcher
+from uta.service import ExchangeService
+from uta.storage import Database
+s = ExchangeService(Database(sys.argv[1]), {"USD":8}, clock=lambda:datetime.fromisoformat(sys.argv[2]))
+result = Matcher(s).match_once("BTC-PERP", max_matches=1)
+if result["confirmed_trades"] != 1:
+    os._exit(78)
+# Commit succeeded, but the worker dies before emitting a response.
+os._exit(77)
+'''
+        result = self.child(code)
+        self.assertEqual(result.returncode, 77, result.stderr)
+        self.assertEqual(result.stdout, "")
+        self.service = self.reopen(Database(self.path))
+        self.matcher = Matcher(self.service)
+        before = self.financial()
+        self.assertEqual(self.matcher.match_once("BTC-PERP")["confirmed_trades"], 0)
+        self.assertEqual(self.financial(), before)
+        receipts = self.matcher.trades()
+        self.assertEqual(len(receipts), 1)
+        receipt = receipts[0]
+        self.assertEqual((receipt["quantity"], receipt["price"]), ("1", "100"))
+        for account, order_id, sign in (("alice", "buy", 1), ("bob", "sell", -1)):
+            actual = self.service.account(account)
+            self.assertEqual(D(actual["balances"]["USD"]), D("999.96"))
+            self.assertEqual(D(actual["positions"]["BTC-PERP"]["quantity"]), D(sign))
+            self.assertEqual(self.service.orders(account)[0]["status"], "FILLED")
+            with self.database.transaction() as connection:
+                fill_id = receipt["buy_fill_id" if sign > 0 else "sell_fill_id"]
+                fill = connection.execute("SELECT * FROM uta_fills WHERE account_id=? AND fill_id=?",
+                                          (account, fill_id)).fetchone()
+                self.assertEqual(fill["order_id"], order_id)
+                self.assertEqual(D(fill["quantity"]), D(sign))
+                self.assertEqual(D(fill["fee"]), D(".04"))
+        self.assertEqual(self.matcher.verify(strict=True)["paired_fills"], 2)
+        # An independent integer projection checks every asset, without using
+        # the production ledger's balance or risk calculation as its oracle.
+        with self.database.transaction() as connection:
+            by_asset = {}
+            for row in connection.execute("SELECT asset,units FROM ledger_postings"):
+                by_asset[row["asset"]] = by_asset.get(row["asset"], 0) + int(row["units"])
+            self.assertEqual(by_asset, {"USD": 0})
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_fills").fetchone()[0], 2)
+            events = [json.loads(row[0]) for row in connection.execute(
+                "SELECT payload FROM uta_events WHERE event_type='MATCH_CONFIRMED'")]
+            self.assertEqual([event["trade_id"] for event in events], [receipt["trade_id"]])
 
 
 if __name__ == "__main__":
