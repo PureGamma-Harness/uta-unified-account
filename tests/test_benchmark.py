@@ -70,6 +70,20 @@ class BenchmarkTests(unittest.TestCase):
             self.assertTrue(all(row["journal_mode"] == "wal" for row in summary["environment"]["storage"]))
             self.assertFalse(summary["gates"]["phase1_exchange_acceptance_passed"])
 
+    def test_real_router_smoke_includes_control_gate_and_keeps_failed_long_gate(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "router"
+            self._run(output, "order", "--duration", ".3", "--rate", "10", "--workers", "2",
+                      "--shards", "2", "--accounts", "4", "--drain-seconds", "2", "--router-mode")
+            summary = json.loads((output / "summary.json").read_text())
+            self.assertEqual(summary["counts"]["durable_accepted"], 3)
+            self.assertIn("real ShardRouter", summary["routing"])
+            self.assertIn("excludes fanout", summary["market_feed"])
+            self.assertTrue((output / "authority" / "router.sqlite3").is_file())
+            self.assertFalse(summary["gates"]["passed"])
+        with self.assertRaises(ValueError):
+            Configuration(router_mode=True).validate()
+
     def test_recorded_raw_evidence_hashes_unique_ids_and_result_counts(self):
         evidence = Path(__file__).resolve().parent.parent / "benchmarks" / "results"
         directories = sorted(evidence.glob("20261114-v1-*"))
