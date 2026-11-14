@@ -299,14 +299,14 @@ class AdmissionInvariants(unittest.TestCase):
         def late_rejection(conn, kind, account, payload):
             original(conn, kind, account, payload)
             if kind == "ORDER_ACCEPTED" and payload["order_id"] == "rejected-late":
-                raise ServiceError("synthetic_policy_rejection", "rejected after attempted writes", 409)
+                raise ServiceError("insufficient_margin", "rejected after attempted writes", 409)
         batcher = self.batcher(max_batch_size=3, max_delay_ms=100)
         with patch.object(self.service, "_event", side_effect=late_rejection):
             first = batcher.submit_order("alice", "first", "BTC-PERP", D(1), D(100))
             rejected = batcher.submit_order("alice", "rejected-late", "BTC-PERP", D(1), D(100))
             second = batcher.submit_order("alice", "second", "BTC-PERP", D(1), D(100))
             self.assertEqual(first.result(timeout=10)["status"], "OPEN")
-            self.assert_error(rejected, "synthetic_policy_rejection")
+            self.assert_error(rejected, "insufficient_margin")
             self.assertEqual(second.result(timeout=10)["status"], "OPEN")
         self.assertEqual({row["order_id"] for row in self.service.orders("alice")}, {"first", "second"})
         self.assertEqual(F(self.service.account("alice")["open_order_margin"]), F("20.08"))
@@ -336,6 +336,46 @@ class AdmissionInvariants(unittest.TestCase):
         self.assert_error(new_order, "admission_batch_failed")
         self.assertEqual(financial_rows(), before)
         self.assertEqual(batcher.stats()["business_rejected"], 0)
+
+    def test_unknown_409_after_mutation_is_not_a_declared_business_rejection(self):
+        self.fund("alice", "1000")
+        original = self.service._event
+        def unknown_error(conn, kind, account, payload):
+            original(conn, kind, account, payload)
+            if kind == "ORDER_ACCEPTED" and payload["order_id"] == "unexpected":
+                raise ServiceError("unregistered_policy_guard", "unknown implementation failure", 409)
+        before = self.service.account("alice"), self.service.events(limit=1000)
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        with patch.object(self.service, "_event", side_effect=unknown_error):
+            first = batcher.submit_order("alice", "first", "BTC-PERP", D(1), D(100))
+            unknown = batcher.submit_order("alice", "unexpected", "BTC-PERP", D(1), D(100))
+            self.assert_error(first, "admission_batch_failed")
+            self.assert_error(unknown, "admission_batch_failed")
+        self.assertEqual((self.service.account("alice"), self.service.events(limit=1000)), before)
+        self.assertEqual(batcher.stats()["business_rejected"], 0)
+
+    def test_market_that_expires_during_group_rolls_back_before_publication(self):
+        self.fund("alice", "1000")
+        self.service.submit_order("alice", "old", "BTC-PERP", D(1), D(100))
+        before = self.service.account("alice"), self.service.events(limit=1000)
+        original = self.service._cancel_order
+        def slow_cancel(conn, account, identifier):
+            result = original(conn, account, identifier)
+            self.now += timedelta(seconds=6)
+            return result
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        with patch.object(self.service, "_cancel_order", side_effect=slow_cancel):
+            new = batcher.submit_order("alice", "new", "BTC-PERP", D(1), D(100))
+            cancel = batcher.cancel_order("alice", "old")
+            self.assert_error(new, "admission_batch_failed")
+            self.assert_error(cancel, "admission_batch_failed")
+        self.assertEqual((self.service.account("alice"), self.service.events(limit=1000)), before)
+        self.service.publish_market(self.market(2))
+        retry = batcher.submit_order("alice", "new", "BTC-PERP", D(1), D(100))
+        cancel = batcher.cancel_order("alice", "old")
+        self.assertEqual(retry.result(timeout=10)["status"], "OPEN")
+        self.assertEqual(cancel.result(timeout=10)["status"], "CANCELLED")
+        self.assertEqual(F(self.service.account("alice")["open_order_margin"]), reserve(1, 100))
 
 
 if __name__ == "__main__":
