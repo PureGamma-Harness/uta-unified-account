@@ -1,0 +1,51 @@
+{
+  "command": [
+    "python",
+    "scripts/benchmark_pm.py",
+    "--mode",
+    "durable",
+    "--workers",
+    "4",
+    "--accounts-per-worker",
+    "100",
+    "--db-dir",
+    ".",
+    "--target-rate",
+    "10000",
+    "--max-pending",
+    "8"
+  ],
+  "cwd": "/workspace/uta-main-baseline",
+  "started_at": "2026-11-14T15:43:03.978656+00:00",
+  "finished_at": "2026-11-14T15:43:06.771676+00:00",
+  "process_wall_seconds": 2.793011691999709,
+  "returncode": 0,
+  "workloads": {
+    "durable": {
+      "errors": 0,
+      "counts": {
+        "account_liquidations_completed": 42,
+        "accounts_not_completed": 358,
+        "end_health_INSOLVENT": 42,
+        "end_positions_flat": 42,
+        "liquidation_cancellations_committed": 42,
+        "liquidation_commands_committed": 84,
+        "liquidation_fills_committed": 42,
+        "maintenance_breaches": 42,
+        "market_updates_committed": 42,
+        "max_pending_observed": 8,
+        "overload_rejections": 358,
+        "position_reductions_committed": 42,
+        "reopened_accounts_verified": 42,
+        "scheduled_arrivals": 400,
+        "staged_accounts": 400
+      },
+      "rates_per_second": {
+        "account_liquidations_completed": 168.01,
+        "liquidation_commands_committed": 336.03,
+        "liquidation_fills_committed": 168.01,
+        "market_updates_committed": 168.01
+      }
+    }
+  }
+}

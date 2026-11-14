@@ -127,6 +127,7 @@ class Store:
         if self.path.with_name(self.path.name + ".shards").exists():
             raise StoreConflict("a shard directory already exists at this path; open with the stored shard count")
         with _transaction(self.path, write=True, initialize=True, enable_wal=True) as db:
+            self._claim_authority(db)
             db.execute("""
                 CREATE TABLE IF NOT EXISTS uta_accounts (
                     account_id TEXT PRIMARY KEY NOT NULL,
@@ -147,6 +148,28 @@ class Store:
                     UNIQUE (account_id, command_id)
                 )
             """)
+
+    @staticmethod
+    def _claim_authority(db: sqlite3.Connection) -> None:
+        expected = {"uta_accounts": {"account_id", "version", "snapshot"},
+                    "uta_events": {"account_id", "version", "command_id", "expected_version", "command", "result", "created_at"},
+                    "uta_authority": {"singleton", "kind"}}
+        existing = {row["name"]: row["type"] for row in db.execute(
+            "SELECT name,type FROM sqlite_master WHERE name IN ('uta_accounts','uta_events','uta_authority','ledger_schema','uta_schema')")}
+        if "ledger_schema" in existing or "uta_schema" in existing:
+            raise StoreConflict("database belongs to the durable exchange; use a separate research database")
+        for table, kind in existing.items():
+            columns = {row["name"] for row in db.execute(f"PRAGMA table_info({table})")}
+            if kind != "table" or columns != expected[table]:
+                raise StoreConflict("database is not a compatible research snapshot authority")
+        if "uta_authority" in existing:
+            rows = db.execute("SELECT singleton,kind FROM uta_authority").fetchall()
+            if len(rows) != 1 or rows[0]["singleton"] != 1 or rows[0]["kind"] != "research":
+                raise StoreConflict("database belongs to another authority")
+        else:
+            db.execute("CREATE TABLE uta_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1), "
+                       "kind TEXT NOT NULL CHECK(kind IN ('exchange','research')))")
+            db.execute("INSERT INTO uta_authority VALUES (1,'research')")
 
     def _connection(self, *, write: bool = False):
         return _transaction(self.path, write=write)

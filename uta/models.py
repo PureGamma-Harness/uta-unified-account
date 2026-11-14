@@ -5,11 +5,25 @@ The caller is responsible for supplying trusted, current prices and rates.
 """
 from dataclasses import dataclass, field
 from decimal import Decimal
+import re
+from types import MappingProxyType
 from typing import Mapping
 
 
 class RiskInputError(ValueError):
     """Missing, malformed, or economically invalid risk input."""
+
+
+def _identifier(name: str, value: str) -> None:
+    """Bound identifiers before they become database keys or audit fields."""
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}", value):
+        raise RiskInputError(f"{name} must be a valid identifier of 1..128 ASCII characters")
+
+
+def _mapping(name: str, value: Mapping) -> dict:
+    if not isinstance(value, Mapping) or len(value) > 4096:
+        raise RiskInputError(f"{name} must be a mapping with at most 4096 entries")
+    return dict(value)
 
 
 def _decimal(name: str, value: Decimal, *, minimum: Decimal | None = None,
@@ -65,8 +79,7 @@ class Position:
     entry_notional: Decimal | None = None
 
     def __post_init__(self) -> None:
-        if not self.symbol:
-            raise RiskInputError("position symbol is required")
+        _identifier("position symbol", self.symbol)
         _decimal("position quantity", self.quantity)
         _decimal("entry price", self.entry_price, positive=True)
         if self.entry_notional is not None:
@@ -96,16 +109,23 @@ class Account:
 
     def __post_init__(self) -> None:
         _decimal("open order margin", self.open_order_margin, minimum=Decimal(0))
-        for asset, amount in self.balances.items():
-            if not asset:
-                raise RiskInputError("asset name is required")
+        balances = _mapping("balances", self.balances)
+        liabilities = _mapping("liabilities", self.liabilities)
+        positions = _mapping("positions", self.positions)
+        for asset, amount in balances.items():
+            _identifier("asset", asset)
             _decimal(f"balance for {asset}", amount)
-        for asset, amount in self.liabilities.items():
-            if not asset:
-                raise RiskInputError("liability asset name is required")
+        for asset, amount in liabilities.items():
+            _identifier("liability asset", asset)
             _decimal(f"liability for {asset}", amount, minimum=Decimal(0))
-            if amount > 0 and self.balances.get(asset, Decimal(0)) < 0:
+            if amount > 0 and balances.get(asset, Decimal(0)) < 0:
                 raise RiskInputError(f"ambiguous duplicate liability for {asset}")
-        for symbol, position in self.positions.items():
+        for symbol, position in positions.items():
+            _identifier("position key", symbol)
             if not isinstance(position, Position) or symbol != position.symbol:
                 raise RiskInputError(f"position key mismatch: {symbol}")
+        # frozen=True protects attributes, but does not freeze a supplied dict.
+        # Copy first so callers cannot mutate a validated risk snapshot later.
+        object.__setattr__(self, "balances", MappingProxyType(balances))
+        object.__setattr__(self, "liabilities", MappingProxyType(liabilities))
+        object.__setattr__(self, "positions", MappingProxyType(positions))

@@ -10,7 +10,7 @@ from decimal import Decimal, Context, ROUND_HALF_EVEN, localcontext
 from fractions import Fraction
 from typing import Mapping
 
-from .models import Account, AssetSpec, InstrumentSpec, RiskInputError, _decimal
+from .models import Account, AssetSpec, InstrumentSpec, RiskInputError, _decimal, _identifier, _mapping
 
 
 def _decimal_exact(value: Fraction) -> Decimal:
@@ -64,6 +64,10 @@ class OrderCheck:
 
 def calculate_risk(account: Account, asset_specs: Mapping[str, AssetSpec],
                    instrument_specs: Mapping[str, InstrumentSpec]) -> RiskSnapshot:
+    if not isinstance(account, Account):
+        raise RiskInputError("account must be an Account")
+    asset_specs = _mapping("asset specifications", asset_specs)
+    instrument_specs = _mapping("instrument specifications", instrument_specs)
     collateral = Fraction(0)
     for asset, amount in account.balances.items():
         try:
@@ -121,6 +125,8 @@ def check_order(account: Account, asset_specs: Mapping[str, AssetSpec],
     calculation alone is not an atomic order acceptance or execution service.
     It counts existing order reserves in full, even for risk-reducing orders.
     """
+    _identifier("order symbol", symbol)
+    instrument_specs = _mapping("instrument specifications", instrument_specs)
     _decimal("order quantity", quantity)
     if quantity == 0:
         raise RiskInputError("order quantity must be nonzero")

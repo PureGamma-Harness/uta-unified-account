@@ -1,3 +1,5 @@
+> 本文保留 main@02549e5 的场景 PM 研究架构。当前认证 UTA 的目标/实现边界见 [target-architecture.md](target-architecture.md) 与 [acceptance-gates.md](acceptance-gates.md)。两个持久权威使用不同数据库，不可混用。
+
 # UTA 事务与分片架构
 
 当前主链路是单机持久化交易模拟器。经典账户导入建立版本 0 的创世状态；后续余额、仓位、订单和行情的变更都通过带版本的账户命令提交。旧版固定费率 API、内存清算控制器和独立预留簿仍可单独运行，不能把它们的行为直接套用到模拟器。

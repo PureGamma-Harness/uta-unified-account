@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uta-reference-exchange"
+version = "0.2.0"
+description = "Inspectable unified trading account and durable exchange foundation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Financial",
+]
+
+[project.scripts]
+uta = "uta.__main__:main"
+uta-ops = "uta.ops:main"
+
+[project.urls]
+Repository = "https://github.com/PureGamma-Harness/uta-unified-account"
+
+[tool.setuptools]
+packages = ["uta"]
+
+[tool.setuptools.package-data]
+uta = ["dashboard.html"]

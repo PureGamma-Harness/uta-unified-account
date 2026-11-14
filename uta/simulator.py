@@ -11,7 +11,7 @@ from .api import json_value
 from .ledger import Ledger, LedgerError, Posting
 from .migration import build_shadow
 from .models import Account, AssetSpec, InstrumentSpec, Position, RiskInputError
-from .portfolio import calculate_portfolio, position_im_bound
+from .scenario_margin import calculate_portfolio, position_im_bound
 from .risk import _decimal_exact, _ratio
 from .shadow_adapter import convert_shadow
 from .store import AccountNotFound, ShardedStore, Store, StoreConflict, StoreError

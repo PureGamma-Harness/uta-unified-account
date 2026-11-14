@@ -1,0 +1,90 @@
+Sat Nov 14 14:50:48 2026    benchmarks/results/20261114-v1-order/worker-0.prof
+Sat Nov 14 14:50:48 2026    benchmarks/results/20261114-v1-order/worker-1.prof
+
+         4291112 function calls (4228312 primitive calls) in 15.935 seconds
+
+   Ordered by: internal time
+   List reduced from 255 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+    95270    9.506    0.000    9.506    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+     5444    2.815    0.001    2.815    0.001 {method 'commit' of 'sqlite3.Connection' objects}
+     5444    0.296    0.000    0.296    0.000 {method 'close' of 'sqlite3.Connection' objects}
+     5444    0.161    0.000    0.221    0.000 {built-in method _sqlite3.connect}
+     5448    0.133    0.000    0.133    0.000 {built-in method posix.read}
+     2724    0.112    0.000    0.112    0.000 {method '__enter__' of '_multiprocessing.SemLock' objects}
+   112252    0.109    0.000    0.241    0.000 fractions.py:186(__new__)
+    10888    0.097    0.000    0.097    0.000 {built-in method posix.open}
+    59884    0.095    0.000    0.226    0.000 models.py:29(_decimal)
+562774/540998    0.089    0.000    0.168    0.000 {built-in method builtins.isinstance}
+    21826    0.079    0.000    0.142    0.000 service.py:65(_exact)
+    54440    0.079    0.000    0.079    0.000 {method 'fullmatch' of 're.Pattern' objects}
+     5494    0.078    0.000    0.493    0.000 service.py:273(_reserve)
+     2722    0.065    0.000    0.753    0.000 service.py:289(_risk)
+   130656    0.057    0.000    0.104    0.000 {method 'as_tuple' of 'decimal.Decimal' objects}
+     5444    0.051    0.000    1.396    0.000 storage.py:74(_connect)
+   341650    0.049    0.000    0.049    0.000 {built-in method __new__ of type object at 0x144d380}
+     2722    0.047    0.000    2.465    0.001 service.py:463(_admit_order)
+     2722    0.047    0.000    0.587    0.000 market.py:154(from_json)
+     5444    0.046    0.000    0.046    0.000 encoder.py:205(iterencode)
+    82310    0.044    0.000    0.195    0.000 fractions.py:613(forward)
+    40830    0.044    0.000    0.044    0.000 {method 'fetchone' of 'sqlite3.Cursor' objects}
+    29942    0.042    0.000    0.225    0.000 market.py:46(_number)
+2724/2722    0.040    0.000   10.068    0.004 service.py:449(submit_order)
+    16332    0.040    0.000    0.040    0.000 {built-in method posix.lstat}
+    93298    0.037    0.000    0.049    0.000 fractions.py:317(_from_coprime_ints)
+    38408    0.036    0.000    0.066    0.000 fractions.py:742(_mul)
+     8166    0.035    0.000    0.035    0.000 {method 'release' of '_thread.lock' objects}
+    63106    0.033    0.000    0.033    0.000 {method 'as_integer_ratio' of 'decimal.Decimal' objects}
+    10888    0.030    0.000    0.030    0.000 {method 'isoformat' of 'datetime.datetime' objects}
+     5494    0.030    0.000    0.056    0.000 service.py:248(_rounded)
+2726/2724    0.029    0.000    8.904    0.003 queues.py:98(get)
+16328/13606    0.029    0.000    0.028    0.000 {method 'acquire' of '_thread.lock' objects}
+     2722    0.028    0.000    5.479    0.002 service.py:525(cancel_order)
+   130656    0.028    0.000    0.047    0.000 <string>:1(<lambda>)
+
+
+Sat Nov 14 14:50:48 2026    benchmarks/results/20261114-v1-order/worker-0.prof
+Sat Nov 14 14:50:48 2026    benchmarks/results/20261114-v1-order/worker-1.prof
+
+         4291112 function calls (4228312 primitive calls) in 15.935 seconds
+
+   Ordered by: cumulative time
+   List reduced from 255 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+29942/16332    0.022    0.000   12.887    0.001 {built-in method builtins.next}
+    10888    0.013    0.000   12.582    0.001 service.py:192(_transaction)
+    10888    0.027    0.000   12.532    0.001 storage.py:93(transaction)
+2724/2722    0.040    0.000   10.068    0.004 service.py:449(submit_order)
+13610/8166    0.010    0.000    9.754    0.001 contextlib.py:132(__enter__)
+    95270    9.506    0.000    9.506    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+2726/2724    0.029    0.000    8.904    0.003 queues.py:98(get)
+     2722    0.028    0.000    5.479    0.002 service.py:525(cancel_order)
+13610/8166    0.012    0.000    3.155    0.000 contextlib.py:141(__exit__)
+     5444    2.815    0.001    2.815    0.001 {method 'commit' of 'sqlite3.Connection' objects}
+     2722    0.047    0.000    2.465    0.001 service.py:463(_admit_order)
+     5444    0.051    0.000    1.396    0.000 storage.py:74(_connect)
+     2722    0.065    0.000    0.753    0.000 service.py:289(_risk)
+     2722    0.012    0.000    0.638    0.000 service.py:236(_market)
+     2722    0.047    0.000    0.587    0.000 market.py:154(from_json)
+     5494    0.078    0.000    0.493    0.000 service.py:273(_reserve)
+     2722    0.014    0.000    0.385    0.000 storage.py:311(balance)
+     5444    0.296    0.000    0.296    0.000 {method 'close' of 'sqlite3.Connection' objects}
+     5444    0.020    0.000    0.290    0.000 storage.py:110(_using)
+     8166    0.027    0.000    0.271    0.000 service.py:328(_order)
+   112252    0.109    0.000    0.241    0.000 fractions.py:186(__new__)
+     2722    0.007    0.000    0.237    0.000 pathlib.py:1228(resolve)
+    59884    0.095    0.000    0.226    0.000 models.py:29(_decimal)
+    29942    0.042    0.000    0.225    0.000 market.py:46(_number)
+     5444    0.161    0.000    0.221    0.000 {built-in method _sqlite3.connect}
+     5444    0.010    0.000    0.209    0.000 service.py:208(_event)
+    82310    0.044    0.000    0.195    0.000 fractions.py:613(forward)
+     2722    0.005    0.000    0.178    0.000 <frozen posixpath>:420(realpath)
+     2724    0.005    0.000    0.169    0.000 connection.py:208(recv_bytes)
+562774/540998    0.089    0.000    0.168    0.000 {built-in method builtins.isinstance}
+     2724    0.009    0.000    0.161    0.000 connection.py:429(_recv_bytes)
+     5448    0.009    0.000    0.145    0.000 connection.py:390(_recv)
+    21826    0.079    0.000    0.142    0.000 service.py:65(_exact)
+     2722    0.010    0.000    0.139    0.000 connection.py:182(send_bytes)
+     5448    0.133    0.000    0.133    0.000 {built-in method posix.read}

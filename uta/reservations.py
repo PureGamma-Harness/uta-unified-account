@@ -7,7 +7,7 @@ persist data, fence multiple processes, or coordinate with fills or liquidations
 Never use it as a production risk gate.
 """
 from dataclasses import dataclass
-from decimal import Decimal, localcontext
+from decimal import Context, Decimal, ROUND_HALF_EVEN, localcontext
 from threading import RLock
 
 
@@ -86,8 +86,7 @@ class ReservationBook:
             raise VersionConflict(f"expected version {expected_version}, current {self._version}")
 
     def snapshot(self) -> BookSnapshot:
-        with self._lock, localcontext() as ctx:
-            ctx.prec = 80
+        with self._lock, localcontext(Context(prec=80, rounding=ROUND_HALF_EVEN)):
             return BookSnapshot(self._version, self._capacity, self._reserved,
                                 self._capacity - self._reserved)
 
@@ -109,8 +108,7 @@ class ReservationBook:
         _id(reservation_id)
         _amount(amount, positive=True)
         _version(expected_version)
-        with self._lock, localcontext() as ctx:
-            ctx.prec = 80
+        with self._lock, localcontext(Context(prec=80, rounding=ROUND_HALF_EVEN)):
             existing = self._entries.get(reservation_id)
             if existing is not None:
                 if existing.amount != amount:
@@ -129,8 +127,7 @@ class ReservationBook:
         """Release an entire reservation once; repeated releases are no-ops."""
         _id(reservation_id)
         _version(expected_version)
-        with self._lock, localcontext() as ctx:
-            ctx.prec = 80
+        with self._lock, localcontext(Context(prec=80, rounding=ROUND_HALF_EVEN)):
             existing = self._entries.get(reservation_id)
             if existing is None:
                 raise ReservationError("unknown reservation")

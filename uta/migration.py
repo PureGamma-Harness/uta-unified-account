@@ -14,7 +14,7 @@ import json
 from threading import RLock
 from typing import Any, Mapping
 
-from .models import RiskInputError, _decimal as _validate_risk_decimal
+from .models import RiskInputError, _decimal as _validate_decimal
 
 
 class MigrationError(ValueError):
@@ -27,8 +27,9 @@ def _fields(value: Any, expected: set[str], name: str) -> None:
 
 
 def _name(value: Any, name: str) -> str:
-    if not isinstance(value, str) or not value or value != value.strip():
-        raise MigrationError(f"{name} must be a nonempty trimmed string")
+    if (not isinstance(value, str) or not value or value != value.strip()
+            or len(value) > 128 or any(ord(ch) < 32 or ord(ch) == 127 for ch in value)):
+        raise MigrationError(f"{name} must be a trimmed string of 1..128 characters without controls")
     return value
 
 
@@ -41,8 +42,8 @@ def _decimal(value: Any, name: str, *, positive: bool = False, signed: bool = Fa
     except InvalidOperation as exc:
         raise MigrationError(f"{name} is not a decimal") from exc
     try:
-        _validate_risk_decimal(name, result, minimum=None if signed else Decimal(0),
-                               positive=positive)
+        _validate_decimal(name, result, positive=positive,
+                          minimum=None if signed else Decimal(0))
     except RiskInputError as exc:
         raise MigrationError(str(exc)) from exc
     return result
@@ -100,13 +101,14 @@ def build_shadow(snapshot: Mapping[str, Any], *, now: datetime | None = None,
     _fields(snapshot, {"account_id", "version", "captured_at", "compartments"}, "snapshot")
     account_id = _name(snapshot["account_id"], "account_id")
     version = snapshot["version"]
-    if isinstance(version, bool) or not isinstance(version, int) or version < 0:
-        raise MigrationError("version must be a nonnegative integer")
+    if type(version) is not int or not 0 <= version <= 2**63 - 1:
+        raise MigrationError("version must be a nonnegative signed 64-bit integer")
     captured_at = _timestamp(snapshot["captured_at"])
-    now = now or datetime.now(timezone.utc)
-    if now.tzinfo is None or now.utcoffset() is None:
+    now = datetime.now(timezone.utc) if now is None else now
+    if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:
         raise MigrationError("now must be timezone-aware")
-    if max_age < timedelta(0) or max_future_skew < timedelta(0):
+    if (not isinstance(max_age, timedelta) or not isinstance(max_future_skew, timedelta)
+            or max_age < timedelta(0) or max_future_skew < timedelta(0)):
         raise MigrationError("time limits must be nonnegative")
     age = now.astimezone(timezone.utc) - captured_at
     if age > max_age or age < -max_future_skew:

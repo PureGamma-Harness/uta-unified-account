@@ -1,0 +1,34 @@
+{
+  "command": [
+    "python",
+    "scripts/benchmark_pm.py",
+    "--mode",
+    "compute",
+    "--workers",
+    "8",
+    "--checks-per-worker",
+    "20000"
+  ],
+  "cwd": "/workspace/uta-main-baseline",
+  "started_at": "2026-11-14T15:42:36.927306+00:00",
+  "finished_at": "2026-11-14T15:42:51.319510+00:00",
+  "process_wall_seconds": 14.392194106000716,
+  "returncode": 0,
+  "workloads": {
+    "compute": {
+      "errors": 0,
+      "counts": {
+        "accepted": 139010,
+        "maintenance_breaches": 17133,
+        "requests": 160000,
+        "risk_rejections": 20990,
+        "worst_scenario_btc_down_eth_up": 75296,
+        "worst_scenario_collateral_gap_down": 47056,
+        "worst_scenario_market_down": 37648
+      },
+      "rates_per_second": {
+        "requests": 11488.8
+      }
+    }
+  }
+}

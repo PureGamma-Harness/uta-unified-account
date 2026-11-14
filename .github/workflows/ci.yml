@@ -1,4 +1,4 @@
-name: Test
+name: Verify exchange foundation
 
 on:
   push:
@@ -7,13 +7,18 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -21,9 +26,37 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
+      - name: Compile source
+        run: python -m compileall -q uta formal tests
       - name: Run demo
         run: python -m uta demo
-      - name: Execute, reopen and replay a liquidation scenario
+      - name: Preserve and replay research scenario
         run: python -m uta scenario --shards 4
+      - name: Run transactional acceptance scenario
+        run: python -m uta acceptance
       - name: Explore bounded reservation model
         run: python formal/explore_reservation.py
+      - name: Explore bounded paired settlement model
+        run: python formal/explore_settlement.py
+      - name: Build installable wheel
+        run: |
+          python -m pip install --disable-pip-version-check 'setuptools>=68' wheel
+          python -m pip wheel . --no-deps --no-build-isolation --wheel-dir dist
+      - name: Verify installed package outside source tree
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/uta-smoke"
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m pip install --no-deps dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m uta demo
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m uta acceptance
+          "$RUNNER_TEMP/uta-smoke/bin/python" -m uta scenario --shards 4
+          "$RUNNER_TEMP/uta-smoke/bin/uta" --help
+          "$RUNNER_TEMP/uta-smoke/bin/uta-ops" --help
+      - name: Retain installable review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uta-wheel-python-${{ matrix.python-version }}
+          path: dist/*.whl
+          if-no-files-found: error
+          retention-days: 14

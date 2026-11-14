@@ -40,6 +40,10 @@ class Ledger:
     It is not a substitute for an accounting chart or external reconciliation.
     """
 
+    # The durable exchange ledger and credit codec retain the default 38-digit
+    # contract. Research simulators may independently request a wider journal.
+    _LIMIT = 10 ** 38
+
     def __init__(self, scales: Mapping[str, int], *, unit_digits: int = 38):
         if not scales:
             raise LedgerError("at least one asset scale is required")

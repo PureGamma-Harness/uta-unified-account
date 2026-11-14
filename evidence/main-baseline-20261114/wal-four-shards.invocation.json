@@ -1,0 +1,75 @@
+{
+  "command": [
+    "python",
+    "scripts/benchmark_pm.py",
+    "--mode",
+    "all",
+    "--workers",
+    "4",
+    "--checks-per-worker",
+    "3000",
+    "--accounts-per-worker",
+    "80",
+    "--db-dir",
+    "."
+  ],
+  "cwd": "/workspace/uta-main-baseline",
+  "started_at": "2026-11-14T15:42:51.320096+00:00",
+  "finished_at": "2026-11-14T15:42:57.346282+00:00",
+  "process_wall_seconds": 6.026176082999882,
+  "returncode": 0,
+  "workloads": {
+    "admission": {
+      "errors": 0,
+      "counts": {
+        "admission_requests": 320,
+        "orders_committed": 240,
+        "reopened_accounts_verified": 320,
+        "risk_rejections": 80,
+        "staged_accounts": 320
+      },
+      "rates_per_second": {
+        "admission_requests": 817.1,
+        "orders_committed": 612.82
+      }
+    },
+    "compute": {
+      "errors": 0,
+      "counts": {
+        "accepted": 10422,
+        "maintenance_breaches": 1285,
+        "requests": 12000,
+        "risk_rejections": 1578,
+        "worst_scenario_btc_down_eth_up": 5648,
+        "worst_scenario_collateral_gap_down": 3528,
+        "worst_scenario_market_down": 2824
+      },
+      "rates_per_second": {
+        "requests": 13286.65
+      }
+    },
+    "durable": {
+      "errors": 0,
+      "counts": {
+        "account_liquidations_completed": 320,
+        "accounts_not_completed": 0,
+        "end_health_INSOLVENT": 320,
+        "end_positions_flat": 320,
+        "liquidation_cancellations_committed": 320,
+        "liquidation_commands_committed": 640,
+        "liquidation_fills_committed": 320,
+        "maintenance_breaches": 320,
+        "market_updates_committed": 320,
+        "position_reductions_committed": 320,
+        "reopened_accounts_verified": 320,
+        "staged_accounts": 320
+      },
+      "rates_per_second": {
+        "account_liquidations_completed": 162.7,
+        "liquidation_commands_committed": 325.41,
+        "liquidation_fills_committed": 162.7,
+        "market_updates_committed": 162.7
+      }
+    }
+  }
+}
