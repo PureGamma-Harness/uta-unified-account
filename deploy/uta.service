@@ -1,5 +1,5 @@
 [Unit]
-Description=UTA durable exchange foundation
+Description=UTA synthetic Cross acceptance authority (not production approved)
 Documentation=https://github.com/PureGamma-Harness/uta-unified-account
 After=network.target
 StartLimitIntervalSec=60
@@ -10,7 +10,7 @@ Type=simple
 User=uta
 Group=uta
 WorkingDirectory=/var/lib/uta
-ExecStart=/opt/uta/venv/bin/python -m uta exchange --database /var/lib/uta/exchange.sqlite3 --credentials /etc/uta/credentials.json --host 127.0.0.1 --port 8080
+ExecStart=/opt/uta/venv/bin/python -m uta exchange --database /var/lib/uta/exchange.sqlite3 --credentials /etc/uta/credentials.json --asset-scale USD=8 --asset-scale BTC=8 --catalog /etc/uta/products.json --risk-rules /etc/uta/risk-rules.json --automate --host 127.0.0.1 --port 8080
 Restart=on-failure
 RestartSec=5
 TimeoutStopSec=30
