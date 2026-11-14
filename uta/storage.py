@@ -297,8 +297,12 @@ class DurableLedger:
                 current.execute("UPDATE ledger_events SET sealed = 1 WHERE sequence = ?", (sequence,))
                 current.execute(f"RELEASE SAVEPOINT {savepoint}")
             except BaseException:
-                current.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
-                current.execute(f"RELEASE SAVEPOINT {savepoint}")
+                # SQLITE_FULL/IOERR may automatically roll back the entire
+                # transaction, including its savepoints. Preserve that failure
+                # instead of replacing it with "no such savepoint".
+                if current.in_transaction:
+                    current.execute(f"ROLLBACK TO SAVEPOINT {savepoint}")
+                    current.execute(f"RELEASE SAVEPOINT {savepoint}")
                 raise
             return JournalEvent(event_id, sequence, tuple(
                 Posting(account, asset, self._codec._amount(asset, units))
