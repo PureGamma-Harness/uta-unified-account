@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D, Inexact, localcontext
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -229,6 +230,49 @@ class CreditTests(unittest.TestCase):
         self.assert_code("credit_schema_version", self.credit.borrow, "alice", "loan", "BTC", D("1"))
         self.assert_code("credit_schema_version", self.credit.configure_limit, "alice", "USD", D("1"))
         self.assert_code("credit_schema_version", self.credit.verify)
+
+    def test_funding_proof_cannot_be_reused_with_another_command_or_asset(self):
+        before = self.exchange.ledger.journal(), self.exchange.events(limit=1000)
+        for asset in ("BTC", "USD"):
+            self.assert_code("duplicate_external_reference", self.credit.fund_pool,
+                             "duplicate:" + asset, asset, D("1"), source_reference="synthetic:capital:btc")
+        self.assertEqual((self.exchange.ledger.journal(), self.exchange.events(limit=1000)), before)
+        # The same command still has normal idempotent delivery semantics.
+        self.credit.fund_pool("capital-btc", "BTC", D("50"), source_reference="synthetic:capital:btc")
+        self.assertEqual((self.exchange.ledger.journal(), self.exchange.events(limit=1000)), before)
+
+    def test_schema_one_upgrade_adds_unique_funding_sources_without_changing_money(self):
+        before = self.exchange.ledger.journal()
+        with self.exchange.database.transaction() as connection:
+            connection.execute("UPDATE credit_schema SET version=1")
+            connection.execute("DROP INDEX credit_pool_source_unique")
+        upgraded = CreditService(self.exchange)
+        with self.exchange.database.transaction() as connection:
+            self.assertEqual(connection.execute("SELECT version FROM credit_schema").fetchone()[0], 2)
+            self.assertIsNotNone(connection.execute("SELECT 1 FROM sqlite_master WHERE name='credit_pool_source_unique'").fetchone())
+        self.assertEqual(self.exchange.ledger.journal(), before)
+        self.assert_code("duplicate_external_reference", upgraded.fund_pool,
+                         "duplicate", "BTC", D("50"), source_reference="synthetic:capital:btc")
+
+    def test_upgrade_rejects_duplicate_historical_funding_proofs_without_rewriting_journal(self):
+        self.credit.fund_pool("capital-other", "USD", D("10"), source_reference="synthetic:capital:other")
+        journal = self.exchange.ledger.journal()
+        with self.exchange.database.transaction() as connection:
+            # Reconstruct a v1 database whose two otherwise valid receipts refer
+            # to the same external proof, as the earlier schema permitted.
+            connection.execute("DROP INDEX credit_pool_source_unique")
+            connection.execute("DROP TRIGGER credit_commands_no_update")
+            row = connection.execute("SELECT result FROM credit_commands WHERE command_id='capital-other'").fetchone()
+            result = json.loads(row["result"])
+            result["source_reference"] = "synthetic:capital:btc"
+            connection.execute("UPDATE credit_commands SET source_reference=?,result=? WHERE command_id='capital-other'",
+                (result["source_reference"], json.dumps(result, sort_keys=True, separators=(",", ":"))))
+            connection.execute("UPDATE credit_schema SET version=1")
+        self.assert_code("credit_corrupt", CreditService, self.exchange)
+        self.assertEqual(self.exchange.ledger.journal(), journal)
+        with self.exchange.database.transaction() as connection:
+            self.assertEqual(connection.execute("SELECT version FROM credit_schema").fetchone()[0], 1)
+
 
 
 if __name__ == "__main__":

@@ -77,10 +77,17 @@ class CreditService:
         for statement in statements:
             connection.execute(statement)
         row = connection.execute("SELECT version FROM credit_schema WHERE singleton=1").fetchone()
-        if row is None:
-            connection.execute("INSERT INTO credit_schema VALUES (1,1)")
-        elif row[0] != 1:
+        if row is not None and row[0] not in (1, 2):
             raise ServiceError("credit_schema_version", "unsupported credit schema version", 503)
+        try:
+            connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS credit_pool_source_unique "
+                               "ON credit_commands(source_reference) WHERE kind='pool_funded'")
+        except sqlite3.IntegrityError as exc:
+            raise ServiceError("credit_corrupt", "duplicate historical pool funding references require reconciliation", 503) from exc
+        if row is None:
+            connection.execute("INSERT INTO credit_schema VALUES (1,2)")
+        elif row[0] == 1:
+            connection.execute("UPDATE credit_schema SET version=2 WHERE singleton=1")
 
     def _asset(self, asset: str) -> str:
         _name(asset, "asset")
@@ -213,6 +220,9 @@ class CreditService:
             previous = self._replay(connection, scope, command_id, "pool_funded", asset, amount_text, source_reference)
             if previous is not None:
                 return previous
+            if connection.execute("SELECT 1 FROM credit_commands WHERE kind='pool_funded' AND source_reference=?",
+                                  (source_reference,)).fetchone() is not None:
+                raise ServiceError("duplicate_external_reference", "funding source business line was already credited", 409)
             event_id = _key("credit", scope, command_id)
             self.ledger.post(event_id, [Posting(_POOL, asset, value), Posting(_CAPITAL, asset, value.copy_negate())], connection=connection)
             result = {"command_id": command_id, "asset": asset, "amount": amount_text,
@@ -342,7 +352,7 @@ class CreditService:
     @staticmethod
     def _check_schema(connection) -> None:
         version = connection.execute("SELECT version FROM credit_schema WHERE singleton=1").fetchone()
-        if version is None or version[0] != 1:
+        if version is None or version[0] != 2:
             raise ServiceError("credit_schema_version", "unsupported credit schema version", 503)
 
     def _verify(self, connection) -> int:
@@ -363,7 +373,8 @@ class CreditService:
             if self._stored(row["asset"], row["amount"]) <= 0:
                 raise ServiceError("credit_corrupt", "nonpositive credit command amount", 503)
             if row["scope"] == "pool":
-                if row["kind"] != "pool_funded" or result.get("source_reference") != row["source_reference"]:
+                if (row["kind"] != "pool_funded" or not isinstance(row["source_reference"], str)
+                        or not row["source_reference"] or result.get("source_reference") != row["source_reference"]):
                     raise ServiceError("credit_corrupt", "pool command lacks its funding source", 503)
             elif (not row["scope"].startswith("account:") or row["kind"] not in ("borrowed", "repaid", "interest_accrued")
                   or result.get("account_id") != row["scope"][8:] or row["source_reference"] is not None):
