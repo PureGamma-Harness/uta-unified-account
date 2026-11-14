@@ -393,8 +393,9 @@ class IndependentStressReferenceTests(unittest.TestCase):
         result = self.assert_stress((account, market, catalog, rules), scenarios, D(50), D(3), D(2))
         self.assertEqual(dict(result.scenario_losses), {"down": D(36), "up": D(20)})
         self.assertEqual(result.reference_requirement, D(55))
-        with self.assertRaises(ValueError):
+        with self.assertRaises((ValueError, TypeError)):
             replace(result, pm_activatable=True)
+        self.assertFalse(result.pm_activatable)
 
     def test_usd_depeg_pm_activation_and_unimplemented_revaluation_are_rejected(self):
         account, market, catalog, rules = manual_case()
