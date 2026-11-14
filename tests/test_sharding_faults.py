@@ -1,6 +1,7 @@
 """Independent single-host router fault/recovery checks; not HA certification."""
 from __future__ import annotations
 
+from contextlib import closing
 from datetime import datetime, timezone
 from decimal import Decimal as D
 import json
@@ -73,7 +74,7 @@ class ShardingFaultTests(unittest.TestCase):
         rejected = self.assert_rejected("shard_identity_conflict", self.router.create_account, target)
         self.assertEqual(rejected.status, 503)
         self.assertTrue(self.router._state()["halted"])
-        with sqlite3.connect(self.router._path(1)) as connection:
+        with closing(sqlite3.connect(self.router._path(1))) as connection, connection:
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_accounts WHERE account_id=?",
                                                 (target,)).fetchone()[0], 0)
 
@@ -98,10 +99,10 @@ class ShardingFaultTests(unittest.TestCase):
         shutil.copyfile(old_control, self.router.control.path)
         rejected = self.assert_rejected("funding_registry_conflict", self.reopen)
         self.assertEqual(rejected.status, 503)
-        with sqlite3.connect(self.router.control.path) as connection:
+        with closing(sqlite3.connect(self.router.control.path)) as connection, connection:
             state = json.loads(connection.execute("SELECT payload FROM router_state WHERE singleton=1").fetchone()[0])
             self.assertTrue(state["halted"])
-        with sqlite3.connect(self.router._path(1)) as connection:
+        with closing(sqlite3.connect(self.router._path(1))) as connection, connection:
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM ledger_events").fetchone()[0], 0)
 
     def test_detected_market_barrier_mismatch_persists_halt_before_returning_error(self):

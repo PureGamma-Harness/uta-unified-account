@@ -1,4 +1,4 @@
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import closing, redirect_stderr, redirect_stdout
 import hashlib
 import io
 import json
@@ -32,7 +32,7 @@ class OperationsTests(unittest.TestCase):
         self.writer.execute("INSERT INTO events VALUES (2, 'uncommitted')")
         target = self.root / "backup.sqlite3"
         result = backup_database(self.source, target)
-        with sqlite3.connect(target) as connection:
+        with closing(sqlite3.connect(target)) as connection, connection:
             self.assertEqual(connection.execute("SELECT id FROM events").fetchall(), [(1,)])
             self.assertEqual(connection.execute("PRAGMA journal_mode").fetchone()[0], "delete")
         self.assertEqual(result["sha256"], hashlib.sha256(target.read_bytes()).hexdigest())
@@ -50,7 +50,7 @@ class OperationsTests(unittest.TestCase):
         before = restored.read_bytes()
         self.assertEqual(check_database(restored)["integrity"], "ok")
         self.assertEqual(restored.read_bytes(), before)
-        with sqlite3.connect(restored) as connection:
+        with closing(sqlite3.connect(restored)) as connection, connection:
             self.assertEqual(connection.execute("SELECT payload FROM events").fetchone()[0],
                              "committed before backup")
 

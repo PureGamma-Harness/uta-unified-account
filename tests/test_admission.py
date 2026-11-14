@@ -1,5 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D, Inexact, localcontext
 from pathlib import Path
@@ -89,7 +89,7 @@ class AdmissionTests(unittest.TestCase):
             self.assertTrue(good.running())
             self.assertFalse(good.done())
             self.assertFalse(bad.done())
-            with sqlite3.connect(self.path) as reader:
+            with closing(sqlite3.connect(self.path)) as reader, reader:
                 self.assertEqual(reader.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 0)
         finally:
             self.database.armed = False

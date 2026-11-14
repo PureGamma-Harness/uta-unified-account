@@ -5,7 +5,7 @@ does not call the production risk calculator, reserve helper or admission path
 to generate expected results.
 """
 from concurrent.futures import ThreadPoolExecutor
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D, Inexact, Rounded, localcontext
 from fractions import Fraction as F
@@ -270,7 +270,7 @@ class AdmissionInvariants(unittest.TestCase):
             self.assertTrue(database.before_commit.wait(5))
             self.assertFalse(success.done())
             self.assertFalse(rejected.done())
-            with sqlite3.connect(database.path) as observer:
+            with closing(sqlite3.connect(database.path)) as observer, observer:
                 self.assertEqual(observer.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 0)
         finally:
             database.allow_commit.set()

@@ -1,3 +1,4 @@
+from contextlib import closing
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from decimal import Decimal as D
@@ -185,7 +186,7 @@ class ShardingTests(unittest.TestCase):
         with patch.object(ExchangeService, "__init__", stop_before_seal), self.assertRaises(OSError):
             ShardRouter(path, 1, {"USD": 8}, clock=lambda: self.now)
         self.assert_code("shard_unavailable", ShardRouter, path, 1, {"USD": 8}, clock=lambda: self.now)
-        with sqlite3.connect(path / "shard-0000.sqlite3") as connection:
+        with closing(sqlite3.connect(path / "shard-0000.sqlite3")) as connection, connection:
             self.assertEqual(connection.execute("SELECT initialized FROM router_shard_identity").fetchone()[0], 0)
 
     def test_diagnostics_detected_runtime_identity_fault_persists_global_stop(self):

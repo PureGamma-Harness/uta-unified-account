@@ -1,7 +1,7 @@
 """Independent real-storage failures of grouped admission; synthetic funds only."""
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 import json
@@ -119,7 +119,7 @@ class GroupedAdmissionFaultTests(unittest.TestCase):
         self.assertFalse(rejected.done(), "even a queued business rejection waits for the outer commit outcome")
         # A separate read connection sees the pre-COMMIT snapshot while the
         # actual managed writer transaction is paused before SQLite COMMIT.
-        with sqlite3.connect(self.path) as observer:
+        with closing(sqlite3.connect(self.path)) as observer, observer:
             self.assertEqual(observer.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 0)
         self.database.release_commit.set()
         self.assertEqual(first.result(timeout=5)["status"], "OPEN")
@@ -151,7 +151,7 @@ class GroupedAdmissionFaultTests(unittest.TestCase):
                             for error in failures for cause in exception_chain(error)))
         self.assertEqual(self.state(), before)
         self.assertEqual(engine.stats()["committed_batches"], 0)
-        with sqlite3.connect(self.path) as conn:
+        with closing(sqlite3.connect(self.path)) as conn, conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM fault_child").fetchone()[0], 0)
 
     def test_later_sql_failure_rolls_back_an_earlier_valid_admission(self):

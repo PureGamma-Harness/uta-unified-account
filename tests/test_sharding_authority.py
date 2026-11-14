@@ -1,3 +1,4 @@
+from contextlib import closing
 from pathlib import Path
 import sqlite3
 from tempfile import TemporaryDirectory
@@ -17,7 +18,7 @@ class ShardAuthorityTests(unittest.TestCase):
 
     @staticmethod
     def dump(path):
-        with sqlite3.connect(path) as conn:
+        with closing(sqlite3.connect(path)) as conn, conn:
             return tuple(conn.iterdump())
 
     def test_control_cannot_be_opened_as_exchange_or_research(self):

@@ -1,5 +1,6 @@
 """Persistence, compare-and-swap, and atomicity tests for the command store."""
 
+from contextlib import closing
 import hashlib
 import sqlite3
 import tempfile
@@ -72,14 +73,14 @@ class StoreTests(unittest.TestCase):
 
     def test_audit_write_failure_rolls_back_snapshot(self):
         self.store.create("account", {"units": 0})
-        with sqlite3.connect(self.path) as db:
+        with closing(sqlite3.connect(self.path)) as db, db:
             db.execute("""CREATE TRIGGER deny_uta_event BEFORE INSERT ON uta_events
                           BEGIN SELECT RAISE(ABORT, 'simulated audit failure'); END""")
         with self.assertRaises(StoreError):
             self.store.apply("account", "command", 0, {"type": "increment"}, add_one)
         self.assertEqual(self.store.read("account"), {"version": 0, "units": 0})
         self.assertEqual(len(self.store.events("account")), 1)
-        with sqlite3.connect(self.path) as db:
+        with closing(sqlite3.connect(self.path)) as db, db:
             db.execute("DROP TRIGGER deny_uta_event")
         self.assertEqual(self.store.apply("account", "command", 0, {"type": "increment"}, add_one),
                          {"version": 1, "units": 1})
@@ -142,7 +143,7 @@ class StoreTests(unittest.TestCase):
 
     def test_batch_database_failure_rolls_back_earlier_commands(self):
         self.store.create("one", {"units": 0})
-        with sqlite3.connect(self.path) as db:
+        with closing(sqlite3.connect(self.path)) as db, db:
             db.execute("""CREATE TRIGGER deny_uta_event BEFORE INSERT ON uta_events
                           WHEN NEW.command_id = 'second'
                           BEGIN SELECT RAISE(ABORT, 'simulated audit failure'); END""")
@@ -167,7 +168,7 @@ class ShardedStoreTests(unittest.TestCase):
             store.apply(account, "increment", 0, {"type": "increment"}, add_one)
             index = int(hashlib.sha256(account.encode()).hexdigest(), 16) % 4
             filename = store.directory / f"shard-{index:02d}.sqlite3"
-            with sqlite3.connect(filename) as db:
+            with closing(sqlite3.connect(filename)) as db, db:
                 self.assertEqual(db.execute("PRAGMA journal_mode").fetchone()[0], "wal")
                 self.assertEqual(db.execute("SELECT version FROM uta_accounts WHERE account_id = ?",
                                             (account,)).fetchone(), (1,))
@@ -241,7 +242,7 @@ class ShardedStoreTests(unittest.TestCase):
         one, two = accounts[0], accounts[1]
         store.create(one, {"units": 0})
         store.create(two, {"units": 0})
-        with sqlite3.connect(store.directory / "shard-01.sqlite3") as db:
+        with closing(sqlite3.connect(store.directory / "shard-01.sqlite3")) as db, db:
             db.execute("""CREATE TRIGGER deny_uta_event BEFORE INSERT ON uta_events
                           WHEN NEW.command_id = 'second'
                           BEGIN SELECT RAISE(ABORT, 'simulated audit failure'); END""")
