@@ -47,3 +47,28 @@ router.deposit('alice', 'synthetic:funding:001', 'USD', Decimal('1000'))
 性能实验须使用相同源码、硬件、worker 数量、账户和产品分布、负载率、持久化设置与延迟统计，对 1/2/4 片顺序运行。只计算唯一成功持久化接单，拒单、过载、重复和未知结果分别报告。现有 benchmark 的独立多库模式可测理想分片上限；若未经过本 router 的 hash 和 barrier，必须明确说明它不是 router 的吞吐。
 
 真实撮合加原子双边结算的 10k/s、30 分钟验收仍然阻塞。短测容量变化只决定下一项工程方向，不构成生产能力或 HA 认证。
+
+## 2026-11-14 真实 router 短测
+
+源码提交 `1a2beb9`，实跑包含 SHA-256 路由、每次控制库查询、共享 flock 和目标分片的接单/本地撤单事务。全部使用 4 workers、100 个账户、均匀账户分布、三个合成产品、1000 arrivals/s、5 秒到达窗口、1024 队列、5 秒最大排空，关闭 profile；1/2/4 片依次运行。协调窗口记录在 `benchmarks/results/20261114-router-shards/run-window.json`，root 在这段时间没有并发运行重测试，但共享宿主机没有资源隔离。
+
+为了只测路由与准入容量，`--router-mode` 使用统一的 30 秒合成行情有效期，只发布初始新鲜快照，不在测量中运行 fanout。该 mode 限制 duration/drain 各不超过 10 秒，并明确排除行情发布吞吐；不能用它执行 30 分钟验收。原来的独立多库 benchmark mode 保留，不回写历史结果。
+
+| 分片 | 唯一持久接纳 | 过载丢弃 | 超过 1 秒软期限 | 含排空接纳/秒 | 相对 1 片 | scheduled p99 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 2,840 | 2,160 | 2,309 | 353.92 | 基准 | 2,938.31ms |
+| 2 | 3,161 | 1,839 | 2,465 | 432.32 | +22.15% | 2,398.72ms |
+| 4 | 3,757 | 1,243 | 2,634 | 555.07 | +56.84% | 1,873.97ms |
+
+每轮 offered 为 5000，完成加过载恰好等于 offered。没有业务拒单、技术失败或未知结果，唯一订单数量与 `ORDER_ACCEPTED` 事件数量逐片相等。超过软期限的提交仍保留为持久接纳，但另行计数，不冒充按时响应。吞吐分母分别为 8.024/7.312/6.768 秒，包含排空成本；按时接纳率仅为 66.17/95.19/165.92 每秒。
+
+三轮的 gates 都失败，Phase 1 matching acceptance 都为 false。增加分片在这一次短测中有改善，但远未达到 10k；一轮/配置不足以给出统计置信区间或证明扩展率。当前最多只有四核 cgroup CPU 配额，控制路径、进程 IPC、磁盘同步和同片竞争都会限制进一步增益。此结果支持继续检查路由成本和固定风险组布局，不支持上线 HA 或跨片交易。
+
+原始 `arrivals.jsonl.gz`、summary/environment、SHA-256 manifest 和源码校验保存在上述结果目录。SQLite 测试库留在本地并从版本库排除；提交的 raw 记录可复算所有唯一结果、延迟和产品/分片分布。运行目录本身会让 `git status` 显示 untracked dirty，因此另有 `source-verification.json` 将关键模块及生成器 hash 与固定提交逐一比较，不能只根据 dirty 布尔值猜测源码是否被改过。
+
+```sh
+python benchmarks/run_benchmark.py --scenario order --duration 5 --rate 1000 \
+  --workers 4 --accounts 100 --shards 4 --queue-capacity 1024 \
+  --timeout-ms 1000 --drain-seconds 5 --router-mode --smoke \
+  --output /tmp/uta-router-shards4
+```
