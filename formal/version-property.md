@@ -32,3 +32,13 @@ Observed result: exit 13, `Action property CommitUsesCurrentVersion is violated`
 The counterexample starts both orders at version 0, commits the first (version becomes 1), then commits the second using its stale observed version 0. Reservations total two, so capacity remains satisfied while the new protocol property detects the stale commit.
 
 Do not modify the actual runtime or remove its guards to reproduce this test. Hosted Python CI does not execute TLC; record TLC results separately. Future changes must rerun the positive and negative checks. No liveness, replication, financial calibration, arbitrary-scale or real-money readiness claim follows from this result.
+
+## Implementation bridge and explicit boundary
+
+`tests/test_reservation_model_bridge.py` replays a path to every reachable state of the independent Python model, then checks every outgoing transition against the actual `uta.reservations.ReservationBook`: 2,628 states, 3,873 transitions, no snapshot or rejection mismatch. Rejections must have the expected error type and leave the book unchanged. A test-only mock deleting the version guard must be detected as an erroneously accepted rejection. Both tests pass locally and are included in normal unittest discovery.
+
+Separate TLC state/graph exports matched the Python model after projecting away `seen_free`: exactly 2,628 states and 3,873 non-stuttering edges, with empty differences both ways. This comparison concerns this finite configuration, not arbitrary trace refinement.
+
+**The implementation target here is the in-memory reference book, not ExchangeService.** `ReservationBook.reserve` checks caller `expected_version` for a new ID under a process lock. Existing-ID equivalent retries may return their prior result despite a stale version; dynamic capacity updates and these retries are outside this one-shot fixed-capacity model. State is lost on restart.
+
+The durable `ExchangeService.submit_order` does not expose a caller expected-version argument. It computes current risk/reserve within a SQLite `BEGIN IMMEDIATE` write transaction; grouped admission shares that transaction. Its evidence comes from the independent cash/reserve oracle and concurrent writer tests in `tests/test_admission_invariants.py`, not from treating this versioned-book model as a proof of durable admission. No bridge result here establishes persistence, crash recovery, multi-process fencing, product correctness or production approval.
