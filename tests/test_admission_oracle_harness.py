@@ -52,3 +52,16 @@ class AdmissionOracleHarnessTests(unittest.TestCase):
         self.assertEqual(status, 0)
         self.assertTrue(report["all_passed"])
         self.assertFalse(report["negative_control"]["passed"])
+
+    def test_expected_failure_is_not_positive_evidence(self):
+        expected = result()
+        expected.expectedFailures.append((unittest.FunctionTestCase(lambda: None),
+                                          "documented failing oracle case"))
+        self.assertTrue(expected.wasSuccessful())  # unittest's own convention
+        report = harness.details(expected)
+        self.assertFalse(report["passed"])
+        self.assertEqual(report["expected_failures"], 1)
+        trace = 'future.result(timeout=10)["status"]\ninsufficient available margin for order and fee reserve'
+        status, matrix = self.classify(expected, result(error=trace))
+        self.assertEqual(status, 1)
+        self.assertFalse(matrix["all_passed"])
