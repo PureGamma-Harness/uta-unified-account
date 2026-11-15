@@ -26,6 +26,8 @@ flowchart TD
 
 `import_classic` 先校验与转换，再调用 `Store.create`；图中的导入路径不执行持续同步。`Ledger` 在 `_trade` 中校验分录，分录随命令回执保存为事件 JSON，没有独立的持久化总账表。账户读回与回放也通过 `Simulator` 和存储层进行。
 
+独立内存日记簿的 `Ledger.replay(scales, events, unit_digits=...)` 使用调用方保留的币种小数位和整数单位位数上限重建余额及幂等索引；默认上限为 38 位，较宽历史须显式提供原配置。精确回放示例与范围测试见 [验证说明](verification.md)。
+
 | 模块 | 当前职责 | 源码入口 |
 | --- | --- | --- |
 | HTTP 与交易台 | 本机监听、请求形状、同源校验、64 KiB 请求体与并发上限 | [server.py](../uta/server.py)、[dashboard.html](../uta/dashboard.html) |
