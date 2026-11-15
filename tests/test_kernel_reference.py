@@ -113,10 +113,11 @@ class IndependentKernelMathTests(unittest.TestCase):
         values = []
         for scale in range(2, 9):
             for rate in (D(0), D('.00000001'), D('.0004'), D('.01')):
-                for _ in range(32):
+                for case_index in range(32):
                     magnitude = generator.randint(1, 1000000)
                     sign = generator.choice((-1, 1))
-                    filled = generator.randint(0, magnitude)
+                    filled = (0 if case_index % 16 == 0 else magnitude if case_index % 16 == 1
+                              else generator.randint(0, magnitude))
                     fill_price = generator.randint(1, 20000)
                     prior = units(filled * fill_price, 6)
                     values.append(inputs(quantity=units(sign * magnitude, 4),

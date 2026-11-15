@@ -54,7 +54,7 @@ python -m unittest discover -s tests -p test_kernel_reference.py -v
 
 ## 执行记录与审查结论
 
-验证起点为 `92086bd`。本地独立 worktree 按顺序应用实现提交 `ec56058`、市场模块 `4a0e9f` 及服务接线 `a4aae6c`，没有修改生产函数。Python 3.12.14 / SQLite 3.53.1 下最终 **17 tests，0 failures/errors/skips，0.638秒**。
+验证起点为 `92086bd`。本地独立 worktree 按顺序应用实现提交 `ec56058`、市场模块 `4a0e9f` 及服务接线 `a4aae6c`，没有修改生产函数。Python 3.12.14 / SQLite 3.53.1 下完整 **17 tests，0 failures/errors/skips，0.638秒**。随后将896个生成案例中的未成交与全部成交边界显式固定，避免仅靠随机抽中；同样17项再次全过，0.669秒。
 
 开发中首次仅有两个缓存模块而服务尚未接线时，6个模块测试通过、9个服务测试因缺少 `market_cache_size` 参数而无法执行；这些未执行结果没有算作通过。接线后一次回归发现本测试对精度不兼容的异常类型预期过晚：既有 `DurableLedger` 在服务政策检查前抛出 `LedgerError`。测试现核对该原有明确拒绝，未改金融预期或生产行为。随后完整17项均执行通过。未发现已确认的数值差异、预占重复使用或缓存绕过门禁；没有为了通过而跳过失败案例。
 
@@ -66,4 +66,4 @@ python -m unittest discover -s tests -p test_kernel_reference.py -v
 
 新增 bridge 将独立有限模型的可达转换重放到内存 `ReservationBook`，并要求版本拒绝不改变状态；另有删除版本guard的反例。它可作为**单独的内存参考回归**引入，建议按这4文件的小补丁独立审查并归档TLC正、负控制输出。分支说明的2628状态/3873转换及TLC执行来自该分支记录，本组此次只读审查，没有冒称重新执行TLC。
 
-`ExchangeService` 不暴露客户端 expected-version，其依据是当前 `BEGIN IMMEDIATE` 中的权威状态。本组17项实际服务测试及既有独立预占/故障测试构成这一路径的证据，不能用内存模型替代。该分支没有证明实现/模型任意规模等价、重启持久性、多进程fencing或生产批准；本轮未直接吞入其生产或测试文件。
+`ExchangeService` 不暴露客户端 expected-version，其依据是当前 `BEGIN IMMEDIATE` 中的权威状态。本组17项测试中的真实服务案例及既有独立预占/故障测试构成这一路径的证据，不能用内存模型替代。该分支没有证明实现/模型任意规模等价、重启持久性、多进程fencing或生产批准；本轮未直接吞入其生产或测试文件。
