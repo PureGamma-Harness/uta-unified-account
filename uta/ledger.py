@@ -137,8 +137,14 @@ class Ledger:
             return tuple(self._events)
 
     @classmethod
-    def replay(cls, scales: Mapping[str, int], events: Sequence[JournalEvent]) -> Ledger:
-        result = cls(scales)
+    def replay(cls, scales: Mapping[str, int], events: Sequence[JournalEvent], *,
+               unit_digits: int = 38) -> Ledger:
+        """Rebuild a journal using caller-retained scales and unit precision.
+
+        Pass the original unit_digits for journals created with a wider limit.
+        Event amounts do not implicitly enlarge the default 38-digit policy.
+        """
+        result = cls(scales, unit_digits=unit_digits)
         for expected, event in enumerate(events, 1):
             if not isinstance(event, JournalEvent) or event.sequence != expected:
                 raise LedgerError("journal sequence is missing or out of order")
