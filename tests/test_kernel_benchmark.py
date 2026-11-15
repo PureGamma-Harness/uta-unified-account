@@ -33,13 +33,14 @@ class KernelBenchmarkTests(unittest.TestCase):
 
     def test_cache_and_workload_bounds_are_explicit(self):
         for changes in ({"reserve_cache_size": True}, {"market_cache_size": -1},
-                        {"market_cache_size": 65537}, {"hot_accounts": 10},
+                        {"market_cache_size": 65}, {"reserve_cache_size": 65537}, {"hot_accounts": 10},
                         {"hot_fraction": .3}, {"hot_fraction": float("nan")},
                         {"hot_accounts": 100, "hot_fraction": .3},
                         {"hot_accounts": True, "hot_fraction": .3},
                         {"order_distribution": "random"}):
             with self.subTest(changes=changes), self.assertRaises(ValueError):
                 replace(group.Configuration(), **changes).validate()
+        replace(group.Configuration(), reserve_cache_size=65536, market_cache_size=64).validate()
 
     def test_unsupported_optimization_is_never_silently_ignored(self):
         class OldRuntime:

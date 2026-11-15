@@ -81,9 +81,9 @@ class Configuration:
                 raise ValueError(f"{name} must be an integer in 1..{maximum}")
         if self.shards > self.accounts:
             raise ValueError("shards cannot exceed accounts")
-        for name in ("reserve_cache_size", "market_cache_size"):
-            if type(getattr(self, name)) is not int or not 0 <= getattr(self, name) <= 65536:
-                raise ValueError(f"{name} must be an integer in 0..65536")
+        for name, maximum in (("reserve_cache_size", 65536), ("market_cache_size", 64)):
+            if type(getattr(self, name)) is not int or not 0 <= getattr(self, name) <= maximum:
+                raise ValueError(f"{name} must be an integer in 0..{maximum}")
         if type(self.hot_accounts) is not int or not 0 <= self.hot_accounts < self.accounts:
             raise ValueError("hot_accounts must be an integer in 0..accounts-1")
         if (isinstance(self.hot_fraction, bool) or not isinstance(self.hot_fraction, (int, float))
