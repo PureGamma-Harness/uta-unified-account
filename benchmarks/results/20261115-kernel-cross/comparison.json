@@ -1,0 +1,36 @@
+{
+  "source_commit": "146fe74d3006d39b5ecb3fb3b2d1cbf2e133ad6a",
+  "offered_arrivals": 300000,
+  "unique_durable_accepted": 61852,
+  "overload": 238148,
+  "accepted_late": 38025,
+  "unknown": 0,
+  "technical_failed": 0,
+  "production_approved": false,
+  "capacity_gate_passed": false,
+  "comparison": {
+    "primary": {
+      "median_acknowledged_per_s": {
+        "base": 708.1962980270854,
+        "optimized": 992.6253768436449
+      },
+      "paired_optimized_to_base_ratios": [
+        1.4615645856288608,
+        1.4016246337476355,
+        1.3990862658227228
+      ]
+    },
+    "hot-varied": {
+      "median_acknowledged_per_s": {
+        "base": 615.6684660424489,
+        "optimized": 856.38493639829
+      },
+      "paired_optimized_to_base_ratios": [
+        1.404715832537235,
+        1.3623280102249937,
+        1.4063449859415582
+      ]
+    }
+  },
+  "interpretation": "Repeated short single-process admission-only probes; no matching/liquidation/replication, no 30-minute or maximum-capacity claim; overloaded/late observations retained."
+}

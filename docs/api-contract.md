@@ -1,5 +1,9 @@
 # UTA 内部 API 契约
 
+0.3.0a1 保持原路由与资金契约。可选的两项纯计算缓存由服务启动配置控制，默认关闭；没有客户可设置缓存、跳过风控或清理持久预占的接口。`GET /metrics` 对 risk/admin 增加 `risk_cache.reserve` / `risk_cache.market` 诊断字段，不返回缓存键、订单内容或原始行情；其容量/命中/淘汰/解码失败属于进程指标，不是金融回执。
+
+新增 `RouterAdmissionBatcher` 是本地主机 Python 接口，不在这里暴露分片 HTTP/WS；同实例片内 FIFO 与 COMMIT 回执语义见 [分片准入契约](shard-admission.md)。
+
 这份契约对应 `uta.gateway` 与持久化交易服务。API 只监听 IPv4 loopback；远程访问必须经过 TLS 反向代理，并配置连接与速率限制。`python -m uta serve` 仍是独立的无认证演示接口，不属于这里的 `/v1` 交易接口。
 
 当前支持线性 USD 结算合约的账户、保证金占用、订单、本地双边撮合及结算、风险监督和持久化事件查询；配置相应组件后还提供资金池借贷、利息记账、还款和 USD 报价现货撮合。完整 PM、期权保证金、外部交易所成交回报接入、WebSocket 推送、HMAC 请求签名及 nonce 防重放没有在此接口实现。行情新鲜度、交易开关与风险检查不等于真实交易所的生产验收。

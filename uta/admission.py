@@ -78,7 +78,7 @@ _BUSINESS_CODES = {"account_frozen", "account_not_found", "idempotency_conflict"
                    "unsupported_product"}
 
 
-def _business_rejection(error: ServiceError) -> bool:
+def _business_rejection(error: ServiceError, *, extra_unavailable_codes: frozenset[str] = frozenset()) -> bool:
     # A SQL/FULL error hidden under a service wrapper is still a transaction
     # failure, even when another layer assigned it a business-like status.
     pending, seen = [error], set()
@@ -92,7 +92,8 @@ def _business_rejection(error: ServiceError) -> bool:
         pending.extend((current.__cause__, current.__context__))
     return (error.code not in _FATAL_CODES
             and (error.code in _BUSINESS_CODES and 400 <= error.status < 500
-                 or error.code in _EXPECTED_UNAVAILABLE and error.status == 503))
+                 or (error.code in _EXPECTED_UNAVAILABLE or error.code in extra_unavailable_codes)
+                 and error.status == 503))
 
 
 class AdmissionBatcher:

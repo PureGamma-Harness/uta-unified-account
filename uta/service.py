@@ -19,9 +19,11 @@ from typing import Callable, Mapping
 
 from .ledger import LedgerError, Posting
 from .market import MarketSnapshot
+from .market_cache import MAX_CACHE_CAPACITY as MAX_MARKET_CACHE_CAPACITY, MarketDecodeCache
 from .models import RiskInputError
 from .portfolio import LinearExposure, LoanAccount, PortfolioRules, calculate_cross_risk
 from .products import AccountMode, ProductCatalog, ProductError, ProductKind
+from .reserve_kernel import MAX_CAPACITY as MAX_RESERVE_CACHE_CAPACITY, ReserveInputs, ReserveKernel
 from .storage import Database, DurableLedger
 
 
@@ -110,7 +112,13 @@ class ExchangeService:
                  clock: Callable[[], datetime] | None = None,
                  fee_rate: Decimal = Decimal("0.0004"),
                  product_catalog: ProductCatalog | None = None,
-                 portfolio_rules: PortfolioRules | None = None):
+                 portfolio_rules: PortfolioRules | None = None,
+                 reserve_cache_size: int = 0,
+                 market_cache_size: int = 0):
+        if type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= MAX_RESERVE_CACHE_CAPACITY:
+            raise ServiceError("invalid_configuration", "reserve_cache_size must be an integer from 0 through 65536")
+        if type(market_cache_size) is not int or not 0 <= market_cache_size <= MAX_MARKET_CACHE_CAPACITY:
+            raise ServiceError("invalid_configuration", "market_cache_size must be an integer from 0 through 64")
         if (product_catalog is None) != (portfolio_rules is None):
             raise ServiceError("invalid_configuration", "product_catalog and portfolio_rules must be configured together")
         if product_catalog is not None and (not isinstance(product_catalog, ProductCatalog) or not isinstance(portfolio_rules, PortfolioRules)):
@@ -128,6 +136,8 @@ class ExchangeService:
         if not _ZERO <= fee_rate <= Decimal("0.01"):
             raise ServiceError("invalid_configuration", "fee_rate must be between zero and 0.01")
         self.database = database
+        self._reserve_kernel = ReserveKernel(reserve_cache_size)
+        self._market_decode_cache = MarketDecodeCache(market_cache_size)
         self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
         self.scales = dict(scales)
         # The research simulator uses different uta_accounts/uta_events schemas.
@@ -358,7 +368,7 @@ class ExchangeService:
         if row is None:
             raise ServiceError("market_unavailable", "no trusted market snapshot has been published", 503)
         try:
-            snapshot = MarketSnapshot.from_json(row["payload"])
+            snapshot = self._market_decode_cache.parse(row["payload"])
             if fresh:
                 snapshot.validate(now=self._now(), max_age=self.max_price_age)
             self._validate_policy_market(snapshot)
@@ -391,7 +401,49 @@ class ExchangeService:
     def _live_orders(connection, account_id: str):
         return connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED') ORDER BY rowid", (account_id,)).fetchall()
 
+    def market_cache_stats(self) -> dict:
+        return self._market_decode_cache.stats()
+
+    def clear_market_cache(self, *, reset_stats: bool = False) -> None:
+        self._market_decode_cache.clear(reset_stats=reset_stats)
+
+    def reserve_cache_stats(self) -> dict:
+        return self._reserve_kernel.stats()
+
+    def clear_reserve_cache(self, *, reset_stats: bool = False) -> None:
+        self._reserve_kernel.clear(reset_stats=reset_stats)
+
     def _reserve(self, order, market: MarketSnapshot) -> Decimal:
+        if self._reserve_kernel.capacity == 0:
+            return self._reserve_reference(order, market)
+        # Resolve authoritative row values and product rules before every hit.
+        # No account/order/version lookup can substitute for these inputs.
+        quantity = Decimal(order["quantity"])
+        filled = Decimal(order["filled_quantity"])
+        try:
+            spec = market.instruments[order["symbol"]]
+        except KeyError as exc:
+            raise ServiceError("market_incomplete", "missing instrument for an outstanding order", 503) from exc
+        im_rate = spec.initial_margin_rate
+        if self.product_catalog is not None:
+            try:
+                product = self.product_catalog.require_risk_supported(order["symbol"])
+                if product.kind is not ProductKind.LINEAR_PERPETUAL or product.multiplier != 1:
+                    raise ServiceError("unsupported_product", "stored perpetual order has an unsupported contract definition", 503)
+                im_rate = self.portfolio_rules.linear_margin[product.risk_tier].initial_margin_rate
+            except (RiskInputError, KeyError) as exc:
+                raise ServiceError("risk_unavailable", "outstanding order has no supported configured margin rule", 503) from exc
+        return self._reserve_kernel.calculate(ReserveInputs(
+            quantity=quantity, filled_quantity=filled,
+            limit_price=Decimal(order["limit_price"]), mark_price=spec.mark_price,
+            reduce_only=bool(order["reduce_only"]), initial_margin_rate=im_rate,
+            fee_notional=Decimal(order["fee_notional"]) if "fee_notional" in order.keys() else _ZERO,
+            charged_fee=Decimal(order["charged_fee"]) if "charged_fee" in order.keys() else _ZERO,
+            fee_rate=self.fee_rate, usd_scale=self.scales["USD"],
+        ))
+
+    def _reserve_reference(self, order, market: MarketSnapshot) -> Decimal:
+        """Original uncached Fraction formula, retained for same-source A/B."""
         remaining = Fraction(Decimal(order["quantity"])) - Fraction(Decimal(order["filled_quantity"]))
         try:
             spec = market.instruments[order["symbol"]]

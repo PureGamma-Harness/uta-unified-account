@@ -1,0 +1,1023 @@
+{
+  "model_source_sha256": "9750d54817c610daf2abb35f5d78a660f5de34436b58fb7d2e06f6fd1dacf718",
+  "python_version": "3.12.14",
+  "scheduler_and_market_barrier": {
+    "safe": {
+      "result": "invariants_hold",
+      "reachable_states": 2742,
+      "explored_transitions": 5862,
+      "terminal_states": 21
+    },
+    "unsafe_overlapping_shard_groups": {
+      "result": "counterexample",
+      "reachable_states": 22,
+      "violation": "two groups own the same shard in one adapter",
+      "trace": [
+        {
+          "action": "worker0:select(0,)",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker1:select(1,)",
+          "state": {
+            "queue": [
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              },
+              {
+                "jobs": [
+                  1
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        }
+      ]
+    },
+    "unsafe_account_fifo_overtake": {
+      "result": "counterexample",
+      "reachable_states": 44,
+      "violation": "same-account execution is not an enqueue-order prefix",
+      "trace": [
+        {
+          "action": "worker0:select(1,)",
+          "state": {
+            "queue": [
+              0,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  1
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:acquire_SHARED_and_shard_writer",
+          "state": {
+            "queue": [
+              0,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  1
+                ],
+                "phase": "gated",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:stage_FIFO_commands(1,)",
+          "state": {
+            "queue": [
+              0,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  1
+                ],
+                "phase": "staged",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              1
+            ],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        }
+      ]
+    },
+    "unsafe_future_before_commit": {
+      "result": "counterexample",
+      "reachable_states": 85,
+      "violation": "a successful Future was visible before its group COMMIT",
+      "trace": [
+        {
+          "action": "worker0:select(0,)",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:acquire_SHARED_and_shard_writer",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "gated",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:stage_FIFO_commands(0,)",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:publish_success_BEFORE_COMMIT",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 1,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        }
+      ]
+    },
+    "unsafe_release_shared_before_commit": {
+      "result": "counterexample",
+      "reachable_states": 220,
+      "violation": "exclusive publication overlaps an uncommitted admission writer",
+      "trace": [
+        {
+          "action": "worker0:select(0,)",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "selected",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:acquire_SHARED_and_shard_writer",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "gated",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:stage_FIFO_commands(0,)",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": true,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "worker0:release_SHARED_BEFORE_COMMIT",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": false,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "idle",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "publisher:request_EXCLUSIVE",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": false,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "waiting",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": false,
+            "publishing": false,
+            "invalid_commit": false
+          }
+        },
+        {
+          "action": "publisher:acquire_EXCLUSIVE_and_persist_halt",
+          "state": {
+            "queue": [
+              1,
+              2
+            ],
+            "workers": [
+              {
+                "jobs": [
+                  0
+                ],
+                "phase": "staged",
+                "shared": false,
+                "generation": 0,
+                "allowed": true
+              },
+              {
+                "jobs": [],
+                "phase": "idle",
+                "shared": false,
+                "generation": -1,
+                "allowed": false
+              }
+            ],
+            "durable": [
+              0,
+              0,
+              0
+            ],
+            "committed": 0,
+            "success": 0,
+            "rejected": 0,
+            "completed": 0,
+            "execution": [
+              0
+            ],
+            "publisher": "exclusive0",
+            "generation": 0,
+            "markets": [
+              0,
+              0
+            ],
+            "halted": true,
+            "publishing": true,
+            "invalid_commit": false
+          }
+        }
+      ]
+    }
+  },
+  "crash_retry_idempotency": {
+    "safe": {
+      "result": "invariants_hold",
+      "reachable_states": 20,
+      "explored_transitions": 32,
+      "terminal_states": 3
+    },
+    "unsafe_retry_duplicate_reservation": {
+      "result": "counterexample",
+      "reachable_states": 20,
+      "violation": "retry of the same immutable business ID duplicated its reservation",
+      "trace": [
+        {
+          "action": "begin_original_ID",
+          "state": {
+            "phase": "running",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 0,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "stage_first_reservation",
+          "state": {
+            "phase": "ready",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "atomic_COMMIT",
+          "state": {
+            "phase": "committed",
+            "attempt": 1,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "process_exit_after_COMMIT_or_lost_response",
+          "state": {
+            "phase": "idle",
+            "attempt": 1,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "retry_same_ID_and_content",
+          "state": {
+            "phase": "running",
+            "attempt": 2,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "BROKEN_replay_reserves_again",
+          "state": {
+            "phase": "ready",
+            "attempt": 2,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 2,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "atomic_COMMIT",
+          "state": {
+            "phase": "committed",
+            "attempt": 2,
+            "durable": 2,
+            "commit_witness": 2,
+            "staged": 2,
+            "acknowledged": false,
+            "current_success": false
+          }
+        }
+      ]
+    },
+    "unsafe_retry_future_before_commit": {
+      "result": "counterexample",
+      "reachable_states": 9,
+      "violation": "a retry Future succeeded before its transaction committed",
+      "trace": [
+        {
+          "action": "begin_original_ID",
+          "state": {
+            "phase": "running",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 0,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "stage_first_reservation",
+          "state": {
+            "phase": "ready",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "publish_success_BEFORE_COMMIT",
+          "state": {
+            "phase": "ready",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": true,
+            "current_success": true
+          }
+        }
+      ]
+    },
+    "unsafe_rollback_leaks_reservation": {
+      "result": "counterexample",
+      "reachable_states": 9,
+      "violation": "financial state differs from the successful atomic COMMIT witness",
+      "trace": [
+        {
+          "action": "begin_original_ID",
+          "state": {
+            "phase": "running",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 0,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "stage_first_reservation",
+          "state": {
+            "phase": "ready",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "COMMIT_failure_but_write_leaks",
+          "state": {
+            "phase": "idle",
+            "attempt": 1,
+            "durable": 1,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        }
+      ]
+    },
+    "unsafe_crash_loses_confirmed_commit": {
+      "result": "counterexample",
+      "reachable_states": 17,
+      "violation": "a client-observed success did not survive process restart",
+      "trace": [
+        {
+          "action": "begin_original_ID",
+          "state": {
+            "phase": "running",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 0,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "stage_first_reservation",
+          "state": {
+            "phase": "ready",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "atomic_COMMIT",
+          "state": {
+            "phase": "committed",
+            "attempt": 1,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 1,
+            "acknowledged": false,
+            "current_success": false
+          }
+        },
+        {
+          "action": "deliver_committed_success",
+          "state": {
+            "phase": "committed",
+            "attempt": 1,
+            "durable": 1,
+            "commit_witness": 1,
+            "staged": 1,
+            "acknowledged": true,
+            "current_success": true
+          }
+        },
+        {
+          "action": "BROKEN_restart_loses_durable_commit",
+          "state": {
+            "phase": "idle",
+            "attempt": 1,
+            "durable": 0,
+            "commit_witness": 0,
+            "staged": 1,
+            "acknowledged": true,
+            "current_success": false
+          }
+        }
+      ]
+    }
+  },
+  "bounds": {
+    "shards": 2,
+    "workers": 2,
+    "commands": 3,
+    "accounts": 2,
+    "max_group_size": 2,
+    "market_publications": 1,
+    "explicit_activations": 1,
+    "retry_business_IDs": 1,
+    "max_attempts_per_ID": 2
+  },
+  "assumptions": [
+    "one adapter owns its FIFO queue and active-shard set",
+    "cooperating writers share a host-local shared/exclusive barrier",
+    "each shard transaction COMMIT is atomic and durable",
+    "retry preserves the original ID and immutable content",
+    "scheduler and crash models are separate safety abstractions"
+  ],
+  "not_verified": [
+    "runtime/model equivalence or a composition proof",
+    "global FIFO across adapters, synchronous callers or process restarts",
+    "liveness, starvation freedom or bounded lock wait",
+    "persistent queues, cancellation, SAVEPOINT business-error classification",
+    "physical fsync/power loss, HA, replication or distributed fencing",
+    "financial formulas, matching or arbitrary queue/portfolio size"
+  ]
+}

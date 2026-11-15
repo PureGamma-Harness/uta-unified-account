@@ -16,6 +16,7 @@ from fractions import Fraction
 import gzip
 from hashlib import sha256
 import importlib
+import inspect
 import json
 import math
 import os
@@ -54,12 +55,19 @@ class Configuration:
     batch_delay_ms: float = 2
     timeout_ms: float = 1000
     drain_seconds: float = 10
+    reserve_cache_size: int = 0
+    market_cache_size: int = 0
+    hot_accounts: int = 0
+    hot_fraction: float = 0
+    order_distribution: str = "constant"
 
     def validate(self):
         if self.mode not in ("sync", "batch"):
             raise ValueError("mode must be sync or batch")
         if self.policy not in ("configured_cross", "legacy_reference"):
             raise ValueError("policy must be configured_cross or legacy_reference")
+        if self.order_distribution not in ("constant", "varied"):
+            raise ValueError("order_distribution must be constant or varied")
         for name in ("duration", "rate", "timeout_ms", "drain_seconds"):
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -73,14 +81,73 @@ class Configuration:
                 raise ValueError(f"{name} must be an integer in 1..{maximum}")
         if self.shards > self.accounts:
             raise ValueError("shards cannot exceed accounts")
+        for name, maximum in (("reserve_cache_size", 65536), ("market_cache_size", 64)):
+            if type(getattr(self, name)) is not int or not 0 <= getattr(self, name) <= maximum:
+                raise ValueError(f"{name} must be an integer in 0..{maximum}")
+        if type(self.hot_accounts) is not int or not 0 <= self.hot_accounts < self.accounts:
+            raise ValueError("hot_accounts must be an integer in 0..accounts-1")
+        if (isinstance(self.hot_fraction, bool) or not isinstance(self.hot_fraction, (int, float))
+                or not math.isfinite(self.hot_fraction) or not 0 <= self.hot_fraction < 1):
+            raise ValueError("hot_fraction must be finite and in [0,1)")
+        if bool(self.hot_accounts) != bool(self.hot_fraction):
+            raise ValueError("hot_accounts and hot_fraction must both be zero or both positive")
         if (isinstance(self.batch_delay_ms, bool) or not isinstance(self.batch_delay_ms, (int, float))
                 or not math.isfinite(self.batch_delay_ms) or not 0 <= self.batch_delay_ms <= 1000):
             raise ValueError("batch_delay_ms must be finite and in 0..1000")
         offered = int(self.duration * self.rate)
         if offered < 1 or offered > 1_000_000:
             raise ValueError("probe must offer 1..1000000 arrivals")
-        if math.ceil(offered / self.accounts) > 900:
+        if max(_account_counts(self, offered).values()) > 900:
             raise ValueError("admission-only probe permits at most 900 offered live orders/account; use more accounts")
+
+
+def _account_counts(configuration, offered):
+    hot = (offered * Fraction(str(configuration.hot_fraction)).numerator
+           // Fraction(str(configuration.hot_fraction)).denominator) if configuration.hot_accounts else 0
+    result = {}
+    for start, size, count in ((0, configuration.hot_accounts, hot),
+                               (configuration.hot_accounts, configuration.accounts - configuration.hot_accounts, offered - hot)):
+        for offset in range(size):
+            result[start + offset] = count // size + int(offset < count % size)
+    return result
+
+
+def _account_schedule(configuration, offered):
+    if not configuration.hot_accounts:
+        return tuple(sequence % configuration.accounts for sequence in range(offered))
+    ratio = Fraction(str(configuration.hot_fraction))
+    result = []
+    for sequence in range(offered):
+        before = sequence * ratio.numerator // ratio.denominator
+        after = (sequence + 1) * ratio.numerator // ratio.denominator
+        if after != before:
+            result.append((after - 1) % configuration.hot_accounts)
+        else:
+            result.append(configuration.hot_accounts + (sequence - before)
+                          % (configuration.accounts - configuration.hot_accounts))
+    return tuple(result)
+
+
+def _order_terms(sequence, distribution):
+    if distribution == "constant":
+        return ".001", "100"
+    quantities = (".001", ".002", ".005", ".01")
+    prices = ("99", "99.5", "100", "100.5", "101")
+    quantity = quantities[(sequence // 2) % len(quantities)]
+    return ("-" if sequence % 2 else "") + quantity, prices[(sequence // 8) % len(prices)]
+
+
+def _reference_reserve(quantity, price):
+    """Independent per-request reserve, including USD 1e-8 fee ceiling.
+
+    The probe has no fills, multiplier=1, mark=100, IM=1/10 and fee=1/2500.
+    No production reserve, valuation or rounding function is called here.
+    """
+    quantity, price = Fraction(Decimal(quantity)), Fraction(Decimal(price))
+    unrounded_fee_units = abs(quantity) * price * Fraction(1, 2500) * 100_000_000
+    fee_units = -(-unrounded_fee_units.numerator // unrounded_fee_units.denominator)
+    return (abs(quantity) * max(Fraction(100), price) / 10
+            + max(Fraction(0), quantity * (price - 100)) + Fraction(fee_units, 100_000_000))
 
 
 def capacity_gates(duration, durable_rate, counts, p99_ms):
@@ -108,9 +175,52 @@ def _policy(mode):
     return {"product_catalog": catalog, "portfolio_rules": rules}
 
 
-def _service(path, policy="configured_cross"):
+def _cache_arguments(reserve_cache_size=0, market_cache_size=0):
+    parameters = inspect.signature(ExchangeService).parameters
+    requested = {"reserve_cache_size": reserve_cache_size, "market_cache_size": market_cache_size}
+    for name, size in requested.items():
+        if size and name not in parameters:
+            raise RuntimeError(f"selected runtime does not implement {name}; optimization cannot be silently skipped")
+    return {name: size for name, size in requested.items() if name in parameters}
+
+
+def _service(path, policy="configured_cross", *, reserve_cache_size=0, market_cache_size=0):
+    cache_arguments = _cache_arguments(reserve_cache_size, market_cache_size)
     return ExchangeService(Database(path, timeout=2), {"USD": 8}, max_price_age=timedelta(seconds=30),
-                           **_policy(policy))
+                           **_policy(policy), **cache_arguments)
+
+
+def _cache_stats(service, configuration):
+    result = {}
+    for name in ("reserve", "market"):
+        capacity = getattr(configuration, name + "_cache_size")
+        method = getattr(service, name + "_cache_stats", None)
+        if method is None:
+            if capacity:
+                raise RuntimeError(f"selected runtime lacks {name} cache counters")
+            result[name] = {"supported": False, "capacity": 0, "size": 0, "hits": 0, "misses": 0, "evictions": 0}
+            continue
+        stats = method()
+        if any(type(stats.get(key)) is not int or stats[key] < 0
+               for key in ("capacity", "size", "hits", "misses", "evictions")):
+            raise RuntimeError(f"invalid {name} cache counters")
+        if stats["capacity"] != capacity or stats["size"] > capacity:
+            raise RuntimeError(f"runtime {name} cache capacity disagrees with benchmark configuration")
+        result[name] = {"supported": True, **stats}
+    return result
+
+
+def _cache_report(before, after):
+    reports = []
+    for shard, (start, finish) in enumerate(zip(before, after)):
+        item = {"shard": shard, "start": start, "finish": finish, "timed_delta": {}}
+        for name in ("reserve", "market"):
+            delta = {key: finish[name][key] - start[name][key] for key in ("hits", "misses", "evictions")}
+            if any(value < 0 for value in delta.values()):
+                raise RuntimeError("cache counters reset during timed window")
+            item["timed_delta"][name] = delta
+        reports.append(item)
+    return reports
 
 
 def _environment(directory):
@@ -151,6 +261,7 @@ class Recorder:
         self.durable = set()
         self.unknown = set()
         self.outcomes = {}
+        self.requests = {}
         self.completed_ns = 0
 
     def record(self, row):
@@ -161,6 +272,7 @@ class Recorder:
             if sequence in self.outcomes:
                 raise RuntimeError("duplicate benchmark result")
             self.outcomes[sequence] = row["outcome"]
+            self.requests[(row["account_id"], row["order_id"])] = row["quantity"], row["limit_price"]
             self.counts[row["outcome"]] += 1
             self.all_latency.observe(row["latency_ns"])
             if row["durable_committed"]:
@@ -190,22 +302,36 @@ def _verify(paths, accounts, recorder, policy):
             synchronous = conn.execute("PRAGMA synchronous").fetchone()[0]
             if journal_mode != "wal" or synchronous != 2:
                 raise RuntimeError("probe did not preserve SQLite WAL/FULL")
-            orders = conn.execute("SELECT account_id,order_id,symbol,quantity,limit_price,status,filled_quantity FROM uta_orders").fetchall()
+            orders = conn.execute("SELECT account_id,order_id,symbol,quantity,limit_price,status,filled_quantity,reduce_only,fee_notional,charged_fee FROM uta_orders").fetchall()
             ids = {(r["account_id"], r["order_id"]) for r in orders}
             accepted = [json.loads(row[0]) for row in conn.execute("SELECT payload FROM uta_events WHERE event_type='ORDER_ACCEPTED'")]
             accepted_ids = {(row["account_id"], row["order_id"]) for row in accepted}
             if len(orders) != len(ids) or len(accepted) != len(accepted_ids) or ids != accepted_ids:
                 raise RuntimeError("orders and durable acceptance events do not reconcile")
+            reserves = Counter()
             for order in orders:
+                identifier = order["account_id"], order["order_id"]
+                if identifier not in recorder.requests:
+                    raise RuntimeError("stored order has no recorded arrival")
+                requested_quantity, requested_price = recorder.requests[identifier]
                 if (order["symbol"], Decimal(order["quantity"]), Decimal(order["limit_price"]),
-                        order["status"], Decimal(order["filled_quantity"])) != ("BTC-PERP", Decimal(".001"), Decimal(100), "OPEN", Decimal(0)):
+                        order["status"], Decimal(order["filled_quantity"]), bool(order["reduce_only"]),
+                        Decimal(order["fee_notional"]), Decimal(order["charged_fee"])) != (
+                        "BTC-PERP", Decimal(requested_quantity), Decimal(requested_price), "OPEN", Decimal(0), False, Decimal(0), Decimal(0)):
                     raise RuntimeError("admission-only probe unexpectedly modified or closed an order")
+                reserves[order["account_id"]] += _reference_reserve(requested_quantity, requested_price)
+            for event in accepted:
+                identifier = event["account_id"], event["order_id"]
+                requested_quantity, requested_price = recorder.requests[identifier]
+                if (Decimal(event["quantity"]) != Decimal(requested_quantity)
+                        or Decimal(event["limit_price"]) != Decimal(requested_price)
+                        or Fraction(Decimal(event["reserved_margin"])) != _reference_reserve(requested_quantity, requested_price)):
+                    raise RuntimeError("durable acceptance event differs from request or independent reserve")
             counts = Counter(account for account, _ in ids)
             for account in range(shard, accounts, len(paths)):
                 account_id = f"probe-{account}"
                 actual = reopened._account(conn, account_id)
-                # Per order: .001*100*.1 + .001*100*.0004 = .01004 USD.
-                expected_reserve = counts[account_id] * Fraction(251, 25000)
+                expected_reserve = reserves[account_id]
                 if (Fraction(Decimal(actual["open_order_margin"])) != expected_reserve
                         or Decimal(actual["balances"]["USD"]) != Decimal(100000000)
                         or actual["positions"] or actual["version"] != 1 + counts[account_id]):
@@ -215,6 +341,7 @@ def _verify(paths, accounts, recorder, policy):
         reports.append({"shard": shard, "unique_orders": len(ids), "acceptance_events": len(accepted),
                         "ledger_events": ledger_events, "all_orders_remain_open": True,
                         "independent_live_reserves_verified": True,
+                        "verification_caches_disabled": True,
                         "journal_mode": journal_mode, "synchronous": synchronous})
     if not recorder.durable <= all_orders or all_orders - recorder.durable - recorder.unknown:
         raise RuntimeError("database effects disagree with post-COMMIT success receipts")
@@ -224,16 +351,33 @@ def _verify(paths, accounts, recorder, policy):
 
 def run(configuration: Configuration, directory: Path):
     configuration.validate()
+    _cache_arguments(configuration.reserve_cache_size, configuration.market_cache_size)
     directory.mkdir(parents=True, exist_ok=False)
     environment = _environment(directory)
     environment["policy"] = configuration.policy
     environment["effective_policy"] = {key: json.loads(model.to_json()) for key, model in _policy(configuration.policy).items()}
+    offered = int(configuration.duration * configuration.rate)
+    account_schedule = _account_schedule(configuration, offered)
+    order_schedule = tuple(_order_terms(sequence, configuration.order_distribution) for sequence in range(offered))
+    workload = {"distribution": "hot" if configuration.hot_accounts else "uniform",
+                "hot_accounts": configuration.hot_accounts, "hot_fraction": str(Fraction(str(configuration.hot_fraction))),
+                "offered_by_account": {f"probe-{key}": value for key, value in _account_counts(configuration, offered).items()},
+                "account_schedule_sha256": sha256(json.dumps(account_schedule, separators=(",", ":")).encode()).hexdigest(),
+                "order_distribution": configuration.order_distribution,
+                "order_schedule_sha256": sha256(json.dumps(order_schedule, separators=(",", ":")).encode()).hexdigest(),
+                "economic_key_count": len(set(order_schedule)),
+                "order_terms": [{"quantity": quantity, "limit_price": price, "arrivals": count}
+                                for (quantity, price), count in sorted(Counter(order_schedule).items())]}
+    environment["workload"] = workload
+    environment["cache_configuration"] = {"reserve": configuration.reserve_cache_size, "market": configuration.market_cache_size,
+                                          "verification_caches_disabled": True}
     (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
     setup_started = time.monotonic_ns()
     paths, services = [], []
     for shard in range(configuration.shards):
         path = directory / f"shard-{shard}.sqlite3"
-        service = _service(path, configuration.policy)
+        service = _service(path, configuration.policy, reserve_cache_size=configuration.reserve_cache_size,
+                           market_cache_size=configuration.market_cache_size)
         for index in range(shard, configuration.accounts, configuration.shards):
             account_id = f"probe-{index}"
             service.create_account(account_id)
@@ -246,6 +390,13 @@ def run(configuration: Configuration, directory: Path):
             {"USD": AssetSpec(Decimal(1), Decimal(1))},
             {"BTC-PERP": InstrumentSpec(Decimal(100), Decimal(".1"), Decimal(".05"))}))
         service.set_kill_switch(False)
+        # Begin every probe from empty caches. Startup counters are retained in
+        # the baseline and excluded by the timed-window counter difference.
+        for name in ("reserve", "market"):
+            clear = getattr(service, "clear_" + name + "_cache", None)
+            if clear is not None:
+                clear()
+    cache_start = [_cache_stats(service, configuration) for service in services]
     batchers = []
     if configuration.mode == "batch":
         module = importlib.import_module("uta.admission")
@@ -319,7 +470,7 @@ def run(configuration: Configuration, directory: Path):
             if row is None:
                 return
             row["dispatch_started_ns"] = time.monotonic_ns()
-            args = row["account_id"], row["order_id"], "BTC-PERP", Decimal(".001"), Decimal(100)
+            args = row["account_id"], row["order_id"], "BTC-PERP", Decimal(row["quantity"]), Decimal(row["limit_price"])
             if batchers:
                 try:
                     future = batchers[row["shard"]].submit_order(*args)
@@ -356,7 +507,6 @@ def run(configuration: Configuration, directory: Path):
     collector.start()
     for worker in workers:
         worker.start()
-    offered = int(configuration.duration * configuration.rate)
     started = time.monotonic_ns()
     try:
         for sequence in range(offered):
@@ -364,9 +514,10 @@ def run(configuration: Configuration, directory: Path):
             delay = scheduled - time.monotonic_ns()
             if delay > 0:
                 time.sleep(delay / 1e9)
-            account = sequence % configuration.accounts
+            account = account_schedule[sequence]
             row = {"kind": "arrival", "sequence": sequence, "account_id": f"probe-{account}",
                    "order_id": f"arrival-{sequence}", "shard": account % configuration.shards,
+                   "quantity": order_schedule[sequence][0], "limit_price": order_schedule[sequence][1],
                    "scheduled_ns": scheduled, "offered_ns": time.monotonic_ns(),
                    "dispatch_started_ns": None, "worker_started_ns": None, "receipt_published_ns": None,
                    "durable_committed": False}
@@ -394,6 +545,7 @@ def run(configuration: Configuration, directory: Path):
         raise RuntimeError("result recording failed: " + collector_error[0])
     if set(recorder.outcomes) != set(range(offered)):
         raise RuntimeError("offered arrivals were lost or duplicated")
+    cache_finish = [_cache_stats(service, configuration) for service in services]
     checks, unknown_resolution = _verify(paths, configuration.accounts, recorder, configuration.policy)
     elapsed = max(configuration.duration, (max(finished, recorder.completed_ns) - started) / 1e9)
     drain = max(0, (finished - (started + int(configuration.duration * 1e9))) / 1e9)
@@ -410,6 +562,9 @@ def run(configuration: Configuration, directory: Path):
                "latency_ms": {"all": all_latency, "accepted": recorder.accepted_latency.report(),
                               "worker_start_to_observation": recorder.service_latency.report()},
                "batch_stats": batch_stats, "durability_checks": checks, "unknown_resolution": unknown_resolution,
+               "cache_stats": _cache_report(cache_start, cache_finish), "workload": workload,
+               "timing_ns": {"planned_window_start": started, "generator_finished": arrivals_finished,
+                             "all_workers_drained": finished, "last_observed_completion": recorder.completed_ns},
                "gates": capacity_gates(configuration.duration, rate, counts, all_latency["p99"]),
                "scope": "single-process threaded admission-only; all successful orders remain live; no matching/liquidation",
                "market_feed": "one initial synthetic snapshot, 30s max age; <=10s arrival probe, no ongoing market fanout",
@@ -434,8 +589,11 @@ def main(argv=None):
     parser.add_argument("--duration", type=float, default=5)
     parser.add_argument("--rate", type=float, default=1000)
     for name, default in (("accounts", 100), ("shards", 1), ("workers", 4),
-                          ("queue-capacity", 1024), ("batch-size", 32)):
+                          ("queue-capacity", 1024), ("batch-size", 32),
+                          ("reserve-cache-size", 0), ("market-cache-size", 0), ("hot-accounts", 0)):
         parser.add_argument("--" + name, type=int, default=default)
+    parser.add_argument("--hot-fraction", type=float, default=0)
+    parser.add_argument("--order-distribution", choices=("constant", "varied"), default="constant")
     parser.add_argument("--batch-delay-ms", type=float, default=2)
     parser.add_argument("--timeout-ms", type=float, default=1000)
     parser.add_argument("--drain-seconds", type=float, default=10)

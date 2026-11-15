@@ -90,6 +90,8 @@ def main():
     parser.add_argument('--admission-queue-capacity', type=int, default=1024, help='pending grouped command limit (1..65536)')
     parser.add_argument('--admission-cancel-reserve', type=int, default=16, help='extra bounded FIFO cancellation slots (0..4096)')
     parser.add_argument('--admission-timeout', type=float, default=2, help='HTTP grouped-result wait deadline (.001..60s)')
+    parser.add_argument('--reserve-cache-size', type=int, default=0, help='opt in to bounded exact reservation memoization (0..65536; 0 disables)')
+    parser.add_argument('--market-cache-size', type=int, default=0, help='opt in to immutable market decoding cache (0..64; 0 disables)')
     parser.add_argument('--asset-scale', action='append', metavar='ASSET=DIGITS',
                         help='asset minor-unit scale; repeat for all assets (default: USD=8)')
     args = parser.parse_args()
@@ -97,6 +99,10 @@ def main():
         parser.error('port must be between 0 and 65535')
     if not 1 <= args.shards <= 64:
         parser.error('shards must be between 1 and 64')
+    if not 0 <= args.reserve_cache_size <= 65536 or not 0 <= args.market_cache_size <= 64:
+        parser.error('invalid cache bounds: reserve 0..65536, market 0..64')
+    if args.command != 'exchange' and (args.reserve_cache_size or args.market_cache_size):
+        parser.error('risk computation caches are supported only for exchange')
     if (not 1 <= args.admission_batch_size <= 256
             or not math.isfinite(args.admission_delay_ms) or not 0 <= args.admission_delay_ms <= 1000
             or not 1 <= args.admission_queue_capacity <= 65536
@@ -120,7 +126,8 @@ def main():
             credentials = load_credentials(args.credentials)
             policy = load_policy(args.catalog, args.risk_rules)
             database = Database(args.database)
-            service = ExchangeService(database, scales, **policy)
+            service = ExchangeService(database, scales, reserve_cache_size=args.reserve_cache_size,
+                                      market_cache_size=args.market_cache_size, **policy)
             service.credit = CreditService(service)
             service.matcher = Matcher(service)
             if service.product_catalog is not None:

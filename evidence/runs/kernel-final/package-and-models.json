@@ -1,0 +1,164 @@
+{
+  "code_commit": "794ffb24da11c7a9ee065c11509f5f343e2c9de6",
+  "started_at": "2026-11-15T07:20:42.843045+00:00",
+  "finished_at": "2026-11-15T07:20:47.539486+00:00",
+  "commands": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "pip",
+        "wheel",
+        ".",
+        "--no-deps",
+        "--no-build-isolation",
+        "--wheel-dir",
+        "/tmp/uta-kernel-wheel-4x2uuu90"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.8495089129996813,
+      "output": "wheel-build.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "/tmp/uta-kernel-wheel-4x2uuu90/uta_reference_exchange-0.3.0a1-py3-none-any.whl"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.485851632000049,
+      "output": "wheel-install.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/python",
+        "-c",
+        "import pathlib,hashlib,json,uta,uta.reserve_kernel,uta.market_cache,uta.shard_admission; p=pathlib.Path(uta.__file__).parent; print(json.dumps({\"version\":uta.__version__,\"installed_at\":str(p),\"files\":{str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in p.rglob(\"*\") if f.is_file() and (f.suffix==\".py\" or f.name==\"dashboard.html\")}},sort_keys=True,indent=2))"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.0766940080002314,
+      "output": "installed-files.json"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/python",
+        "-m",
+        "uta",
+        "acceptance"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.3548361680000198,
+      "output": "installed-acceptance.json"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/python",
+        "-c",
+        "import json\nfrom unittest.mock import patch\nfrom uta.service import ExchangeService\nfrom uta.vertical import run_vertical_acceptance\nservices=[]\ndef configured(*a,**k):\n s=ExchangeService(*a,reserve_cache_size=32,market_cache_size=4,**k);services.append(s);return s\nwith patch(\"uta.vertical.ExchangeService\",side_effect=configured): result=run_vertical_acceptance()\nassert result[\"status\"]==\"passed\" and not result[\"production_approved\"]\nassert any(s.reserve_cache_stats()[\"hits\"] for s in services) and any(s.market_cache_stats()[\"hits\"] for s in services)\nprint(json.dumps({\"result\":result,\"cache_stats\":[{\"reserve\":s.reserve_cache_stats(),\"market\":s.market_cache_stats()} for s in services]},indent=2))\n"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.3219348739999077,
+      "output": "installed-enabled-vertical.json"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/python",
+        "-m",
+        "uta",
+        "scenario",
+        "--shards",
+        "4"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.12976185600018653,
+      "output": "installed-research.txt"
+    },
+    {
+      "argv": [
+        "/tmp/uta-kernel-installed-k5p1rhf2/bin/uta",
+        "exchange",
+        "--help"
+      ],
+      "cwd": "/tmp",
+      "exit_code": 0,
+      "duration_seconds": 0.08087552999995751,
+      "output": "installed-cli.txt"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_shard_admission.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.12156814099989788,
+      "output": "shard-model.json"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_group_commit.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.03241498599982151,
+      "output": "group-model.json"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_reservation.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.04780598099978306,
+      "output": "reservation-model.txt"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "formal/explore_settlement.py"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.030597391999890533,
+      "output": "settlement-model.json"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "compileall",
+        "-q",
+        "uta",
+        "formal",
+        "tests",
+        "benchmarks"
+      ],
+      "cwd": "/workspace/uta-unified-account",
+      "exit_code": 0,
+      "duration_seconds": 0.039712728999802493,
+      "output": "compileall.txt"
+    }
+  ],
+  "wheel": {
+    "filename": "uta_reference_exchange-0.3.0a1-py3-none-any.whl",
+    "size": 177156,
+    "sha256": "e3c78f699cdea26fbb305106aafe6a3802824a4e012aa0be5590af0ad705aecc"
+  },
+  "installed_version": "0.3.0a1",
+  "installed_file_count": 40,
+  "source_matches_installed": true,
+  "passed": true,
+  "production_approved": false
+}
