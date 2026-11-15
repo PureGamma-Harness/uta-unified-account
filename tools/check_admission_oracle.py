@@ -36,7 +36,9 @@ def run_case(seed, batch_size):
 
 
 def details(result):
-    return {"passed": result.wasSuccessful(),
+    return {"passed": (result.testsRun == 1 and not result.skipped
+                       and result.wasSuccessful()),
+            "tests_run": result.testsRun, "skipped": len(result.skipped),
             "failures": [trace for _, trace in result.failures],
             "errors": [trace for _, trace in result.errors]}
 
@@ -54,7 +56,8 @@ def main():
         negative = run_case(872511, 16)
     # Reject false positives from unrelated harness errors: this mutant must
     # fail at an order expected to succeed because it now rejects margin.
-    negative_detected = (len(negative.errors) == 1 and not negative.failures
+    negative_detected = (negative.testsRun == 1 and not negative.skipped
+                         and len(negative.errors) == 1 and not negative.failures
                          and "insufficient available margin for order and fee reserve"
                          in negative.errors[0][1]
                          and 'future.result(timeout=10)["status"]' in negative.errors[0][1])
