@@ -46,3 +46,15 @@ python formal/explore_reservation.py
 原命令启用默认 deadlock 检查，会在所有订单均已 released/rejected、无后续 Next 动作时报告 `Deadlock reached`。这次运行没有完成全图探索，不能报告为通过。此模型是单次有限订单生命周期，允许终态停滞；上面的 `-deadlock` 参数**禁用 deadlock 检查**，仅用于穷尽既有安全不变量，不是修复或证明生产系统不会死锁。
 
 明确禁用 deadlock 检查后，TLC 退出码为 0，报告 `Model checking completed. No error has been found.`；4,198 个生成状态、2,628 个不同状态、队列剩余 0、图深度 10。检查的是配置中的 `TypeOK`、`NoOvercommit` 和 `HeldMatchesReservation`。不包含活性、最终成交、外部故障、任意订单规模或真实金融授权。
+
+### 不变量灵敏度检查
+
+对上述规格的独立临时副本进行了三项 TLC mutation 检查（同一配置、单 worker、`-deadlock`）；仓库规格和交易实现没有改变：
+
+| 临时变异 | TLC 结果 | 说明 |
+| --- | --- | --- |
+| 移除 Commit 的当前容量检查 | 退出码 12，`NoOvercommit` 反例 | 容量不变量能检测该错误；97 个不同状态后发现反例 |
+| Commit 将 reserved 写成 0 而非请求量 | 退出码 12，`HeldMatchesReservation` 反例 | 预占与阶段一致性检查能检测该错误；8 个不同状态后发现反例 |
+| 只移除 Commit 的 `seen[o] = version` 条件 | 退出码 0，4,883 个不同状态穷尽，无上述不变量反例 | **现有三个不变量不能证明拒绝旧版本请求**；原子地检查当前容量仍可满足这些有限安全性质 |
+
+最后一项不是生产代码缺陷，也不是允许删除版本检查。它说明验证主张必须与性质逐项对应：若要形式验证旧版本拒绝，须另加能够观察提交前 seen/version 关系的动作性质或历史变量，并对该性质做反例测试。不得把当前模型的安全检查宣传成完整乐观并发协议验证。
