@@ -25,7 +25,8 @@
 
 冻结运行代码为 `146fe74d3006d39b5ecb3fb3b2d1cbf2e133ad6a`，本地 Python 3.10 / 3.12 各 **605 项完整通过**，0 failures/errors/skips，50.68 / 47.86 秒。随后增加启用缓存的完整纵向链路和 300,000 条归档验证两个测试；最终完整测试及四版本 CI 原始状态保存在下列索引，不用旧测试数替代新候选。
 
-- [最终 Python 3.10](../evidence/runs/kernel-final/python310-607/summary.json) / [逐项日志](../evidence/runs/kernel-final/python310-607/unittest.txt)，[最终 Python 3.12](../evidence/runs/kernel-final/python312-607/summary.json) / [逐项日志](../evidence/runs/kernel-final/python312-607/unittest.txt)：最终 607 项的完整复验记录。
+- [最终 Python 3.10](../evidence/runs/kernel-final/python310-607/summary.json) / [逐项日志](../evidence/runs/kernel-final/python310-607/unittest.txt)，[最终 Python 3.12](../evidence/runs/kernel-final/python312-607/summary.json) / [逐项日志](../evidence/runs/kernel-final/python312-607/unittest.txt)：607 项各完整通过，0 failures/errors/skips，50.49 / 48.24 秒。
+- [四版本 CI 元数据及选取日志](../evidence/runs/kernel-final/github-ci.json)：`9983b64` 的 Python 3.10–3.13 均完成成功，3.13 实际607项且没有 unclosed database 警告；[完整运行](https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/43690088873)。之后仅归档证据与文档，不改变已验运行模块。
 - [冻结代码的 605 项原始结果](../evidence/runs/kernel-final/python312/summary.json)与[首次预检及真实失败](../evidence/runs/kernel-preflight/)均保留。Python 3.10 缺少 `sqlite3.SQLITE_FULL` 导出，只调整测试兼容写法；真实 SQLite 页数上限、整批回滚和原 ID 恢复预期不变。
 - [独立金融验证](kernel-validation.md)：896 个 Fraction 标准输入、低 Decimal context、部分成交、累计收费、LRU/清空、政策/行情修改、并发额度与冷重启。
 - [独立故障验证](kernel-faults.md)：真实 SQLITE_FULL、延迟外键 COMMIT 失败、提交前后 `os._exit`、已提交响应丢失、跨实例争用、同版本 payload 损坏、换片身份、旧 control 丢 claim、队列取消及关停。

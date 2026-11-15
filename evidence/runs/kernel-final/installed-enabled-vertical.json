@@ -1,0 +1,71 @@
+{
+  "result": {
+    "status": "passed",
+    "production_approved": false,
+    "checks": [
+      "classic gross snapshot handover, retained source evidence and initial freeze",
+      "explicit funded borrowing, spot asset locks, real cash matching, separate interest and repayment",
+      "market shock, automatic risk freeze, real partial liquidation and residual-risk preservation",
+      "worker restart, second matched liquidation, recovery and hand-computed terminal balances",
+      "read-only four-side replay plus source, spot and debt reconciliation after reopening storage"
+    ],
+    "linear_matches": 3,
+    "spot_matches": 2,
+    "final_balances": {
+      "BTC": "0.999",
+      "USD": "93.152"
+    },
+    "reconciliation": {
+      "status": "passed",
+      "matching_only": true,
+      "accounts": 2,
+      "orders": 6,
+      "fills": 6,
+      "positions": 0,
+      "active_imports": 1,
+      "ledger_events": 15,
+      "matches": 3,
+      "paired_fills": 6,
+      "unpaired_fills": 0,
+      "nonzero_liabilities": 0
+    },
+    "source_fence_verified": false,
+    "scope": "synthetic single-node Cross; not production capacity or real-source cutover approval"
+  },
+  "cache_stats": [
+    {
+      "reserve": {
+        "capacity": 32,
+        "size": 6,
+        "hits": 13,
+        "misses": 6,
+        "evictions": 0
+      },
+      "market": {
+        "capacity": 4,
+        "size": 2,
+        "hits": 35,
+        "misses": 2,
+        "errors": 0,
+        "evictions": 0
+      }
+    },
+    {
+      "reserve": {
+        "capacity": 32,
+        "size": 2,
+        "hits": 5,
+        "misses": 2,
+        "evictions": 0
+      },
+      "market": {
+        "capacity": 4,
+        "size": 1,
+        "hits": 12,
+        "misses": 1,
+        "errors": 0,
+        "evictions": 0
+      }
+    }
+  ]
+}
