@@ -71,3 +71,39 @@ class PartialCancelRecoveryTests(unittest.TestCase):
         result = reopened.cancel_order("seller", "sell")
         self.assertEqual((result["status"], result["filled_quantity"]), ("FILLED", "-2"))
         self.assertEqual(self.snapshot(reopened), stable)
+
+    def test_partial_cancel_racing_remainder_match_has_only_serialized_outcomes(self):
+        from concurrent.futures import ThreadPoolExecutor
+        from threading import Barrier
+        self.matched("-3")
+        self.service.submit_order("late-buyer", "late", "BTC-PERP", D(1), D(100))
+        barrier = Barrier(2)
+
+        def cancel():
+            service = self.reopen()
+            barrier.wait(timeout=5)
+            return service.cancel_order("seller", "sell")
+
+        def match():
+            service = self.reopen()
+            barrier.wait(timeout=5)
+            return Matcher(service).match_once("BTC-PERP")
+
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            cancellation, matching = pool.submit(cancel), pool.submit(match)
+            cancelled, matched = cancellation.result(timeout=10), matching.result(timeout=10)
+        reopened = self.reopen()
+        order = reopened.orders("seller")[0]
+        self.assertIn((order["status"], order["filled_quantity"], matched["confirmed_trades"]),
+                      (("CANCELLED", "-2", 0), ("FILLED", "-3", 1)))
+        self.assertEqual(cancelled["status"], order["status"])
+        trades = 1 + matched["confirmed_trades"]
+        matcher = Matcher(reopened)
+        self.assertEqual(len(matcher.trades()), trades)
+        self.assertEqual(matcher.verify(strict=True)["paired_fills"], 2 * trades)
+        account = reopened.account("seller")
+        self.assertEqual(D(account["open_order_margin"]), 0)
+        self.assertEqual(D(account["positions"]["BTC-PERP"]["quantity"]), D(order["filled_quantity"]))
+        self.assertEqual(D(account["balances"]["USD"]),
+                         D(10000) - abs(D(order["filled_quantity"])) * D(".04"))
+        reopened.ledger.verify()
