@@ -97,3 +97,18 @@ python -m uta exchange \
 完整权限矩阵已进入根 `test_kernel_gateway.py`。本次没有发现必须修改 runtime 才能继续本地评估的问题；建议把独立探针中的两类检查纳入长期自动化：安装版 wheel 的缓存 CLI/metrics 与分组/worker 联合退出，以及 warm cache 后晚期失败再同库切回 `0/0` 的全金融状态对比。
 
 现有 CI 会构建 wheel、在仓库外安装并运行 demo、acceptance 和 scenario，但没有直接把“安装版显式启用缓存后读取 metrics 并 SIGTERM”作为发布检查。此处只完成了 Python 3.12.14 的独立实测，不能替代 3.10/3.11/3.13 CI、其他 agent 的算术/并发复核、性能实验及完整发布验收。缓存开关带来的性能收益、真实资金运行资格和整条分支的生产批准均不在本报告结论中。
+
+## 补充：受控 router 的缓存参数转发
+
+随后只针对根分支新增的 `ShardRouter` 缓存参数小补丁做了交叉审查，没有扩大为整个 router 或分组控制屏障的审查。检查时该补丁尚未提交，文件身份如下：
+
+```text
+uta/sharding.py             7a10b74502ab80a9708f0a64fe7780b006ca51c431145aad444c5fbd52410a51
+tests/test_shard_kernel.py  6987aa13964fd57f538c3b651005c4789565acb90b165d2fbfd1e2283d8c6c38
+```
+
+未发现该小补丁的新阻断。两个容量参数默认零，严格整数/边界校验位于创建目录、control 数据库及 shard 数据库之前；参数仅传给各 shard 的 `ExchangeService`，没有加入不可变 economic layout descriptor 或金融 policy。`cache_stats()` 返回各 service 的局部统计，不读取或修改金融 authority，也没有宣称统计是原子金融快照。
+
+独立重跑 `python -m unittest discover -s tests -p test_shard_kernel.py -v`，2 项均通过：无效参数不创建目录；配置 Cross 的双分片与 `RouterAdmissionBatcher` 实际入场，行情发布后暂停并显式重新激活，挂单重新估值为 `30.42`，随后同库关闭缓存重开保持 layout、账户版本、账本及原订单 ID 幂等。这里只执行已有小型回归，没有增加压力负载或给出吞吐结论。
+
+运维容量必须按 **每个 shard/service 实例** 计算：N 个分片会有 N 份 LRU，并存 router 进程还会进一步增加实例数。`reserve_cache_size=65536`、`market_cache_size=64` 不是整个 router 的总预算；最多 256 分片的参数上限不构成可推荐的联合配置。这个补丁没有新增分片 CLI 启动入口或 HTTP stats 端点，`cache_stats()` 是 Python 诊断接口。缓存回退仍只改变计算优化配置，不授权重新分片、重建缺失 shard 或回滚金融数据库。
