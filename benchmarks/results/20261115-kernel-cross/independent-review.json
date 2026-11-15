@@ -1,0 +1,32 @@
+{
+  "reviewer": "/root/group_validation",
+  "review_kind": "independent automated agent read-only review",
+  "source_commit": "146fe74d3006d39b5ecb3fb3b2d1cbf2e133ad6a",
+  "scope": "12 run summaries and both run-window reports; no source mutation or extra load",
+  "checks": [
+    "same frozen source",
+    "one account/order schedule hash per cohort",
+    "accepted plus overload equals25000 per run",
+    "recalculated ack rate including drain and cohort medians",
+    "production gates false",
+    "reopen cache-disabled and OPEN assertions",
+    "all service cache sizes initially zero",
+    "reserve disabled counters zero reflect reference bypass; market disabled misses positive; optimized hits positive"
+  ],
+  "counts": {
+    "primary": {
+      "accepted": 32489,
+      "overload": 117511,
+      "accepted_late": 18331
+    },
+    "hot-varied": {
+      "accepted": 29363,
+      "overload": 120637,
+      "accepted_late": 19694
+    },
+    "total_offered": 300000
+  },
+  "measurement_contract_blocker": false,
+  "production_approved": false,
+  "raw_rows_recomputed_by_this_reviewer": false
+}

@@ -174,6 +174,71 @@ class KernelBenchmarkTests(unittest.TestCase):
         execute.assert_not_called()
         self.assertFalse(json.loads(output.getvalue())["load_started"])
 
+    def test_archived_kernel_pairs_retain_all_arrivals_and_frozen_source(self):
+        root = Path(__file__).resolve().parents[1] / "benchmarks/results/20261115-kernel-cross"
+        source = "146fe74d3006d39b5ecb3fb3b2d1cbf2e133ad6a"
+        for filename, proof in json.loads((root / "manifest.json").read_text())["files"].items():
+            data = (root / filename).read_bytes()
+            self.assertEqual(len(data), proof["bytes"])
+            self.assertEqual(sha256(data).hexdigest(), proof["sha256"])
+        total_arrivals = total_committed = 0
+        for cohort in ("primary", "hot-varied"):
+            directory = root / cohort
+            window = json.loads((directory / "run-window.json").read_text())
+            self.assertTrue(window["complete"])
+            self.assertFalse(window["production_approved"])
+            self.assertEqual(window["source"]["commit"], source)
+            self.assertEqual(window["source"]["tracked_changes"], "")
+            self.assertEqual([row["variant"] for row in window["runs"]],
+                             ["base", "optimized", "optimized", "base", "base", "optimized"])
+            invocation = json.loads((directory / "invocation.json").read_text())
+            self.assertEqual(invocation["returncode"], 0)
+            self.assertEqual(invocation["stdout_sha256"], sha256((directory / "run-window.json").read_bytes()).hexdigest())
+            self.assertEqual(invocation["stderr_sha256"], sha256((directory / "driver.stderr.txt").read_bytes()).hexdigest())
+            manifest = json.loads((directory / "manifest.json").read_text())
+            self.assertFalse(manifest["database_files_included"])
+            self.assertFalse(list(directory.rglob("*.sqlite3*")))
+            for filename, proof in manifest["files"].items():
+                data = (directory / filename).read_bytes()
+                self.assertEqual(len(data), proof["bytes"])
+                self.assertEqual(sha256(data).hexdigest(), proof["sha256"])
+            for entry in window["runs"]:
+                run_directory = directory / entry["label"]
+                summary = json.loads((run_directory / "summary.json").read_text())
+                self.assertEqual(summary["environment"]["code_commit"], source)
+                self.assertFalse(summary["environment"]["working_tree_dirty"])
+                self.assertEqual((summary["configuration"]["reserve_cache_size"], summary["configuration"]["market_cache_size"]),
+                                 (0, 0) if entry["variant"] == "base" else (4096, 4))
+                self.assertFalse(summary["gates"]["passed"])
+                self.assertEqual(summary["workload"]["economic_key_count"], 1 if cohort == "primary" else 40)
+                outcomes, accounts, sequences, durable, accepted_late = Counter(), Counter(), set(), 0, 0
+                with gzip.open(run_directory / "arrivals.jsonl.gz", "rt") as stream:
+                    for line in stream:
+                        row = json.loads(line)
+                        self.assertNotIn(row["sequence"], sequences)
+                        sequences.add(row["sequence"])
+                        outcomes[row["outcome"]] += 1
+                        accounts[row["account_id"]] += 1
+                        self.assertEqual(row["latency_ns"], row["completed_ns"] - row["scheduled_ns"])
+                        self.assertEqual(row["deadline_exceeded"], row["latency_ns"] > 1_000_000_000)
+                        self.assertIn("quantity", row)
+                        self.assertIn("limit_price", row)
+                        durable += int(row["durable_committed"])
+                        accepted_late += int(row["durable_committed"] and row["deadline_exceeded"])
+                self.assertEqual(sequences, set(range(25000)))
+                self.assertEqual(accounts, summary["workload"]["offered_by_account"])
+                for outcome, count in outcomes.items():
+                    self.assertEqual(count, summary["counts"][outcome])
+                self.assertEqual(set(outcomes), {"durable_accepted", "overload"})
+                self.assertEqual(accepted_late, summary["counts"]["accepted_late"])
+                self.assertEqual(durable, sum(check["unique_orders"] for check in summary["durability_checks"]))
+                self.assertTrue(all(check["all_orders_remain_open"] and check["verification_caches_disabled"]
+                                    for check in summary["durability_checks"]))
+                total_arrivals += len(sequences)
+                total_committed += durable
+        self.assertEqual(total_arrivals, 300000)
+        self.assertEqual(total_committed, 61852)
+
 
 if __name__ == "__main__":
     unittest.main()
