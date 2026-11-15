@@ -34,7 +34,8 @@ def _json(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
-_INTEGRITY_FAULTS = {"shard_unavailable", "shard_identity_conflict", "funding_registry_conflict"}
+_INTEGRITY_FAULTS = {"shard_unavailable", "shard_identity_conflict", "funding_registry_conflict",
+                     "market_barrier_mismatch"}
 
 
 class _BoundShardDatabase(Database):
@@ -323,7 +324,7 @@ class ShardRouter:
                 state = self._state()
                 if exposure and (state["halted"] or state["publishing"]):
                     raise ServiceError("router_halted", "global control is halted or market publication is incomplete", 503)
-                yield
+                yield state
         except ServiceError as exc:
             if exc.code in _INTEGRITY_FAULTS:
                 with self._lock(exclusive=True):
@@ -360,6 +361,107 @@ class ShardRouter:
     def cancel_order(self, account_id, order_id):
         with self._gate():
             return self._services[self.shard_for(account_id)].cancel_order(account_id, order_id)
+
+    def _batch_funding_claims(self):
+        """Read and validate the global registry while the caller holds a gate.
+
+        Unlike startup reconciliation this must not acquire write transactions
+        in other shards: concurrent shard batches already own their own writer.
+        The shared flock excludes cooperative funding and registry changes.
+        """
+        connection = sqlite3.connect(Path(self.control.path).as_uri() + "?mode=ro", uri=True)
+        try:
+            connection.execute("PRAGMA query_only=ON")
+            claims = dict(connection.execute("SELECT source_reference,command FROM router_pool_sources"))
+            codec = Ledger(self.layout["scales"])
+            for reference, encoded in claims.items():
+                command = json.loads(encoded)
+                _name(reference, "source_reference")
+                if not isinstance(command, list) or len(command) != 4 or type(command[0]) is not int:
+                    raise ValueError("invalid funding claim")
+                self._index(command[0])
+                _name(command[1], "command_id")
+                _name(command[2], "asset")
+                if (not isinstance(command[3], str) or codec._units(command[2], Decimal(command[3])) <= 0
+                        or encoded != _json(command)):
+                    raise ValueError("invalid funding claim")
+            return claims
+        except (sqlite3.Error, ValueError, TypeError, ArithmeticError) as exc:
+            raise ServiceError("funding_registry_conflict", "global funding claims are invalid", 503) from exc
+        finally:
+            connection.close()
+
+    @staticmethod
+    def _batch_reconcile_shard(connection, shard, claims):
+        if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='credit_commands'").fetchone() is None:
+            return
+        observed = set()
+        for row in connection.execute("SELECT scope,command_id,asset,amount,source_reference FROM credit_commands WHERE kind='pool_funded'"):
+            reference = row["source_reference"]
+            if (row["scope"] != "pool" or reference in observed or
+                    claims.get(reference) != _json([shard, row["command_id"], row["asset"], row["amount"]])):
+                raise ServiceError("funding_registry_conflict", "shard funding receipt has no exact unique global claim", 503)
+            observed.add(reference)
+
+    def _admit_order_batch(self, shard, commands):
+        """Controlled same-shard group commit for RouterAdmissionBatcher only.
+
+        Each tuple is (kind, arguments, reduce_only). All router checks and the
+        shared market barrier cover the *entire* transaction through COMMIT.
+        Results are per-command outcomes, not an atomic client bulk operation.
+        """
+        from .admission import _business_rejection
+
+        shard = self._index(shard)
+        if not isinstance(commands, (tuple, list)) or not 1 <= len(commands) <= 256:
+            raise ServiceError("invalid_batch", "batch requires 1..256 same-shard commands")
+        for kind, arguments, reduce_only in commands:
+            if kind == "submit":
+                ExchangeService._validate_order_command(*arguments, reduce_only=reduce_only)
+            elif kind == "cancel" and reduce_only is False:
+                ExchangeService._validate_cancel_command(*arguments)
+            else:
+                raise ServiceError("invalid_batch", "unsupported batch command")
+            if self.shard_for(arguments[0]) != shard:
+                raise ServiceError("cross_shard_unsupported", "a commit group must belong to one shard", 409)
+        outcomes = []
+        with self._gate() as state:
+            claims = self._batch_funding_claims()
+            service = self._services[shard]
+            # _BoundShardDatabase validates identity in this very transaction.
+            with service._transaction() as connection:
+                self._batch_reconcile_shard(connection, shard, claims)
+                new_admission = False
+                for index, (kind, arguments, reduce_only) in enumerate(commands):
+                    savepoint = "router_admission_" + str(index)
+                    connection.execute("SAVEPOINT " + savepoint)
+                    changes_before = connection.total_changes
+                    try:
+                        if kind == "submit":
+                            if state["halted"] or state["publishing"]:
+                                raise ServiceError("router_halted", "global control is halted or market publication is incomplete", 503)
+                            market = service._market(connection, fresh=False)
+                            if (market.version != state["market_version"] or
+                                    sha256(market.to_json().encode()).hexdigest() != state["market_digest"]):
+                                raise ServiceError("market_barrier_mismatch", "shard market differs from global publication barrier", 503)
+                            result = service._admit_order(connection, *arguments, reduce_only=reduce_only)
+                        else:
+                            result = service._cancel_order(connection, *arguments)
+                    except ServiceError as exc:
+                        if (not connection.in_transaction or
+                                not (_business_rejection(exc) or exc.code == "router_halted" and exc.status == 503)):
+                            raise
+                        connection.execute("ROLLBACK TO SAVEPOINT " + savepoint)
+                        connection.execute("RELEASE SAVEPOINT " + savepoint)
+                        outcomes.append((None, exc))
+                    else:
+                        connection.execute("RELEASE SAVEPOINT " + savepoint)
+                        outcomes.append((result, None))
+                        if kind == "submit" and connection.total_changes > changes_before:
+                            new_admission = True
+                if new_admission:
+                    service._market(connection)  # Last freshness checkpoint before COMMIT.
+        return outcomes
 
     def borrow(self, account_id, command_id, asset, amount):
         with self._gate(exposure=True):
