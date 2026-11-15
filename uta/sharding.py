@@ -440,7 +440,17 @@ class ShardRouter:
                         if kind == "submit":
                             if state["halted"] or state["publishing"]:
                                 raise ServiceError("router_halted", "global control is halted or market publication is incomplete", 503)
-                            market = service._market(connection, fresh=False)
+                            try:
+                                market = service._market(connection, fresh=False)
+                            except ServiceError as exc:
+                                # An active global barrier promises a complete
+                                # local snapshot. With freshness disabled these
+                                # codes mean missing/invalid data, not an aging
+                                # quote. Persist the same integrity halt as a
+                                # mismatched version or digest.
+                                if exc.code in {"market_unavailable", "market_incomplete"}:
+                                    raise ServiceError("market_barrier_mismatch", "active shard market is missing or invalid", 503) from exc
+                                raise
                             if (market.version != state["market_version"] or
                                     sha256(market.to_json().encode()).hexdigest() != state["market_digest"]):
                                 raise ServiceError("market_barrier_mismatch", "shard market differs from global publication barrier", 503)

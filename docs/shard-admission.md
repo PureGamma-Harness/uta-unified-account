@@ -88,7 +88,10 @@ checked when those shards execute, and across all shards during startup and
 activation. It does not claim a full cross-shard audit on each group.
 
 Each order admission also checks that the shard's market version and complete
-snapshot digest match the router publication barrier. All submit commands,
+snapshot digest match the router publication barrier. A missing or invalid
+snapshot under an active barrier is an integrity failure and persists a global
+halt; an ordinary aging quote is a market rejection and still permits cancels.
+All submit commands,
 including reduce-only and idempotent replay, are rejected with `router_halted`
 503 while global control is halted or publishing. Valid cancellations may
 continue in the same group, with control, identity, and funding integrity still

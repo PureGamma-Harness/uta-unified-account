@@ -214,6 +214,37 @@ class ShardAdmissionTests(unittest.TestCase):
             self.error(first, "admission_batch_failed")
             self.error(last, "admission_batch_failed")
         self.assertEqual(self.router.orders(self.accounts[0]), [])
+        self.assertFalse(self.router._state()["halted"])
+
+    def test_missing_or_invalid_active_market_is_a_durable_barrier_failure(self):
+        batcher = self.batcher(max_delay_ms=0)
+        for version, payload in ((1, None), (2, "{}")):
+            with self.subTest(payload=payload):
+                with self.router._services[0].database.transaction() as connection:
+                    if payload is None:
+                        connection.execute("DELETE FROM uta_market")
+                    else:
+                        connection.execute("UPDATE uta_market SET payload=?", (payload,))
+                error = self.error(self.submit(batcher, "corrupt" + str(version)), "admission_batch_failed")
+                self.assertEqual(error.__cause__.code, "market_barrier_mismatch")
+                self.assertTrue(self.router._state()["halted"])
+                self.error(self.submit(batcher, "other" + str(version), shard=1), "router_halted")
+                self.assertEqual(self.router.orders(self.accounts[0]), [])
+                if payload is None:
+                    self.router.publish_market(self.market(version + 1))
+                    self.router.set_kill_switch(False)
+
+    def test_ordinary_stale_quote_is_rejection_without_an_integrity_halt(self):
+        account = self.accounts[0]
+        self.router.submit_order(account, "live", "BTC-PERP", D(1), D(100))
+        self.now += timedelta(seconds=6)
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        rejected = self.submit(batcher, "stale")
+        cancelled = batcher.cancel_order(account, "live")
+        batcher.close()
+        self.error(rejected, "market_unavailable")
+        self.assertEqual(cancelled.result()["status"], "CANCELLED")
+        self.assertFalse(self.router._state()["halted"])
 
     def test_real_matching_receipts_positions_and_orders_survive_reopen(self):
         buyer = self.accounts[0]
