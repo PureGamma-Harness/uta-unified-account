@@ -98,9 +98,13 @@ class ShardRouter:
 
     def __init__(self, directory, shard_count, scales, *, fee_rate=Decimal(".0004"),
                  max_price_age=timedelta(seconds=5), clock=None,
-                 product_catalog=None, portfolio_rules=None):
+                 product_catalog=None, portfolio_rules=None,
+                 reserve_cache_size=0, market_cache_size=0):
         if type(shard_count) is not int or not 1 <= shard_count <= 256:
             raise ServiceError("invalid_layout", "shard count must be in 1..256")
+        if (type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= 65536 or
+                type(market_cache_size) is not int or not 0 <= market_cache_size <= 64):
+            raise ServiceError("invalid_configuration", "cache capacities require reserve 0..65536 and market 0..64")
         Ledger(scales)  # Validate without creating financial state.
         policy = {"fee_rate": _text(fee_rate), "max_price_age_us": max_price_age // timedelta(microseconds=1),
                   "catalog": None if product_catalog is None else json.loads(product_catalog.to_json()),
@@ -151,7 +155,8 @@ class ShardRouter:
                     database = _BoundShardDatabase(self._path(index), index, sha256(self._descriptor.encode()).hexdigest(), bootstrap=fresh)
                     service = ExchangeService(database,
                         scales, fee_rate=fee_rate, max_price_age=max_price_age, clock=clock,
-                        product_catalog=product_catalog, portfolio_rules=portfolio_rules)
+                        product_catalog=product_catalog, portfolio_rules=portfolio_rules,
+                        reserve_cache_size=reserve_cache_size, market_cache_size=market_cache_size)
                     if fresh:
                         database.finish_bootstrap()
                     self._services.append(service)
@@ -179,6 +184,17 @@ class ShardRouter:
 
     def _path(self, index):
         return self.directory / f"shard-{index:04d}.sqlite3"
+
+    def cache_stats(self):
+        """Per-service process counters, not an atomic financial snapshot.
+
+        Cache capacities do not enter the immutable economic layout descriptor:
+        reopening with zero capacities is an execution rollback, not a new
+        authority, shard count, precision, or financial policy.
+        """
+        return {str(index): {"reserve": service.reserve_cache_stats(),
+                             "market": service.market_cache_stats()}
+                for index, service in enumerate(self._services)}
 
     def _intact_file(self, index):
         try:
