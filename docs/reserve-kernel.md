@@ -41,6 +41,14 @@ original service expression remains separately callable for same-source A/B.
 Independent acceptance must also use a separately developed reference model;
 comparing two implementations in this module alone is insufficient.
 
+The separate [market decoder cache](market-cache.md) is integrated through
+`market_cache_size=0` (default) or an explicit capacity up to 64. It replaces
+only decoding of the complete payload read by the current transaction. Market
+freshness and configured-policy checks remain after decoding on every use.
+`market_cache_stats()` and `clear_market_cache(reset_stats=False)` expose its
+own independent diagnostics and lifecycle. Both cache-size arguments are
+validated before any database file is created.
+
 The service still reads current authoritative rows and current market data. It
 resolves outstanding-order product eligibility and effective IM on every call,
 including cache hits. Existing market-age, configured-market-policy, balance,

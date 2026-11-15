@@ -19,6 +19,7 @@ from typing import Callable, Mapping
 
 from .ledger import LedgerError, Posting
 from .market import MarketSnapshot
+from .market_cache import MAX_CACHE_CAPACITY as MAX_MARKET_CACHE_CAPACITY, MarketDecodeCache
 from .models import RiskInputError
 from .portfolio import LinearExposure, LoanAccount, PortfolioRules, calculate_cross_risk
 from .products import AccountMode, ProductCatalog, ProductError, ProductKind
@@ -112,9 +113,12 @@ class ExchangeService:
                  fee_rate: Decimal = Decimal("0.0004"),
                  product_catalog: ProductCatalog | None = None,
                  portfolio_rules: PortfolioRules | None = None,
-                 reserve_cache_size: int = 0):
+                 reserve_cache_size: int = 0,
+                 market_cache_size: int = 0):
         if type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= MAX_RESERVE_CACHE_CAPACITY:
             raise ServiceError("invalid_configuration", "reserve_cache_size must be an integer from 0 through 65536")
+        if type(market_cache_size) is not int or not 0 <= market_cache_size <= MAX_MARKET_CACHE_CAPACITY:
+            raise ServiceError("invalid_configuration", "market_cache_size must be an integer from 0 through 64")
         if (product_catalog is None) != (portfolio_rules is None):
             raise ServiceError("invalid_configuration", "product_catalog and portfolio_rules must be configured together")
         if product_catalog is not None and (not isinstance(product_catalog, ProductCatalog) or not isinstance(portfolio_rules, PortfolioRules)):
@@ -133,6 +137,7 @@ class ExchangeService:
             raise ServiceError("invalid_configuration", "fee_rate must be between zero and 0.01")
         self.database = database
         self._reserve_kernel = ReserveKernel(reserve_cache_size)
+        self._market_decode_cache = MarketDecodeCache(market_cache_size)
         self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
         self.scales = dict(scales)
         # The research simulator uses different uta_accounts/uta_events schemas.
@@ -363,7 +368,7 @@ class ExchangeService:
         if row is None:
             raise ServiceError("market_unavailable", "no trusted market snapshot has been published", 503)
         try:
-            snapshot = MarketSnapshot.from_json(row["payload"])
+            snapshot = self._market_decode_cache.parse(row["payload"])
             if fresh:
                 snapshot.validate(now=self._now(), max_age=self.max_price_age)
             self._validate_policy_market(snapshot)
@@ -395,6 +400,12 @@ class ExchangeService:
     @staticmethod
     def _live_orders(connection, account_id: str):
         return connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED') ORDER BY rowid", (account_id,)).fetchall()
+
+    def market_cache_stats(self) -> dict:
+        return self._market_decode_cache.stats()
+
+    def clear_market_cache(self, *, reset_stats: bool = False) -> None:
+        self._market_decode_cache.clear(reset_stats=reset_stats)
 
     def reserve_cache_stats(self) -> dict:
         return self._reserve_kernel.stats()

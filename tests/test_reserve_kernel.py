@@ -117,13 +117,14 @@ class ReserveServiceTests(unittest.TestCase):
         self.directory = Path(temporary.name)
         self.now = datetime(2026, 11, 15, tzinfo=timezone.utc)
 
-    def open(self, name="account.sqlite3", *, cache=32, configured=False):
+    def open(self, name="account.sqlite3", *, cache=32, market_cache=4, configured=False):
         kwargs = {}
         if configured:
             catalog, rules = synthetic_policy()
             kwargs.update(product_catalog=catalog, portfolio_rules=rules)
         service = ExchangeService(Database(self.directory / name), {"USD": 2, "BTC": 8},
-                                  clock=lambda: self.now, reserve_cache_size=cache, **kwargs)
+                                  clock=lambda: self.now, reserve_cache_size=cache,
+                                  market_cache_size=market_cache, **kwargs)
         return service
 
     def market(self, mark="100", version=1):
@@ -153,6 +154,48 @@ class ReserveServiceTests(unittest.TestCase):
             self.assertEqual(service._reserve(row, self.market()), D("31.57"))
             self.assertEqual(reference.call_count, 1)
         self.assertEqual(service.reserve_cache_stats()["size"], 0)
+
+    def test_invalid_market_size_fails_before_database_file_creation(self):
+        for index, size in enumerate((True, -1, 65, 1.5, "1", None)):
+            path = self.directory / f"invalid-market-{index}.sqlite3"
+            with self.subTest(size=size), self.assertRaises(ServiceError) as rejected:
+                ExchangeService(Database(path), {"USD": 2}, market_cache_size=size)
+            self.assertEqual(rejected.exception.code, "invalid_configuration")
+            self.assertFalse(path.exists())
+
+    def test_warm_market_decode_rechecks_freshness_and_same_version_row(self):
+        service = self.open()
+        self.fund(service)
+        service.submit_order("alice", "order", "BTC-PERP", D(2), D(100))
+        service.risk("alice")
+        before = service.market_cache_stats()
+        self.assertGreater(before["hits"], 0)
+        # Simulate a same-version persisted edit. A version-keyed cache would
+        # incorrectly retain the old quote and underreserve the live order.
+        with service.database.transaction() as connection:
+            connection.execute("UPDATE uta_market SET payload=? WHERE singleton=1",
+                               (self.market("200").to_json(),))
+        self.assertEqual(service.risk("alice")["open_order_margin"], "40.08")
+        self.assertGreater(service.market_cache_stats()["misses"], before["misses"])
+        self.now += timedelta(seconds=6)
+        with self.assertRaises(ServiceError) as rejected:
+            service.risk("alice")
+        self.assertEqual(rejected.exception.code, "market_unavailable")
+
+    def test_market_cache_clear_and_configured_policy_are_rechecked(self):
+        service = self.open(configured=True)
+        self.fund(service)
+        service.submit_order("alice", "order", "BTC-PERP", D(1), D(100))
+        service.risk("alice")
+        self.assertGreater(service.market_cache_stats()["size"], 0)
+        service.clear_market_cache(reset_stats=True)
+        self.assertEqual(service.market_cache_stats(), {"capacity": 4, "size": 0,
+            "hits": 0, "misses": 0, "errors": 0, "evictions": 0})
+        service.risk("alice")
+        with patch.object(service, "_validate_policy_market", side_effect=ServiceError("margin_rule_conflict", "test policy conflict", 409)):
+            with self.assertRaises(ServiceError) as rejected:
+                service.risk("alice")
+        self.assertEqual(rejected.exception.code, "margin_rule_conflict")
 
     def test_seeded_cached_and_original_fraction_formulas_agree(self):
         service = self.open()
@@ -189,7 +232,7 @@ class ReserveServiceTests(unittest.TestCase):
         self.assertEqual(service.account("alice")["open_order_margin"], "15.06")
         service.publish_market(self.market("110", version=2))
         self.assertEqual(service.account("alice")["open_order_margin"], "16.56")
-        reference = self.open(cache=0)
+        reference = self.open(cache=0, market_cache=0)
         self.assertEqual(service.account("alice"), reference.account("alice"))
         self.assertEqual(service.risk("alice"), reference.risk("alice"))
         self.assertEqual(service.ledger.verify(), 2)
