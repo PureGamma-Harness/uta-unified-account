@@ -37,8 +37,9 @@ def run_case(seed, batch_size):
 
 def details(result):
     return {"passed": (result.testsRun == 1 and not result.skipped
-                       and result.wasSuccessful()),
+                       and not result.expectedFailures and result.wasSuccessful()),
             "tests_run": result.testsRun, "skipped": len(result.skipped),
+            "expected_failures": len(result.expectedFailures),
             "failures": [trace for _, trace in result.failures],
             "errors": [trace for _, trace in result.errors]}
 
