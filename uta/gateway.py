@@ -430,6 +430,13 @@ class _Handler(BaseHTTPRequestHandler):
             admission = getattr(service, "admission", None)
             if admission is not None:
                 result["admission"] = admission.stats()
+            caches = {}
+            for name in ("reserve", "market"):
+                stats = getattr(service, name + "_cache_stats", None)
+                if callable(stats):
+                    caches[name] = stats()
+            if caches:
+                result["risk_cache"] = caches
             return 200, result
         if method == "GET" and path == "/v1/events":
             self._permit(principal, "reader", "trader", "risk")
