@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 from pathlib import Path
+import sqlite3
 from tempfile import TemporaryDirectory
 from threading import Event, Thread
 import unittest
@@ -199,6 +200,38 @@ class ShardAdmissionTests(unittest.TestCase):
         self.error(submit, "router_halted")
         self.assertEqual(cancel.result()["status"], "CANCELLED")
         self.assertEqual(batcher.stats()["committed_batches"], 1)
+
+    def test_sqlite_failure_wrapped_as_router_halt_rolls_back_both_written_commands(self):
+        account = self.accounts[0]
+        before = (self.router.account(account), self.router.orders(account),
+                  self.router.events({"shard": 0, "sequence": 0}, limit=1000))
+        batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)
+        service = self.router._services[0]
+        original = service._admit_order
+        written = []
+        def fail_after_write(connection, account_id, order_id, *args, **kwargs):
+            result = original(connection, account_id, order_id, *args, **kwargs)
+            written.append(order_id)
+            if order_id == "wrapped-fault":
+                try:
+                    connection.execute("INSERT INTO deliberately_missing_admission_table VALUES (1)")
+                except sqlite3.OperationalError as exc:
+                    self.assertTrue(connection.in_transaction)
+                    raise ServiceError("router_halted", "injected storage wrapper", 503) from exc
+            return result
+        with patch.object(service, "_admit_order", fail_after_write):
+            first = self.submit(batcher, "written-first")
+            second = self.submit(batcher, "wrapped-fault")
+            for future in (first, second):
+                failure = self.error(future, "admission_batch_failed")
+                self.assertEqual(failure.__cause__.code, "router_halted")
+                self.assertIsInstance(failure.__cause__.__cause__, sqlite3.OperationalError)
+        batcher.close()
+        self.assertEqual(written, ["written-first", "wrapped-fault"])
+        self.assertEqual((self.router.account(account), self.router.orders(account),
+                          self.router.events({"shard": 0, "sequence": 0}, limit=1000)), before)
+        self.assertEqual(batcher.stats()["committed_batches"], 0)
+        self.assertEqual(batcher.stats()["technical_failed"], 2)
 
     def test_last_freshness_check_rolls_back_whole_group(self):
         batcher = self.batcher(max_batch_size=2, max_delay_ms=1000)

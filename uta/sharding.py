@@ -475,7 +475,7 @@ class ShardRouter:
                             result = service._cancel_order(connection, *arguments)
                     except ServiceError as exc:
                         if (not connection.in_transaction or
-                                not (_business_rejection(exc) or exc.code == "router_halted" and exc.status == 503)):
+                                not _business_rejection(exc, extra_unavailable_codes=frozenset({"router_halted"}))):
                             raise
                         connection.execute("ROLLBACK TO SAVEPOINT " + savepoint)
                         connection.execute("RELEASE SAVEPOINT " + savepoint)

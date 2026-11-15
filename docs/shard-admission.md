@@ -99,7 +99,10 @@ required. These router halt policies are stricter than standalone admission.
 
 Commands execute sequentially with individual SAVEPOINTs. The existing explicit
 `admission._business_rejection` allowlist isolates expected business/market
-rejections; the explicit router halt rejection is also isolated. Storage,
+rejections; the router extends its unavailable-code allowlist with `router_halted`
+through the same cause-chain guard. A SQL, ledger, or storage failure wrapped in
+that code still aborts the whole group. This is an error-classification contract
+hardening; no external attack path is asserted. Storage,
 configuration, identity, funding, market barrier, and unexpected failures abort
 the group. Integrity failures also persist a global halt after releasing the
 shared gate. A final fresh-market check runs before COMMIT whenever the group
