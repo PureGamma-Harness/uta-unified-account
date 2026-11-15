@@ -56,6 +56,26 @@ flowchart LR
 
 尚未取得的证据包括真实交易所逐字段对账、第三方独立审计、真实行情历史回放、连续端到端压力验收、业务参数校准、进程崩溃/断电与跨主机故障恢复、形式化证明覆盖真实实现及监管适用性审查。现有有界模型只覆盖 [公开的假设与状态空间](../formal/README.md)，不能把规格文件存在、Python 枚举通过或数据库重开成功描述为这些目标已完成。
 
+## 独立日记簿的精度与回放
+
+[Ledger](../uta/ledger.py) 按币种小数位转换为整数最小单位，`unit_digits` 指定这些整数的位数上限，默认 38，可显式设为 38–60。每笔金额和累计余额的绝对值均须小于 `10 ** unit_digits` 个最小单位；该参数控制范围，金额仍须精确匹配币种小数位，不进行舍入。
+
+`JournalEvent` 不携带币种小数位或位数上限，调用方须随历史保留这两项配置。对显式使用较宽上限的日记簿，回放时提供相同 `unit_digits`；省略时仍执行默认 38 位检查。例如 USD 保留 18 位小数时，下面的金额对应 `10 ** 43` 个最小单位，需要较宽配置：
+
+```python
+from decimal import Decimal as D
+from uta.ledger import Ledger, Posting
+
+scales = {"USD": 18}
+ledger = Ledger(scales, unit_digits=60)
+ledger.post("large", [Posting("external", "USD", D("-1e25")),
+                      Posting("customer", "USD", D("1e25"))])
+restored = Ledger.replay(scales, ledger.journal(), unit_digits=60)
+assert restored.balance("customer", "USD") == D("1e25")
+```
+
+[test_ledger.py](../tests/test_ledger.py) 覆盖较宽金额与最小单位扣减的精确往返、低 Decimal 精度上下文、回放后的幂等、默认范围拒绝，以及回放后新增事件触发余额上限时不改变余额或历史。这里重建的是独立内存日记簿；SQLite 账户的逐命令回放由 [Simulator.verify_replay](../uta/simulator.py) 完成，流程见 [审计回放](workflows.md)。
+
 ## 可人工复算的基准
 
 此例对应 `test_collateral_liability_unrealized_pnl_and_margins`，所有数值均为合成示例，不对应任何交易所参数。报告单位为 USD，合约乘数假设为 1。

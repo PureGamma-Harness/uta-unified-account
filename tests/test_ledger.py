@@ -68,6 +68,39 @@ class LedgerTests(unittest.TestCase):
         with self.assertRaises(LedgerError):
             Ledger.replay({"USDT": 6}, [one, JournalEvent("x", 2, one.postings)])
 
+    def test_replay_preserves_wide_journal_amounts_and_idempotency(self):
+        scales = {"USD": 18}
+        ledger = Ledger(scales, unit_digits=60)
+        deposit = [
+            Posting("external", "USD", D("-10000000000000000000000000.123456789012345678")),
+            Posting("customer", "USD", D("10000000000000000000000000.123456789012345678")),
+        ]
+        ledger.post("deposit", deposit)
+        ledger.post("withdraw", [Posting("customer", "USD", D("-0.000000000000000001")),
+                                 Posting("external", "USD", D("0.000000000000000001"))])
+        with localcontext() as ctx:
+            ctx.prec = 2
+            restored = Ledger.replay(scales, ledger.journal(), unit_digits=60)
+        self.assertEqual(restored.journal(), ledger.journal())
+        self.assertEqual(restored.balance("customer", "USD"),
+                         D("10000000000000000000000000.123456789012345677"))
+        self.assertIs(restored.post("deposit", deposit[::-1]), restored.journal()[0])
+        # Wider histories must not silently enlarge the default replay policy.
+        with self.assertRaises(LedgerError):
+            Ledger.replay(scales, ledger.journal())
+
+    def test_replay_keeps_requested_balance_limit_for_new_events(self):
+        restored = Ledger.replay({"USD": 0}, [], unit_digits=40)
+        maximum = D("9" * 40)
+        restored.post("maximum", [Posting("external", "USD", maximum.copy_negate()),
+                                  Posting("customer", "USD", maximum)])
+        before = restored.journal()
+        with self.assertRaisesRegex(LedgerError, "balance exceeds supported range"):
+            restored.post("overflow", [Posting("external", "USD", D("-1")),
+                                       Posting("customer", "USD", D("1"))])
+        self.assertEqual(restored.journal(), before)
+        self.assertEqual(restored.balance("customer", "USD"), maximum)
+
     def test_concurrent_retries_commit_once(self):
         def post(_):
             return self.ledger.post("retry", self.transfer())
