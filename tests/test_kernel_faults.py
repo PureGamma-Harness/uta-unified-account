@@ -168,7 +168,7 @@ class KernelCacheFaultTests(unittest.TestCase):
                 continue
             seen.add(id(item))
             found_full |= isinstance(item, sqlite3.Error) and (
-                getattr(item, "sqlite_errorcode", None) == sqlite3.SQLITE_FULL or
+                getattr(item, "sqlite_errorcode", None) == getattr(sqlite3, "SQLITE_FULL", 13) or
                 "database or disk is full" in str(item))
             chain.extend((item.__cause__, item.__context__))
         self.assertTrue(found_full, "failure must include SQLite's actual SQLITE_FULL")
