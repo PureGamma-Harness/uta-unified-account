@@ -10,7 +10,7 @@
 | --- | --- | --- |
 | 六场景抵押品、负债、持仓联合重估及 IM/MM 底线 | [test_portfolio.py](../tests/test_portfolio.py)，[PM 手算](risk-model.md) | 项目自定义场景；没有外部交易所结果校准 |
 | 经典账户导入、总资产与借款分别保留、冻结余额拒绝 | [test_shadow_adapter.py](../tests/test_shadow_adapter.py)、[test_simulator.py](../tests/test_simulator.py) | 导入是新模拟账户创世，不证明来源接口构成原子快照 |
-| 独立连接争抢相同账户版本，审计失败时状态回滚 | [test_store.py](../tests/test_store.py) | 本地 SQLite 并发与故障注入；未覆盖断电或跨主机共识 |
+| 独立连接争抢相同账户版本，审计写入及 COMMIT 失败时状态回滚 | [test_store.py](../tests/test_store.py)、[test_store_commit.py](../tests/test_store_commit.py) | 本地 SQLite 并发、写入故障与真实延迟约束提交失败；未覆盖断电或跨主机共识 |
 | FIFO 部分成交、反向开仓、撤单和清算分录 | [test_simulator.py](../tests/test_simulator.py) | 人工注入成交与固定滑点，未接入真实撮合 |
 | 重开数据库后的命令幂等、记录时间回放和快照比较 | [test_store.py](../tests/test_store.py)、[test_simulator.py](../tests/test_simulator.py) | 兼容当前模型和命令历史，不是外部会计真实性证明 |
 | 分片路由固定、丢失分片拒绝、组提交保存点与分片独立失败 | [test_store.py](../tests/test_store.py) | 无跨分片原子事务或在线重新分片 |
@@ -38,6 +38,18 @@ flowchart LR
 ```
 
 本地单一 Python 版本通过，不等于整个 CI 矩阵已通过。`scenario` 未指定数据库时使用临时目录并清理；要保存并再次回放，使用 [流程文档](workflows.md) 中带 `--db` 的命令。Python 枚举器与 TLA+ TLC 是不同工具；当前 CI 没有执行 TLC，范围见 [形式化模型说明](../formal/README.md)。
+
+## SQLite 提交失败与原请求重试
+
+[test_store_commit.py](../tests/test_store_commit.py) 在临时测试库中建立 `DEFERRABLE INITIALLY DEFERRED` 外键。审计触发器插入缺少父记录的引用，INSERT 和组内保存点仍可完成，最终由真实外层 COMMIT 抛出 `sqlite3.IntegrityError`，存储层转换为 `StoreError`。测试使用 SQL trace 确认已尝试 COMMIT；观察连接时不替换提交方法或伪造异常。
+
+| 路径 | 提交失败后核对 | 原 ID、版本与载荷重试 |
+| --- | --- | --- |
+| `Store.apply` 单命令 | 不返回成功回执；重开后仍是版本 0，只有创世事件 | 移除测试故障后只提交一次，再次重试返回原回执 |
+| `Store.apply_many` 同库多账户 | 包括延迟约束违规之后的命令在内，所有状态转换均已运行，但整批快照、版本和事件一同回滚 | 原批次可完整重提，回执对应输入顺序，重复提交不再执行转换 |
+| `ShardedStore.apply_many` 跨片 | 失败片整组返回错误，另一片的成功回执和版本保持提交 | 重开后重提原批次；成功片返回旧回执，失败片从原版本提交 |
+
+这些测试验证 [Store._transaction 与分片组提交](../uta/store.py) 的本地事务边界，补充已有的事件 INSERT 失败测试。测试表和约束只存在于临时夹具中。它们不模拟断电、磁盘损坏或跨主机恢复；跨片部分成功仍是接口语义，不能将批量结果当作全局原子提交。
 
 ## 验证问题和证据
 

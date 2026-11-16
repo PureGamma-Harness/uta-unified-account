@@ -65,8 +65,16 @@ sequenceDiagram
             S-->>T: 新状态与回执
             T->>D: 更新快照并写命令事件，version + 1
             T->>D: COMMIT
-            T-->>H: 已持久提交的回执
-            H-->>C: 200，新 version
+            alt 提交成功
+                D-->>T: 提交完成
+                T-->>H: 已持久提交的回执
+                H-->>C: 200，新 version
+            else SQLite 提交失败
+                D-->>T: sqlite3.Error
+                T->>D: 关闭连接，回滚未提交事务
+                T-->>H: StoreError
+                H-->>C: 503，保留原请求重试
+            end
         else 业务检查拒绝
             S-->>T: SimulatorError
             T->>D: 回滚未提交事务
@@ -94,13 +102,17 @@ flowchart TD
     Write --> Release["释放 SAVEPOINT，处理组内下一条"]
     Undo --> Release
     Release -->|仍有命令| Save
-    Release -->|全部处理完| Commit["一次 COMMIT 后返回该组结果"]
-    Begin -->|SQLite 事务失败| Fail["该分片组整体失败"]
-    Commit --> Merge["按原输入位置合并逐项回执"]
+    Release -->|全部处理完| Commit["尝试 COMMIT 整个分片组"]
+    Commit -->|成功| Success["返回该组已提交的回执"]
+    Commit -->|失败| Fail["该分片组整体失败"]
+    Begin -->|事务期间其他 SQLite 错误| Fail
+    Success --> Merge["按原输入位置合并逐项回执"]
     Fail --> Merge
 ```
 
 图中 SQLite 失败分支代表整个分片事务期间的数据库错误，包括提交失败。单库或同一分片内按输入顺序处理；分片组可并行提交，最多使用 8 个组工作线程。一个分片失败不会回滚其他分片，批量接口没有跨分片的全局原子性。实现与故障测试分别见 [Store.apply_many / ShardedStore.apply_many](../uta/store.py)、[test_store.py](../tests/test_store.py)。
+
+[提交失败与恢复测试](../tests/test_store_commit.py) 使用真实 SQLite 延迟外键约束，在状态转换和事件写入后使外层 COMMIT 失败。它核对重开后的快照、连续版本及事件，并验证原请求重试；跨片重试同时保留另一片已提交的原回执。具体覆盖与故障边界见 [验证说明](verification.md)。
 
 ## 独立示例与生产化边界
 
