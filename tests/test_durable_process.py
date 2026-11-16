@@ -5,6 +5,7 @@ import os
 import fcntl
 import signal
 import sqlite3
+import multiprocessing
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import monotonic, sleep
@@ -17,6 +18,21 @@ from uta.models import AssetSpec, InstrumentSpec
 from uta.service import ServiceError
 from uta.sharding import ShardRouter, ShardWorkerView, _BoundShardDatabase
 from uta.writer_fence import WriterFence, WriterFenceError
+
+
+def _orphan_coordinator(directory, buyer, report):
+    """A real separate parent that the test will SIGKILL, never graceful-close."""
+    router = DurableProcessRouter(directory, lease_seconds=.6, poll_interval=.01)
+    router.start()
+    snapshot = MarketSnapshot(1, datetime.now(timezone.utc), {"USD": AssetSpec(D(1), D(1))},
+                              {"X": InstrumentSpec(D(100), D(".1"), D(".05"))})
+    router.publish_market(snapshot, timeout=8)
+    router.set_kill_switch(False, timeout=8)
+    router.submit_order(buyer, "orphan-original", "resting", "X", D(1), D(100))
+    receipt = router.wait("orphan-original", account_id=buyer, timeout=8)
+    report.send({"parent": os.getpid(), "workers": [router.worker_pid(i) for i in range(2)], "receipt": receipt})
+    while True:
+        sleep(1)
 
 
 class DurableProcessTests(unittest.TestCase):
@@ -308,6 +324,66 @@ class DurableProcessTests(unittest.TestCase):
         with resumed._database(0).read_transaction() as conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_deposits").fetchone()[0], 1)
             self.assertEqual(int(conn.execute("SELECT units FROM ledger_balances WHERE account=? AND asset='USD'", ("customer:" + account,)).fetchone()[0]), 1004000000)
+
+    def test_new_parent_uses_registered_birth_identity_to_recover_sigstopped_orphans(self):
+        context = multiprocessing.get_context("spawn")
+        receive, send = context.Pipe(duplex=False)
+        coordinator = context.Process(target=_orphan_coordinator, args=(str(self.path), self.names[0], send))
+        coordinator.start()
+        send.close()
+        self.addCleanup(receive.close)
+        self.addCleanup(lambda: coordinator.kill() if coordinator.is_alive() else None)
+        self.assertTrue(receive.poll(8))
+        prior = receive.recv()
+        self.assertEqual(prior["receipt"]["state"], "SUCCEEDED")
+        try:
+            # Pause shard 1 at an EX safe point; only shard 0 can then take SH
+            # and block on our DB lock. Stop it there before killing its parent.
+            with self.router._control._lock(exclusive=True, timeout=3):
+                connection = sqlite3.connect(self.router._database(0).path, isolation_level=None)
+                connection.execute("BEGIN IMMEDIATE")
+                os.kill(prior["workers"][1], signal.SIGSTOP)
+            def held_by_zero():
+                descriptor = os.open(self.path / "router.lock", os.O_RDWR)
+                try:
+                    try:
+                        fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except BlockingIOError:
+                        return True
+                    return False
+                finally:
+                    os.close(descriptor)
+            self.eventually(held_by_zero)
+            os.kill(prior["workers"][0], signal.SIGSTOP)
+            connection.rollback()
+            connection.close()
+            coordinator.kill()
+            coordinator.join(timeout=3)
+            recovered = DurableProcessRouter(self.path, lease_seconds=.6, poll_interval=.01)
+            self.addCleanup(recovered.close)
+            recovered.start(recovery_timeout=4)
+            publication = recovered.publish_market(self.market(2), timeout=8)
+            self.assertFalse(publication["publishing"])
+            self.assertFalse(recovered.set_kill_switch(False, timeout=8)["halted"])
+            self.assertEqual(len(recovered.diagnostics()["recovered_orphans"]), 2)
+            self.assertEqual(recovered.status("orphan-original", account_id=self.names[0]), prior["receipt"])
+            recovered.submit_order(self.names[1], "orphan-counterparty", "sell", "X", D(-1), D(100))
+            self.assertEqual(recovered.wait("orphan-counterparty", account_id=self.names[1], timeout=8)["state"], "SUCCEEDED")
+            def has_trade():
+                with recovered._database(0).read_transaction() as conn:
+                    return conn.execute("SELECT COUNT(*) FROM uta_matches").fetchone()[0] == 1
+            self.eventually(has_trade)
+            with recovered._control.control.read_transaction() as conn:
+                self.assertEqual(conn.execute("SELECT COUNT(*) FROM router_process_owners WHERE kind='ORPHAN_KILLED'").fetchone()[0], 2)
+        finally:
+            if coordinator.is_alive():
+                coordinator.kill()
+                coordinator.join(timeout=3)
+            for pid in prior["workers"]:
+                try:
+                    os.kill(pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ processes.start()
 
 每个 worker 在自身 fenced Database 事务内选命令，完成金融变更及 terminal receipt 后一起 COMMIT。崩溃前未提交的金融变更和回执一起回滚，原 PENDING 可由新 owner 重试；提交后失去响应先查询原 ID，不重复发明成功。技术异常有有界尝试和 QUARANTINED 记录，不能伪装为风险业务拒绝；同账户前序 PENDING 不被后序金融操作越过。
 
-父进程自动监督真实子 PID，退出后重新 spawn。旧租约未到期时新 owner 等待，不能凭进程退出通知抢写；续租失败、租约过期或 PID 绑定不符，Database 在事务及提交边界拒绝。生命周期 Event/Pipe 只传停止信号和进程诊断，不承载任何需要恢复的命令、资金或回执。父进程死亡后子进程检测 PPID 变化并退出，避免永久孤儿续租。父进程还检查其自有子进程的持久租约：若 PID 对应当前 owner 但租约已到期，会 SIGKILL 该尚未回收的子进程，释放 SIGSTOP 可能持有的 shared flock/SQLite 锁，再启动新 PID。它不会仅凭一个任意外部 owner PID 去杀无关进程；父进程也已经死亡且旧子进程仍被 SIGSTOP 的组合故障需要独立的孤儿身份/接管协议，不能冒称已经自动处理。发布和 halt 的 exclusive flock 等待有显式 timeout，不会把等待锁的无限阻塞当成有限 receipt timeout。
+父进程自动监督真实子 PID，退出后重新 spawn。旧租约未到期时新 owner 等待，不能凭进程退出通知抢写；续租失败、租约过期或 PID 绑定不符，Database 在事务及提交边界拒绝。生命周期 FD/Pipe 只传启动/停止信号和进程诊断，不承载任何需要恢复的命令、资金或回执。父进程死亡后子进程检测 PPID 变化并退出，避免永久孤儿续租。父进程还检查其自有子进程的持久租约：若 PID 对应当前 owner 但租约已到期，会 SIGKILL 该尚未回收的子进程，释放 SIGSTOP 可能持有的 shared flock/SQLite 锁，再启动新 PID。它不会仅凭一个任意外部 owner PID 去杀无关进程。当前运行器另以持久的出生身份登记和 pidfd 处理“父进程已死、旧子进程仍 SIGSTOP”的已登记 worker 组合故障，具体证明与边界见下文。发布和 halt 的 exclusive flock 等待有显式 timeout，不会把等待锁的无限阻塞当成有限 receipt timeout。
 
 worker 不仅处理挂单。它在同一个受控循环中调用真实 `ExchangeWorker.run_once()`，执行账户风险监督、持久清算规划和 `Matcher` 双腿撮合；没有额外模拟 tick 成交或假填单。已接纳订单可在新 owner 重启后继续匹配。后台工作每个金融事务同样受 token fencing，整个工作轮次还持有 router shared gate，校验资金证明、固定分片和行情 barrier。停止或不完整 publication 时不运行后台撮合。
 
@@ -73,3 +73,17 @@ processes = DurableProcessRouter.take_over(
 若接管中断，未封存清单使普通启动拒绝；管理员可用相同 layout hash、政策和 inbox 容量再次显式调用 `take_over`。已 managed 的前缀不通过旧 Router 构造函数重开，不重建缺失 inbox/history，不接管活跃 lease，也不恢复旧快照。无法核验身份、账本、债务或资金证明时保留 stop，要求调查。当前函数使用有界的 60 秒临时租约；大型离线校验超时会拒绝封存而不是在失去租约后宣称成功。
 
 新增测试从真实既有非 managed layout 接管两张挂单，验证新 PID 后沿用原单真实撮合、当前代码的无 token 旧对象不能写；还注入第二片封存失败，验证显式重试不重复存款、不丢原账本。真实旧二进制门禁另行验证，不能由这两个用例替代。
+
+## 已登记孤儿进程的可信回收
+
+每个 coordinator 先独占独立 supervisor flock；该描述符不传入 spawn 子进程。启动 worker 前，父进程将目标 authority、shard、随机 nonce、PID、Linux `/proc` start_ticks、boot_id 与 coordinator ID 追加到 `router_process_owners`。子进程在这条 SPAWNED 事实提交前被生命周期启动管道挡住，不能 acquire token 或碰金融状态。取得 token 后再追加含真实 generation 的 OWNED 记录，然后才打开自己的金融服务。
+
+新 coordinator 获得 supervisor flock 后，先读取这些历史事实。对于仍存活的旧注册进程，匹配相同 authority、nonce、PID、start_ticks、boot_id 和 OS 用户；若它仍有有效 lease，必须等待到期或正常退出。PID 已复用、boot 改变、nonce 已变成另一身份、不认识的外部 owner 都不会被猜测性终止。发信号前使用 `pidfd_open` 锚定准确进程，再复核出生信息，最后使用 `pidfd_send_signal(SIGKILL)`；不以裸 PID 重用风险作为授权。旧注册子进程若尚未取得 token，也不能因 coordinator 已死而继续尝试进入金融服务。
+
+回收后追加 ORPHAN_KILLED 证据，新 PID 仍需自行取得更高 token generation，不能继承旧 token。缺 Linux pidfd 或无法验证身份时拒绝自动回收；旧版本没有登记出生身份的孤儿也不在自动终止范围。`start(recovery_timeout=10)` 对仍有效的旧 lease 等待有界，超时要求重试或调查，不能缩短旧 lease 来强行接管。
+
+新增真实过程测试使用一个独立 coordinator，保留已成功接纳的原挂单；把两个子进程 SIGSTOP，其中一个确认持有 router SH，再 SIGKILL coordinator。新父进程不发人工 SIGCONT，以持久出生事实回收两个旧进程，启动新 PID、重新发布/激活，再由新对手单与原挂单真实成交，原 command 回执保持不变。生命周期信号改用 FD 管道，避免该破坏性测试依赖父进程清理命名 semaphore。它不把这些 IPC 当作持久命令来源。
+
+### 历史二进制及格式升级
+
+当前候选已接入存储组的持久 SQL guard 格式 1：实际旧 `ad3f5b8` 源码包无受控 UDF 时也会由金融表触发器拒绝。`tests/test_writer_fence_legacy.py` 的七项实际历史进程验证在本分支通过；最终合入仍以独立组与整体回归为准。运行器遇到 guard 格式 0 会 fail closed 要求显式离线 `upgrade_guards()`，不会自动升级、重新绑定路径或把旧 snapshot 当作当前 authority。出生登记解决的是本机相关进程回收，不替代持久 SQL guard，也不提供 OS 所有者之外的安全隔离。

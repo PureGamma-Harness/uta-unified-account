@@ -15,6 +15,8 @@ import math
 import multiprocessing
 import os
 from pathlib import Path
+import select
+import signal
 import sqlite3
 import stat
 from threading import Event, RLock, Thread, current_thread
@@ -61,16 +63,90 @@ def _prepare_config(connection, config):
     connection.execute("CREATE TRIGGER router_durable_config_seal_only BEFORE UPDATE ON router_durable_config WHEN OLD.initialized!=0 OR NEW.initialized!=1 OR NEW.singleton!=OLD.singleton OR NEW.format!=OLD.format OR NEW.payload!=OLD.payload BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
 
 
-def _run_worker(directory, shard, settings, stop, ready, parent_pid):
+def _process_identity(pid):
+    details = Path(f"/proc/{pid}").stat()
+    tail = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
+    return {"pid": pid, "start_ticks": int(tail[19]),
+            "boot_id": Path("/proc/sys/kernel/random/boot_id").read_text().strip(), "uid": details.st_uid,
+            "state": tail[0]}
+
+
+def _registry_schema(connection):
+    present = connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='router_process_owners'").fetchone()
+    if present is None:
+        connection.execute("""CREATE TABLE router_process_owners(
+            sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,shard INTEGER,
+            nonce TEXT NOT NULL,generation INTEGER NOT NULL,pid INTEGER NOT NULL,start_ticks INTEGER NOT NULL,
+            boot_id TEXT NOT NULL,coordinator TEXT NOT NULL,observed_at TEXT NOT NULL)""")
+        for action in ("UPDATE", "DELETE"):
+            connection.execute(f"CREATE TRIGGER router_process_owners_no_{action.lower()} BEFORE {action} ON router_process_owners BEGIN SELECT RAISE(ABORT,'process ownership evidence is immutable'); END")
+    else:
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(router_process_owners)")}
+        triggers = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger' AND tbl_name='router_process_owners'")}
+        if columns != {"sequence", "kind", "authority_id", "shard", "nonce", "generation", "pid", "start_ticks", "boot_id", "coordinator", "observed_at"} or not {"router_process_owners_no_update", "router_process_owners_no_delete"} <= triggers:
+            raise ServiceError("process_registry_corrupt", "process birth identity registry is incomplete", 503)
+
+
+def _record_process(control, kind, shard, nonce, generation, identity, coordinator):
+    authority = "layout:" + sha256(control._descriptor.encode()).hexdigest() if shard is None else _authority(control._descriptor, shard)
+    with control.control.transaction() as connection:
+        connection.execute("""INSERT INTO router_process_owners
+            (kind,authority_id,shard,nonce,generation,pid,start_ticks,boot_id,coordinator,observed_at)
+            VALUES (?,?,?,?,?,?,?,?,?,?)""", (kind, authority, shard, nonce, generation, identity["pid"],
+                identity["start_ticks"], identity["boot_id"], coordinator, datetime.now(timezone.utc).isoformat()))
+
+
+class _SignalReceiver:
+    """FD-backed lifecycle signal; parent death needs no named-semaphore cleanup."""
+    def __init__(self, connection):
+        self.connection, self.seen = connection, False
+
+    def is_set(self):
+        if not self.seen and self.connection.poll():
+            try:
+                self.connection.recv_bytes()
+            except EOFError:
+                pass
+            self.seen = True
+        return self.seen
+
+    def wait(self, timeout):
+        if not self.seen:
+            self.connection.poll(timeout)
+        return self.is_set()
+
+
+class _SignalSender:
+    def __init__(self, connection):
+        self.connection, self.sent = connection, False
+
+    def set(self):
+        if not self.sent:
+            self.sent = True
+            try:
+                self.connection.send_bytes(b"1")
+            except (BrokenPipeError, OSError):
+                pass
+
+    def close(self):
+        self.connection.close()
+
+
+def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate, owner_nonce, coordinator):
     """Spawn entry point: acquire a PID-bound token only inside this child."""
     fence = token = None
     try:
+        while not start_gate.wait(.05):
+            if stop.is_set() or os.getppid() != parent_pid:
+                return
+        if stop.is_set() or os.getppid() != parent_pid:
+            return
         parent = DurableProcessRouter(directory, _only_shard=shard, **settings)
         database = parent._database(shard)
         fence = WriterFence(database)
         while not stop.is_set() and os.getppid() == parent_pid:
             try:
-                token = fence.acquire("worker:" + uuid4().hex, settings["lease_seconds"])
+                token = fence.acquire(owner_nonce, settings["lease_seconds"])
                 break
             except WriterFenceError as exc:
                 if exc.code != "lease_busy":
@@ -78,6 +154,8 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid):
                 stop.wait(min(settings["poll_interval"], .1))
         if token is None:
             return
+        _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
+                        _process_identity(os.getpid()), coordinator)
         view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
                                account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"])
         store = parent._queue(shard)
@@ -331,6 +409,9 @@ class DurableProcessRouter:
                               background_interval=background_interval, account_batch=account_batch,
                               matches_per_symbol=matches_per_symbol, max_attempts=max_attempts)
         self._queues, self._workers, self._reports = {}, {}, {}
+        self._start_gates = {}
+        self._recovered_orphans = []
+        self._coordinator = None
         self._mutex, self._stop = RLock(), Event()
         self._monitor = None
         self._supervisor_fd = None
@@ -341,6 +422,8 @@ class DurableProcessRouter:
                 status = WriterFence(self._database(index)).status()
                 if not status["managed"] or status["authority_id"] != _authority(self._control._descriptor, index):
                     raise ServiceError("managed_authority_conflict", "shard is not bound to its expected managed authority", 503)
+                if status.get("guard_format") != 1:
+                    raise WriterFenceError("fence_upgrade_required", "stop existing writers and explicitly upgrade persistent SQL guards before starting processes")
                 self._queue(index)  # Existing queue metadata only; never bootstrap.
         except BaseException as exc:
             with self._control._lock(exclusive=True):
@@ -409,22 +492,108 @@ class DurableProcessRouter:
         self._supervisor_fd = descriptor
 
     def _spawn(self, shard):
-        stop = self._context.Event()
+        stop_read, stop_write = self._context.Pipe(duplex=False)
+        gate_read, gate_write = self._context.Pipe(duplex=False)
+        stop, start_gate = _SignalSender(stop_write), _SignalSender(gate_write)
+        self._start_gates[shard] = start_gate
+        nonce = "worker:" + uuid4().hex
         receive, send = self._context.Pipe(duplex=False)
         process = self._context.Process(target=_run_worker,
-            args=(str(self.directory), shard, self._settings, stop, send, os.getpid()),
+            args=(str(self.directory), shard, self._settings, _SignalReceiver(stop_read), send, os.getpid(), _SignalReceiver(gate_read), nonce, self._coordinator),
             name=f"uta-shard-{shard}")
         process.start()
+        stop_read.close()
+        gate_read.close()
         send.close()
         self._workers[shard] = (process, stop, receive)
+        # Child cannot acquire or touch a financial authority until its kernel
+        # birth identity and intended authority/nonce are durably registered.
+        _record_process(self._control, "SPAWNED", shard, nonce, 0,
+                        _process_identity(process.pid), self._coordinator)
+        start_gate.set()
 
-    def start(self):
+    def _recover_registered_orphans(self, timeout):
+        with self._control.control.read_transaction() as connection:
+            if connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_process_owners'").fetchone() is None:
+                return
+            _registry_schema(connection)  # Present schema must already be intact.
+            candidates = [dict(row) for row in connection.execute("SELECT * FROM router_process_owners WHERE kind='SPAWNED' ORDER BY sequence")]
+        deadline = monotonic() + timeout
+        for candidate in candidates:
+            shard, pid = candidate["shard"], candidate["pid"]
+            self._control._index(shard)
+            if candidate["authority_id"] != _authority(self._control._descriptor, shard) or pid in (1, os.getpid()):
+                continue
+            try:
+                identity = _process_identity(pid)
+            except (OSError, ValueError, IndexError):
+                continue
+            if (identity["uid"] != os.geteuid() or identity["start_ticks"] != candidate["start_ticks"]
+                    or identity["boot_id"] != candidate["boot_id"] or identity["state"] == "Z"):
+                continue  # No bare-PID killing after reuse or a host reboot.
+            if not hasattr(os, "pidfd_open") or not hasattr(signal, "pidfd_send_signal"):
+                raise ServiceError("orphan_identity_unavailable", "registered orphan recovery requires Linux pidfd support", 503)
+            try:
+                pidfd = os.pidfd_open(pid)
+            except ProcessLookupError:
+                continue
+            try:
+                # Opening pidfd before the second /proc check anchors the kill
+                # to that exact process even if the integer PID is later reused.
+                again = _process_identity(pid)
+                if (again["start_ticks"], again["boot_id"], again["uid"]) != (identity["start_ticks"], identity["boot_id"], identity["uid"]):
+                    continue
+                fence = WriterFence(self._database(shard))
+                lease = fence.status()
+                if lease.get("authority_id") != candidate["authority_id"]:
+                    raise ServiceError("managed_authority_conflict", "orphan proof belongs to another authority", 503)
+                if lease.get("owner_pid") == pid and lease.get("owner_nonce") != candidate["nonce"]:
+                    continue  # Same PID now has another identity; never guess.
+                while (lease.get("owner_pid") == pid and lease.get("owner_nonce") == candidate["nonce"] and lease["active"]):
+                    if monotonic() >= deadline:
+                        raise ServiceError("ownership_recovery_pending", "registered prior owner still has an unexpired lease", 503)
+                    sleep(.02)
+                    lease = fence.status()
+                if lease.get("owner_pid") == pid and lease.get("owner_nonce") != candidate["nonce"]:
+                    continue
+                # Either this exact owner expired, or the registered old child
+                # has no current token (e.g. died while acquiring one). A new
+                # coordinator owns the exclusive supervision flock; it never
+                # terminates an unregistered external owner.
+                signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+                exited = select.poll()
+                exited.register(pidfd, select.POLLIN)
+                if not exited.poll(1000):
+                    raise ServiceError("orphan_recovery_pending", "registered orphan has not exited", 503)
+                self._recovered_orphans.append({"shard": shard, "pid": pid,
+                    "start_ticks": identity["start_ticks"], "boot_id": identity["boot_id"],
+                    "nonce": candidate["nonce"], "generation": lease.get("generation", 0),
+                    "coordinator": candidate["coordinator"]})
+            except (ProcessLookupError, FileNotFoundError):
+                pass
+            finally:
+                os.close(pidfd)
+
+    def start(self, *, recovery_timeout=10):
+        if isinstance(recovery_timeout, bool) or not isinstance(recovery_timeout, (float, int)) or not math.isfinite(recovery_timeout) or not 0 <= recovery_timeout <= 3600:
+            raise ValueError("recovery_timeout requires seconds in 0..3600")
         with self._mutex:
             if self._supervisor_fd is not None:
                 raise ServiceError("supervisor_started", "supervisor is already running", 409)
             self._claim_supervisor()
             self._stop.clear()
             try:
+                self._coordinator = uuid4().hex
+                self._recovered_orphans = []
+                self._recover_registered_orphans(recovery_timeout)
+                with self._control._lock(exclusive=True, timeout=recovery_timeout):
+                    with self._control.control.transaction() as connection:
+                        _registry_schema(connection)
+                    _record_process(self._control, "COORDINATOR", None, self._coordinator, 0,
+                                    _process_identity(os.getpid()), self._coordinator)
+                    for orphan in self._recovered_orphans:
+                        _record_process(self._control, "ORPHAN_KILLED", orphan["shard"], orphan["nonce"],
+                            orphan["generation"], orphan, self._coordinator)
                 for shard in range(self.layout["shard_count"]):
                     self._spawn(shard)
                 self._monitor = Thread(target=self._supervise, name="uta-process-supervisor", daemon=True)
@@ -461,6 +630,8 @@ class DurableProcessRouter:
                     if not process.is_alive() and not self._stop.is_set():
                         process.join()
                         pipe.close()
+                        stop.close()
+                        self._start_gates[shard].close()
                         self._spawn(shard)
 
     def worker_pid(self, shard):
@@ -485,6 +656,7 @@ class DurableProcessRouter:
                              "owner_pid": lease.get("owner_pid"), "generation": lease.get("generation"),
                              "report": dict(self._reports.get(shard, {}))})
         return {"state": state, "workers": rows, "managed": True,
+                "recovered_orphans": [{key: row[key] for key in ("shard", "pid", "start_ticks", "generation")} for row in self._recovered_orphans],
                 "ready": not state["halted"] and not state["publishing"] and all(
                     row["pid"] is not None and row["pid"] == row["owner_pid"] and row["lease_active"] for row in rows)}
 
@@ -605,10 +777,14 @@ class DurableProcessRouter:
                     process.kill()
                     process.join(timeout=5)
                 pipe.close()
+                stop.close()
             if self._supervisor_fd is not None:
                 os.close(self._supervisor_fd)
                 self._supervisor_fd = None
             self._monitor = None
+            for gate in self._start_gates.values():
+                gate.close()
+            self._start_gates.clear()
 
     def __enter__(self):
         return self.start()
