@@ -67,7 +67,26 @@ IntegrityError。修正仅透传原参数并接受真实 SQLite 拒绝链；仍�
 ## 修复复测及交付边界
 
 集成负责人已提供 `f8d96e8`，将安装和验证使用的 guard 定义统一，并核验 SQL、所属表和
-完整 `audit_*` inventory；本组将在保留原断言下摘入后重新验收，结果在完成后补充。
+完整 `audit_*` inventory。本工作树仅追加该候选（本地映射 `dab143d`），未改动独立断言，
+完整复跑结果为：
+
+```text
+Python 3.12.14: Ran 12 tests in 1.500s — OK
+Python 3.10.22: Ran 12 tests in 1.437s — OK
+```
+
+原红态用例冻结于独立提交 `557db67`；修复后同名弱化 guard 现在明确返回
+`audit_schema_corrupt`，没有自动重建，完整财务与审计快照保持不变。
+本轮没有 skip、预期失败标记，也没有用新对象代替实际旧二进制。
+
+完整复测日志及 SHA256（供集成组归档）：
+
+- `/tmp/uta-decision-audit-faults-guard-fix-py312.txt`：
+  `c52548e2d339e0e34817a0d5955366cb6d2cb45bde6be13967c5c26eb670f21e`。
+- `/tmp/uta-decision-audit-faults-guard-fix-py310.txt`：
+  `f0c028532592981c7cd4d5c2f82baa45228cbf7a3ae0722badb4b5e9721eb7ed`。
+
+上述秒数是测试运行时间，不是延迟、吞吐或持续负载证据。
 
 升级属于明确的数据能力切换。失败时保持 schema 2；成功后不能删除引用、降低标记或启动
 旧金融 writer 作为回滚。事故回滚须停止入口，保留原命令和证据，以兼容审计版本只读导出、
