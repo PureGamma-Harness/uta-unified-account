@@ -9,8 +9,10 @@ from decimal import Decimal as D, Inexact, Rounded, localcontext
 from fractions import Fraction as F
 from pathlib import Path
 import random
+import os
 import sqlite3
 from tempfile import TemporaryDirectory
+from time import monotonic, sleep
 import unittest
 from unittest.mock import patch
 
@@ -491,3 +493,64 @@ class IndependentWriterLeaseTests(unittest.TestCase):
             current.deposit('alice', 'exact-expiry', 'USD', D(1))
         self.assertEqual(failure.exception.code, 'lease_expired')
         self.assertEqual(F(self.old_service.account('alice')['balances']['USD']), F('21.08'))
+
+
+class IndependentProcessReceiptTests(unittest.TestCase):
+    def test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity(self):
+        from uta.durable_process import DurableProcessRouter
+        temporary = TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        path = Path(temporary.name) / 'process-authority'
+        catalog, rules = synthetic_policy()
+        def bootstrap(router):
+            router.create_account('cash')
+            router.deposit('cash', 'source-capital', 'USD', D('10.04'))
+        router = DurableProcessRouter.initialize(path, 1, {'USD': 8, 'BTC': 8}, managed=True,
+            bootstrap=bootstrap, product_catalog=catalog, portfolio_rules=rules,
+            lease_seconds=.6, poll_interval=.01, background_interval=.05)
+        self.addCleanup(router.close)
+        router.start()
+        market = MarketSnapshot(1, datetime.now(timezone.utc),
+            {'USD': AssetSpec(D(1), D(1)), 'BTC': AssetSpec(D(100), D('.8'))},
+            {'BTC-PERP': InstrumentSpec(D(100), D('.1'), D('.05'))})
+        self.assertFalse(router.publish_market(market, timeout=10)['publishing'])
+        self.assertFalse(router.set_kill_switch(False, timeout=10)['halted'])
+        self.assertNotEqual(router.worker_pid(0), os.getpid())
+        self.assertIsNotNone(router.worker_pid(0))
+        router.close()
+        queued = router.submit_order('cash', 'survive-parent', 'first-order', 'BTC-PERP', D(1), D(100))
+        self.assertEqual((queued['ack'], queued['state'], queued['result']), ('durably_queued', 'PENDING', None))
+        with router._database(0).read_transaction() as connection:
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_orders').fetchone()[0], 0)
+            self.assertEqual(int(connection.execute("SELECT units FROM ledger_balances WHERE account='customer:cash' AND asset='USD'").fetchone()[0]), 1_004_000_000)
+        reopened = DurableProcessRouter(path, lease_seconds=.6, poll_interval=.01, background_interval=.05)
+        self.addCleanup(reopened.close)
+        self.assertEqual(reopened.status('survive-parent', account_id='cash'), queued)
+        reopened.start()
+        accepted = reopened.wait('survive-parent', account_id='cash', timeout=10)
+        self.assertEqual(accepted['state'], 'SUCCEEDED')
+        self.assertEqual(F(accepted['result']['reserved_margin']), F('10.04'))
+        reopened.submit_order('cash', 'cannot-double-spend', 'second-order', 'BTC-PERP', D(1), D(100))
+        rejected = reopened.wait('cannot-double-spend', account_id='cash', timeout=10)
+        self.assertEqual((rejected['state'], rejected['error']['code']), ('REJECTED', 'insufficient_margin'))
+        previous = reopened.diagnostics()['workers'][0]
+        old_pid, old_generation = reopened.worker_pid(0), previous['generation']
+        self.assertNotEqual(old_pid, os.getpid())
+        reopened.terminate_worker(0)
+        deadline = monotonic() + 10
+        while monotonic() < deadline:
+            current = reopened.diagnostics()['workers'][0]
+            if (current['pid'] not in (None, old_pid, os.getpid()) and current['lease_active']
+                    and current['owner_pid'] == current['pid'] and current['generation'] > old_generation):
+                break
+            sleep(.02)
+        else:
+            self.fail('actual killed worker did not recover with a new fenced PID')
+        self.assertEqual(reopened.submit_order('cash', 'survive-parent', 'first-order', 'BTC-PERP', D('1.00'), D('100.00')), accepted)
+        self.assertEqual(reopened.submit_order('cash', 'cannot-double-spend', 'second-order', 'BTC-PERP', D(1), D(100)), rejected)
+        with reopened._database(0).read_transaction() as connection:
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_orders').fetchone()[0], 1)
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_events WHERE event_type='ORDER_ACCEPTED'").fetchone()[0], 1)
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM ledger_events').fetchone()[0], 1)
+            self.assertEqual(int(connection.execute("SELECT units FROM ledger_balances WHERE account='customer:cash' AND asset='USD'").fetchone()[0]), 1_004_000_000)
+            self.assertEqual(sum(int(row[0]) for row in connection.execute("SELECT units FROM ledger_balances WHERE asset='USD'")), 0)
