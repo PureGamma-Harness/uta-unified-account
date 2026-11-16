@@ -5,9 +5,12 @@ from contextlib import closing, contextmanager
 from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
+import fcntl
 import json
+import os
 from pathlib import Path
 import shutil
+import signal
 import sqlite3
 import subprocess
 import sys
@@ -462,9 +465,9 @@ raise AssertionError("worker did not reach injected crash boundary")
     def test_unsupported_commands_and_capacity_are_explicit_and_never_fall_back_to_sync(self):
         before = financial_snapshot(self.path)
         with self.assertRaises(ServiceError) as caught:
-            self.queue.enqueue("REPAY", "unsupported-repay", {"account_id": "alice", "amount": "1", "asset": "USD"})
+            self.queue.enqueue("WITHDRAW", "unsupported-withdraw", {"account_id": "alice", "amount": "1", "asset": "USD"})
         self.assertEqual(caught.exception.code, "unsupported_durable_command")
-        self.assertIsNone(self.queue.status("unsupported-repay"))
+        self.assertIsNone(self.queue.status("unsupported-withdraw"))
         for index in range(4):
             self.enqueue(f"normal-{index}", f"order-{index}")
         with self.assertRaises(ServiceError) as caught:
@@ -658,6 +661,379 @@ else: raise AssertionError("a different PID used a transferred writer token")
         self.assertEqual(child.returncode, 0, child.stderr)
         self.assertIn("writer_fenced", json.loads(child.stdout))
         self.assertEqual(financial_snapshot(self.path), before)
+
+
+class DurableRepaymentFaultTests(DurableFaultFixture):
+    def setUp(self):
+        super().setUp()
+        credit = CreditService(self.service)
+        credit.configure_asset_limit("USD", D(100))
+        credit.configure_limit("alice", "USD", D(100))
+        credit.fund_pool("loan-capital", "USD", D(50), source_reference="synthetic:repayment:capital")
+        credit.borrow("alice", "loan", "USD", D(10))
+        credit.accrue_interest("alice", "interest", "USD", D(1))
+        self.queue = QueueStore(self.database, queue_capacity=4, cancel_reserve=2,
+                                market_capacity=2, clock=lambda: NOW, initialize=True)
+        _, _, self.current = self.managed()
+        self.credit = CreditService(self.current)
+
+    def enqueue_repay(self):
+        return self.queue.enqueue_repay("alice", "repayment", "USD", D(4))
+
+    def assert_repaid_once(self):
+        receipt = self.queue.status("repayment")
+        self.assertEqual(receipt["state"], "SUCCEEDED")
+        self.assertEqual((receipt["result"]["interest_repaid"], receipt["result"]["principal_repaid"]), ("1", "3"))
+        account = self.current.account("alice")
+        self.assertEqual(account["balances"]["USD"], "1006")
+        self.assertEqual(account["liabilities"]["USD"], {"principal": "7", "interest": "0", "total": "7"})
+        for name, amount in (("system:credit-pool", "43"), ("system:credit-interest-cash", "1"),
+                             ("system:credit-interest-receivable", "0"),
+                             ("system:credit-principal-receivable", "7"),
+                             ("liability:principal:alice", "-7"), ("liability:interest:alice", "0")):
+            self.assertEqual(self.current.ledger.balance(name, "USD"), D(amount))
+        self.current.ledger.verify()
+        self.credit.verify()
+
+    def test_same_asset_repayment_is_available_during_halt_and_complete_quote_outage(self):
+        self.current.set_kill_switch(True)
+        with self.current.database.transaction() as connection:
+            connection.execute("DELETE FROM uta_market")
+        self.enqueue_repay()
+        self.queue.process_one(self.current, credit=self.credit)
+        self.assert_repaid_once()
+        before = financial_snapshot(self.path)
+        self.assertEqual(self.enqueue_repay()["state"], "SUCCEEDED")
+        self.assertIsNone(self.queue.process_one(self.current, credit=self.credit))
+        self.assertEqual(financial_snapshot(self.path), before)
+
+    def test_repayment_postings_debt_cash_and_terminal_receipt_share_actual_commit(self):
+        with self.current.database.transaction() as connection:
+            connection.execute("CREATE TABLE repayment_parent (id INTEGER PRIMARY KEY)")
+            connection.execute("CREATE TABLE repayment_child (id INTEGER REFERENCES repayment_parent(id) DEFERRABLE INITIALLY DEFERRED)")
+        self.enqueue_repay()
+        before = financial_snapshot(self.path)
+        original = self.credit._repay
+        def fail_commit(connection, *args, **kwargs):
+            result = original(connection, *args, **kwargs)
+            connection.execute("INSERT INTO repayment_child VALUES (999)")
+            return result
+        with patch.object(self.credit, "_repay", side_effect=fail_commit):
+            with self.assertRaises(CommandExecutionError) as caught:
+                self.queue.process_one(self.current, credit=self.credit)
+        self.assertTrue(any(isinstance(value, sqlite3.IntegrityError) for value in chain(caught.exception)))
+        self.assertEqual(self.queue.status("repayment")["state"], "PENDING")
+        self.assertEqual(financial_snapshot(self.path), before)
+        self.queue.process_one(self.current, credit=self.credit)
+        self.assert_repaid_once()
+
+    def test_missing_initialized_credit_is_technical_pending_and_never_fake_success(self):
+        self.enqueue_repay()
+        before = financial_snapshot(self.path)
+        with self.assertRaises(CommandExecutionError) as caught:
+            self.queue.process_one(self.current)
+        self.assertTrue(any(isinstance(value, StorageError) for value in chain(caught.exception)))
+        self.assertEqual(self.queue.status("repayment")["state"], "PENDING")
+        self.assertEqual(financial_snapshot(self.path), before)
+        self.queue.process_one(self.current, credit=self.credit)
+        self.assert_repaid_once()
+
+    def test_same_account_poison_quarantine_unblocks_repayment_without_funding_or_quote_dependency(self):
+        self.queue.enqueue_submit("alice", "poison", "poison-order", "BTC-PERP", D(1), D(100))
+        self.enqueue_repay()
+        self.current.set_kill_switch(True)
+        with self.current.database.transaction() as connection:
+            connection.execute("DELETE FROM uta_market")
+        with patch.object(self.current, "_admit_order", side_effect=RuntimeError("synthetic poison")):
+            with self.assertRaises(CommandExecutionError):
+                self.queue.process_one(self.current, credit=self.credit)
+            isolated = self.queue.record_failure(self.current, "poison", max_attempts=1)
+            self.assertEqual(isolated["state"], "QUARANTINED")
+            self.assertEqual(self.queue.process_one(self.current, credit=self.credit)["command_id"], "repayment")
+        self.assert_repaid_once()
+        self.assertEqual(self.current.orders("alice"), [])
+
+
+class ManagedProcessFaultTests(unittest.TestCase):
+    def setUp(self):
+        from uta.durable_process import DurableProcessRouter
+        temporary = TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.path = Path(temporary.name) / "router"
+        self.accounts = []
+        def bootstrap(router):
+            self.accounts = [next(f"process-user-{index}" for index in range(1000)
+                                  if router.shard_for(f"process-user-{index}") == shard)
+                             for shard in range(2)]
+            for account in self.accounts:
+                router.create_account(account)
+                router.deposit(account, "seed", "USD", D(1000))
+            router.fund_credit_pool(1, "fund", "USD", D(50), source_reference="synthetic:process:fund")
+            router.fund_credit_pool(0, "repay-fund", "USD", D(50), source_reference="synthetic:process:repay-fund")
+            router.configure_credit_asset_limit(0, "USD", D(100))
+            router.configure_credit_limit(self.accounts[0], "USD", D(100))
+            router.publish_market(MarketSnapshot(0, datetime.now(timezone.utc),
+                {"USD": AssetSpec(D(1), D(1))},
+                {"BTC-PERP": InstrumentSpec(D(100), D(".1"), D(".05"))}))
+            router.set_kill_switch(False)
+            router.borrow(self.accounts[0], "loan", "USD", D(10))
+            router.accrue_interest(self.accounts[0], "interest", "USD", D(1))
+        self.router = DurableProcessRouter.initialize(self.path, 2, {"USD": 8},
+            managed=True, bootstrap=bootstrap, max_price_age=timedelta(minutes=1),
+            lease_seconds=1, poll_interval=.01, background_interval=.05,
+            account_batch=1, matches_per_symbol=1, max_attempts=2)
+        self.addCleanup(self.router.close)
+
+    def shard_path(self, shard):
+        return self.path / f"shard-{shard:04d}.sqlite3"
+
+    def market(self, version=1, mark="100"):
+        return MarketSnapshot(version, datetime.now(timezone.utc),
+            {"USD": AssetSpec(D(1), D(1))},
+            {"BTC-PERP": InstrumentSpec(D(mark), D(".1"), D(".05"))})
+
+    def control_state(self):
+        with closing(sqlite3.connect(self.path / "router.sqlite3")) as connection:
+            return json.loads(connection.execute("SELECT payload FROM router_state WHERE singleton=1").fetchone()[0])
+
+    def active(self):
+        self.router.start()
+        result = self.router.publish_market(self.market(), timeout=10)
+        self.assertFalse(result["publishing"])
+        result = self.router.set_kill_switch(False, timeout=10)
+        self.assertFalse(result["halted"])
+        self.assertTrue(self.router.diagnostics()["ready"])
+
+    def submit(self, command, order=None, shard=0):
+        return self.router.submit_order(self.accounts[shard], command, order or command,
+                                        "BTC-PERP", D(1), D(100))
+
+    def wait(self, command, shard=0, state="SUCCEEDED"):
+        receipt = self.router.wait(command, account_id=self.accounts[shard], timeout=10)
+        self.assertIsNotNone(receipt)
+        self.assertEqual(receipt["state"], state, repr(receipt))
+        return receipt
+
+    def suspend_outside_transaction(self, shard):
+        """Stop a worker only after both its gate and SQLite writer are free.
+
+        Pausing a live lock holder is a separate recovery fault, not a way to
+        create a stalled consumer for the partial-publication scenario.
+        """
+        pid = self.router.worker_pid(shard)
+        descriptor = os.open(self.path / "router.lock", os.O_RDWR)
+        try:
+            fcntl.flock(descriptor, fcntl.LOCK_EX)
+            with closing(sqlite3.connect(self.shard_path(shard), timeout=5, isolation_level=None)) as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                try:
+                    os.kill(pid, signal.SIGSTOP)
+                finally:
+                    connection.rollback()
+        finally:
+            os.close(descriptor)
+        return pid
+
+    def test_without_live_worker_ack_is_only_pending_and_has_no_financial_effect(self):
+        before = financial_snapshot(self.shard_path(0))
+        receipt = self.submit("no-worker")
+        self.assertEqual((receipt["ack"], receipt["state"], receipt["result"]),
+                         ("durably_queued", "PENDING", None))
+        self.assertEqual(self.router.wait("no-worker", account_id=self.accounts[0], timeout=.05)["state"], "PENDING")
+        repayment = self.router.repay(self.accounts[0], "no-worker-repayment", "USD", D(4))
+        self.assertEqual((repayment["state"], repayment["result"]), ("PENDING", None))
+        self.assertEqual(self.router.wait("no-worker-repayment", account_id=self.accounts[0], timeout=.05)["state"], "PENDING")
+        self.assertTrue(all(worker["pid"] is None for worker in self.router.diagnostics()["workers"]))
+        self.assertEqual(financial_snapshot(self.shard_path(0)), before)
+
+    def test_ack_before_real_worker_kill_is_recovered_by_new_pid_and_generation_once(self):
+        self.active()
+        pid = self.suspend_outside_transaction(0)
+        old_generation = self.router.diagnostics()["workers"][0]["generation"]
+        receipt = self.submit("recover-after-kill")
+        self.assertEqual(receipt["state"], "PENDING")
+        self.assertEqual(financial_snapshot(self.shard_path(0))["uta_orders"], [])
+        self.router.terminate_worker(0)
+        terminal = self.wait("recover-after-kill")
+        self.assertEqual(terminal["sequence"], receipt["sequence"])
+        self.assertNotEqual(self.router.worker_pid(0), pid)
+        self.assertGreater(self.router.diagnostics()["workers"][0]["generation"], old_generation)
+        before = financial_snapshot(self.shard_path(0))
+        replay = self.submit("recover-after-kill")
+        self.assertEqual(replay, terminal)
+        self.assertEqual(financial_snapshot(self.shard_path(0)), before)
+        self.assertEqual(len(before["uta_orders"]), 1)
+        self.assertEqual(len([row for row in before["uta_events"] if row[1] == "ORDER_ACCEPTED"]), 1)
+
+    def test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover(self):
+        self.active()
+        pid = self.suspend_outside_transaction(0)
+        other_pid = self.suspend_outside_transaction(1)
+        old_generation = self.router.diagnostics()["workers"][0]["generation"]
+        self.submit("held-gate-command")
+        descriptor = os.open(self.path / "router.lock", os.O_RDWR)
+        held = False
+        try:
+            with closing(sqlite3.connect(self.shard_path(0), timeout=5, isolation_level=None)) as connection:
+                connection.execute("BEGIN IMMEDIATE")
+                try:
+                    os.kill(pid, signal.SIGCONT)
+                    deadline = monotonic() + .75
+                    while monotonic() < deadline:
+                        try:
+                            fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                            fcntl.flock(descriptor, fcntl.LOCK_UN)
+                        except BlockingIOError:
+                            held = True
+                            break
+                        sleep(.005)
+                    self.assertTrue(held, "worker never entered the shared gate while its SQLite writer was blocked")
+                    os.kill(pid, signal.SIGSTOP)
+                finally:
+                    connection.rollback()
+        finally:
+            os.close(descriptor)
+            # The other shard was stopped only to disambiguate the flock
+            # observation. Let it process publication normally again.
+            try:
+                os.kill(other_pid, signal.SIGCONT)
+            except ProcessLookupError:
+                pass
+        done, results, errors = Event(), [], []
+        snapshot = self.market(2, "110")
+        def publish():
+            try:
+                results.append(self.router.publish_market(snapshot, timeout=5))
+            except BaseException as error:
+                errors.append(error)
+            finally:
+                done.set()
+        thread = Thread(target=publish, daemon=True)
+        thread.start()
+        try:
+            self.assertTrue(done.wait(5), "expired live PID retained SH flock: supervisor did not kill and replace the paused owner")
+        finally:
+            if not done.is_set() and self.router.worker_pid(0) == pid:
+                self.router.terminate_worker(0)
+            thread.join(8)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(errors, [])
+        self.assertFalse(results[0]["publishing"])
+        self.assertNotEqual(self.router.worker_pid(0), pid)
+        self.assertGreater(self.router.diagnostics()["workers"][0]["generation"], old_generation)
+        orders = financial_snapshot(self.shard_path(0))["uta_orders"]
+        self.assertLessEqual(len(orders), 1)
+
+    def test_partial_publication_stays_halted_until_exact_publication_replay_completes(self):
+        self.active()
+        self.suspend_outside_transaction(1)
+        snapshot = self.market(2, "110")
+        try:
+            partial = self.router.publish_market(snapshot, timeout=.15)
+            self.assertTrue(partial["publishing"])
+            self.assertTrue(partial["halted"])
+            self.assertTrue(self.control_state()["publishing"])
+            self.submit("during-partial")
+            rejected = self.wait("during-partial", state="REJECTED")
+            self.assertEqual(rejected["error"]["code"], "router_halted")
+            self.assertEqual(financial_snapshot(self.shard_path(0))["uta_orders"], [])
+        finally:
+            self.router.terminate_worker(1)
+        repaired = self.router.publish_market(snapshot, timeout=10)
+        self.assertFalse(repaired["publishing"])
+        self.assertTrue(repaired["halted"])
+        self.assertFalse(self.router.set_kill_switch(False, timeout=10)["halted"])
+        self.submit("after-complete-publication")
+        self.wait("after-complete-publication")
+
+    def test_real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel(self):
+        self.active()
+        self.submit("old-order")
+        self.wait("old-order")
+        pid = self.suspend_outside_transaction(0)
+        try:
+            # A legal append role cannot fake terminal status, but damaged
+            # pending input still needs bounded handling by the actual worker.
+            with Database(self.shard_path(0)).inbox_transaction() as connection:
+                connection.execute("INSERT INTO uta_command_inbox(command_id,account_id,kind,payload,state,enqueued_at) "
+                    "VALUES (?,?,?,'{}','PENDING',?)", ("persisted-poison", self.accounts[0],
+                    "UNRECOGNIZED_KIND", datetime.now(timezone.utc).isoformat()))
+            self.router.cancel_order(self.accounts[0], "cancel-after-poison", "old-order")
+        finally:
+            os.kill(pid, signal.SIGCONT)
+        terminal = self.wait("persisted-poison", state="QUARANTINED")
+        self.assertEqual(terminal["attempts"], 2)
+        self.assertEqual(terminal["error"]["code"], "command_quarantined")
+        self.assertEqual(self.wait("cancel-after-poison")["result"]["status"], "CANCELLED")
+        snapshot = financial_snapshot(self.shard_path(0))
+        self.assertEqual(len(snapshot["uta_orders"]), 1)
+        self.assertEqual(len([row for row in snapshot["uta_events"] if row[1] == "ORDER_ACCEPTED"]), 1)
+
+    def test_real_worker_quarantines_predecessor_then_repays_during_halt_without_quotes(self):
+        self.active()
+        self.assertTrue(self.router.set_kill_switch(True, timeout=10)["halted"])
+        pid = self.suspend_outside_transaction(0)
+        try:
+            with closing(sqlite3.connect(self.shard_path(0))) as connection, connection:
+                connection.execute("DELETE FROM uta_market")
+            with Database(self.shard_path(0)).inbox_transaction() as connection:
+                connection.execute("INSERT INTO uta_command_inbox(command_id,account_id,kind,payload,state,enqueued_at) "
+                    "VALUES (?,?,?,'{}','PENDING',?)", ("repayment-poison", self.accounts[0],
+                    "UNRECOGNIZED_KIND", datetime.now(timezone.utc).isoformat()))
+            self.router.repay(self.accounts[0], "process-repayment", "USD", D(4))
+        finally:
+            try:
+                os.kill(pid, signal.SIGCONT)
+            except ProcessLookupError:
+                pass
+        self.assertEqual(self.wait("repayment-poison", state="QUARANTINED")["attempts"], 2)
+        repayment = self.wait("process-repayment")
+        self.assertEqual((repayment["result"]["interest_repaid"], repayment["result"]["principal_repaid"]), ("1", "3"))
+        with closing(sqlite3.connect(self.shard_path(0))) as connection:
+            principal, interest = connection.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id=? AND asset='USD'", (self.accounts[0],)).fetchone()
+            self.assertEqual((principal, interest), ("7", "0"))
+            balance, = connection.execute("SELECT units FROM ledger_balances WHERE account=? AND asset='USD'", ("customer:" + self.accounts[0],)).fetchone()
+            self.assertEqual(D(balance) / D(10**8), D(1006))
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM credit_commands WHERE command_id='process-repayment' AND kind='repaid'").fetchone()[0], 1)
+        before = financial_snapshot(self.shard_path(0))
+        self.assertEqual(self.router.repay(self.accounts[0], "process-repayment", "USD", D(4)), repayment)
+        self.assertEqual(financial_snapshot(self.shard_path(0)), before)
+
+    def test_missing_managed_shard_is_not_recreated_and_persists_global_halt(self):
+        from uta.durable_process import DurableProcessRouter
+        self.active()
+        self.router.close()
+        self.shard_path(1).unlink()
+        with self.assertRaises((ServiceError, WriterFenceError, StorageError)):
+            DurableProcessRouter(self.path)
+        self.assertFalse(self.shard_path(1).exists(), "startup silently recreated a missing financial shard")
+        self.assertTrue(self.control_state()["halted"])
+        self.assertEqual(financial_snapshot(self.shard_path(0))["uta_orders"], [])
+
+    def test_startup_with_missing_funding_claim_halts_instead_of_restarting_into_new_risk(self):
+        from uta.durable_process import DurableProcessRouter
+        self.active()
+        self.router.close()
+        # Deliberate uncooperative control restore, preserving its schema guards
+        # while emulating a missing historical claim. Financial state is intact.
+        with closing(sqlite3.connect(self.path / "router.sqlite3")) as connection, connection:
+            connection.execute("DROP TRIGGER router_pool_sources_no_delete")
+            connection.execute("DELETE FROM router_pool_sources WHERE source_reference='synthetic:process:fund'")
+            connection.execute("CREATE TRIGGER router_pool_sources_no_delete BEFORE DELETE ON router_pool_sources BEGIN SELECT RAISE(ABORT,'source claims are immutable'); END")
+        try:
+            recovered = DurableProcessRouter(self.path, lease_seconds=1, poll_interval=.01)
+        except ServiceError as error:
+            self.assertEqual(error.code, "funding_registry_conflict")
+        else:
+            self.addCleanup(recovered.close)
+            recovered.start()
+            deadline = monotonic() + 8
+            while not self.control_state()["halted"] and monotonic() < deadline:
+                sleep(.01)
+        self.assertTrue(self.control_state()["halted"])
+        self.assertEqual(self.control_state()["error"], "funding_registry_conflict")
+        for shard in range(2):
+            self.assertEqual(financial_snapshot(self.shard_path(shard))["uta_orders"], [])
 
 
 if __name__ == "__main__":

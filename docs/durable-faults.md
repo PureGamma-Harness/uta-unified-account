@@ -12,8 +12,12 @@
 - `39157ad`：把行情与停机变更提取为可加入调用方事务的 helper。
 - `a057362`：四种持久命令与原子终态回执。
 
+第二批另依赖 `742ca91`（收紧租约 schema 控制）、`a175605`（真实分片进程）、
+`7b1e432`（同事务还款 helper）、`ea9b12a`（持久还款）及 `5fced893`（暂停进程接管与
+进程还款接线）。
+
 第一批检查持久 ACK、资金事务、终态回执、旧写入者与恢复边界。
-第二批检查真实分片子进程、部分行情发布、分片缺失、资金 claim 不一致及还款链路。
+第二批已检查真实分片子进程、部分行情发布、分片缺失、资金 claim 不一致及还款链路。
 24 小时稳定性和容量测试由性能组单独安排，本组不以短故障测试替代这些门槛。
 
 复跑第一批：
@@ -30,6 +34,16 @@ Python 3.10.22: Ran 17 tests in 4.883s — OK
 ```
 
 上述时间仅为故障测试运行时间，不是延迟或吞吐性能结果。
+
+第二批同样未跳过用例，完整重跑第一批与新增用例：
+
+```text
+Python 3.12.14: Ran 29 tests in 11.441s — OK
+Python 3.10.22: Ran 29 tests in 11.511s — OK
+```
+
+预期的资金 claim 不一致用例会在子进程打印 `funding_registry_conflict` 异常栈；
+该用例要求其同时持久化全局停机并保持财务状态，异常栈本身不是测试失败。
 
 ## 必须保持的语义
 
@@ -73,18 +87,63 @@ IM 为 10%，手续费率为 0.04%；独立预期预占为 `10 + 0.04 = 10.04`�
 静态交叉审查提出了两项边界：生产者 INSERT/REPLACE 不能伪造终态，
 以及 token 绑定实例遇缺失 managed marker 不能退回 legacy。实现由对应工作组修复，
 本组保留独立断言，只有实际运行通过后才关闭该项。
-这两项在四种命令候选上的独立运行已通过；分片子进程上的相同恢复边界仍待第二批验证。
+这两项在四种命令候选上的独立运行已通过。分片子进程恢复、停机和还款的第二批结果如下。
 
-## 未完成门槛与还款范围
+## 第二批进程和还款矩阵
+
+| 用例函数后缀 | 注入与验收 |
+| --- | --- |
+| `without_live_worker_ack_is_only_pending_and_has_no_financial_effect` | 未启动 worker 时下单和还款都只能返回 PENDING，无成功结果及财务变化。 |
+| `ack_before_real_worker_kill_is_recovered_by_new_pid_and_generation_once` | 在事务外暂停实际 worker，入队收到 ACK 后强杀；supervisor 用新 PID 和更大 generation 处理原 ID，一笔订单、一笔接纳事件，不重复预占。 |
+| `expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover` | 用真实数据库写锁让 worker 持 SH 等待，确认锁归属后 SIGSTOP，释放数据库锁；租约过期后 supervisor 必须自行杀旧 owner、换 PID，发布恢复，测试不靠 SIGCONT 放行。 |
+| `partial_publication_stays_halted_until_exact_publication_replay_completes` | 暂停一个事务外消费者，造成真实部分发布；全局保持 halted/publishing，新增风险被拒绝；换进程后重放同一发布，确认全部持久回执，再显式激活。 |
+| `real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel` | 真正 worker 读取损坏的 PENDING kind，达到两次上限后隔离，再处理同账户撤单。 |
+| `real_worker_quarantines_predecessor_then_repays_during_halt_without_quotes` | 全局停机且删除该分片所有报价后，真实 worker 先隔离毒命令，再完成利息 1、本金 3 的同币还款；重复原 ID 不增分录。 |
+| `missing_managed_shard_is_not_recreated_and_persists_global_halt` | 活跃布局停止后删除分片；重开必须拒绝并持久化全局停机，不新建空金融库。 |
+| `startup_with_missing_funding_claim_halts_instead_of_restarting_into_new_risk` | 控制库恢复为缺失资金 claim 的状态、保留真实分片资金回执；启动检测后持久化停机，不能靠反复换进程继续放量。 |
+| `same_asset_repayment_is_available_during_halt_and_complete_quote_outage` | 合法 fenced writer 在停机、报价表为空时完成同币还款，利息优先，重复命令无影响。 |
+| `repayment_postings_debt_cash_and_terminal_receipt_share_actual_commit` | 真正延迟外键在 COMMIT 失败，还款本金、利息、现金、分录和终态同时回滚；原 ID 重试只还一次。 |
+| `missing_initialized_credit_is_technical_pending_and_never_fake_success` | worker 缺少绑定到同一 exchange 的已初始化 credit 服务时保持技术 PENDING，不返回虚假成功。 |
+| `same_account_poison_quarantine_unblocks_repayment_without_funding_or_quote_dependency` | 同账户毒命令隔离后还款继续，停机与行情缺失不阻断用已结算同币现金还债；不允许无资金还款。 |
+
+还款人工例子：客户原有 USD 1000，借入本金 10 后现金为 1010，计提利息 1；偿还 4
+先还利息 1、再还本金 3。结果现金 1006，本金 7、利息 0，原资金池 50 在借出后为 40，
+收回本金后为 43，利息现金为 1。独立用例分别检查这些余额和对应应收应付，而不是调用
+生产还款 helper 计算预期。
+
+## 保留的首次失败与修复证据
+
+最初对任意运行位置直接 SIGSTOP，实际捕获了 worker 持共享发布锁而暂停的情况。
+父进程的发布调用在等待 EX flock 时不能被 receipt timeout 打断，原 supervisor 又只检查
+PID 是否存活。手动 SIGCONT 后旧租约正确拒绝写入，但原行情已过期，首次 23 用例运行
+以一项发布恢复失败结束，耗时 84.072 秒。该记录没有被当作验收通过。
+
+随后把“暂停消费者造成部分发布”与“暂停正在持锁的 owner”拆成两项，后者使用数据库写锁
+和非阻塞 flock 探测确定复现。修复前的独立工具输出节选如下（不是完整日志）：
+
+```text
+FAIL: test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover
+AssertionError: False is not true : expired live PID retained SH flock: supervisor did not kill and replace the paused owner
+Ran 1 test in 5.524s
+FAILED (failures=1)
+```
+
+实现组在 `5fced893` 中加入只针对 supervisor 自己子进程、且持久 owner PID 匹配的
+过期租约 watchdog，以及发布锁的超时。上述持锁暂停测试保持原恢复断言，随后在
+Python 3.12 和 3.10 的 29 用例重跑中通过。
+
+## 阶段范围与未完成门槛
 
 第一版持久协议支持 `SUBMIT_ORDER`、`CANCEL_ORDER`、`PUBLISH_MARKET` 和 `SET_HALT`。
 第一版 `REPAY` 明确返回 `unsupported_durable_command`，不能声称已经验证持久还款链路。
-集成负责人正在补同事务还款与保留容量；完成后本组须独立验证：毒命令隔离后还款继续、
-停机或行情中断时同币还款、利息优先顺序、本金与利息冲销分录和队列终态原子提交，
-以及没有活 worker 时只能返回排队状态。
+这是第一批保留的历史边界。第二批已补 `REPAY` 并完成上述独立验证；当前未支持的
+`WITHDRAW` 仍明确拒绝，不回落到同步旧写入者。借入、自动借币和跨分片划转不因这批
+还款变更而获得持久命令支持。
 
 本报告不替代金融规则负责人签字、24 小时长稳、真实清算成交容量、跨节点容灾或上线审批。
 缺失这些证据时保留对应生产门槛的否决。
+当前 watchdog 只处理仍由活 supervisor 持有的子进程身份。“supervisor 已死且孤儿 child
+同时处于 SIGSTOP”不在本次恢复通过范围内；不能靠任意 PID 识别后直接杀进程来补证据。
 
 ## 部署与回滚边界
 
