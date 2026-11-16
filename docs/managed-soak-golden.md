@@ -35,6 +35,11 @@ and let one BTC minor unit be `u = 0.00000001 BTC`. Configure and fund explicit
 BTC pool/account limits. Fund the synthetic pool with `F=1 BTC`, then create a
 real bootstrap loan with principal `P0 = 2*N*u`, zero interest, and a unique
 source reference. Record its actual credit command and journal IDs. Bootstrap
+must first publish an actual-UTC initial snapshot including USD, BTC and
+BTC-PERP, and explicitly activate the offline router before invoking borrow;
+the managed initializer halts it again before sealing. The first running feed
+continues above that existing market version, rather than resetting to 1.
+Bootstrap
 must have enough cash, principal and pool capacity for the whole selected job;
 there is no recurring privileged borrow, deposit or interest accrual during it.
 At 24 hours, N=21,600 and P0=0.000432 BTC. The 1 BTC buffer is ample.
