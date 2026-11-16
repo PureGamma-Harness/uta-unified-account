@@ -74,8 +74,8 @@ def code_artifact():
     Release source bytes must be retained separately to run that exact release.
     """
     directory = Path(__file__).resolve().parent
-    sources = {path.name: sha256(path.read_bytes()).hexdigest()
-               for path in sorted(directory.glob("*.py"))}
+    sources = {path.relative_to(directory).as_posix(): sha256(path.read_bytes()).hexdigest()
+               for path in sorted(directory.rglob("*.py"))}
     if not sources or "service.py" not in sources or "decision_audit.py" not in sources:
         raise DecisionAuditError("audit_artifact_unavailable", "deployed Python source manifest is incomplete")
     return {"format": FORMAT, "signed": False, "app_version": __version__,
@@ -101,7 +101,9 @@ class DecisionAudit:
                 "rules": None if exchange.portfolio_rules is None else json.loads(exchange.portfolio_rules.to_json()),
                 "scales": dict(exchange.scales), "fee_rate": str(exchange.fee_rate),
                 "max_price_age_us": exchange.max_price_age // timedelta(microseconds=1),
-                "order_precision": 8, "reserve_formula": "linear-adverse-loss-cumulative-fee-v1"}
+                "order_precision": 8, "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+                "execution_options": {"reserve_cache_size": exchange._reserve_kernel.capacity,
+                                      "market_cache_size": exchange._market_decode_cache.capacity}}
 
     @staticmethod
     def _insert(connection, table, id_column, identity, payload_column, payload):
@@ -223,6 +225,10 @@ class DecisionAudit:
         row = self._read("uta_risk_decisions", "decision_id", identity)
         row["inputs"] = json.loads(row.pop("input_payload"))
         row["summary"] = json.loads(row.pop("summary_payload"))
+        if (identity != self.decision_id(row["kind"], row["account_id"], row["business_id"])
+                or row["pre_version"] != row["inputs"]["before"]["version"]
+                or row["post_version"] != row["inputs"]["after"]["version"]):
+            raise DecisionAuditError("audit_content_conflict", "decision identity or account-version evidence is inconsistent")
         return row
 
     def market(self, identity):
@@ -324,7 +330,26 @@ class DecisionAudit:
             for field, value in values.items():
                 if value != expected[field]:
                     differences[f"{side}.{field}"] = {"recorded": expected[field], "replayed": value}
+        operation = {}
+        if record["kind"] == "ORDER_ACCEPTED":
+            request = record["inputs"]["operation"]
+            spec = market.instruments[request["symbol"]]
+            rate = spec.initial_margin_rate
+            if policy["catalog"] is not None:
+                catalog = ProductCatalog.from_json(_json(policy["catalog"]))
+                rules = PortfolioRules.from_json(_json(policy["rules"]))
+                rate = rules.linear_margin[catalog.require_risk_supported(request["symbol"]).risk_tier].initial_margin_rate
+            reserve = calculate_reserve(ReserveInputs(
+                quantity=Decimal(request["quantity"]), filled_quantity=Decimal(0),
+                limit_price=Decimal(request["limit_price"]), mark_price=spec.mark_price,
+                reduce_only=request["reduce_only"], initial_margin_rate=rate,
+                fee_notional=Decimal(0), charged_fee=Decimal(0), fee_rate=Decimal(policy["fee_rate"]),
+                usd_scale=policy["scales"]["USD"]))
+            operation["reserved_margin"] = _text(Fraction(reserve))
+            if operation["reserved_margin"] != record["summary"]["reserved_margin"]:
+                differences["operation.reserved_margin"] = {"recorded": record["summary"]["reserved_margin"],
+                                                           "replayed": operation["reserved_margin"]}
         return {"decision_id": identity, "market_snapshot_id": record["market_snapshot_id"],
                 "artifact_id": record["artifact_id"], "policy_id": record["policy_id"],
-                "values": replayed, "differences": differences, "matches": not differences,
+                "values": replayed, "operation": operation, "differences": differences, "matches": not differences,
                 "scope": "numerical valuation; no historical re-execution or live freshness claim"}

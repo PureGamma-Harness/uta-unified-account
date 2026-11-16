@@ -115,6 +115,7 @@ class AuditedServiceTests(unittest.TestCase):
         service.cancel_order("alice", "order")
         replay = service.audit.replay(identity)
         self.assertTrue(replay["matches"], replay["differences"])
+        self.assertEqual(replay["operation"]["reserved_margin"], "20.08")
         self.assertEqual(replay["values"]["before"]["equity"], "100")
         self.assertEqual(replay["values"]["after"]["open_order_margin"], "20.08")
         self.assertEqual(replay["values"]["after"]["available_margin"], "79.92")

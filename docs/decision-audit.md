@@ -67,6 +67,8 @@ Deploy source files immutably for the process lifetime; a changed file under a
 running interpreter cannot be claimed to replace already-loaded code. Runtime
 monkeypatching or hot replacement of financial functions is outside this artifact
 identity assumption; hashes do not attest to arbitrary in-process mutations.
+The policy record also identifies the enabled mathematical/decoder cache sizes;
+those options must not change the financial result.
 
 New order receipts and `ORDER_ACCEPTED` events carry `decision_id`; legacy order
 rows expose NULL with `decision_evidence="legacy_missing"`. Confirmed fill
@@ -109,3 +111,9 @@ authorities require a deliberate migration; do not let a restart fabricate
 missing history. Default legacy calculations remain available for comparison in
 separate schema-2 databases. No throughput, production approval or PM coverage
 claim follows from enabling this archive.
+
+This first implementation stores full account valuation inputs before and after
+each supported decision. Evidence size and capture cost grow with live orders,
+positions and liabilities. Archives are not pruned automatically. Measure disk
+growth, write amplification and latency in required mode, including hot accounts;
+legacy/no-audit throughput cannot be presented as required-audit capacity.
