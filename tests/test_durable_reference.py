@@ -17,6 +17,7 @@ import unittest
 from unittest.mock import patch
 
 from uta.ledger import Ledger, LedgerError, Posting
+from uta.credit import CreditService
 from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
@@ -178,7 +179,7 @@ class IndependentDurableCommandTests(unittest.TestCase):
     def financial_rows(self):
         with self.database.transaction() as connection:
             return {table: [tuple(row) for row in connection.execute('SELECT * FROM ' + table)]
-                    for table in ('uta_accounts', 'uta_orders', 'uta_positions', 'uta_fills',
+                    for table in ('uta_accounts', 'uta_orders', 'uta_positions', 'uta_fills', 'uta_liabilities',
                                   'uta_events', 'ledger_events', 'ledger_balances')}
 
     def drain(self):
@@ -376,6 +377,44 @@ class IndependentDurableCommandTests(unittest.TestCase):
         self.assertEqual(self.enqueue('technical', 'order'), terminal)
         self.assertIsNone(self.queue.process_one(self.service))
         self.assertEqual(self.financial_rows(), before)
+
+    def test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice(self):
+        self.fund('alice', '1000')
+        self.service.deposit('alice', 'btc-capital', 'BTC', D(1))
+        credit = CreditService(self.service)
+        credit.configure_asset_limit('BTC', D(10))
+        credit.configure_limit('alice', 'BTC', D(1))
+        credit.fund_pool('pool-capital', 'BTC', D(1), source_reference='synthetic:durable:capital')
+        credit.borrow('alice', 'borrow', 'BTC', D('.1'))
+        credit.accrue_interest('alice', 'interest', 'BTC', D('.001'))
+        before = self.financial_rows()
+        queued = self.queue.enqueue_repay('alice', 'partial-repay', 'BTC', D('.0005'))
+        self.assertEqual((queued['ack'], queued['state']), ('durably_queued', 'PENDING'))
+        self.assertEqual(self.financial_rows(), before)
+        with localcontext() as context:
+            context.prec, context.Emax, context.Emin = 1, 2, -2
+            context.traps[Inexact] = context.traps[Rounded] = True
+            first = self.queue.process_one(self.service, credit=credit)
+        self.assertEqual(first['state'], 'SUCCEEDED')
+        account = self.service.account('alice')
+        self.assertEqual(F(account['balances']['BTC']), F('1.0995'))
+        self.assertEqual(F(account['liabilities']['BTC']['principal']), F('.1'))
+        self.assertEqual(F(account['liabilities']['BTC']['interest']), F('.0005'))
+        self.queue.enqueue_repay('alice', 'final-repay', 'BTC', D('.1005'))
+        self.assertEqual(self.queue.process_one(self.service, credit=credit)['state'], 'SUCCEEDED')
+        self.assertEqual(F(self.service.account('alice')['balances']['BTC']), F('.999'))
+        self.assertEqual(credit.verify()['nonzero_liabilities'], 0)
+        before = self.financial_rows()
+        self.assertEqual(self.queue.enqueue_repay('alice', 'partial-repay', 'BTC', D('.000500')), first)
+        self.assertIsNone(self.queue.process_one(self.service, credit=credit))
+        self.queue.enqueue_repay('alice', 'excess-repay', 'BTC', D('.01'))
+        excess = self.queue.process_one(self.service, credit=credit)
+        self.assertEqual((excess['state'], excess['error']['code']), ('REJECTED', 'repayment_exceeds_debt'))
+        self.assertEqual(self.financial_rows(), before)
+        with self.database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM credit_commands WHERE kind='repaid'").fetchone()[0], 2)
+            for asset in ('USD', 'BTC'):
+                self.assertEqual(sum(int(row[0]) for row in connection.execute('SELECT units FROM ledger_balances WHERE asset=?', (asset,))), 0)
 
 
 class IndependentWriterLeaseTests(unittest.TestCase):
