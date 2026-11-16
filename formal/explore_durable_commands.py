@@ -68,7 +68,7 @@ def transitions(state, mutant=None):
                 continue
             earlier = [prior for prior in range(index) if ACCOUNTS[prior] == ACCOUNTS[index]
                        and state.terminal[prior] == PENDING]
-            if earlier:
+            if earlier and mutant != 'skip_fifo':
                 continue
             yield 'stage account head ' + str(index), replace(state, staged=index,
                                                                staged_generation=state.generation)
@@ -100,6 +100,9 @@ def violation(state):
         if used > capacity:
             return 'account capacity was reserved twice'
     for index, count in enumerate(state.effects):
+        if state.terminal[index] != PENDING and any(state.terminal[prior] == PENDING
+                and ACCOUNTS[prior] == ACCOUNTS[index] for prior in range(index)):
+            return 'later account command became terminal before its pending head'
         if count > 1:
             return 'same command produced financial effect twice'
         if count and state.terminal[index] not in (ACCEPTED, CANCELLED):
@@ -136,7 +139,8 @@ def explore(mutant=None):
 
 def main():
     safe = explore()
-    mutants = {name: explore(name) for name in ('early_accept', 'split_terminal', 'duplicate_retry', 'skip_fence')}
+    mutants = {name: explore(name) for name in
+               ('early_accept', 'split_terminal', 'duplicate_retry', 'skip_fence', 'skip_fifo')}
     passed = safe['violation'] is None and all(result['violation'] for result in mutants.values())
     print(json.dumps({'passed': passed, 'safe': safe, 'negative_controls': mutants,
         'bounds': {'commands': 4, 'accounts': 2, 'writer_generations': 2, 'concurrent_transactions': 1},
