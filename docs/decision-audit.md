@@ -53,7 +53,7 @@ not permission to erase acknowledged decisions.
 | Archive | Contents |
 | --- | --- |
 | `uta_market_history` | Exact full payload bytes, SHA-256 snapshot ID, origin and archive time |
-| `uta_code_artifacts` | Application version; all installed package Python-source hashes and their digest; Python implementation/version and SQLite version |
+| `uta_code_artifacts` | Application version; package Python-source hashes; deterministic loaded financial/replay code fingerprints; Python implementation/version, optimization flag and SQLite version |
 | `uta_risk_policies` | Full catalog and rules JSON, asset scales, fee rate, age policy and formula/precision identifiers |
 | `uta_risk_decisions` | Business/account IDs; market, artifact and policy IDs; account pre/post versions; operation and complete account valuation inputs; risk/reserve summaries |
 | `uta_audit_capability` | Activation point and explicit supported/unsupported historical coverage |
@@ -64,9 +64,12 @@ to them rather than duplicating source/configuration. The hashes are unsigned
 identities on a trusted local host. They are not release signatures or external
 tamper-proof audit seals. Retain the corresponding source release separately.
 Deploy source files immutably for the process lifetime; a changed file under a
-running interpreter cannot be claimed to replace already-loaded code. Runtime
-monkeypatching or hot replacement of financial functions is outside this artifact
-identity assumption; hashes do not attest to arbitrary in-process mutations.
+running interpreter cannot be claimed to replace already-loaded code. The archive
+also fingerprints loaded functions in fixed financial/replay modules, including
+wrapped function bodies. Paths and unordered constants are normalized so host
+paths and process hash seeds do not produce different engine identities. These
+checks remain unsigned evidence on a trusted interpreter, not an attestation
+against arbitrary hostile in-process mutation.
 The policy record also identifies the enabled mathematical/decoder cache sizes;
 those options must not change the financial result.
 
@@ -84,10 +87,19 @@ current account, prices or orders have changed.
 
 `DecisionAudit(database)` provides `decision(id)`, `market(id)`, `artifact(id)`,
 `policy_record(id)` and `replay(id)`. Replay verifies archived content IDs and
-requires the recorded code/runtime artifact. It computes reserve and pre/post
+recomputes the currently installed source, loaded financial code and Python/SQLite
+fingerprints before valuation. A valid archived digest or an equal cached startup
+manifest alone is insufficient. A mismatch returns `replay_engine_mismatch`;
+missing release files return `replay_artifact_unavailable`. Neither result reports
+`matches` or calculates values. Use the matching Git/wheel release and runtime;
+the tool never loads or executes code from database records. There is no default
+compatible-math bypass. With a matching artifact it computes reserve and pre/post
 risk from archived input states and the referenced historical market; it never
 reads current account balances or current quotes for those values. It reports
 each differing field. Use the recorded release/runtime to replay older artifacts.
+An engine fingerprint is only a replay prerequisite. It does not authorize a
+financial command, replace complete economic inputs, or permit sharing cached
+risk decisions between accounts or different states.
 
 Replay covers numerical valuation. It does not resubmit a historical order,
 repeat matching, certify lease ownership or validate age against today's clock.

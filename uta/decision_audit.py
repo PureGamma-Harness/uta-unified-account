@@ -7,11 +7,14 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from fractions import Fraction
 from hashlib import sha256
+import importlib
+import inspect
 import json
 from pathlib import Path
 import platform
 import sqlite3
 import sys
+from types import CodeType
 
 from . import __version__
 from .market import MarketSnapshot
@@ -67,8 +70,70 @@ def _text(value):
     return (result.rstrip("0").rstrip(".") if "." in result else result) if value else "0"
 
 
+def _code_value(value):
+    """Deterministic code constants, without deployment paths or hash seed."""
+    if isinstance(value, CodeType):
+        return {"code": value.co_code.hex(), "name": value.co_name,
+                "args": [value.co_argcount, value.co_posonlyargcount, value.co_kwonlyargcount],
+                "locals": value.co_nlocals, "stack": value.co_stacksize, "flags": value.co_flags,
+                "names": value.co_names, "variables": value.co_varnames,
+                "free": value.co_freevars, "cells": value.co_cellvars,
+                "constants": [_code_value(item) for item in value.co_consts],
+                "first_line": value.co_firstlineno,
+                "lines": value.co_linetable.hex(),
+                "exceptions": getattr(value, "co_exceptiontable", b"").hex()}
+    if value is None or type(value) in (bool, int, str):
+        return value
+    if isinstance(value, tuple):
+        return {"tuple": [_code_value(item) for item in value]}
+    if isinstance(value, frozenset):
+        return {"frozenset": sorted((_code_value(item) for item in value), key=_json)}
+    if isinstance(value, bytes):
+        return {"bytes": value.hex()}
+    if isinstance(value, float):
+        return {"float": value.hex()}
+    if isinstance(value, complex):
+        return {"complex": [value.real.hex(), value.imag.hex()]}
+    if value is Ellipsis:
+        return {"ellipsis": True}
+    raise DecisionAuditError("audit_artifact_unavailable", "unsupported loaded code constant in risk engine")
+
+
+def _loaded_engine():
+    """Fingerprint current financial/replay functions, including wrapped bodies.
+
+    Only fixed installed modules are imported. No archive content is imported,
+    compiled or executed. Runtime object mutation is not a hostile-code boundary.
+    """
+    result = {}
+    modules = ("service", "decision_audit", "reserve_kernel", "portfolio", "products",
+               "models", "market", "ledger", "storage")
+    for name in modules:
+        module = importlib.import_module("uta." + name)
+        functions = {}
+        for attribute, value in vars(module).items():
+            if inspect.isfunction(value):
+                functions[attribute] = value
+            elif inspect.isclass(value) and value.__module__ == module.__name__:
+                for member_name, member in vars(value).items():
+                    if isinstance(member, (staticmethod, classmethod)):
+                        member = member.__func__
+                    if isinstance(member, property):
+                        for accessor in ("fget", "fset", "fdel"):
+                            function = getattr(member, accessor)
+                            if function is not None:
+                                functions[f"{attribute}.{member_name}.{accessor}"] = function
+                    elif inspect.isfunction(member):
+                        functions[f"{attribute}.{member_name}"] = member
+        for attribute, function in functions.items():
+            result[f"{module.__name__}.{attribute}"] = _digest(_json({
+                "function": _code_value(function.__code__),
+                "unwrapped": _code_value(inspect.unwrap(function).__code__)}))
+    return result
+
+
 def code_artifact():
-    """Fingerprint the deployed Python sources and execution runtime once.
+    """Fingerprint deployed sources, loaded financial code and runtime.
 
     No Git checkout is required: installed source wheels are fingerprintable.
     Release source bytes must be retained separately to run that exact release.
@@ -82,6 +147,7 @@ def code_artifact():
             "python_implementation": platform.python_implementation(),
             "python_version": sys.version, "sqlite_version": sqlite3.sqlite_version,
             "source_files": sources, "source_digest": _digest(_json(sources)),
+            "loaded_engine": _loaded_engine(), "python_optimize": sys.flags.optimize,
             "deployment_assumption": "immutable source files for the process lifetime"}
 
 
@@ -318,9 +384,13 @@ class DecisionAudit:
         freshness. It is a valuation replay, not a historical command resubmit.
         """
         record = self.decision(identity)
-        manifest = self.artifact(record["artifact_id"])
-        if _json(manifest) != _json(self.manifest):
-            raise DecisionAuditError("audit_artifact_mismatch", "use the recorded source and runtime release for exact replay")
+        try:
+            manifest = self.artifact(record["artifact_id"])
+            current = code_artifact()
+        except (OSError, DecisionAuditError) as exc:
+            raise DecisionAuditError("replay_artifact_unavailable", "matching Git/wheel source and runtime artifact is unavailable; replay was not calculated") from exc
+        if _json(manifest) != _json(current) or _json(self.manifest) != _json(current):
+            raise DecisionAuditError("replay_engine_mismatch", "load the matching Git/wheel artifact and Python/SQLite runtime; current engine cannot authoritatively replay this decision")
         market = MarketSnapshot.from_json(self.market(record["market_snapshot_id"])["payload"])
         policy = self.policy_record(record["policy_id"])
         replayed = {side: self._replay_state(record["inputs"][side], market, policy) for side in ("before", "after")}

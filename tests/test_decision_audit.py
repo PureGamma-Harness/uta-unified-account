@@ -3,13 +3,16 @@ from datetime import datetime, timezone
 from decimal import Decimal as D, Inexact, Rounded, localcontext
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 import sqlite3
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from uta.decision_audit import DecisionAudit, DecisionAuditError
+from uta.decision_audit import DecisionAudit, DecisionAuditError, code_artifact
 from uta.durable_commands import CommandExecutionError, QueueStore
 from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
@@ -241,7 +244,49 @@ class AuditedServiceTests(unittest.TestCase):
         with patch.object(service.audit, "manifest", {"different_runtime": True}):
             with self.assertRaises(DecisionAuditError) as error:
                 service.audit.replay(order["decision_id"])
-        self.assertEqual(error.exception.code, "audit_artifact_mismatch")
+        self.assertEqual(error.exception.code, "replay_engine_mismatch")
+
+    def test_validly_hashed_old_source_artifact_is_not_authorized_by_startup_cache(self):
+        old = code_artifact()
+        old["source_files"]["service.py"] = "0" * 64
+        old["source_digest"] = sha256(json.dumps(old["source_files"], sort_keys=True,
+            separators=(",", ":")).encode()).hexdigest()
+        with patch("uta.decision_audit.code_artifact", return_value=old):
+            service = self.required()
+        order = service.submit_order("alice", "order", "BTC-PERP", D(1), D(100))
+        # Correct archive hashing and an equal startup cache do not prove that
+        # the currently executing engine is the release recorded by the row.
+        self.assertEqual(service.audit.artifact(service.audit.artifact_id), old)
+        with patch.object(service.audit, "_replay_state", side_effect=AssertionError("must not calculate")):
+            with self.assertRaises(DecisionAuditError) as error:
+                service.audit.replay(order["decision_id"])
+        self.assertEqual(error.exception.code, "replay_engine_mismatch")
+
+    def test_loaded_financial_code_change_is_rejected_even_when_source_files_match(self):
+        service = self.required()
+        order = service.submit_order("alice", "order", "BTC-PERP", D(1), D(100))
+        def changed_calculator(*args, **kwargs):
+            return D(0)
+        with patch("uta.decision_audit.calculate_reserve", changed_calculator):
+            with self.assertRaises(DecisionAuditError) as error:
+                service.audit.replay(order["decision_id"])
+        self.assertEqual(error.exception.code, "replay_engine_mismatch")
+
+    def test_unavailable_current_release_is_an_explicit_replay_failure(self):
+        service = self.required()
+        order = service.submit_order("alice", "order", "BTC-PERP", D(1), D(100))
+        with patch("uta.decision_audit.code_artifact", side_effect=OSError("release files unavailable")):
+            with self.assertRaises(DecisionAuditError) as error:
+                service.audit.replay(order["decision_id"])
+        self.assertEqual(error.exception.code, "replay_artifact_unavailable")
+
+    def test_engine_fingerprint_is_stable_between_process_hash_seeds(self):
+        command = [sys.executable, "-c", "from uta.service import ExchangeService; from uta.decision_audit import code_artifact; import json; print(json.dumps(code_artifact(),sort_keys=True))"]
+        manifests = []
+        for seed in ("17", "91"):
+            environment = dict(os.environ, PYTHONHASHSEED=seed)
+            manifests.append(json.loads(subprocess.check_output(command, env=environment, text=True, timeout=10)))
+        self.assertEqual(manifests[0], manifests[1])
 
 
 if __name__ == "__main__":
