@@ -13,11 +13,13 @@ import unittest
 from unittest.mock import patch
 
 from uta.durable_process import DurableProcessRouter
+from uta import durable_process
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
 from uta.service import ServiceError
 from uta.sharding import ShardRouter, ShardWorkerView, _BoundShardDatabase
 from uta.writer_fence import WriterFence, WriterFenceError
+from uta.service import ExchangeService
 
 
 def _orphan_coordinator(directory, buyer, report):
@@ -402,6 +404,146 @@ class DurableProcessTests(unittest.TestCase):
         self.assertEqual(legacy.diagnostics()["profile"], "managed_development_legacy_gap")
         with legacy._database(0).read_transaction() as conn:
             self.assertEqual(conn.execute("SELECT version FROM uta_schema").fetchone()[0], 2)
+
+    def test_offline_audit_upgrade_preserves_config_legacy_gaps_and_monies_then_audits_new_fills(self):
+        path = Path(self.temporary.name) / "audit-promotion"
+        buyer, seller = self.names
+        def bootstrap(router):
+            for account in (buyer, seller):
+                router.create_account(account)
+                router.deposit(account, "seed", "USD", D("1000"))
+            router.publish_market(self.market())
+            router.set_kill_switch(False)
+            router.submit_order(buyer, "legacy-buy", "X", D(1), D(100))
+        legacy = DurableProcessRouter.initialize(path, 2, {"USD": 8}, managed=True,
+                        bootstrap=bootstrap, decision_audit=False, lease_seconds=.6, poll_interval=.01)
+        self.addCleanup(legacy.close)
+        with legacy._control.control.read_transaction() as conn:
+            original_config = conn.execute("SELECT payload FROM router_durable_config").fetchone()[0]
+        with legacy._database(0).read_transaction() as conn:
+            original_head = tuple(conn.execute("SELECT sequence,event_hash FROM ledger_events ORDER BY sequence DESC LIMIT 1").fetchone())
+        plan = DurableProcessRouter.plan_decision_audit_upgrade(path)
+        self.assertEqual({row["trading_schema"] for row in plan["shards"]}, {2})
+        upgraded = DurableProcessRouter.upgrade_decision_audit(path, managed=True,
+                    expected_layout_hash=plan["layout_hash"], lease_seconds=.6, poll_interval=.01)
+        self.addCleanup(upgraded.close)
+        self.assertTrue(upgraded.decision_audit_required)
+        with upgraded._control.control.read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT payload FROM router_durable_config").fetchone()[0], original_config)
+            self.assertEqual(conn.execute("SELECT state FROM router_decision_audit_capability").fetchone()[0], "READY")
+        with upgraded._database(0).read_transaction() as conn:
+            self.assertEqual(tuple(conn.execute("SELECT sequence,event_hash FROM ledger_events ORDER BY sequence DESC LIMIT 1").fetchone()), original_head)
+            self.assertEqual(conn.execute("SELECT legacy_order_count FROM uta_audit_capability").fetchone()[0], 1)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_risk_decisions").fetchone()[0], 0)
+        with self.assertRaises(ServiceError) as stale:
+            legacy.start()
+        self.assertEqual(stale.exception.code, "configuration_refresh_required")
+        upgraded.start()
+        self.assertFalse(upgraded.set_kill_switch(False, timeout=8)["halted"])
+        upgraded.submit_order(seller, "new-sell", "sell", "X", D(-1), D(100))
+        self.assertEqual(upgraded.wait("new-sell", account_id=seller, timeout=8)["state"], "SUCCEEDED")
+        def matched():
+            with upgraded._database(0).read_transaction() as conn:
+                return conn.execute("SELECT COUNT(*) FROM uta_matches").fetchone()[0] == 1
+        self.eventually(matched)
+        with upgraded._database(0).read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_risk_decisions WHERE kind='ORDER_ACCEPTED'").fetchone()[0], 1)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_fills WHERE execution_decision_id IS NOT NULL").fetchone()[0], 2)
+            self.assertEqual(sum(int(row[0]) for row in conn.execute("SELECT units FROM ledger_balances WHERE asset='USD'")), 0)
+
+    def test_partial_audit_upgrade_blocks_start_and_resumes_without_fake_backfill(self):
+        path = Path(self.temporary.name) / "audit-partial"
+        legacy = DurableProcessRouter.initialize(path, 2, {"USD": 8}, managed=True, decision_audit=False)
+        self.addCleanup(legacy.close)
+        plan = DurableProcessRouter.plan_decision_audit_upgrade(path)
+        original = ExchangeService
+        def interrupted(database, scales, **options):
+            if database._index == 1:
+                raise OSError("injected audit promotion stop")
+            return original(database, scales, **options)
+        with patch("uta.service.ExchangeService", side_effect=interrupted):
+            with self.assertRaisesRegex(OSError, "injected"):
+                DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        with self.assertRaises(ServiceError) as error:
+            DurableProcessRouter(path)
+        self.assertEqual(error.exception.code, "decision_audit_upgrade_incomplete")
+        with self.assertRaises(ServiceError) as error:
+            legacy.start()
+        self.assertEqual(error.exception.code, "decision_audit_upgrade_incomplete")
+        upgraded = DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.addCleanup(upgraded.close)
+        self.assertTrue(upgraded.decision_audit_required)
+        again = DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.addCleanup(again.close)
+        self.assertTrue(again.diagnostics()["state"]["halted"])
+
+    def test_first_wave_config_without_flag_requires_explicit_promotion_and_remains_byte_exact(self):
+        path = Path(self.temporary.name) / "old-config-shape"
+        original_prepare = durable_process._prepare_config
+        def first_wave_manifest(connection, config):
+            old = {**config, "service": dict(config["service"])}
+            old["service"].pop("decision_audit")
+            original_prepare(connection, old)
+        # Reproduce the first wave's persisted configuration shape. This is a
+        # schema fixture, separate from the real archived-binary fence tests.
+        with patch.object(durable_process, "_prepare_config", first_wave_manifest):
+            old = DurableProcessRouter.initialize(path, 1, {"USD": 8}, managed=True, decision_audit=False)
+        self.addCleanup(old.close)
+        with old._control.control.read_transaction() as conn:
+            before = conn.execute("SELECT payload FROM router_durable_config").fetchone()[0]
+        with self.assertRaises(ServiceError) as denied:
+            old.start()
+        self.assertEqual(denied.exception.code, "decision_audit_upgrade_required")
+        plan = DurableProcessRouter.plan_decision_audit_upgrade(path)
+        required = DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.addCleanup(required.close)
+        self.assertTrue(required.decision_audit_required)
+        with required._control.control.read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT payload FROM router_durable_config").fetchone()[0], before)
+
+    def test_audit_upgrade_stops_globally_but_never_promotes_with_a_live_coordinator(self):
+        path = Path(self.temporary.name) / "live-upgrade"
+        legacy = DurableProcessRouter.initialize(path, 1, {"USD": 8}, managed=True,
+                            decision_audit=False, lease_seconds=.6, poll_interval=.01)
+        self.addCleanup(legacy.close)
+        legacy.start()
+        legacy.publish_market(self.market(), timeout=8)
+        legacy.set_kill_switch(False, timeout=8)
+        plan = DurableProcessRouter.plan_decision_audit_upgrade(path)
+        with self.assertRaises(ServiceError) as denied:
+            DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.assertEqual(denied.exception.code, "supervisor_busy")
+        self.assertTrue(legacy.diagnostics()["state"]["halted"])
+        with legacy._database(0).read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT version FROM uta_schema").fetchone()[0], 2)
+
+    def test_required_control_does_not_silently_upgrade_a_restored_pre_promotion_snapshot(self):
+        path = Path(self.temporary.name) / "audit-restore"
+        legacy = DurableProcessRouter.initialize(path, 1, {"USD": 8}, managed=True, decision_audit=False)
+        self.addCleanup(legacy.close)
+        backup = Path(self.temporary.name) / "old-shard.sqlite3"
+        descriptor = os.open(backup, os.O_CREAT | os.O_EXCL | os.O_RDWR, 0o600)
+        os.close(descriptor)
+        with legacy._database(0).read_transaction() as source:
+            target = sqlite3.connect(backup)
+            try:
+                source.backup(target)
+            finally:
+                target.close()
+        plan = DurableProcessRouter.plan_decision_audit_upgrade(path)
+        required = DurableProcessRouter.upgrade_decision_audit(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.addCleanup(required.close)
+        # This deliberately restores an old snapshot at its original path;
+        # canonical-path binding alone cannot detect this version mismatch.
+        os.replace(backup, legacy._database(0).path)
+        with self.assertRaises(ServiceError) as denied:
+            DurableProcessRouter(path)
+        self.assertEqual(denied.exception.code, "decision_audit_capability_mismatch")
+        raw = sqlite3.connect(legacy._database(0).path)
+        try:
+            self.assertEqual(raw.execute("SELECT version FROM uta_schema").fetchone()[0], 2)
+        finally:
+            raw.close()
 
 
 if __name__ == "__main__":

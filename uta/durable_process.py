@@ -64,6 +64,27 @@ def _prepare_config(connection, config):
     connection.execute("CREATE TRIGGER router_durable_config_seal_only BEFORE UPDATE ON router_durable_config WHEN OLD.initialized!=0 OR NEW.initialized!=1 OR NEW.singleton!=OLD.singleton OR NEW.format!=OLD.format OR NEW.payload!=OLD.payload BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
 
 
+def _audit_capability_payload(control, config):
+    return {"format": 1, "target_schema": 3, "required": True,
+            "layout_hash": sha256(control._descriptor.encode()).hexdigest(),
+            "source_config_hash": sha256(_json(config).encode()).hexdigest()}
+
+
+def _read_audit_capability(control, config, *, allow_pending=False):
+    with control.control.read_transaction() as connection:
+        if connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_decision_audit_capability'").fetchone() is None:
+            return None
+        rows = connection.execute("SELECT singleton,format,state,payload FROM router_decision_audit_capability").fetchall()
+        guards = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger' AND tbl_name='router_decision_audit_capability'")}
+        if (len(rows) != 1 or tuple(rows[0])[:2] != (1, 1) or rows[0][2] not in ("PREPARED", "READY")
+                or rows[0][3] != _json(_audit_capability_payload(control, config))
+                or not {"router_audit_capability_no_delete", "router_audit_capability_no_replace", "router_audit_capability_seal_only"} <= guards):
+            raise ServiceError("decision_audit_capability_corrupt", "audit promotion manifest is invalid or incomplete", 503)
+        if rows[0][2] != "READY" and not allow_pending:
+            raise ServiceError("decision_audit_upgrade_incomplete", "explicit audit promotion has not completed every shard", 503)
+        return {"state": rows[0][2], "payload": json.loads(rows[0][3])}
+
+
 def _process_identity(pid):
     details = Path(f"/proc/{pid}").stat()
     tail = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
@@ -389,6 +410,119 @@ class DurableProcessRouter:
             os.close(holder._supervisor_fd)
         return cls(directory, **runtime)
 
+    @classmethod
+    def plan_decision_audit_upgrade(cls, directory):
+        control = _open_router_control(directory)
+        with control.control.read_transaction() as connection:
+            row = connection.execute("SELECT initialized,payload FROM router_durable_config WHERE singleton=1").fetchone()
+        if row is None or row[0] != 1:
+            raise ServiceError("managed_bootstrap_incomplete", "finish managed initialization before planning audit promotion", 503)
+        config = json.loads(row[1])
+        capability = _read_audit_capability(control, config, allow_pending=True)
+        plan = cls.inspect_takeover(directory)
+        for shard in plan["shards"]:
+            database = _BoundShardDatabase(control._path(shard["shard"]), shard["shard"], plan["layout_hash"])
+            with database.read_transaction() as connection:
+                shard["trading_schema"] = connection.execute("SELECT version FROM uta_schema").fetchone()[0]
+        return {**plan, "target_schema": 3, "source_config_hash": sha256(row[1].encode()).hexdigest(),
+                "capability": capability}
+
+    @classmethod
+    def upgrade_decision_audit(cls, directory, *, managed=False, expected_layout_hash, **runtime):
+        """Explicit offline promotion; never rewrite immutable old configuration."""
+        if managed is not True:
+            raise ServiceError("managed_opt_in_required", "audit promotion requires managed=True", 409)
+        control = _open_router_control(directory)
+        layout_hash = sha256(control._descriptor.encode()).hexdigest()
+        if expected_layout_hash != layout_hash:
+            raise ServiceError("layout_conflict", "reviewed layout hash does not match this authority", 409)
+        with control._lock(exclusive=True, timeout=30):
+            control._write_state({**control._state(), "halted": True, "error": "decision_audit_upgrade_requested"})
+        holder = cls.__new__(cls)
+        holder.directory, holder._supervisor_fd = control.directory, None
+        holder._claim_supervisor()  # A live coordinator must be stopped first.
+        try:
+            with control._lock(exclusive=True, timeout=30):
+                leases = []
+                try:
+                    with control.control.read_transaction() as connection:
+                        row = connection.execute("SELECT format,initialized,payload FROM router_durable_config WHERE singleton=1").fetchone()
+                    if row is None or tuple(row)[:2] != (1, 1):
+                        raise ServiceError("managed_bootstrap_incomplete", "managed configuration is not sealed", 503)
+                    config = json.loads(row[2])
+                    if config["descriptor"] != control._descriptor or _json(config) != row[2]:
+                        raise ServiceError("configuration_corrupt", "promotion source configuration is invalid", 503)
+                    capability = _read_audit_capability(control, config, allow_pending=True)
+                    if capability is None:
+                        initial = {"layout_hash": layout_hash, "target_schema": 3,
+                                   "source_config_hash": sha256(row[2].encode()).hexdigest(), "shards": []}
+                        for index in range(control.layout["shard_count"]):
+                            source = _BoundShardDatabase(control._path(index), index, layout_hash)
+                            with source.read_transaction() as connection:
+                                initial["shards"].append({"shard": index, **_financial_head(connection),
+                                    "trading_schema": connection.execute("SELECT version FROM uta_schema").fetchone()[0]})
+                        with control.control.transaction() as connection:
+                            connection.execute("CREATE TABLE router_decision_audit_capability(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,state TEXT NOT NULL CHECK(state IN ('PREPARED','READY')),payload TEXT NOT NULL)")
+                            connection.execute("INSERT INTO router_decision_audit_capability VALUES (1,1,'PREPARED',?)", (_json(_audit_capability_payload(control, config)),))
+                            connection.execute("CREATE TRIGGER router_audit_capability_no_delete BEFORE DELETE ON router_decision_audit_capability BEGIN SELECT RAISE(ABORT,'audit requirement is irreversible'); END")
+                            connection.execute("CREATE TRIGGER router_audit_capability_no_replace BEFORE INSERT ON router_decision_audit_capability WHEN EXISTS (SELECT 1 FROM router_decision_audit_capability WHERE singleton=NEW.singleton) BEGIN SELECT RAISE(ABORT,'audit requirement cannot be replaced'); END")
+                            connection.execute("CREATE TRIGGER router_audit_capability_seal_only BEFORE UPDATE ON router_decision_audit_capability WHEN OLD.state!='PREPARED' OR NEW.state!='READY' OR NEW.singleton!=OLD.singleton OR NEW.format!=OLD.format OR NEW.payload!=OLD.payload BEGIN SELECT RAISE(ABORT,'audit requirement is immutable'); END")
+                            connection.execute("CREATE TABLE router_decision_audit_events(sequence INTEGER PRIMARY KEY,stage TEXT NOT NULL,shard INTEGER,payload TEXT NOT NULL,observed_at TEXT NOT NULL)")
+                            for action in ("UPDATE", "DELETE"):
+                                connection.execute(f"CREATE TRIGGER router_decision_audit_events_no_{action.lower()} BEFORE {action} ON router_decision_audit_events BEGIN SELECT RAISE(ABORT,'audit promotion evidence is immutable'); END")
+                            connection.execute("INSERT INTO router_decision_audit_events(stage,payload,observed_at) VALUES ('PREPARED',?,?)",
+                                               (_json(initial), datetime.now(timezone.utc).isoformat()))
+                    if capability is None or capability["state"] != "READY":
+                        options = _options(config["service"])
+                        options["decision_audit"] = True
+                        claims = control._batch_funding_claims()
+                        for index in range(control.layout["shard_count"]):
+                            database = _BoundShardDatabase(control._path(index), index, layout_hash)
+                            fence = WriterFence(database)
+                            status = fence.status()
+                            if not status["managed"] or status["authority_id"] != _authority(control._descriptor, index):
+                                raise ServiceError("managed_authority_conflict", "promotion shard has another writer authority", 503)
+                            with database.read_transaction() as connection:
+                                before = _financial_head(connection)
+                            token = fence.acquire("audit-upgrade:" + uuid4().hex, 60)
+                            leases.append((fence, token))
+                            from .credit import CreditService
+                            from .service import ExchangeService
+                            owned = ExchangeService(database.for_writer(token), control.layout["scales"], **options)
+                            owned.set_kill_switch(True)
+                            CreditService(owned).verify()
+                            with owned._transaction() as connection:
+                                control._batch_reconcile_shard(connection, index, claims)
+                                after = _financial_head(connection)
+                                if before != after:
+                                    raise ServiceError("audit_promotion_changed_financial_state", "audit promotion must preserve ledger heads and account/order/position counts", 503)
+                                legacy = dict(connection.execute("SELECT * FROM uta_audit_capability WHERE singleton=1").fetchone())
+                            with control.control.transaction() as connection:
+                                connection.execute("INSERT INTO router_decision_audit_events(stage,shard,payload,observed_at) VALUES ('SHARD_REQUIRED',?,?,?)",
+                                                   (index, _json({"before": before, "after": after, "legacy_gap": legacy,
+                                                                  "writer_generation": token.generation}), datetime.now(timezone.utc).isoformat()))
+                        for fence, token in leases:
+                            fence.renew(token, 60)
+                        with control.control.transaction() as connection:
+                            connection.execute("INSERT INTO router_decision_audit_events(stage,payload,observed_at) VALUES ('READY',?,?)",
+                                               (_json({"layout_hash": layout_hash}), datetime.now(timezone.utc).isoformat()))
+                            connection.execute("UPDATE router_decision_audit_capability SET state='READY' WHERE singleton=1")
+                        control._write_state({**control._state(), "halted": True, "error": None})
+                    control._write_state({**control._state(), "halted": True, "error": None})
+                except BaseException as exc:
+                    control._write_state({**control._state(), "halted": True,
+                                          "error": getattr(exc, "code", "decision_audit_upgrade_incomplete")})
+                    raise
+                finally:
+                    for fence, token in reversed(leases):
+                        try:
+                            fence.release(token)
+                        except WriterFenceError:
+                            pass
+        finally:
+            os.close(holder._supervisor_fd)
+        return cls(directory, **runtime)
+
     def __init__(self, directory, *, lease_seconds=5.0, poll_interval=.02,
                  background_interval=.1, account_batch=25, matches_per_symbol=10,
                  max_attempts=3, _only_shard=None):
@@ -419,6 +553,11 @@ class DurableProcessRouter:
             raise ServiceError("configuration_corrupt", "managed audit requirement must be a boolean", 503)
         self.decision_audit_required = audit_setting
         self._explicit_development_profile = "decision_audit" in self._config["service"] and not audit_setting
+        capability = _read_audit_capability(self._control, self._config)
+        if capability is not None:
+            self._config["service"]["decision_audit"] = True
+            self.decision_audit_required = True
+            self._explicit_development_profile = False
         self.directory, self.layout = self._control.directory, self._control.layout
         self._settings = dict(lease_seconds=lease_seconds, poll_interval=poll_interval,
                               background_interval=background_interval, account_batch=account_batch,
@@ -439,6 +578,16 @@ class DurableProcessRouter:
                     raise ServiceError("managed_authority_conflict", "shard is not bound to its expected managed authority", 503)
                 if status.get("guard_format") != 1:
                     raise WriterFenceError("fence_upgrade_required", "stop existing writers and explicitly upgrade persistent SQL guards before starting processes")
+                with self._database(index).read_transaction() as connection:
+                    version = connection.execute("SELECT version FROM uta_schema").fetchone()
+                    if self.decision_audit_required:
+                        if version is None or version[0] != 3:
+                            raise ServiceError("decision_audit_capability_mismatch", "required authority is not schema 3; an old snapshot must not be silently promoted at restart", 503)
+                        audit = connection.execute("SELECT format FROM uta_audit_capability WHERE singleton=1").fetchone()
+                        if audit is None or audit[0] != 1:
+                            raise ServiceError("decision_audit_capability_mismatch", "required shard audit capability is absent", 503)
+                    elif version is not None and version[0] == 3:
+                        raise ServiceError("decision_audit_configuration_conflict", "schema 3 requires an explicit recorded audit capability", 503)
                 self._queue(index)  # Existing queue metadata only; never bootstrap.
         except BaseException as exc:
             with self._control._lock(exclusive=True):
@@ -592,14 +741,20 @@ class DurableProcessRouter:
     def start(self, *, recovery_timeout=10):
         if isinstance(recovery_timeout, bool) or not isinstance(recovery_timeout, (float, int)) or not math.isfinite(recovery_timeout) or not 0 <= recovery_timeout <= 3600:
             raise ValueError("recovery_timeout requires seconds in 0..3600")
-        if not self.decision_audit_required and not self._explicit_development_profile:
-            raise ServiceError("decision_audit_upgrade_required", "unclassified existing managed authority requires an explicit offline audit upgrade", 503)
         with self._mutex:
             if self._supervisor_fd is not None:
                 raise ServiceError("supervisor_started", "supervisor is already running", 409)
             self._claim_supervisor()
             self._stop.clear()
             try:
+                with self._control.control.read_transaction() as connection:
+                    source = json.loads(connection.execute("SELECT payload FROM router_durable_config WHERE singleton=1").fetchone()[0])
+                latest = _read_audit_capability(self._control, source)
+                required = source["service"].get("decision_audit", False) or latest is not None
+                if not required and "decision_audit" not in source["service"]:
+                    raise ServiceError("decision_audit_upgrade_required", "unclassified existing managed authority requires an explicit offline audit upgrade", 503)
+                if required != self.decision_audit_required:
+                    raise ServiceError("configuration_refresh_required", "reopen the parent after an irreversible audit capability promotion", 503)
                 self._coordinator = uuid4().hex
                 self._recovered_orphans = []
                 self._recover_registered_orphans(recovery_timeout)
