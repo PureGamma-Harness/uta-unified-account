@@ -196,3 +196,95 @@ suite under Python 3.10 and the current interpreter; SQLite authorizer constants
 use stable numeric fallbacks for symbols absent from Python 3.10. Independent
 queue/process fault suites verify composition. These tests do not establish HA,
 load capacity, RPO under disk loss, or availability-zone recovery.
+
+## Persistent SQL guards and real old binaries
+
+The first implementation's Python authorizer did not stop a process actually
+running the pre-fencing `ad3f5b8` source. That process never loaded the new
+`Database` guard and could still deposit, admit orders, post a journal, and match.
+This failure was reproduced in a separate `python -I` process and is retained in
+`tests/fixtures/legacy_fence_red_evidence.json`; the initial passing tests covered
+old objects using the new storage module and did not establish old-binary safety.
+
+New managed authorities additionally install persistent SQLite BEFORE INSERT,
+UPDATE, and DELETE triggers on every financial table. Their names are
+`writer_fence_data_<sha256(table-name)>_<i|u|d>`. Each requires the zero-argument
+`uta_writer_fence_v1()` function to return 1. Only a valid token-bound financial
+transaction registers that function. Its callback checks authority, generation,
+owner, PID, boot, and current expiry against the persisted lease snapshot held
+stable by BEGIN IMMEDIATE. The record is reloaded before COMMIT. A genuine old
+binary has no such SQL function, so SQLite rejects its protected statements even
+though that binary knows nothing about fencing. Wrapped SQLite exceptions remain
+storage failures, and all financial changes roll back. The authorizer remains a
+second layer for capability and schema boundaries.
+
+`writer_fence_guard_config` records persistent `guard_format=1`, and
+`writer_fence_guard_tables` records the exact table/action inventory. Every new
+managed transaction validates existing guard names, target tables, and complete
+SQL definitions against that inventory. A missing, renamed, weakened, or extra
+guard fails with `fence_guard_corrupt`. Startup, `enable`, and `upgrade_guards`
+do not recreate missing protection. Immutable activation/upgrade audit markers
+also distinguish an old deployment from loss of both guard metadata tables.
+
+A legitimate token-bound schema transaction may create additional financial
+tables and insert their initial data atomically. Before COMMIT, the new tables
+are registered and all three guards installed. Existing guards must still match;
+this path never repairs existing tables. No other connection can observe the new
+financial tables before their guards commit with them. Existing ADD COLUMN
+migrations may proceed if existing trigger definitions remain valid. Product and
+accounting schemas must be bootstrapped through authorized code; arbitrary raw
+DDL and a trusted OS owner creating unregistered tables are not a confinement
+boundary. Observing unregistered tables at a later managed transaction fails
+closed. SQLite has no general persistent DDL-trigger facility.
+
+The two inbox tables have UPDATE/DELETE financial guards; their producer INSERTs
+retain the pending-only, immutable-ID and no-replacement triggers supplied by the
+queue schema. The control tables are not financial data and remain restricted to
+the lease control role. Producer and control transactions do not register the
+financial authorization function. Their existing narrow authorizers still apply.
+
+### Offline upgrade from the Python-only managed format
+
+`status()['guard_format'] == 0` identifies the initial managed format. New acquire,
+renew, explicit writer assertion, and financial writes fail with
+`fence_upgrade_required`; reads and release remain available. There is no silent
+startup migration and no claim that the old format already blocks old binaries.
+
+1. Stop producers and **all** writer processes, including old binaries. Verify
+   no stale process can write during the offline procedure; a lease alone does
+   not prove an old binary has stopped.
+2. Preserve and reconcile the complete database/WAL and current generation.
+3. Release the old lease or wait until it expires. `upgrade_guards()` refuses an
+   active same-boot lease with `lease_busy`.
+4. Invoke `WriterFence(database).upgrade_guards()`. Under one SQLite write lock it
+   validates the old format, installs the complete persistent guard set, clears
+   the old owner, increments generation, and records `guards_upgraded` atomically.
+5. Verify `guard_format == 1`, start a new process, acquire a fresh token, and
+   reconcile command IDs before resuming producers.
+
+Calling this method on guard format 1 only verifies the existing guards; it does
+not repair them. Missing or changed protection requires a separate offline
+recovery investigation. There is no temporary unguarded online migration window.
+A rollback to `ad3f5b8` cannot write a protected authority. Removing triggers,
+disabling them through arbitrary raw SQL, or restoring a same-path complete old
+backup as the trusted OS owner remains outside the fault model. These changes
+provide neither cross-host consensus nor an external rollback witness.
+
+The regression archive `legacy_ad3f5b8_uta.tar.gz` contains the original `uta/`
+source and original LICENSE from commit
+`ad3f5b894f96ed6857a061b71290047ae1d4d0e7`. Its checksum and source URL are retained
+in `legacy_ad3f5b8_provenance.json`. Tests verify the archive checksum, extract only
+regular files/directories below `uta/` plus LICENSE, and verify the original
+storage source hash before launching the old process. CI needs no historical git
+object and never substitutes current source for the old implementation.
+
+```sh
+python -m unittest discover -s tests -p 'test_writer_fence*.py' -v
+```
+
+The extended suite verifies old processes created before and after activation,
+actual matcher settlement by the current writer, guards on newly created tables,
+missing guard/metadata refusal without repair, runtime SQL expiry with complete
+rollback, and the explicit old-format upgrade. Retained red evidence and these
+green checks must be reported separately; the earlier authorizer-only acceptance
+must not be interpreted as proof about old binaries.

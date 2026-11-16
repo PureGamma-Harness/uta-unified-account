@@ -1,0 +1,27 @@
+{
+  "candidate_before_persistent_guard": "742ca91f883584113fd35ac5f2c5b1b04b0eef2c",
+  "legacy_commit": "ad3f5b894f96ed6857a061b71290047ae1d4d0e7",
+  "command": "python -m unittest discover -s tests -p test_writer_fence_legacy.py -v",
+  "result": "FAILED (failures=1), 1 test in 0.183s",
+  "legacy_storage_sha256": "ad0c34e97be43fa3a0ba648a84664f37a9944524dd4ab2802f20bdf0686c8feb",
+  "writer_fence_module_loaded_in_legacy": false,
+  "operations": [
+    {
+      "operation": "deposit",
+      "wrote": true
+    },
+    {
+      "operation": "order",
+      "wrote": true
+    },
+    {
+      "operation": "ledger",
+      "wrote": true
+    },
+    {
+      "operation": "match",
+      "wrote": true
+    }
+  ],
+  "data": "synthetic isolated SQLite fixture"
+}

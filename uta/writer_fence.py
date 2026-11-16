@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 import re
 import sqlite3
+from hashlib import sha256
 from threading import RLock
 import time
 
@@ -32,7 +33,9 @@ class WriterToken:
     process_id: int = field(default_factory=os.getpid)
 
 
-_NAMES = frozenset({"writer_fence_authority", "writer_fence_lease", "writer_fence_events"})
+_BASE_NAMES = frozenset({"writer_fence_authority", "writer_fence_lease", "writer_fence_events"})
+_GUARD_NAMES = frozenset({"writer_fence_guard_config", "writer_fence_guard_tables"})
+_NAMES = _BASE_NAMES | _GUARD_NAMES
 _INBOX_TABLES = frozenset({"uta_command_config", "uta_command_inbox"})
 _INBOX_INDEXES = frozenset({"uta_command_pending", "uta_command_account_pending"})
 _INBOX_TRIGGERS = frozenset({"uta_command_config_no_replace", "uta_command_config_no_update",
@@ -85,7 +88,9 @@ def _load(connection):
         "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'writer_fence_%'")}
     if not found:
         return None
-    if found != _NAMES:
+    if _BASE_NAMES <= found and found != _BASE_NAMES and found != _NAMES:
+        raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata is incomplete; automatic repair is forbidden")
+    if found != _BASE_NAMES and found != _NAMES:
         raise WriterFenceError("fence_corrupt", "managed authority schema is incomplete")
     try:
         authority = connection.execute("SELECT singleton,format,authority_id,canonical_path FROM writer_fence_authority").fetchall()
@@ -105,7 +110,16 @@ def _load(connection):
                 or owner is not None and (not isinstance(owner, str) or not _NAME.fullmatch(owner))
                 or owner is None and pid is not None or owner is not None and (type(pid) is not int or pid <= 0)):
             raise ValueError("invalid lease")
-        return {"authority_id": authority[0][2], "canonical_path": authority[0][3], "generation": generation, "owner_nonce": owner,
+        guard_format = 0
+        if found == _NAMES:
+            guard = connection.execute("SELECT singleton,format FROM writer_fence_guard_config").fetchall()
+            if [tuple(row) for row in guard] != [(1, 1)]:
+                raise ValueError("invalid persistent guard format")
+            guard_format = 1
+        elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind IN ('enabled_guard_v1','guards_upgraded') LIMIT 1").fetchone() is not None:
+            raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata disappeared after activation")
+        return {"authority_id": authority[0][2], "guard_format": guard_format,
+                "canonical_path": authority[0][3], "generation": generation, "owner_nonce": owner,
                 "owner_pid": pid, "boot_id": boot, "expires_ns": expires, "observed_ns": observed}
     except (sqlite3.Error, ValueError, TypeError) as exc:
         raise WriterFenceError("fence_corrupt", "managed authority record is invalid") from exc
@@ -140,6 +154,77 @@ def _ttl(value):
     return int(value * 1_000_000_000)
 
 
+def _quote(identifier):
+    return '"' + identifier.replace('"', '""') + '"'
+
+
+def _data_tables(connection):
+    return {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")
+            if not row[0].startswith(("writer_fence_", "sqlite_"))}
+
+
+def _guard_actions(table):
+    # Producer INSERTs use the independently protected queue schema. Terminal
+    # UPDATE/DELETE still require a financial token, including in old binaries.
+    return "UD" if table in _INBOX_TABLES else "IUD"
+
+
+def _guard_sql(table, action):
+    name = "writer_fence_data_" + sha256(table.encode("utf-8")).hexdigest() + "_" + action.lower()
+    operation = {"I": "INSERT", "U": "UPDATE", "D": "DELETE"}[action]
+    sql = ("CREATE TRIGGER " + _quote(name) + " BEFORE " + operation + " ON " + _quote(table)
+        + " BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END")
+    return name, sql
+
+
+def _verify_data_guards(connection, *, allow_new=False):
+    registered = {row[0]: row[1] for row in connection.execute("SELECT name,actions FROM writer_fence_guard_tables")}
+    actual = _data_tables(connection)
+    if not set(registered) <= actual or not allow_new and set(registered) != actual:
+        raise WriterFenceError("fence_guard_corrupt", "protected table inventory changed outside a guarded schema transaction")
+    triggers = {row[0]: (row[1], row[2]) for row in connection.execute(
+        "SELECT name,tbl_name,sql FROM sqlite_master WHERE type='trigger' AND name LIKE 'writer_fence_data_%'")}
+    expected = {}
+    for table, actions in registered.items():
+        if actions != _guard_actions(table):
+            raise WriterFenceError("fence_guard_corrupt", "protected table guard policy changed")
+        for action in actions:
+            name, sql = _guard_sql(table, action)
+            expected[name] = (table, sql)
+    if triggers != expected:
+        raise WriterFenceError("fence_guard_corrupt", "persistent financial guard is missing or changed; automatic repair is forbidden")
+    return actual - set(registered)
+
+
+def _install_table_guards(connection, tables):
+    for table in sorted(tables):
+        actions = _guard_actions(table)
+        for action in actions:
+            connection.execute(_guard_sql(table, action)[1])
+        connection.execute("INSERT INTO writer_fence_guard_tables VALUES (?,?)", (table, actions))
+
+
+def _initialize_data_guards(connection):
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if guard is None or guard.role != "control":
+        raise WriterFenceError("unguarded_connection", "guard installation requires the explicit lease control transaction")
+    with guard.privileged():
+        connection.execute("CREATE TABLE writer_fence_guard_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))")
+        connection.execute("CREATE TABLE writer_fence_guard_tables(name TEXT PRIMARY KEY,actions TEXT NOT NULL)")
+        connection.execute("INSERT INTO writer_fence_guard_config VALUES(1,1)")
+        for table in _GUARD_NAMES:
+            for action in ("UPDATE", "DELETE"):
+                connection.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END")
+        _install_table_guards(connection, _data_tables(connection))
+        _verify_data_guards(connection)
+
+
+def _require_guard_format(state):
+    if state is not None and state["guard_format"] != 1:
+        raise WriterFenceError("fence_upgrade_required", "old managed format requires an explicit offline persistent-guard upgrade")
+
+
 class WriterFence:
     """Control lease state without acquiring permission to write financial data."""
     def __init__(self, database: Database):
@@ -155,6 +240,7 @@ class WriterFence:
             if existing is not None:
                 if existing["authority_id"] != authority_id:
                     raise WriterFenceError("authority_conflict", "managed authority identity is immutable")
+                _require_guard_format(existing)
             else:
                 now, boot = _clock(self.database)
                 connection.execute("CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)")
@@ -167,7 +253,31 @@ class WriterFence:
                         connection.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
                 connection.execute("CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
                 connection.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
-                self._event(connection, "enabled", _load(connection), now)
+                _initialize_data_guards(connection)
+                self._event(connection, "enabled_guard_v1", _load(connection), now)
+        return self.status()
+
+    def upgrade_guards(self):
+        """Explicit offline upgrade of the first managed format, never repair.
+
+        Operators must stop every writer first. An active lease prevents the
+        upgrade. Existing persistent guards are verified, never reinstalled.
+        """
+        with self.database._fence_transaction() as connection:
+            state = _load(connection)
+            if state is None:
+                raise WriterFenceError("fence_not_managed", "enable a managed authority before upgrading it")
+            if state["guard_format"] == 1:
+                _verify_data_guards(connection)
+            else:
+                now, boot = _observed(self.database, state)
+                if state["owner_nonce"] is not None and boot == state["boot_id"] and state["expires_ns"] > now:
+                    raise WriterFenceError("lease_busy", "stop and release or expire every writer before offline guard upgrade")
+                if state["generation"] == _MAX_INTEGER:
+                    raise WriterFenceError("fence_exhausted", "generation cannot advance for the offline upgrade")
+                _initialize_data_guards(connection)
+                connection.execute("UPDATE writer_fence_lease SET generation=generation+1,owner_nonce=NULL,owner_pid=NULL,boot_id=?,expires_ns=?,observed_ns=? WHERE singleton=1", (boot, now, now))
+                self._event(connection, "guards_upgraded", _load(connection), now)
         return self.status()
 
     def _event(self, connection, kind, state, now):
@@ -182,6 +292,7 @@ class WriterFence:
             state = _load(connection)
             if state is None:
                 raise WriterFenceError("fence_not_managed", "enable the managed authority before acquiring a lease")
+            _require_guard_format(state)
             now, boot = _observed(self.database, state)
             if state["owner_nonce"] is not None and boot == state["boot_id"] and state["expires_ns"] > now:
                 raise WriterFenceError("lease_busy", "another live owner holds the authority lease")
@@ -197,6 +308,7 @@ class WriterFence:
         duration = _ttl(ttl_seconds)
         with self.database._fence_transaction() as connection:
             state = _load(connection)
+            _require_guard_format(state)
             now, boot = _assert_token(self.database, state, token)
             if now + duration > _MAX_INTEGER:
                 raise WriterFenceError("fence_exhausted", "lease clock exhausted its range")
@@ -226,6 +338,7 @@ class WriterFence:
             raise WriterFenceError("unguarded_connection", "writer assertion requires an active Database transaction")
         _assert_joinable(self.database, connection)
         state = _load(connection)
+        _require_guard_format(state)
         _assert_token(self.database, state, self.database.writer_token if token is None else token)
         return state
 
@@ -239,16 +352,40 @@ class _TransactionGuard:
         self.denied = None
         self.token_error = None
         self.started_at = None
+        self._udf_registered = False
+        if self.state is not None and self.state["guard_format"] == 1:
+            _verify_data_guards(connection)
         if role == "financial" and (self.state is not None or database.writer_token is not None):
             try:
+                _require_guard_format(self.state)
                 self.started_at = _assert_token(database, self.state, database.writer_token)
             except WriterFenceError as exc:
                 self.token_error = exc
+            else:
+                connection.create_function("uta_writer_fence_v1", 0, self._sql_permit)
+                self._udf_registered = True
         self.armed = self.state is not None or database.writer_token is not None or role != "financial"
         if self.armed:
             connection.set_authorizer(self._authorize)
         with _REGISTRY_LOCK:
             _REGISTRY[id(connection)] = self
+
+    def _sql_permit(self):
+        try:
+            if self.role != "financial" or self.denied is not None:
+                return 0
+            # BEGIN IMMEDIATE prevents any other connection from changing this
+            # persistent lease snapshot. Expiry/PID/boot are checked on every
+            # trigger invocation, and the record is reloaded before COMMIT.
+            _assert_token(self.database, self.state, self.database.writer_token)
+            return 1
+        except WriterFenceError as exc:
+            self.denied = exc
+            return 0
+        except BaseException as exc:
+            self.denied = WriterFenceError("fence_guard_failed", "persistent writer guard could not establish authority")
+            self.denied.__cause__ = exc
+            return 0
 
     def _deny(self, error=None):
         if self.denied is None:
@@ -335,13 +472,20 @@ class _TransactionGuard:
                 now, boot = _assert_token(self.database, state, self.database.writer_token)
                 if self.started_at is not None and boot == self.started_at[1] and now < self.started_at[0]:
                     raise WriterFenceError("fence_clock_regressed", "lease clock regressed during a financial transaction")
+                new_tables = _verify_data_guards(self.connection, allow_new=True)
+                _install_table_guards(self.connection, new_tables)
+                _verify_data_guards(self.connection)
                 self.connection.execute("UPDATE writer_fence_lease SET observed_ns=? WHERE singleton=1", (now,))
+        elif self.state is not None and self.state["guard_format"] == 1:
+            _verify_data_guards(self.connection)
 
     def close(self):
         with _REGISTRY_LOCK:
             _REGISTRY.pop(id(self.connection), None)
         if self.armed:
             self.connection.set_authorizer(None)
+        if self._udf_registered:
+            self.connection.create_function("uta_writer_fence_v1", 0, None)
 
 
 def _assert_joinable(database, connection):

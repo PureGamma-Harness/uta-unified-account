@@ -160,6 +160,8 @@ class Database:
                 with guard.privileged() if guard is not None else nullcontext():
                     connection.rollback()
             if guard is not None and guard.denied is not None and not isinstance(exc, WriterFenceError):
+                if guard.denied.__cause__ is not None:
+                    raise guard.denied
                 raise guard.denied from exc
             raise
         finally:
