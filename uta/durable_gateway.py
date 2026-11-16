@@ -7,7 +7,12 @@ Only a separately fenced writer can commit a financial terminal receipt.
 from __future__ import annotations
 
 import json
+import hashlib
+import io
+import os
+import secrets
 import sqlite3
+import ssl
 from typing import Iterable
 
 from .durable_commands import QueueStore
@@ -238,17 +243,112 @@ class _DurableHandler(_Handler):
         raise _RequestError(404, "not_found", "durable route not found")
 
 
+def producer_binding(producer):
+    """Local deployment binding, independent of policy and lease generations.
+
+    Fresh auth initialization additionally generates a persistent random audience.
+    File identities make copied/moved local authorities fail closed at startup;
+    this is not a cross-host anti-rollback or replicated identity protocol.
+    """
+    api = DurableCommandAPI(producer)
+    backend = api._producer
+    databases = ([backend.queue.database] if isinstance(backend, _InboxProducer) else
+                 [backend.router._control.control] + [backend.router._database(i)
+                    for i in range(backend.router.layout["shard_count"])])
+    records = []
+    for database in databases:
+        info = os.stat(database.path, follow_symlinks=False)
+        lease = WriterFence(database).status()
+        records.append({"path": database.path, "device": info.st_dev, "inode": info.st_ino,
+                        "authority_id": lease.get("authority_id")})
+    return hashlib.sha256(json.dumps(records, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+class _SignedDurableHandler(_DurableHandler):
+    def _principal(self):
+        from .request_signing import RequestAuthenticator, SigningError
+        authenticator = getattr(self.server, "request_authenticator", None)
+        if not isinstance(authenticator, RequestAuthenticator):
+            raise _RequestError(503, "signing_store_unavailable", "HMAC authentication is unavailable; no fallback")
+        if self.headers.get("Authorization", "").lower() != "uta-hmac-sha256":
+            raise _RequestError(401, "signature_required", "HMAC request authentication is required")
+        # BaseHTTPRequestHandler can normalize a leading // before routing.
+        # Sign the exact original target and reject such ambiguous normalization.
+        try:
+            line = self.raw_requestline.rstrip(b"\r\n").split(b" ")
+            if len(line) != 3 or line[0].decode("ascii") != self.command:
+                raise ValueError("invalid request line")
+            target = line[1].decode("ascii")
+            if target != self.path:
+                raise ValueError("normalized request target")
+        except (ValueError, UnicodeError):
+            raise _RequestError(400, "invalid_path", "HMAC requires an unmodified ASCII request target") from None
+        length = self._framing(self.command in ("POST", "PUT"))
+        body = self.rfile.read(length)
+        if len(body) != length:
+            raise _RequestError(400, "truncated_body", "incomplete signed request body")
+        try:
+            principal = authenticator.authenticate(self.headers, method=self.command, request_target=target, body=body)
+        except SigningError as exc:
+            raise _RequestError(exc.status, exc.code, str(exc)) from None
+        self._signed_body = body
+        return principal
+
+    def _payload(self, length):
+        # Authentication already consumed the exact bytes. Reuse the existing
+        # content-type and strict JSON parser only after nonce COMMIT succeeds.
+        original = self.rfile
+        self.rfile = io.BytesIO(self._signed_body)
+        try:
+            return super()._payload(length)
+        finally:
+            self.rfile = original
+
+
 def make_server(producer, host: str = "127.0.0.1", port: int = 8081, *,
-                credentials: Iterable[Credential], max_workers: int = 16,
-                request_timeout: float = 5.0):
+                credentials: Iterable[Credential] = (), max_workers: int = 16,
+                request_timeout: float = 5.0, auth_profile="bearer_dev", authenticator=None,
+                require_tls: bool = True, tls_context: ssl.SSLContext | None = None):
     """Construct an authenticated, bounded loopback server for v2 only.
 
     This reuses the established HTTP server, credential rotation, constant-time
     authentication, size/framing limits, socket deadlines and graceful draining.
     No server thread starts until the caller invokes ``serve_forever``.
     """
+    if auth_profile not in ("bearer_dev", "hmac") or type(require_tls) is not bool:
+        raise ValueError("auth_profile must be bearer_dev or hmac, with a boolean TLS requirement")
+    credentials = tuple(credentials)
+    if tls_context is not None and (not isinstance(tls_context, ssl.SSLContext) or tls_context.minimum_version < ssl.TLSVersion.TLSv1_2):
+        raise ValueError("TLS context must require TLS 1.2 or newer")
+    if auth_profile == "hmac":
+        from .request_signing import RequestAuthenticator
+        if credentials or not isinstance(authenticator, RequestAuthenticator):
+            raise ValueError("HMAC profile requires its authenticator and no Bearer credentials")
+        if require_tls and tls_context is None:
+            raise ValueError("HMAC production profile requires TLS; explicit require_tls=False is development only")
+        if authenticator.store.producer_binding != producer_binding(producer):
+            raise ValueError("authentication authority belongs to another producer deployment")
+        # Only satisfy the legacy server's credential-set shape during creation.
+        # This random, unused reader credential is removed before return; no
+        # request thread starts, and signed requests never call Bearer auth.
+        credentials = (Credential(secrets.token_urlsafe(32), "reader", "signed-only"),)
+    elif authenticator is not None:
+        raise ValueError("an authenticator cannot silently use the Bearer development profile")
     api = DurableCommandAPI(producer)
     server = _authenticated_server(api, host, port, credentials=credentials,
                                    max_workers=max_workers, request_timeout=request_timeout)
-    server.RequestHandlerClass = _DurableHandler
-    return server
+    try:
+        server.auth_profile = auth_profile
+        if auth_profile == "hmac":
+            with server._credential_lock:
+                server._credentials = ()
+            server.request_authenticator = authenticator
+            server.RequestHandlerClass = _SignedDurableHandler
+        else:
+            server.RequestHandlerClass = _DurableHandler
+        if tls_context is not None:
+            server.socket = tls_context.wrap_socket(server.socket, server_side=True)
+        return server
+    except BaseException:
+        server.server_close()
+        raise

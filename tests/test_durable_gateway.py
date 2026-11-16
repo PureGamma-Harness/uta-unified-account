@@ -381,6 +381,11 @@ class DurableRouterGatewayTests(HTTPMixin, unittest.TestCase):
             # No client-ID control contract exists for router fanout yet.
             with patch.object(reopened, "set_kill_switch", side_effect=AssertionError("sync control fallback forbidden")):
                 self.expect(501, "POST", "/v2/control/halt", {"command_id": "h", "enabled": True}, token=RISK)
+            # Stop HTTP and writer children while the directory still exists;
+            # addCleanup runs only after this with-block would remove its DBs.
+            self.stop_http()
+            reopened.close()
+            router.close()
 
 
 if __name__ == "__main__":
