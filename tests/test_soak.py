@@ -184,7 +184,7 @@ class SoakTests(unittest.TestCase):
                 return original(sequence)
             with patch.object(job, "roundtrip", side_effect=slow):
                 report = job.run()
-            self.assertEqual(sum(report["counts"].values()), 3)
+            self.assertEqual(sum(report["counts"].values()), 3, report)
             self.assertGreater(report["counts"].get("overload", 0), 0)
             self.assertFalse(report["stability_target_passed"])
 
@@ -206,7 +206,7 @@ class SoakTests(unittest.TestCase):
             with patch.object(job, "roundtrip", side_effect=unknown):
                 report = job.run()
             self.assertEqual(report["status"], "failed")
-            self.assertEqual(report["counts"], {"pending": 1, "queued": 2})
+            self.assertEqual(report["counts"], {"pending": 1, "queued": 2}, report)
             self.assertEqual(report["financial_counts"]["uta_orders"], 1)
             self.assertEqual(report["financial_counts"]["uta_matches"], 0)
             recovered = soak.Soak(directory, resume=True, strict_source=False)
