@@ -21,7 +21,7 @@ import time
 from uuid import uuid4
 
 from .gateway import Credential, _decode_json
-from .storage import Database, StorageError
+from .storage import Database, StorageError, _FILE_CHECK_LOCK
 
 
 _ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}\Z", re.ASCII)
@@ -176,17 +176,14 @@ def sign_headers(profile: SigningProfile, key_id: str, *, timestamp_ms, nonce, m
 
 class _ExistingAuthDatabase(Database):
     def _private_file(self):
-        try:
-            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
-        except OSError as exc:
-            raise StorageError("existing authentication database unavailable; automatic recreation is forbidden") from exc
-        try:
-            info = os.fstat(descriptor)
+        with _FILE_CHECK_LOCK:
+            try:
+                info = os.stat(self.path, follow_symlinks=False)
+            except OSError as exc:
+                raise StorageError("existing authentication database unavailable; automatic recreation is forbidden") from exc
             if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or stat.S_IMODE(info.st_mode) & 0o077:
                 raise StorageError("authentication database must remain private and service-user-owned")
             return info.st_dev, info.st_ino
-        finally:
-            os.close(descriptor)
 
 
 class NonceStore:
@@ -201,8 +198,9 @@ class NonceStore:
         _integer(future_skew_ms, "future_skew_ms", 0, 30000)
         _integer(max_nonces, "max_nonces", 1, 1000000)
         db = _ExistingAuthDatabase(path)
-        descriptor = os.open(db.path, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
-        os.close(descriptor)
+        with _FILE_CHECK_LOCK:
+            descriptor = os.open(db.path, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
+            os.close(descriptor)
         audience = "uta:" + uuid4().hex
         with db.transaction() as connection:
             connection.execute("CREATE TABLE auth_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,canonical_path TEXT NOT NULL,tenant TEXT NOT NULL,audience TEXT NOT NULL,producer_binding TEXT NOT NULL,past_window INTEGER NOT NULL,future_skew INTEGER NOT NULL,max_nonces INTEGER NOT NULL,highwater INTEGER NOT NULL,revision INTEGER NOT NULL,fingerprint TEXT NOT NULL)")

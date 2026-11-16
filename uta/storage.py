@@ -17,11 +17,17 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
+from threading import RLock
 from types import MappingProxyType
 from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
 
 from .ledger import JournalEvent, Ledger, LedgerError, Posting
+
+
+# Serialize first-file creation with other in-process path checks. Once a file
+# is visible, no peer may open SQLite before its creation descriptor is closed.
+_FILE_CHECK_LOCK = RLock()
 
 
 class StorageError(RuntimeError):
@@ -80,21 +86,29 @@ class Database:
         State must be kept in an operator-controlled directory. File checks
         protect accidental exposure/replacement; the service OS user is trusted.
         """
-        flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
-        try:
-            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
-        except FileExistsError:
-            descriptor = os.open(self.path, flags)
-        except OSError as exc:
-            raise StorageError("database path cannot be opened safely") from exc
-        try:
-            info = os.fstat(descriptor)
+        with _FILE_CHECK_LOCK:
+            try:
+                info = os.stat(self.path, follow_symlinks=False)
+            except FileNotFoundError:
+                flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
+                try:
+                    descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
+                except FileExistsError:
+                    info = os.stat(self.path, follow_symlinks=False)
+                except OSError as exc:
+                    raise StorageError("database path cannot be opened safely") from exc
+                else:
+                    try:
+                        info = os.fstat(descriptor)
+                    finally:
+                        os.close(descriptor)
+            # Never open/close an existing SQLite file outside SQLite. POSIX
+            # close() drops every record lock held by this process on that file,
+            # including locks owned by another live Database connection.
             if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
                     or stat.S_IMODE(info.st_mode) & 0o077):
                 raise StorageError("database must be a private regular file owned by the service user")
             return info.st_dev, info.st_ino
-        finally:
-            os.close(descriptor)
 
     def _connect(self) -> sqlite3.Connection:
         identity = self._private_file()

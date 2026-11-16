@@ -48,6 +48,8 @@ worker 不仅处理挂单。它在同一个受控循环中调用真实 `Exchange
 
 ## 小规模过程验证
 
+同进程的新读连接必须保留已有 SQLite 连接的文件锁。三个数据库入口的文件检查、跨进程锁探测及修复边界见 [SQLite 文件检查与进程锁](storage-locks.md)；不能用一次新版本 SQLite 的通过结果代替该项回归。
+
 `tests/test_durable_process.py` 使用真实独立 PID 验证两个分片、两对手账户下单和真实双腿成交，强杀 owner 后由新 PID/代次恢复，再真实成交平仓，核对仓位、FILL_APPLIED、实际匹配记录及逐资产账本平衡。它还验证父进程重启时不初始化金融服务、PENDING/terminal 保留、部分 publication 恢复、旧无 token writer 拒绝、错误分片 inbox 触发全局 stop，以及单 worker 不打开其他 managed 分片。
 
 这些用例是故障/恢复与金融事实验证，不是吞吐压测或生产迁移验收。
