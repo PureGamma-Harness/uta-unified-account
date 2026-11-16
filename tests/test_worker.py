@@ -99,5 +99,35 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(self.consumer().run_once(), 3)
 
 
+    def test_takeover_during_callback_redelivers_but_old_owner_cannot_checkpoint(self):
+        deliveries, sink_effects = [], set()
+
+        def idempotent_sink(event):
+            deliveries.append(event["sequence"])
+            # Synthetic sink for this one stream only. Real sinks must make
+            # deduplication and the business effect atomic and persistent.
+            sink_effects.add(event["sequence"])
+
+        replacement = self.consumer(idempotent_sink, batch_size=1)
+
+        def slow_handler(event):
+            idempotent_sink(event)
+            self.now += timedelta(seconds=31)
+            self.assertEqual(replacement.run_once(), 1)
+            self.assertEqual(replacement.cursor(), 1)
+
+        original = self.consumer(slow_handler, batch_size=1)
+        with self.assertRaises(LeaseLost):
+            original.run_once()
+        self.assertEqual(deliveries, [1, 1])
+        self.assertEqual(sink_effects, {1})
+        self.assertEqual(original.cursor(), 1)
+        restarted = self.consumer(idempotent_sink)
+        self.assertEqual(restarted.run_once(), 2)
+        self.assertEqual(restarted.cursor(), 3)
+        self.assertEqual(deliveries, [1, 1, 2, 3])
+        self.assertEqual(sink_effects, {1, 2, 3})
+
+
 if __name__ == "__main__":
     unittest.main()

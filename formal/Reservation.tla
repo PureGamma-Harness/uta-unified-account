@@ -64,4 +64,10 @@ NoOvercommit == Total(Orders) <= Capacity
 HeldMatchesReservation == \A o \in Orders :
     IF phase[o] = "held" THEN reserved[o] = amount[o] /\ amount[o] > 0
     ELSE reserved[o] = 0
+
+\* Check the pre-state version on every pending -> held transition.
+\* State invariants alone cannot establish this protocol condition.
+VersionChecked == \A o \in Orders :
+    (phase[o] = "pending" /\ phase'[o] = "held") => seen[o] = version
+CommitUsesCurrentVersion == [][VersionChecked]_vars
 =======================================================================

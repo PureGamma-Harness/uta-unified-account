@@ -1,0 +1,225 @@
+{
+  "checked_commit": "813360c0979e8b3f58f421aa68f05376c1697fec",
+  "scope": "isolated synthetic local verification; not production approval",
+  "environment": {
+    "python": "3.12.14",
+    "sqlite": "3.53.1",
+    "os": "Linux",
+    "architecture": "x86_64"
+  },
+  "unittest": {
+    "command": "python -m unittest discover -s tests",
+    "tests": 517,
+    "duration_seconds": 31.734,
+    "result": "OK"
+  },
+  "admission_oracle": {
+    "command": "python tools/check_admission_oracle.py",
+    "all_passed": true,
+    "cases": 24,
+    "positive_commands": 3840,
+    "parameters": [
+      {
+        "seed": 0,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 0,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 0,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 0,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 1,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 1,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 1,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 1,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 2,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 2,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 2,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 2,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 42,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 42,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 42,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 42,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 20261115,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 20261115,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 20261115,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 20261115,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 872511,
+        "batch_size": 1,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 872511,
+        "batch_size": 2,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 872511,
+        "batch_size": 8,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      },
+      {
+        "seed": 872511,
+        "batch_size": 32,
+        "passed": true,
+        "tests_run": 1,
+        "skipped": 0
+      }
+    ],
+    "negative_control": {
+      "mutation": "reservation increased 10 percent",
+      "expected_failure_detected": true
+    }
+  },
+  "process_fault_samples": [
+    {
+      "fixture": "single-node-process-exit",
+      "outcome": "acknowledged",
+      "recovery_ms": 2.827,
+      "verified_journal_events": 2,
+      "lost_confirmed_commands": 0,
+      "duplicate_business_effects": 0,
+      "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"
+    },
+    {
+      "fixture": "single-node-process-exit",
+      "outcome": "unknown",
+      "recovery_ms": 3.393,
+      "verified_journal_events": 3,
+      "lost_confirmed_commands": 0,
+      "duplicate_business_effects": 0,
+      "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"
+    }
+  ],
+  "not_verified": [
+    "production capacity and sustained load",
+    "hardware power loss",
+    "multi-region replication and fencing",
+    "external venue adapter",
+    "financial calibration and human approval",
+    "pending migration quarantine implementation"
+  ],
+  "evidence_note": "Structured record of executed outputs. Durations are individual observations, not latency or RTO commitments. Reproduce using the checked commit; future documentation commits do not retroactively change the tested SHA."
+}
