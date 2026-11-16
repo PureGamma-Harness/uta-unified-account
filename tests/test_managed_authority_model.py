@@ -23,6 +23,7 @@ EXPECTED_VIOLATIONS = {
     'release_shared_before_commit': 'prepared_risk_command_released_SHARED_before_commit',
     'terminal_success_before_commit': 'accepted_outcome_was_visible_before_financial_terminal_commit',
     'financial_without_terminal': 'financial_reservation_has_no_same_commit_success_terminal',
+    'terminal_without_financial': 'successful_terminal_has_no_corresponding_financial_effect',
     'repeat_original_command': 'original_command_ID_created_financial_effect_twice',
     'repeat_confirmed_fill_after_restart': 'original_confirmed_fill_ID_settled_twice',
     'count_unmatched_liquidation_as_filled': 'unconfirmed_liquidation_changed_position_or_reversed_direction',
@@ -69,8 +70,8 @@ class ManagedAuthorityModelTests(unittest.TestCase):
             with self.subTest(coverage=name):
                 self.assertGreater(commands[name], 0)
 
-    def test_all_sixteen_negative_variants_have_specific_real_counterexamples(self):
-        self.assertEqual(len(self.negative), 16)
+    def test_all_seventeen_negative_variants_have_specific_real_counterexamples(self):
+        self.assertEqual(len(self.negative), 17)
         self.assertEqual({variant for _, variant in self.negative}, set(EXPECTED_VIOLATIONS))
         for (_, variant), result in self.negative.items():
             with self.subTest(mutation=variant):

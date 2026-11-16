@@ -261,7 +261,7 @@ class Commands:
 
 
 COMMAND_MUTANTS = (
-    'terminal_success_before_commit', 'financial_without_terminal', 'repeat_original_command',
+    'terminal_success_before_commit', 'financial_without_terminal', 'terminal_without_financial', 'repeat_original_command',
     'repeat_confirmed_fill_after_restart', 'count_unmatched_liquidation_as_filled',
     'reverse_liquidation_direction', 'overfill_order_quantity', 'skip_reduce_only_reservation',
 )
@@ -306,6 +306,8 @@ def command_next(state, mutant=None):
                     terminal=put(state.terminal, index, SUCCEEDED), staged_kind='', staged_id=-1)
                 if mutant == 'financial_without_terminal':
                     committed = replace(committed, terminal=state.terminal)
+                if mutant == 'terminal_without_financial':
+                    committed = replace(committed, admitted=state.admitted, admission_effects=state.admission_effects)
             else:
                 committed = replace(state, terminal=put(state.terminal, index, REJECTED), staged_kind='', staged_id=-1)
             yield 'COMMIT_reservation_and_immutable_command_terminal_together', committed
@@ -343,6 +345,8 @@ def command_violation(state):
     if sum(a - f for a, f in zip(state.admitted, state.filled)) > state.position:
         return 'aggregate_reduce_only_reservation_exceeded_remaining_position'
     for index, terminal in enumerate(state.terminal):
+        if terminal == SUCCEEDED and state.admission_effects[index] != 1:
+            return 'successful_terminal_has_no_corresponding_financial_effect'
         if state.admission_effects[index] and terminal != SUCCEEDED:
             return 'financial_reservation_has_no_same_commit_success_terminal'
         if terminal == REJECTED and (state.admitted[index] or state.admission_effects[index]):
