@@ -579,7 +579,7 @@ class ExchangeService:
                 self._event(connection, "ACCOUNT_CREATED", account_id, {"account_id": account_id})
             return self._account(connection, account_id)
 
-    def publish_market(self, snapshot: MarketSnapshot) -> dict:
+    def _validate_market_command(self, snapshot: MarketSnapshot) -> str:
         if not isinstance(snapshot, MarketSnapshot):
             raise ServiceError("invalid_input", "market must be a MarketSnapshot")
         try:
@@ -593,40 +593,49 @@ class ExchangeService:
                for spec in snapshot.instruments.values()):
             raise ServiceError("invalid_market", "trading instruments require strictly positive maintenance and initial margin rates")
         self._validate_policy_market(snapshot)
-        payload = snapshot.to_json()
+        return snapshot.to_json()
+
+    def publish_market(self, snapshot: MarketSnapshot) -> dict:
+        payload = self._validate_market_command(snapshot)
         with self._transaction() as connection:
-            # A queued publisher may have waited for another writer; freshness
-            # is a commit-time admission condition, not just a parse-time one.
-            try:
-                snapshot.validate(now=self._now(), max_age=self.max_price_age)
-            except RiskInputError as exc:
-                raise ServiceError("invalid_market", str(exc)) from exc
-            previous_row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
-            if previous_row is not None:
-                previous = MarketSnapshot.from_json(previous_row["payload"])
-                if snapshot.version < previous.version or snapshot.observed_at < previous.observed_at:
-                    raise ServiceError("market_regression", "market version or timestamp regressed", 409)
-                if snapshot.version == previous.version:
-                    if payload != previous_row["payload"]:
-                        raise ServiceError("market_conflict", "market version reused with different content", 409)
-                    return {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
-            for row in connection.execute("SELECT DISTINCT symbol FROM uta_positions UNION SELECT DISTINCT symbol FROM uta_orders WHERE status IN ('OPEN','PARTIALLY_FILLED')"):
-                if row["symbol"] not in snapshot.instruments:
-                    raise ServiceError("market_incomplete", "cannot remove a live instrument specification", 409)
-            # Positive funded assets need pricing even when no positions exist.
-            for account in connection.execute("SELECT account_id FROM uta_accounts"):
-                for asset in self.scales:
-                    if (asset not in snapshot.assets and
-                            self.ledger.balance(self._customer(account["account_id"]), asset, connection=connection)):
-                        raise ServiceError("market_incomplete", "cannot remove funded collateral specification", 409)
-            for debt in connection.execute("SELECT asset,principal,interest FROM uta_liabilities"):
-                if (debt["asset"] not in snapshot.assets and
-                        Fraction(Decimal(debt["principal"])) + Fraction(Decimal(debt["interest"]))):
-                    raise ServiceError("market_incomplete", "cannot remove gross liability asset specification", 409)
-            connection.execute("INSERT INTO uta_market VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", (payload,))
-            result = {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
-            self._event(connection, "MARKET_PUBLISHED", None, result)
-            return result
+            return self._publish_market(connection, snapshot, payload=payload)
+
+    def _publish_market(self, connection, snapshot: MarketSnapshot, *, payload: str | None = None) -> dict:
+        """Publish while joining the caller's financial/receipt transaction."""
+        if payload is None:
+            payload = self._validate_market_command(snapshot)
+        # A queued publisher may have waited for another writer; freshness
+        # is a commit-time admission condition, not just a parse-time one.
+        try:
+            snapshot.validate(now=self._now(), max_age=self.max_price_age)
+        except RiskInputError as exc:
+            raise ServiceError("invalid_market", str(exc)) from exc
+        previous_row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+        if previous_row is not None:
+            previous = MarketSnapshot.from_json(previous_row["payload"])
+            if snapshot.version < previous.version or snapshot.observed_at < previous.observed_at:
+                raise ServiceError("market_regression", "market version or timestamp regressed", 409)
+            if snapshot.version == previous.version:
+                if payload != previous_row["payload"]:
+                    raise ServiceError("market_conflict", "market version reused with different content", 409)
+                return {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
+        for row in connection.execute("SELECT DISTINCT symbol FROM uta_positions UNION SELECT DISTINCT symbol FROM uta_orders WHERE status IN ('OPEN','PARTIALLY_FILLED')"):
+            if row["symbol"] not in snapshot.instruments:
+                raise ServiceError("market_incomplete", "cannot remove a live instrument specification", 409)
+        # Positive funded assets need pricing even when no positions exist.
+        for account in connection.execute("SELECT account_id FROM uta_accounts"):
+            for asset in self.scales:
+                if (asset not in snapshot.assets and
+                        self.ledger.balance(self._customer(account["account_id"]), asset, connection=connection)):
+                    raise ServiceError("market_incomplete", "cannot remove funded collateral specification", 409)
+        for debt in connection.execute("SELECT asset,principal,interest FROM uta_liabilities"):
+            if (debt["asset"] not in snapshot.assets and
+                    Fraction(Decimal(debt["principal"])) + Fraction(Decimal(debt["interest"]))):
+                raise ServiceError("market_incomplete", "cannot remove gross liability asset specification", 409)
+        connection.execute("INSERT INTO uta_market VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", (payload,))
+        result = {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
+        self._event(connection, "MARKET_PUBLISHED", None, result)
+        return result
 
     def deposit(self, account_id: str, event_id: str, asset: str, amount: Decimal) -> dict:
         for value, field in ((account_id, "account_id"), (event_id, "event_id"), (asset, "asset")):
@@ -1125,14 +1134,20 @@ class ExchangeService:
     def set_kill_switch(self, enabled: bool) -> dict:
         if type(enabled) is not bool:
             raise ServiceError("invalid_input", "enabled must be a boolean")
-        value = "true" if enabled else "false"
         with self._transaction() as connection:
-            previous = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
-            old = previous["value"] if previous is not None else None
-            if old != value:
-                connection.execute("INSERT INTO uta_config VALUES ('halted',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (value,))
-                self._event(connection, "KILL_SWITCH_CHANGED", None, {"enabled": enabled})
-            return {"enabled": enabled}
+            return self._set_kill_switch(connection, enabled)
+
+    def _set_kill_switch(self, connection, enabled: bool) -> dict:
+        """Change the local halt and its event in the existing transaction."""
+        if type(enabled) is not bool:
+            raise ServiceError("invalid_input", "enabled must be a boolean")
+        value = "true" if enabled else "false"
+        previous = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+        old = previous["value"] if previous is not None else None
+        if old != value:
+            connection.execute("INSERT INTO uta_config VALUES ('halted',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (value,))
+            self._event(connection, "KILL_SWITCH_CHANGED", None, {"enabled": enabled})
+        return {"enabled": enabled}
 
     def readiness(self) -> dict:
         try:
