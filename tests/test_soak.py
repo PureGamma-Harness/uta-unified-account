@@ -196,6 +196,25 @@ class SoakTests(unittest.TestCase):
             self.assertTrue((Path(directory) / "authority.sqlite3").exists())
             self.assertFalse(report["stability_target_passed"])
 
+    def test_unknown_round_preserves_later_queue_without_executing_its_book(self):
+        with TemporaryDirectory() as directory:
+            job = self.make(directory, duration=1.6, queue_capacity=4)
+            def unknown(sequence):
+                time.sleep(1.1)  # Later absolute arrivals are already durable.
+                job.exchange.submit_order("soak-alice", f"soak:{sequence}:open-buy", "BTC-PERP", D(".02"), D(100))
+                raise RuntimeError("unknown earlier round must fence later financial execution")
+            with patch.object(job, "roundtrip", side_effect=unknown):
+                report = job.run()
+            self.assertEqual(report["status"], "failed")
+            self.assertEqual(report["counts"], {"pending": 1, "queued": 2})
+            self.assertEqual(report["financial_counts"]["uta_orders"], 1)
+            self.assertEqual(report["financial_counts"]["uta_matches"], 0)
+            recovered = soak.Soak(directory, resume=True, strict_source=False)
+            for sequence in range(3):
+                recovered.roundtrip(sequence)
+            self.assertEqual(recovered._validate(full=True)["uta_matches"], 6)
+            recovered.close()
+
 
 if __name__ == "__main__":
     unittest.main()

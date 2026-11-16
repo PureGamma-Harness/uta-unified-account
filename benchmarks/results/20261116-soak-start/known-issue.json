@@ -1,0 +1,9 @@
+{
+  "recorded_utc": "2026-11-16T21:35:58.644383+00:00",
+  "affected_source": "69ce43bcda7d44ba9e2f82ec647ef08abfb0c6b0",
+  "issue": "After an unknown earlier round, the first driver stops arrival generation but could still execute later queued rounds against its unfinished book. This weakens ordered recovery.",
+  "actual_observation": "No such error was observed in the live preliminary job; this was found by source review and a new bounded-queue fault regression.",
+  "disposition": "INTERRUPTED_KNOWN_ISSUE; retain original financial authority and timestamps. Start a new fixed-source candidate and a new actual 24-hour deadline; do not resume across source or count the old runtime toward the new job.",
+  "stability_24h_passed": false,
+  "production_approved": false
+}

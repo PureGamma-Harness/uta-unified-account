@@ -487,6 +487,11 @@ class Soak:
                 if sequence is None:
                     return
                 try:
+                    # Preserve account/book causality after an unknown earlier
+                    # round. Later obligations remain durably queued for an
+                    # ordered resume; executing them could consume its book.
+                    if errors:
+                        continue
                     with self.database.transaction() as connection:
                         connection.execute("UPDATE soak_arrivals SET status='active',started_ns=COALESCE(started_ns,?) WHERE sequence=?", (time.time_ns(), sequence))
                     self.roundtrip(sequence)
