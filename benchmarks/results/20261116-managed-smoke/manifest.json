@@ -1,0 +1,52 @@
+{
+  "synthetic": true,
+  "real_funds": false,
+  "cases": {
+    "smoke10": {
+      "candidate_commit": "81c7e5b7e9965723854b7bcc2b8966b9d3d0b8ae",
+      "duration": 10.0,
+      "status": "completed",
+      "actual_elapsed": 10.165401945,
+      "faults": {
+        "worker": 3,
+        "parent": 1
+      },
+      "sha256": {
+        "bootstrap-plan.json": "4d1626de13b7985584e000f5619566816c6a292b05a2e705285708de77e4d9b3",
+        "cold-audit.json": "4279c64c4e43fba17efc7dfcaecc0759440ee988f89e26475c3b0658552ca0a1",
+        "financial-snapshot.json.gz": "5d9c26a60baeac5c6f474530657a66b52b9354d361fc5fb78c95562667e8da3f",
+        "job.json": "b651d2195c46f67e8b0a91bf9776bfb1d6a15e293e33c0a13032378352d430bd",
+        "log-segments.json": "c84545400b3751dc63ddc2b6bcee0b168ccaca2f08440acd16114d58b6ddb724",
+        "logs/events-000000001-000000042.jsonl.gz": "571fd307b0ba16283ea3417a3f4daf8002ae24adcee12beb2d0151cb8ea98343",
+        "progress.json": "6b72626acf71fb37b8e4a9ac92c075cbb1a7684a9e4311c4f9d6788975548369"
+      }
+    },
+    "smoke60": {
+      "candidate_commit": "81c7e5b7e9965723854b7bcc2b8966b9d3d0b8ae",
+      "duration": 60.0,
+      "status": "completed",
+      "actual_elapsed": 60.150831638,
+      "faults": {
+        "worker": 3,
+        "parent": 2
+      },
+      "sha256": {
+        "bootstrap-plan.json": "9ecbf46a772ef5c4b45f993a24556b1bb04ac0236c95a2601a69d04106215b2d",
+        "cold-audit.json": "c9f4a59ae5533756238df9b33a0fb5aeee6ccb6b3ad64d63c46a66db0cceddd7",
+        "financial-snapshot.json.gz": "309662f208e2e40a54dbb14c75d1ce3f09b7ee278e872dfbeaa7c6906384b6e2",
+        "job.json": "f0e39310949968bc2f92418583179ca0c47b8c66dbc02d8ad4f1d9632fd3af11",
+        "log-segments.json": "ee54fb9bb740073f5f4b85d70d8f818af50be6f091d55ac0fa2bd7a4a221549e",
+        "logs/events-000000001-000000176.jsonl.gz": "d5bb849109f02231f0b5a33c770d4d17cf4929cf2b86a9fa02e21c73c5bffbe9",
+        "progress.json": "17679f2a64131ddfa4a35ac93ade5af496b4212cbd92394e873ab73d1e78c70a"
+      }
+    }
+  },
+  "excluded": [
+    "private/",
+    "auth database",
+    "TLS private key",
+    "signing profile"
+  ],
+  "capacity_10000_per_s_passed": false,
+  "production_approved": false
+}

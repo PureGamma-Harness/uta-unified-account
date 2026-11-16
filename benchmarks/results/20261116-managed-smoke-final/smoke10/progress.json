@@ -1,0 +1,65 @@
+{
+  "status": "completed",
+  "mode": "managed-process-required-audit-native-tls-hmac",
+  "synthetic": true,
+  "planned_rounds": 3,
+  "rounds": {
+    "DONE": 3
+  },
+  "unresolved_steps": 0,
+  "unresolved_faults": 0,
+  "elapsed_seconds": 10.075580279,
+  "fault_signals": {
+    "worker": 3,
+    "parent": 1
+  },
+  "round_latency_ms_from_planned_arrival_including_cli_feed_and_recovery": {
+    "p50": 2106.445263,
+    "p95": 2133.993958,
+    "p99": 2133.993958,
+    "p99_9": 2133.993958
+  },
+  "http_attempts": 121,
+  "resources": {
+    "directory_bytes": 899565,
+    "free_bytes": 30481235968,
+    "budget_exceeded": false
+  },
+  "controller_sessions": 1,
+  "verified_tls": true,
+  "logs_verified": true,
+  "final_audit": {
+    "golden_passed": true,
+    "completed_rounds": 3,
+    "remaining_principal_satoshi": 0,
+    "financial_counts": {
+      "uta_orders": 12,
+      "uta_fills": 12,
+      "uta_matches": 6,
+      "uta_risk_decisions": 24,
+      "partial_cancelled_orders": 3,
+      "terminal_account_commands": 18,
+      "control_commands": 6,
+      "ledger_events": 21
+    },
+    "oracle": "independent integer postings/cash/debt and relational audit links"
+  },
+  "error": null,
+  "continuous_6h_stability_passed": false,
+  "continuous_24h_stability_passed": false,
+  "capacity_10000_per_s_passed": false,
+  "production_approved": false,
+  "audit_scope": {
+    "required": [
+      "ORDER_ACCEPTED",
+      "FILL_CONFIRMED"
+    ],
+    "not_risk_decision_captured": [
+      "cancels",
+      "repayments",
+      "new credit",
+      "business rejects"
+    ]
+  },
+  "qualification": "new candidate single-host stability only; no endorsement of the earlier 887 job or HA/capacity"
+}
