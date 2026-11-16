@@ -61,3 +61,9 @@ job.json 保存不可变原始时间、负载、源摘要、环境及财务 DB �
 只有达到实际 24 小时并通过所有检查才能改变 stability_target_passed；运行中、暂停、未知、中断、磁盘不足都保持 false。production_approved 与 capacity_10000_per_s_passed 永远 false。结束报告应包含真实运行区间、active/downtime、全部计划/完成/过载/错误/剩余数量、撮合/两侧账务与仓位核对、资源峰值和 manifest。此作业不批准真实资金。
 
 回滚仅停止该合成作业并保留数据库、原始事件和未完成义务；修复版另建 candidate 或在同一不可变源码下按原 ID 恢复。不得删除旧 DB 后创建同名目录继续宣称原运行时间。
+
+## 首个预检候选与故障后队列屏障
+
+首个候选 69ce43b 于 2026-11-16 21:28:34.484473 UTC 实际启动，后续自审发现未知结果后的队列因果屏障缺口：生成器虽停止，worker 仍可能执行后续 round，消费前一轮尚未完成的盘口。真实 live 作业当时未遇到此错误，但不能据此忽略恢复契约。新增回归在第一轮只提交买单后丢结果、同时已有两轮排队，验证后两轮保持 durable queued 且未创建任何订单，随后按原 ID 逐轮恢复得到恰好六笔真实 match。
+
+修复版首个错误后只保留后续义务，不继续金融执行。修复候选使用新的独立 authority、实际 start 与 24 小时 deadline；旧候选 graceful stop 并留下 INTERRUPTED_KNOWN_ISSUE 注记、原 DB、原 start、原 deadline 与历史日志。旧时长不并入新作业，旧源码不被暗中修改，不跨 source resume。首个预检及 known-issue 原始记录见 benchmarks/results/20261116-soak-start。
