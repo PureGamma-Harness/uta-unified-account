@@ -30,7 +30,8 @@ multiplier 1, quantity step 0.01, price tick 0.01, minimum notional 1 USD.
 Execution prices are always 100 USD, and every fresh synthetic mark/index input
 is 100. Prices remain synthetic, not a calibrated real-market feed.
 
-Let `N = floor(duration_seconds * 0.25)` be the immutable planned round budget,
+Let `N = ceil(duration_seconds * 0.25)` be the immutable planned round budget
+(the first scheduled arrival is at zero, so a 10-second smoke has three rounds),
 and let one BTC minor unit be `u = 0.00000001 BTC`. Configure and fund explicit
 BTC pool/account limits. Fund the synthetic pool with `F=1 BTC`, then create a
 real bootstrap loan with principal `P0 = 2*N*u`, zero interest, and a unique
