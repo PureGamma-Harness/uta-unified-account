@@ -82,6 +82,8 @@ class DurableProcessTests(unittest.TestCase):
         queued = self.router.submit_order(account, command, order, "X", D(quantity), D("100"))
         self.assertEqual((queued["ack"], queued["state"], queued["result"]), ("durably_queued", "PENDING", None))
         receipt = self.router.wait(command, account_id=account, timeout=8)
+        if receipt is None:
+            self.fail(repr({"command": command, "diagnostics": self.router.diagnostics()}))
         self.assertEqual(receipt["state"], "SUCCEEDED", receipt)
         return receipt
 

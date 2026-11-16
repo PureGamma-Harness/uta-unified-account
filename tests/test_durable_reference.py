@@ -571,6 +571,8 @@ class IndependentProcessReceiptTests(unittest.TestCase):
         self.assertEqual(F(accepted['result']['reserved_margin']), F('10.04'))
         reopened.submit_order('cash', 'cannot-double-spend', 'second-order', 'BTC-PERP', D(1), D(100))
         rejected = reopened.wait('cannot-double-spend', account_id='cash', timeout=10)
+        if rejected is None:
+            self.fail(repr({'command': 'cannot-double-spend', 'diagnostics': reopened.diagnostics()}))
         self.assertEqual((rejected['state'], rejected['error']['code']), ('REJECTED', 'insufficient_margin'))
         previous = reopened.diagnostics()['workers'][0]
         old_pid, old_generation = reopened.worker_pid(0), previous['generation']

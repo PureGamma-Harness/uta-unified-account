@@ -115,6 +115,8 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
         self.wait_for(lambda: self.snapshot()['state'] == 'LIQUIDATING', 'persisted account risk freeze')
         self.router.submit_order(self.victim, 'frozen-new-risk', 'must-not-exist', 'BTC-PERP', D(1), D(90))
         rejected = self.router.wait('frozen-new-risk', account_id=self.victim, timeout=12)
+        if rejected is None:
+            self.fail(repr({'command': 'frozen-new-risk', 'diagnostics': self.router.diagnostics()}))
         self.assertEqual((rejected['state'], rejected['error']['code']), ('REJECTED', 'account_frozen'))
         self.submit(self.peer, 'depth-one', 'first-depth', '45', '90', reduce_only=True)
         self.wait_for(lambda: len(self.snapshot()['matches']) == 2, 'first actual partial liquidation')

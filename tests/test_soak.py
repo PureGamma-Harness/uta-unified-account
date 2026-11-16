@@ -184,6 +184,7 @@ class SoakTests(unittest.TestCase):
                 return original(sequence)
             with patch.object(job, "roundtrip", side_effect=slow):
                 report = job.run()
+            self.assertEqual(report["status"], "completed", report)
             self.assertEqual(sum(report["counts"].values()), 3)
             self.assertGreater(report["counts"].get("overload", 0), 0)
             self.assertFalse(report["stability_target_passed"])
