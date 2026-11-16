@@ -3,6 +3,10 @@
 本组只修改独立测试与本报告，不修改运行实现，不复用生产保证金公式。
 测试全部使用合成资金和本地临时 SQLite 数据库。测试通过不代表真实资金获准启用。
 
+范围更正：前两批验证的是**当前 storage 版本创建、启用 managed 前已经存在的对象**，
+不能用其 29 项通过结果证明真正旧二进制失效。第三批使用真实 `ad3f5b8` 旧源码，
+在持久数据库 guard 修复前实际检出旧进程仍可写入，详见下文红态证据。
+
 ## 阶段与候选版本
 
 基线为 `ad3f5b8`。第一批依赖：
@@ -66,7 +70,7 @@ IM 为 10%，手续费率为 0.04%；独立预期预占为 `10 + 0.04 = 10.04`�
 
 | 用例函数后缀 | 注入与验收 |
 | --- | --- |
-| `enabling_managed_mode_fences_existing_service_matcher_ledger_and_plain_database` | 在启用前创建旧 `ExchangeService`、`Matcher`、`CreditService` 和账本对象；启用后旧对象和普通 `Database` 的真实资金写入都必须被存储层拒绝，逐表财务状态完全不变；当前合法写入者仍可完成双侧真实撮合与结算。 |
+| `enabling_managed_mode_fences_existing_service_matcher_ledger_and_plain_database` | 用当前 storage 在启用前创建既有 `ExchangeService`、`Matcher`、`CreditService` 和账本对象；启用后这些对象和普通 `Database` 的真实资金写入都必须被存储层拒绝，逐表财务状态完全不变；当前合法写入者仍可完成双侧真实撮合与结算。此项不覆盖旧二进制。 |
 | `managed_ledger_rejects_a_raw_unguarded_sqlite_transaction` | 把未受管的原始 SQLite 事务传入公开账本接口，必须拒绝，不能借用 connection 绕过租约。 |
 | `token_bound_writer_cannot_fall_back_to_legacy_after_restoring_pre_enable_database` | 原路径恢复启用前的整库备份后，已有 token 的写入实例不能因为 managed marker 缺失退回 legacy 写入。 |
 | `two_real_processes_cannot_share_live_lease_and_expired_owner_cannot_resume_writes` | 两个真实 PID 争用租约；第二进程先收到 busy，过期后取得更大 generation；旧进程继续运行时资金写入失败，当前新 generation 可写。 |
@@ -131,6 +135,42 @@ FAILED (failures=1)
 实现组在 `5fced893` 中加入只针对 supervisor 自己子进程、且持久 owner PID 匹配的
 过期租约 watchdog，以及发布锁的超时。上述持锁暂停测试保持原恢复断言，随后在
 Python 3.12 和 3.10 的 29 用例重跑中通过。
+
+## 第三批：真正旧二进制的独立红态
+
+使用完整提交 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`，本地优先执行
+`git archive` 提取当时的 `uta` 包及 LICENSE。浅克隆缺少该对象时，唯一允许的替代是
+带原 LICENSE 的固定归档，SHA256 为
+`af1ffcbdb78d4f2c789f049cb4f3c61e75724a10a1f8f55d0d1ed09af1cda265`；
+还须核对 provenance 的原提交。缺失、摘要错误或内容不符均使测试失败，不跳过，
+也不加载当前实现代替旧实现。
+
+真正旧进程通过 `python -I` 启动，并显式把提取目录放入 `sys.path`。
+子进程返回实际导入文件路径与 SHA256，独立断言还固定核对：
+
+- `uta/storage.py`：`ad0c34e97be43fa3a0ba648a84664f37a9944524dd4ab2802f20bdf0686c8feb`。
+- `uta/service.py`：`980dddc853f23dd12625a112ae1d9f192473e1fd213db985462f209d160d6397`。
+
+测试确认该旧 `Database` 没有 `for_writer`，不 mock storage，也不把当前版本的旧对象
+作为旧二进制。两个独立场景为：
+
+1. 旧进程先建立真实 `ExchangeService`、`Matcher`、ledger 并报告 READY，父进程再启用
+   managed mode，然后释放旧进程分别执行 deposit、order、ledger post 和 match。
+2. 父进程先启用 managed mode，再启动旧二进制，要求其不能重新初始化或完成任何金融写入。
+
+修复前，以 `2c9431c` 的运行候选执行，两种场景的四项操作全部返回 `wrote`，且独立
+只读财务快照都得到 `financial_changed=True`。原始完整日志暂存为
+`/tmp/uta-actual-legacy-before-guard.txt`，SHA256 为
+`846d574f1d0f69c5cad5c69b46fc58bbd2788aa5b4fdaa7d599446fa22b36416`，
+供集成组归档；其结束输出为：
+
+```text
+Ran 2 tests in 0.422s
+FAILED (failures=2)
+```
+
+此时不得宣称旧二进制已被 fencing。存储实现组正在加入持久触发器/UDF 和完整 guard
+清单；独立测试保持“每次写入被数据库拒绝且财务状态完全不变”的原断言，等待候选后复跑。
 
 ## 阶段范围与未完成门槛
 

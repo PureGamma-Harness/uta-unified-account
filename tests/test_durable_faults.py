@@ -6,6 +6,7 @@ from dataclasses import asdict
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 import fcntl
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -14,6 +15,7 @@ import signal
 import sqlite3
 import subprocess
 import sys
+import tarfile
 from tempfile import TemporaryDirectory
 from threading import Event, Thread
 from time import monotonic, sleep
@@ -164,6 +166,165 @@ class StorageFencingFaultTests(DurableFaultFixture):
         shutil.copyfile(backup, self.path)
         before = financial_snapshot(self.path)
         self.fenced(current.deposit, "alice", "after-inconsistent-restore", "USD", D(1))
+        self.assertEqual(financial_snapshot(self.path), before)
+
+
+class ActualLegacyBinaryFaultTests(DurableFaultFixture):
+    """Run the immutable pre-fencing package in an isolated real interpreter."""
+    LEGACY_COMMIT = "ad3f5b894f96ed6857a061b71290047ae1d4d0e7"
+    LEGACY_ARCHIVE_SHA256 = "af1ffcbdb78d4f2c789f049cb4f3c61e75724a10a1f8f55d0d1ed09af1cda265"
+    LEGACY_SOURCES = {
+        "storage": "ad0c34e97be43fa3a0ba648a84664f37a9944524dd4ab2802f20bdf0686c8feb",
+        "service": "980dddc853f23dd12625a112ae1d9f192473e1fd213db985462f209d160d6397",
+    }
+
+    LEGACY_PROGRAM = r'''
+import hashlib, json, sys, time
+from datetime import datetime
+from decimal import Decimal as D
+from pathlib import Path
+sys.path.insert(0, sys.argv[1])
+import uta.storage, uta.service
+from uta.ledger import Posting
+from uta.matching import Matcher
+from uta.service import ExchangeService
+from uta.storage import Database
+root = Path(sys.argv[1]).resolve()
+sources = {}
+for name, module in (("storage", uta.storage), ("service", uta.service)):
+    path = Path(module.__file__).resolve()
+    assert root in path.parents, (name, str(path), str(root))
+    sources[name] = {"path":str(path), "sha256":hashlib.sha256(path.read_bytes()).hexdigest()}
+assert not hasattr(Database, "for_writer"), "current Database accidentally substituted for the actual legacy binary"
+def describe(error):
+    import sqlite3
+    pending, seen, values = [error], set(), []
+    while pending:
+        value = pending.pop()
+        if value is None or id(value) in seen: continue
+        seen.add(id(value))
+        values.append({"type":type(value).__name__, "message":str(value),
+                       "code":getattr(value,"code",None), "sqlite":isinstance(value,sqlite3.Error)})
+        pending.extend((value.__cause__,value.__context__))
+    return values
+try:
+    service = ExchangeService(Database(sys.argv[2]), {"USD":8}, clock=lambda:datetime.fromisoformat(sys.argv[3]))
+    matcher, ledger = Matcher(service), service.ledger
+except Exception as error:
+    if sys.argv[4] == "waiting": raise
+    print(json.dumps({"sources":sources,"stage":"startup_blocked","errors":describe(error)}),flush=True)
+    raise SystemExit(0)
+if sys.argv[4] == "waiting":
+    Path(sys.argv[5]).write_text(json.dumps({"sources":sources,"stage":"ready"}))
+    deadline = time.monotonic()+15
+    while not Path(sys.argv[6]).exists():
+        if time.monotonic()>deadline: raise RuntimeError("legacy binary was not released")
+        time.sleep(.01)
+operations = (
+    ("deposit",lambda:service.deposit("alice","actual-legacy-deposit","USD",D(1))),
+    ("order",lambda:service.submit_order("alice","actual-legacy-order","BTC-PERP",D(1),D(100))),
+    ("ledger",lambda:ledger.post("actual-legacy-post",[
+        Posting("customer:alice","USD",D(1)),Posting("system:custody","USD",D(-1))])),
+    ("match",lambda:matcher.match_once("BTC-PERP")),
+)
+outcomes = []
+for name, operation in operations:
+    try:
+        operation()
+    except Exception as error:
+        outcomes.append({"operation":name,"state":"blocked","errors":describe(error)})
+    else:
+        outcomes.append({"operation":name,"state":"wrote"})
+print(json.dumps({"sources":sources,"stage":"executed","outcomes":outcomes}),flush=True)
+'''
+
+    def setUp(self):
+        super().setUp()
+        self.service.submit_order("alice", "legacy-resting-buy", "BTC-PERP", D(1), D(100))
+        self.service.submit_order("bob", "legacy-resting-sell", "BTC-PERP", D(-1), D(100))
+        self.legacy = self.directory / "actual-legacy"
+        self.legacy.mkdir()
+        archive_path = self.directory / "legacy.tar"
+        import uta.service
+        repository = Path(uta.service.__file__).resolve().parent.parent
+        available = subprocess.run(["git", "cat-file", "-e", self.LEGACY_COMMIT + "^{commit}"],
+                                   cwd=repository, capture_output=True, text=True, timeout=10)
+        if available.returncode == 0:
+            archived = subprocess.run(["git", "archive", "--format=tar", "--output=" + str(archive_path),
+                                       self.LEGACY_COMMIT, "uta", "LICENSE"], cwd=repository,
+                                      capture_output=True, text=True, timeout=10)
+            self.assertEqual(archived.returncode, 0, archived.stderr)
+        else:
+            # Shallow CI checkouts may lack this ancestor. Only the immutable,
+            # independently checksummed git-archive fixture may substitute.
+            fixture = repository / "tests" / "fixtures" / "legacy_ad3f5b8_uta.tar.gz"
+            self.assertTrue(fixture.is_file(), "legacy git object and pinned archive fixture are both unavailable")
+            self.assertEqual(hashlib.sha256(fixture.read_bytes()).hexdigest(), self.LEGACY_ARCHIVE_SHA256)
+            metadata = json.loads(fixture.with_name("legacy_ad3f5b8_provenance.json").read_text())
+            self.assertEqual(metadata["commit"], self.LEGACY_COMMIT)
+            self.assertEqual(metadata["archive_sha256"], self.LEGACY_ARCHIVE_SHA256)
+            archive_path = fixture
+        with tarfile.open(archive_path) as archive:
+            for member in archive.getmembers():
+                name = Path(member.name)
+                self.assertFalse(name.is_absolute() or ".." in name.parts)
+                self.assertTrue(name.parts[0] == "uta" or member.name == "LICENSE")
+                target = self.legacy / name
+                if member.isdir():
+                    target.mkdir(parents=True, exist_ok=True)
+                else:
+                    self.assertTrue(member.isfile(), "legacy archive must not introduce links or devices")
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with archive.extractfile(member) as contents:
+                        target.write_bytes(contents.read())
+        self.assertTrue((self.legacy / "LICENSE").is_file())
+
+    def assert_actual_sources(self, report):
+        for name in ("storage", "service"):
+            source = self.legacy / "uta" / (name + ".py")
+            self.assertEqual(Path(report["sources"][name]["path"]), source)
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()
+            self.assertEqual(digest, self.LEGACY_SOURCES[name])
+            self.assertEqual(report["sources"][name]["sha256"], digest)
+
+    def assert_legacy_blocked(self, report):
+        self.assert_actual_sources(report)
+        self.assertFalse(report["financial_changed"], repr(report))
+        if report["stage"] == "startup_blocked":
+            self.assertTrue(any(error["sqlite"] for error in report["errors"]), repr(report))
+        else:
+            self.assertEqual([row["operation"] for row in report["outcomes"]], ["deposit", "order", "ledger", "match"])
+            self.assertTrue(all(row["state"] == "blocked" for row in report["outcomes"]), repr(report))
+            self.assertTrue(all(any(error["sqlite"] for error in row["errors"]) for row in report["outcomes"]), repr(report))
+
+    def test_actual_ad3_binary_initialized_before_enable_cannot_deposit_order_post_or_match_afterwards(self):
+        ready, release = self.directory / "actual-ready.json", self.directory / "actual-release"
+        child = subprocess.Popen([sys.executable, "-I", "-c", self.LEGACY_PROGRAM,
+            str(self.legacy), str(self.path), NOW.isoformat(), "waiting", str(ready), str(release)],
+            text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.addCleanup(self.cleanup_child, child)
+        self.wait_file(ready, child)
+        self.assert_actual_sources(json.loads(ready.read_text()))
+        self.managed()
+        before = financial_snapshot(self.path)
+        release.touch()
+        output, errors = child.communicate(timeout=15)
+        self.assertEqual(child.returncode, 0, errors)
+        report = json.loads(output)
+        report["financial_changed"] = financial_snapshot(self.path) != before
+        self.assert_legacy_blocked(report)
+        self.assertEqual(financial_snapshot(self.path), before)
+
+    def test_actual_ad3_binary_started_after_enable_cannot_write_or_reinitialize_authority(self):
+        self.managed()
+        before = financial_snapshot(self.path)
+        child = subprocess.run([sys.executable, "-I", "-c", self.LEGACY_PROGRAM,
+            str(self.legacy), str(self.path), NOW.isoformat(), "after-enable"],
+            text=True, capture_output=True, timeout=15)
+        self.assertEqual(child.returncode, 0, child.stderr)
+        report = json.loads(child.stdout)
+        report["financial_changed"] = financial_snapshot(self.path) != before
+        self.assert_legacy_blocked(report)
         self.assertEqual(financial_snapshot(self.path), before)
 
 
