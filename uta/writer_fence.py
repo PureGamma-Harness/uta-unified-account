@@ -276,9 +276,13 @@ class _TransactionGuard:
         if self.role == "read":
             return self._deny(WriterFenceError("read_only_transaction", "read transactions cannot modify authority state"))
         if self.role == "control":
-            allowed = first in _NAMES or (first or "").startswith("writer_fence_")
-            if action in _DDL:
-                allowed = action in {_ACTIONS["CREATE_TABLE"], _ACTIONS["CREATE_TRIGGER"]} and allowed
+            allowed = first in _NAMES
+            if action == _ACTIONS["CREATE_TABLE"]:
+                allowed = first in _NAMES
+            elif action == _ACTIONS["CREATE_TRIGGER"]:
+                allowed = (first or "").startswith("writer_fence_") and second in _NAMES
+            elif action in _DDL:
+                allowed = False
             if action in _DML and first in {"sqlite_master", "sqlite_schema"}:
                 allowed = True
             return _OK if allowed else self._deny()

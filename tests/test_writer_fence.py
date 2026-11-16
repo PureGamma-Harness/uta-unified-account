@@ -137,6 +137,9 @@ class WriterFenceTests(unittest.TestCase):
             with self.subTest(sql=sql), self.assertRaises(WriterFenceError):
                 with self.database.for_writer(token).transaction() as connection:
                     connection.execute(sql)
+        with self.assertRaises(WriterFenceError):
+            with self.database._fence_transaction() as connection:
+                connection.execute("CREATE TRIGGER writer_fence_unrelated AFTER INSERT ON uta_accounts BEGIN SELECT 1; END")
         self.assertEqual(self.fence.status()["generation"], 1)
 
     def test_old_unbound_ddl_and_swallowed_denial_cannot_commit(self):
