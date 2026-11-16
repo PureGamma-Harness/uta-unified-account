@@ -24,6 +24,7 @@ import resource
 import shutil
 import signal
 import sqlite3
+import stat
 import subprocess
 import sys
 from threading import BoundedSemaphore, Event, Thread
@@ -67,6 +68,25 @@ def _atomic(path, value):
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
+
+
+def _observed_file_bytes(paths):
+    """Sample regular-file sizes without racing an is_file/stat pair.
+
+    SQLite sidecars and atomic-publication temporaries may disappear after
+    directory discovery. Required files and other I/O failures remain fatal.
+    """
+    total = 0
+    for path in paths:
+        try:
+            details = path.stat()
+        except FileNotFoundError:
+            if path.name in {"authority.sqlite3-wal", "authority.sqlite3-shm"} or path.name.endswith(".tmp"):
+                continue
+            raise
+        if stat.S_ISREG(details.st_mode):
+            total += details.st_size
+    return total
 
 
 @dataclass(frozen=True)
@@ -442,7 +462,7 @@ class Soak:
                 "free_disk_bytes": report["free_disk_bytes"], "rss_max_kib": report["rss_max_kib"],
                 "confirmed_active_seconds": report["confirmed_active_seconds"], "status": status})
         size = report["directory_bytes"]
-        database_size = sum(path.stat().st_size for path in self.directory.glob("authority.sqlite3*"))
+        database_size = _observed_file_bytes(self.directory.glob("authority.sqlite3*"))
         if (size > self.configuration.max_directory_bytes or database_size > self.configuration.max_database_bytes
                 or report["free_disk_bytes"] < self.configuration.min_free_bytes):
             raise RuntimeError("disk resource budget exhausted; job incomplete")
@@ -658,7 +678,7 @@ def read_status(directory):
         "wall_seconds_since_original_start": (time.time_ns() - meta["started_ns"]) / 1e9,
         "market_version": market["version"], "market_age_seconds": age,
         "roundtrip_latency_ms": histogram.report(),
-        "directory_bytes": sum(path.stat().st_size for path in directory.rglob("*") if path.is_file()),
+        "directory_bytes": _observed_file_bytes(directory.rglob("*")),
         "free_disk_bytes": shutil.disk_usage(directory).free,
         "stability_target_passed": passed, "production_approved": False,
         "capacity_10000_per_s_passed": False, "cohosted": True}

@@ -196,6 +196,54 @@ class SoakTests(unittest.TestCase):
             self.assertTrue((Path(directory) / "authority.sqlite3").exists())
             self.assertFalse(report["stability_target_passed"])
 
+    def test_heartbeat_survives_sidecar_removal_after_directory_listing(self):
+        for suffix in ("-wal", "-shm"):
+            with self.subTest(suffix=suffix), TemporaryDirectory() as directory:
+                job = self.make(directory)
+                self.addCleanup(job.close)
+                original_glob = Path.glob
+                def disappearing(path, pattern, *args, **kwargs):
+                    entries = list(original_glob(path, pattern, *args, **kwargs))
+                    if path == job.directory and pattern == "authority.sqlite3*":
+                        sidecar = path / ("authority.sqlite3" + suffix)
+                        # No worker is running and heartbeat's SQL transactions
+                        # have closed. Model a sidecar present at discovery but
+                        # removed by SQLite before the size observation.
+                        self.assertFalse(sidecar.exists())
+                        sidecar.write_bytes(b"transient")
+                        entries.append(sidecar)
+                        sidecar.unlink()
+                    return iter(entries)
+                with patch.object(Path, "glob", disappearing):
+                    report = job.heartbeat()
+                self.assertEqual(report["stored_status"], "running")
+                self.assertFalse(report["stability_target_passed"])
+
+    def test_size_observation_preserves_required_file_and_permission_errors(self):
+        for filename, error in (("authority.sqlite3", FileNotFoundError("required authority vanished")),
+                                ("authority.sqlite3-shm", PermissionError("size denied"))):
+            with self.subTest(error=type(error).__name__), TemporaryDirectory() as directory:
+                job = self.make(directory)
+                self.addCleanup(job.close)
+                original_glob, original_stat = Path.glob, Path.stat
+                target = job.directory / filename
+                observing = False
+                def entries(path, pattern, *args, **kwargs):
+                    nonlocal observing
+                    found = list(original_glob(path, pattern, *args, **kwargs))
+                    if path == job.directory and pattern == "authority.sqlite3*":
+                        if target not in found:
+                            found.append(target)
+                        observing = True
+                    return iter(found)
+                def unavailable(path, *args, **kwargs):
+                    if observing and path == target:
+                        raise error
+                    return original_stat(path, *args, **kwargs)
+                with patch.object(Path, "glob", entries), patch.object(Path, "stat", unavailable):
+                    with self.assertRaises(type(error)):
+                        job.heartbeat()
+
     def test_unknown_round_preserves_later_queue_without_executing_its_book(self):
         with TemporaryDirectory() as directory:
             job = self.make(directory, duration=1.6, queue_capacity=4)
