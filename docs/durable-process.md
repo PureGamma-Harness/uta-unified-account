@@ -98,6 +98,25 @@ processes = DurableProcessRouter.take_over(
 
 `diagnostics()` 返回 `decision_audit_required` 与 profile；当前 supervisor 的 ready 还要求该 PID 已完成真实服务初始化的握手，不只看它取得了 lease。诊断仍不是金融授权，命令和每个确认成交必须在事务内做完整校验。
 
+### 行情与金融就绪的只读诊断
+
+`diagnostics(*, timeout=1.0)` 的参数为有限秒数，范围 `0 < timeout <= 5`，不接受布尔值。一次预算覆盖 supervisor mutex、router shared gate、控制库、全局资金证明以及各分片读取；SQLite 锁争用最多单次等待 20ms，VM progress handler 在 guard 验证和查询过程中检查同一 deadline。达到预算或遇到异常返回未就绪，不使用无限 flock/SQLite 等待。这个预算不保证操作系统调度、故障磁盘 I/O 或任意 Python 扩展调用的硬实时上界。
+
+诊断不构造金融服务，不初始化数据库，不执行金融写入，也不切换 journal mode。它在 shared gate 内读取已验证的控制状态、完整发布 watermarks 和资金证明，再在每片的同一个只读事务内读取分片身份、持久 SQL guard、writer lease、local halt、required 审计 capability 与完整行情 payload。实际 payload 的 SHA-256、canonical 编码和版本必须匹配当前全局 barrier，不能只相信版本、早先握手或缓存。缺失、损坏、超限、缺 USD settlement、缺活跃持仓/挂单或已入账资产/负债的输入都不能就绪。
+
+所有分片和证明读完后，重新用快照**原始** `observed_at` 与配置的 `max_price_age` 检查时效，未来容忍仍沿用 `MarketSnapshot.validate` 的 1 秒界线；不刷新或改写时间戳。租约也在返回前再次检查到期时间。部分发布、全局/本地停机、代次握手不符、过期报价和未来报价均为未就绪。
+
+返回值区分这些事实：
+
+- `workers_alive`：本 supervisor 所拥有的每个 child PID 都已观察到存活；不说明有新鲜行情或已完成金融初始化。mutex 不可读时为 False，含义是无法确认全部存活。
+- `financial_ready`：完整发布且已激活，所有必需的身份、租约、初始化握手、资金证明、审计 capability 和行情检查通过。兼容字段 `ready` 与它完全相同。
+- `state_observed`：是否成功读取并验证控制状态。失败时 `state=None`，不会捏造一个已持久 HALT 的状态。成功时 `state` 只包含控制标志、代次、行情版本/摘要、watermarks 与受控错误码。
+- `reason` 与各 `workers[*].reason`：受控诊断码，例如 `market_stale`、`market_future`、`market_invalid`、`market_missing`、`market_barrier_mismatch`、`publication_incomplete` 或 `diagnostic_timeout`。不返回数据库路径、完整价格 payload、writer nonce 或异常正文；分片报价成功读取时另给原 `market_observed_at`、版本和摘要。
+
+这是同主机的就绪观察，不是外部行情源真实性、独立价格证明、跨片账户财务快照或执行授权。行情失效时 `workers_alive=True` 与 `financial_ready=False` 可以同时成立；风险降低的撤单/还款仍由各自事务规则决定，不能由此诊断一律禁止。
+
+`tests/test_process_readiness.py` 用真实两个 spawn PID 验证自然过期、新行情恢复、同版本内容变更、部分发布恢复与只读原时间戳；损坏/缺失/超限注入采用明确 development profile 的离线合法 test token，不移除 required 历史 guard。另以诊断时钟回退、最后一片读取后跨过时效界线、有界 mutex/flock 和真实 SQLite 长查询验证未来/延迟/超时失败及路径隐藏。这些小规模故障用例不构成 feed trust 或负载验收。
+
 ## 既有 managed authority 的显式离线审计提升
 
 第一波 managed authority 的不可变配置不能被重写成 True。先停止 coordinator 和所有 writer，读取只读计划：
