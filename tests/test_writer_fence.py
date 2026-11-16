@@ -290,6 +290,26 @@ except WriterFenceError as error:
                 connection.execute("UPDATE uta_accounts SET version=version+1")
         self.assertEqual(caught.exception.code, "authority_path_conflict")
 
+    def test_inbox_bootstrap_allows_only_required_implicit_sqlite_schema(self):
+        # Exercise SQLite's actual AUTOINCREMENT/UNIQUE authorizer callbacks.
+        with self.database.inbox_transaction() as connection:
+            connection.execute("CREATE TABLE uta_command_config(singleton INTEGER PRIMARY KEY)")
+            connection.execute("CREATE TABLE uta_command_inbox(sequence INTEGER PRIMARY KEY AUTOINCREMENT,command_id TEXT UNIQUE,state TEXT)")
+            connection.execute("CREATE INDEX uta_command_pending ON uta_command_inbox(state,sequence)")
+            connection.execute("INSERT INTO uta_command_config VALUES(1)")
+            connection.execute("INSERT INTO uta_command_inbox(command_id,state) VALUES('one','PENDING')")
+        self.enable()
+        with self.database.inbox_transaction() as connection:
+            connection.execute("INSERT INTO uta_command_inbox(command_id,state) VALUES('two','PENDING')")
+        with self.database.read_transaction() as connection:
+            self.assertEqual([tuple(row) for row in connection.execute("SELECT sequence,command_id FROM uta_command_inbox ORDER BY sequence")], [(1, "one"), (2, "two")])
+        for sql in ("CREATE TABLE unrelated(value TEXT)",
+                    "CREATE INDEX unauthorized_index ON uta_command_inbox(state)",
+                    "UPDATE uta_command_inbox SET state='SUCCEEDED'"):
+            with self.subTest(sql=sql), self.assertRaises(WriterFenceError):
+                with self.database.inbox_transaction() as connection:
+                    connection.execute(sql)
+
 
 if __name__ == "__main__":
     unittest.main()

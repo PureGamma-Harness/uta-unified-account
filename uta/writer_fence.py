@@ -284,11 +284,19 @@ class _TransactionGuard:
             return _OK if allowed else self._deny()
         if self.role == "inbox":
             if action == _ACTIONS["CREATE_TABLE"]:
-                allowed = first in _INBOX_TABLES
+                # AUTOINCREMENT creates SQLite's reserved sequence table;
+                # UNIQUE creates an implicit reserved-name index. User SQL
+                # cannot create sqlite_* objects to obtain broader DDL access.
+                allowed = first in _INBOX_TABLES or first == "sqlite_sequence"
             elif action == _ACTIONS["CREATE_INDEX"]:
-                allowed = first in _INBOX_INDEXES and second in _INBOX_TABLES
+                allowed = (second in _INBOX_TABLES and
+                    (first in _INBOX_INDEXES or (first or "").startswith("sqlite_autoindex_" + second + "_")))
             elif action == _ACTIONS["CREATE_TRIGGER"]:
                 allowed = first in _INBOX_TRIGGERS and second in _INBOX_TABLES
+            elif action == _ACTIONS["REINDEX"]:
+                # Building a declared index also emits SQLITE_REINDEX.
+                allowed = first in _INBOX_INDEXES or any((first or "").startswith(
+                    "sqlite_autoindex_" + table + "_") for table in _INBOX_TABLES)
             elif action in _DDL:
                 allowed = False
             else:
