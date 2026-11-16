@@ -347,7 +347,10 @@ def make_server(producer, host: str = "127.0.0.1", port: int = 8081, *,
         else:
             server.RequestHandlerClass = _DurableHandler
         if tls_context is not None:
-            server.socket = tls_context.wrap_socket(server.socket, server_side=True)
+            # Do not handshake on the accept thread: a silent TCP client would
+            # otherwise block the whole listener before worker limits/deadlines.
+            # The first worker read handshakes after _Handler.setup sets timeout.
+            server.socket = tls_context.wrap_socket(server.socket, server_side=True, do_handshake_on_connect=False)
         return server
     except BaseException:
         server.server_close()

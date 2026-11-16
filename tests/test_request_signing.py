@@ -334,7 +334,10 @@ class SignedHTTPTests(unittest.TestCase):
         context.load_cert_chain(cert, key)
         self.start(tls_context=context)
         target = "/v2/worker-health"
-        status, observed = _request(self.server.server_address, "GET", target, headers=self.headers("GET", target, key="risk"), tls=True)
+        # A TCP client that never sends a TLS ClientHello must occupy only one
+        # bounded worker, never stall SSL accept and every other connection.
+        with socket.create_connection(self.server.server_address, timeout=3):
+            status, observed = _request(self.server.server_address, "GET", target, headers=self.headers("GET", target, key="risk"), tls=True)
         self.assertEqual(status, 200)
         self.assertFalse(observed["writer"]["lease_active"])
 
