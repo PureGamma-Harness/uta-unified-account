@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
+import tempfile
 from types import MappingProxyType
 from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
@@ -26,6 +27,26 @@ from .ledger import JournalEvent, Ledger, LedgerError, Posting
 
 class StorageError(RuntimeError):
     """The persistent store cannot satisfy its transaction contract."""
+
+
+def _publish_private_database(path):
+    """Publish a closed private inode; never raw-close a published SQLite DB.
+
+    POSIX close() on any descriptor for an inode drops this process's other
+    fcntl locks on it. SQLite manages that internally; application preflight
+    must not open/close the target while another connection may be active.
+    """
+    descriptor, temporary = tempfile.mkstemp(prefix=".uta-create-", dir=str(Path(path).parent))
+    try:
+        try:
+            os.fchmod(descriptor, 0o600)
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        # EEXIST must not replace another initializer's published database.
+        os.link(temporary, path, follow_symlinks=False)
+    finally:
+        os.unlink(temporary)
 
 
 class Database:
@@ -80,29 +101,37 @@ class Database:
         State must be kept in an operator-controlled directory. File checks
         protect accidental exposure/replacement; the service OS user is trusted.
         """
-        flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
         try:
-            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
-        except FileExistsError:
-            descriptor = os.open(self.path, flags)
+            try:
+                info = os.stat(self.path, follow_symlinks=False)
+            except FileNotFoundError:
+                try:
+                    _publish_private_database(self.path)
+                except FileExistsError:
+                    pass
+                info = os.stat(self.path, follow_symlinks=False)
         except OSError as exc:
             raise StorageError("database path cannot be opened safely") from exc
-        try:
-            info = os.fstat(descriptor)
-            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
-                    or stat.S_IMODE(info.st_mode) & 0o077):
-                raise StorageError("database must be a private regular file owned by the service user")
-            return info.st_dev, info.st_ino
-        finally:
-            os.close(descriptor)
+        self._validate_private_info(info)
+        return info.st_dev, info.st_ino
+
+    @staticmethod
+    def _validate_private_info(info):
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or stat.S_IMODE(info.st_mode) & 0o077):
+            raise StorageError("database must be a private regular file owned by the service user")
 
     def _connect(self) -> sqlite3.Connection:
         identity = self._private_file()
-        connection = sqlite3.connect(self.path, timeout=self.timeout, isolation_level=None)
+        # Never recreate a path removed after identity validation. URI encoding
+        # also preserves literal '?' and '#' in a filesystem path.
+        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=rw", uri=True,
+                                     timeout=self.timeout, isolation_level=None)
         try:
             info = os.stat(self.path, follow_symlinks=False)
             if (info.st_dev, info.st_ino) != identity or not stat.S_ISREG(info.st_mode):
                 raise StorageError("database path changed while opening")
+            self._validate_private_info(info)
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             connection.execute(f"PRAGMA busy_timeout = {int(self.timeout * 1000)}")

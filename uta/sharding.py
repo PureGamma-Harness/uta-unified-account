@@ -51,17 +51,13 @@ class _BoundShardDatabase(Database):
         if self._bootstrap and not os.path.lexists(self.path):
             return super()._private_file()
         try:
-            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+            details = os.stat(self.path, follow_symlinks=False)
         except OSError as exc:
             raise ServiceError("shard_unavailable", "persisted shard cannot be safely opened; automatic creation is forbidden", 503) from exc
-        try:
-            details = os.fstat(descriptor)
-            if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or
-                details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):
-                raise ServiceError("shard_unavailable", "persisted shard is missing, empty or unsafe", 503)
-            return details.st_dev, details.st_ino
-        finally:
-            os.close(descriptor)
+        if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or
+            details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):
+            raise ServiceError("shard_unavailable", "persisted shard is missing, empty or unsafe", 503)
+        return details.st_dev, details.st_ino
 
     @contextmanager
     def transaction(self):
