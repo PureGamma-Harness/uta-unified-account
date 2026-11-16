@@ -52,3 +52,54 @@ python benchmarks/run_managed_benchmark.py --output /tmp/uta-managed-profile-uni
 实际 job.started_ns 为 1794864973820942405，首 session.started_ns 为 1794864973825199889，两者差 4,256,484ns（4.256484ms）。单调 active 起点在 session INSERT 前，和原 wall deadline 存在初始化毫秒差。原实现到 wall deadline 后还执行 worker/feed join、完整只读最终验证，最终 heartbeat 将这些真实执行时间计入 active，通常会覆盖几毫秒差，但没有保证。
 
 因此理论上可能出现 wall 已满 86400 秒、strict active 略少而 false-negative。当前 source/job 一字未改，也不能加 epsilon、回填暂停或改 start 来硬判通过；若实际终态短缺，应原样未通过。下一版可统一实际单调起点/截止，并分开报告生成器、持续 feed、排空和终检的运行时间；新版本需要新候选，不套用本次历史计时。
+
+
+## 首个固定源码的真实诊断结果
+
+测量源码 `7a06c0532ba510653b1feccd7e80030d3cb19f8a`（62f4336 + dacf3fe 的等价本地 cherry 0b7d2ac + 工具），已推到可检出分支：<https://github.com/PureGamma-Harness/uta-unified-account/tree/experiment/managed-inbox-profile-20261116>。实际驱动运行 UTC 2026-11-16 22:48:59.167507–22:49:11.000714，总 11.833067 秒；真正计划到达窗口 10 秒，含 terminal 观察排空为 10.101954 秒。
+CPU 为 AMD EPYC 9V74，可见 benchmark affinity **2**，宿主 cgroup 配额为4 CPU/16GiB；Python3.12.14、SQLite3.53.1、overlay本地文件系统。两个真实 worker PID 为18157/18158、各 generation1；PID与lease owner相同、required audit ready。其他协作组暂停新的短测试，887低频长稳与8784只读观察器继续同机，因此不声称独占硬件。
+| 到达与终态 | 实际数量 |
+|---|---:|
+| 原计划到达 | 200 |
+| durable enqueue ACK | 200 |
+| 金融 SUCCEEDED / 持久 OPEN 订单 | 171 |
+| 产品规则 REJECTED | 18 |
+| 发布门关闭 router_halted REJECTED | 11 |
+| QUARANTINED / deadline unknown / 未完成 | 0 / 0 / 0 |
+| worker技术重试 attempts | 0 |
+| 观察器轮询技术错误 | **1** |
+| 成功回执超过1秒 | 1 |
+金融完成速率是 **16.927418/s**，另列 ACK19.798149/s。20/s是设定到达率，负载没有饱和，不能把16.93解释成最大容量。预设20个非法数量中有2个先被发布门拒绝，故产品拒绝是18而非20；业务策略检查顺序及安全拒绝均原样保留。全部171成功原CID、订单、ORDER_ACCEPTED、账户版本、手算预占、required decision和逐币ledger/hash链复开核对通过；未发现未观察到的额外成功，pending0，无 fills/positions。
+| 延迟（毫秒，计划到达起点） | P50 | P95 | P99 | P99.9 |
+|---|---:|---:|---:|---:|
+| 全部200次 | 118.061 | 291.123 | 393.309 | 1196.361 |
+| 171次金融成功 | 125.107 | 294.048 | 686.302 | 1196.361 |
+| 仅ACK，非金融成功 | 15.336 | 143.753 | 240.529 | 1155.233 |
+
+最慢 seq8 实际端到端1195.702ms，其中本地开始前 .151ms、enqueue 调用 **1154.504ms**、ACK至金融terminal观察41.048ms。不能归因于纯风险计算；锁/元数据写入等待需下一次更细的阶段证据，当前父profile不支持可靠分摊。
+4次真实新 tick 的完整 publication+activation 耗时609.692/471.790/779.054/600.254ms，全部完成并重新激活。每片观测的 pending峰值为4/3，无本地/持久queue full。此开关过程使11条原命令得到明确安全拒绝，不进行改写或重报成功。
+### 独立 worker PID 的剖析
+
+| 函数 | worker0 调用数 / 累计秒 | worker1 调用数 / 累计秒 |
+|---|---:|---:|
+| worker生命周期 | 1 / 10.756409 | 1 / 10.730257 |
+| 真实background | 36 / 6.474565 | 40 / 6.010610 |
+| 账户监督 | 760 / 5.838574 | 611 / 5.224251 |
+| _admit_order | 93 / 0.387944 | 96 / 0.411761 |
+| _risk | 922 / 0.767319 | 791 / 0.717859 |
+| _verify_data_guards | 3130 / 1.791906 | 2751 / 1.632122 |
+| _verify_control_schema | 2226 / 0.661278 | 1988 / 0.606006 |
+| audit.validate | 1298 / 0.290346 | 1194 / 0.298254 |
+| audit.record | 81 / 0.033741 | 90 / 0.034003 |
+
+这些是单PID完整生命周期的累计墙钟，包含初始化、等待和停止，函数嵌套不能相加为CPU百分比。后台1371次账户监督对应大量重复风险/事务/guard校验；与171条有效金融接纳相比，先研究有正确性约束的后台调度与事务密度，比预设计算核瓶颈更有依据。随后可评估durable批量入队/有界金融批事务，但必须保留FIFO、required审计、SQL fencing、事务末新鲜度与控制门响应。没有关闭当前后台来凑性能，也没有跨事务盲缓存guard。
+父 dispatcher0 的 .prof **实际混入其他父线程函数**，且5项 internal_seconds>cumulative_seconds。原始数据完整保留并标记为诊断限制，不能据它计算精确入队/guard阶段占比。两个独立worker PID .prof该异常均为0；上述结论只使用这两份profile及每条原始请求墙钟时间。CPython3.12 initial多profiler自检失败也保留为明确的开发转录记录，不冒充原始性能日志。
+### 原样保留的I/O事件与共机证据
+
+在到达起点后 .725336s，RO polling曾出现一次 **SQLITE_IOERR_SHORT_READ(522)**。工具保留原错误并重试，此后全部terminal和复开数据一致。当前证据没有该次SQLite FD/syscall、WAL身份和受影响分片，不能断言根因无害或已修复，也不能把这轮称为无技术错误。后续可记录连接/WAL生命周期与分片上下文复现，不能事后删除此行。
+887原正式作业与8784观察器未重启或改源码。探针周围实际持久 heartbeat 为22:48:57.764591、22:49:02.815317、22:49:07.886762、22:49:12.934797 UTC，约5.05秒间隔，记录的market age为 .506–.555秒；前后原PID出生匹配、无观察告警。它们是该窗口观测，不是所有资源情况下无干扰的证明。原24小时稳定性仍待真实截止和最终审计。
+### 证据与后续门槛
+
+原始证据 `benchmarks/results/20261116-managed-inbox-profile/raw/` 包含200条gzip到达、每片telemetry、完整fresh tick/control回执、environment、独立PID及父profile原文件/文本、manifest和实际命令。`analysis.json` 保存剖析限制、子PID函数计数和原始尾部拆解，cohost文件保留实际长稳检查。原SQL数据留在 `/tmp/uta-managed-profile-20261116-first/authority`，不提交Git。
+`startup_seconds_excluded=.458328s` 是spawn/初次publication/activation区间，未单独测量更早的离线开户资金setup；两者均在计划到达起点之前。wrapper总时间、arrival-window和原始setup来源均保留，不能把该字段称为全部初始化时长。关闭耗时 .024675s另外报告。
+四项原冻结工具自检通过，集成后新增归档测试核验200唯一到达、全部摘要、实际171/18/11分类、I/O522和profile限制。无profile对照、重复配对、更高到达率、持续半小时、复制与撮合容量尚未完成；capacity_10000_per_s_passed和production_approved均为false。下一轮先固定同一新source做受控改前改后，不把当前单次低速instrumented观察当作收益百分比。

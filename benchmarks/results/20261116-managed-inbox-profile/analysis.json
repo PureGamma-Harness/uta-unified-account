@@ -1,0 +1,176 @@
+{
+  "source_commit": "7a06c0532ba510653b1feccd7e80030d3cb19f8a",
+  "classification": {
+    "planned": 200,
+    "durable_enqueue_ack": 200,
+    "financial_success": 171,
+    "business_rejected": 18,
+    "control_or_market_rejected": 11,
+    "quarantined": 0,
+    "unknown": 0,
+    "uncompleted": 0
+  },
+  "instrumented_probe_only": true,
+  "cohosted": true,
+  "offered_rate_is_not_maximum_capacity": true,
+  "parent_profile_has_mixed_thread_frames": true,
+  "profile_timing_anomalies": {
+    "dispatcher-0.prof": [
+      {
+        "file": "~",
+        "function": "<method 'execute' of 'sqlite3.Connection' objects>",
+        "internal_seconds": 1.8493906210000002,
+        "cumulative_seconds": 0.8835088430000001
+      },
+      {
+        "file": "~",
+        "function": "<method 'fetchall' of 'sqlite3.Cursor' objects>",
+        "internal_seconds": 0.26296456700000004,
+        "cumulative_seconds": 0.261339771
+      },
+      {
+        "file": "~",
+        "function": "<method 'acquire' of '_thread.lock' objects>",
+        "internal_seconds": 0.815463322,
+        "cumulative_seconds": 0.044269184
+      },
+      {
+        "file": "~",
+        "function": "<built-in method time.sleep>",
+        "internal_seconds": 4.535262958000001,
+        "cumulative_seconds": 0.038374168
+      },
+      {
+        "file": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py",
+        "function": "start",
+        "internal_seconds": 0.002856972,
+        "cumulative_seconds": 9.2897e-05
+      }
+    ],
+    "worker-0-pid-18157.prof": [],
+    "worker-1-pid-18158.prof": []
+  },
+  "independent_worker_profiles": [
+    {
+      "profile": "worker-0-pid-18157.prof",
+      "lifecycle": {
+        "calls": 1,
+        "internal_seconds": 0.0024951540000000003,
+        "cumulative_seconds": 10.756408629000001
+      },
+      "background": {
+        "calls": 36,
+        "internal_seconds": 0.00073315,
+        "cumulative_seconds": 6.474564814000001
+      },
+      "supervise_account": {
+        "calls": 760,
+        "internal_seconds": 0.020436993,
+        "cumulative_seconds": 5.838573951000001
+      },
+      "admission": {
+        "calls": 93,
+        "internal_seconds": 0.004232704,
+        "cumulative_seconds": 0.38794434600000005
+      },
+      "risk": {
+        "calls": 922,
+        "internal_seconds": 0.038134926,
+        "cumulative_seconds": 0.7673193770000001
+      },
+      "guard_data_inventory": {
+        "calls": 3130,
+        "internal_seconds": 0.527797123,
+        "cumulative_seconds": 1.7919055160000001
+      },
+      "guard_control_schema": {
+        "calls": 2226,
+        "internal_seconds": 0.18991063800000002,
+        "cumulative_seconds": 0.661278154
+      },
+      "audit_validate": {
+        "calls": 1298,
+        "internal_seconds": 0.139249067,
+        "cumulative_seconds": 0.29034622200000004
+      },
+      "audit_record": {
+        "calls": 81,
+        "internal_seconds": 0.0005226,
+        "cumulative_seconds": 0.033741023
+      }
+    },
+    {
+      "profile": "worker-1-pid-18158.prof",
+      "lifecycle": {
+        "calls": 1,
+        "internal_seconds": 0.002495539,
+        "cumulative_seconds": 10.730256554
+      },
+      "background": {
+        "calls": 40,
+        "internal_seconds": 0.000847685,
+        "cumulative_seconds": 6.010609624000001
+      },
+      "supervise_account": {
+        "calls": 611,
+        "internal_seconds": 0.018782003000000002,
+        "cumulative_seconds": 5.224250868
+      },
+      "admission": {
+        "calls": 96,
+        "internal_seconds": 0.0037865480000000003,
+        "cumulative_seconds": 0.411760703
+      },
+      "risk": {
+        "calls": 791,
+        "internal_seconds": 0.042269078,
+        "cumulative_seconds": 0.717858996
+      },
+      "guard_data_inventory": {
+        "calls": 2751,
+        "internal_seconds": 0.483639468,
+        "cumulative_seconds": 1.632122053
+      },
+      "guard_control_schema": {
+        "calls": 1988,
+        "internal_seconds": 0.16857545200000001,
+        "cumulative_seconds": 0.6060061240000001
+      },
+      "audit_validate": {
+        "calls": 1194,
+        "internal_seconds": 0.14352910800000002,
+        "cumulative_seconds": 0.29825367
+      },
+      "audit_record": {
+        "calls": 90,
+        "internal_seconds": 0.0005839920000000001,
+        "cumulative_seconds": 0.034003235
+      }
+    }
+  ],
+  "slowest_arrival": {
+    "sequence": 8,
+    "financial_outcome": "financial_succeeded",
+    "end_to_end_ms": 1195.702228,
+    "local_before_enqueue_ms": 0.151305,
+    "enqueue_call_ms": 1154.504117,
+    "after_ack_to_terminal_observation_ms": 41.047537
+  },
+  "poll_error": {
+    "count": 1,
+    "code": 522,
+    "name": "SQLITE_IOERR_SHORT_READ",
+    "observed_offset_seconds": 0.725336092,
+    "cause_verified": false,
+    "financial_effect_or_loss_found": false,
+    "evidence_gap": "the first tool did not record the affected shard, SQLite FD/syscall trace or WAL identity at failure; no harmless-root-cause conclusion"
+  },
+  "recommendations": [
+    "First study background risk scheduling/dirty-account handling and transaction density without skipping required current risk checks.",
+    "Then evaluate durable multi-command enqueue and bounded financial transactions with original-ID FIFO, required audit, full financial commit before terminal, freshness/lease checks and publication responsiveness.",
+    "Evaluate metadata writer wait/connection/guard timings separately; raw enqueue latency is trustworthy, parent cProfile cumulative attribution is not.",
+    "Use same-source unprofiled repeated A/B before any capacity claim; retain all control-period refusals and IO errors."
+  ],
+  "capacity_10000_per_s_passed": false,
+  "production_approved": false
+}

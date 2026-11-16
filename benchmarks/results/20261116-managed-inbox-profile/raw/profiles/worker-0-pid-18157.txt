@@ -1,0 +1,55 @@
+Mon Nov 16 22:49:10 2026    /tmp/uta-managed-profile-20261116-first/profiles/worker-0-pid-18157.prof
+
+         6114757 function calls (6051548 primitive calls) in 10.720 seconds
+
+   Ordered by: cumulative time
+   List reduced from 657 to 45 due to restriction <45>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.002    0.002   10.756   10.756 /workspace/uta-managed-perf/uta/durable_process.py:157(_run_worker)
+       36    0.001    0.000    6.475    0.180 /workspace/uta-managed-perf/uta/sharding.py:844(run_background_once)
+19627/5525    0.017    0.000    6.383    0.001 {built-in method builtins.next}
+       31    0.009    0.000    6.304    0.203 /workspace/uta-managed-perf/uta/supervisor.py:37(run_once)
+     2232    0.016    0.000    6.005    0.003 /workspace/uta-managed-perf/uta/storage.py:142(_role_transaction)
+     2202    0.007    0.000    5.991    0.003 /workspace/uta-managed-perf/uta/sharding.py:66(transaction)
+     2194    0.003    0.000    5.978    0.003 /workspace/uta-managed-perf/uta/service.py:267(_transaction)
+     2204    0.003    0.000    5.954    0.003 /workspace/uta-managed-perf/uta/storage.py:118(transaction)
+      760    0.020    0.000    5.839    0.008 /workspace/uta-managed-perf/uta/service.py:1042(supervise_account)
+7998/2652    0.007    0.000    3.567    0.001 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:141(__exit__)
+8003/4677    0.009    0.000    2.826    0.001 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:132(__enter__)
+    58808    1.998    0.000    2.194    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+      418    0.001    0.000    2.071    0.005 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/connection.py:253(poll)
+      418    0.001    0.000    2.070    0.005 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/connection.py:439(_poll)
+      418    0.003    0.000    2.069    0.005 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/connection.py:1122(wait)
+      103    0.001    0.000    2.067    0.020 /workspace/uta-managed-perf/uta/durable_process.py:135(wait)
+      418    0.001    0.000    2.058    0.005 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/selectors.py:402(select)
+      418    2.057    0.005    2.057    0.005 {method 'poll' of 'select.poll' objects}
+      210    0.003    0.000    2.013    0.010 /workspace/uta-managed-perf/uta/sharding.py:830(process_one)
+     3130    0.528    0.000    1.792    0.001 /workspace/uta-managed-perf/uta/writer_fence.py:241(_verify_data_guards)
+      210    0.005    0.000    1.780    0.008 /workspace/uta-managed-perf/uta/durable_commands.py:307(process_one)
+     1116    0.043    0.000    1.772    0.002 /workspace/uta-managed-perf/uta/writer_fence.py:523(before_commit)
+     1116    1.253    0.001    1.253    0.001 {method 'commit' of 'sqlite3.Connection' objects}
+     1116    0.034    0.000    1.166    0.001 /workspace/uta-managed-perf/uta/writer_fence.py:405(__init__)
+   293785    0.500    0.000    1.018    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:233(_guard_sql)
+     1116    0.011    0.000    0.986    0.001 /workspace/uta-managed-perf/uta/storage.py:99(_connect)
+      922    0.038    0.000    0.767    0.001 /workspace/uta-managed-perf/uta/service.py:481(_risk)
+     1130    0.006    0.000    0.764    0.001 /workspace/uta-managed-perf/uta/service.py:374(_market)
+     2226    0.190    0.000    0.661    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:94(_verify_control_schema)
+     1211    0.014    0.000    0.571    0.000 /workspace/uta-managed-perf/uta/decision_audit.py:275(market_ref)
+     1609    0.512    0.000    0.512    0.000 {method 'close' of 'sqlite3.Connection' objects}
+    13076    0.404    0.000    0.404    0.000 {method 'fetchall' of 'sqlite3.Cursor' objects}
+       93    0.004    0.000    0.388    0.004 /workspace/uta-managed-perf/uta/service.py:734(_admit_order)
+     2365    0.029    0.000    0.361    0.000 /workspace/uta-managed-perf/uta/market.py:154(from_json)
+     1298    0.139    0.000    0.290    0.000 /workspace/uta-managed-perf/uta/decision_audit.py:244(validate)
+     4205    0.010    0.000    0.289    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:196(_assert_token)
+     4208    0.004    0.000    0.277    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:189(_observed)
+     4208    0.030    0.000    0.274    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:128(_clock)
+      922    0.036    0.000    0.258    0.000 /workspace/uta-managed-perf/uta/portfolio.py:274(calculate_cross_risk)
+   587570    0.165    0.000    0.249    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:218(_quote)
+     2460    0.067    0.000    0.231    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:147(_load)
+     4210    0.011    0.000    0.211    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py:1022(read_text)
+     1183    0.009    0.000    0.197    0.000 /workspace/uta-managed-perf/uta/storage.py:375(balance)
+     1130    0.004    0.000    0.190    0.000 /workspace/uta-managed-perf/uta/market_cache.py:45(parse)
+     3130    0.121    0.000    0.158    0.000 /workspace/uta-managed-perf/uta/writer_fence.py:222(_data_tables)
+
+

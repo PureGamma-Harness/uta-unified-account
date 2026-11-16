@@ -28,7 +28,7 @@ class ManagedBenchmarkTests(unittest.TestCase):
                          "control_or_market_rejected")
         self.assertEqual(terminal_outcome({"state": "REJECTED", "error": {"status": 409}}), "business_rejected")
 
-    def inspect(self, directory, summary, expected):
+    def inspect(self, directory, summary, expected, *, live=True):
         with gzip.open(directory / "arrivals.jsonl.gz", "rt") as stream:
             rows = [json.loads(line) for line in stream]
         self.assertEqual(len(rows), expected)
@@ -38,7 +38,7 @@ class ManagedBenchmarkTests(unittest.TestCase):
         self.assertFalse(summary["production_approved"])
         self.assertFalse(summary["capacity_10000_per_s_passed"])
         self.assertTrue(summary["initial_real_pid_and_fence"]["decision_audit_required"])
-        self.assertTrue(all(row["pid"] != os.getpid() and row["owner_pid"] == row["pid"] and row["lease_active"]
+        self.assertTrue(all((not live or row["pid"] != os.getpid()) and row["owner_pid"] == row["pid"] and row["lease_active"]
                             for row in summary["initial_real_pid_and_fence"]["workers"]))
         for name, proof in json.loads((directory / "manifest.json").read_text())["files"].items():
             data = (directory / name).read_bytes()
@@ -76,6 +76,26 @@ class ManagedBenchmarkTests(unittest.TestCase):
             self.assertEqual(summary["counts"]["financial_succeeded"], 1)
             self.assertIsNone(rows[0]["enqueue_ack_ns"])
             self.assertEqual(rows[0]["receipt"]["command_id"], "bench:0")
+
+    def test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits(self):
+        root = Path(__file__).resolve().parents[1] / "benchmarks/results/20261116-managed-inbox-profile"
+        directory = root / "raw"
+        summary = json.loads((directory / "summary.json").read_text())
+        self.assertEqual(summary["environment"]["code_commit"], "7a06c0532ba510653b1feccd7e80030d3cb19f8a")
+        rows = self.inspect(directory, summary, 200, live=False)
+        self.assertEqual(summary["counts"]["durably_enqueued"], 200)
+        self.assertEqual(summary["counts"]["financial_succeeded"], 171)
+        self.assertEqual(summary["counts"]["business_rejected"], 18)
+        self.assertEqual(summary["counts"]["control_or_market_rejected"], 11)
+        self.assertEqual(summary["readonly_reconciliation"]["pending_count"], 0)
+        self.assertEqual(summary["readonly_reconciliation"]["unobserved_successes_found_on_reopen"], 0)
+        self.assertEqual(sum(row["outcome"] == "financial_succeeded" for row in rows), 171)
+        self.assertEqual(summary["poll_errors"][0]["sqlite_errorcode"], 522)
+        self.assertEqual(summary["poll_errors"][0]["sqlite_errorname"], "SQLITE_IOERR_SHORT_READ")
+        analysis = json.loads((root / "analysis.json").read_text())
+        self.assertTrue(analysis["parent_profile_has_mixed_thread_frames"])
+        self.assertEqual(len(analysis["profile_timing_anomalies"]["dispatcher-0.prof"]), 5)
+        self.assertTrue(all(not value for name, value in analysis["profile_timing_anomalies"].items() if name.startswith("worker-")))
 
 
 if __name__ == "__main__":

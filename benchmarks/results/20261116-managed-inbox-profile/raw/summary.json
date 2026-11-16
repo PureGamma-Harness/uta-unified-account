@@ -1,0 +1,2252 @@
+{
+  "configuration": {
+    "duration": 10.0,
+    "rate": 20.0,
+    "accounts": 100,
+    "shards": 2,
+    "dispatchers": 2,
+    "outstanding": 256,
+    "inbox_capacity": 128,
+    "reject_every": 10,
+    "feed_interval": 2,
+    "control_timeout": 3,
+    "drain_seconds": 10,
+    "timeout_ms": 1000,
+    "poll_interval": 0.02,
+    "background_interval": 0.1,
+    "profile": true
+  },
+  "offered": 200,
+  "counts": {
+    "financial_succeeded": 171,
+    "business_rejected": 18,
+    "control_or_market_rejected": 11,
+    "durably_enqueued": 200,
+    "enqueue_technical_errors": 0,
+    "financial_success_late": 1
+  },
+  "duration_including_terminal_observation_drain": 10.101954325,
+  "drain_seconds": 0.10195432499999946,
+  "close_seconds_excluded": 0.024675404,
+  "startup_seconds_excluded": 0.45832764,
+  "unique_observed_financial_success_per_s": 16.927417655890064,
+  "enqueue_ack_per_s_not_financial_success": 19.79814930513458,
+  "latency_ms": {
+    "all": {
+      "p50": 118.06055,
+      "p95": 291.123168,
+      "p99": 393.309186,
+      "p99_9": 1196.361214
+    },
+    "financial_succeeded": {
+      "p50": 125.10691,
+      "p95": 294.047535,
+      "p99": 686.301971,
+      "p99_9": 1196.361214
+    },
+    "enqueue_ack": {
+      "p50": 15.336229,
+      "p95": 143.753381,
+      "p99": 240.52929,
+      "p99_9": 1155.233071
+    }
+  },
+  "initial_real_pid_and_fence": {
+    "state": {
+      "durable_desired_halt": false,
+      "durable_halt_commands": {
+        "0": "halt:7a45eb07ed6b450999a2778c133eb710:0",
+        "1": "halt:7a45eb07ed6b450999a2778c133eb710:1"
+      },
+      "durable_market_commands": {
+        "0": "market:1:0:01f6434afce6ed93",
+        "1": "market:1:1:01f6434afce6ed93"
+      },
+      "epoch": 1,
+      "error": null,
+      "halted": false,
+      "market_digest": "01f6434afce6ed931d169f78e47cdd21eb0f782ed47bce4adecbb1b5c3fb5574",
+      "market_version": 1,
+      "publishing": false,
+      "target_digest": "01f6434afce6ed931d169f78e47cdd21eb0f782ed47bce4adecbb1b5c3fb5574",
+      "target_version": 1,
+      "watermarks": {
+        "0": 1,
+        "1": 1
+      }
+    },
+    "workers": [
+      {
+        "shard": 0,
+        "pid": 18157,
+        "lease_active": true,
+        "owner_pid": 18157,
+        "generation": 1,
+        "report": {
+          "state": "ready",
+          "shard": 0,
+          "pid": 18157,
+          "generation": 1
+        }
+      },
+      {
+        "shard": 1,
+        "pid": 18158,
+        "lease_active": true,
+        "owner_pid": 18158,
+        "generation": 1,
+        "report": {
+          "state": "ready",
+          "shard": 1,
+          "pid": 18158,
+          "generation": 1
+        }
+      }
+    ],
+    "managed": true,
+    "decision_audit_required": true,
+    "profile": "managed_audit_required",
+    "recovered_orphans": [],
+    "ready": true
+  },
+  "final_diagnostics": {
+    "state": {
+      "durable_desired_halt": false,
+      "durable_halt_commands": {
+        "0": "halt:ff884c1eac864650b35e194236eee660:0",
+        "1": "halt:ff884c1eac864650b35e194236eee660:1"
+      },
+      "durable_market_commands": {
+        "0": "market:5:0:be6d43f8974c15d3",
+        "1": "market:5:1:be6d43f8974c15d3"
+      },
+      "epoch": 5,
+      "error": null,
+      "halted": false,
+      "market_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+      "market_version": 5,
+      "publishing": false,
+      "target_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+      "target_version": 5,
+      "watermarks": {
+        "0": 5,
+        "1": 5
+      }
+    },
+    "workers": [
+      {
+        "shard": 0,
+        "pid": 18157,
+        "lease_active": true,
+        "owner_pid": 18157,
+        "generation": 1,
+        "report": {
+          "state": "ready",
+          "shard": 0,
+          "pid": 18157,
+          "generation": 1
+        }
+      },
+      {
+        "shard": 1,
+        "pid": 18158,
+        "lease_active": true,
+        "owner_pid": 18158,
+        "generation": 1,
+        "report": {
+          "state": "ready",
+          "shard": 1,
+          "pid": 18158,
+          "generation": 1
+        }
+      }
+    ],
+    "managed": true,
+    "decision_audit_required": true,
+    "profile": "managed_audit_required",
+    "recovered_orphans": [],
+    "ready": true
+  },
+  "poll_errors": [
+    {
+      "at_ns": 6467638992389,
+      "error_type": "OperationalError",
+      "error_code": null,
+      "sqlite_errorcode": 522,
+      "sqlite_errorname": "SQLITE_IOERR_SHORT_READ"
+    }
+  ],
+  "feed_publications": [
+    {
+      "version": 2,
+      "snapshot": {
+        "assets": {
+          "USD": {
+            "collateral_factor": "1",
+            "price": "1"
+          }
+        },
+        "instruments": {
+          "BTC-PERP": {
+            "initial_margin_rate": "0.1",
+            "maintenance_margin_rate": "0.05",
+            "mark_price": "1E+2"
+          }
+        },
+        "observed_at": "2026-11-16T22:49:02.439716+00:00",
+        "version": 2
+      },
+      "started_ns": 6468917297596,
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:2:0:c68fa04ec5f9488d",
+          "1": "market:2:1:c68fa04ec5f9488d"
+        },
+        "epoch": 2,
+        "error": null,
+        "halted": true,
+        "market_digest": "c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+        "market_version": 2,
+        "publishing": false,
+        "target_digest": "c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+        "target_version": 2,
+        "watermarks": {
+          "0": 2,
+          "1": 2
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:2:0:c68fa04ec5f9488d",
+            "sequence": 31,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+              "observed_at": "2026-11-16T22:49:02.439716+00:00",
+              "version": 2
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:02.907906+00:00",
+            "completed_at": "2026-11-16T22:49:02.929174+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:2:1:c68fa04ec5f9488d",
+            "sequence": 25,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+              "observed_at": "2026-11-16T22:49:02.439716+00:00",
+              "version": 2
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:02.913552+00:00",
+            "completed_at": "2026-11-16T22:49:02.925275+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "activation": {
+        "durable_desired_halt": false,
+        "durable_halt_commands": {
+          "0": "halt:8ed34ab00ac8453a8ead41aea5b81a1c:0",
+          "1": "halt:8ed34ab00ac8453a8ead41aea5b81a1c:1"
+        },
+        "durable_market_commands": {
+          "0": "market:2:0:c68fa04ec5f9488d",
+          "1": "market:2:1:c68fa04ec5f9488d"
+        },
+        "epoch": 2,
+        "error": null,
+        "halted": false,
+        "market_digest": "c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+        "market_version": 2,
+        "publishing": false,
+        "target_digest": "c68fa04ec5f9488dc07b2d7457f4b6da6799d69a99c932300ab7e0fd790d0107",
+        "target_version": 2,
+        "watermarks": {
+          "0": 2,
+          "1": 2
+        },
+        "receipts": {
+          "0": {
+            "command_id": "halt:8ed34ab00ac8453a8ead41aea5b81a1c:0",
+            "sequence": 34,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:03.000524+00:00",
+            "completed_at": "2026-11-16T22:49:03.014681+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "halt:8ed34ab00ac8453a8ead41aea5b81a1c:1",
+            "sequence": 26,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:03.004716+00:00",
+            "completed_at": "2026-11-16T22:49:03.011709+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "finished_ns": 6469526989384
+    },
+    {
+      "version": 3,
+      "snapshot": {
+        "assets": {
+          "USD": {
+            "collateral_factor": "1",
+            "price": "1"
+          }
+        },
+        "instruments": {
+          "BTC-PERP": {
+            "initial_margin_rate": "0.1",
+            "maintenance_margin_rate": "0.05",
+            "mark_price": "1E+2"
+          }
+        },
+        "observed_at": "2026-11-16T22:49:05.050740+00:00",
+        "version": 3
+      },
+      "started_ns": 6471528255583,
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:3:0:b0477c2e1734b478",
+          "1": "market:3:1:b0477c2e1734b478"
+        },
+        "epoch": 3,
+        "error": null,
+        "halted": true,
+        "market_digest": "b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+        "market_version": 3,
+        "publishing": false,
+        "target_digest": "b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+        "target_version": 3,
+        "watermarks": {
+          "0": 3,
+          "1": 3
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:3:0:b0477c2e1734b478",
+            "sequence": 53,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+              "observed_at": "2026-11-16T22:49:05.050740+00:00",
+              "version": 3
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:05.315217+00:00",
+            "completed_at": "2026-11-16T22:49:05.340890+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:3:1:b0477c2e1734b478",
+            "sequence": 55,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+              "observed_at": "2026-11-16T22:49:05.050740+00:00",
+              "version": 3
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:05.322795+00:00",
+            "completed_at": "2026-11-16T22:49:05.338399+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "activation": {
+        "durable_desired_halt": false,
+        "durable_halt_commands": {
+          "0": "halt:9790340fccfc424199d088342ffd2d8c:0",
+          "1": "halt:9790340fccfc424199d088342ffd2d8c:1"
+        },
+        "durable_market_commands": {
+          "0": "market:3:0:b0477c2e1734b478",
+          "1": "market:3:1:b0477c2e1734b478"
+        },
+        "epoch": 3,
+        "error": null,
+        "halted": false,
+        "market_digest": "b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+        "market_version": 3,
+        "publishing": false,
+        "target_digest": "b0477c2e1734b4782692d6335f2a9b20f8f9d341b8cc5e03b178fa2b7f486cc6",
+        "target_version": 3,
+        "watermarks": {
+          "0": 3,
+          "1": 3
+        },
+        "receipts": {
+          "0": {
+            "command_id": "halt:9790340fccfc424199d088342ffd2d8c:0",
+            "sequence": 55,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:05.411508+00:00",
+            "completed_at": "2026-11-16T22:49:05.429674+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "halt:9790340fccfc424199d088342ffd2d8c:1",
+            "sequence": 57,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:05.416525+00:00",
+            "completed_at": "2026-11-16T22:49:05.431297+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "finished_ns": 6472000045824
+    },
+    {
+      "version": 4,
+      "snapshot": {
+        "assets": {
+          "USD": {
+            "collateral_factor": "1",
+            "price": "1"
+          }
+        },
+        "instruments": {
+          "BTC-PERP": {
+            "initial_margin_rate": "0.1",
+            "maintenance_margin_rate": "0.05",
+            "mark_price": "1E+2"
+          }
+        },
+        "observed_at": "2026-11-16T22:49:07.522845+00:00",
+        "version": 4
+      },
+      "started_ns": 6474000385344,
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:4:0:1e3d887a79f3b4fd",
+          "1": "market:4:1:1e3d887a79f3b4fd"
+        },
+        "epoch": 4,
+        "error": null,
+        "halted": true,
+        "market_digest": "1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+        "market_version": 4,
+        "publishing": false,
+        "target_digest": "1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+        "target_version": 4,
+        "watermarks": {
+          "0": 4,
+          "1": 4
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:4:0:1e3d887a79f3b4fd",
+            "sequence": 87,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+              "observed_at": "2026-11-16T22:49:07.522845+00:00",
+              "version": 4
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:08.173565+00:00",
+            "completed_at": "2026-11-16T22:49:08.189312+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:4:1:1e3d887a79f3b4fd",
+            "sequence": 82,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+              "observed_at": "2026-11-16T22:49:07.522845+00:00",
+              "version": 4
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:08.178471+00:00",
+            "completed_at": "2026-11-16T22:49:08.185847+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "activation": {
+        "durable_desired_halt": false,
+        "durable_halt_commands": {
+          "0": "halt:e6420145a7594b2e9e0d8cf84232293c:0",
+          "1": "halt:e6420145a7594b2e9e0d8cf84232293c:1"
+        },
+        "durable_market_commands": {
+          "0": "market:4:0:1e3d887a79f3b4fd",
+          "1": "market:4:1:1e3d887a79f3b4fd"
+        },
+        "epoch": 4,
+        "error": null,
+        "halted": false,
+        "market_digest": "1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+        "market_version": 4,
+        "publishing": false,
+        "target_digest": "1e3d887a79f3b4fd82f50f2302130f99339a7180b83b506caa94171359e5cb7d",
+        "target_version": 4,
+        "watermarks": {
+          "0": 4,
+          "1": 4
+        },
+        "receipts": {
+          "0": {
+            "command_id": "halt:e6420145a7594b2e9e0d8cf84232293c:0",
+            "sequence": 88,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:08.251723+00:00",
+            "completed_at": "2026-11-16T22:49:08.267053+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "halt:e6420145a7594b2e9e0d8cf84232293c:1",
+            "sequence": 85,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:08.256452+00:00",
+            "completed_at": "2026-11-16T22:49:08.263766+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "finished_ns": 6474779439082
+    },
+    {
+      "version": 5,
+      "snapshot": {
+        "assets": {
+          "USD": {
+            "collateral_factor": "1",
+            "price": "1"
+          }
+        },
+        "instruments": {
+          "BTC-PERP": {
+            "initial_margin_rate": "0.1",
+            "maintenance_margin_rate": "0.05",
+            "mark_price": "1E+2"
+          }
+        },
+        "observed_at": "2026-11-16T22:49:10.302296+00:00",
+        "version": 5
+      },
+      "started_ns": 6476779805697,
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:5:0:be6d43f8974c15d3",
+          "1": "market:5:1:be6d43f8974c15d3"
+        },
+        "epoch": 5,
+        "error": null,
+        "halted": true,
+        "market_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+        "market_version": 5,
+        "publishing": false,
+        "target_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+        "target_version": 5,
+        "watermarks": {
+          "0": 5,
+          "1": 5
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:5:0:be6d43f8974c15d3",
+            "sequence": 107,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+              "observed_at": "2026-11-16T22:49:10.302296+00:00",
+              "version": 5
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:10.810990+00:00",
+            "completed_at": "2026-11-16T22:49:10.829760+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:5:1:be6d43f8974c15d3",
+            "sequence": 111,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+              "observed_at": "2026-11-16T22:49:10.302296+00:00",
+              "version": 5
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:10.814517+00:00",
+            "completed_at": "2026-11-16T22:49:10.821710+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "activation": {
+        "durable_desired_halt": false,
+        "durable_halt_commands": {
+          "0": "halt:ff884c1eac864650b35e194236eee660:0",
+          "1": "halt:ff884c1eac864650b35e194236eee660:1"
+        },
+        "durable_market_commands": {
+          "0": "market:5:0:be6d43f8974c15d3",
+          "1": "market:5:1:be6d43f8974c15d3"
+        },
+        "epoch": 5,
+        "error": null,
+        "halted": false,
+        "market_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+        "market_version": 5,
+        "publishing": false,
+        "target_digest": "be6d43f8974c15d390cd19f2bca8e1e6644eec54558efd4b0bad406f5672eee2",
+        "target_version": 5,
+        "watermarks": {
+          "0": 5,
+          "1": 5
+        },
+        "receipts": {
+          "0": {
+            "command_id": "halt:ff884c1eac864650b35e194236eee660:0",
+            "sequence": 108,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:10.854555+00:00",
+            "completed_at": "2026-11-16T22:49:10.864301+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "halt:ff884c1eac864650b35e194236eee660:1",
+            "sequence": 112,
+            "account_id": null,
+            "kind": "SET_HALT",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "enabled": false
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-16T22:49:10.858062+00:00",
+            "completed_at": "2026-11-16T22:49:10.864339+00:00",
+            "next_attempt_at": null
+          }
+        }
+      },
+      "finished_ns": 6477380060156
+    }
+  ],
+  "readonly_reconciliation": {
+    "shards": [
+      {
+        "shard": 0,
+        "commands": 98,
+        "unique_orders": 81,
+        "ledger_events": 49,
+        "audit_required": true,
+        "independent_reserve_account_version_ledger_verified": true
+      },
+      {
+        "shard": 1,
+        "commands": 102,
+        "unique_orders": 90,
+        "ledger_events": 51,
+        "audit_required": true,
+        "independent_reserve_account_version_ledger_verified": true
+      }
+    ],
+    "observed_financial_successes": 171,
+    "persistent_successes": 171,
+    "unobserved_successes_found_on_reopen": 0,
+    "pending_original_ids": [],
+    "pending_count": 0,
+    "durable_enqueue_acknowledgements_verified": 200,
+    "reopened_readonly": true
+  },
+  "profile": {
+    "scope": "per-real-PID lifecycle and dispatcher0 cProfile; CPython3.12 permits one cProfile owner/interpreter. All dispatchers retain raw enqueue timing. Profiles include startup, waiting, shutdown; cumulative times overlap and are not CPU percentages",
+    "profiles": [
+      {
+        "file": "dispatcher-0.prof",
+        "total_profile_internal_seconds": 9.950155612999996,
+        "critical_functions": [
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 385,
+            "function": "status",
+            "calls": 314,
+            "internal_seconds": 0.004805668,
+            "cumulative_seconds": 7.325659636
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 105,
+            "function": "inbox_transaction",
+            "calls": 423,
+            "internal_seconds": 0.002657107,
+            "cumulative_seconds": 6.010362701
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 130,
+            "function": "inbox_transaction",
+            "calls": 423,
+            "internal_seconds": 0.0034058310000000002,
+            "cumulative_seconds": 5.686617601
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 233,
+            "function": "enqueue",
+            "calls": 212,
+            "internal_seconds": 0.004073375000000001,
+            "cumulative_seconds": 5.661481378
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 217,
+            "function": "enqueue_submit",
+            "calls": 201,
+            "internal_seconds": 0.003266932,
+            "cumulative_seconds": 5.645438233
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 99,
+            "function": "read_transaction",
+            "calls": 687,
+            "internal_seconds": 0.001919464,
+            "cumulative_seconds": 2.0629734220000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 124,
+            "function": "read_transaction",
+            "calls": 687,
+            "internal_seconds": 0.001537113,
+            "cumulative_seconds": 2.012180981
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 142,
+            "function": "_role_transaction",
+            "calls": 1139,
+            "internal_seconds": 0.054637813,
+            "cumulative_seconds": 1.8186704610000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 405,
+            "function": "__init__",
+            "calls": 570,
+            "internal_seconds": 0.020266599,
+            "cumulative_seconds": 0.8358244260000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 241,
+            "function": "_verify_data_guards",
+            "calls": 1110,
+            "internal_seconds": 0.257881158,
+            "cumulative_seconds": 0.8342224300000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 99,
+            "function": "_connect",
+            "calls": 569,
+            "internal_seconds": 0.012575272,
+            "cumulative_seconds": 0.713584823
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 523,
+            "function": "before_commit",
+            "calls": 570,
+            "internal_seconds": 0.02237838,
+            "cumulative_seconds": 0.665822095
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 308,
+            "function": "_write_state",
+            "calls": 15,
+            "internal_seconds": 0.000126045,
+            "cumulative_seconds": 0.560110989
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 94,
+            "function": "_verify_control_schema",
+            "calls": 1110,
+            "internal_seconds": 0.10567076800000001,
+            "cumulative_seconds": 0.456670642
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 233,
+            "function": "_guard_sql",
+            "calls": 104340,
+            "internal_seconds": 0.20731825,
+            "cumulative_seconds": 0.43278003200000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 147,
+            "function": "_load",
+            "calls": 1454,
+            "internal_seconds": 0.045468585000000006,
+            "cumulative_seconds": 0.42663071300000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 224,
+            "function": "enqueue_market",
+            "calls": 6,
+            "internal_seconds": 0.00017111800000000002,
+            "cumulative_seconds": 0.304278123
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 91,
+            "function": "_check_read_identity",
+            "calls": 555,
+            "internal_seconds": 0.002676868,
+            "cumulative_seconds": 0.15664883100000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 45,
+            "function": "__init__",
+            "calls": 325,
+            "internal_seconds": 0.0011895570000000002,
+            "cumulative_seconds": 0.11611850800000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 40,
+            "function": "__init__",
+            "calls": 325,
+            "internal_seconds": 0.004676273,
+            "cumulative_seconds": 0.114911043
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 270,
+            "function": "status",
+            "calls": 18,
+            "internal_seconds": 0.0005379390000000001,
+            "cumulative_seconds": 0.108140443
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 218,
+            "function": "_quote",
+            "calls": 208680,
+            "internal_seconds": 0.07226091300000001,
+            "cumulative_seconds": 0.10681367700000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 222,
+            "function": "_data_tables",
+            "calls": 1110,
+            "internal_seconds": 0.054954318,
+            "cumulative_seconds": 0.08102086800000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 249,
+            "function": "_lock",
+            "calls": 24,
+            "internal_seconds": 0.0009556860000000001,
+            "cumulative_seconds": 0.074220955
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 227,
+            "function": "enqueue_halt",
+            "calls": 6,
+            "internal_seconds": 3.1898000000000005e-05,
+            "cumulative_seconds": 0.060978728
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 189,
+            "function": "_observed",
+            "calls": 314,
+            "internal_seconds": 0.000355438,
+            "cumulative_seconds": 0.060534336
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 45,
+            "function": "_name",
+            "calls": 1030,
+            "internal_seconds": 0.0011318790000000001,
+            "cumulative_seconds": 0.055559201
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 363,
+            "function": "shard_for",
+            "calls": 200,
+            "internal_seconds": 0.0013959780000000002,
+            "cumulative_seconds": 0.053864001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 128,
+            "function": "_clock",
+            "calls": 314,
+            "internal_seconds": 0.005365245,
+            "cumulative_seconds": 0.049172622000000006
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 118,
+            "function": "transaction",
+            "calls": 30,
+            "internal_seconds": 5.4145000000000004e-05,
+            "cumulative_seconds": 0.039539186000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 455,
+            "function": "_authorize",
+            "calls": 32769,
+            "internal_seconds": 0.017998894,
+            "cumulative_seconds": 0.018509298
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 61,
+            "function": "_canonical",
+            "calls": 212,
+            "internal_seconds": 0.002539136,
+            "cumulative_seconds": 0.016720215
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 50,
+            "function": "_private_file",
+            "calls": 554,
+            "internal_seconds": 0.003942307,
+            "cumulative_seconds": 0.016127364
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 721,
+            "function": "_validate_order_command",
+            "calls": 200,
+            "internal_seconds": 0.0009523950000000001,
+            "cumulative_seconds": 0.010065392000000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 452,
+            "function": "_batch_reconcile_shard",
+            "calls": 6,
+            "internal_seconds": 2.6687e-05,
+            "cumulative_seconds": 0.008541065
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 86,
+            "function": "_json",
+            "calls": 212,
+            "internal_seconds": 0.0007764810000000001,
+            "cumulative_seconds": 0.008342867
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 215,
+            "function": "_path",
+            "calls": 325,
+            "internal_seconds": 0.001799423,
+            "cumulative_seconds": 0.0066306360000000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 277,
+            "function": "_state",
+            "calls": 12,
+            "internal_seconds": 0.00024547,
+            "cumulative_seconds": 0.005923358
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 423,
+            "function": "_batch_funding_claims",
+            "calls": 3,
+            "internal_seconds": 4.1092000000000006e-05,
+            "cumulative_seconds": 0.005289808
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 227,
+            "function": "_guard_actions",
+            "calls": 35520,
+            "internal_seconds": 0.004791198,
+            "cumulative_seconds": 0.004791198
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 541,
+            "function": "close",
+            "calls": 570,
+            "internal_seconds": 0.0017179180000000001,
+            "cumulative_seconds": 0.004351678
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 51,
+            "function": "_amount",
+            "calls": 400,
+            "internal_seconds": 0.0017072080000000002,
+            "cumulative_seconds": 0.003944166
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 161,
+            "function": "<genexpr>",
+            "calls": 2848,
+            "internal_seconds": 0.002879468,
+            "cumulative_seconds": 0.002895355
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 55,
+            "function": "_stamp",
+            "calls": 211,
+            "internal_seconds": 0.000637182,
+            "cumulative_seconds": 0.00246085
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 63,
+            "function": "_text",
+            "calls": 400,
+            "internal_seconds": 0.0005810860000000001,
+            "cumulative_seconds": 0.0011964920000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 131,
+            "function": "<lambda>",
+            "calls": 211,
+            "internal_seconds": 0.0004905290000000001,
+            "cumulative_seconds": 0.001074789
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 205,
+            "function": "_record",
+            "calls": 229,
+            "internal_seconds": 0.00090636,
+            "cumulative_seconds": 0.0010339770000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 367,
+            "function": "_index",
+            "calls": 343,
+            "internal_seconds": 0.000783907,
+            "cumulative_seconds": 0.000783907
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 77,
+            "function": "_private_file",
+            "calls": 15,
+            "internal_seconds": 8.1048e-05,
+            "cumulative_seconds": 0.000467578
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 34,
+            "function": "_json",
+            "calls": 15,
+            "internal_seconds": 2.4611000000000002e-05,
+            "cumulative_seconds": 0.00035527700000000003
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 291,
+            "function": "__init__",
+            "calls": 313,
+            "internal_seconds": 0.000257719,
+            "cumulative_seconds": 0.000296054
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 514,
+            "function": "privileged",
+            "calls": 1140,
+            "internal_seconds": 0.00028915200000000004,
+            "cumulative_seconds": 0.00028915200000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 60,
+            "function": "writer_token",
+            "calls": 30,
+            "internal_seconds": 7.407e-06,
+            "cumulative_seconds": 7.407e-06
+          }
+        ]
+      },
+      {
+        "file": "worker-0-pid-18157.prof",
+        "total_profile_internal_seconds": 10.720321932,
+        "critical_functions": [
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 844,
+            "function": "run_background_once",
+            "calls": 36,
+            "internal_seconds": 0.00073315,
+            "cumulative_seconds": 6.474564814000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/supervisor.py",
+            "line": 37,
+            "function": "run_once",
+            "calls": 31,
+            "internal_seconds": 0.009036503000000001,
+            "cumulative_seconds": 6.304050379
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 142,
+            "function": "_role_transaction",
+            "calls": 2232,
+            "internal_seconds": 0.016334969,
+            "cumulative_seconds": 6.005018902000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 66,
+            "function": "transaction",
+            "calls": 2202,
+            "internal_seconds": 0.007242887000000001,
+            "cumulative_seconds": 5.991481498000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 267,
+            "function": "_transaction",
+            "calls": 2194,
+            "internal_seconds": 0.0029206130000000003,
+            "cumulative_seconds": 5.9777850280000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 118,
+            "function": "transaction",
+            "calls": 2204,
+            "internal_seconds": 0.003046645,
+            "cumulative_seconds": 5.954434186
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 1042,
+            "function": "supervise_account",
+            "calls": 760,
+            "internal_seconds": 0.020436993,
+            "cumulative_seconds": 5.838573951000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 830,
+            "function": "process_one",
+            "calls": 210,
+            "internal_seconds": 0.0032842210000000004,
+            "cumulative_seconds": 2.013370988
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 241,
+            "function": "_verify_data_guards",
+            "calls": 3130,
+            "internal_seconds": 0.527797123,
+            "cumulative_seconds": 1.7919055160000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 307,
+            "function": "process_one",
+            "calls": 210,
+            "internal_seconds": 0.004850218,
+            "cumulative_seconds": 1.779815334
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 523,
+            "function": "before_commit",
+            "calls": 1116,
+            "internal_seconds": 0.042536322,
+            "cumulative_seconds": 1.7722466360000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 405,
+            "function": "__init__",
+            "calls": 1116,
+            "internal_seconds": 0.034237581,
+            "cumulative_seconds": 1.165525686
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 233,
+            "function": "_guard_sql",
+            "calls": 293785,
+            "internal_seconds": 0.49985076600000006,
+            "cumulative_seconds": 1.018361895
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 99,
+            "function": "_connect",
+            "calls": 1116,
+            "internal_seconds": 0.01064643,
+            "cumulative_seconds": 0.985570975
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 481,
+            "function": "_risk",
+            "calls": 922,
+            "internal_seconds": 0.038134926,
+            "cumulative_seconds": 0.7673193770000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 374,
+            "function": "_market",
+            "calls": 1130,
+            "internal_seconds": 0.0063110760000000005,
+            "cumulative_seconds": 0.763837862
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 94,
+            "function": "_verify_control_schema",
+            "calls": 2226,
+            "internal_seconds": 0.18991063800000002,
+            "cumulative_seconds": 0.661278154
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 275,
+            "function": "market_ref",
+            "calls": 1211,
+            "internal_seconds": 0.014469695000000001,
+            "cumulative_seconds": 0.570926818
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 734,
+            "function": "_admit_order",
+            "calls": 93,
+            "internal_seconds": 0.004232704,
+            "cumulative_seconds": 0.38794434600000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 244,
+            "function": "validate",
+            "calls": 1298,
+            "internal_seconds": 0.139249067,
+            "cumulative_seconds": 0.29034622200000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 196,
+            "function": "_assert_token",
+            "calls": 4205,
+            "internal_seconds": 0.009810812,
+            "cumulative_seconds": 0.289360714
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 189,
+            "function": "_observed",
+            "calls": 4208,
+            "internal_seconds": 0.003919392,
+            "cumulative_seconds": 0.277466478
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 128,
+            "function": "_clock",
+            "calls": 4208,
+            "internal_seconds": 0.030392825000000002,
+            "cumulative_seconds": 0.273547086
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 218,
+            "function": "_quote",
+            "calls": 587570,
+            "internal_seconds": 0.165104293,
+            "cumulative_seconds": 0.24946985600000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 147,
+            "function": "_load",
+            "calls": 2460,
+            "internal_seconds": 0.067303129,
+            "cumulative_seconds": 0.23105628600000003
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 375,
+            "function": "balance",
+            "calls": 1183,
+            "internal_seconds": 0.008874630000000001,
+            "cumulative_seconds": 0.196966901
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 222,
+            "function": "_data_tables",
+            "calls": 3130,
+            "internal_seconds": 0.12066146400000001,
+            "cumulative_seconds": 0.158111309
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 1026,
+            "function": "_liquidation_state",
+            "calls": 760,
+            "internal_seconds": 0.000794457,
+            "cumulative_seconds": 0.152299934
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 172,
+            "function": "_using",
+            "calls": 2368,
+            "internal_seconds": 0.015902912,
+            "cumulative_seconds": 0.144351806
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 433,
+            "function": "_sql_permit",
+            "calls": 1983,
+            "internal_seconds": 0.0064533360000000005,
+            "cumulative_seconds": 0.1261153
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 426,
+            "function": "_reserve",
+            "calls": 990,
+            "internal_seconds": 0.0013446220000000002,
+            "cumulative_seconds": 0.12310453800000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 455,
+            "function": "_reserve_reference",
+            "calls": 990,
+            "internal_seconds": 0.018981241000000003,
+            "cumulative_seconds": 0.12154648400000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 749,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 8.215900000000001e-05,
+            "cumulative_seconds": 0.121038742
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 277,
+            "function": "_state",
+            "calls": 249,
+            "internal_seconds": 0.0056642030000000005,
+            "cumulative_seconds": 0.12063649100000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 791,
+            "function": "_command_guard",
+            "calls": 211,
+            "internal_seconds": 0.0005399550000000001,
+            "cumulative_seconds": 0.11298103100000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 780,
+            "function": "_check_market",
+            "calls": 129,
+            "internal_seconds": 0.000468212,
+            "cumulative_seconds": 0.100840289
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 491,
+            "function": "<genexpr>",
+            "calls": 1750,
+            "internal_seconds": 0.001760428,
+            "cumulative_seconds": 0.100724146
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 423,
+            "function": "_batch_funding_claims",
+            "calls": 242,
+            "internal_seconds": 0.002619779,
+            "cumulative_seconds": 0.08037598900000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 111,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 0.00014076800000000002,
+            "cumulative_seconds": 0.072070042
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 455,
+            "function": "_authorize",
+            "calls": 149430,
+            "internal_seconds": 0.065449886,
+            "cumulative_seconds": 0.06986696
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 249,
+            "function": "_lock",
+            "calls": 498,
+            "internal_seconds": 0.0023099270000000002,
+            "cumulative_seconds": 0.057912239000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 410,
+            "function": "_live_orders",
+            "calls": 1925,
+            "internal_seconds": 0.001806314,
+            "cumulative_seconds": 0.057858281000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 45,
+            "function": "_name",
+            "calls": 8043,
+            "internal_seconds": 0.00437812,
+            "cumulative_seconds": 0.047267723000000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 111,
+            "function": "_fence_transaction",
+            "calls": 16,
+            "internal_seconds": 4.8979e-05,
+            "cumulative_seconds": 0.043472857000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 136,
+            "function": "_fence_transaction",
+            "calls": 16,
+            "internal_seconds": 2.4616000000000003e-05,
+            "cumulative_seconds": 0.043205443
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 284,
+            "function": "_assert_writer",
+            "calls": 210,
+            "internal_seconds": 0.0012135680000000002,
+            "cumulative_seconds": 0.042461660000000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 394,
+            "function": "assert_writer",
+            "calls": 210,
+            "internal_seconds": 0.001139175,
+            "cumulative_seconds": 0.040807727
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 173,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 9.776000000000001e-06,
+            "cumulative_seconds": 0.039729122000000006
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 151,
+            "function": "code_artifact",
+            "calls": 1,
+            "internal_seconds": 0.00017801200000000002,
+            "cumulative_seconds": 0.039206291000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 569,
+            "function": "_audit_state",
+            "calls": 162,
+            "internal_seconds": 0.002393511,
+            "cumulative_seconds": 0.037947633
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 774,
+            "function": "_reconcile",
+            "calls": 140,
+            "internal_seconds": 0.005058741,
+            "cumulative_seconds": 0.036308559000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 365,
+            "function": "renew",
+            "calls": 6,
+            "internal_seconds": 0.00014454500000000002,
+            "cumulative_seconds": 0.035811794
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 362,
+            "function": "_require_account",
+            "calls": 2697,
+            "internal_seconds": 0.004335282,
+            "cumulative_seconds": 0.034160908000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 290,
+            "function": "record",
+            "calls": 81,
+            "internal_seconds": 0.0005226,
+            "cumulative_seconds": 0.033741023
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 118,
+            "function": "_loaded_engine",
+            "calls": 1,
+            "internal_seconds": 0.0020211070000000003,
+            "cumulative_seconds": 0.028266329000000003
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 340,
+            "function": "_locked_assets",
+            "calls": 1084,
+            "internal_seconds": 0.0011672660000000001,
+            "cumulative_seconds": 0.027389698
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 70,
+            "function": "_exact",
+            "calls": 2834,
+            "internal_seconds": 0.013244413,
+            "cumulative_seconds": 0.026572335000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 406,
+            "function": "_positions",
+            "calls": 1925,
+            "internal_seconds": 0.001975783,
+            "cumulative_seconds": 0.026439436
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 60,
+            "function": "_json",
+            "calls": 1133,
+            "internal_seconds": 0.0021417890000000003,
+            "cumulative_seconds": 0.021278612000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 34,
+            "function": "_guard_definitions",
+            "calls": 1298,
+            "internal_seconds": 0.016470323000000002,
+            "cumulative_seconds": 0.021022555000000002
+          }
+        ]
+      },
+      {
+        "file": "worker-1-pid-18158.prof",
+        "total_profile_internal_seconds": 10.692180385999992,
+        "critical_functions": [
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 844,
+            "function": "run_background_once",
+            "calls": 40,
+            "internal_seconds": 0.000847685,
+            "cumulative_seconds": 6.010609624000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/supervisor.py",
+            "line": 37,
+            "function": "run_once",
+            "calls": 35,
+            "internal_seconds": 0.010147849,
+            "cumulative_seconds": 5.802854013
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 142,
+            "function": "_role_transaction",
+            "calls": 1994,
+            "internal_seconds": 0.020327456,
+            "cumulative_seconds": 5.7069954130000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 66,
+            "function": "transaction",
+            "calls": 1964,
+            "internal_seconds": 0.0065933450000000005,
+            "cumulative_seconds": 5.692527111
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 267,
+            "function": "_transaction",
+            "calls": 1956,
+            "internal_seconds": 0.003204176,
+            "cumulative_seconds": 5.685779664
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 118,
+            "function": "transaction",
+            "calls": 1966,
+            "internal_seconds": 0.004368788,
+            "cumulative_seconds": 5.66493609
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 1042,
+            "function": "supervise_account",
+            "calls": 611,
+            "internal_seconds": 0.018782003000000002,
+            "cumulative_seconds": 5.224250868
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 830,
+            "function": "process_one",
+            "calls": 224,
+            "internal_seconds": 0.0037248560000000003,
+            "cumulative_seconds": 2.240671174
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 307,
+            "function": "process_one",
+            "calls": 224,
+            "internal_seconds": 0.005119027,
+            "cumulative_seconds": 1.9363678780000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 241,
+            "function": "_verify_data_guards",
+            "calls": 2751,
+            "internal_seconds": 0.483639468,
+            "cumulative_seconds": 1.632122053
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 523,
+            "function": "before_commit",
+            "calls": 997,
+            "internal_seconds": 0.03194778,
+            "cumulative_seconds": 1.553714043
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 405,
+            "function": "__init__",
+            "calls": 997,
+            "internal_seconds": 0.031012546000000002,
+            "cumulative_seconds": 1.112665193
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 99,
+            "function": "_connect",
+            "calls": 997,
+            "internal_seconds": 0.010284596,
+            "cumulative_seconds": 0.933946703
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 233,
+            "function": "_guard_sql",
+            "calls": 258159,
+            "internal_seconds": 0.445382547,
+            "cumulative_seconds": 0.909741648
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 374,
+            "function": "_market",
+            "calls": 1008,
+            "internal_seconds": 0.00985514,
+            "cumulative_seconds": 0.774995752
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 481,
+            "function": "_risk",
+            "calls": 791,
+            "internal_seconds": 0.042269078,
+            "cumulative_seconds": 0.717858996
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 94,
+            "function": "_verify_control_schema",
+            "calls": 1988,
+            "internal_seconds": 0.16857545200000001,
+            "cumulative_seconds": 0.6060061240000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 275,
+            "function": "market_ref",
+            "calls": 1098,
+            "internal_seconds": 0.011702163000000002,
+            "cumulative_seconds": 0.585158289
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 734,
+            "function": "_admit_order",
+            "calls": 96,
+            "internal_seconds": 0.0037865480000000003,
+            "cumulative_seconds": 0.411760703
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 244,
+            "function": "validate",
+            "calls": 1194,
+            "internal_seconds": 0.14352910800000002,
+            "cumulative_seconds": 0.29825367
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 196,
+            "function": "_assert_token",
+            "calls": 3703,
+            "internal_seconds": 0.010920597,
+            "cumulative_seconds": 0.28958516900000003
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 189,
+            "function": "_observed",
+            "calls": 3706,
+            "internal_seconds": 0.003970917,
+            "cumulative_seconds": 0.27685031400000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 128,
+            "function": "_clock",
+            "calls": 3706,
+            "internal_seconds": 0.024899698,
+            "cumulative_seconds": 0.272879397
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 218,
+            "function": "_quote",
+            "calls": 516318,
+            "internal_seconds": 0.15753761300000002,
+            "cumulative_seconds": 0.23092078000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 147,
+            "function": "_load",
+            "calls": 2236,
+            "internal_seconds": 0.065337695,
+            "cumulative_seconds": 0.220795768
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 375,
+            "function": "balance",
+            "calls": 1074,
+            "internal_seconds": 0.006684166,
+            "cumulative_seconds": 0.194070865
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 277,
+            "function": "_state",
+            "calls": 267,
+            "internal_seconds": 0.011318801,
+            "cumulative_seconds": 0.159918962
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 222,
+            "function": "_data_tables",
+            "calls": 2751,
+            "internal_seconds": 0.108996117,
+            "cumulative_seconds": 0.151504931
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 1026,
+            "function": "_liquidation_state",
+            "calls": 611,
+            "internal_seconds": 0.000715033,
+            "cumulative_seconds": 0.150712928
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 172,
+            "function": "_using",
+            "calls": 2150,
+            "internal_seconds": 0.018362361,
+            "cumulative_seconds": 0.137868143
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 433,
+            "function": "_sql_permit",
+            "calls": 1727,
+            "internal_seconds": 0.0023350940000000002,
+            "cumulative_seconds": 0.12619792300000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 426,
+            "function": "_reserve",
+            "calls": 887,
+            "internal_seconds": 0.0013304130000000001,
+            "cumulative_seconds": 0.117724884
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 749,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 8.204000000000001e-05,
+            "cumulative_seconds": 0.11771857100000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 455,
+            "function": "_reserve_reference",
+            "calls": 887,
+            "internal_seconds": 0.016794742,
+            "cumulative_seconds": 0.11621661900000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 791,
+            "function": "_command_guard",
+            "calls": 218,
+            "internal_seconds": 0.0005454920000000001,
+            "cumulative_seconds": 0.11149795400000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 249,
+            "function": "_lock",
+            "calls": 534,
+            "internal_seconds": 0.002466747,
+            "cumulative_seconds": 0.10362006400000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 491,
+            "function": "<genexpr>",
+            "calls": 1498,
+            "internal_seconds": 0.001383789,
+            "cumulative_seconds": 0.10149542900000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 780,
+            "function": "_check_market",
+            "calls": 136,
+            "internal_seconds": 0.000568557,
+            "cumulative_seconds": 0.10127126700000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 111,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 0.00014451200000000002,
+            "cumulative_seconds": 0.07522901500000001
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 423,
+            "function": "_batch_funding_claims",
+            "calls": 260,
+            "internal_seconds": 0.0031297340000000003,
+            "cumulative_seconds": 0.071015591
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 455,
+            "function": "_authorize",
+            "calls": 132452,
+            "internal_seconds": 0.063269744,
+            "cumulative_seconds": 0.067062247
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/durable_commands.py",
+            "line": 284,
+            "function": "_assert_writer",
+            "calls": 224,
+            "internal_seconds": 0.001538024,
+            "cumulative_seconds": 0.056087950000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 394,
+            "function": "assert_writer",
+            "calls": 224,
+            "internal_seconds": 0.0013234730000000001,
+            "cumulative_seconds": 0.054076032
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 410,
+            "function": "_live_orders",
+            "calls": 1672,
+            "internal_seconds": 0.0017932620000000001,
+            "cumulative_seconds": 0.05222512
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 569,
+            "function": "_audit_state",
+            "calls": 180,
+            "internal_seconds": 0.0025512350000000002,
+            "cumulative_seconds": 0.051946259
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 173,
+            "function": "__init__",
+            "calls": 1,
+            "internal_seconds": 4.1201e-05,
+            "cumulative_seconds": 0.04944409
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 151,
+            "function": "code_artifact",
+            "calls": 1,
+            "internal_seconds": 0.00016473800000000002,
+            "cumulative_seconds": 0.048922842
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 45,
+            "function": "_name",
+            "calls": 8602,
+            "internal_seconds": 0.0043828140000000005,
+            "cumulative_seconds": 0.044055369000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 774,
+            "function": "_reconcile",
+            "calls": 148,
+            "internal_seconds": 0.005479188,
+            "cumulative_seconds": 0.042955263
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 111,
+            "function": "_fence_transaction",
+            "calls": 16,
+            "internal_seconds": 4.5243e-05,
+            "cumulative_seconds": 0.041893992000000005
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/storage.py",
+            "line": 136,
+            "function": "_fence_transaction",
+            "calls": 16,
+            "internal_seconds": 2.1427e-05,
+            "cumulative_seconds": 0.041614605000000006
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 118,
+            "function": "_loaded_engine",
+            "calls": 1,
+            "internal_seconds": 0.008158443000000001,
+            "cumulative_seconds": 0.041153609
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/writer_fence.py",
+            "line": 365,
+            "function": "renew",
+            "calls": 6,
+            "internal_seconds": 0.000103412,
+            "cumulative_seconds": 0.034522263000000004
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 290,
+            "function": "record",
+            "calls": 90,
+            "internal_seconds": 0.0005839920000000001,
+            "cumulative_seconds": 0.034003235
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 340,
+            "function": "_locked_assets",
+            "calls": 971,
+            "internal_seconds": 0.005220635,
+            "cumulative_seconds": 0.031731094
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/sharding.py",
+            "line": 363,
+            "function": "shard_for",
+            "calls": 7650,
+            "internal_seconds": 0.010272416000000001,
+            "cumulative_seconds": 0.025918571
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 70,
+            "function": "_exact",
+            "calls": 2469,
+            "internal_seconds": 0.012199454,
+            "cumulative_seconds": 0.025786365000000002
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 60,
+            "function": "_json",
+            "calls": 1160,
+            "internal_seconds": 0.00081088,
+            "cumulative_seconds": 0.024196034
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/decision_audit.py",
+            "line": 34,
+            "function": "_guard_definitions",
+            "calls": 1194,
+            "internal_seconds": 0.014752010000000001,
+            "cumulative_seconds": 0.022899414
+          },
+          {
+            "file": "/workspace/uta-managed-perf/uta/service.py",
+            "line": 362,
+            "function": "_require_account",
+            "calls": 2289,
+            "internal_seconds": 0.0022394660000000003,
+            "cumulative_seconds": 0.021662582
+          }
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "code_commit": "7a06c0532ba510653b1feccd7e80030d3cb19f8a",
+    "working_tree_dirty": false,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "sqlite": "3.53.1",
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "cpu_affinity_count": 2,
+    "cgroup_limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    },
+    "source_root": "/workspace/uta-managed-perf",
+    "generator_sha256": "3c5d42bee565713bfc1d1eed78dc50e9336f0a7f64bba714feb48bed75d72ce4",
+    "source_sha256": {
+      "__init__.py": "45d35bfcef31f11b84a82a8dd312be77b76e86fbb9bf3aed71ab8452e93189c5",
+      "__main__.py": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131",
+      "acceptance.py": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7",
+      "admission.py": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47",
+      "api.py": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2",
+      "bridge.py": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432",
+      "configuration.py": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68",
+      "credit.py": "f90f28b6181bbacab544d0bb3a41168e94d7df24a91830e36edc58f17d77a3a0",
+      "cutover.py": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b",
+      "decision_audit.py": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6",
+      "durable_commands.py": "37c33f1ce6bc5248abe91a2f1b4c356c5d4a32ff4f5089c507592af66d0dc7f3",
+      "durable_gateway.py": "4358701a1da3ca53e305c780aa7f5f3876c53e7c4b8887a1948e74256046b3c2",
+      "durable_liquidation.py": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826",
+      "durable_process.py": "dfdaa4f1eac4c09ec7bfbd2d832353bd3fadabf43991afb5989d2849537aec17",
+      "examples.py": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90",
+      "gateway.py": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7",
+      "ledger.py": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66",
+      "liquidation.py": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f",
+      "market.py": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+      "market_cache.py": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211",
+      "matching.py": "a419e5cba5a396a7440429dcf6c2e68ed590f1a1fdad35db69a1d8fe3e370fc8",
+      "migration.py": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5",
+      "models.py": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+      "ops.py": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da",
+      "portfolio.py": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+      "products.py": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+      "reconciliation.py": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8",
+      "request_signing.py": "c73ac32e3ab0469ad6da1e67d20d88ce396fe08ddedab485e12ae385db62eb8b",
+      "reservations.py": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b",
+      "reserve_kernel.py": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95",
+      "risk.py": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264",
+      "scenario_margin.py": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4",
+      "server.py": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c",
+      "service.py": "b10dc52b3eb4bde476f4dabc805c16a49729026f03e668a6069eccb8a0c39242",
+      "shadow_adapter.py": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064",
+      "shard_admission.py": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c",
+      "sharding.py": "9deb265f28952fd2ca5d474ef59bad05276f6a69d7223367e448853c7a31b52e",
+      "simulator.py": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae",
+      "spot.py": "f5427a71000022e512814f042b56034ada94eb2d4c170f88e822de8465e19cd7",
+      "storage.py": "9d872fa1b338d91730c1ea525cdb2c24da01dabeebe6e0defcb3a5215a27520a",
+      "store.py": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c",
+      "supervisor.py": "3ba0bd8058016524d75c42411ae73682294fae2f9311cf46cdf0eeae0368ecb3",
+      "vertical.py": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0",
+      "worker.py": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b",
+      "writer_fence.py": "6d375edf8165b8d6f989600bc933ffd45b11ed269c83993bf00e9149449902e5"
+    },
+    "filesystem": "Filesystem     Type    1K-blocks    Used Available Use% Mounted on\noverlay        overlay  32978704 1469592  29815008   5% /",
+    "storage": "local SQLite WAL/FULL; each batch COMMIT retains FULL synchronous; no replication",
+    "sqlite_busy_timeout_seconds": 10,
+    "market_max_age_seconds": 5,
+    "timing": "planned monotonic arrival to post-COMMIT observation; p99 histogram upper bound width <=0.1%",
+    "queue_model": "one shared outstanding budget across dispatcher queue, database calls, batch queues and result collection",
+    "scope": "local independent spawned managed PID owners, WAL/FULL, audit required, no replication; cohosted",
+    "profile": true
+  },
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "scope": "<=10s managed local process inbox admission diagnostic; all successful orders OPEN, no simulated or real fills, no replication; profiling includes instrumentation overhead"
+}
