@@ -19,7 +19,7 @@ import sqlite3
 import subprocess
 from tempfile import TemporaryDirectory
 from threading import Barrier, Thread
-from time import monotonic, sleep
+from time import monotonic, sleep, time_ns
 import unittest
 
 from uta.durable_commands import QueueStore
@@ -213,6 +213,22 @@ class SigningStoreTests(unittest.TestCase):
         with sqlite3.connect(self.root / "auth.sqlite3") as connection:
             connection.execute("ALTER TABLE auth_audit RENAME COLUMN event TO unsupported_event")
         self.code("signing_store_unavailable", self.signed())
+
+    def test_default_real_clock_serializes_concurrent_distinct_nonces_without_false_regression(self):
+        store = NonceStore.initialize(self.root / "real-clock.sqlite3", tenant_id="tenant-a", producer_binding="1" * 64)
+        observed = time_ns() // 1000000
+        key = replace(self.key, not_before_ms=observed - 1000, expires_at_ms=observed + 60000)
+        profile = SigningProfile("tenant-a", store.audience, 1, (key,))
+        auth = RequestAuthenticator(store, profile)
+        def authenticate(_):
+            header = sign_headers(profile, key.key_id, timestamp_ms=time_ns() // 1000000,
+                nonce=secrets.token_urlsafe(24), method="GET", request_target="/v2/accounts/alice/commands/c")
+            return auth.authenticate(header, method="GET", request_target="/v2/accounts/alice/commands/c", body=b"")
+        with ThreadPoolExecutor(max_workers=8) as workers:
+            results = list(workers.map(authenticate, range(24)))
+        self.assertTrue(all(result.account_id == "alice" for result in results))
+        with store.database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM auth_nonces").fetchone()[0], 24)
 
 
 class SignedHTTPTests(unittest.TestCase):
