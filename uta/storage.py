@@ -7,7 +7,8 @@ trusted; journal hashes detect accidental edits but are not external audit seals
 """
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
+from copy import copy
 from decimal import Decimal
 from hashlib import sha256
 import json
@@ -36,7 +37,8 @@ class Database:
     File-backed databases are required so every connection sees the same state.
     """
 
-    def __init__(self, path: str | Path, *, timeout: float = 10.0):
+    def __init__(self, path: str | Path, *, timeout: float = 10.0,
+                 writer_token=None, fence_clock_ns=None, fence_boot_id=None):
         if (not isinstance(path, (str, Path)) or not str(path).strip()
                 or str(path) == ":memory:" or str(path).startswith("file:")):
             raise StorageError("a filesystem database path is required; memory/URI databases are unsupported")
@@ -48,6 +50,29 @@ class Database:
         # follow a database symlink before it can be rejected below.
         self.path = str(candidate.parent.resolve() / candidate.name)
         self.timeout = float(timeout)
+        if fence_clock_ns is not None and not callable(fence_clock_ns):
+            raise StorageError("fence_clock_ns must be callable")
+        if fence_boot_id is not None and not isinstance(fence_boot_id, str):
+            raise StorageError("fence_boot_id must be a string")
+        self._writer_token = writer_token
+        self._fence_clock_ns, self._fence_boot_id = fence_clock_ns, fence_boot_id
+
+    @property
+    def writer_token(self):
+        return self._writer_token
+
+    def for_writer(self, token):
+        """Bind a new database object, preserving subclass identity checks.
+
+        Existing services keep their original unbound/stale object. Binding a
+        token never transfers permission to old services sharing this object.
+        """
+        from .writer_fence import WriterToken
+        if not isinstance(token, WriterToken):
+            raise StorageError("writer token must be a WriterToken")
+        bound = copy(self)
+        bound._writer_token = token
+        return bound
 
     def _private_file(self) -> tuple[int, int]:
         """Create private state independently of umask and reject unsafe reuse.
@@ -93,18 +118,53 @@ class Database:
     @contextmanager
     def transaction(self) -> Iterator[sqlite3.Connection]:
         """Commit all changes together, or roll them all back on any exception."""
+        with self._role_transaction("financial") as connection:
+            yield connection
+
+    @contextmanager
+    def read_transaction(self) -> Iterator[sqlite3.Connection]:
+        """Read a consistent snapshot; financial and control writes are denied."""
+        with self._role_transaction("read") as connection:
+            yield connection
+
+    @contextmanager
+    def inbox_transaction(self) -> Iterator[sqlite3.Connection]:
+        """Create/enqueue in the fixed inbox only; no terminal or financial DML."""
+        with self._role_transaction("inbox") as connection:
+            yield connection
+
+    @contextmanager
+    def _fence_transaction(self) -> Iterator[sqlite3.Connection]:
+        """Internal lease control role; never grants financial write access."""
+        with self._role_transaction("control") as connection:
+            yield connection
+
+    @contextmanager
+    def _role_transaction(self, role) -> Iterator[sqlite3.Connection]:
+        from .writer_fence import _TransactionGuard, WriterFenceError
         connection = self._connect()
+        guard = None
         try:
-            connection.execute("BEGIN IMMEDIATE")
+            if role == "read":
+                connection.execute("PRAGMA query_only=ON")
+            connection.execute("BEGIN" if role == "read" else "BEGIN IMMEDIATE")
+            guard = _TransactionGuard(self, connection, role)
             yield connection
             if not connection.in_transaction:
                 raise StorageError("caller ended the managed transaction")
-            connection.commit()
-        except BaseException:
+            guard.before_commit()
+            with guard.privileged():
+                connection.commit()
+        except BaseException as exc:
             if connection.in_transaction:
-                connection.rollback()
+                with guard.privileged() if guard is not None else nullcontext():
+                    connection.rollback()
+            if guard is not None and guard.denied is not None and not isinstance(exc, WriterFenceError):
+                raise guard.denied from exc
             raise
         finally:
+            if guard is not None:
+                guard.close()
             connection.close()
 
     @contextmanager
@@ -119,6 +179,8 @@ class Database:
         main_path = next((row[2] for row in files if row[1] == "main"), None)
         if main_path is None or str(Path(main_path).resolve()) != self.path:
             raise StorageError("the supplied connection belongs to another database")
+        from .writer_fence import _assert_joinable
+        _assert_joinable(self, connection)
         yield connection
 
 
