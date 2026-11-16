@@ -2,6 +2,9 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 import os
+import fcntl
+import signal
+import sqlite3
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from time import monotonic, sleep
@@ -177,6 +180,74 @@ class DurableProcessTests(unittest.TestCase):
             view = ShardWorkerView(self.path, 0, token, service_options={"max_price_age": self.legacy._services[0].max_price_age})
             self.assertEqual(view.shard, 0)
         self.assertTrue(indices)
+
+    def test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers(self):
+        self.activate()
+        pid = self.router.worker_pid(0)
+        connection = sqlite3.connect(self.router._database(0).path, isolation_level=None)
+        self.addCleanup(connection.close)
+        connection.execute("BEGIN IMMEDIATE")
+        def shared_gate_held():
+            descriptor = os.open(self.path / "router.lock", os.O_RDWR)
+            try:
+                try:
+                    fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    return True
+                return False
+            finally:
+                os.close(descriptor)
+        self.eventually(shared_gate_held)
+        os.kill(pid, signal.SIGSTOP)
+        connection.rollback()
+        # No manual SIGCONT: supervisor must observe expiry and kill its own
+        # stopped child so an EX publication gate can actually be acquired.
+        before = monotonic()
+        publication = self.router.publish_market(self.market(2), timeout=4)
+        self.assertLess(monotonic() - before, 5)
+        self.assertFalse(publication["publishing"])
+        self.eventually(lambda: self.router.worker_pid(0) not in (None, pid))
+        self.assertTrue(publication["halted"])
+
+    def test_real_new_pid_repayments_use_same_fenced_credit_and_stable_receipts(self):
+        path = Path(self.temporary.name) / "credit-managed"
+        account = self.names[0]
+        def bootstrap(router):
+            router.create_account(account)
+            router.deposit(account, "cash", "USD", D("1000"))
+            router.publish_market(self.market())
+            router.set_kill_switch(False)
+            shard = router.shard_for(account)
+            router.configure_credit_limit(account, "USD", D("100"))
+            router.configure_credit_asset_limit(shard, "USD", D("100"))
+            router.fund_credit_pool(shard, "pool", "USD", D("50"), source_reference="proof:pool")
+            router.borrow(account, "loan", "USD", D("10"))
+            router.accrue_interest(account, "interest", "USD", D("1"))
+        router = DurableProcessRouter.initialize(path, 2, {"USD": 8}, managed=True,
+                    bootstrap=bootstrap, lease_seconds=.6, poll_interval=.01)
+        self.addCleanup(router.close)
+        router.start()  # Global halt remains true; repayment needs no activation.
+        queued = router.repay(account, "repay-4", "USD", D("4"))
+        self.assertEqual(queued["state"], "PENDING")
+        first = router.wait("repay-4", account_id=account, timeout=8)
+        self.assertEqual(first["state"], "SUCCEEDED", first)
+        self.assertEqual((first["result"]["principal_repaid"], first["result"]["interest_repaid"]), ("3", "1"))
+        shard, old_pid = router.shard_for(account), router.worker_pid(router.shard_for(account))
+        router.terminate_worker(shard)
+        self.eventually(lambda: router.worker_pid(shard) not in (None, old_pid))
+        self.assertEqual(router.repay(account, "repay-4", "USD", D("4")), first)
+        router.repay(account, "repay-2", "USD", D("2"))
+        second = router.wait("repay-2", account_id=account, timeout=8)
+        self.assertEqual(second["state"], "SUCCEEDED", second)
+        with router._database(shard).read_transaction() as conn:
+            debt = conn.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id=?", (account,)).fetchone()
+            self.assertEqual(tuple(debt), ("5", "0"))
+            balances = dict(conn.execute("SELECT account,units FROM ledger_balances WHERE asset='USD'"))
+            self.assertEqual(int(balances["customer:" + account]), 100400000000)
+            self.assertEqual(int(balances["system:credit-pool"]), 4500000000)
+            self.assertEqual(int(balances["system:credit-interest-cash"]), 100000000)
+            self.assertEqual(sum(map(int, balances.values())), 0)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM credit_commands WHERE kind='repaid'").fetchone()[0], 2)
 
 
 if __name__ == "__main__":

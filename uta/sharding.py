@@ -17,6 +17,7 @@ from pathlib import Path
 import re
 import sqlite3
 import stat
+from time import monotonic, sleep
 from types import MappingProxyType
 
 from .credit import CreditService
@@ -243,7 +244,7 @@ class ShardRouter:
             connection.close()
 
     @contextmanager
-    def _lock(self, *, exclusive=False):
+    def _lock(self, *, exclusive=False, timeout=None):
         flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
         try:
             descriptor = os.open(self._lock_path, flags | os.O_CREAT | os.O_EXCL, 0o600)
@@ -253,7 +254,19 @@ class ShardRouter:
             details = os.fstat(descriptor)
             if not stat.S_ISREG(details.st_mode) or details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077:
                 raise ServiceError("unsafe_lock", "router lock must be private and owned by the service user")
-            fcntl.flock(descriptor, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+            operation = fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH
+            if timeout is None:
+                fcntl.flock(descriptor, operation)
+            else:
+                deadline = monotonic() + timeout
+                while True:
+                    try:
+                        fcntl.flock(descriptor, operation | fcntl.LOCK_NB)
+                        break
+                    except BlockingIOError:
+                        if monotonic() >= deadline:
+                            raise ServiceError("router_busy", "router control gate did not become available before timeout", 503)
+                        sleep(min(.01, max(0, deadline - monotonic())))
             yield
         finally:
             os.close(descriptor)
@@ -802,7 +815,7 @@ class ShardWorkerView:
                     raise ServiceError("router_halted", "market publication is incomplete", 503)
                 self._check_market(connection, state)
                 self._exchange._market(connection)  # Activation requires fresh prices.
-        elif kind != "CANCEL_ORDER":
+        elif kind not in ("CANCEL_ORDER", "REPAY"):
             raise ServiceError("invalid_input", "managed worker does not support this command")
         yield
 
@@ -817,7 +830,8 @@ class ShardWorkerView:
                 state = self._control._state()
                 claims = self._control._batch_funding_claims()
                 return store.process_one(self._exchange,
-                    guard=lambda connection, record: self._command_guard(connection, record, state, claims))
+                    guard=lambda connection, record: self._command_guard(connection, record, state, claims),
+                    credit=self._exchange.credit)
         except BaseException as exc:
             cause = getattr(exc, "cause", exc)
             if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:

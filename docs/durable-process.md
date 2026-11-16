@@ -26,11 +26,11 @@ processes.start()
 
 ## 持久命令与真实后台工作
 
-`submit_order(account_id, command_id, order_id, symbol, quantity, limit_price)` 和 `cancel_order(account_id, command_id, order_id)` 返回 `ack=durably_queued`。它只证明意图写入本地 WAL/FULL inbox，**不证明风险接纳或成交**。`status(command_id, account_id=...)` 以及 `wait(..., timeout=...)` 查询原 ID 的 PENDING、SUCCEEDED、REJECTED 或 QUARANTINED。SUCCEEDED 的下单回执是接纳时的快照；之后真实成交不会改写它。
+`submit_order(account_id, command_id, order_id, symbol, quantity, limit_price)`、`cancel_order(account_id, command_id, order_id)` 和 `repay(account_id, command_id, asset, amount)` 返回 `ack=durably_queued`。它只证明意图写入本地 WAL/FULL inbox，**不证明风险接纳或成交**。`status(command_id, account_id=...)` 以及 `wait(..., timeout=...)` 查询原 ID 的 PENDING、SUCCEEDED、REJECTED 或 QUARANTINED。SUCCEEDED 的下单回执是接纳时的快照；之后真实成交不会改写它。
 
 每个 worker 在自身 fenced Database 事务内选命令，完成金融变更及 terminal receipt 后一起 COMMIT。崩溃前未提交的金融变更和回执一起回滚，原 PENDING 可由新 owner 重试；提交后失去响应先查询原 ID，不重复发明成功。技术异常有有界尝试和 QUARANTINED 记录，不能伪装为风险业务拒绝；同账户前序 PENDING 不被后序金融操作越过。
 
-父进程自动监督真实子 PID，退出后重新 spawn。旧租约未到期时新 owner 等待，不能凭进程退出通知抢写；续租失败、租约过期或 PID 绑定不符，Database 在事务及提交边界拒绝。生命周期 Event/Pipe 只传停止信号和进程诊断，不承载任何需要恢复的命令、资金或回执。父进程死亡后子进程检测 PPID 变化并退出，避免永久孤儿续租。
+父进程自动监督真实子 PID，退出后重新 spawn。旧租约未到期时新 owner 等待，不能凭进程退出通知抢写；续租失败、租约过期或 PID 绑定不符，Database 在事务及提交边界拒绝。生命周期 Event/Pipe 只传停止信号和进程诊断，不承载任何需要恢复的命令、资金或回执。父进程死亡后子进程检测 PPID 变化并退出，避免永久孤儿续租。父进程还检查其自有子进程的持久租约：若 PID 对应当前 owner 但租约已到期，会 SIGKILL 该尚未回收的子进程，释放 SIGSTOP 可能持有的 shared flock/SQLite 锁，再启动新 PID。它不会仅凭一个任意外部 owner PID 去杀无关进程；父进程也已经死亡且旧子进程仍被 SIGSTOP 的组合故障需要独立的孤儿身份/接管协议，不能冒称已经自动处理。发布和 halt 的 exclusive flock 等待有显式 timeout，不会把等待锁的无限阻塞当成有限 receipt timeout。
 
 worker 不仅处理挂单。它在同一个受控循环中调用真实 `ExchangeWorker.run_once()`，执行账户风险监督、持久清算规划和 `Matcher` 双腿撮合；没有额外模拟 tick 成交或假填单。已接纳订单可在新 owner 重启后继续匹配。后台工作每个金融事务同样受 token fencing，整个工作轮次还持有 router shared gate，校验资金证明、固定分片和行情 barrier。停止或不完整 publication 时不运行后台撮合。
 
@@ -42,10 +42,12 @@ worker 不仅处理挂单。它在同一个受控循环中调用真实 `Exchange
 
 业务写入和后台匹配都不能裸用底层服务绕过 router：`ShardWorkerView` 在整个交易及 receipt COMMIT 期间持有 shared gate，并检查 account 的固定 SHA-256 分片、控制状态、当前行情摘要、本分片身份和全局资金证明。缺分片、错误身份及证明不一致会保留全局 stop。
 
-第一版运行期只支持下单、撤单、行情和 halt 控制。开户、存款、新借款、资金池注资及其他未接线行政操作必须拒绝或保持离线；不能把它们偷偷改成父进程无 token 写入。只减风险的还款通道由后续同事务 helper 集成。本版也不提供跨分片对手成交或转账。
+当前运行期支持下单、撤单、还款、行情和 halt 控制。还款使用 worker 启动时、同一个 token Database 初始化的 CreditService，与金融分录和 inbox receipt 同事务提交；先付利息再付本金。全局停机或行情中断仍允许按同账户 FIFO 处理还款，并与撤单共享预留容量。开户、存款、新借款、资金池注资及其他未接线行政操作必须拒绝或保持离线，不能偷偷改成父进程无 token 写入。本版也不提供跨分片对手成交或转账。
 
 ## 小规模过程验证
 
 `tests/test_durable_process.py` 使用真实独立 PID 验证两个分片、两对手账户下单和真实双腿成交，强杀 owner 后由新 PID/代次恢复，再真实成交平仓，核对仓位、FILL_APPLIED、实际匹配记录及逐资产账本平衡。它还验证父进程重启时不初始化金融服务、PENDING/terminal 保留、部分 publication 恢复、旧无 token writer 拒绝、错误分片 inbox 触发全局 stop，以及单 worker 不打开其他 managed 分片。
 
 这些用例是故障/恢复与金融事实验证，不是吞吐压测或生产迁移验收。
+
+新增过程用例还验证实际 SIGSTOP 持 shared gate 的 owner 在租约到期后被监督器清理、发布继续，以及新 PID 下的真实本金/利息还款。手算初始现金 1000、借本金 10、应计利息 1，先还 4 再还 2：现金 1004、本金 5、利息 0；资金池本金现金 45、利息现金 1，逐资产分录总和仍为零。

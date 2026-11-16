@@ -231,6 +231,9 @@ class DurableProcessRouter:
     def cancel_order(self, account_id, command_id, order_id):
         return self._queue(self.shard_for(account_id)).enqueue_cancel(account_id, command_id, order_id)
 
+    def repay(self, account_id, command_id, asset, amount):
+        return self._queue(self.shard_for(account_id)).enqueue_repay(account_id, command_id, asset, amount)
+
     def status(self, command_id, *, account_id=None, shard=None):
         if account_id is not None:
             index = self.shard_for(account_id)
@@ -302,6 +305,21 @@ class DurableProcessRouter:
                             self._reports[shard] = pipe.recv()
                     except (EOFError, OSError):
                         pass
+                    if process.is_alive():
+                        observer = self._database(shard)
+                        observer.timeout = .1
+                        try:
+                            lease = WriterFence(observer).status()
+                        except Exception:
+                            lease = None
+                        if (lease is not None and lease.get("owner_pid") == process.pid
+                                and not lease["active"]):
+                            # SIGSTOP can hold a router SH gate indefinitely.
+                            # Lease expiry alone fences commits but does not
+                            # release flock. Kill only our own unreaped child,
+                            # then let the next PID acquire a new generation.
+                            process.kill()
+                            process.join(timeout=1)
                     if not process.is_alive() and not self._stop.is_set():
                         process.join()
                         pipe.close()
@@ -345,7 +363,9 @@ class DurableProcessRouter:
             raise ServiceError("invalid_market", "publish a validated MarketSnapshot")
         payload, commands = snapshot.to_json(), {}
         digest = sha256(payload.encode()).hexdigest()
-        with self._control._lock(exclusive=True):
+        if isinstance(timeout, bool) or not isinstance(timeout, (float, int)) or not math.isfinite(timeout) or not 0 <= timeout <= 3600:
+            raise ValueError("timeout requires seconds in 0..3600")
+        with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             previous = state["market_version"]
             if previous is not None and (snapshot.version < previous or snapshot.version == previous and digest != state["market_digest"]):
@@ -366,7 +386,7 @@ class DurableProcessRouter:
             for index, command_id in commands.items():
                 self._queue(int(index)).enqueue_market(command_id, snapshot)
         receipts = self._receipts(commands, timeout)
-        with self._control._lock(exclusive=True):
+        with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             if state.get("durable_market_commands") != commands:
                 raise ServiceError("control_superseded", "another market publication superseded this request", 409)
@@ -388,7 +408,9 @@ class DurableProcessRouter:
     def set_kill_switch(self, enabled, *, timeout=10):
         if type(enabled) is not bool:
             raise ServiceError("invalid_input", "enabled must be a boolean")
-        with self._control._lock(exclusive=True):
+        if isinstance(timeout, bool) or not isinstance(timeout, (float, int)) or not math.isfinite(timeout) or not 0 <= timeout <= 3600:
+            raise ValueError("timeout requires seconds in 0..3600")
+        with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             state.update(halted=True)
             self._control._write_state(state)
@@ -401,7 +423,7 @@ class DurableProcessRouter:
             for index, command_id in commands.items():
                 self._queue(int(index)).enqueue_halt(command_id, enabled)
         receipts = self._receipts(commands, timeout)
-        with self._control._lock(exclusive=True):
+        with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             if state.get("durable_halt_commands") != commands:
                 raise ServiceError("control_superseded", "another halt transition superseded this request", 409)
