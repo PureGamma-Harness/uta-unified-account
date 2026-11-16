@@ -24,7 +24,7 @@ HMAC profile 默认要求本机原生 TLS ≥1.2。请求签名覆盖 tenant、�
 
 1. 独立运行真实 `ad3f5b8` 历史源码，发现仅靠当前 Python authorizer 的 lease 检查无法阻止历史二进制继续写入。已加入持久 SQL guard/UDF 格式门禁，并以隔离旧源码进程执行红绿验证；浅克隆 CI 使用带来源摘要与许可证的固定旧源码归档，不替换为当前代码或跳过。
 2. 实际 SIGSTOP owner 持 shared gate 时曾阻塞 publication。监督器现在在租约过期后清理其已核验的自有进程，且 exclusive gate 等待有界。实际 supervisor SIGKILL 与已登记停止子进程的组合故障另有 pidfd 恢复测试。
-3. 独立审查发现控制事务 DDL 授权过宽，存在金融投影一致性风险；`62f4336` 将 DDL 限制为官方精确 schema，26 项专项与 38 项独立原故障回归通过。新增独立权限边界复验仍在进行，最终关闭以其结果为准。
+3. 独立审查发现控制事务 DDL 授权过宽，存在金融投影一致性风险；`62f4336` 将 DDL 限制为官方精确 schema，26 项专项与 38 项独立原故障回归通过。[新增独立权限边界复验](fence-control-validation.md)的同一测试在旧源码产生 26 个失败子断言，修复后 8 项在 Python 3.10/3.12 均通过；原失败证据保留。
 
 固定 `6a61c44` 在单独不可变工作树完成双 Python 全量预检，各 **793 项通过**，零失败、错误和跳过：[Python 3.12 原始输出](../evidence/runs/durable-preflight/python312-6a61c44/summary.json)（96.20 秒）及 [Python 3.10 原始输出](../evidence/runs/durable-preflight/python310-6a61c44/summary.json)（98.99 秒）。最终候选尚未冻结；该结果不能改写为后续新增代码已验，也不关闭独立审查已找到的阻断项。原记录器只重定向 Python 层输出，部分实际 spawn stderr 仍输出到调用端；新记录器改用 OS 文件描述符重定向并校验源码前后一致，最终复验使用新记录器，不篡改旧日志补齐。实现组已有针对性测试，独立组覆盖实际 COMMIT 失败、磁盘满、响应丢失、旧进程、部分 publication、同账户 FIFO、poison command、还款和四侧对账，详见 [独立协议验证](durable-validation.md)、[故障验证](durable-faults.md)。
 
@@ -38,7 +38,7 @@ HMAC profile 默认要求本机原生 TLS ≥1.2。请求签名覆盖 tenant、�
 
 正式生产者固定在 `88755a9f2ba3bb672ca5d354b3037796f00c6611`，只读观察器固定在 `f96dfd8d6b1ca6f5ae28ac771c886baf4fdeb30e`；两者有独立可达 experiment 分支。该生产者是本轮早期单库运行模块，**不包含新 managed 进程、schema3 或 HMAC**。它只验证同一固定 authority、固定账户上的低频借贷、真实撮合、部分成交/撤单、重开对账和日志归档；不能用它替代本候选长稳。
 
-负载为 0.25 roundtrip/s，每个正常 roundtrip 两笔真实双腿撮合。独立观察器每 60 秒核对 source、原始起点/截止、实际 PID 出生身份、心跳及只读金融事实。所有长稳和生产 flags 维持 false，直至实际终态、足够 active 秒数、全部计划完成、日志摘要与最终全量对账。初始预检因结果未知后的执行顺序缺陷被停止，保留其失败与 472 秒记录，不并入正式时长。启动和独立观察证据分别见 [正式启动](../benchmarks/results/20261116-soak-formal-start/README.md)、[观察器启动](../benchmarks/results/20261116-soak-observer-start/README.md)；运行与恢复见 [长稳手册](soak.md)。
+负载为 0.25 roundtrip/s，每个正常 roundtrip 两笔真实双腿撮合。独立观察器每 60 秒核对 source、原始起点/截止、实际 PID 出生身份、心跳及只读金融事实。所有长稳和生产 flags 维持 false，直至实际终态、足够 active 秒数、全部计划完成、日志摘要与最终全量对账。初始预检因结果未知后的执行顺序缺陷被停止，保留其失败与 472 秒记录，不并入正式时长。[首小时只读观察](../benchmarks/results/20261116-soak-hour1/README.md)保留实际 PID、起点/截止、成交与独立核对结果，所有正式关卡仍 false。启动和独立观察证据分别见 [正式启动](../benchmarks/results/20261116-soak-formal-start/README.md)、[观察器启动](../benchmarks/results/20261116-soak-observer-start/README.md)；运行与恢复见 [长稳手册](soak.md)。
 
 本轮尚无新 durable 接纳吞吐报告。G3/G4 的 10,000/s×1800s、G5 混合热点/突发长稳及 G6 复制/RPO/RTO 均未通过；不能用 nonce、入队 ACK、worker 尝试、快速拒绝或不同 SQLite 库总量替代持久接纳/唯一清算成交。
 
