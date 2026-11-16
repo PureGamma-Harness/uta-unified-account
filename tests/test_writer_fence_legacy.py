@@ -225,12 +225,20 @@ except BaseException as error:
         # Exact first-version metadata columns; this fixture deliberately has
         # no SQL data guards, matching the first managed deployment format.
         with sqlite3.connect(self.database.path) as raw:
-            raw.execute('CREATE TABLE writer_fence_authority(singleton INTEGER PRIMARY KEY,format INTEGER,authority_id TEXT,canonical_path TEXT)')
-            raw.execute('CREATE TABLE writer_fence_lease(singleton INTEGER PRIMARY KEY,generation INTEGER,owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT,expires_ns INTEGER,observed_ns INTEGER)')
-            raw.execute('CREATE TABLE writer_fence_events(sequence INTEGER PRIMARY KEY,kind TEXT,authority_id TEXT,owner_nonce TEXT,generation INTEGER,owner_pid INTEGER,boot_id TEXT,observed_ns INTEGER,expires_ns INTEGER)')
+            raw.execute('CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)')
+            raw.execute('CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)')
+            raw.execute('CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)')
             raw.execute('INSERT INTO writer_fence_authority VALUES(1,1,?,?)',('old-managed',base.path))
             raw.execute('INSERT INTO writer_fence_lease VALUES(1,0,NULL,NULL,?,?,?)',('old-managed-boot',now,now))
             raw.execute("INSERT INTO writer_fence_events VALUES(1,'enabled','old-managed',NULL,0,NULL,'old-managed-boot',?,?)",(now,now))
+            # Literal schema emitted by c05e10f, independent of the current
+            # runtime's schema constants. The first format already had these
+            # six control protections even though it had no data SQL guards.
+            for table in ('writer_fence_authority','writer_fence_events'):
+                for action in ('UPDATE','DELETE'):
+                    raw.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
+            raw.execute("CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
+            raw.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
         fence = WriterFence(base)
         self.assertEqual(fence.status()['guard_format'],0)
         for operation in (lambda:fence.enable('old-managed'),lambda:fence.acquire('worker',1)):

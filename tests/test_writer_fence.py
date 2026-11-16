@@ -313,6 +313,56 @@ except WriterFenceError as error:
                 with self.database.inbox_transaction() as connection:
                     connection.execute(sql)
 
+    def test_control_cannot_add_lease_triggers_and_legal_lease_operations_conserve_finance(self):
+        self.enable()
+        token = self.fence.acquire("worker", 1)
+        before = self.snapshot()
+        with self.assertRaises(WriterFenceError):
+            with self.database._fence_transaction() as connection:
+                connection.execute("CREATE TRIGGER writer_fence_extra AFTER UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
+        self.assertEqual(self.snapshot(), before)
+        self.fence.renew(token, 1)
+        self.assertEqual(self.snapshot(), before)
+        current = ExchangeService(self.database.for_writer(token), {"USD": 8})
+        current.deposit("alice", "after-control-denial", "USD", D(1))
+        self.assertEqual(current.account("alice")["balances"]["USD"], "1001")
+        self.assertGreater(current.ledger.verify(), 0)
+        self.fence.release(token)
+        self.assertFalse(self.fence.status()["active"])
+
+    def test_caught_control_ddl_denial_still_rolls_back_lease_writes(self):
+        self.enable()
+        before = self.fence.status()
+        with self.assertRaises(WriterFenceError):
+            with self.database._fence_transaction() as connection:
+                try:
+                    connection.execute("CREATE TRIGGER writer_fence_extra AFTER UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
+                except sqlite3.DatabaseError:
+                    pass
+                connection.execute("UPDATE writer_fence_lease SET observed_ns=observed_ns+1")
+        self.assertEqual(self.fence.status(), before)
+
+    def test_unknown_control_trigger_is_corruption_without_automatic_repair(self):
+        self.enable()
+        token = self.fence.acquire("worker", 1)
+        with sqlite3.connect(self.path) as raw:
+            raw.execute("CREATE TRIGGER unexpected_lease_observer AFTER UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
+        for operation in (self.fence.status, lambda: self.fence.renew(token, 1),
+                          lambda: self.fence.enable("authority:one"), self.fence.upgrade_guards):
+            self.code("fence_control_corrupt", operation)
+        with sqlite3.connect(self.path) as raw:
+            self.assertIsNotNone(raw.execute("SELECT name FROM sqlite_master WHERE name='unexpected_lease_observer'").fetchone())
+
+    def test_changed_control_trigger_definition_is_corruption(self):
+        self.enable()
+        with sqlite3.connect(self.path) as raw:
+            raw.execute("DROP TRIGGER writer_fence_lease_monotonic")
+            raw.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
+        self.code("fence_control_corrupt", self.fence.status)
+        self.code("fence_control_corrupt", self.fence.upgrade_guards)
+        with sqlite3.connect(self.path) as raw:
+            self.assertNotIn("NEW.generation<OLD.generation", raw.execute("SELECT sql FROM sqlite_master WHERE name='writer_fence_lease_monotonic'").fetchone()[0])
+
 
 if __name__ == "__main__":
     unittest.main()

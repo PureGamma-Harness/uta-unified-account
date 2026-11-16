@@ -288,3 +288,29 @@ missing guard/metadata refusal without repair, runtime SQL expiry with complete
 rollback, and the explicit old-format upgrade. Retained red evidence and these
 green checks must be reported separately; the earlier authorizer-only acceptance
 must not be interpreted as proof about old binaries.
+
+## Lease control schema is an exact capability
+
+Control transactions grant no caller-directed DDL. In particular, the
+`writer_fence_` name prefix does not authorize a trigger, including a trigger on
+the lease table. Official `enable` and offline guard upgrade use an internal
+object-name helper that executes only compiled-in SQL for the five known control
+tables and their ten known immutability/monotonicity triggers. The helper accepts
+no SQL text. Existing official schema definitions remain unchanged, so this
+hardening requires no data migration or guard-format change.
+
+Every managed transaction verifies the exact control table definitions, complete
+attached trigger inventory and definitions, and required implicit primary-key
+index before exposing the connection and again before commit. Extra triggers on
+control tables are rejected regardless of their name. Unknown, missing, or
+modified control objects fail with `fence_control_corrupt`; startup and offline
+upgrade do not repair them. First-format offline upgrades require the genuine
+original control schema, including its six original protections.
+
+This prevents control DDL from installing side effects that could later run
+when a legitimate financial commit advances the lease clock watermark. The
+financial writer still uses its persistent data guards, and legitimate acquire,
+renew, release, and ledger operations retain their existing behavior. A rejected
+control SQL statement poisons its transaction even when application code catches
+the immediate SQLite exception. Trusted-OS raw SQL is used only to inject schema
+corruption in tests; it does not represent an additional supported control API.

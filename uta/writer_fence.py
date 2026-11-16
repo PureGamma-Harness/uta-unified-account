@@ -15,6 +15,7 @@ import sqlite3
 from hashlib import sha256
 from threading import RLock
 import time
+from types import MappingProxyType
 
 from .storage import Database, StorageError
 
@@ -62,6 +63,66 @@ _DML = {_ACTIONS[name] for name in ("INSERT", "UPDATE", "DELETE")}
 _DDL = {_ACTIONS[name] for name in _ACTIONS if name.startswith(("CREATE_", "DROP_"))
         or name in {"ALTER_TABLE", "REINDEX", "ANALYZE"}}
 _OK, _DENY = getattr(sqlite3, "SQLITE_OK", 0), getattr(sqlite3, "SQLITE_DENY", 1)
+
+_CONTROL_TABLE_SQL = MappingProxyType({
+    "writer_fence_authority": "CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)",
+    "writer_fence_lease": "CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)",
+    "writer_fence_events": "CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)",
+    "writer_fence_guard_config": "CREATE TABLE writer_fence_guard_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))",
+    "writer_fence_guard_tables": "CREATE TABLE writer_fence_guard_tables(name TEXT PRIMARY KEY,actions TEXT NOT NULL)",
+})
+
+
+def _control_trigger_definitions():
+    definitions = {}
+    for table in ("writer_fence_authority", "writer_fence_events"):
+        for action in ("UPDATE", "DELETE"):
+            name = f"{table}_no_{action.lower()}"
+            definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
+    definitions["writer_fence_lease_no_delete"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
+    definitions["writer_fence_lease_monotonic"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
+    for table in _GUARD_NAMES:
+        for action in ("UPDATE", "DELETE"):
+            name = f"{table}_no_{action.lower()}"
+            definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END")
+    return MappingProxyType(definitions)
+
+
+_CONTROL_TRIGGER_SQL = _control_trigger_definitions()
+
+
+def _verify_control_schema(connection, state):
+    names = _NAMES if state["guard_format"] == 1 else _BASE_NAMES
+    rows = connection.execute("SELECT name,type,tbl_name,sql FROM sqlite_master").fetchall()
+    tables = {row[0]: row[3] for row in rows if row[1] == "table" and row[0] in names}
+    if tables != {name: _CONTROL_TABLE_SQL[name] for name in names}:
+        raise WriterFenceError("fence_control_corrupt", "lease control table definition changed; automatic repair is forbidden")
+    expected = {name: (table, sql) for name, (table, sql) in _CONTROL_TRIGGER_SQL.items() if table in names}
+    triggers = {row[0]: (row[2], row[3]) for row in rows if row[1] == "trigger" and
+        (row[2] in _NAMES or row[0].startswith("writer_fence_") and not row[0].startswith("writer_fence_data_"))}
+    if triggers != expected:
+        raise WriterFenceError("fence_control_corrupt", "lease control trigger inventory or definition changed; automatic repair is forbidden")
+    indexes = {(row[0], row[2], row[3]) for row in rows if row[1] == "index" and row[2] in _NAMES}
+    expected_indexes = ({("sqlite_autoindex_writer_fence_guard_tables_1", "writer_fence_guard_tables", None)}
+                        if state["guard_format"] == 1 else set())
+    if indexes != expected_indexes:
+        raise WriterFenceError("fence_control_corrupt", "lease control index inventory changed")
+
+
+def _create_control_object(connection, name):
+    """Execute only a compiled-in schema statement, never caller-supplied SQL."""
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if guard is None or guard.role != "control":
+        raise WriterFenceError("unguarded_connection", "lease schema creation requires its internal control transaction")
+    if name in _CONTROL_TABLE_SQL:
+        sql = _CONTROL_TABLE_SQL[name]
+    elif name in _CONTROL_TRIGGER_SQL:
+        sql = _CONTROL_TRIGGER_SQL[name][1]
+    else:
+        raise WriterFenceError("writer_fenced", "unknown lease control schema object")
+    with guard.privileged():
+        connection.execute(sql)
 
 
 def _clock(database):
@@ -209,15 +270,15 @@ def _initialize_data_guards(connection):
         guard = _REGISTRY.get(id(connection))
     if guard is None or guard.role != "control":
         raise WriterFenceError("unguarded_connection", "guard installation requires the explicit lease control transaction")
+    for table in sorted(_GUARD_NAMES):
+        _create_control_object(connection, table)
+    connection.execute("INSERT INTO writer_fence_guard_config VALUES(1,1)")
+    for name, (table, sql) in _CONTROL_TRIGGER_SQL.items():
+        if table in _GUARD_NAMES:
+            _create_control_object(connection, name)
     with guard.privileged():
-        connection.execute("CREATE TABLE writer_fence_guard_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))")
-        connection.execute("CREATE TABLE writer_fence_guard_tables(name TEXT PRIMARY KEY,actions TEXT NOT NULL)")
-        connection.execute("INSERT INTO writer_fence_guard_config VALUES(1,1)")
-        for table in _GUARD_NAMES:
-            for action in ("UPDATE", "DELETE"):
-                connection.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END")
         _install_table_guards(connection, _data_tables(connection))
-        _verify_data_guards(connection)
+    _verify_data_guards(connection)
 
 
 def _require_guard_format(state):
@@ -243,16 +304,13 @@ class WriterFence:
                 _require_guard_format(existing)
             else:
                 now, boot = _clock(self.database)
-                connection.execute("CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)")
-                connection.execute("CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)")
-                connection.execute("CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)")
+                for table in ("writer_fence_authority", "writer_fence_lease", "writer_fence_events"):
+                    _create_control_object(connection, table)
                 connection.execute("INSERT INTO writer_fence_authority VALUES (1,1,?,?)", (authority_id, self.database.path))
                 connection.execute("INSERT INTO writer_fence_lease VALUES (1,0,NULL,NULL,?,?,?)", (boot, now, now))
-                for table in ("writer_fence_authority", "writer_fence_events"):
-                    for action in ("UPDATE", "DELETE"):
-                        connection.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
-                connection.execute("CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
-                connection.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
+                for name, (table, sql) in _CONTROL_TRIGGER_SQL.items():
+                    if table in _BASE_NAMES:
+                        _create_control_object(connection, name)
                 _initialize_data_guards(connection)
                 self._event(connection, "enabled_guard_v1", _load(connection), now)
         return self.status()
@@ -353,6 +411,8 @@ class _TransactionGuard:
         self.token_error = None
         self.started_at = None
         self._udf_registered = False
+        if self.state is not None:
+            _verify_control_schema(connection, self.state)
         if self.state is not None and self.state["guard_format"] == 1:
             _verify_data_guards(connection)
         if role == "financial" and (self.state is not None or database.writer_token is not None):
@@ -414,11 +474,7 @@ class _TransactionGuard:
             return self._deny(WriterFenceError("read_only_transaction", "read transactions cannot modify authority state"))
         if self.role == "control":
             allowed = first in _NAMES
-            if action == _ACTIONS["CREATE_TABLE"]:
-                allowed = first in _NAMES
-            elif action == _ACTIONS["CREATE_TRIGGER"]:
-                allowed = (first or "").startswith("writer_fence_") and second in _NAMES
-            elif action in _DDL:
+            if action in _DDL:
                 allowed = False
             if action in _DML and first in {"sqlite_master", "sqlite_schema"}:
                 allowed = True
@@ -457,18 +513,21 @@ class _TransactionGuard:
 
     @contextmanager
     def privileged(self):
+        previous = self.internal
         self.internal = True
         try:
             yield
         finally:
-            self.internal = False
+            self.internal = previous
 
     def before_commit(self):
         if self.denied is not None:
             raise self.denied
+        state = _load(self.connection)
+        if state is not None:
+            _verify_control_schema(self.connection, state)
         if self.written and self.state is not None:
             with self.privileged():
-                state = _load(self.connection)
                 now, boot = _assert_token(self.database, state, self.database.writer_token)
                 if self.started_at is not None and boot == self.started_at[1] and now < self.started_at[0]:
                     raise WriterFenceError("fence_clock_regressed", "lease clock regressed during a financial transaction")
