@@ -20,6 +20,12 @@ last legacy event sequence and the counts of legacy orders and fills. Existing
 rows retain NULL decision links. Those are evidence gaps, not zero-risk decisions
 and not successfully replayed cases.
 
+The service entry point is `ExchangeService(..., decision_audit=True)`; its
+default is `False`. An already upgraded database rejects a default/legacy
+constructor. New managed deployments must explicitly require the capability,
+and existing managed authorities need an offline, token-authorized migration.
+This constructor does not bypass or automatically enable writer fencing.
+
 The current full market can be archived at the upgrade boundary as
 `UPGRADE_OBSERVED`. This proves which bytes were observed at upgrade and permits
 future decisions to refer to them. It does not prove earlier publication or
@@ -58,7 +64,15 @@ to them rather than duplicating source/configuration. The hashes are unsigned
 identities on a trusted local host. They are not release signatures or external
 tamper-proof audit seals. Retain the corresponding source release separately.
 Deploy source files immutably for the process lifetime; a changed file under a
-running interpreter cannot be claimed to replace already-loaded code.
+running interpreter cannot be claimed to replace already-loaded code. Runtime
+monkeypatching or hot replacement of financial functions is outside this artifact
+identity assumption; hashes do not attest to arbitrary in-process mutations.
+
+New order receipts and `ORDER_ACCEPTED` events carry `decision_id`; legacy order
+rows expose NULL with `decision_evidence="legacy_missing"`. Confirmed fill
+receipts additionally carry `execution_decision_id`, and the fill event carries
+that decision ID. Market publication receipts/events carry `market_snapshot_id`.
+Legacy schema-2 API responses do not gain these fields.
 
 The evidence includes settled balances without netting away liabilities,
 separate principal and interest, positions with signed cost basis, current live
