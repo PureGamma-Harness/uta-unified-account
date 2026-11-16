@@ -152,7 +152,7 @@ def _receipt(record, *, status_url: str):
         raise ServiceError("invalid_command_receipt", "durable command receipt is malformed", 503)
     pending = record["state"] == "PENDING"
     if (pending and (record.get("result") is not None or record.get("error") is not None)
-            or record["state"] == "SUCCEEDED" and (record.get("result") is None or record.get("error") is not None)
+            or record["state"] == "SUCCEEDED" and (not isinstance(record.get("result"), dict) or record.get("error") is not None)
             or record["state"] in ("REJECTED", "QUARANTINED") and (record.get("result") is not None or not isinstance(record.get("error"), dict))):
         raise ServiceError("invalid_command_receipt", "durable command receipt is inconsistent", 503)
     return (202 if pending else 200), {**record, "ack": "durably_queued" if pending else "terminal_receipt",

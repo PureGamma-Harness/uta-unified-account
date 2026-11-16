@@ -328,6 +328,16 @@ class DurableGatewayTests(HTTPMixin, unittest.TestCase):
         self.assertEqual((receipt["state"], receipt["result"]), ("SUCCEEDED", {"enabled": True}))
         self.expect(404, "GET", "/v2/accounts/alice/commands/halt", token=TRADER)
 
+    def test_inconsistent_receipt_never_becomes_a_fake_http_success(self):
+        queued = self.expect(202, "POST", "/v2/accounts/alice/orders", self.order(), token=TRADER)
+        for malformed in ({**queued, "result": {"status": "OPEN"}},
+                          {**queued, "state": "SUCCEEDED", "result": "not a business result"},
+                          {**queued, "state": "REJECTED", "error": None}):
+            with patch.object(self.queue, "status", return_value=malformed):
+                response = self.expect(503, "GET", queued["status_url"], token=TRADER)
+                self.assertEqual(response["error"]["code"], "invalid_command_receipt")
+                self.assertNotIn("result", response)
+
 
 class DurableRouterGatewayTests(HTTPMixin, unittest.TestCase):
     def test_real_process_router_scopes_same_command_id_by_account_and_parent_reopen(self):
