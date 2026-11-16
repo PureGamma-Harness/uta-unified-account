@@ -60,26 +60,77 @@ python -m unittest discover -s tests -p test_sqlite_lock_ownership.py -v
 ```
 
 ```text
-Python 3.12 / SQLite 3.53.1: Ran 8 tests in 1.730s — FAILED (failures=16)
+Python 3.12.14 / SQLite 3.53.1: Ran 8 tests in 1.730s — FAILED (failures=16)
+Python 3.10.22 / SQLite 3.53.1: Ran 8 tests in 1.761s — FAILED (failures=16)
+Python 3.13.5 / SQLite 3.46.1: Ran 8 tests in 1.617s — FAILED (failures=17)
 ```
 
 16 为 unittest 子用例失败数。三条文件检查路径都检出了 active SQLite 事务仍存在、
 但 B 的 kernel 排他探测从阻塞变为可获得；普通只读缺失路径还实际创建了空库。
-正常 SQL busy、合成 DML/DDL、权限和身份的正向用例仍通过，没有据此掩盖主锁缺口。
+SQLite 3.53.1 下正常 SQL busy、合成 DML/DDL、权限和身份的正向用例仍通过，没有据此
+掩盖主锁缺口。SQLite 3.46.1 的旧源码并发 DML/DDL 用例还实际检出
+`OperationalError('disk I/O error')`，因此该次多一个失败；没有把 I/O 错误冒称为已经证明
+文件损坏。所有数据库仍只在临时合成目录，未用已经丢失的锁尝试强制写入。
 
-独立测试文件冻结前 SHA256 为
+独立测试文件在红态冻结与所有复测中的 SHA256 始终为
 `8d1cbff2b857e91fc907e5f327ba49a9446ab0c59866005e10fda447212c1cda`。
 完整原始日志：
 
 - `/tmp/uta-sqlite-locks-57d776c-red-first.txt`，SHA256
   `1490236ff794ca1b4d41b08cc4f080f273fb4544b0f3fd32c0d4092f4b49ffad`。
-- `/tmp/uta-sqlite-locks-57d776c-red-py310.txt`：同一文件的 Python 3.10 独立红态复跑。
+- `/tmp/uta-sqlite-locks-57d776c-red-py310.txt`，SHA256
+  `b5f7b35a09fee5a95d5f40c636f3e93409fea4e59e86fa509fad850c3f68b1c4`。
+- `/tmp/uta-sqlite-locks-57d776c-red-py313-sqlite346.txt`，SHA256
+  `10fefd555e2ebe445f794f241f1dedde2d3ae6753be2280faacbf54a47a4ed04`。
+
+3.13 红态使用 `git archive 57d776c uta LICENSE` 的真实旧包，以 `python3.13 -I` 显式
+导入 `/tmp/uta-sqlite-locks-57d776c-reference` 中的旧源码和同字节测试。没有替换当前
+实现为旧对象、mock SQLite 或修改断言。参考目录的测试文件摘要与上文完全相同。
 
 ## 修复复测与部署边界
 
-实现组已提供独立候选 `dabbeeb`，计划对现有文件仅作不打开描述符的路径检查；新建文件
-只在未发布 inode 上先关闭描述符再原子发布，并禁止校验后缺失路径被 SQLite 自动创建。
-本组会在保留原锁、权限与 fencing 断言下摘入候选复测，完成后补充确切结果。
+实现组的独立候选 `dabbeeb` 对现有文件仅作不打开描述符的路径检查；新建文件只在未发布
+inode 上先关闭描述符再原子发布，并禁止校验后缺失路径被 SQLite 自动创建。摘入后所有
+kernel 锁用例均通过，但普通 `Database(missing).read_transaction()` 仍进入 body 并造库：
+
+```text
+dabbeeb / Python 3.12.14: Ran 8 tests in 2.141s — FAILED (failures=1)
+dabbeeb / Python 3.10.22: Ran 8 tests in 2.024s — FAILED (failures=1)
+```
+
+两份初版修复结果完整保留：
+
+- `/tmp/uta-sqlite-locks-dabbeeb-green-py312.txt`，SHA256
+  `ac2cc982a34a8f972eb481c43fa67d981093d7414b2e9b4b452c5362f766ae69`。
+- `/tmp/uta-sqlite-locks-dabbeeb-green-py310.txt`，SHA256
+  `55714100b5e3bf1fc01c3ea658cb34655de88321c20b9449c6647da1c1bb3cb6`。
+
+文件名中预期的 `green` 不改变其真实失败结果，不能把该候选当作完整验收通过。
+
+随后只摘入 `99e347b` 的只读 existing-only 补强，跳过同期独立 startup 调度变更。
+本工作树映射分别为 `43d7d1e`、`3bce014`；原测试断言、字节和金融精度预期均未改变。
+
+```text
+Python 3.12.14 / SQLite 3.53.1: Ran 8 tests in 1.988s — OK
+Python 3.10.22 / SQLite 3.53.1: Ran 8 tests in 1.956s — OK
+Python 3.13.5 / SQLite 3.46.1: Ran 8 tests in 1.958s — OK
+```
+
+Python 3.10 与 3.12 实际加载的是同一 SQLite 3.53.1，不冒称它们提供了两个 SQLite
+版本的证据。额外的 `/usr/bin/python3.13` 实际加载 SQLite 3.46.1，补齐旧 SQLite 版本
+回归；命令仅选择独立解释器，没有修改运行任务的环境或源码。
+
+完整最终日志（供集成组归档）及 SHA256：
+
+- `/tmp/uta-sqlite-locks-99e347b-green-py312.txt`：
+  `e485e45a8561c6cedeaae471e491a901df73c6f869c608ba59e6ea45586caa6a`。
+- `/tmp/uta-sqlite-locks-99e347b-green-py310.txt`：
+  `75cbed8e20a35219f178f10acece786369f9600b97e433c9bce30c8c713228b6`。
+- `/tmp/uta-sqlite-locks-99e347b-green-py313-sqlite346.txt`：
+  `418382c2c3b90df5a0a92d6f6b4e85788679c63bf9b3e0fc674930fd6084cee3`。
+
+旧版本、初修和补修结果均保留；没有 skip、预期失败标记或用成功 SQL busy 掩盖 kernel
+锁丢失。用例运行秒数是正确性测试时间，不是性能延迟或吞吐。
 
 本轮没有部署或数据修复动作。旧版本已完成的压力测试不能自动成为修复候选的容量或恢复
 证据；仍需在新的冻结版本复跑相应门槛。恢复和回滚不能通过关闭锁、放宽文件权限、接受
