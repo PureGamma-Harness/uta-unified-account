@@ -98,6 +98,36 @@ class AuditArchiveTests(unittest.TestCase):
                 audit.install(connection, policy=DecisionAudit.policy(self.legacy), recorded_at=self.now.isoformat())
 
 
+    def test_same_named_weakened_guard_is_rejected_without_repair(self):
+        audit = self.install()
+        with self.database.transaction() as connection:
+            connection.execute("DROP TRIGGER audit_fill_requires_decision")
+            connection.execute("CREATE TRIGGER audit_fill_requires_decision BEFORE INSERT ON uta_fills BEGIN SELECT 1; END")
+        for operation in (
+            lambda: ExchangeService(self.database, {"USD": 2}, clock=lambda: self.now, decision_audit=True),
+            lambda: audit.artifact(audit.artifact_id),
+        ):
+            with self.assertRaises(DecisionAuditError) as rejected:
+                operation()
+            self.assertEqual(rejected.exception.code, "audit_schema_corrupt")
+        with self.database.read_transaction() as connection:
+            self.assertIn("SELECT 1", connection.execute(
+                "SELECT sql FROM sqlite_master WHERE name='audit_fill_requires_decision'").fetchone()[0])
+
+    def test_live_audited_writer_rolls_back_after_guard_definition_changes(self):
+        service = ExchangeService(self.database, {"USD": 2}, clock=lambda: self.now, decision_audit=True)
+        with self.database.transaction() as connection:
+            connection.execute("DROP TRIGGER audit_order_requires_decision")
+            connection.execute("CREATE TRIGGER audit_order_requires_decision BEFORE INSERT ON uta_orders BEGIN SELECT 1; END")
+        with self.assertRaises(DecisionAuditError) as rejected:
+            service.submit_order("alice", "after-corruption", "BTC-PERP", D(1), D(100))
+        self.assertEqual(rejected.exception.code, "audit_schema_corrupt")
+        with self.database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 0)
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_risk_decisions").fetchone()[0], 0)
+        service.ledger.verify()
+
+
 class AuditedServiceTests(unittest.TestCase):
     setUp = AuditArchiveTests.setUp
 

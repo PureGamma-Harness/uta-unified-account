@@ -1,5 +1,13 @@
 # Linear decision evidence, capability 1 / trading schema 3
 
+Required guards are checked by their exact SQLite SQL definitions and target
+tables, with a complete `audit_*` trigger inventory. A same-named weakened guard
+or unexpected audit trigger is rejected as `audit_schema_corrupt`; startup does
+not repair it. Archiving, recording a decision and reading historical evidence
+also validate this inventory, so a previously opened audit object fails closed
+after a guard definition changes. This is a local integrity check, not protection
+against a trusted OS owner replacing the entire authority or executable.
+
 This capability covers new linear perpetual order acceptance and confirmed
 linear fills through `ExchangeService`, including matcher/liquidation paths that
 call the same helpers. It retains the complete market payload and all valuation

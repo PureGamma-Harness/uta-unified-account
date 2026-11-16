@@ -29,10 +29,26 @@ FORMAT = 1
 TRADING_SCHEMA = 3
 _TABLES = {"uta_audit_capability", "uta_market_history", "uta_code_artifacts",
            "uta_risk_policies", "uta_risk_decisions"}
-_GUARDS = {f"audit_{table}_{action}" for table in _TABLES
-           for action in ("no_update", "no_delete", "no_replace")}
-_GUARDS |= {"audit_order_requires_decision", "audit_fill_requires_decision",
-            "audit_market_insert_requires_history", "audit_market_update_requires_history"}
+
+
+def _guard_definitions():
+    """The complete definitions, shared by explicit install and validation."""
+    definitions = {}
+    for table in sorted(_TABLES):
+        key = {"uta_audit_capability": "singleton", "uta_market_history": "snapshot_id",
+               "uta_code_artifacts": "artifact_id", "uta_risk_policies": "policy_id",
+               "uta_risk_decisions": "decision_id"}[table]
+        for action in ("UPDATE", "DELETE"):
+            name = f"audit_{table}_no_{action.lower()}"
+            definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'audit archive is immutable'); END")
+        name = f"audit_{table}_no_replace"
+        definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE INSERT ON {table} WHEN EXISTS (SELECT 1 FROM {table} WHERE {key}=NEW.{key}) BEGIN SELECT RAISE(ABORT,'audit identity cannot be replaced'); END")
+    definitions["audit_order_requires_decision"] = ("uta_orders", "CREATE TRIGGER audit_order_requires_decision BEFORE INSERT ON uta_orders WHEN NEW.admission_decision_id IS NULL BEGIN SELECT RAISE(ABORT,'audit decision required for new order'); END")
+    definitions["audit_fill_requires_decision"] = ("uta_fills", "CREATE TRIGGER audit_fill_requires_decision BEFORE INSERT ON uta_fills WHEN NEW.execution_decision_id IS NULL BEGIN SELECT RAISE(ABORT,'audit decision required for new fill'); END")
+    for operation in ("INSERT", "UPDATE"):
+        name = f"audit_market_{operation.lower()}_requires_history"
+        definitions[name] = ("uta_market", f"CREATE TRIGGER {name} BEFORE {operation} ON uta_market WHEN NOT EXISTS (SELECT 1 FROM uta_market_history WHERE payload=NEW.payload) BEGIN SELECT RAISE(ABORT,'full market history is required'); END")
+    return definitions
 
 
 class DecisionAuditError(StorageError):
@@ -207,17 +223,8 @@ class DecisionAudit:
             )
             for statement in statements:
                 connection.execute(statement)
-            for table in sorted(_TABLES):
-                key = {"uta_audit_capability": "singleton", "uta_market_history": "snapshot_id",
-                       "uta_code_artifacts": "artifact_id", "uta_risk_policies": "policy_id",
-                       "uta_risk_decisions": "decision_id"}[table]
-                for action in ("UPDATE", "DELETE"):
-                    connection.execute(f"CREATE TRIGGER audit_{table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'audit archive is immutable'); END")
-                connection.execute(f"CREATE TRIGGER audit_{table}_no_replace BEFORE INSERT ON {table} WHEN EXISTS (SELECT 1 FROM {table} WHERE {key}=NEW.{key}) BEGIN SELECT RAISE(ABORT,'audit identity cannot be replaced'); END")
-            connection.execute("CREATE TRIGGER audit_order_requires_decision BEFORE INSERT ON uta_orders WHEN NEW.admission_decision_id IS NULL BEGIN SELECT RAISE(ABORT,'audit decision required for new order'); END")
-            connection.execute("CREATE TRIGGER audit_fill_requires_decision BEFORE INSERT ON uta_fills WHEN NEW.execution_decision_id IS NULL BEGIN SELECT RAISE(ABORT,'audit decision required for new fill'); END")
-            for operation in ("INSERT", "UPDATE"):
-                connection.execute(f"CREATE TRIGGER audit_market_{operation.lower()}_requires_history BEFORE {operation} ON uta_market WHEN NOT EXISTS (SELECT 1 FROM uta_market_history WHERE payload=NEW.payload) BEGIN SELECT RAISE(ABORT,'full market history is required'); END")
+            for _, definition in _guard_definitions().values():
+                connection.execute(definition)
             gaps = {"before_upgrade": "historical decisions and replaced markets are unavailable; no backfill inferred",
                     "supported_decisions": ["ORDER_ACCEPTED", "FILL_CONFIRMED"],
                     "not_captured": ["business rejections", "spot decisions", "new credit decisions", "risk-reducing cancels and repayments"]}
@@ -236,10 +243,15 @@ class DecisionAudit:
 
     @staticmethod
     def validate(connection):
-        expected = {**{name: "table" for name in _TABLES}, **{name: "trigger" for name in _GUARDS}}
+        guards = _guard_definitions()
+        expected = {**{name: "table" for name in _TABLES}, **{name: "trigger" for name in guards}}
         actual = {row[0]: row[1] for row in connection.execute("SELECT name,type FROM sqlite_master WHERE name IN (" + ",".join("?" for _ in expected) + ")", tuple(expected))}
         if actual != expected:
             raise DecisionAuditError("audit_schema_corrupt", "required audit tables or guards are missing; automatic repair is forbidden")
+        actual_guards = {row[0]: (row[1], row[2]) for row in connection.execute(
+            "SELECT name,tbl_name,sql FROM sqlite_master WHERE type='trigger' AND name GLOB 'audit_*'")}
+        if actual_guards != guards:
+            raise DecisionAuditError("audit_schema_corrupt", "audit guard definitions or inventory differ; automatic repair is forbidden")
         row = connection.execute("SELECT format FROM uta_audit_capability WHERE singleton=1").fetchone()
         if row is None or row[0] != FORMAT:
             raise DecisionAuditError("audit_schema_version", "unsupported audit capability version")
@@ -249,6 +261,7 @@ class DecisionAudit:
 
     @staticmethod
     def archive_market(connection, payload, *, origin, recorded_at):
+        DecisionAudit.validate(connection)
         MarketSnapshot.from_json(payload)
         digest = _digest(payload)
         identity = "market:" + digest
@@ -261,6 +274,7 @@ class DecisionAudit:
 
     @staticmethod
     def market_ref(connection, market):
+        DecisionAudit.validate(connection)
         row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
         if row is None or MarketSnapshot.from_json(row[0]).to_json() != market.to_json():
             raise DecisionAuditError("audit_market_mismatch", "decision market differs from authoritative snapshot")
@@ -275,6 +289,7 @@ class DecisionAudit:
 
     def record(self, connection, *, decision_id, kind, account_id, business_id, market_id,
                before, after, operation, summary, recorded_at):
+        self.validate(connection)
         connection.execute("INSERT INTO uta_risk_decisions VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (decision_id, kind, account_id, business_id, market_id, self.artifact_id, self.policy_id,
              before["version"], after["version"], recorded_at,
@@ -282,6 +297,7 @@ class DecisionAudit:
 
     def _read(self, table, column, identity):
         with self.database.read_transaction() as connection:
+            self.validate(connection)
             row = connection.execute(f"SELECT * FROM {table} WHERE {column}=?", (identity,)).fetchone()
             if row is None:
                 raise DecisionAuditError("audit_not_found", "requested historical evidence is unavailable")
