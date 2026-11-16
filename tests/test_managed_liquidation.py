@@ -7,6 +7,7 @@ import copy
 from datetime import datetime, timezone
 from decimal import Decimal as D
 from fractions import Fraction as F
+import json
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -70,6 +71,12 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
                 writer_time=connection.execute('SELECT observed_ns FROM writer_fence_lease').fetchone()[0])
 
     def test_managed_partial_liquidation_survives_real_worker_kill_and_reconciles(self):
+        self.run_liquidation(decision_audit=False)
+
+    def test_required_audit_partial_liquidation_replays_historical_decisions_after_restart(self):
+        self.run_liquidation(decision_audit=True)
+
+    def run_liquidation(self, *, decision_audit):
         temporary = TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         path = Path(temporary.name) / 'managed-liquidation'
@@ -85,10 +92,11 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
                 router.create_account(account)
                 router.deposit(account, 'synthetic-capital', 'USD', D(cash))
             templates.update(enumerate(router._services))
+        audit_option = {'decision_audit': decision_audit}
         self.router = DurableProcessRouter.initialize(path, 2, {'USD': 8, 'BTC': 8}, managed=True,
             bootstrap=bootstrap, product_catalog=catalog, portfolio_rules=rules,
             lease_seconds=.6, poll_interval=.01, background_interval=.05,
-            reserve_cache_size=32, market_cache_size=4)
+            reserve_cache_size=32, market_cache_size=4, **audit_option)
         self.addCleanup(self.router.close)
         self.router.start()
         self.publish_activate(1, '100')
@@ -148,6 +156,8 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
         self.assertEqual([F(row['quantity']) for row in liquidation], [F(45), F(45)])
         self.assertEqual({F(row['price']) for row in liquidation}, {F(90)})
         self.assertEqual(len({row['trade_id'] for row in final['matches']}), 3)
+        if decision_audit:
+            self.publish_activate(4, '110')  # Current data differs from archived fill snapshots.
         self.router.close()
 
         for shard in (0, 1):
@@ -171,3 +181,47 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
                 else:
                     self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_orders').fetchone()[0], 0)
                     self.assertEqual(F(connection.execute("SELECT units FROM ledger_balances WHERE account=? AND asset='USD'", ('customer:' + self.ghost,)).fetchone()[0]) / 10**8, F(123))
+            if decision_audit and shard == 0:
+                self.check_audited_cashflow(view.database)
+
+    def check_audited_cashflow(self, database):
+        from uta.decision_audit import DecisionAudit
+        audit = DecisionAudit(database)
+        with database.read_transaction() as connection:
+            self.assertEqual(connection.execute('SELECT version FROM uta_schema').fetchone()[0], 3)
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_orders WHERE admission_decision_id IS NULL').fetchone()[0], 0)
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_fills WHERE execution_decision_id IS NULL').fetchone()[0], 0)
+            orders = connection.execute('SELECT COUNT(*) FROM uta_orders').fetchone()[0]
+            fills = connection.execute('SELECT COUNT(*) FROM uta_fills').fetchone()[0]
+            self.assertEqual(connection.execute('SELECT COUNT(*) FROM uta_risk_decisions').fetchone()[0], orders + fills)
+            victim_fills = [dict(row) for row in connection.execute('SELECT * FROM uta_fills WHERE account_id=? ORDER BY rowid', (self.victim,))]
+            self.assertEqual(json.loads(connection.execute('SELECT payload FROM uta_market').fetchone()[0])['version'], 4)
+        self.assertEqual(len(victim_fills), 3)
+        before_cash = ('1000', '996.4', '544.78')
+        after_cash = ('996.4', '544.78', '93.16')
+        before_position, after_position = (0, 90, 45), (90, 45, 0)
+        before_equity, after_equity = ('1000', '96.4', '94.78'), ('996.4', '94.78', '93.16')
+        for index, fill in enumerate(victim_fills):
+            with self.subTest(fill=index):
+                identity = fill['execution_decision_id']
+                record = audit.decision(identity)
+                self.assertEqual((record['kind'], record['account_id'], record['business_id']),
+                                 ('FILL_CONFIRMED', self.victim, fill['fill_id']))
+                self.assertEqual(F(record['summary']['fee']), F(('3.6', '1.62', '1.62')[index]))
+                self.assertEqual(F(record['summary']['realized_pnl']), F((0, -450, -450)[index]))
+                for side, cash, quantity in (('before', before_cash[index], before_position[index]),
+                                              ('after', after_cash[index], after_position[index])):
+                    archived = record['inputs'][side]
+                    self.assertEqual(F(archived['balances']['USD']), F(cash))
+                    self.assertEqual(F(archived['positions'].get('BTC-PERP', {}).get('quantity', '0')), F(quantity))
+                archived_market = json.loads(audit.market(record['market_snapshot_id'])['payload'])
+                self.assertEqual(archived_market['version'], (1, 2, 3)[index])
+                self.assertEqual(F(archived_market['instruments']['BTC-PERP']['mark_price']), F((100, 90, 90)[index]))
+                policy = audit.policy_record(record['policy_id'])
+                self.assertEqual((policy['scales']['USD'], F(policy['fee_rate'])), (8, F('.0004')))
+                self.assertFalse(audit.artifact(record['artifact_id'])['signed'])
+                self.assertIn('service.py', audit.artifact(record['artifact_id'])['source_files'])
+                replayed = audit.replay(identity)
+                self.assertTrue(replayed['matches'], replayed['differences'])
+                self.assertEqual(F(replayed['values']['before']['equity']), F(before_equity[index]))
+                self.assertEqual(F(replayed['values']['after']['equity']), F(after_equity[index]))

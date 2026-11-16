@@ -74,7 +74,25 @@
 
 随后真正kill旧worker，要求新PID不同于父PID和旧PID、持久owner_pid相符且generation递增。恢复时原剩余45和已确认trade仍在。重新发布新鲜同价mark90、完成激活，再提供第二张45深度，最终仓位为零并恢复NORMAL。独立现金流为 `1000−3.6−900−3.24=93.16USD`；两笔唯一清算trade均为45@90，未将最初90开仓trade算作清算。两侧共6个fills、系统费用13.68USD、各币账务科目合计为零，冻结拒绝命令没有金融订单。
 
-关闭worker后，用只读Database和原始service/ledger的codec副本运行完整四侧reconciliation，不调用可能修复schema的金融构造器。主片恰有3个实际paired trade/6个fill、零仓位；另一片零订单/零成交/零仓位，独立账户仍为123USD。**首版1/1测试通过、0 failures/errors/skips，1.548秒**。这是单主机合成的部分清算恢复证据，不是跨分片撮合、跨AZ恢复、持续万笔或24小时稳定性验收。Schema3 required审计模式需在实际透传到spawn子进程后另行复跑，未提前记作通过。
+关闭worker后，用只读Database和原始service/ledger的codec副本运行完整四侧reconciliation，不调用可能修复schema的金融构造器。主片恰有3个实际paired trade/6个fill、零仓位；另一片零订单/零成交/零仓位，独立账户仍为123USD。**首版1/1测试通过、0 failures/errors/skips，1.548秒**。这是单主机合成的部分清算恢复证据，不是跨分片撮合、跨AZ恢复、持续万笔或24小时稳定性验收。Schema3实际透传及required重跑结果见下一阶段。
+
+## 阶段六：required审计下重跑同一真实清算链路
+
+应用审计实现 `dd57cd4`、`9f215b1`、`f97ff31`，以及进程透传 `40faaa6`（依赖takeover `aa309dc`与孤儿owner恢复 `713e676`）后，同一helper分别显式设置 `decision_audit=False` 和 `True`，各自初始化全新的两个分片、运行实际spawn/45+45清算/kill与新generation链路。没有patch父构造器来假装子进程启用了审计。两个模式的所有金融标准数值相同。
+
+required模式要求实际主片schema=3、所有新订单admission_decision_id与全部6笔双侧fill的execution_decision_id非空，持久决策数精确等于订单数加fill数。Victim三次fill分别独立核对：
+
+| fill | 现金前→后 USD | 仓位前→后 | 实现损益 | 费用 | 原始mark/version |
+| --- | --- | --- | ---: | ---: | --- |
+| 初始开仓 | 1000→996.4 | 0→90 | 0 | 3.6 | 100 / 1 |
+| 首笔清算 | 996.4→544.78 | 90→45 | −450 | 1.62 | 90 / 2 |
+| 恢复后清算 | 544.78→93.16 | 45→0 | −450 | 1.62 | 90 / 3 |
+
+完成处置后再发布新的当前行情mark110/version4，然后关闭worker。只读查询三个execution decision的原business ID、完整前后现金/仓位、market内容、policy精度/费率与artifact源文件摘要；manifest明确unsigned，不伪造签名。历史numerical replay必须matches且分别得到人工权益：开仓前1000、后996.4；首轮前96.4、后94.78；末轮前94.78、后93.16。这样不会把“复用当前行情”误当历史回放，也没有调用生产函数产生这些预期。
+
+`test_managed_liquidation.py` 两种模式 **2/2通过、0 failures/errors/skips，3.390秒**。在同一包含持久SQLguard与required审计的候选上再复跑既有独立 `test_durable_reference.py`，**20/20通过、0 failures/errors/skips，2.912秒**。共22个不同测试通过，报告两个实际运行时长，未把它们相加包装成单次全仓执行记录。
+
+此处replay仅重构历史估值与预占，不能代替当时授权、租约、时效或完整命令再执行的证明。业务拒绝、现货、新借款等尚未审计的范围依实现capability缺口披露；没有补造缺失历史。当前已验证的managed线性部分清算与新决策追溯没有遗留已确认阻断，生产容量、24小时稳定性、跨AZ/复制、完整PM、保险基金/ADL与真实资金审批仍未通过。
 
 ## 独立有界命令模型
 
