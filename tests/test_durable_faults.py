@@ -328,6 +328,163 @@ print(json.dumps({"sources":sources,"stage":"executed","outcomes":outcomes}),flu
         self.assertEqual(financial_snapshot(self.path), before)
 
 
+class ShallowLegacyFixtureFaultTests(unittest.TestCase):
+    def test_isolated_empty_git_checkout_runs_the_same_real_legacy_binary_assertions(self):
+        """Exercise the pinned archive fallback without mocking Git or storage."""
+        import uta.service
+        repository = Path(uta.service.__file__).resolve().parent.parent
+        with TemporaryDirectory() as temporary:
+            shallow = Path(temporary)
+            shutil.copytree(repository / "uta", shallow / "uta", ignore=shutil.ignore_patterns("__pycache__"))
+            tests = shallow / "tests"
+            fixtures = tests / "fixtures"
+            fixtures.mkdir(parents=True)
+            shutil.copyfile(__file__, tests / "test_durable_faults.py")
+            for name in ("legacy_ad3f5b8_uta.tar.gz", "legacy_ad3f5b8_provenance.json"):
+                shutil.copyfile(repository / "tests" / "fixtures" / name, fixtures / name)
+            initialized = subprocess.run(["git", "init", "--quiet", str(shallow)], capture_output=True, text=True, timeout=10)
+            self.assertEqual(initialized.returncode, 0, initialized.stderr)
+            missing = subprocess.run(["git", "cat-file", "-e", ActualLegacyBinaryFaultTests.LEGACY_COMMIT],
+                                     cwd=shallow, capture_output=True, text=True, timeout=10)
+            self.assertNotEqual(missing.returncode, 0, "isolated fixture unexpectedly contains the ancestor object")
+            program = "import sys,unittest; sys.path[:0]=[sys.argv[1],sys.argv[1]+'/tests']; suite=unittest.defaultTestLoader.loadTestsFromName('test_durable_faults.ActualLegacyBinaryFaultTests'); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())"
+            child = subprocess.run([sys.executable, "-I", "-c", program, str(shallow)],
+                                   capture_output=True, text=True, timeout=30)
+            self.assertEqual(child.returncode, 0, child.stdout + child.stderr)
+            self.assertIn("Ran 2 tests", child.stderr)
+
+
+class LegacyManagedFormatUpgradeFaultTests(DurableFaultFixture):
+    def old_managed(self, *, active=False):
+        """Independent format-0 fixture, using the schema published in c05e10f.
+
+        The controlled lease clock isolates schema migration from host timing;
+        actual PID/expiry behavior is covered by the real-process tests above.
+        """
+        self.database = Database(self.path, fence_clock_ns=lambda: 1_000_000_000,
+                                 fence_boot_id="legacy-managed-boot")
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute("CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)")
+            connection.execute("CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)")
+            connection.execute("CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)")
+            connection.execute("INSERT INTO writer_fence_authority VALUES (1,1,?,?)", ("synthetic-authority", str(self.path)))
+            connection.execute("INSERT INTO writer_fence_lease VALUES (1,?,?,?,?,?,?)",
+                (1 if active else 0, "previous-writer" if active else None, os.getpid() if active else None,
+                 "legacy-managed-boot", 31_000_000_000 if active else 1_000_000_000, 1_000_000_000))
+            connection.execute("INSERT INTO writer_fence_events VALUES (1,'enabled','synthetic-authority',NULL,0,NULL,'legacy-managed-boot',1000000000,1000000000)")
+            if active:
+                connection.execute("INSERT INTO writer_fence_events VALUES (2,'acquired','synthetic-authority','previous-writer',1,?,'legacy-managed-boot',1000000000,31000000000)", (os.getpid(),))
+            for table in ("writer_fence_authority", "writer_fence_events"):
+                for action in ("UPDATE", "DELETE"):
+                    connection.execute(f"CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
+            connection.execute("CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
+            connection.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
+        return WriterFence(self.database)
+
+    def test_old_managed_format_requires_explicit_offline_upgrade_before_writing(self):
+        fence = self.old_managed()
+        before = financial_snapshot(self.path)
+        self.assertEqual(fence.status()["guard_format"], 0)
+        with self.assertRaises(WriterFenceError) as caught:
+            fence.acquire("new-writer", 10)
+        self.assertEqual(caught.exception.code, "fence_upgrade_required")
+        self.assertEqual(fence.status()["guard_format"], 0)
+        self.assertEqual(financial_snapshot(self.path), before)
+        fence.upgrade_guards()
+        self.assertEqual(fence.status()["guard_format"], 1)
+        self.assertEqual(financial_snapshot(self.path), before)
+        token = fence.acquire("after-explicit-upgrade", 10)
+        current = self.open_service(self.database.for_writer(token))
+        current.deposit("alice", "after-upgrade", "USD", D(1))
+        self.assertEqual(current.account("alice")["balances"]["USD"], "1001")
+        current.ledger.verify()
+
+    def test_persistent_guard_upgrade_refuses_live_old_lease_until_explicit_release(self):
+        fence = self.old_managed(active=True)
+        before = financial_snapshot(self.path)
+        self.assertTrue(fence.status()["active"])
+        with self.assertRaises(WriterFenceError) as caught:
+            fence.upgrade_guards()
+        self.assertEqual(caught.exception.code, "lease_busy")
+        self.assertEqual(fence.status()["guard_format"], 0)
+        self.assertEqual(financial_snapshot(self.path), before)
+        fence.release(WriterToken("synthetic-authority", "previous-writer", 1))
+        fence.upgrade_guards()
+        self.assertEqual(fence.status()["guard_format"], 1)
+        self.assertEqual(financial_snapshot(self.path), before)
+
+
+class PersistentGuardFaultTests(DurableFaultFixture):
+    def setUp(self):
+        super().setUp()
+        self.fence, self.token, self.current = self.managed()
+
+    def guard(self):
+        with closing(sqlite3.connect(self.path)) as connection:
+            row = connection.execute("SELECT name,sql FROM sqlite_master WHERE type='trigger' "
+                "AND name LIKE 'writer_fence_data_%' AND tbl_name='ledger_balances' ORDER BY name LIMIT 1").fetchone()
+        self.assertIsNotNone(row, "managed activation did not create persistent financial triggers")
+        return row
+
+    def assert_corruption_rejects_without_repair(self, missing_name=None):
+        before = financial_snapshot(self.path)
+        error = self.fenced(self.current.deposit, "alice", "after-guard-corruption", "USD", D(1))
+        self.assertTrue(any(getattr(value, "code", None) == "fence_guard_corrupt" for value in chain(error)))
+        self.fenced(self.open_service, self.database.for_writer(self.token))
+        self.fenced(self.fence.enable, "synthetic-authority")
+        self.assertEqual(financial_snapshot(self.path), before)
+        if missing_name is not None:
+            with closing(sqlite3.connect(self.path)) as connection:
+                self.assertIsNone(connection.execute("SELECT name FROM sqlite_master WHERE type='trigger' AND name=?", (missing_name,)).fetchone())
+
+    def test_missing_persistent_guard_blocks_current_writer_and_reopen_without_automatic_repair(self):
+        name, _ = self.guard()
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute('DROP TRIGGER "' + name + '"')
+        self.assert_corruption_rejects_without_repair(name)
+
+    def test_same_name_weakened_persistent_guard_sql_is_rejected_without_financial_change(self):
+        name, sql = self.guard()
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute('DROP TRIGGER "' + name + '"')
+            connection.execute(sql[:sql.index(" BEGIN")] + " BEGIN SELECT 1; END")
+        self.assert_corruption_rejects_without_repair()
+        with closing(sqlite3.connect(self.path)) as connection:
+            stored, = connection.execute("SELECT sql FROM sqlite_master WHERE name=?", (name,)).fetchone()
+            self.assertNotEqual(stored, sql, "reopen silently replaced the damaged guard")
+
+    def test_missing_both_guard_metadata_tables_cannot_downgrade_or_silently_upgrade_again(self):
+        before = financial_snapshot(self.path)
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            connection.execute("DROP TABLE writer_fence_guard_tables")
+            connection.execute("DROP TABLE writer_fence_guard_config")
+        for action in (self.fence.status, self.fence.upgrade_guards,
+                       lambda: self.fence.enable("synthetic-authority"),
+                       lambda: self.current.deposit("alice", "after-lost-manifest", "USD", D(1))):
+            with self.subTest(action=repr(action)):
+                error = self.fenced(action)
+                self.assertTrue(any(getattr(value, "code", None) == "fence_guard_corrupt" for value in chain(error)))
+                self.assertEqual(financial_snapshot(self.path), before)
+        with closing(sqlite3.connect(self.path)) as connection:
+            self.assertEqual(connection.execute("SELECT name FROM sqlite_master WHERE type='table' "
+                "AND name IN ('writer_fence_guard_config','writer_fence_guard_tables')").fetchall(), [])
+
+    def test_new_financial_table_is_guarded_on_commit_and_raw_legacy_connections_cannot_insert(self):
+        with self.current.database.transaction() as connection:
+            connection.execute("CREATE TABLE independently_added_financial (id INTEGER PRIMARY KEY,value TEXT NOT NULL)")
+            connection.execute("INSERT INTO independently_added_financial VALUES (1,'authorized')")
+        with closing(sqlite3.connect(self.path)) as connection, connection:
+            guards = connection.execute("SELECT name FROM sqlite_master WHERE type='trigger' "
+                "AND name LIKE 'writer_fence_data_%' AND tbl_name='independently_added_financial'").fetchall()
+            self.assertEqual(len(guards), 3)
+            with self.assertRaises(sqlite3.OperationalError) as caught:
+                connection.execute("INSERT INTO independently_added_financial VALUES (2,'legacy')")
+            self.assertIn("uta_writer_fence_v1", str(caught.exception))
+            self.assertEqual(connection.execute("SELECT * FROM independently_added_financial").fetchall(), [(1, "authorized")])
+        with self.current.database.transaction() as connection:
+            connection.execute("INSERT INTO independently_added_financial VALUES (3,'authorized-again')")
+
+
 class DurableCommandFaultTests(DurableFaultFixture):
     def setUp(self):
         super().setUp()
@@ -1133,10 +1290,24 @@ class ManagedProcessFaultTests(unittest.TestCase):
     def test_real_worker_quarantines_predecessor_then_repays_during_halt_without_quotes(self):
         self.active()
         self.assertTrue(self.router.set_kill_switch(True, timeout=10)["halted"])
+        # Persistent SQL guards intentionally block unbound raw DELETE now.
+        # Inject the quote outage through a real, exclusive fenced owner while
+        # workers are stopped; never forge its UDF or weaken any guard.
+        self.router.close()
+        database = Database(self.shard_path(0))
+        fence = WriterFence(database)
+        token = fence.acquire("independent-outage-injector", 10)
+        try:
+            with database.for_writer(token).transaction() as connection:
+                connection.execute("DELETE FROM uta_market")
+        finally:
+            fence.release(token)
+        self.router.start()
+        deadline = monotonic() + 5
+        while self.router.worker_pid(0) is None and monotonic() < deadline:
+            sleep(.01)
         pid = self.suspend_outside_transaction(0)
         try:
-            with closing(sqlite3.connect(self.shard_path(0))) as connection, connection:
-                connection.execute("DELETE FROM uta_market")
             with Database(self.shard_path(0)).inbox_transaction() as connection:
                 connection.execute("INSERT INTO uta_command_inbox(command_id,account_id,kind,payload,state,enqueued_at) "
                     "VALUES (?,?,?,'{}','PENDING',?)", ("repayment-poison", self.accounts[0],

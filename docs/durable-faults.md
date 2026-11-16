@@ -5,7 +5,7 @@
 
 范围更正：前两批验证的是**当前 storage 版本创建、启用 managed 前已经存在的对象**，
 不能用其 29 项通过结果证明真正旧二进制失效。第三批使用真实 `ad3f5b8` 旧源码，
-在持久数据库 guard 修复前实际检出旧进程仍可写入，详见下文红态证据。
+在持久数据库 guard 修复前实际检出旧进程仍可写入；新增的独立验证与修复前后证据如下。
 
 ## 阶段与候选版本
 
@@ -136,7 +136,7 @@ FAILED (failures=1)
 过期租约 watchdog，以及发布锁的超时。上述持锁暂停测试保持原恢复断言，随后在
 Python 3.12 和 3.10 的 29 用例重跑中通过。
 
-## 第三批：真正旧二进制的独立红态
+## 第三批：真正旧二进制的红态与复测
 
 使用完整提交 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`，本地优先执行
 `git archive` 提取当时的 `uta` 包及 LICENSE。浅克隆缺少该对象时，唯一允许的替代是
@@ -169,8 +169,56 @@ Ran 2 tests in 0.422s
 FAILED (failures=2)
 ```
 
-此时不得宣称旧二进制已被 fencing。存储实现组正在加入持久触发器/UDF 和完整 guard
-清单；独立测试保持“每次写入被数据库拒绝且财务状态完全不变”的原断言，等待候选后复跑。
+在该红态候选上不得宣称旧二进制已被 fencing。本组冻结了红态用例提交 `c39ac16`；
+后续持久 guard 候选复测保持“每次写入被数据库拒绝且财务状态完全不变”的原断言。
+
+### 持久 guard 候选复测
+
+候选为 `a68a6433509f4430aa410342ffd652d8945414c2`。新格式为每个受保护表登记持久
+I/U/D 触发器，调用 `uta_writer_fence_v1()`；真正旧二进制未注册这个函数，因而由数据库
+拒绝金融 DML。当前合法写入者仍须由同事务租约检查授权。该函数不是客户端凭证，覆盖的
+边界仍是可信服务进程与可信操作系统用户，并非恶意数据库文件所有者隔离。
+
+第三批除两个真实旧二进制场景外，另增加：
+
+| 用例函数后缀 | 独立验收 |
+| --- | --- |
+| `isolated_empty_git_checkout_runs_the_same_real_legacy_binary_assertions` | 新建完全没有旧提交对象的真实空 Git 仓库，复制候选包、测试和固定归档，再用 `python -I` 运行完全相同的两项旧二进制断言；验证浅克隆 fallback，不 mock Git、storage 或计算器。 |
+| `old_managed_format_requires_explicit_offline_upgrade_before_writing` | 依据 `c05e10f` 发布的 schema 构造旧 managed 元数据，`guard_format=0` 获取新写者必须失败；显式 `upgrade_guards()` 后格式为 1，财务数据不变，合法新 token 可写入。 |
+| `persistent_guard_upgrade_refuses_live_old_lease_until_explicit_release` | 活跃旧租约阻止升级；必须明确释放，再升级持久 guard，不允许跳过租约或隐式接管。 |
+| `missing_persistent_guard_blocks_current_writer_and_reopen_without_automatic_repair` | 删除一个持久 guard 后，现有写者、重开服务及重复 enable 都必须拒绝，不能自动重建。 |
+| `same_name_weakened_persistent_guard_sql_is_rejected_without_financial_change` | 保留触发器名字但弱化 SQL，同样要求 `fence_guard_corrupt`，不能只验证名称或数量。 |
+| `missing_both_guard_metadata_tables_cannot_downgrade_or_silently_upgrade_again` | 两张 guard 元数据表同时丢失，也不能被误判为旧格式并自动升级；status、enable、upgrade 和金融写入均须拒绝。 |
+| `new_financial_table_is_guarded_on_commit_and_raw_legacy_connections_cannot_insert` | 合法金融 DDL 提交时新增表同时获得三种 I/U/D guard；未注册 UDF 的原始连接不能插入，合法写者仍可继续使用。 |
+
+旧格式升级用例使用独立的版本化元数据 fixture 与受控租约时钟，不把它冒充为真实旧代码
+进程；旧代码进程的证据来自前述隔离归档的两个场景。
+
+首次在该候选运行 37 项时，36 项通过，一项故障注入报错：原测试以未绑定 token 的
+原始 SQLite 连接删除报价，新持久 guard 正确拒绝了该操作。该次完整日志为
+`/tmp/uta-durable-faults-guard-v1-py312.txt`，结束为 `Ran 37 tests in 12.832s`、
+`FAILED (errors=1)`。修正的只是注入方式：先全局停机并停止 worker，合法 owner 获取
+真实新租约，通过受管事务制造报价缺失，再释放并重启 worker；没有伪造 UDF、删除 guard
+或改变“缺报价时同币还款仍原子成功”的原断言。实际旧二进制的断言也始终未降低。
+
+最终包含第三批全部用例，并重跑前两批：
+
+```text
+Python 3.12.14: Ran 38 tests in 13.226s — OK
+Python 3.10.22: Ran 38 tests in 13.233s — OK
+```
+
+最终完整原始日志与 SHA256（待集成组归档至交付证据目录）：
+
+- `/tmp/uta-durable-faults-guard-v1-38-py312.txt`：
+  `40648f85b767b23e4546b61bb32f37c265395fe545fafbe7ee351d15c21ec4df`。
+- `/tmp/uta-durable-faults-guard-v1-38-py310.txt`：
+  `709201483f2b3ccf289b6d71813dea67cb1411896d292778c2268b1805abf412`。
+- 前述候选首次故障注入 ERROR 的完整日志摘要为
+  `7b22897932195abe0bea198a679ae37beb582a8a692692db9f7c07dec61b60aa`。
+
+本次可以确认候选对上述真实未修改旧二进制的持久写入阻断，以及 guard 完整性和显式
+离线升级边界；不能把这个结论扩大成跨主机 fencing、任意整库旧备份检测或生产资金上线批准。
 
 ## 阶段范围与未完成门槛
 
