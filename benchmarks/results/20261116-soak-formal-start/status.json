@@ -1,0 +1,71 @@
+{
+  "status": "running",
+  "stored_status": "running",
+  "process_alive": true,
+  "heartbeat_age_seconds": 0.589250302,
+  "source_commit": "88755a9f2ba3bb672ca5d354b3037796f00c6611",
+  "started_utc": "2026-11-16T21:36:13.820942+00:00",
+  "original_started_ns": 1794864973820942405,
+  "deadline_ns": 1794951373820942405,
+  "observed_ns": 1794865095091210397,
+  "planned_rounds": 21600,
+  "counts": {
+    "done": 31
+  },
+  "financial_counts": {
+    "uta_orders": 130,
+    "uta_fills": 124,
+    "uta_matches": 62,
+    "ledger_events": 132,
+    "soak_evidence": 627,
+    "cancelled_orders": 10,
+    "partial_cancelled_orders": 4,
+    "live_orders": 0,
+    "positions": 0,
+    "credit_commands": {
+      "borrowed": 1,
+      "interest_accrued": 1,
+      "pool_funded": 1,
+      "repaid": 1
+    }
+  },
+  "golden_for_completed_rounds": {
+    "matches": 62,
+    "fill_legs": 124,
+    "orders": 130,
+    "cancelled_orders": 10,
+    "partial_cancelled_orders": 4,
+    "borrow_interest_repay_cycles": 1
+  },
+  "completed_round_golden_matches_financial_state": true,
+  "logs_verified": false,
+  "configured_workload_completed": false,
+  "sessions": [
+    {
+      "id": "32adb2827ad246c096da107615bac7f3",
+      "pid": 4471,
+      "started_ns": 1794864973825199889,
+      "heartbeat_ns": 1794865094501952714,
+      "ended_ns": null,
+      "active_ns": 120676298402,
+      "status": "running",
+      "process_identity": "210004"
+    }
+  ],
+  "confirmed_active_seconds": 120.676298402,
+  "wall_seconds_since_original_start": 121.270272188,
+  "market_version": 122,
+  "market_age_seconds": 0.225533,
+  "roundtrip_latency_ms": {
+    "p50": 85.572034,
+    "p95": 140.908281,
+    "p99": 194.600317,
+    "p99_9": 194.600317
+  },
+  "directory_bytes": 960269,
+  "free_disk_bytes": 30929776640,
+  "stability_target_passed": false,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "cohosted": true
+}

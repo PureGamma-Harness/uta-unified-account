@@ -1,0 +1,22 @@
+{
+  "collected_utc": "2026-11-16T21:38:15.208220+00:00",
+  "status_command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-soak-source-88755a9/benchmarks/run_soak.py",
+    "status",
+    "--directory",
+    "/workspace/uta-soak-runs/formal-20261116T213613Z-88755a9"
+  ],
+  "status_returncode": 0,
+  "ps_command": [
+    "ps",
+    "-o",
+    "pid,ppid,stat,etime,args",
+    "-p",
+    "3968,4471"
+  ],
+  "previous_job_disposition": "INTERRUPTED_KNOWN_ISSUE; stopped normally with original authority retained",
+  "previous_status_process_alive_caveat": "old helper checks process identity; stopped process3968 remains a zombie underPID1. Raw ps establishes it is exited, despite historical identity being present.",
+  "new_job_24h_passed": false,
+  "production_approved": false
+}
