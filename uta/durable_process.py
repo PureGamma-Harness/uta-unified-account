@@ -181,13 +181,22 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
         view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
                                account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"])
         store = parent._queue(shard)
+        # Initialization consumes the acquired lease. Renew the same still-live
+        # token before advertising readiness; an expired initializer must fail,
+        # never revive its generation or publish a misleading READY receipt.
+        renew_at = monotonic() + settings["lease_seconds"] / 3
+        fence.renew(token, settings["lease_seconds"])
+        with database.read_transaction() as connection:
+            fence.assert_writer(connection, token)
         ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
-        renew_at, background_at = monotonic() + settings["lease_seconds"] / 3, monotonic()
+        background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:
             now = monotonic()
             if now >= renew_at:
+                # Anchor to the start of renewal, not time spent waiting for
+                # the database/COMMIT. Slow storage cannot postpone the deadline.
+                renew_at = now + settings["lease_seconds"] / 3
                 fence.renew(token, settings["lease_seconds"])
-                renew_at = monotonic() + settings["lease_seconds"] / 3
             worked = False
             try:
                 receipt = view.process_one(store)
