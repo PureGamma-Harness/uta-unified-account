@@ -62,7 +62,9 @@ CLI availability alone is not trading acceptance.
 ## Checkpoint and process recovery
 
 The checkpoint database is distinct from the financial authority. There is no
-cross-database atomic commit. A canonical method/target/account/payload/digest is
+cross-database atomic commit. Within the checkpoint database, each plan,
+confirmation, round boundary and fault confirmation commits atomically with its
+corresponding hash-chain event. A canonical method/target/account/payload/digest is
 persisted before each signed POST. Every attempt queries the original account/CID
 first. Only a scoped absent result permits resubmitting the same CID and bytes.
 PENDING is only durable enqueue. After a financial COMMIT/checkpoint gap, a new

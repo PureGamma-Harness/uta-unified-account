@@ -83,12 +83,12 @@ class ManagedSoakTests(unittest.TestCase):
     def test_financial_commit_checkpoint_gap_queries_original_id_and_does_not_skip_partial_history(self):
         with TemporaryDirectory() as directory:
             job = self.make(directory)
-            original = job._done
-            def fail_checkpoint(sequence, name, receipt):
-                if name == "cancel-partial":
-                    raise RuntimeError("injected controller failure after financial receipt before checkpoint COMMIT")
-                return original(sequence, name, receipt)
-            with patch.object(job, "_done", fail_checkpoint):
+            original = job._append_event
+            def fail_checkpoint(connection, kind, payload):
+                original(connection, kind, payload)
+                if kind == "STEP_CONFIRMED" and payload.get("step") == "cancel-partial":
+                    raise RuntimeError("injected failure after local row and event writes before checkpoint COMMIT")
+            with patch.object(job, "_append_event", fail_checkpoint):
                 report = job.run()
             self.assertEqual(report["status"], "failed")
             with readonly(job.financial) as connection:
@@ -96,6 +96,8 @@ class ManagedSoakTests(unittest.TestCase):
                 self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_orders WHERE status='CANCELLED'").fetchone()[0], 1)
             with job.checkpoint.read_transaction() as connection:
                 plan = json.loads(connection.execute("SELECT plan FROM steps WHERE name='cancel-partial'").fetchone()[0])
+                self.assertEqual(connection.execute("SELECT state FROM steps WHERE name='cancel-partial'").fetchone()[0], "PLANNED")
+                self.assertFalse(any(json.loads(row[0]).get("step") == "cancel-partial" for row in connection.execute("SELECT payload FROM events WHERE kind='STEP_CONFIRMED'")))
             resumed = ManagedSoak(job.directory, resume=True, strict_source=False)
             try:
                 with self.assertRaisesRegex(RuntimeError, "differs"):

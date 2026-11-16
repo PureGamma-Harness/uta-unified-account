@@ -262,13 +262,17 @@ class ManagedSoak:
         if sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest() != self.env["workload_spec_sha256"]:
             raise RuntimeError("frozen workload specification changed")
 
-    def _event(self, kind, payload):
+    @staticmethod
+    def _append_event(connection, kind, payload):
         payload = canonical({"at_ns": time.time_ns(), **payload})
+        previous = connection.execute("SELECT sequence,event_hash FROM events ORDER BY sequence DESC LIMIT 1").fetchone()
+        sequence, digest = (1, "0" * 64) if previous is None else (previous[0] + 1, previous[1])
+        fingerprint = sha256(canonical([sequence, kind, payload, digest]).encode()).hexdigest()
+        connection.execute("INSERT INTO events VALUES(?,?,?,?,?)", (sequence, kind, payload, digest, fingerprint))
+
+    def _event(self, kind, payload):
         with self.checkpoint.transaction() as connection:
-            previous = connection.execute("SELECT sequence,event_hash FROM events ORDER BY sequence DESC LIMIT 1").fetchone()
-            sequence, digest = (1, "0" * 64) if previous is None else (previous[0] + 1, previous[1])
-            fingerprint = sha256(canonical([sequence, kind, payload, digest]).encode()).hexdigest()
-            connection.execute("INSERT INTO events VALUES(?,?,?,?,?)", (sequence, kind, payload, digest, fingerprint))
+            self._append_event(connection, kind, payload)
 
     def _state(self, key, value=None):
         with self.checkpoint.transaction() as connection:
@@ -365,6 +369,7 @@ class ManagedSoak:
             previous = connection.execute("SELECT plan,state,receipt FROM steps WHERE round=? AND name=?", (sequence, name)).fetchone()
             if previous is None:
                 connection.execute("INSERT INTO steps VALUES(?,?,?,'PLANNED',NULL)", (sequence, name, encoded))
+                self._append_event(connection, "STEP_PLANNED", {"round": sequence, "step": name, "plan": plan})
                 return "PLANNED", None
             if previous[0] != encoded:
                 raise RuntimeError("checkpoint payload/ID differs; never replace an unknown command")
@@ -372,8 +377,15 @@ class ManagedSoak:
 
     def _done(self, sequence, name, receipt):
         with self.checkpoint.transaction() as connection:
+            previous = connection.execute("SELECT state,receipt FROM steps WHERE round=? AND name=?", (sequence, name)).fetchone()
+            if previous is None:
+                raise RuntimeError("a checkpoint confirmation needs its persisted original intent")
+            if previous[0] == "DONE":
+                if previous[1] != canonical(receipt):
+                    raise RuntimeError("checkpoint confirmation cannot change an immutable receipt")
+                return
             connection.execute("UPDATE steps SET state='DONE',receipt=? WHERE round=? AND name=?", (canonical(receipt), sequence, name))
-        self._event("STEP_CONFIRMED", {"round": sequence, "step": name, "receipt": receipt})
+            self._append_event(connection, "STEP_CONFIRMED", {"round": sequence, "step": name, "receipt": receipt})
 
     def _control_state(self):
         with readonly(self.authority / "router.sqlite3") as connection:
@@ -459,6 +471,7 @@ class ManagedSoak:
             evidence = {"target": target, "old_generation": worker["generation"], "signal": "SIGKILL"}
             with self.checkpoint.transaction() as connection:
                 connection.execute("INSERT INTO faults VALUES(?,?,'PLANNED',?)", (sequence, kind, canonical(evidence)))
+                self._append_event(connection, "FAULT_PLANNED", {"round": sequence, "kind": kind, **evidence})
         if target["pid"] in (None, os.getpid()) or not target["birth"]:
             raise RuntimeError("fault target PID identity is unsafe")
         sent = False
@@ -482,7 +495,7 @@ class ManagedSoak:
         evidence.update(signal_sent=sent, new_generation=recovered_state["workers"][0]["generation"], recovered_ns=time.time_ns())
         with self.checkpoint.transaction() as connection:
             connection.execute("UPDATE faults SET state='DONE',evidence=? WHERE round=? AND kind=?", (canonical(evidence), sequence, kind))
-        self._event("FAULT_RECOVERED", {"round": sequence, "kind": kind, **evidence})
+            self._append_event(connection, "FAULT_RECOVERED", {"round": sequence, "kind": kind, **evidence})
 
     def command(self, sequence, name, account, path, payload, key):
         plan = {"method": "POST", "path": path, "payload": payload, "account": account, "key_id": key,
@@ -794,16 +807,17 @@ class ManagedSoak:
                 self._assert_source()
                 with self.checkpoint.transaction() as connection:
                     connection.execute("INSERT INTO rounds VALUES(?,?,'ACTIVE',NULL) ON CONFLICT(sequence) DO UPDATE SET state='ACTIVE'", (sequence, planned))
-                if previous is None:
-                    self._state("last_round_started_ns", time.clock_gettime_ns(time.CLOCK_BOOTTIME))
-                self._event("ROUND_STARTED" if previous is None else "ROUND_RECOVERING",
-                    {"round": sequence, "planned_ns": planned, "clock": "CLOCK_BOOTTIME"})
+                    if previous is None:
+                        connection.execute("INSERT INTO state VALUES('last_round_started_ns',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+                                           (canonical(time.clock_gettime_ns(time.CLOCK_BOOTTIME)),))
+                    self._append_event(connection, "ROUND_STARTED" if previous is None else "ROUND_RECOVERING",
+                        {"round": sequence, "planned_ns": planned, "clock": "CLOCK_BOOTTIME"})
                 self.publish(sequence)
                 proof = self.roundtrip(sequence)
                 completed = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
                 with self.checkpoint.transaction() as connection:
                     connection.execute("UPDATE rounds SET state='DONE',completed_ns=? WHERE sequence=?", (completed, sequence))
-                self._event("ROUND_DONE", {"round": sequence, "proof": proof, "latency_ns": completed - planned})
+                    self._append_event(connection, "ROUND_DONE", {"round": sequence, "proof": proof, "latency_ns": completed - planned})
                 self.status()
             while time.clock_gettime_ns(time.CLOCK_BOOTTIME) < deadline and not self.stop.is_set():
                 if (self.directory / "STOP").exists():
