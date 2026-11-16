@@ -11,9 +11,11 @@ import math
 from typing import Mapping
 
 from .admission import _business_rejection
+from .credit import CreditService
+from .ledger import Ledger, LedgerError
 from .market import MarketSnapshot
 from .models import RiskInputError
-from .service import ExchangeService, ServiceError, _json, _name, _text
+from .service import ExchangeService, ServiceError, _amount, _json, _name, _text
 from .storage import Database, StorageError
 
 
@@ -21,12 +23,14 @@ SUBMIT_ORDER = "SUBMIT_ORDER"
 CANCEL_ORDER = "CANCEL_ORDER"
 PUBLISH_MARKET = "PUBLISH_MARKET"
 SET_HALT = "SET_HALT"
+REPAY = "REPAY"
 _CONTROL = (PUBLISH_MARKET, SET_HALT)
 _TERMINAL = ("SUCCEEDED", "REJECTED", "QUARANTINED")
 _FIELDS = {
     SUBMIT_ORDER: {"account_id", "order_id", "symbol", "quantity", "limit_price", "reduce_only"},
     CANCEL_ORDER: {"account_id", "order_id"},
     PUBLISH_MARKET: {"snapshot"}, SET_HALT: {"enabled"},
+    REPAY: {"account_id", "asset", "amount"},
 }
 _TRIGGER_NAMES = {
     "uta_command_config_no_replace", "uta_command_config_no_update", "uta_command_config_no_delete",
@@ -85,6 +89,17 @@ def _canonical(kind, payload):
         if not isinstance(snapshot, MarketSnapshot):
             raise ServiceError("invalid_input", "snapshot must be a MarketSnapshot or lossless market JSON")
         value["snapshot"] = snapshot.to_json()
+    elif kind == REPAY:
+        _name(value["account_id"], "account_id")
+        _name(value["asset"], "asset")
+        if not isinstance(value["amount"], (str, Decimal)):
+            raise ServiceError("invalid_input", "repayment amount requires Decimal or a decimal string")
+        try:
+            amount = Decimal(value["amount"])
+        except Exception as exc:
+            raise ServiceError("invalid_input", "repayment amount is invalid") from exc
+        _amount(amount, "amount", positive=True)
+        value["amount"] = _text(amount)
     elif type(value["enabled"]) is not bool:
         raise ServiceError("invalid_input", "enabled must be a boolean")
     return value
@@ -212,6 +227,9 @@ class QueueStore:
     def enqueue_halt(self, command_id, enabled):
         return self.enqueue(SET_HALT, command_id, dict(enabled=enabled))
 
+    def enqueue_repay(self, account_id, command_id, asset, amount):
+        return self.enqueue(REPAY, command_id, dict(account_id=account_id, asset=asset, amount=amount))
+
     def enqueue(self, kind, command_id, payload):
         _name(command_id, "command_id")
         canonical = _canonical(kind, payload)
@@ -223,11 +241,24 @@ class QueueStore:
                     raise ServiceError("idempotency_conflict", "command ID was reused with different canonical content", 409)
                 result = self._record(row)
             else:
+                if kind == REPAY:
+                    asset = canonical["asset"]
+                    scale = connection.execute("SELECT scale FROM ledger_assets WHERE asset=?", (asset,)).fetchone()
+                    if scale is None:
+                        raise ServiceError("unknown_asset", "repayment asset is not configured")
+                    try:
+                        codec = Ledger({asset: scale[0]})
+                    except LedgerError as exc:
+                        raise StorageError("invalid persisted repayment asset scale") from exc
+                    try:
+                        codec._units(asset, Decimal(canonical["amount"]))
+                    except LedgerError as exc:
+                        raise ServiceError("invalid_input", str(exc)) from exc
                 control = kind in _CONTROL
                 count = connection.execute("SELECT COUNT(*) FROM uta_command_inbox WHERE state='PENDING' AND "
                     + ("kind IN ('PUBLISH_MARKET','SET_HALT')" if control else "kind NOT IN ('PUBLISH_MARKET','SET_HALT')")).fetchone()[0]
                 limit = (self.market_capacity if control else self.queue_capacity
-                         + (self.cancel_reserve if kind == CANCEL_ORDER else 0))
+                         + (self.cancel_reserve if kind in (CANCEL_ORDER, REPAY) else 0))
                 if count >= limit:
                     raise ServiceError("durable_queue_overloaded", "durable pending command capacity is exhausted", 503)
                 connection.execute("INSERT INTO uta_command_inbox(command_id,account_id,kind,payload,state,enqueued_at) VALUES (?,?,?,?,'PENDING',?)",
@@ -263,13 +294,17 @@ class QueueStore:
             mapped = ServiceError("invalid_input", str(error), 400)
             mapped.__cause__ = error
             return _business_rejection(mapped)
+        if kind == REPAY and error.code in {"repayment_exceeds_debt", "insufficient_cash", "unknown_asset", "credit_limit"} and 400 <= error.status < 500:
+            mapped = ServiceError("invalid_input", str(error), 400)
+            mapped.__cause__ = error
+            return _business_rejection(mapped)
         if kind == PUBLISH_MARKET and error.code in {"invalid_market", "market_regression", "market_conflict", "market_incomplete"} and 400 <= error.status < 500:
             mapped = ServiceError("invalid_input", str(error), 400)
             mapped.__cause__ = error
             return _business_rejection(mapped)
         return False
 
-    def process_one(self, exchange, *, guard=None):
+    def process_one(self, exchange, *, guard=None, credit=None):
         """Execute one eligible account head; return only after outer COMMIT.
 
         Router users must supply its guard and hold its outer publication lock
@@ -310,6 +345,11 @@ class QueueStore:
                             result = exchange._cancel_order(connection, payload["account_id"], payload["order_id"])
                         elif row["kind"] == PUBLISH_MARKET:
                             result = exchange._publish_market(connection, MarketSnapshot.from_json(payload["snapshot"]))
+                        elif row["kind"] == REPAY:
+                            if not isinstance(credit, CreditService) or credit.exchange is not exchange:
+                                raise StorageError("repayment requires the worker's initialized credit service")
+                            result = credit._repay(connection, payload["account_id"], command_id,
+                                                   payload["asset"], Decimal(payload["amount"]))
                         else:
                             result = exchange._set_kill_switch(connection, payload["enabled"])
                 except ServiceError as exc:

@@ -9,10 +9,12 @@ Risk acceptance occurs later inside the fenced writer's financial transaction.
 The initial supported kinds are `SUBMIT_ORDER` (existing limit-order policy),
 `CANCEL_ORDER`, `PUBLISH_MARKET`, and privileged `SET_HALT`. Existing product,
 account-mode, precision, reduce-only and liquidation-ID restrictions remain.
+The follow-up `REPAY` command uses the existing credit service's same-connection
+helper, including interest-before-principal accounting and journal verification.
 Market and halt commands are internal operations requiring risk/admin authority
 at the gateway. The queue library is an internal trusted boundary, not an API
-authentication layer. Live deposits, account creation, fills, matching requests,
-repayments, withdrawals, conditional orders and all other client operations are
+authentication layer. Live deposits, new borrowing, account creation, fills,
+matching requests, withdrawals, conditional orders and other client operations are
 unsupported by this command protocol. Generic `enqueue(kind, command_id,
 payload)` returns `unsupported_durable_command` (409) for unknown kinds and
 never falls back to a synchronous service operation.
@@ -26,8 +28,10 @@ queue.enqueue_submit(account_id, command_id, order_id, symbol,
 queue.enqueue_cancel(account_id, command_id, order_id)
 queue.enqueue_market(command_id, snapshot)
 queue.enqueue_halt(command_id, enabled)
+queue.enqueue_repay(account_id, command_id, asset, amount)
 queue.status(command_id, account_id=account_id)
-queue.process_one(fenced_exchange, guard=router_transaction_guard)
+queue.process_one(fenced_exchange, guard=router_transaction_guard,
+                  credit=worker_credit_service)
 ```
 
 Restart uses `QueueStore(database)` with `initialize=False`. Existing table,
@@ -54,8 +58,9 @@ not a global total execution order or a fairness/latency guarantee under an
 unbounded control stream.
 
 Ordinary pending capacity defaults to 1024 (range 1..65536), with an additional
-16 cancel slots (0..4096). New ordinary commands are rejected when the financial
-pending count reaches ordinary capacity; cancels may use the extra slots.
+16 shared cancel/repayment slots (0..4096). New ordinary commands are rejected
+when the financial pending count reaches ordinary capacity; cancels and
+repayments may use the extra slots.
 Controls have separate capacity 4 (1..64). A full lane returns
 `durable_queue_overloaded` (503) without inserting the new command. Existing-ID
 queries/retries still work when full. Pending capacity includes backed-off
@@ -122,6 +127,24 @@ quarantine that command. This ordering rule is explicit; cancel reserved slots
 are admission capacity, not a priority execution or immediate-cancel guarantee.
 Unrecoverable storage failures cannot be promised a terminal record; stop or
 back off the worker and retain/query the original ID after recovery.
+
+Repayment remains available during trading halts and stale/missing market data,
+using settled cash of the debt asset and the existing shared spot-lock policy.
+The router guard must classify it as a risk-reducing operation. It remains behind
+earlier pending commands for its account. The worker supplies its already
+initialized `CreditService` bound to the identical exchange object; no nested
+transaction or per-command service construction is used. Repayment and credit
+command/journal identity use the inbox command ID, so the original receipt is
+stable across restart and retry. An overpayment or insufficient cash is a
+recognized business rejection; missing worker credit integration, corrupt debt,
+SQL and unknown errors remain technical failures.
+
+Repayment inputs use the bounded service amount contract: positive Decimal or
+decimal string, magnitude at most 1e12 and at most eight fractional digits. The
+producer also verifies exact integer minor units using the immutable configured
+asset scale before acknowledging a new repayment. An unknown asset or invalid
+precision is rejected before enqueue; this does not evaluate account debt,
+cash availability or credit acceptance. No new lending is enabled by repayment.
 
 ## Deployment, recovery and rollback
 

@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from uta.credit import CreditService
 from uta.durable_commands import CommandExecutionError, QueueStore
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
@@ -88,7 +89,7 @@ class DurableCommandTests(unittest.TestCase):
         self.assertEqual(self.writer.ledger.verify(), 1)
 
     def test_unknown_operations_and_liquidation_ids_never_enter_queue(self):
-        for kind in ("REPAY", "APPLY_FILL", "MATCH", "WITHDRAW", "CONDITIONAL_ORDER"):
+        for kind in ("BORROW", "APPLY_FILL", "MATCH", "WITHDRAW", "CONDITIONAL_ORDER"):
             with self.subTest(kind=kind), self.assertRaises(ServiceError) as error:
                 self.queue.enqueue(kind, "unsupported", {})
             self.assertEqual(error.exception.code, "unsupported_durable_command")
@@ -229,6 +230,76 @@ class DurableCommandTests(unittest.TestCase):
             self.queue.process_one(self.legacy)
         self.assertEqual(self.queue.status("command")["state"], "PENDING")
         self.assertEqual(self.writer.orders("alice"), [])
+
+
+class DurableRepaymentTests(unittest.TestCase):
+    market = DurableCommandTests.market
+
+    def setUp(self):
+        DurableCommandTests.setUp(self)
+        self.credit = CreditService(self.writer)
+        self.credit.configure_asset_limit("USD", D(100))
+        self.credit.configure_limit("alice", "USD", D(100))
+        self.credit.fund_pool("pool", "USD", D(100), source_reference="synthetic-pool-capital")
+
+    def test_repayment_pays_interest_then_principal_during_halt_and_price_outage(self):
+        self.credit.borrow("alice", "loan", "USD", D(10))
+        self.credit.accrue_interest("alice", "interest", "USD", D(1))
+        self.writer.set_kill_switch(True)
+        self.now += timedelta(seconds=6)
+        queued = self.queue.enqueue_repay("alice", "repay", "USD", D(2))
+        self.assertEqual(queued["state"], "PENDING")
+        self.assertEqual(self.writer.account("alice")["balances"]["USD"], "30.08")
+        result = self.queue.process_one(self.writer, credit=self.credit)
+        self.assertEqual(result["state"], "SUCCEEDED")
+        self.assertEqual(result["result"]["interest_repaid"], "1")
+        self.assertEqual(result["result"]["principal_repaid"], "1")
+        self.assertEqual(self.writer.account("alice")["balances"]["USD"], "28.08")
+        self.assertEqual(self.writer.account("alice")["liabilities"]["USD"]["total"], "9")
+        self.assertEqual(self.queue.enqueue_repay("alice", "repay", "USD", D("2.00")), result)
+        self.assertEqual(self.credit.verify()["nonzero_liabilities"], 1)
+
+    def test_repayment_business_rejections_and_missing_worker_credit(self):
+        self.queue.enqueue_repay("alice", "too-much", "USD", D(1))
+        with self.assertRaises(CommandExecutionError):
+            self.queue.process_one(self.writer)
+        self.assertEqual(self.queue.status("too-much")["state"], "PENDING")
+        rejected = self.queue.process_one(self.writer, credit=self.credit)
+        self.assertEqual(rejected["state"], "REJECTED")
+        self.assertEqual(rejected["error"]["code"], "repayment_exceeds_debt")
+        for amount in (D(".001"), D(-1), D(0)):
+            with self.subTest(amount=amount), self.assertRaises(ServiceError):
+                self.queue.enqueue_repay("alice", "invalid", "USD", amount)
+        self.assertIsNone(self.queue.status("invalid"))
+
+    def test_repayment_uses_the_same_reserved_pending_budget_as_cancel(self):
+        database = Database(self.path.parent / "repay-capacity.sqlite3")
+        ExchangeService(database, {"USD": 2})
+        queue = QueueStore(database, queue_capacity=1, cancel_reserve=1, initialize=True)
+        first = queue.enqueue_submit("alice", "order", "o", "BTC-PERP", D(1), D(100))
+        repayment = queue.enqueue_repay("alice", "repay", "USD", D(1))
+        self.assertGreater(repayment["sequence"], first["sequence"])
+        with self.assertRaises(ServiceError) as rejected:
+            queue.enqueue_cancel("alice", "cancel", "o")
+        self.assertEqual(rejected.exception.code, "durable_queue_overloaded")
+        self.assertIsNone(queue.status("cancel"))
+
+    def test_repayment_ledger_and_receipt_rollback_together_on_technical_failure(self):
+        self.credit.borrow("alice", "loan", "USD", D(10))
+        before = self.writer.account("alice")
+        journal = self.writer.ledger.journal()
+        self.queue.enqueue_repay("alice", "repay", "USD", D(2))
+        original = self.credit._record
+        def fail(*args, **kwargs):
+            original(*args, **kwargs)
+            raise RuntimeError("after credit and ledger mutation")
+        with patch.object(self.credit, "_record", side_effect=fail):
+            with self.assertRaises(CommandExecutionError):
+                self.queue.process_one(self.writer, credit=self.credit)
+        self.assertEqual(self.queue.status("repay")["state"], "PENDING")
+        self.assertEqual(self.writer.account("alice"), before)
+        self.assertEqual(self.writer.ledger.journal(), journal)
+        self.assertEqual(self.queue.process_one(self.writer, credit=self.credit)["state"], "SUCCEEDED")
 
 
 if __name__ == "__main__":
