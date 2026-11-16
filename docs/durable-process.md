@@ -13,11 +13,13 @@ def offline_bootstrap(router):
     router.create_account("example")
     router.deposit("example", "synthetic-bootstrap", "USD", Decimal("1000"))
 
-processes = DurableProcessRouter.initialize(
-    "/private/uta", 2, {"USD": 8}, managed=True,
-    bootstrap=offline_bootstrap,
-)
-processes.start()
+if __name__ == "__main__":  # spawn 入口必须有此保护
+    with DurableProcessRouter.initialize(
+        "/private/uta", 2, {"USD": 8}, managed=True,
+        bootstrap=offline_bootstrap,
+    ) as processes:
+        # 随后明确发布有效行情、激活，再接受客户端业务请求。
+        print(processes.diagnostics())
 ```
 
 示例存款是合成 bootstrap 数据，不能替代真实外部资金证明。初始化先经既有 router 的账户、账本及全局资金证明检查完成离线准备，再创建 inbox 并不可逆启用各分片 fencing，最后封存控制配置。若中途崩溃而未封存，运行器拒绝启动，不会自动补建缺失财务状态或把旧库变为 managed。已经存在的旧布局必须另走显式接管流程，本版初始化不提供自动迁移。
@@ -95,3 +97,25 @@ processes = DurableProcessRouter.take_over(
 这个布尔值固化在 control 的 service 配置，bootstrap `ShardRouter` 和子进程 `_options` 都显式透传，不依赖父进程对象或 monkeypatch 被 spawn 继承。它不改变经济 layout hash、账户分片或保证金公式。显式 `decision_audit=False` 只标记 `managed_development_legacy_gap` 开发/参考 profile，不能作为 required 候选证据；没有该字段的第一波 managed 配置在正常 `start()` 时拒绝，要求单独、显式离线升级，不会改写其不可变配置。
 
 `diagnostics()` 返回 `decision_audit_required` 与 profile；当前 supervisor 的 ready 还要求该 PID 已完成真实服务初始化的握手，不只看它取得了 lease。诊断仍不是金融授权，命令和每个确认成交必须在事务内做完整校验。
+
+## 既有 managed authority 的显式离线审计提升
+
+第一波 managed authority 的不可变配置不能被重写成 True。先停止 coordinator 和所有 writer，读取只读计划：
+
+```python
+plan = DurableProcessRouter.plan_decision_audit_upgrade("/private/managed")
+required = DurableProcessRouter.upgrade_decision_audit(
+    "/private/managed", managed=True,
+    expected_layout_hash=plan["layout_hash"],
+)
+```
+
+计划包含原 layout/config hash、目标 schema 3、各片账本 head/数量和当前 schema，以及 promotion capability 状态。执行先全局 HALT；仍有 coordinator 会被 `supervisor_busy` 拒绝，未过期租约也不会被抢夺。所有 financial 数据库仍只由临时 PID token 访问。
+
+提升在控制库创建绑定原配置 hash 的 `router_decision_audit_capability` PREPARED 清单，普通 constructor/start 在该状态拒绝。逐片明确使用 `decision_audit=True`，核对账本/信用/资金证明，保存前后相同的财务 heads 与原始 legacy gap；所有 temporary lease 保持到最终 READY。`router_decision_audit_events` 追加 PREPARED、SHARD_REQUIRED 和 READY 证据，旧 `router_durable_config` 的字节完全不变。
+
+READY 后，新 parent 才按经过验证的 capability marker 读取 effective required=True；旧 facade 若缓存了 False 必须重开。没有 marker 就不能猜测提升。中断后可按同一计划明确续接，已提升分片只验证，不补造旧决策；同一 READY 计划可再次确认。完成仍 HALTED，需启动并显式激活。
+
+required 控制与财务 schema 必须相符。把旧的、提升前 schema 2 快照恢复到原路径也不会让 constructor/worker 自动再升级；它会保留 stop 并报 `decision_audit_capability_mismatch`。这项检查针对 capability/schema 不一致，不宣称能替代复制、受信备份恢复或发现所有同代次文件回滚。
+
+过程测试覆盖：原配置 byte-for-byte 保留、legacy 挂单缺口不补造、提升后原挂单与新对手单的两条真实成交 FK、第二片失败后普通启动拒绝及显式续接、活 coordinator 不提升、第一波缺 flag 配置明确拒绝，以及恢复旧快照后不默默修复。暂停窗口和 legacy gap 是证据的一部分，不应从生产候选报告中删掉。
