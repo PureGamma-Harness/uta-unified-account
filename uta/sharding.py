@@ -87,6 +87,32 @@ class _BoundShardDatabase(Database):
             connection.execute("UPDATE router_shard_identity SET initialized=1 WHERE singleton=1 AND initialized=0")
         self._bootstrap = False
 
+    def _check_read_identity(self, connection):
+        try:
+            row = connection.execute("SELECT shard,layout_hash,initialized FROM router_shard_identity WHERE singleton=1").fetchone()
+        except sqlite3.DatabaseError as exc:
+            raise ServiceError("shard_identity_conflict", "persisted shard identity is missing or invalid", 503) from exc
+        if row is None or tuple(row) != (self._index, self._layout_hash, 1):
+            raise ServiceError("shard_identity_conflict", "shard identity differs from the initialized layout", 503)
+
+    @contextmanager
+    def read_transaction(self):
+        with super().read_transaction() as connection:
+            self._check_read_identity(connection)
+            yield connection
+
+    @contextmanager
+    def inbox_transaction(self):
+        with super().inbox_transaction() as connection:
+            self._check_read_identity(connection)
+            yield connection
+
+    @contextmanager
+    def _fence_transaction(self):
+        with super()._fence_transaction() as connection:
+            self._check_read_identity(connection)
+            yield connection
+
 
 class ShardRouter:
     """Immutable account routing with durable fail-closed publication barriers.
@@ -645,3 +671,173 @@ class ShardRouter:
                 result["state"] = self._state()
                 result["ready"] = False
         return result
+
+
+def _open_router_control(directory):
+    """Open existing control metadata without initializing any shard authority.
+
+    Managed process parents and child workers use this path instead of the
+    legacy router constructor, which opens every financial database for writes.
+    """
+    candidate = Path(directory).expanduser().absolute()
+    try:
+        details = candidate.stat(follow_symlinks=False)
+        control_path = candidate / "router.sqlite3"
+        control_details = control_path.stat(follow_symlinks=False)
+    except OSError as exc:
+        raise ServiceError("layout_missing", "existing router control is required", 503) from exc
+    if (not stat.S_ISDIR(details.st_mode) or details.st_uid != os.geteuid()
+            or stat.S_IMODE(details.st_mode) & 0o077
+            or not stat.S_ISREG(control_details.st_mode) or control_details.st_size == 0
+            or control_details.st_uid != os.geteuid() or stat.S_IMODE(control_details.st_mode) & 0o077):
+        raise ServiceError("unsafe_control", "managed router requires private existing control state", 503)
+    connection = sqlite3.connect(control_path.as_uri() + "?mode=ro", uri=True)
+    try:
+        connection.execute("PRAGMA query_only=ON")
+        row = connection.execute("SELECT descriptor FROM router_layout WHERE singleton=1").fetchone()
+        if row is None:
+            raise ValueError("missing descriptor")
+        descriptor = json.loads(row[0])
+        if (set(descriptor) != {"format", "shard_count", "hash_version", "scales", "policy_hash"}
+                or descriptor["format"] != 1 or descriptor["hash_version"] != HASH_VERSION
+                or type(descriptor["shard_count"]) is not int or not 1 <= descriptor["shard_count"] <= 256
+                or not isinstance(descriptor["policy_hash"], str)
+                or not re.fullmatch(r"[0-9a-f]{64}", descriptor["policy_hash"])
+                or _json(descriptor) != row[0]):
+            raise ValueError("invalid descriptor")
+        Ledger(descriptor["scales"])
+    except (sqlite3.Error, ValueError, TypeError, KeyError) as exc:
+        raise ServiceError("layout_corruption", "managed router descriptor is missing or invalid", 503) from exc
+    finally:
+        connection.close()
+    view = ShardRouter.__new__(ShardRouter)
+    view.directory = candidate.resolve()
+    view.control = Database(control_path)
+    view._descriptor = row[0]
+    view.layout = MappingProxyType({**descriptor, "scales": MappingProxyType(dict(descriptor["scales"]))})
+    view._lock_path = view.directory / "router.lock"
+    view._services = ()
+    with view._lock():
+        view._state()  # Includes control authority and complete active barrier.
+    return view
+
+
+class ShardWorkerView:
+    """One fenced shard, with router checks held through every local COMMIT.
+
+    This controlled view deliberately never constructs services in other shards.
+    Inbox execution and background matching use the same shared router lock,
+    funding claims, local market digest and immutable shard identity checks.
+    """
+
+    def __init__(self, directory, shard, token, *, service_options=None,
+                 account_batch=25, matches_per_symbol=10):
+        from .supervisor import ExchangeWorker
+
+        self._control = _open_router_control(directory)
+        self.shard = self._control._index(shard)
+        database = _BoundShardDatabase(self._control._path(shard), shard,
+                                       sha256(self._control._descriptor.encode()).hexdigest())
+        self.database = database.for_writer(token)
+        options = dict(service_options or {})
+        try:
+            with self._control._lock():
+                self._control._state()
+                claims = self._control._batch_funding_claims()
+                with self.database.transaction() as connection:
+                    self._reconcile(connection, claims)
+                self._exchange = ExchangeService(self.database, self._control.layout["scales"], **options)
+                self._exchange.credit = CreditService(self._exchange)
+                self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
+                                                  matches_per_symbol=matches_per_symbol)
+        except ServiceError as exc:
+            if exc.code in _INTEGRITY_FAULTS:
+                self._freeze(exc.code)
+            raise
+
+    def _reconcile(self, connection, claims):
+        self._control._batch_reconcile_shard(connection, self.shard, claims)
+        for row in connection.execute("SELECT account_id FROM uta_accounts"):
+            if self._control.shard_for(row[0]) != self.shard:
+                raise ServiceError("shard_identity_conflict", "account is stored outside its immutable shard", 503)
+
+    def _check_market(self, connection, state):
+        try:
+            market = self._exchange._market(connection, fresh=False)
+        except ServiceError as exc:
+            if exc.code in {"market_unavailable", "market_incomplete"}:
+                raise ServiceError("market_barrier_mismatch", "active shard has no valid publication", 503) from exc
+            raise
+        if (market.version != state["market_version"] or
+                sha256(market.to_json().encode()).hexdigest() != state["market_digest"]):
+            raise ServiceError("market_barrier_mismatch", "shard market differs from global publication barrier", 503)
+
+    @contextmanager
+    def _command_guard(self, connection, record, state, claims):
+        self._reconcile(connection, claims)
+        kind, account_id = record["kind"], record["account_id"]
+        if account_id is not None and self._control.shard_for(account_id) != self.shard:
+            raise ServiceError("shard_identity_conflict", "queued account belongs to another shard", 503)
+        if kind == "SUBMIT_ORDER":
+            if state["halted"] or state["publishing"]:
+                raise ServiceError("router_halted", "global publication or activation barrier is closed", 503)
+            self._check_market(connection, state)
+        elif kind == "PUBLISH_MARKET":
+            payload = record["payload"]["snapshot"]
+            target = MarketSnapshot.from_json(payload)
+            commands = state.get("durable_market_commands", {})
+            if (not state["publishing"] or commands.get(str(self.shard)) != record["command_id"]
+                    or target.version != state.get("target_version")
+                    or sha256(target.to_json().encode()).hexdigest() != state.get("target_digest")):
+                raise ServiceError("control_superseded", "market command does not belong to the current publication", 409)
+            self._exchange._set_kill_switch(connection, True)
+        elif kind == "SET_HALT":
+            commands = state.get("durable_halt_commands", {})
+            enabled = record["payload"]["enabled"]
+            if (commands.get(str(self.shard)) != record["command_id"]
+                    or enabled is not state.get("durable_desired_halt")):
+                raise ServiceError("control_superseded", "halt command does not belong to the current control transition", 409)
+            if not enabled:
+                if state["publishing"] or state["market_version"] is None:
+                    raise ServiceError("router_halted", "market publication is incomplete", 503)
+                self._check_market(connection, state)
+                self._exchange._market(connection)  # Activation requires fresh prices.
+        elif kind != "CANCEL_ORDER":
+            raise ServiceError("invalid_input", "managed worker does not support this command")
+        yield
+
+    def _freeze(self, reason):
+        with self._control._lock(exclusive=True):
+            state = self._control._state()
+            self._control._write_state({**state, "halted": True, "error": reason})
+
+    def process_one(self, store):
+        try:
+            with self._control._lock():
+                state = self._control._state()
+                claims = self._control._batch_funding_claims()
+                return store.process_one(self._exchange,
+                    guard=lambda connection, record: self._command_guard(connection, record, state, claims))
+        except BaseException as exc:
+            cause = getattr(exc, "cause", exc)
+            if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:
+                self._freeze(cause.code)
+            raise
+
+    def run_background_once(self):
+        try:
+            with self._control._lock():
+                state = self._control._state()
+                if state["halted"] or state["publishing"]:
+                    return {"state": "blocked", "reason": "router_halted", "linear_trades": 0}
+                claims = self._control._batch_funding_claims()
+                with self._exchange._transaction() as connection:
+                    self._reconcile(connection, claims)
+                    self._check_market(connection, state)
+                # The shared gate excludes publication/funding transitions for
+                # ALL internal transactions, including real paired settlements.
+                return self._background.run_once()
+        except ServiceError as exc:
+            if exc.code in _INTEGRITY_FAULTS:
+                self._freeze(exc.code)
+            raise
