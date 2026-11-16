@@ -381,6 +381,7 @@ class SignedHTTPTests(unittest.TestCase):
         subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", str(key),
                         "-out", str(cert), "-days", "1", "-subj", "/CN=synthetic.local"], capture_output=True, check=True)
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
         context.load_cert_chain(cert, key)
         self.start(tls_context=context)
         target = "/v2/worker-health"
