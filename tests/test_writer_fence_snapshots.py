@@ -8,7 +8,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from uta.storage import Database
+from uta.storage import Database, StorageError
 from uta.writer_fence import WriterFence, WriterFenceError
 import uta.writer_fence as fence_module
 
@@ -68,6 +68,19 @@ finally: os.close(fd)
                 with database.transaction():
                     self.fail("removed authority was recreated")
         self.assertFalse(victim.exists())
+
+    def test_missing_read_only_authority_creates_neither_database_nor_sidecar(self):
+        path = Path(self.database.path).with_name("missing-reader.sqlite3")
+        database = Database(path)
+        before = set(path.parent.iterdir())
+        with self.assertRaises(StorageError):
+            with database.read_transaction():
+                self.fail("missing read-only authority was created")
+        self.assertEqual(set(path.parent.iterdir()), before)
+        # A failed read does not leak its policy into an explicit initializer.
+        with database.transaction() as connection:
+            connection.execute("CREATE TABLE explicit_initializer(id INTEGER)")
+        self.assertTrue(path.is_file())
 
     def test_committed_new_table_cannot_split_an_existing_read_guard_snapshot(self):
         registered_read, writer_committed = Event(), Event()

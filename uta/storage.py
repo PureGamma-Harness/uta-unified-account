@@ -8,6 +8,7 @@ trusted; journal hashes detect accidental edits but are not external audit seals
 from __future__ import annotations
 
 from contextlib import contextmanager, nullcontext
+from contextvars import ContextVar
 from copy import copy
 from decimal import Decimal
 from hashlib import sha256
@@ -23,6 +24,9 @@ from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
 
 from .ledger import JournalEvent, Ledger, LedgerError, Posting
+
+
+_EXISTING_ONLY_OPEN = ContextVar("uta_existing_only_database_open", default=False)
 
 
 class StorageError(RuntimeError):
@@ -104,7 +108,9 @@ class Database:
         try:
             try:
                 info = os.stat(self.path, follow_symlinks=False)
-            except FileNotFoundError:
+            except FileNotFoundError as exc:
+                if _EXISTING_ONLY_OPEN.get():
+                    raise StorageError("read-only database is missing; automatic creation is forbidden") from exc
                 try:
                     _publish_private_database(self.path)
                 except FileExistsError:
@@ -171,7 +177,13 @@ class Database:
     @contextmanager
     def _role_transaction(self, role) -> Iterator[sqlite3.Connection]:
         from .writer_fence import _TransactionGuard, WriterFenceError
-        connection = self._connect()
+        # Scope creation policy to this connection attempt, retaining existing
+        # no-argument subclass hooks without mutating a shared Database object.
+        policy = _EXISTING_ONLY_OPEN.set(role == "read")
+        try:
+            connection = self._connect()
+        finally:
+            _EXISTING_ONLY_OPEN.reset(policy)
         guard = None
         try:
             if role == "read":
