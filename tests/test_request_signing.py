@@ -15,6 +15,7 @@ import secrets
 import shutil
 import socket
 import ssl
+import sqlite3
 import subprocess
 from tempfile import TemporaryDirectory
 from threading import Barrier, Thread
@@ -188,6 +189,31 @@ class SigningStoreTests(unittest.TestCase):
         for sensitive in (SECRET.decode(), secret_text, nonce, body.decode(), header["X-UTA-Signature"]):
             self.assertNotIn(sensitive, persisted)
 
+    def test_fresh_audiences_are_unique_and_copied_auth_authorities_fail_closed(self):
+        second = NonceStore.initialize(self.root / "second.sqlite3", tenant_id="tenant-a", producer_binding="1" * 64)
+        self.assertNotEqual(second.audience, self.store.audience)
+        self.assertEqual(NonceStore(self.root / "auth.sqlite3").audience, self.store.audience)
+        shutil.copy2(self.root / "auth.sqlite3", self.root / "copy.sqlite3")
+        with self.assertRaises(SigningError) as raised:
+            NonceStore(self.root / "copy.sqlite3")
+        self.assertEqual(raised.exception.status, 503)
+        # Even a correctly recomputed MAC for another tenant/deployment is not
+        # valid here; this checks domain isolation beyond accidental tampering.
+        foreign = replace(self.profile, tenant_id="tenant-b", audience=second.audience)
+        self.code("invalid_signature", self.signed(profile=foreign))
+
+    def test_duplicate_signature_headers_and_corrupt_store_are_rejected(self):
+        from email.message import Message
+        headers = self.signed()
+        duplicate = Message()
+        for name, value in headers.items():
+            duplicate[name] = value
+        duplicate["X-UTA-Nonce"] = headers["X-UTA-Nonce"]
+        self.code("signature_required", duplicate)
+        with sqlite3.connect(self.root / "auth.sqlite3") as connection:
+            connection.execute("ALTER TABLE auth_audit RENAME COLUMN event TO unsupported_event")
+        self.code("signing_store_unavailable", self.signed())
+
 
 class SignedHTTPTests(unittest.TestCase):
     def setUp(self):
@@ -251,6 +277,14 @@ class SignedHTTPTests(unittest.TestCase):
         self.assertEqual(self.server.credentials, ())
         self.server.replace_credentials((Credential("B" * 43, "admin"),))
         self.assertEqual(_request(self.server.server_address, "GET", queued["status_url"], headers={"Authorization": "Bearer " + "B" * 43})[0], 401)
+        connection = HTTPConnection(*self.server.server_address, timeout=3)
+        try:
+            connection.request("GET", queued["status_url"], headers={"Authorization": "Bearer " + "B" * 43})
+            response = connection.getresponse()
+            self.assertEqual(response.getheader("WWW-Authenticate"), 'UTA-HMAC-SHA256 realm="uta-v2"')
+            response.read()
+        finally:
+            connection.close()
         self.assertEqual(_request(self.server.server_address, "POST", "/v2/accounts/bob/orders", body,
             self.headers("POST", "/v2/accounts/bob/orders", body))[0], 403)
         self.assertEqual(_request(self.server.server_address, "POST", target, body, self.headers("POST", target, body, key="reader"))[0], 403)

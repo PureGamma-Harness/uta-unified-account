@@ -265,6 +265,11 @@ def producer_binding(producer):
 
 
 class _SignedDurableHandler(_DurableHandler):
+    def send_header(self, keyword, value):
+        if keyword.lower() == "www-authenticate":
+            value = 'UTA-HMAC-SHA256 realm="uta-v2"'
+        return super().send_header(keyword, value)
+
     def _principal(self):
         from .request_signing import RequestAuthenticator, SigningError
         authenticator = getattr(self.server, "request_authenticator", None)

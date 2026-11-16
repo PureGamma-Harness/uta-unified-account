@@ -31,7 +31,7 @@ with make_server(producer, port=8081,
 
 这个 factory 只构造服务器。调用方负责 worker 的独立启动/监管、信号处理、HTTP drain 和 producer 生命周期；它没有自动安装 SIGTERM handler 或宣称提供新 CLI 命令。多 shard 可把已有 `DurableProcessRouter` 直接作为 producer 传入同一 factory。parent HTTP 重启不需要重放 financial schema DML。
 
-默认只监听 `127.0.0.1:8081`，只允许 IPv4 loopback。远程使用须经 TLS 反向代理，并配置代理的连接、总请求时限和请求速率。内置 worker cap 是并发上限，不是每账户/API key 的速率配额。凭据仍采用已有私有文件中的 bearer 令牌；本模块没有 HMAC/nonce 防重放、WebSocket 或互联网边缘服务器能力。
+默认只监听 `127.0.0.1:8081`，只允许 IPv4 loopback。远程使用须经 TLS 反向代理，并配置代理的连接、总请求时限和请求速率。内置 worker cap 是并发上限，不是每账户/API key 的速率配额。原 Bearer 路径是开发 profile；新增的 [显式 HMAC profile](signed-api.md) 提供持久 nonce 防重放并默认要求 TLS。Bearer 开发模式不满足生产接入门槛，也没有 WebSocket 或互联网边缘服务器能力。
 
 | 角色 | v2 能力 |
 | --- | --- |

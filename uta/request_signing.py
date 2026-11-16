@@ -30,6 +30,12 @@ _HEX = re.compile(r"[0-9a-f]{64}\Z", re.ASCII)
 _MAX_INT = 2**63 - 1
 _AUTH_HEADER = "UTA-HMAC-SHA256"
 _TABLES = {"auth_config", "auth_keys", "auth_nonces", "auth_audit"}
+_COLUMNS = {
+    "auth_config": {"singleton", "format", "canonical_path", "tenant", "audience", "producer_binding", "past_window", "future_skew", "max_nonces", "highwater", "revision", "fingerprint"},
+    "auth_keys": {"key_id", "identity", "revoked"},
+    "auth_nonces": {"key_id", "nonce_hash", "expires_ms"},
+    "auth_audit": {"sequence", "event", "key_id", "nonce_hash", "request_hash", "request_ms", "server_ms", "revision"},
+}
 _TRIGGERS = {"auth_config_monotonic", "auth_keys_immutable", "auth_nonces_immutable", "auth_nonces_window",
              "auth_audit_no_update", "auth_audit_no_delete"}
 
@@ -231,11 +237,27 @@ class NonceStore:
         names = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type IN('table','trigger')")}
         if not _TABLES | _TRIGGERS <= names:
             raise StorageError("authentication schema or integrity guards are missing")
+        for table, expected in _COLUMNS.items():
+            if {row["name"] for row in connection.execute(f"PRAGMA table_info({table})")} != expected:
+                raise StorageError("authentication schema columns differ from the supported format")
         rows = connection.execute("SELECT * FROM auth_config").fetchall()
         if len(rows) != 1 or rows[0]["format"] != 1 or rows[0]["canonical_path"] != self.database.path:
             raise StorageError("authentication identity is invalid or was moved")
         if hasattr(self, "audience") and (rows[0]["tenant"], rows[0]["audience"], rows[0]["producer_binding"]) != (self.tenant_id, self.audience, self.producer_binding):
             raise StorageError("authentication deployment identity changed")
+        row = rows[0]
+        try:
+            _id(row["tenant"], "tenant")
+            _id(row["audience"], "audience")
+            _integer(row["highwater"], "highwater")
+            _integer(row["revision"], "revision")
+            _integer(row["past_window"], "past_window", 1, 300000)
+            _integer(row["future_skew"], "future_skew", 0, 30000)
+            _integer(row["max_nonces"], "max_nonces", 1, 1000000)
+            if not _HEX.fullmatch(row["producer_binding"]) or (row["revision"] and not _HEX.fullmatch(row["fingerprint"])):
+                raise ValueError("invalid authentication binding")
+        except (ValueError, TypeError):
+            raise StorageError("authentication configuration is malformed") from None
         return rows[0]
 
     @staticmethod
