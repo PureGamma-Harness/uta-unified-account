@@ -193,7 +193,8 @@ class DurableProcessTests(unittest.TestCase):
             self.assertEqual(database._index, 0)
             return original(database)
         with patch.object(_BoundShardDatabase, "_private_file", only_own):
-            view = ShardWorkerView(self.path, 0, token, service_options={"max_price_age": self.legacy._services[0].max_price_age})
+            view = ShardWorkerView(self.path, 0, token, service_options={"max_price_age": self.legacy._services[0].max_price_age,
+                                                                         "decision_audit": True})
             self.assertEqual(view.shard, 0)
         self.assertTrue(indices)
 
@@ -296,6 +297,9 @@ class DurableProcessTests(unittest.TestCase):
         with managed._database(0).read_transaction() as conn:
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 2)
             self.assertEqual(sum(int(row[0]) for row in conn.execute("SELECT units FROM ledger_balances WHERE asset='USD'")), 0)
+            self.assertEqual(conn.execute("SELECT legacy_order_count FROM uta_audit_capability WHERE singleton=1").fetchone()[0], 2)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_risk_decisions WHERE kind='ORDER_ACCEPTED'").fetchone()[0], 0)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_risk_decisions WHERE kind='FILL_CONFIRMED'").fetchone()[0], 2)
         with managed._control.control.read_transaction() as conn:
             stages = [row[0] for row in conn.execute("SELECT stage FROM router_durable_takeover_events ORDER BY sequence")]
             self.assertEqual(stages, ["PREPARED", "SHARD_FENCED", "SHARD_FENCED", "COMPLETED"])
@@ -384,6 +388,20 @@ class DurableProcessTests(unittest.TestCase):
                     os.kill(pid, signal.SIGKILL)
                 except ProcessLookupError:
                     pass
+
+    def test_fresh_required_audit_is_persisted_and_explicit_false_is_development_only(self):
+        self.assertTrue(self.router.decision_audit_required)
+        for shard in (0, 1):
+            with self.router._database(shard).read_transaction() as conn:
+                self.assertEqual(conn.execute("SELECT version FROM uta_schema").fetchone()[0], 3)
+                self.assertEqual(conn.execute("SELECT legacy_order_count FROM uta_audit_capability").fetchone()[0], 0)
+        legacy = DurableProcessRouter.initialize(Path(self.temporary.name) / "development", 1, {"USD": 8},
+                                                  managed=True, decision_audit=False)
+        self.addCleanup(legacy.close)
+        self.assertFalse(legacy.decision_audit_required)
+        self.assertEqual(legacy.diagnostics()["profile"], "managed_development_legacy_gap")
+        with legacy._database(0).read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT version FROM uta_schema").fetchone()[0], 2)
 
 
 if __name__ == "__main__":

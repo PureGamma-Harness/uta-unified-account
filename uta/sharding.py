@@ -126,7 +126,9 @@ class ShardRouter:
     def __init__(self, directory, shard_count, scales, *, fee_rate=Decimal(".0004"),
                  max_price_age=timedelta(seconds=5), clock=None,
                  product_catalog=None, portfolio_rules=None,
-                 reserve_cache_size=0, market_cache_size=0):
+                 reserve_cache_size=0, market_cache_size=0, decision_audit=False):
+        if type(decision_audit) is not bool:
+            raise ServiceError("invalid_configuration", "decision_audit must be a boolean")
         if type(shard_count) is not int or not 1 <= shard_count <= 256:
             raise ServiceError("invalid_layout", "shard count must be in 1..256")
         if (type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= 65536 or
@@ -183,7 +185,8 @@ class ShardRouter:
                     service = ExchangeService(database,
                         scales, fee_rate=fee_rate, max_price_age=max_price_age, clock=clock,
                         product_catalog=product_catalog, portfolio_rules=portfolio_rules,
-                        reserve_cache_size=reserve_cache_size, market_cache_size=market_cache_size)
+                        reserve_cache_size=reserve_cache_size, market_cache_size=market_cache_size,
+                        decision_audit=decision_audit)
                     if fresh:
                         database.finish_bootstrap()
                     self._services.append(service)

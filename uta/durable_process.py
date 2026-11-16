@@ -41,7 +41,8 @@ def _options(encoded):
             "max_price_age": timedelta(microseconds=encoded["max_price_age_us"]),
             "product_catalog": ProductCatalog.from_json(encoded["catalog"]) if encoded["catalog"] else None,
             "portfolio_rules": PortfolioRules.from_json(encoded["portfolio"]) if encoded["portfolio"] else None,
-            "reserve_cache_size": encoded["reserve_cache_size"], "market_cache_size": encoded["market_cache_size"]}
+            "reserve_cache_size": encoded["reserve_cache_size"], "market_cache_size": encoded["market_cache_size"],
+            "decision_audit": encoded.get("decision_audit", False)}
 
 
 def _authority(descriptor, shard):
@@ -220,7 +221,10 @@ class DurableProcessRouter:
                    fee_rate=Decimal(".0004"), max_price_age=timedelta(seconds=30),
                    product_catalog=None, portfolio_rules=None,
                    reserve_cache_size=0, market_cache_size=0,
-                   queue_capacity=1024, cancel_reserve=16, market_capacity=4, **runtime):
+                   queue_capacity=1024, cancel_reserve=16, market_capacity=4,
+                   decision_audit=True, **runtime):
+        if type(decision_audit) is not bool:
+            raise ValueError("decision_audit must be a boolean")
         if managed is not True:
             raise ServiceError("managed_opt_in_required", "fresh managed layout initialization requires managed=True", 409)
         path = Path(directory).expanduser().absolute()
@@ -230,7 +234,8 @@ class DurableProcessRouter:
             raise ValueError("bootstrap must be callable")
         router = ShardRouter(path, shard_count, scales, fee_rate=fee_rate, max_price_age=max_price_age,
                              product_catalog=product_catalog, portfolio_rules=portfolio_rules,
-                             reserve_cache_size=reserve_cache_size, market_cache_size=market_cache_size)
+                             reserve_cache_size=reserve_cache_size, market_cache_size=market_cache_size,
+                             decision_audit=decision_audit)
         if bootstrap is not None:
             bootstrap(router)  # Explicit offline administration before sealing.
         config = {"descriptor": router._descriptor,
@@ -238,7 +243,8 @@ class DurableProcessRouter:
                               "max_price_age_us": max_price_age // timedelta(microseconds=1),
                               "catalog": product_catalog.to_json() if product_catalog else None,
                               "portfolio": portfolio_rules.to_json() if portfolio_rules else None,
-                              "reserve_cache_size": reserve_cache_size, "market_cache_size": market_cache_size},
+                              "reserve_cache_size": reserve_cache_size, "market_cache_size": market_cache_size,
+                              "decision_audit": decision_audit},
                   "queue": {"queue_capacity": queue_capacity, "cancel_reserve": cancel_reserve,
                             "market_capacity": market_capacity}}
         router.set_kill_switch(True)
@@ -273,7 +279,8 @@ class DurableProcessRouter:
 
     @classmethod
     def take_over(cls, directory, *, managed=False, expected_layout_hash,
-                  queue_capacity=1024, cancel_reserve=16, market_capacity=4, **runtime):
+                  queue_capacity=1024, cancel_reserve=16, market_capacity=4,
+                  decision_audit=True, **runtime):
         """Explicit, resumable offline sealing of an existing legacy layout.
 
         Original policy, account mapping, ledger and accepted orders are kept.
@@ -282,6 +289,8 @@ class DurableProcessRouter:
         """
         if managed is not True:
             raise ServiceError("managed_opt_in_required", "take-over requires managed=True", 409)
+        if type(decision_audit) is not bool:
+            raise ValueError("decision_audit must be a boolean")
         control = _open_router_control(directory)
         layout_hash = sha256(control._descriptor.encode()).hexdigest()
         if expected_layout_hash != layout_hash:
@@ -305,7 +314,8 @@ class DurableProcessRouter:
                     portfolio = _json(risk["rules"]) if risk["mode"] == "phase1_cross" else None
                     service = {"fee_rate": policy["fee_rate"], "max_price_age_us": policy["max_price_age_us"],
                                "catalog": catalog, "portfolio": portfolio,
-                               "reserve_cache_size": 0, "market_cache_size": 0}
+                               "reserve_cache_size": 0, "market_cache_size": 0,
+                               "decision_audit": decision_audit}
                     original_policy = {"fee_rate": service["fee_rate"], "max_price_age_us": service["max_price_age_us"],
                                        "catalog": json.loads(catalog) if catalog else None,
                                        "portfolio": json.loads(portfolio) if portfolio else None}
@@ -404,6 +414,11 @@ class DurableProcessRouter:
                 raise ValueError("configuration identity differs")
         except (ValueError, TypeError, KeyError) as exc:
             raise ServiceError("configuration_corrupt", "durable process configuration is invalid", 503) from exc
+        audit_setting = self._config["service"].get("decision_audit", False)
+        if type(audit_setting) is not bool:
+            raise ServiceError("configuration_corrupt", "managed audit requirement must be a boolean", 503)
+        self.decision_audit_required = audit_setting
+        self._explicit_development_profile = "decision_audit" in self._config["service"] and not audit_setting
         self.directory, self.layout = self._control.directory, self._control.layout
         self._settings = dict(lease_seconds=lease_seconds, poll_interval=poll_interval,
                               background_interval=background_interval, account_batch=account_batch,
@@ -577,6 +592,8 @@ class DurableProcessRouter:
     def start(self, *, recovery_timeout=10):
         if isinstance(recovery_timeout, bool) or not isinstance(recovery_timeout, (float, int)) or not math.isfinite(recovery_timeout) or not 0 <= recovery_timeout <= 3600:
             raise ValueError("recovery_timeout requires seconds in 0..3600")
+        if not self.decision_audit_required and not self._explicit_development_profile:
+            raise ServiceError("decision_audit_upgrade_required", "unclassified existing managed authority requires an explicit offline audit upgrade", 503)
         with self._mutex:
             if self._supervisor_fd is not None:
                 raise ServiceError("supervisor_started", "supervisor is already running", 409)
@@ -656,9 +673,13 @@ class DurableProcessRouter:
                              "owner_pid": lease.get("owner_pid"), "generation": lease.get("generation"),
                              "report": dict(self._reports.get(shard, {}))})
         return {"state": state, "workers": rows, "managed": True,
+                "decision_audit_required": self.decision_audit_required,
+                "profile": "managed_audit_required" if self.decision_audit_required else "managed_development_legacy_gap",
                 "recovered_orphans": [{key: row[key] for key in ("shard", "pid", "start_ticks", "generation")} for row in self._recovered_orphans],
                 "ready": not state["halted"] and not state["publishing"] and all(
-                    row["pid"] is not None and row["pid"] == row["owner_pid"] and row["lease_active"] for row in rows)}
+                    row["pid"] is not None and row["pid"] == row["owner_pid"] and row["lease_active"]
+                    and row["report"].get("state") == "ready" and row["report"].get("pid") == row["pid"]
+                    for row in rows)}
 
     def _receipts(self, commands, timeout):
         deadline = monotonic() + timeout

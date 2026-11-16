@@ -87,3 +87,11 @@ processes = DurableProcessRouter.take_over(
 ### 历史二进制及格式升级
 
 当前候选已接入存储组的持久 SQL guard 格式 1：实际旧 `ad3f5b8` 源码包无受控 UDF 时也会由金融表触发器拒绝。`tests/test_writer_fence_legacy.py` 的七项实际历史进程验证在本分支通过；最终合入仍以独立组与整体回归为准。运行器遇到 guard 格式 0 会 fail closed 要求显式离线 `upgrade_guards()`，不会自动升级、重新绑定路径或把旧 snapshot 当作当前 authority。出生登记解决的是本机相关进程回收，不替代持久 SQL guard，也不提供 OS 所有者之外的安全隔离。
+
+## 新 authority 的 required 决策审计配置
+
+新的 `initialize(managed=True)` 默认明确使用 `decision_audit=True`，创建 required 审计 schema 3。`take_over(...managed=True,expected_layout_hash=...)` 也是显式离线升级入口，默认 True；原有 schema 2 挂单不会补造历史审计，真实 legacy gap 和原数量保存在每片 `uta_audit_capability`，之后确认的真实成交必须产生新执行审计。
+
+这个布尔值固化在 control 的 service 配置，bootstrap `ShardRouter` 和子进程 `_options` 都显式透传，不依赖父进程对象或 monkeypatch 被 spawn 继承。它不改变经济 layout hash、账户分片或保证金公式。显式 `decision_audit=False` 只标记 `managed_development_legacy_gap` 开发/参考 profile，不能作为 required 候选证据；没有该字段的第一波 managed 配置在正常 `start()` 时拒绝，要求单独、显式离线升级，不会改写其不可变配置。
+
+`diagnostics()` 返回 `decision_audit_required` 与 profile；当前 supervisor 的 ready 还要求该 PID 已完成真实服务初始化的握手，不只看它取得了 lease。诊断仍不是金融授权，命令和每个确认成交必须在事务内做完整校验。
