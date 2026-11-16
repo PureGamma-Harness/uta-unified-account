@@ -50,3 +50,22 @@ From the source checkout run `python tools/check_admission_oracle.py`. This harn
 A separate test-only mock increases the implementation reserve calculation by 10 percent. The harness requires the specific unexpected margin rejection at an expected-success receipt, not merely any nonzero exit. The mock is removed automatically and never edits runtime source. The JSON report labels this expected failing negative control separately; overall exit 0 requires every positive case and detection of that negative control.
 
 The matrix is a source-checkout verification command, not automatically run by current hosted CI. It is neither a new independent oracle nor a full portfolio proof: it expands the existing fixed-price, linear-product cash/reserve fixture. It does not cover fills, external execution, price/rule calibration, replication, hardware failures or throughput acceptance. A test pass must not authorize real orders.
+
+## Durable fill concurrency: separate evidence
+
+At commit `f2d56b2f9f4983168176c1a97360e8c6c8fcc9fc`, [test_fill_races.py](../tests/test_fill_races.py) adds two tests to normal unittest discovery:
+
+- Eight independent service instances concurrently replay one equivalent fill ID. The database must contain one fill and exactly the expected filled quantity. After reopening, an equivalent replay and a conflicting retry must leave the complete logical SQLite dump unchanged.
+- Two different fill IDs each request 0.6 against an order of quantity 1. Exactly one must succeed and one must return `invalid_fill`; either winner is valid. After reopening, a 0.4 remainder completes the order exactly. Ledger verification is also required.
+
+Reproduce from repository root:
+
+```sh
+python -m unittest discover -s tests -p test_fill_races.py -v
+```
+
+The two tests were repeated 20 times (40 successful test executions). The full local suite with these additions passed 520 tests in 28.902 seconds; the exact commit above also passed the eight hosted Python 3.10–3.13 push/PR checks. These are recorded observations, not evidence for later revisions.
+
+A separate in-process negative control removed only the remaining-quantity clause from a temporary copy of `ExchangeService._apply_fill`, patched the method for the overfill test, and restored it immediately afterward. The original and restored implementation passed. The altered method allowed both fills; the test failed at its expected-success/error multiset assertion (two `ok` results, no `invalid_fill`). This checks sensitivity to that specific missing guard, not arbitrary implementation faults. The negative control is not part of hosted CI. Never remove the guard in runtime source or run mutation experiments against real storage.
+
+These tests use temporary synthetic accounts and independent connections to one local SQLite database. They do not demonstrate venue-side idempotency, cross-host locking, replication, crash-safe external effects, or production approval. They are not covered by the finite reservation-version model above.
