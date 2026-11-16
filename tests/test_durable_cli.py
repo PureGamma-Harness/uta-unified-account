@@ -47,7 +47,7 @@ class DurableCLITests(unittest.TestCase):
     def initialize(self):
         return self.command("init", "--asset-scale", "USD=2", "--max-price-age", "60")
 
-    def tls_and_auth(self):
+    def tls_and_auth(self, *, configure=True):
         executable = shutil.which("openssl")
         self.assertIsNotNone(executable, "native TLS lifecycle acceptance requires openssl")
         self.cert, self.key = self.root / "cert.pem", self.root / "key.pem"
@@ -77,7 +77,8 @@ class DurableCLITests(unittest.TestCase):
         self.profile_path.write_text(json.dumps({"format": 1, "tenant_id": "synthetic-cli",
             "audience": initialized["audience"], "revision": 1, "keys": keys}))
         self.profile_path.chmod(0o600)
-        self.command("auth-configure", "--auth-db", self.auth_db, "--signing-profile", self.profile_path)
+        if configure:
+            self.command("auth-configure", "--auth-db", self.auth_db, "--signing-profile", self.profile_path)
         self.profile = load_profile(self.profile_path)
 
     def serve_options(self):
@@ -178,6 +179,80 @@ class DurableCLITests(unittest.TestCase):
         self.addCleanup(router.close)
         with router._control.control.read_transaction() as connection:
             self.assertIsNone(connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_process_owners'").fetchone())
+
+    def test_unconfigured_signing_profile_is_rejected_without_implicit_key_setup(self):
+        self.initialize()
+        self.tls_and_auth(configure=False)
+        error = self.command("serve", *self.serve_options(), expected=2)
+        self.assertEqual(error["error"]["code"], "auth_configuration_required")
+        with Database(self.auth_db).read_transaction() as connection:
+            self.assertEqual(tuple(connection.execute("SELECT revision,fingerprint,highwater FROM auth_config").fetchone()), (0, "", 0))
+            for table in ("auth_keys", "auth_nonces", "auth_audit"):
+                self.assertEqual(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0], 0)
+        self.assertFalse(self.command("inspect")["shards"][0]["lease_active"])
+
+    def test_private_tls_permissions_and_symlinks_fail_before_workers_start(self):
+        self.initialize()
+        self.tls_and_auth()
+        self.key.chmod(0o644)
+        denied = self.command("serve", *self.serve_options(), expected=2)
+        self.assertIn("private regular", denied["error"]["message"])
+        self.key.chmod(0o600)
+        linked_cert = self.root / "linked-cert.pem"
+        linked_cert.symlink_to(self.cert)
+        options = self.serve_options()
+        options[options.index("--tls-cert") + 1] = str(linked_cert)
+        self.command("serve", *options, expected=2)
+        with Database(self.auth_db).read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM auth_nonces").fetchone()[0], 0)
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM auth_audit").fetchone()[0], 1)
+        router = DurableProcessRouter(self.directory)
+        self.addCleanup(router.close)
+        with router._control.control.read_transaction() as connection:
+            self.assertIsNone(connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_process_owners'").fetchone())
+
+    def test_real_offline_audit_upgrade_preserves_original_config_and_financial_heads(self):
+        legacy_path = self.root / "legacy-managed"
+        def bootstrap(router):
+            # Explicitly authorized synthetic migration fixture, outside CLI
+            # init. The deployed init command itself still imports no funds.
+            router.create_account("legacy-alice")
+            router.deposit("legacy-alice", "synthetic-source", "USD", D("123.45"))
+        legacy = DurableProcessRouter.initialize(legacy_path, 1, {"USD": 2}, managed=True,
+                                                 decision_audit=False, bootstrap=bootstrap)
+        self.addCleanup(legacy.close)
+        with legacy._control.control.read_transaction() as connection:
+            config = connection.execute("SELECT payload FROM router_durable_config").fetchone()[0]
+        credentials = self.root / "development.json"
+        credentials.write_text(json.dumps([{"token": "synthetic-private-development-key-material", "role": "admin"}]))
+        credentials.chmod(0o600)
+        refused = self.command("serve", "--profile", "bearer-development", "--credentials", credentials,
+                               directory=legacy_path, expected=2)
+        self.assertEqual(refused["error"]["code"], "decision_audit_upgrade_required")
+        plan = self.command("upgrade-audit-plan", directory=legacy_path)
+        self.assertEqual(plan["target_schema"], 3)
+        self.assertEqual(plan["shards"][0]["trading_schema"], 2)
+        self.assertEqual(plan["shards"][0]["ledger_sequence"], 1)
+        self.assertEqual(plan["shards"][0]["accounts"], 1)
+        self.assertIsNone(plan["capability"])
+        self.command("upgrade-audit", "--expected-layout-hash", "0" * 64, directory=legacy_path, expected=2)
+        self.assertEqual(self.command("upgrade-audit-plan", directory=legacy_path), plan)
+        upgraded = self.command("upgrade-audit", "--expected-layout-hash", plan["layout_hash"], directory=legacy_path)
+        self.assertTrue(upgraded["decision_audit_required"])
+        after = self.command("upgrade-audit-plan", directory=legacy_path)
+        self.assertEqual(after["capability"]["state"], "READY")
+        self.assertEqual(after["shards"][0]["trading_schema"], 3)
+        self.assertEqual(after["source_config_hash"], plan["source_config_hash"])
+        self.assertTrue(after["state"]["halted"])
+        for field in ("ledger_sequence", "ledger_hash", "accounts", "orders", "positions"):
+            self.assertEqual(after["shards"][0][field], plan["shards"][0][field])
+        with legacy._control.control.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT payload FROM router_durable_config").fetchone()[0], config)
+        with legacy._database(0).read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT units FROM ledger_balances WHERE account='customer:legacy-alice' AND asset='USD'").fetchone()[0], "12345")
+        self.assertTrue(self.command("status", directory=legacy_path)["decision_audit_required"])
+        self.assertTrue(self.command("upgrade-audit", "--expected-layout-hash", plan["layout_hash"],
+                                     directory=legacy_path)["decision_audit_required"])
 
     def test_actual_tls_hmac_sigterm_and_new_parent_preserve_pending_and_nonce(self):
         self.initialize()

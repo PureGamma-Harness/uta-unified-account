@@ -189,3 +189,7 @@ uses real separate CLI/worker PIDs, native TLS with a trusted synthetic test
 certificate, HMAC requests, SIGTERM, parent restart, persistent pending/nonce
 recovery and occupied-port failure. These short tests do not satisfy the separate
 24-hour stability, capacity, disaster-recovery or real-funds launch gates.
+Additional subprocess cases verify explicit offline schema-2 promotion to
+required audit without changing financial heads or original configuration,
+rejection of public/symlinked TLS material, and rejection of an unconfigured
+signing profile without implicit keys, nonces, authentication audit or workers.
