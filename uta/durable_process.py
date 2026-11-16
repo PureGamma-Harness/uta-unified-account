@@ -6,7 +6,7 @@ on a parent process, shared manager, Future, or in-memory transport surviving.
 """
 from __future__ import annotations
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import fcntl
 from hashlib import sha256
@@ -44,6 +44,21 @@ def _options(encoded):
 
 def _authority(descriptor, shard):
     return "router:" + sha256(descriptor.encode()).hexdigest() + ":shard:" + str(shard)
+
+
+def _financial_head(connection):
+    head = connection.execute("SELECT sequence,event_hash FROM ledger_events ORDER BY sequence DESC LIMIT 1").fetchone()
+    return {"ledger_sequence": head[0] if head else 0, "ledger_hash": head[1] if head else "0" * 64,
+            "accounts": connection.execute("SELECT COUNT(*) FROM uta_accounts").fetchone()[0],
+            "orders": connection.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0],
+            "positions": connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0]}
+
+
+def _prepare_config(connection, config):
+    connection.execute("CREATE TABLE router_durable_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,initialized INTEGER NOT NULL,payload TEXT NOT NULL)")
+    connection.execute("INSERT INTO router_durable_config VALUES (1,1,0,?)", (_json(config),))
+    connection.execute("CREATE TRIGGER router_durable_config_no_delete BEFORE DELETE ON router_durable_config BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
+    connection.execute("CREATE TRIGGER router_durable_config_seal_only BEFORE UPDATE ON router_durable_config WHEN OLD.initialized!=0 OR NEW.initialized!=1 OR NEW.singleton!=OLD.singleton OR NEW.format!=OLD.format OR NEW.payload!=OLD.payload BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
 
 
 def _run_worker(directory, shard, settings, stop, ready, parent_pid):
@@ -152,16 +167,139 @@ class DurableProcessRouter:
         with router._lock(exclusive=True):
             router._reconcile_funding()
             with router.control.transaction() as connection:
-                connection.execute("CREATE TABLE router_durable_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,initialized INTEGER NOT NULL,payload TEXT NOT NULL)")
-                connection.execute("INSERT INTO router_durable_config VALUES (1,1,0,?)", (_json(config),))
-                connection.execute("CREATE TRIGGER router_durable_config_no_delete BEFORE DELETE ON router_durable_config BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
-                connection.execute("CREATE TRIGGER router_durable_config_seal_only BEFORE UPDATE ON router_durable_config WHEN OLD.initialized!=0 OR NEW.initialized!=1 OR NEW.singleton!=OLD.singleton OR NEW.format!=OLD.format OR NEW.payload!=OLD.payload BEGIN SELECT RAISE(ABORT,'durable configuration is immutable'); END")
+                _prepare_config(connection, config)
             for index, service in enumerate(router._services):
                 QueueStore(service.database, initialize=True, **config["queue"])
                 WriterFence(service.database).enable(_authority(router._descriptor, index))
             with router.control.transaction() as connection:
                 connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
         return cls(path, **runtime)
+
+    @classmethod
+    def inspect_takeover(cls, directory):
+        """Read-only plan, not a cross-shard monetary snapshot or approval."""
+        control = _open_router_control(directory)
+        shards = []
+        with control._lock():
+            state = control._state()
+            for index in range(control.layout["shard_count"]):
+                database = _BoundShardDatabase(control._path(index), index, sha256(control._descriptor.encode()).hexdigest())
+                lease = WriterFence(database).status()
+                with database.read_transaction() as connection:
+                    head = _financial_head(connection)
+                    queue = connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_command_config'").fetchone() is not None
+                shards.append({"shard": index, "managed": lease["managed"], "lease_active": lease["active"],
+                               "queue_present": queue, **head})
+        return {"layout_hash": sha256(control._descriptor.encode()).hexdigest(),
+                "descriptor": json.loads(control._descriptor), "state": state, "shards": shards}
+
+    @classmethod
+    def take_over(cls, directory, *, managed=False, expected_layout_hash,
+                  queue_capacity=1024, cancel_reserve=16, market_capacity=4, **runtime):
+        """Explicit, resumable offline sealing of an existing legacy layout.
+
+        Original policy, account mapping, ledger and accepted orders are kept.
+        A durable incomplete manifest prevents normal workers from opening until
+        every shard is fenced, verified, and recorded. Completion stays halted.
+        """
+        if managed is not True:
+            raise ServiceError("managed_opt_in_required", "take-over requires managed=True", 409)
+        control = _open_router_control(directory)
+        layout_hash = sha256(control._descriptor.encode()).hexdigest()
+        if expected_layout_hash != layout_hash:
+            raise ServiceError("layout_conflict", "reviewed layout hash does not match this authority", 409)
+        holder = cls.__new__(cls)
+        holder.directory, holder._supervisor_fd = control.directory, None
+        holder._claim_supervisor()
+        try:
+            with control._lock(exclusive=True, timeout=30):
+                state = control._state()
+                control._write_state({**state, "halted": True, "error": "takeover_in_progress"})
+                leases = []
+                try:
+                    first = _BoundShardDatabase(control._path(0), 0, layout_hash)
+                    with first.read_transaction() as connection:
+                        policies = dict(connection.execute("SELECT key,value FROM uta_config WHERE key IN ('policy','risk_policy')"))
+                    policy, risk = json.loads(policies["policy"]), json.loads(policies["risk_policy"])
+                    if risk["mode"] not in ("legacy_reference", "phase1_cross"):
+                        raise ServiceError("configuration_corrupt", "unsupported existing risk policy", 503)
+                    catalog = _json(risk["catalog"]) if risk["mode"] == "phase1_cross" else None
+                    portfolio = _json(risk["rules"]) if risk["mode"] == "phase1_cross" else None
+                    service = {"fee_rate": policy["fee_rate"], "max_price_age_us": policy["max_price_age_us"],
+                               "catalog": catalog, "portfolio": portfolio,
+                               "reserve_cache_size": 0, "market_cache_size": 0}
+                    original_policy = {"fee_rate": service["fee_rate"], "max_price_age_us": service["max_price_age_us"],
+                                       "catalog": json.loads(catalog) if catalog else None,
+                                       "portfolio": json.loads(portfolio) if portfolio else None}
+                    if sha256(_json(original_policy).encode()).hexdigest() != control.layout["policy_hash"]:
+                        raise ServiceError("configuration_conflict", "existing financial policy does not match its layout", 503)
+                    config = {"descriptor": control._descriptor, "service": service,
+                              "queue": dict(queue_capacity=queue_capacity, cancel_reserve=cancel_reserve,
+                                            market_capacity=market_capacity)}
+                    with control.control.transaction() as connection:
+                        existing = connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_durable_config'").fetchone()
+                        if existing is None:
+                            _prepare_config(connection, config)
+                            connection.execute("CREATE TABLE router_durable_takeover_events(sequence INTEGER PRIMARY KEY,stage TEXT NOT NULL,shard INTEGER,payload TEXT NOT NULL,observed_at TEXT NOT NULL)")
+                            for action in ("UPDATE", "DELETE"):
+                                connection.execute(f"CREATE TRIGGER router_durable_takeover_no_{action.lower()} BEFORE {action} ON router_durable_takeover_events BEGIN SELECT RAISE(ABORT,'take-over audit is immutable'); END")
+                            connection.execute("INSERT INTO router_durable_takeover_events(stage,payload,observed_at) VALUES ('PREPARED',?,?)",
+                                               (_json({"layout_hash": layout_hash}), datetime.now(timezone.utc).isoformat()))
+                        else:
+                            row = connection.execute("SELECT format,initialized,payload FROM router_durable_config WHERE singleton=1").fetchone()
+                            if row is None or row[0] != 1 or row[1] != 0 or row[2] != _json(config):
+                                raise ServiceError("configuration_conflict", "take-over may resume only its exact incomplete configuration", 409)
+                            if connection.execute("SELECT 1 FROM sqlite_master WHERE name='router_durable_takeover_events'").fetchone() is None:
+                                raise ServiceError("takeover_audit_missing", "incomplete bootstrap is not a recorded take-over", 503)
+                    claims = control._batch_funding_claims()
+                    for index in range(control.layout["shard_count"]):
+                        database = _BoundShardDatabase(control._path(index), index, layout_hash)
+                        fence = WriterFence(database)
+                        status = fence.status()
+                        if not status["managed"]:
+                            # Queue creation precedes the irreversible marker;
+                            # a resumed managed prefix must already have it.
+                            QueueStore(database, initialize=True, **config["queue"])
+                            fence.enable(_authority(control._descriptor, index))
+                        elif status["authority_id"] != _authority(control._descriptor, index):
+                            raise ServiceError("managed_authority_conflict", "existing managed prefix has another identity", 503)
+                        QueueStore(database, **config["queue"])
+                        token = fence.acquire("takeover:" + uuid4().hex, 60)
+                        leases.append((fence, token))
+                        from .credit import CreditService
+                        from .service import ExchangeService
+                        owned = ExchangeService(database.for_writer(token), control.layout["scales"], **_options(service))
+                        owned.set_kill_switch(True)
+                        CreditService(owned).verify()
+                        with owned._transaction() as connection:
+                            control._batch_reconcile_shard(connection, index, claims)
+                            for row in connection.execute("SELECT account_id FROM uta_accounts UNION SELECT account_id FROM uta_command_inbox WHERE account_id IS NOT NULL"):
+                                if control.shard_for(row[0]) != index:
+                                    raise ServiceError("shard_identity_conflict", "existing account or queued command belongs to another shard", 503)
+                            head = {**_financial_head(connection), "writer_generation": token.generation}
+                        with control.control.transaction() as connection:
+                            connection.execute("INSERT INTO router_durable_takeover_events(stage,shard,payload,observed_at) VALUES ('SHARD_FENCED',?,?,?)",
+                                               (index, _json(head), datetime.now(timezone.utc).isoformat()))
+                    for fence, token in leases:
+                        fence.renew(token, 60)  # Every verified shard remains owned through sealing.
+                    with control.control.transaction() as connection:
+                        connection.execute("INSERT INTO router_durable_takeover_events(stage,payload,observed_at) VALUES ('COMPLETED',?,?)",
+                                           (_json({"layout_hash": layout_hash}), datetime.now(timezone.utc).isoformat()))
+                        connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
+                    control._write_state({**control._state(), "halted": True, "error": None})
+                except BaseException as exc:
+                    control._write_state({**control._state(), "halted": True,
+                                          "error": getattr(exc, "code", "takeover_incomplete")})
+                    raise
+                finally:
+                    for fence, token in reversed(leases):
+                        try:
+                            fence.release(token)
+                        except WriterFenceError:
+                            pass
+        finally:
+            os.close(holder._supervisor_fd)
+        return cls(directory, **runtime)
 
     def __init__(self, directory, *, lease_seconds=5.0, poll_interval=.02,
                  background_interval=.1, account_batch=25, matches_per_symbol=10,

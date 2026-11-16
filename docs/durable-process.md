@@ -22,7 +22,7 @@ processes.start()
 
 示例存款是合成 bootstrap 数据，不能替代真实外部资金证明。初始化先经既有 router 的账户、账本及全局资金证明检查完成离线准备，再创建 inbox 并不可逆启用各分片 fencing，最后封存控制配置。若中途崩溃而未封存，运行器拒绝启动，不会自动补建缺失财务状态或把旧库变为 managed。已经存在的旧布局必须另走显式接管流程，本版初始化不提供自动迁移。
 
-正常重启直接使用 `DurableProcessRouter("/private/uta")`，随后 `start()`。保留的旧无 token `ShardRouter` / `ExchangeService` 对象会被 Database 层拒绝写入。只有子进程启动后才 acquire token，父进程不会把 token 传入 fork/spawn，也不能用父进程 token 冒充子进程 owner。
+正常重启直接使用 `DurableProcessRouter("/private/uta")`，随后 `start()`。使用当前存储代码构造并保留的旧无 token `ShardRouter` / `ExchangeService` 对象会被 Database 层拒绝写入。这项对象级验证不等于真实历史二进制防护：不认识 fencing 的旧源码需要持久 SQL 触发器/受控 UDF 格式门禁及独立旧进程验证，在该防护合入前不能宣称历史二进制已失效。只有子进程启动后才 acquire token，父进程不会把 token 传入 fork/spawn，也不能用父进程 token 冒充子进程 owner。
 
 ## 持久命令与真实后台工作
 
@@ -51,3 +51,25 @@ worker 不仅处理挂单。它在同一个受控循环中调用真实 `Exchange
 这些用例是故障/恢复与金融事实验证，不是吞吐压测或生产迁移验收。
 
 新增过程用例还验证实际 SIGSTOP 持 shared gate 的 owner 在租约到期后被监督器清理、发布继续，以及新 PID 下的真实本金/利息还款。手算初始现金 1000、借本金 10、应计利息 1，先还 4 再还 2：现金 1004、本金 5、利息 0；资金池本金现金 45、利息现金 1，逐资产分录总和仍为零。
+
+## 显式既有布局接管
+
+`inspect_takeover(directory)` 只读返回既有 layout hash、分片数量、是否 managed、是否存在 inbox，以及逐片账本 head、账户/订单/仓位计数。它是接管计划，在线运行时不是跨片财务快照，也不是人的签字。
+
+管理员明确停止旧入口后，可以调用：
+
+```python
+plan = DurableProcessRouter.inspect_takeover("/private/existing-uta")
+processes = DurableProcessRouter.take_over(
+    "/private/existing-uta", managed=True,
+    expected_layout_hash=plan["layout_hash"],
+)
+```
+
+这条显式路径保留原账户映射、费用和保证金政策，不能重分片或自动重绑定文件路径/旧快照。它先取得独立 supervisor flock 和全局 exclusive gate，持久 HALTED，然后写入未封存的接管清单；逐片按 inbox-before-fence 顺序封存，用当前管理员进程的临时 PID token 检验账本、信用投影、资金证明与固定路由。所有已验证分片的租约持有到最终封存，防止验证与启用之间出现另一个合作 writer。原有已接纳挂单、成交、账户和回执均保留，接管不会假造成交或转移托管资金。
+
+`router_durable_takeover_events` 追加 PREPARED、逐片 SHARD_FENCED（包含原账本 head、数量和 writer generation）及 COMPLETED 证据。它是本机审计记录，不是外部审计封条。完成仍 HALTED，随后启动 worker 并显式激活。
+
+若接管中断，未封存清单使普通启动拒绝；管理员可用相同 layout hash、政策和 inbox 容量再次显式调用 `take_over`。已 managed 的前缀不通过旧 Router 构造函数重开，不重建缺失 inbox/history，不接管活跃 lease，也不恢复旧快照。无法核验身份、账本、债务或资金证明时保留 stop，要求调查。当前函数使用有界的 60 秒临时租约；大型离线校验超时会拒绝封存而不是在失去租约后宣称成功。
+
+新增测试从真实既有非 managed layout 接管两张挂单，验证新 PID 后沿用原单真实撮合、当前代码的无 token 旧对象不能写；还注入第二片封存失败，验证显式重试不重复存款、不丢原账本。真实旧二进制门禁另行验证，不能由这两个用例替代。

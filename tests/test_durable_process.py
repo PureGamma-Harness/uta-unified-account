@@ -249,6 +249,66 @@ class DurableProcessTests(unittest.TestCase):
             self.assertEqual(sum(map(int, balances.values())), 0)
             self.assertEqual(conn.execute("SELECT COUNT(*) FROM credit_commands WHERE kind='repaid'").fetchone()[0], 2)
 
+    def test_explicit_existing_layout_takeover_preserves_orders_and_disables_old_writers(self):
+        path = Path(self.temporary.name) / "existing"
+        legacy = ShardRouter(path, 2, {"USD": 8}, max_price_age=timedelta(seconds=30))
+        names = [f"legacy-{index}" for index in range(30) if legacy.shard_for(f"legacy-{index}") == 0][:2]
+        for name in names:
+            legacy.create_account(name)
+            legacy.deposit(name, "fund", "USD", D("1000"))
+        legacy.publish_market(self.market())
+        legacy.set_kill_switch(False)
+        legacy.submit_order(names[0], "resting-buy", "X", D("1"), D("100"))
+        legacy.submit_order(names[1], "resting-sell", "X", D("-1"), D("100"))
+        plan = DurableProcessRouter.inspect_takeover(path)
+        self.assertTrue(all(not shard["managed"] for shard in plan["shards"]))
+        self.assertEqual(sum(shard["orders"] for shard in plan["shards"]), 2)
+        with self.assertRaises(ServiceError):
+            DurableProcessRouter.take_over(path, managed=True, expected_layout_hash="0" * 64)
+        managed = DurableProcessRouter.take_over(path, managed=True, expected_layout_hash=plan["layout_hash"],
+                                                lease_seconds=.6, poll_interval=.01)
+        self.addCleanup(managed.close)
+        self.assertTrue(managed.diagnostics()["state"]["halted"])
+        with self.assertRaises(WriterFenceError):
+            legacy.deposit(names[0], "old-writer", "USD", D("1"))
+        managed.start()
+        self.assertFalse(managed.set_kill_switch(False, timeout=8)["halted"])
+        def matched():
+            with managed._database(0).read_transaction() as conn:
+                return conn.execute("SELECT COUNT(*) FROM uta_matches").fetchone()[0] == 1
+        self.eventually(matched)
+        with managed._database(0).read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_orders").fetchone()[0], 2)
+            self.assertEqual(sum(int(row[0]) for row in conn.execute("SELECT units FROM ledger_balances WHERE asset='USD'")), 0)
+        with managed._control.control.read_transaction() as conn:
+            stages = [row[0] for row in conn.execute("SELECT stage FROM router_durable_takeover_events ORDER BY sequence")]
+            self.assertEqual(stages, ["PREPARED", "SHARD_FENCED", "SHARD_FENCED", "COMPLETED"])
+
+    def test_incomplete_explicit_takeover_resumes_without_recreating_managed_history(self):
+        path = Path(self.temporary.name) / "takeover-recovery"
+        legacy = ShardRouter(path, 2, {"USD": 8}, max_price_age=timedelta(seconds=30))
+        account = next(f"r-{index}" for index in range(20) if legacy.shard_for(f"r-{index}") == 0)
+        legacy.create_account(account)
+        legacy.deposit(account, "cash", "USD", D("10.04"))
+        plan = DurableProcessRouter.inspect_takeover(path)
+        original = WriterFence.enable
+        def fail_second(fence, authority_id):
+            if authority_id.endswith(":1"):
+                raise OSError("injected take-over interruption")
+            return original(fence, authority_id)
+        with patch.object(WriterFence, "enable", fail_second):
+            with self.assertRaisesRegex(OSError, "injected"):
+                DurableProcessRouter.take_over(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        with self.assertRaises(ServiceError) as blocked:
+            DurableProcessRouter(path)
+        self.assertEqual(blocked.exception.code, "managed_bootstrap_incomplete")
+        resumed = DurableProcessRouter.take_over(path, managed=True, expected_layout_hash=plan["layout_hash"])
+        self.addCleanup(resumed.close)
+        self.assertTrue(resumed.diagnostics()["state"]["halted"])
+        with resumed._database(0).read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_deposits").fetchone()[0], 1)
+            self.assertEqual(int(conn.execute("SELECT units FROM ledger_balances WHERE account=? AND asset='USD'", ("customer:" + account,)).fetchone()[0]), 1004000000)
+
 
 if __name__ == "__main__":
     unittest.main()
