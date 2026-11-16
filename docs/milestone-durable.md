@@ -1,6 +1,6 @@
 # 持久命令、单主机分片进程与历史决策审计：进行中
 
-本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
+本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
 
 ## 交付范围与明确拒绝
 
@@ -24,9 +24,11 @@ HMAC profile 默认要求本机原生 TLS ≥1.2。请求签名覆盖 tenant、�
 
 1. 独立运行真实 `ad3f5b8` 历史源码，发现仅靠当前 Python authorizer 的 lease 检查无法阻止历史二进制继续写入。已加入持久 SQL guard/UDF 格式门禁，并以隔离旧源码进程执行红绿验证；浅克隆 CI 使用带来源摘要与许可证的固定旧源码归档，不替换为当前代码或跳过。
 2. 实际 SIGSTOP owner 持 shared gate 时曾阻塞 publication。监督器现在在租约过期后清理其已核验的自有进程，且 exclusive gate 等待有界。实际 supervisor SIGKILL 与已登记停止子进程的组合故障另有 pidfd 恢复测试。
-3. **独立审查仍发现控制事务 DDL 授权过宽，可损坏金融投影的一致性；修复与独立回归进行中。此项是本候选阻断，不因旧测试通过而关闭。**
+3. 独立审查发现控制事务 DDL 授权过宽，存在金融投影一致性风险；`62f4336` 将 DDL 限制为官方精确 schema，26 项专项与 38 项独立原故障回归通过。新增独立权限边界复验仍在进行，最终关闭以其结果为准。
 
-固定 `6a61c44` 在单独不可变工作树完成双 Python 全量预检，各 **793 项通过**，零失败、错误和跳过：[Python 3.12 原始输出](../evidence/runs/durable-preflight/python312-6a61c44/summary.json)（96.20 秒）及 [Python 3.10 原始输出](../evidence/runs/durable-preflight/python310-6a61c44/summary.json)（98.99 秒）。最终候选尚未冻结；该结果不能改写为后续新增代码已验，也不关闭独立审查已找到的阻断项。实现组已有针对性测试，独立组覆盖实际 COMMIT 失败、磁盘满、响应丢失、旧进程、部分 publication、同账户 FIFO、poison command、还款和四侧对账，详见 [独立协议验证](durable-validation.md)、[故障验证](durable-faults.md)。
+固定 `6a61c44` 在单独不可变工作树完成双 Python 全量预检，各 **793 项通过**，零失败、错误和跳过：[Python 3.12 原始输出](../evidence/runs/durable-preflight/python312-6a61c44/summary.json)（96.20 秒）及 [Python 3.10 原始输出](../evidence/runs/durable-preflight/python310-6a61c44/summary.json)（98.99 秒）。最终候选尚未冻结；该结果不能改写为后续新增代码已验，也不关闭独立审查已找到的阻断项。原记录器只重定向 Python 层输出，部分实际 spawn stderr 仍输出到调用端；新记录器改用 OS 文件描述符重定向并校验源码前后一致，最终复验使用新记录器，不篡改旧日志补齐。实现组已有针对性测试，独立组覆盖实际 COMMIT 失败、磁盘满、响应丢失、旧进程、部分 publication、同账户 FIFO、poison command、还款和四侧对账，详见 [独立协议验证](durable-validation.md)、[故障验证](durable-faults.md)。
+
+另一次独立审查发现审计只核 guard 名称、未核实际 SQL。`f8d96e8` 共享安装/验证的完整定义，逐项核对 SQL、所属表和 inventory；读档、写决策及行情引用均失败关闭。独立 12 项测试在 Python 3.10/3.12 通过，保留原弱化 guard 红态，见 [独立审计故障报告](decision-audit-faults.md)。签名接口另有 [独立 HMAC/TLS 验证](hmac-validation.md)，9 项测试使用独立客户端 MAC 和真实证书验证。
 
 真实 managed 清算用实际盘口完成 90 开仓、45 部分清算、无深度继续持有 45、kill 后新 PID 接管、再成交 45，终态现金 93.16 USD。schema2 与 required schema3 均逐笔核对；当前价格变化后按历史市场重放三个 victim fill，现金 1000→996.4→544.78→93.16，仓位 0→90→45→0。它是功能/恢复证据，不是容量或灾难恢复验收。
 

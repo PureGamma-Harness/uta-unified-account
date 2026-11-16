@@ -1,0 +1,18 @@
+test_loader_failure_is_recorded_as_an_error_not_a_fake_success (test_validation_recorder.ValidationRecorderTests.test_loader_failure_is_recorded_as_an_error_not_a_fake_success) ... ok
+test_passing_tests_cannot_approve_sources_changed_during_execution (test_validation_recorder.ValidationRecorderTests.test_passing_tests_cannot_approve_sources_changed_during_execution) ... ok
+test_raw_os_child_stderr_is_archived_and_real_test_count_retained (test_validation_recorder.ValidationRecorderTests.test_raw_os_child_stderr_is_archived_and_real_test_count_retained) ... FAIL
+test_real_failure_count_and_worker_exit_are_preserved (test_validation_recorder.ValidationRecorderTests.test_real_failure_count_and_worker_exit_are_preserved) ... ok
+test_uncommitted_sources_cannot_be_certified_as_the_recorded_commit (test_validation_recorder.ValidationRecorderTests.test_uncommitted_sources_cannot_be_certified_as_the_recorded_commit) ... ok
+
+======================================================================
+FAIL: test_raw_os_child_stderr_is_archived_and_real_test_count_retained (test_validation_recorder.ValidationRecorderTests.test_raw_os_child_stderr_is_archived_and_real_test_count_retained)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-unified-account/tests/test_validation_recorder.py", line 41, in test_raw_os_child_stderr_is_archived_and_real_test_count_retained
+    self.assertEqual(process.returncode, 0, process.stderr)
+AssertionError: 1 != 0 : 
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.940s
+
+FAILED (failures=1)
