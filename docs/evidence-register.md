@@ -29,3 +29,27 @@
 ## 规则变更与签核
 
 每次规则 PR 需要更新 [追溯矩阵](../evidence/rules.csv)，提供人工案例、实现与独立验证结果，并保留代码 SHA、配置版本、市场快照和命令 ID。量化风险组负责公式；独立验证组可以否决启用。工程 agent 的审查记录不替代金融规则负责人的真实授权签字、模型委员会批准或真实资金上线审批。
+
+## 后续可复现验证索引（2026-11-16 UTC）
+
+下列记录固定到提交 `51623cb0e0081834e7e167039ba27fec582c9bc8`，不能把该提交的通过结果自动套用到后续提交。该提交的 Python 3.10–3.13 push/PR 共八项 CI 已通过；提交前对应源码的完整本地回归为 524 tests、32.391 秒。测试数量不是风险覆盖率，也不表示验收门槛全部关闭。
+
+| 可复现证据 | 直接检查的性质 | 仍未证明 |
+| --- | --- | --- |
+| [成交竞态测试](../tests/test_fill_races.py) | 同 fill ID 并发重放只有一次业务效果；不同 ID 不能竞争超出剩余量；重启后继续结算 | 交易所端幂等、多主执行、跨节点 fencing |
+| [账户作用域重放](../tests/test_account_scoped_replay.py) | 不同账户可独立复用订单/成交 ID；重启等值重放及冲突拒绝不改变逻辑数据库 | API 租户身份认证、真实客户隔离 |
+| [网关路径作用域](../tests/test_gateway_path_scope.py) | 七种读取路径与五种取消路径的拒绝不调用 FakeService；合法路径正对照正常 | 反向代理路径规范化、外部部署、完整权限审计 |
+| [优化模式验收负对照](../tests/test_optimized_acceptance.py) | 独立 python -O 子进程仍拒绝余额回读多一美元；正常与还原后验收通过 | 任意金融计算正确、真实行情校准、生产批准 |
+
+从源码根目录运行单项：
+
+```sh
+python -m unittest discover -s tests -p test_fill_races.py -v
+python -m unittest discover -s tests -p test_account_scoped_replay.py -v
+python -m unittest discover -s tests -p test_gateway_path_scope.py -v
+python -m unittest discover -s tests -p test_optimized_acceptance.py -v
+```
+
+这些测试均加入常规 unittest discovery；FakeService 不处理真实订单，验收使用临时合成存储。测试内的负对照仅临时 mock 回读结果，不删除运行时防护、不改真实数据库或外部安全设置。详细有限模型与实现边界见 [版本性质及耐久测试证据](../formal/version-property.md)。
+
+下一阶段需要的是关闭证据缺口，而非只增加测试数量：真实源写入者隔离证明、复制与恢复水位、外部执行对账及未知结果处理、正式持续容量测量、金融校准与责任人签核，仍按 [验收门槛](acceptance-gates.md) 管理。上述新增证据不授权实盘，不自动批准迁移隔离实现，也不将旧快照完整性等同于零数据损失。
