@@ -2,6 +2,8 @@
 
 本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
 
+**当前整合阻断：** `e6e3afd` 的远端四版本 CI 各执行 845 项并失败，涉及 worker 回执等待超时、一次读 guard inventory 异常及短 soak fixture。完整[原始日志与失败台账](../evidence/runs/durable-ci-preflight/README.md)已保留；根因调查和独立复验尚未完成，不用较早本地通过覆盖。之后的 CI 会在测试前记录实际 SQLite 构建、运行时及 checked-out SHA，避免把环境差异当作未经验证的原因。
+
 ## 交付范围与明确拒绝
 
 | 接入路径 | 本轮可运行范围 | 未支持操作及行为 |
