@@ -477,12 +477,17 @@ class DurableLedger:
                 raise LedgerError("unsealed journal event")
             return tuple(self._event(current, row[0], row[1]) for row in rows)
 
-    def verify(self, *, connection: sqlite3.Connection | None = None) -> int:
+    def verify(self, *, connection: sqlite3.Connection | None = None,
+               ordered_postings: bool = False) -> int:
         """Independently replay the journal and compare its hashes and balances.
 
         Returns the count of verified events. Raises LedgerError on corruption.
         Verification holds a transaction, so it sees one consistent state.
+        ``ordered_postings`` is an opt-in statement-dispatch experiment, not a
+        cached proof: both paths revalidate the complete current journal.
         """
+        if type(ordered_postings) is not bool:
+            raise ValueError("ordered_postings must be a boolean")
         with self.database._using(connection) as current:
             if [row[0] for row in current.execute("PRAGMA integrity_check")] != ["ok"]:
                 raise LedgerError("database integrity check failed")
@@ -498,12 +503,24 @@ class DurableLedger:
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
                                    "FROM ledger_events ORDER BY sequence").fetchall()
+            posting_cursor = (current.execute("SELECT sequence, ordinal, account, asset, units "
+                                             "FROM ledger_postings ORDER BY sequence, ordinal")
+                              if ordered_postings else None)
+            following = next(posting_cursor, None) if posting_cursor is not None else None
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
-                                           "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
+                if posting_cursor is None:
+                    postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
+                                               "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
+                else:
+                    postings = []
+                    while following is not None and following[0] == sequence:
+                        postings.append(tuple(following)[1:])
+                        following = next(posting_cursor, None)
+                    if following is not None and following[0] < sequence:
+                        raise LedgerError("journal posting sequence is broken")
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")
                 canonical = tuple((posting[1], posting[2], self._stored_units(posting[3])) for posting in postings)
@@ -522,6 +539,8 @@ class DurableLedger:
                     if abs(projected[key]) >= Ledger._LIMIT:
                         raise LedgerError("replayed balance exceeds supported range")
                 previous_hash = event_hash
+            if following is not None:
+                raise LedgerError("journal posting sequence is broken")
             stored = {(row[0], row[1]): self._stored_units(row[2]) for row in current.execute(
                 "SELECT account, asset, units FROM ledger_balances")}
             if stored != projected:
