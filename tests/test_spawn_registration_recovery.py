@@ -194,6 +194,20 @@ class SpawnRegistrationUnitTests(unittest.TestCase):
         self.assertNotIn(secret, json.dumps(router._spawn_failures))
         self.assertFalse(router._spawn_failures[0]["retryable_new_child"])
 
+    def test_later_confirmed_cleanup_does_not_clear_terminal_registration_error(self):
+        router, context, _, _ = self.run_failure(stuck=True, message="terminal private error")
+        self.assertIn(0, router._spawn_pending_cleanup)
+        context.stuck = False
+        router.close()
+        self.assertEqual(router._spawn_pending_cleanup, {})
+        self.assertTrue(router._spawn_failures[0]["cleanup_complete"])
+        self.assertIn(0, router._spawn_blocked)
+        for operation in (lambda: router._spawn(0), router.start):
+            with self.assertRaises(Exception) as caught:
+                operation()
+            self.assertEqual(getattr(caught.exception, "code", None), "spawn_recovery_pending")
+        self.assertEqual(len(context.processes), 1)
+
     def test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity(self):
         context, clock = _Context(), SimpleNamespace(now=0.0)
         router = _model_router(context)

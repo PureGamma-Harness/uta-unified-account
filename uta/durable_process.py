@@ -1133,6 +1133,7 @@ class DurableProcessRouter:
             self._spawn_pending_cleanup[shard] = {
                 "process": process, "stop": stop, "gate": start_gate,
                 "pid": child_pid, "child_exit_confirmed": child_pid is None,
+                "registration_retryable": _retryable_spawn_registration(error),
                 "handles": [stop_read, gate_read, send, receive, stop, start_gate]}
             cleanup_complete = self._cleanup_gated_spawn(shard)
             failure = _SpawnRegistrationFailure(child_pid=child_pid,
@@ -1179,7 +1180,10 @@ class DurableProcessRouter:
         if self._start_gates.get(shard) is pending["gate"]:
             self._start_gates.pop(shard, None)
         self._spawn_pending_cleanup.pop(shard)
-        self._spawn_blocked.discard(shard)
+        # Resolving resource uncertainty cannot clear a terminal registration
+        # error. Only a known retryable cause may permit a later new child.
+        if pending["registration_retryable"]:
+            self._spawn_blocked.discard(shard)
         if shard in self._spawn_failures:
             self._spawn_failures[shard]["cleanup_complete"] = True
         return True
