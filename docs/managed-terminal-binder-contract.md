@@ -32,6 +32,8 @@
 
 独立 `ae5e52c322780024d9669d8bf49377d17bc1e709` 后续首批 17 项 challenge 得到 11 PASS / 6 RED：布尔零值、浮点轮数和故障计数仍可被 Python 宽松相等接受；两份 child 回执可以复用完全相同的 PID/birth；1001 位 elapsed 整数会令 `math.isfinite` 抛 OverflowError。全部首原件与源固定保留。本次严格化修订尚待新的纯验证和独立复核，不覆盖原 12 PASS 或原 6 RED。
 
+严格化代码先固定为 `98e41f50256a6d2d01332c20826dd0033b9efc3a`，随后一次 CPU3、10s 上限的纯验证执行原独立 17 项 challenge 加一个“同 PID、新 birth 合法”的正例，共 **18/18 PASS**；完整外层耗时 164,361,260ns。没有重跑作者原 12 测试，没有读取实际长测目录或执行 SQL、observer、冷审计。原 challenge 的输出头仍含历史被审版本 `8a0aa68`，原件没有改写；本次实际受测 source commit、driver 与输入 SHA 在新 `evidence/managed-terminal-binder-strict-20261117` 记录中明确绑定。当前仍待修订后的独立审查，候选资格与金融生产 flags 保持 false。
+
 修订按实际 schema 统一约束：所有元数据数值先检查有界范围；整数证据采用精确 int（排除 bool/float），默认范围为正负 signed 64-bit，count/clock 字段另外要求非负或正值，PID 至多 signed 32-bit、birth 为 ASCII 十进制有界 token。秒值支持源 schema 的 int/float，仅接受有限且位于 0 至 86400 的值；该范围是六小时任务元数据契约，不改变任何金融计算精度或原长测时限。字段值超界先返回固定结构化错误，不再经过隐式 int→float 转换。
 
 该次注册的 coverage 数值契约来自 v4 计划及实际 `Coverage.report`：12 个 1800s block、每块至少 1 次独立 golden、61s 采样、technical unknown 总预算 3、连续预算 1。对计数、block index/时钟、required/observed、轮数、零残余、故障、文件设备/inode 等按真实类型检查；跨记录用规范 JSON 的类型敏感比较，避免 True/1 或 5400.0/5400 的隐式相等。四个子进程的 `(pid,birth)` 必须两两不同；同 PID 配不同 birth 仍被允许，不能把正常 PID 重用当成错误。
