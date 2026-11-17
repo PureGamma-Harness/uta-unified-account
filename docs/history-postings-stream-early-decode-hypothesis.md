@@ -1,0 +1,7 @@
+# Early SQLite decoding: declared red control, NOT_RUN
+
+Root's static review of runtime `56de743` identified a possible error-order regression. Opening/advancing the stream obtains a Python row before the first event's chain check. While collecting one group's rows, the next-row lookahead may also decode a future event's posting before the current event's fingerprint/hash finishes. SQLite permits invalid UTF-8 TEXT through `CAST(X'ff' AS TEXT)`; Python row decoding can raise a SQLite exception before financial canonicalization sees a value.
+
+This is a hypothesis until an actual synthetic run. The frozen controls add broken first-chain plus invalid account/units in that same event; broken first fingerprint plus invalid account/units in the next group; and invalid asset retaining original FK failure priority. The expected financial first-error semantics are not weakened. An actual difference is a real red candidate, not a permitted improvement or proof of data loss. Asset TEXT with no configured FK target should fail the original FK check before either path reaches postings decoding.
+
+The single bounded harness fails closed before profiling if any differential is red. It preserves the raw unittest error and summary rather than automatically retrying or changing the runtime. The author must report the original immutable candidate outcome and obtain separate approval before a fix/retest. No production caller enables this experimental option.
