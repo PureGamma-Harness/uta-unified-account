@@ -1,0 +1,49 @@
+{
+  "reviewed_source": "c27ced8306009106f9da720179fa53b1080f2c91",
+  "control_kind": "explicit measurement MemoryError injected into actual supervisor flow, all children mocked",
+  "producer_drain_calls": 0,
+  "events": [
+    [
+      "write",
+      "launch.json",
+      {
+        "synthetic": true,
+        "driver_pid": 123456789,
+        "driver_birth": "123",
+        "launched_wall_ns": 1,
+        "launched_boottime_ns": 1,
+        "continuous_6h_stability_passed": false,
+        "continuous_24h_stability_passed": false,
+        "production_approved": false,
+        "capacity_10000_per_s_passed": false
+      }
+    ],
+    [
+      "write",
+      "supervisor-identity.json",
+      {
+        "synthetic": true,
+        "pid": 212891,
+        "birth": "123",
+        "cpu": [
+          3
+        ]
+      }
+    ],
+    [
+      "write",
+      "collection-errors.jsonl",
+      {
+        "synthetic": true,
+        "at_wall_ns": 1794924714576445322,
+        "code": "supervision_collection_error",
+        "error_type": "MemoryError",
+        "error_digest": "6a1fc7212513b5e838a7a0cdf50f27113f7b63a139749dcf94a404bc24fa248a",
+        "financial_drain_requested": false
+      }
+    ]
+  ],
+  "expected": "metadata unknown must request owned official drain before technical logging",
+  "physical_OOM_or_SQL_or_service_or_child_process_exercised": false,
+  "wall_seconds": 0.0021171760017750785
+}
