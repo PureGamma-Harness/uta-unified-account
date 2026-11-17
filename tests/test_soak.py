@@ -262,6 +262,8 @@ class SoakTests(unittest.TestCase):
                 report = job.run()
             roundtrip.assert_called_once_with(0)
             self.assertEqual(report["status"], "failed")
+            self.assertEqual([(error["type"], error["message"]) for error in report["errors"]],
+                             [("RuntimeError", "unknown earlier round must fence later financial execution")], report)
             self.assertEqual(report["counts"], {"pending": 1, "queued": 2}, report)
             self.assertEqual(report["financial_counts"]["uta_orders"], 1)
             self.assertEqual(report["financial_counts"]["uta_matches"], 0)
