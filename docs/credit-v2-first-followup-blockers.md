@@ -6,8 +6,9 @@ failed. Original raw, exact code hashes and selected read-only post-failure
 financial observations remain in `evidence/runs/credit-v2-actual-followup/attempt-01`.
 No successful first BORROW evidence was rewritten or rerun to hide these failures.
 
-The quota case passed: 0.51 BTC exceeded the explicit gross account/allocation
-limit, actual SAVEPOINT rollback removed all financial effects/intent/decision,
+The quota case passed: 0.51 BTC exceeded the independently replayed conservative
+quote (the first recorded refusal; account/allocation limits require their own
+distinct boundary cases). Actual SAVEPOINT rollback removed all financial effects/intent/decision,
 and only the original source and REJECTED409 receipt remained. The next account
 FIFO loan then succeeded. This is an actual business-refusal/rollback result.
 
