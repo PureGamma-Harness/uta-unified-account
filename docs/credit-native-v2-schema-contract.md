@@ -1,5 +1,12 @@
 # Fresh internal credit V2: native schema and API contract
 
+Historical checkpoint: this document records the sequential catalog/source/
+assertion contracts beginning at `a4a9d00`. Statements about APIs not yet existing
+describe those retained checkpoints. The subsequent current implementation and
+its still-unexecuted positive gates are in
+`docs/credit-native-v2-runtime-candidate.md`; none of the earlier component
+outputs is relabeled as a runtime or financial pass.
+
 This contract starts from `899c91d0a032d88cc4cb8c73ffb09cb2d1bd7236` and uses the
 parent-owned audit catalog `3a434f2d33f7fcf020f31cf78cc59f1388a99031` (local
 dependency copy `084e29e`). The new `uta.credit_native_v2` module contains only

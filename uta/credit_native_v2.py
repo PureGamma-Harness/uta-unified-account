@@ -1,14 +1,15 @@
-"""Compiled contract for a future fresh internal synthetic credit authority.
+"""Fresh-only internal synthetic credit primitives and staged SQL obligations.
 
-This catalog is not an installer or an authorization capability. Writer fencing
-recognizes its reserved namespace but refuses incomplete capabilities. There is
-no positive operation context,
-activation, ownership, intake, HTTP or CLI entry point in this schema slice.
-Format1 NATIVE_PREPARED is never upgraded. Actual primitive enforcement and
-independent positive-chain acceptance must precede any internal execution.
+Importing this module installs nothing and grants no role or authority. Only a
+complete explicit fresh synthetic format2 can enter its internal owner/intake/
+financial scopes; immutable PREPARED1 is never upgraded. No HTTP/CLI activation
+or real-funds permission is supplied. Positive-chain and independent acceptance
+remain separate from this implementation's schema/data component tests.
 """
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from contextlib import contextmanager
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 from hashlib import sha256
 import json
 import os
@@ -50,6 +51,7 @@ TABLE_SQL = MappingProxyType({
       format INTEGER NOT NULL CHECK(typeof(format)='integer' AND format=2),
       capability_id TEXT NOT NULL,descriptor_id TEXT NOT NULL,authority_id TEXT NOT NULL,
       artifact_id TEXT NOT NULL REFERENCES uta_credit_code_artifacts(artifact_id),
+      policy_id TEXT NOT NULL REFERENCES uta_credit_risk_policies(policy_id),
       opening_ledger_sequence INTEGER NOT NULL CHECK(typeof(opening_ledger_sequence)='integer' AND opening_ledger_sequence>=0),
       opening_credit_count INTEGER NOT NULL CHECK(typeof(opening_credit_count)='integer' AND opening_credit_count>=0),
       opening_payload TEXT NOT NULL,payload TEXT NOT NULL)""",
@@ -152,6 +154,608 @@ def _immutable_definitions():
 TRIGGER_SQL = _immutable_definitions()
 OBJECT_SQL = MappingProxyType({**TABLE_SQL, **INDEX_SQL,
     **{name: sql for name, (_, sql) in TRIGGER_SQL.items()}})
+
+
+def _create_object(connection, name, catalog):
+    """Execute only a fixed native/audit catalog name in actual control role."""
+    from .writer_fence import _REGISTRY, _REGISTRY_LOCK
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is None or guard.connection is not connection or guard.role != "control"
+            or name not in catalog):
+        raise CreditV2Error("credit_v2_context_invalid", "native schema requires its real control transaction")
+    with guard.privileged():
+        connection.execute(catalog[name])
+
+
+def _opening_record(connection):
+    return _canonical({"journal_head": _head(connection),
+        "debts": [dict(row) for row in connection.execute("SELECT account_id,asset,principal,interest FROM uta_liabilities ORDER BY account_id,asset")],
+        "account_limits": [dict(row) for row in connection.execute("SELECT account_id,asset,units FROM credit_account_limits ORDER BY account_id,asset")],
+        "asset_limits": [dict(row) for row in connection.execute("SELECT asset,units FROM credit_asset_limits ORDER BY asset")],
+        "credit_count": connection.execute("SELECT COUNT(*) FROM credit_commands").fetchone()[0]})
+
+
+def install_internal_credit_v2(database, exchange, credit, envelope):
+    """One fresh synthetic installation; no format1 upgrade or writer grant."""
+    from .credit import CreditService
+    from .service import ExchangeService
+    from .credit_native import _verify_financial_source, validate_opening
+    from .decision_audit import DecisionAudit
+    from .writer_fence import (WriterFence, _load, _REGISTRY, _REGISTRY_LOCK,
+        _create_control_object, _CONTROL_TRIGGER_SQL, _install_table_guards, _observed)
+    if (type(exchange) is not ExchangeService or type(credit) is not CreditService
+            or credit.exchange is not exchange or exchange.database is not database or credit.database is not database
+            or database.writer_token is not None):
+        raise CreditV2Error("credit_v2_context_invalid", "fresh installation requires actual unbound initialized source services")
+    audit, fifo, _ = _runtime_dependencies()
+    with database._fence_transaction() as con:
+        state = _load(con)
+        if state is None or state["guard_format"] != 1:
+            raise CreditV2Error("credit_v2_fresh_required", "fresh installation needs its actual persistent guarded authority")
+        if state.get("credit_format") == 1:
+            raise CreditV2Error("credit_not_active", "prepared format1 can never become internal format2")
+        if state.get("credit_format") == 2:
+            current = con.execute("SELECT singleton,format,state,capability_id,payload FROM writer_fence_credit_v2_capability").fetchone()
+            value = load_marker(con, current, authority_id=state["authority_id"])
+            if type(envelope) is not str or envelope != value.canonical_payload:
+                raise CreditV2Error("credit_v2_descriptor_conflict", "existing native capability cannot be replaced")
+            return {"stage": STAGE, "capability_id": value.capability_id,
+                "descriptor_id": value.static_descriptor.descriptor_id, "writer_acquired": False}
+        history = tuple(tuple(row) for row in con.execute("SELECT sequence,kind FROM writer_fence_events ORDER BY sequence"))
+        if (state["generation"] != 0 or state["owner_nonce"] is not None or state["batch_format"]
+                or history != ((1, "enabled_guard_v1"),)
+                or con.execute("SELECT 1 FROM uta_command_inbox LIMIT 1").fetchone()
+                or con.execute("SELECT 1 FROM sqlite_master WHERE name LIKE 'credit_v2_%' OR name LIKE 'uta_credit_%' OR name LIKE 'credit_audit_v2_%' OR name LIKE 'uta_command_batch_%' LIMIT 1").fetchone()):
+            raise CreditV2Error("credit_v2_fresh_required", "internal credit requires unused unowned fresh-only source state")
+        old_queue_sequence = con.execute("SELECT seq FROM sqlite_sequence WHERE name='uta_command_inbox'").fetchone()
+        if old_queue_sequence is not None and old_queue_sequence[0] != 0:
+            raise CreditV2Error("credit_v2_fresh_required", "a previously used durable inbox cannot become a fresh native queue")
+        scales = dict(con.execute("SELECT asset,scale FROM ledger_assets"))
+        if scales != {"USD": 8, "BTC": 8} or exchange.audit is None:
+            raise CreditV2Error("credit_v2_opening_unsupported", "fresh internal credit requires actual USD8/BTC8 and schema3 audit services")
+        DecisionAudit.validate(con)
+        _verify_financial_source(database, con, scales)
+        for row in con.execute("SELECT asset,principal,interest FROM uta_liabilities"):
+            if row[0] != "BTC" and (credit._stored(row[0], row[1]) or credit._stored(row[0], row[2])):
+                raise CreditV2Error("credit_v2_opening_unsupported", "unsupported non-BTC opening debt cannot be locked into BTC-only credit")
+        fifo.verify_existing_queue(con)
+        # This is the real strict declaration. Current code identity is bound
+        # below after the dedicated empty audit catalog has been created.
+        declared = validate_envelope(envelope, expected_authority_id=state["authority_id"], expected_asset_scales=scales)
+        validate_opening(con, declared.static_descriptor)
+        opening = _opening_record(con)
+        # Catalogs and immutable metadata are prepared before effect triggers;
+        # no positive scope UDF is faked for installer metadata writes.
+        for name in audit.OBJECT_SQL:
+            _create_object(con, name, audit.OBJECT_SQL)
+        for name in CATALOG_OBJECT_SQL:
+            _create_object(con, name, CATALOG_OBJECT_SQL)
+        evidence = audit.CreditAuditV2(exchange, credit).runtime_evidence(con)
+        actual = validate_envelope(envelope, expected_authority_id=state["authority_id"],
+            expected_artifact_id=evidence["artifact_id"], expected_asset_scales=scales)
+        with _REGISTRY_LOCK:
+            guard = _REGISTRY[id(con)]
+        allocation = actual.static_descriptor.allocation_for("BTC", actual.static_descriptor.shard)
+        with guard.privileged():
+            con.execute("INSERT INTO uta_credit_code_artifacts VALUES(?,?)", (evidence["artifact_id"], audit.canonical(evidence["manifest"])))
+            con.execute("INSERT INTO uta_credit_risk_policies VALUES(?,?)", (evidence["policy_id"], audit.canonical(evidence["policy"])))
+            con.execute("INSERT INTO credit_v2_config VALUES(1,2,?,?,?,?,?,?,?,?,?)",
+                (actual.capability_id, actual.static_descriptor.descriptor_id, state["authority_id"], evidence["artifact_id"], evidence["policy_id"],
+                 json.loads(opening)["journal_head"]["sequence"], json.loads(opening)["credit_count"], opening, actual.canonical_payload))
+            con.execute("INSERT INTO credit_v2_allocations VALUES(?,?,?,?,?,?,?,?)",
+                (allocation.allocation_id, actual.static_descriptor.descriptor_id, actual.static_descriptor.certificate_id,
+                 state["authority_id"], allocation.shard, "BTC", 8, str(allocation.limit_units)))
+            for row in con.execute("SELECT scope,command_id,kind,asset,amount,journal_event_id,result FROM credit_commands"):
+                con.execute("INSERT INTO credit_v2_legacy_commands VALUES(?,?,?,?,?,?,?)",
+                    (*tuple(row)[:6], _digest(row[6])))
+        for name in EFFECT_TRIGGER_SQL:
+            _create_object(con, name, OBJECT_SQL)
+        with guard.privileged():
+            _install_table_guards(con, set(TABLE_SQL) | set(audit.TABLE_SQL))
+        _create_control_object(con, MARKER_NAME)
+        con.execute("INSERT INTO writer_fence_credit_v2_capability VALUES(1,2,?,?,?)",
+                    (STAGE, actual.capability_id, actual.canonical_payload))
+        for name, (table, _) in _CONTROL_TRIGGER_SQL.items():
+            if table == MARKER_NAME:
+                _create_control_object(con, name)
+        now, _ = _observed(database, state)
+        WriterFence(database)._event(con, "credit_internal_enabled_v2", state, now)
+    return {"stage": STAGE, "capability_id": actual.capability_id,
+        "descriptor_id": actual.static_descriptor.descriptor_id, "writer_acquired": False}
+
+
+def acquire_credit_v2(database, owner_nonce, ttl_seconds):
+    """Explicit internal real acquisition; generic acquire never opts in."""
+    _runtime_dependencies()
+    from .writer_fence import WriterFence
+    return WriterFence(database)._acquire_internal_credit_v2(owner_nonce, ttl_seconds)
+
+
+def _source_row(source):
+    return (source.command_id, source.source_id, source.account_id, source.kind, source.payload_hash,
+        "synthetic_local", source.actor_id, source.source_reference, source.authority_id,
+        source.command_payload, source.canonical_payload)
+
+
+def _live_sql_context(guard):
+    from .writer_fence import _assert_token
+    context = getattr(guard, "credit_v2_context", None)
+    if (guard.denied is not None or not getattr(guard, "credit_v2_active", False)
+            or type(context) not in (_IntakeContext, _CreditOperation, _MetadataContext, _RejectionContext)
+            or context.guard is not guard or context.process_id != os.getpid()
+            or context.thread_id != get_ident() or guard.credit_owner_thread != get_ident()
+            or not guard.connection.in_transaction or guard.state is None or guard.state.get("credit_format") != 2):
+        raise CreditV2Error("credit_v2_context_invalid", "no live actual native scope for protected mutation")
+    if type(context) is _IntakeContext:
+        if guard.role != "inbox":
+            raise CreditV2Error("credit_v2_context_invalid", "source intake has no producer role")
+    else:
+        if guard.role != "financial" or context.credit.database is not guard.database:
+            raise CreditV2Error("credit_v2_context_invalid", "financial scope has no actual service binding")
+        _assert_token(guard.database, guard.state, guard.database.writer_token)
+    return context
+
+
+def _sql_gate(guard, phase, *args):
+    """Pure NEW/OLD/context checks only; never recursive SQL or seen counters."""
+    try:
+        context = _live_sql_context(guard)
+        if phase == "SOURCE":
+            valid = type(context) is _IntakeContext and args == _source_row(context.source)
+        elif phase == "INBOX_INSERT":
+            valid = (type(context) is _IntakeContext and args == (context.source.command_id, context.source.account_id,
+                context.source.kind, context.source.command_payload, "PENDING", None, None, None, 0, None, None))
+        elif phase == "INBOX_UPDATE":
+            cid, account, kind, payload, state, result, error, completed, old_state = args
+            if type(context) is _RejectionContext:
+                valid = (cid, account, kind, payload, state, result, error, old_state) == (
+                    context.source.command_id, context.source.account_id, context.source.kind,
+                    context.source.command_payload, "REJECTED", None, context.error_payload, "PENDING")
+            elif type(context) is _CreditOperation:
+                valid = (cid, account, kind, state, error, old_state) == (context.view.command_id,
+                    context.view.account_id, context.view.operation_kind, "SUCCEEDED", None, "PENDING") and result is not None
+            else:
+                valid = False
+            from .credit_audit_v2 import utc_checkpoint
+            if valid:
+                source_payload = context.source.canonical_payload if type(context) is _RejectionContext else context.view.source_payload
+                if utc_checkpoint(completed) < utc_checkpoint(json.loads(source_payload)["accepted_at"]):
+                    raise CreditV2Error("credit_v2_clock_regression", "actual terminal time precedes its original source")
+        elif phase in ("CONFIG", "MARKET", "MARKET_HISTORY"):
+            valid = type(context) is _MetadataContext
+            if phase == "CONFIG":
+                valid = valid and context.operation == "SET_HALT" and args[0] == "halted" and args[1] in ("true", "false")
+            else:
+                valid = valid and context.operation == "PUBLISH_MARKET"
+                if phase == "MARKET":
+                    valid = valid and args[0] == 1
+                else:
+                    valid = valid and args[0] == "market:" + _digest(args[2]) and args[1] == _digest(args[2]) and args[3] == "PUBLISHED"
+        elif phase == "SERVICE_EVENT":
+            event, account, payload, created = args
+            from .credit_audit_v2 import utc_checkpoint
+            utc_checkpoint(created)
+            if type(context) is _MetadataContext:
+                valid = account is None and event == ("KILL_SWITCH_CHANGED" if context.operation == "SET_HALT" else "MARKET_PUBLISHED")
+            elif type(context) is _CreditOperation:
+                item = _document(payload, code="credit_v2_state_invalid")
+                valid = (event, account, item.get("command_id")) == ("CREDIT_" + ("BORROWED" if context.view.operation_kind == "BORROW" else "REPAID"),
+                    context.view.account_id, context.view.command_id)
+            else:
+                valid = False
+        else:
+            valid = type(context) is _CreditOperation and context.generation == guard.state["generation"]
+            if not valid:
+                raise CreditV2Error("credit_v2_context_invalid", "financial effect requires an actual credit operation")
+            if phase == "INTENT":
+                valid = args == context.intent_row
+            else:
+                cid, digest, *values = args
+                valid = (cid, digest) == (context.view.command_id, context.view.intent_digest)
+                after = json.loads(context.after_payload)
+                before = json.loads(context.view.pre_state_payload)["credit"]
+                from .service import _text
+                def amount(units):
+                    return _text(context.credit._codec._amount(context.view.asset, int(units)))
+                if phase == "EXPECTED":
+                    ordinal, name, asset, units = values
+                    valid = (valid and type(ordinal) is int and 0 <= ordinal < len(context.expected_postings)
+                        and (name, asset, units) == tuple((*context.expected_postings[ordinal][:2], str(context.expected_postings[ordinal][2]))))
+                elif phase == "POSTING":
+                    sequence, ordinal, name, asset, units = values
+                    head = json.loads(context.view.pre_state_payload)["journal_head"]
+                    valid = (valid and sequence == head["sequence"] + 1 and type(ordinal) is int
+                        and 0 <= ordinal < len(context.expected_postings)
+                        and (name, asset, units) == (*context.expected_postings[ordinal][:2], str(context.expected_postings[ordinal][2])))
+                elif phase.startswith("DEBT_"):
+                    account, asset, principal, interest, old_principal, old_interest = values
+                    valid = valid and (account, asset, principal, interest) == (context.view.account_id, context.view.asset,
+                        amount(after["principal_units"]), amount(after["interest_units"]))
+                    if phase == "DEBT_UPDATE":
+                        valid = valid and (context.credit._stored(asset, old_principal), context.credit._stored(asset, old_interest)) == (
+                            int(before["principal_units"]), int(before["interest_units"]))
+                elif phase == "ACCOUNT":
+                    valid = valid and tuple(values) == (context.view.account_id, context.view.pre_version, context.view.pre_version + 1)
+                elif phase.startswith("JOURNAL_"):
+                    from .storage import DurableLedger
+                    head = json.loads(context.view.pre_state_payload)["journal_head"]
+                    fingerprint = DurableLedger._fingerprint(context.expected_postings)
+                    expected = (head["sequence"] + 1, context.view.journal_id, fingerprint, head["event_hash"],
+                        DurableLedger._hash(head["sequence"] + 1, context.view.journal_id, head["event_hash"], fingerprint),
+                        0 if phase == "JOURNAL_INSERT" else 1)
+                    valid = valid and tuple(values) == expected
+                elif phase.startswith("BALANCE_"):
+                    name, asset, units, old_units = values
+                    deltas = {(name, asset): value for name, asset, value in context.expected_postings}
+                    previous = {(name, asset): value for name, asset, value in context.ledger_before}
+                    valid = valid and (name, asset) in deltas and units == str(previous[name, asset] + deltas[name, asset])
+                    if phase == "BALANCE_UPDATE":
+                        valid = valid and old_units == str(previous[name, asset])
+                elif phase == "RECORD":
+                    scope, record_cid, kind, asset, text, source_reference, payload, journal, created = values
+                    item = _document(payload, code="credit_v2_state_invalid")
+                    valid = (valid and (scope, record_cid, kind, asset, text, source_reference, journal) == (
+                        "account:" + context.view.account_id, context.view.command_id,
+                        "borrowed" if context.view.operation_kind == "BORROW" else "repaid", context.view.asset,
+                        context.view.amount, None, context.view.journal_id)
+                        and {key: item.get(key) for key in ("account_id", "command_id", "asset", "amount", "principal", "interest", "total", "account_version", "journal_event_id")} == {
+                            "account_id": context.view.account_id, "command_id": context.view.command_id, "asset": context.view.asset,
+                            "amount": context.view.amount, "principal": amount(after["principal_units"]),
+                            "interest": amount(after["interest_units"]),
+                            "total": amount(int(after["principal_units"]) + int(after["interest_units"])),
+                            "account_version": context.view.pre_version + 1, "journal_event_id": context.view.journal_id})
+                    from .credit_audit_v2 import utc_checkpoint
+                    utc_checkpoint(created)
+                elif phase == "DECISION":
+                    from .credit_audit_v2 import strict_json
+                    valid = valid and context.view.operation_kind == "BORROW" and type(strict_json(values[0])) is dict and type(values[1]) is str
+                else:
+                    valid = False
+        if valid:
+            return 1
+        raise CreditV2Error("credit_v2_state_invalid", "protected row differs from actual native command inputs")
+    except BaseException as cause:
+        _poison(guard, "actual native credit SQL guard refused a protected mutation", code="credit_v2_sql_guard_failed", cause=cause)
+        return 0
+
+
+def register_guard(guard):
+    """Register actual connection-local pure gates, with no positive fixtures."""
+    if guard.connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
+        raise CreditV2Error("credit_v2_foreign_keys_required", "actual native foreign-key enforcement is required")
+    guard.credit_v2_baseline = _snapshot_database(guard.connection)
+    guard.credit_v2_sequences = dict(guard.connection.execute("SELECT name,seq FROM sqlite_sequence"))
+    guard.credit_v2_context = None
+    guard.credit_v2_operation = None
+    guard.credit_v2_active = False
+    guard.connection.create_function("uta_credit_v2_gate", -1, lambda *args: _sql_gate(guard, *args))
+    def deny(phase):
+        _poison(guard, "actual native credit SQL guard refused a protected mutation", code="credit_v2_sql_guard_failed")
+        return 0
+    guard.connection.create_function("uta_credit_v2_deny", 1, deny)
+    guard._credit_v2_udf_registered = True
+
+
+def close_guard(guard):
+    if getattr(guard, "_credit_v2_udf_registered", False):
+        guard.connection.create_function("uta_credit_v2_gate", -1, None)
+        guard.connection.create_function("uta_credit_v2_deny", 1, None)
+
+
+def authorize_write(guard, action, table):
+    """DML allowlist inside a real scope; SQL gates still check staged rows."""
+    from .writer_fence import _ACTIONS, _OK
+    try:
+        context = _live_sql_context(guard)
+        if type(context) is _IntakeContext:
+            allowed = (action == _ACTIONS["INSERT"] and table in ("credit_v2_sources", "uta_command_inbox")
+                or table == "sqlite_sequence" and action in (_ACTIONS["INSERT"], _ACTIONS["UPDATE"]))
+        elif type(context) is _MetadataContext:
+            allowed = (action == _ACTIONS["INSERT"] and table in ("uta_events", "sqlite_sequence")
+                or context.operation == "SET_HALT" and table == "uta_config" and action in (_ACTIONS["INSERT"], _ACTIONS["UPDATE"])
+                or context.operation == "PUBLISH_MARKET" and table in ("uta_market", "uta_market_history") and action in (_ACTIONS["INSERT"], _ACTIONS["UPDATE"]))
+        elif type(context) is _RejectionContext:
+            allowed = action == _ACTIONS["UPDATE"] and table == "uta_command_inbox"
+        else:
+            permitted = {
+                "credit_v2_intents": ("INSERT",), "credit_v2_expected_postings": ("INSERT",),
+                "ledger_events": ("INSERT", "UPDATE"), "ledger_postings": ("INSERT",),
+                "ledger_balances": ("INSERT", "UPDATE"), "uta_liabilities": ("INSERT", "UPDATE"),
+                "uta_accounts": ("UPDATE",), "credit_commands": ("INSERT",), "uta_events": ("INSERT",),
+                "uta_credit_decisions": ("INSERT",), "uta_credit_code_artifacts": ("INSERT",),
+                "uta_credit_risk_policies": ("INSERT",), "uta_command_inbox": ("UPDATE",), "sqlite_sequence": ("INSERT", "UPDATE"),
+            }
+            allowed = action in tuple(_ACTIONS[name] for name in permitted.get(table, ()))
+        if not allowed:
+            raise CreditV2Error("credit_v2_context_invalid", "native scope does not authorize this table mutation")
+        if guard.role == "financial":
+            guard.written = True
+        return _OK
+    except BaseException as cause:
+        return guard._deny(_poison(guard, "internal credit DML requires its actual allowed scope", cause=cause))
+
+
+def _dict_rows(snapshot, table):
+    columns, rows = snapshot[table]
+    return [dict(zip(columns, row)) for row in rows]
+
+
+def _set_rows(snapshot, table, rows):
+    columns = snapshot[table][0]
+    normalized = tuple(sorted((tuple(row[name] for name in columns) for row in rows),
+        key=lambda row: _canonical([_sql_value(value) for value in row])))
+    snapshot[table] = (columns, normalized)
+
+
+def _replace_row(snapshot, table, keys, changed):
+    rows = _dict_rows(snapshot, table)
+    matches = [row for row in rows if all(row[name] == changed[name] for name in keys)]
+    if len(matches) > 1:
+        raise CreditV2Error("credit_v2_state_invalid", "ambiguous actual financial row identity")
+    if matches:
+        rows.remove(matches[0])
+    rows.append(changed)
+    _set_rows(snapshot, table, rows)
+
+
+def _assert_snapshot(expected, actual):
+    if expected != actual:
+        raise CreditV2Error("credit_v2_unexpected_effect", "actual staged financial state differs from its one permitted command")
+
+
+def _verify_operation(guard, context):
+    """Rebuild exact expected DB deltas; all proof comes from actual rows."""
+    from .credit_audit_v2 import read_credit_snapshot, journal_record, verify_journal, utc_checkpoint
+    from .service import _text
+    credit, con, view = context.credit, guard.connection, context.view
+    assert_operation_context(credit, con, command_id=view.command_id, account_id=view.account_id,
+        asset=view.asset, amount=Decimal(view.amount), operation_kind=view.operation_kind)
+    actual = _snapshot_database(con)
+    expected = dict(guard.credit_v2_baseline)
+    after, _ = read_credit_snapshot(credit.exchange, credit, con, view.account_id, view.asset,
+                                   require_limits=False, require_increment=False)
+    if _canonical(after) != context.after_payload:
+        raise CreditV2Error("credit_v2_unexpected_effect", "actual gross account/shard debt and pool differ from the trusted transition")
+    intent = dict(zip(_INTENT_COLUMNS, context.intent_row))
+    _replace_row(expected, "credit_v2_intents", ("command_id",), intent)
+    rows = _dict_rows(expected, "credit_v2_expected_postings")
+    rows.extend({"command_id": view.command_id, "ordinal": n, "account": name, "asset": asset, "units": str(units)}
+                for n, (name, asset, units) in enumerate(context.expected_postings))
+    _set_rows(expected, "credit_v2_expected_postings", rows)
+    account_rows = _dict_rows(expected, "uta_accounts")
+    for row in account_rows:
+        if row["account_id"] == view.account_id:
+            if row["version"] != view.pre_version:
+                raise CreditV2Error("credit_v2_state_invalid", "starting account version differs")
+            row["version"] += 1
+    _set_rows(expected, "uta_accounts", account_rows)
+    def amount(units):
+        return _text(credit._codec._amount(view.asset, int(units)))
+    _replace_row(expected, "uta_liabilities", ("account_id", "asset"), {"account_id": view.account_id,
+        "asset": view.asset, "principal": amount(after["principal_units"]), "interest": amount(after["interest_units"])})
+    recorded = journal_record(con, view.journal_id)
+    legs = [{"ordinal": n, "account": name, "asset": asset, "units": str(units)}
+            for n, (name, asset, units) in enumerate(context.expected_postings)]
+    prestate = json.loads(view.pre_state_payload)
+    verify_journal(recorded, expected_event_id=view.journal_id, expected_postings=legs,
+                   journal_head=prestate["journal_head"])
+    events = _dict_rows(expected, "ledger_events")
+    events.append({name: recorded[name] for name in expected["ledger_events"][0]})
+    _set_rows(expected, "ledger_events", events)
+    postings = _dict_rows(expected, "ledger_postings")
+    postings.extend({"sequence": recorded["sequence"], **row} for row in legs)
+    _set_rows(expected, "ledger_postings", postings)
+    before_balances = {(name, asset): value for name, asset, value in context.ledger_before}
+    for name, asset, units in context.expected_postings:
+        _replace_row(expected, "ledger_balances", ("account", "asset"),
+                     {"account": name, "asset": asset, "units": str(before_balances[name, asset] + units)})
+    records = [row for row in _dict_rows(actual, "credit_commands") if row["scope"] == "account:" + view.account_id and row["command_id"] == view.command_id]
+    if len(records) != 1:
+        raise CreditV2Error("credit_v2_closing_invalid", "actual original credit receipt is missing or ambiguous")
+    record = records[0]
+    if (record["kind"], record["asset"], record["amount"], record["source_reference"], record["journal_event_id"]) != (
+            "borrowed" if view.operation_kind == "BORROW" else "repaid", view.asset, view.amount, None, view.journal_id):
+        raise CreditV2Error("credit_v2_closing_invalid", "actual receipt relational identity differs")
+    result = credit._read_result(record)
+    basic = credit._result(view.account_id, view.command_id, view.asset, view.amount,
+        int(after["principal_units"]), int(after["interest_units"]), view.pre_version + 1, view.journal_id)
+    if any(result.get(name) != value for name, value in basic.items()):
+        raise CreditV2Error("credit_v2_closing_invalid", "actual original receipt differs from financial transition")
+    _replace_row(expected, "credit_commands", ("scope", "command_id"), record)
+    terminal_rows = [row for row in _dict_rows(actual, "uta_command_inbox") if row["command_id"] == view.command_id]
+    if len(terminal_rows) != 1:
+        raise CreditV2Error("credit_v2_closing_invalid", "original command terminal is missing")
+    terminal = terminal_rows[0]
+    original = next(row for row in _dict_rows(expected, "uta_command_inbox") if row["command_id"] == view.command_id)
+    accepted_at = json.loads(view.source_payload)["accepted_at"]
+    if original["enqueued_at"] != accepted_at or utc_checkpoint(terminal["completed_at"]) < utc_checkpoint(accepted_at):
+        raise CreditV2Error("credit_v2_clock_regression", "actual command time precedes its original immutable source")
+    permitted = dict(original)
+    permitted.update(state="SUCCEEDED", result=record["result"], error=None,
+        completed_at=terminal["completed_at"], next_attempt_at=None)
+    if (type(terminal["attempts"]) is not int or terminal["attempts"] not in (original["attempts"], original["attempts"] + 1)
+            or terminal["last_error"] not in (original["last_error"], None)):
+        raise CreditV2Error("credit_v2_closing_invalid", "terminal retry metadata differs")
+    permitted.update(attempts=terminal["attempts"], last_error=terminal["last_error"])
+    if terminal != permitted:
+        raise CreditV2Error("credit_v2_closing_invalid", "original CID terminal differs from its credit receipt")
+    utc_checkpoint(terminal["completed_at"])
+    _replace_row(expected, "uta_command_inbox", ("command_id",), permitted)
+    service_events = [row for row in _dict_rows(actual, "uta_events") if row not in _dict_rows(expected, "uta_events")]
+    if (len(service_events) != 1 or service_events[0]["sequence"] != max((row["sequence"] for row in _dict_rows(expected, "uta_events")), default=0) + 1
+            or service_events[0]["event_type"] != "CREDIT_" + ("BORROWED" if view.operation_kind == "BORROW" else "REPAID")
+            or service_events[0]["account_id"] != view.account_id or service_events[0]["payload"] != record["result"]):
+        raise CreditV2Error("credit_v2_closing_invalid", "credit event does not match the original receipt")
+    utc_checkpoint(record["created_at"])
+    utc_checkpoint(service_events[0]["created_at"])
+    _set_rows(expected, "uta_events", _dict_rows(expected, "uta_events") + service_events)
+    if view.operation_kind == "BORROW":
+        audit, _, _ = _runtime_dependencies()
+        decision = audit.CreditAuditV2(credit.exchange, credit).verify_staged_borrow(con, view.command_id, terminal_required=True)
+        if type(decision) is not dict or "decision_id" not in decision:
+            raise CreditV2Error("credit_v2_closing_invalid", "actual staged dedicated decision verification is incomplete")
+        rows = [row for row in _dict_rows(actual, "uta_credit_decisions") if row["command_id"] == view.command_id]
+        if len(rows) != 1 or rows[0]["decision_id"] != decision["decision_id"]:
+            raise CreditV2Error("credit_v2_closing_invalid", "actual staged decision identity differs")
+        _replace_row(expected, "uta_credit_decisions", ("decision_id",), rows[0])
+        if utc_checkpoint(terminal["completed_at"]) < utc_checkpoint(rows[0]["recorded_at"]):
+            raise CreditV2Error("credit_v2_clock_regression", "terminal time precedes the actual dedicated decision")
+        now = utc_checkpoint(_stamp_actual(credit.exchange))
+        if now < utc_checkpoint(rows[0]["recorded_at"]):
+            raise CreditV2Error("credit_v2_closing_invalid", "actual final application clock regressed")
+        market = credit.exchange._market(con)
+        if credit.exchange.audit.market_ref(con, market) != view.market_snapshot_id:
+            raise CreditV2Error("credit_v2_closing_invalid", "actual final market identity differs")
+        market.validate(now=now, max_age=credit.exchange.max_price_age, max_future_skew=timedelta(seconds=1))
+    _assert_snapshot(expected, actual)
+
+
+def _verify_intake(guard, context):
+    actual = _snapshot_database(guard.connection)
+    expected = dict(guard.credit_v2_baseline)
+    source = read_source(guard.connection, context.source.command_id, expected_authority_id=guard.state["authority_id"])
+    if source != context.source:
+        raise CreditV2Error("credit_v2_source_invalid", "actual original source changed")
+    columns = expected["credit_v2_sources"][0]
+    source_row = dict(zip(columns, _source_row(source)))
+    _replace_row(expected, "credit_v2_sources", ("command_id",), source_row)
+    candidates = [row for row in _dict_rows(actual, "uta_command_inbox") if row["command_id"] == source.command_id]
+    if len(candidates) != 1:
+        raise CreditV2Error("credit_v2_source_invalid", "actual original pending command is missing")
+    row = candidates[0]
+    original = _dict_rows(expected, "uta_command_inbox")
+    if (row["state"] != "PENDING" or any(row[name] is not None for name in ("result", "error", "completed_at", "last_error", "next_attempt_at"))
+            or row["attempts"] != 0 or row["sequence"] != max((item["sequence"] for item in original), default=0) + 1):
+        raise CreditV2Error("credit_v2_source_invalid", "native source has an invalid pending command")
+    if row["enqueued_at"] != json.loads(source.canonical_payload)["accepted_at"]:
+        raise CreditV2Error("credit_v2_source_invalid", "actual pending acceptance time differs from its first source")
+    _set_rows(expected, "uta_command_inbox", original + [row])
+    _assert_snapshot(expected, actual)
+
+
+def _verify_rejection(guard, context):
+    actual = _snapshot_database(guard.connection)
+    expected = dict(guard.credit_v2_baseline)
+    cid = context.source.command_id
+    original = next(row for row in _dict_rows(expected, "uta_command_inbox") if row["command_id"] == cid)
+    candidates = [row for row in _dict_rows(actual, "uta_command_inbox") if row["command_id"] == cid]
+    if len(candidates) != 1:
+        raise CreditV2Error("credit_v2_closing_invalid", "original rejected command is missing")
+    changed = dict(original)
+    changed.update(state="REJECTED", result=None, error=context.error_payload,
+                   completed_at=candidates[0]["completed_at"], next_attempt_at=None)
+    if (type(candidates[0]["attempts"]) is not int or candidates[0]["attempts"] not in (original["attempts"], original["attempts"] + 1)
+            or candidates[0]["last_error"] not in (original["last_error"], None)):
+        raise CreditV2Error("credit_v2_closing_invalid", "rejection retry metadata differs")
+    changed.update(attempts=candidates[0]["attempts"], last_error=candidates[0]["last_error"])
+    if candidates[0] != changed:
+        raise CreditV2Error("credit_v2_closing_invalid", "business rejection changed its original command identity")
+    from .credit_audit_v2 import utc_checkpoint
+    utc_checkpoint(changed["completed_at"])
+    accepted_at = json.loads(context.source.canonical_payload)["accepted_at"]
+    if original["enqueued_at"] != accepted_at or utc_checkpoint(changed["completed_at"]) < utc_checkpoint(accepted_at):
+        raise CreditV2Error("credit_v2_clock_regression", "actual rejection time precedes its original accepted source")
+    _replace_row(expected, "uta_command_inbox", ("command_id",), changed)
+    _assert_snapshot(expected, actual)
+
+
+def _verify_metadata(guard, context):
+    from .credit_audit_v2 import utc_checkpoint
+    con = guard.connection
+    actual = _snapshot_database(con)
+    expected = dict(guard.credit_v2_baseline)
+    added_events = [row for row in _dict_rows(actual, "uta_events") if row not in _dict_rows(expected, "uta_events")]
+    if context.operation == "SET_HALT":
+        original = _dict_rows(expected, "uta_config")
+        current = _dict_rows(actual, "uta_config")
+        old_halt = next((row for row in original if row["key"] == "halted"), None)
+        new_halt = next((row for row in current if row["key"] == "halted"), None)
+        if new_halt is None or new_halt["value"] not in ("true", "false"):
+            raise CreditV2Error("credit_v2_metadata_invalid", "actual halt metadata is invalid")
+        _replace_row(expected, "uta_config", ("key",), new_halt)
+        changed = old_halt != new_halt
+        event_type = "KILL_SWITCH_CHANGED"
+        event_payload = _canonical({"enabled": new_halt["value"] == "true"})
+    else:
+        from .market import MarketSnapshot
+        before = context.market_snapshot
+        after = _snapshot_tables(con, ("uta_market", "uta_market_history"))
+        rows = _dict_rows(after, "uta_market")
+        if len(rows) != 1 or rows[0]["singleton"] != 1:
+            raise CreditV2Error("credit_v2_metadata_invalid", "actual market publication is absent")
+        market = MarketSnapshot.from_json(rows[0]["payload"])
+        market.validate(now=context.credit.exchange._now(), max_age=context.credit.exchange.max_price_age,
+                        max_future_skew=timedelta(seconds=1))
+        context.credit.exchange._validate_policy_market(market)
+        sid = "market:" + _digest(rows[0]["payload"])
+        history = _dict_rows(after, "uta_market_history")
+        matches = [row for row in history if row["snapshot_id"] == sid]
+        if len(matches) != 1 or matches[0]["payload"] != rows[0]["payload"] or matches[0]["content_digest"] != _digest(rows[0]["payload"]):
+            raise CreditV2Error("credit_v2_metadata_invalid", "actual market has no complete historical source")
+        expected_market = dict(before)
+        _set_rows(expected_market, "uta_market", rows)
+        old_history = _dict_rows(before, "uta_market_history")
+        if not any(row["snapshot_id"] == sid for row in old_history):
+            if matches[0]["origin"] != "PUBLISHED":
+                raise CreditV2Error("credit_v2_metadata_invalid", "new market origin is invalid")
+            utc_checkpoint(matches[0]["recorded_at"])
+            old_history.append(matches[0])
+        _set_rows(expected_market, "uta_market_history", old_history)
+        _assert_snapshot(expected_market, after)
+        changed = before["uta_market"] != after["uta_market"]
+        event_type = "MARKET_PUBLISHED"
+        event_payload = _canonical({"version": market.version, "observed_at": market.observed_at.isoformat(), "market_snapshot_id": sid})
+    if len(added_events) != int(changed):
+        raise CreditV2Error("credit_v2_metadata_invalid", "metadata event count differs from its actual change")
+    if changed:
+        event = added_events[0]
+        if (event["sequence"] != max((row["sequence"] for row in _dict_rows(expected, "uta_events")), default=0) + 1
+                or event["event_type"] != event_type or event["account_id"] is not None or event["payload"] != event_payload):
+            raise CreditV2Error("credit_v2_metadata_invalid", "metadata event differs from the actual publication")
+        utc_checkpoint(event["created_at"])
+    _set_rows(expected, "uta_events", _dict_rows(expected, "uta_events") + added_events)
+    _assert_snapshot(expected, actual)
+
+
+def verify_before_commit(guard):
+    """Actual staged-state reconstruction, independent of observed UDF counts."""
+    from .credit_native import _verify_financial_source
+    context = getattr(guard, "credit_v2_context", None)
+    try:
+        if guard.denied is not None:
+            raise guard.denied
+        if getattr(guard, "credit_v2_active", False):
+            raise CreditV2Error("credit_v2_context_invalid", "native operation scope did not finish before physical commit")
+        # None never means "nothing happened": actual state must equal the
+        # actual starting snapshot. This detects lost context with staged rows.
+        if context is None:
+            _assert_snapshot(guard.credit_v2_baseline, _snapshot_database(guard.connection))
+        elif type(context) is _IntakeContext:
+            _verify_intake(guard, context)
+        elif type(context) is _RejectionContext:
+            _verify_rejection(guard, context)
+        elif type(context) is _MetadataContext:
+            _verify_metadata(guard, context)
+        elif type(context) is _CreditOperation:
+            _verify_operation(guard, context)
+        else:
+            raise CreditV2Error("credit_v2_context_invalid", "unexpected native transaction context")
+        expected_sequences = dict(guard.credit_v2_sequences)
+        for name in ("uta_events", "uta_command_inbox"):
+            previous = max((row["sequence"] for row in _dict_rows(guard.credit_v2_baseline, name)), default=0)
+            actual_max = guard.connection.execute("SELECT COALESCE(MAX(sequence),0) FROM " + name).fetchone()[0]
+            if actual_max != previous:
+                expected_sequences[name] = actual_max
+        if dict(guard.connection.execute("SELECT name,seq FROM sqlite_sequence")) != expected_sequences:
+            raise CreditV2Error("credit_v2_unexpected_effect", "unrelated SQLite allocation state changed")
+        # All source/intent/terminal/audit obligations now exist, unlike the
+        # in-flight middle of a credit operation. Original global FK/journal
+        # verification is meaningful at this point.
+        scales = dict(guard.connection.execute("SELECT asset,scale FROM ledger_assets"))
+        _verify_financial_source(guard.database, guard.connection, scales)
+    except BaseException as cause:
+        raise _poison(guard, "actual native before-commit verification failed", cause=cause) from cause
 
 MAX_DOCUMENT_BYTES = 1024 * 1024
 _IDENTIFIER = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}\Z", re.ASCII)
@@ -374,6 +978,8 @@ class _CreditOperation:
     view: CreditOperationView
     intent_row: tuple
     expected_postings: tuple
+    after_payload: str
+    ledger_before: tuple
 
 
 _INTENT_COLUMNS = ("command_id", "account_id", "scope", "operation_kind", "inbox_kind", "credit_kind",
@@ -423,7 +1029,8 @@ def assert_operation_context(credit, connection, *, command_id, account_id, asse
             guard._deny(error)
             raise error
         raise CreditV2Error("credit_v2_scope_missing", "internal credit v2 requires its actual operation scope")
-    if (type(context) is not _CreditOperation or context.guard is not guard or context.credit is not credit
+    if (type(context) is not _CreditOperation or getattr(guard, "credit_v2_context", None) is not context
+            or context.guard is not guard or context.credit is not credit
             or context.process_id != os.getpid() or context.thread_id != get_ident()
             or context.generation != guard.state["generation"] or guard.denied is not None):
         error = CreditV2Error("credit_v2_context_invalid", "no actual native operation is bound to this transaction")
@@ -478,6 +1085,7 @@ def _runtime_dependencies():
         audit = importlib.import_module("uta.credit_audit_v2")
         fifo = importlib.import_module("uta.credit_fifo_v2")
         artifact = importlib.import_module("uta.credit_artifact")
+        existing = importlib.import_module("uta.existing_services")
         required = ("operation_scope", "synthetic_intake_scope", "rejection_scope", "metadata_scope",
                     "register_guard", "verify_before_commit", "install_internal_credit_v2")
         if (any(not callable(globals().get(name)) for name in required)
@@ -485,10 +1093,14 @@ def _runtime_dependencies():
                 or not isinstance(getattr(audit, "CreditAuditV2", None), type)
                 or not isinstance(getattr(fifo, "InternalCreditFIFO", None), type)
                 or not callable(getattr(fifo, "verify_existing_queue", None))
+                or not callable(getattr(fifo, "is_business_rejection", None))
+                or not callable(getattr(existing, "open_existing_services", None))
                 or not {"credit_native_v2", "credit_audit_v2", "credit_fifo_v2", "credit_transition",
-                        "credit_audit_v2_replay", "credit_v2_payload_contract"}
+                        "credit_audit_v2_replay", "credit_v2_payload_contract", "existing_services"}
                     <= set(artifact._MODULES)):
             raise ValueError("complete internal credit implementation is absent")
+        if not callable(getattr(audit, "verify_stored_policy", None)):
+            raise ValueError("actual dedicated policy validator is absent")
         for name in ("runtime_evidence", "begin_borrow", "complete_borrow", "verify_staged_borrow", "replay"):
             if not callable(getattr(audit.CreditAuditV2, name, None)):
                 raise ValueError("actual credit audit entry point is absent")
@@ -544,12 +1156,14 @@ def load_marker(connection, row, *, authority_id):
     verify_schema(connection)
     audit.verify_schema(connection)
     fifo.verify_existing_queue(connection)
-    config = connection.execute("SELECT format,capability_id,descriptor_id,authority_id,artifact_id,payload FROM credit_v2_config WHERE singleton=1").fetchall()
+    stored_policy = audit.verify_stored_policy(connection)
+    config = connection.execute("SELECT format,capability_id,descriptor_id,authority_id,artifact_id,policy_id,payload FROM credit_v2_config WHERE singleton=1").fetchall()
     if [tuple(item) for item in config] != [(2, envelope.capability_id, envelope.static_descriptor.descriptor_id,
-            authority_id, current_id, envelope.canonical_payload)]:
+            authority_id, current_id, stored_policy["policy_id"], envelope.canonical_payload)]:
         raise CreditV2Error("credit_v2_corrupt", "internal credit configuration identity differs")
-    retained = connection.execute("SELECT manifest FROM uta_credit_code_artifacts WHERE artifact_id=?", (current_id,)).fetchone()
-    if retained is None or artifact.parse_credit_artifact(retained[0], expected_id=current_id) != current:
+    retained = connection.execute("SELECT artifact_id,manifest FROM uta_credit_code_artifacts").fetchall()
+    if (len(retained) != 1 or retained[0][0] != current_id
+            or artifact.parse_credit_artifact(retained[0][1], expected_id=current_id) != current):
         raise CreditV2Error("credit_v2_corrupt", "actual current credit code artifact is not retained")
     allocation = envelope.static_descriptor.allocation_for("BTC", envelope.static_descriptor.shard)
     expected = (allocation.allocation_id, envelope.static_descriptor.descriptor_id,
@@ -557,3 +1171,433 @@ def load_marker(connection, row, *, authority_id):
     if [tuple(item) for item in connection.execute("SELECT * FROM credit_v2_allocations")] != [expected]:
         raise CreditV2Error("credit_v2_corrupt", "actual local immutable allocation differs")
     return envelope
+
+
+@dataclass(frozen=True)
+class _IntakeContext:
+    guard: object
+    process_id: int
+    thread_id: int
+    source: SyntheticCreditSource
+
+
+@dataclass(frozen=True)
+class _MetadataContext:
+    guard: object
+    credit: object
+    process_id: int
+    thread_id: int
+    operation: str
+    market_snapshot: object
+
+
+@dataclass(frozen=True)
+class _RejectionContext:
+    guard: object
+    credit: object
+    process_id: int
+    thread_id: int
+    source: SyntheticCreditSource
+    error_payload: str
+
+
+def _poison(guard, message, *, code="credit_v2_guard_failed", cause=None):
+    from .writer_fence import WriterFenceError
+    error = WriterFenceError(code, message)
+    if cause is not None:
+        error.__cause__ = cause
+    guard._deny(error)
+    return error
+
+
+def _actual_guard(database, connection, role):
+    from .writer_fence import _REGISTRY, _REGISTRY_LOCK, _assert_token
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is None or guard.connection is not connection or guard.database is not database
+            or guard.role != role or guard.credit_owner_thread != get_ident()
+            or not connection.in_transaction):
+        raise CreditV2Error("credit_v2_context_invalid", "internal credit requires its exact guarded transaction role")
+    if guard.state is None or guard.state.get("credit_format") != 2:
+        raise CreditV2Error("credit_v2_not_active", "this authority has no complete internal credit capability")
+    if guard.denied is not None:
+        raise guard.denied
+    if role == "financial":
+        try:
+            _assert_token(database, guard.state, database.writer_token)
+        except StorageError as cause:
+            raise _poison(guard, "actual internal credit token is no longer valid", cause=cause) from cause
+    return guard
+
+
+def _sql_value(value):
+    if value is None:
+        return ["null", None]
+    if type(value) is str:
+        return ["text", value]
+    if type(value) is int:
+        return ["integer", str(value)]
+    if type(value) is bytes:
+        return ["blob", value.hex()]
+    if type(value) is float:
+        return ["real", value.hex()]
+    raise CreditV2Error("credit_v2_state_invalid", "unsupported actual SQLite value type")
+
+
+def _snapshot_tables(connection, tables):
+    from .writer_fence import _quote
+    result = {}
+    for table in tables:
+        columns = tuple(row[1] for row in connection.execute("PRAGMA table_info(" + _quote(table) + ")"))
+        rows = tuple(sorted((tuple(row) for row in connection.execute("SELECT * FROM " + _quote(table))),
+            key=lambda row: _canonical([_sql_value(value) for value in row])))
+        result[table] = (columns, rows)
+    return MappingProxyType(result)
+
+
+def _snapshot_database(connection):
+    """An immutable starting snapshot, never observed-effect counters.
+
+    Raw rows remain private in this transaction. Only nonsecret table hashes
+    become persisted isolation evidence. Writer lease state is verified by the
+    original fence; SQLite allocation bookkeeping is not financial state.
+    """
+    tables = tuple(sorted(row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        if not row[0].startswith(("writer_fence_", "sqlite_")) and row[0] not in ("uta_market", "uta_market_history")))
+    return _snapshot_tables(connection, tables)
+
+
+def _isolation_payload(snapshot):
+    return _canonical({table: _digest(_canonical({"columns": list(columns),
+        "rows": [[_sql_value(value) for value in row] for row in rows]}))
+        for table, (columns, rows) in snapshot.items() if not table.startswith("auth_")})
+
+
+def _fresh_guard(guard):
+    if getattr(guard, "credit_v2_context", None) is not None or getattr(guard, "credit_v2_operation", None) is not None:
+        raise _poison(guard, "one internal command is permitted per financial transaction")
+    if _snapshot_database(guard.connection) != guard.credit_v2_baseline:
+        raise _poison(guard, "unscoped staged state precedes the internal command")
+
+
+def _head(connection):
+    row = connection.execute("SELECT sequence,event_hash,sealed FROM ledger_events ORDER BY sequence DESC LIMIT 1").fetchone()
+    if row is None:
+        return {"sequence": 0, "event_hash": "0" * 64}
+    if row[2] != 1 or type(row[0]) is not int or row[0] >= 2**63 - 1:
+        raise CreditV2Error("credit_v2_state_invalid", "actual journal head cannot be advanced")
+    return {"sequence": row[0], "event_hash": row[1]}
+
+
+def _stamp_actual(exchange):
+    return exchange._now().astimezone(timezone.utc).isoformat(timespec="microseconds")
+
+
+@contextmanager
+def synthetic_intake_scope(database, connection, *, canonical_source):
+    """Explicit local synthetic intake only; no financial role or token."""
+    guard = _actual_guard(database, connection, "inbox")
+    _fresh_guard(guard)
+    source = parse_source(canonical_source.canonical_payload if type(canonical_source) is SyntheticCreditSource else canonical_source)
+    if source.authority_id != guard.state["authority_id"]:
+        raise CreditV2Error("credit_v2_source_invalid", "source authority differs from the actual shard")
+    if connection.execute("SELECT 1 FROM credit_commands WHERE command_id=? LIMIT 1", (source.command_id,)).fetchone():
+        raise CreditV2Error("credit_v2_legacy_post_unsupported", "legacy receipt cannot be backfilled with a new native source")
+    if connection.execute("SELECT 1 FROM uta_accounts WHERE account_id=?", (source.account_id,)).fetchone() is None:
+        from .service import ServiceError
+        raise ServiceError("account_not_found", "unknown account", 404)
+    guard.credit_v2_context = _IntakeContext(guard, os.getpid(), get_ident(), source)
+    guard.credit_v2_active = True
+    try:
+        yield source
+    finally:
+        guard.credit_v2_active = False
+
+
+@contextmanager
+def metadata_scope(credit, connection, *, operation):
+    """Only explicit internal halt/market metadata; never cash or positions."""
+    guard = _actual_guard(credit.database, connection, "financial")
+    _fresh_guard(guard)
+    if operation not in ("SET_HALT", "PUBLISH_MARKET"):
+        raise CreditV2Error("credit_v2_metadata_unsupported", "unsupported internal metadata operation")
+    market_snapshot = _snapshot_tables(connection, ("uta_market", "uta_market_history")) if operation == "PUBLISH_MARKET" else None
+    guard.credit_v2_context = _MetadataContext(guard, credit, os.getpid(), get_ident(), operation, market_snapshot)
+    guard.credit_v2_active = True
+    try:
+        yield
+    except BaseException as cause:
+        raise _poison(guard, "internal metadata operation failed", cause=cause) from cause
+    finally:
+        guard.credit_v2_active = False
+
+
+@contextmanager
+def rejection_scope(credit, connection, *, command_id, error):
+    """Only business REJECTED after actual SQL rollback, never a money scope."""
+    from .service import ServiceError
+    guard = _actual_guard(credit.database, connection, "financial")
+    if _snapshot_database(connection) != guard.credit_v2_baseline:
+        raise _poison(guard, "business rejection requires actual complete savepoint rollback")
+    source = read_source(connection, command_id, expected_authority_id=guard.state["authority_id"])
+    _, fifo, _ = _runtime_dependencies()
+    if type(error) is not ServiceError or not fifo.is_business_rejection(source.kind, error):
+        raise _poison(guard, "technical or unknown outcome cannot become a business rejection")
+    guard.credit_v2_context = _RejectionContext(guard, credit, os.getpid(), get_ident(), source,
+        _canonical({"code": error.code, "message": str(error), "status": error.status}))
+    guard.credit_v2_active = True
+    try:
+        yield
+    finally:
+        guard.credit_v2_active = False
+
+
+def _repay_plan(credit, connection, account_id, units, before):
+    from .service import ServiceError
+    state = {key: (value if key == "version" else int(value)) for key, value in before.items()}
+    principal, interest = state["principal_units"], state["interest_units"]
+    if units > principal + interest:
+        raise ServiceError("repayment_exceeds_debt", "repayment exceeds outstanding principal and interest", 409)
+    available = credit.exchange._available_asset(connection, account_id, "BTC")
+    if credit._codec._units("BTC", available) < units:
+        raise ServiceError("insufficient_cash", "settled available cash is insufficient for repayment", 409)
+    paid_interest = min(units, interest)
+    paid_principal = units - paid_interest
+    after = dict(state)
+    for key, change in (("cash_units", -units), ("principal_units", -paid_principal), ("interest_units", -paid_interest),
+        ("principal_ledger_units", paid_principal), ("interest_ledger_units", paid_interest),
+        ("shard_principal_units", -paid_principal), ("shard_interest_units", -paid_interest),
+        ("pool_units", paid_principal), ("principal_receivable_units", -paid_principal), ("interest_receivable_units", -paid_interest)):
+        after[key] += change
+    after["version"] += 1
+    from .credit_transition import _snapshot
+    after_wire = {key: (value if key == "version" else str(value)) for key, value in after.items()}
+    _snapshot(after_wire, require_increment=False)
+    legs = [("customer:" + account_id, "BTC", -units)]
+    for paid, cash, liability, receivable in ((paid_interest, "system:credit-interest-cash", "liability:interest:" + account_id, "system:credit-interest-receivable"),
+        (paid_principal, "system:credit-pool", "liability:principal:" + account_id, "system:credit-principal-receivable")):
+        if paid:
+            legs.extend(((cash, "BTC", paid), (liability, "BTC", paid), (receivable, "BTC", -paid)))
+    return after_wire, tuple(sorted(legs))
+
+
+@contextmanager
+def operation_scope(credit, connection, *, command_id):
+    """Stage trusted actual intent/legs before one original loan or repayment."""
+    from .credit import CreditService
+    from .credit_audit_v2 import read_credit_snapshot, borrow_operation_id
+    from .credit_transition import calculate_borrow_transition, CreditTransitionError
+    from .credit_native import _verify_financial_source
+    from .service import ServiceError, _key
+    if type(credit) is not CreditService:
+        raise CreditV2Error("credit_v2_context_invalid", "operation needs its real initialized credit service")
+    guard = _actual_guard(credit.database, connection, "financial")
+    _fresh_guard(guard)
+    _verify_financial_source(credit.database, connection, credit.exchange.scales)
+    source = read_source(connection, command_id, expected_authority_id=guard.state["authority_id"])
+    inbox = connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (command_id,)).fetchone()
+    if inbox is None or inbox["state"] != "PENDING":
+        raise CreditV2Error("credit_v2_context_invalid", "native operation requires its original pending command")
+    if connection.execute("SELECT 1 FROM uta_command_inbox WHERE state='PENDING' AND account_id=? AND sequence<?",
+                          (source.account_id, inbox["sequence"])).fetchone():
+        raise CreditV2Error("credit_v2_fifo_conflict", "an earlier account command is still pending")
+    command = _document(source.command_payload, code="credit_v2_source_invalid")
+    asset, amount = command["asset"], Decimal(command["amount"])
+    units, amount_text, scope = credit._prepare(source.account_id, command_id, asset, amount)
+    if connection.execute("SELECT 1 FROM credit_commands WHERE scope=? AND command_id=?", (scope, command_id)).fetchone():
+        raise CreditV2Error("credit_v2_legacy_post_unsupported", "existing receipt must be queried rather than executed again")
+    marker = connection.execute("SELECT singleton,format,state,capability_id,payload FROM writer_fence_credit_v2_capability").fetchone()
+    envelope = load_marker(connection, marker, authority_id=guard.state["authority_id"])
+    static = envelope.static_descriptor
+    before, limits = read_credit_snapshot(credit.exchange, credit, connection, source.account_id, asset,
+        require_limits=source.kind == "BORROW", require_increment=True)
+    account = credit.exchange._audit_state(connection, source.account_id)
+    selected = sid = risk = quote_units = step_units = None
+    head = _head(connection)
+    if source.kind == "BORROW":
+        credit.exchange._require_exposure_allowed(connection, source.account_id)
+        market = credit.exchange._market(connection)
+        if asset not in market.assets:
+            raise ServiceError("market_incomplete", "borrowed asset has no trusted price", 503)
+        selected = _stamp_actual(credit.exchange)
+        from .credit_audit_v2 import utc_checkpoint
+        if utc_checkpoint(selected) < utc_checkpoint(json.loads(source.canonical_payload)["accepted_at"]):
+            raise CreditV2Error("credit_v2_clock_regression", "actual borrower clock precedes its original accepted source")
+        market.validate(now=utc_checkpoint(selected), max_age=credit.exchange.max_price_age,
+                        max_future_skew=timedelta(seconds=1))
+        sid = credit.exchange.audit.market_ref(connection, market)
+        risk = credit.exchange._risk(connection, source.account_id, market)
+        rule = credit.exchange.portfolio_rules.borrow_limits.get(asset)
+        if rule is None:
+            raise ServiceError("credit_disabled", "asset is not enabled by the versioned borrow policy", 409)
+        quotes = risk.get("borrowable")
+        if type(quotes) is not dict or asset not in quotes:
+            raise ServiceError("credit_policy_unavailable", "versioned risk did not provide a borrow quote", 503)
+        quote_units = str(credit._codec._units(asset, Decimal(quotes[asset])))
+        step_units = str(credit._codec._units(asset, rule.quantity_step))
+        if units % int(step_units):
+            raise ServiceError("invalid_input", "borrow amount violates the configured quantity step")
+        try:
+            transition = calculate_borrow_transition(descriptor=static, account_id=source.account_id,
+                asset=asset, amount_units=str(units), before=before, limits=limits,
+                quote_units=quote_units, quantity_step_units=step_units)
+        except CreditTransitionError as cause:
+            if 400 <= cause.status < 500:
+                raise ServiceError(cause.code, str(cause), cause.status) from cause
+            raise
+        after = {key: (value if key == "version" else str(value)) for key, value in transition.after.items()}
+        legs = tuple((name, asset, value) for name, value in transition.postings)
+    else:
+        after, legs = _repay_plan(credit, connection, source.account_id, units, before)
+    prestate = _canonical({"account": account, "credit": before, "limits": limits, "selected_at": selected,
+        "market_snapshot_id": sid, "risk": risk, "quote_units": quote_units,
+        "quantity_step_units": step_units, "journal_head": head})
+    isolation = _isolation_payload(guard.credit_v2_baseline)
+    allocation = static.allocation_for(asset, static.shard)
+    journal_id = _key("credit", scope, command_id)
+    values = {"command_id": command_id, "account_id": source.account_id, "scope": scope,
+        "operation_kind": source.kind, "inbox_kind": source.kind,
+        "credit_kind": "borrowed" if source.kind == "BORROW" else "repaid", "asset": asset,
+        "amount": amount_text, "amount_units": str(units), "payload_hash": source.payload_hash,
+        "source_id": source.source_id, "authority_id": source.authority_id,
+        "allocation_id": allocation.allocation_id, "descriptor_id": static.descriptor_id,
+        "intent_digest": "", "journal_id": journal_id, "pre_state_payload": prestate,
+        "pre_state_hash": _digest(prestate), "isolation_payload": isolation, "isolation_hash": _digest(isolation),
+        "journal_sealed": 1, "terminal_state": "SUCCEEDED", "operation_id": borrow_operation_id(source.account_id, command_id) if source.kind == "BORROW" else None,
+        "decision_kind": "CREDIT_BORROWED" if source.kind == "BORROW" else None,
+        "market_dependency": "SID" if source.kind == "BORROW" else "NONE", "market_snapshot_id": sid,
+        "selected_at": selected, "expected_postings": len(legs),
+        "old_principal_units": before["principal_units"], "old_interest_units": before["interest_units"],
+        "new_principal_units": after["principal_units"], "new_interest_units": after["interest_units"],
+        "pre_version": before["version"], "post_version": after["version"]}
+    values["intent_digest"] = "credit-intent:" + _digest(_canonical({key: value for key, value in values.items() if key != "intent_digest"}))
+    intent_row = tuple(values[name] for name in _INTENT_COLUMNS)
+    view = CreditOperationView(source.kind, source.account_id, command_id, asset, amount_text, units,
+        envelope.capability_id, static, allocation.allocation_id, journal_id, source.payload_hash,
+        source.source_id, source.actor_id, source.canonical_payload, values["intent_digest"], before["version"],
+        prestate, values["pre_state_hash"], selected, sid)
+    balances = tuple((name, currency, credit._codec._units(currency, credit.ledger.balance(name, currency, connection=connection)))
+                     for name, currency, _ in legs)
+    context = _CreditOperation(guard, credit, os.getpid(), get_ident(), guard.state["generation"],
+        view, intent_row, legs, _canonical(after), balances)
+    guard.credit_v2_operation = context
+    guard.credit_v2_context = context
+    guard.credit_v2_active = True
+    try:
+        connection.execute("INSERT INTO credit_v2_intents(" + ",".join(_INTENT_COLUMNS) + ") VALUES(" + ",".join("?" for _ in _INTENT_COLUMNS) + ")", intent_row)
+        connection.executemany("INSERT INTO credit_v2_expected_postings VALUES(?,?,?,?,?)",
+            ((command_id, ordinal, name, currency, str(value)) for ordinal, (name, currency, value) in enumerate(legs)))
+        try:
+            yield view
+        except ServiceError as cause:
+            # The real caller SAVEPOINT must roll back all rows before the
+            # separately constrained rejection_scope can record REJECTED.
+            _, fifo, _ = _runtime_dependencies()
+            if (source.kind == "BORROW" and cause.code in {"market_unavailable", "market_incomplete", "risk_unavailable"}
+                    or not fifo.is_business_rejection(source.kind, cause)):
+                raise _poison(guard, "late financial validation cannot become a normal rejection", cause=cause) from cause
+            raise
+        except BaseException as cause:
+            raise _poison(guard, "internal financial operation failed", cause=cause) from cause
+        try:
+            _verify_operation(guard, context)
+        except BaseException as cause:
+            raise _poison(guard, "actual internal credit closing validation failed", cause=cause) from cause
+    finally:
+        guard.credit_v2_active = False
+
+
+def _effect_definitions():
+    """Every financial effect checks an actual matching intent plus live scope."""
+    result = {}
+    def add(name, table, clause, predicate):
+        sql = (f"CREATE TRIGGER {name} {clause} ON {table} BEGIN SELECT CASE WHEN ({predicate}) THEN 1 "
+            "ELSE CASE WHEN uta_credit_v2_deny('protected_mutation')=0 THEN RAISE(ABORT,'actual native credit scope and staged obligation required') END END; END")
+        result[name] = (table, sql)
+    def gate(phase, *fields):
+        return "uta_credit_v2_gate('" + phase + "'," + ",".join(fields) + ")=1"
+    def intent(predicate, phase, *fields):
+        return ("EXISTS(SELECT 1 FROM credit_v2_intents i WHERE " + predicate + " AND "
+                + gate(phase, "i.command_id", "i.intent_digest", *fields) + ")")
+    source_columns = ("command_id", "source_id", "account_id", "kind", "payload_hash", "source_kind",
+                      "actor_id", "source_reference", "authority_id", "command_payload", "payload")
+    add("credit_v2_gate_source", "credit_v2_sources", "BEFORE INSERT",
+        gate("SOURCE", *("NEW." + name for name in source_columns)))
+    add("credit_v2_gate_inbox_insert", "uta_command_inbox", "BEFORE INSERT",
+        "EXISTS(SELECT 1 FROM credit_v2_sources s WHERE s.command_id=NEW.command_id AND s.account_id=NEW.account_id "
+        "AND s.kind=NEW.kind AND s.command_payload=NEW.payload) AND "
+        + gate("INBOX_INSERT", *("NEW." + name for name in ("command_id", "account_id", "kind", "payload", "state", "result", "error", "completed_at", "attempts", "last_error", "next_attempt_at"))))
+    add("credit_v2_gate_inbox_update", "uta_command_inbox", "BEFORE UPDATE",
+        "EXISTS(SELECT 1 FROM credit_v2_sources s WHERE s.command_id=NEW.command_id AND s.account_id=NEW.account_id "
+        "AND s.kind=NEW.kind AND s.command_payload=NEW.payload) AND "
+        "((NEW.state='SUCCEEDED' AND EXISTS(SELECT 1 FROM credit_v2_intents i JOIN credit_commands c "
+        "ON c.scope=i.scope AND c.command_id=i.command_id WHERE i.command_id=NEW.command_id "
+        "AND i.account_id=NEW.account_id AND i.inbox_kind=NEW.kind AND i.journal_id=c.journal_event_id AND c.result=NEW.result)) "
+        "OR (NEW.state='REJECTED' AND NOT EXISTS(SELECT 1 FROM credit_v2_intents i WHERE i.command_id=NEW.command_id) "
+        "AND NOT EXISTS(SELECT 1 FROM credit_commands c WHERE c.scope='account:'||NEW.account_id AND c.command_id=NEW.command_id))) AND "
+        + gate("INBOX_UPDATE", *("NEW." + name for name in ("command_id", "account_id", "kind", "payload", "state", "result", "error", "completed_at")), "OLD.state"))
+    add("credit_v2_gate_intent", "credit_v2_intents", "BEFORE INSERT",
+        "EXISTS(SELECT 1 FROM credit_v2_sources s WHERE s.command_id=NEW.command_id AND s.source_id=NEW.source_id "
+        "AND s.account_id=NEW.account_id AND s.kind=NEW.inbox_kind AND s.payload_hash=NEW.payload_hash) AND "
+        + gate("INTENT", *("NEW." + name for name in _INTENT_COLUMNS)))
+    add("credit_v2_gate_expected", "credit_v2_expected_postings", "BEFORE INSERT",
+        intent("i.command_id=NEW.command_id", "EXPECTED", "NEW.ordinal", "NEW.account", "NEW.asset", "NEW.units"))
+    for action in ("INSERT", "UPDATE"):
+        old = ("NULL", "NULL") if action == "INSERT" else ("OLD.principal", "OLD.interest")
+        add("credit_v2_gate_debt_" + action.lower(), "uta_liabilities", "BEFORE " + action,
+            intent("i.account_id=NEW.account_id AND i.asset=NEW.asset", "DEBT_" + action,
+                   "NEW.account_id", "NEW.asset", "NEW.principal", "NEW.interest", *old))
+    add("credit_v2_gate_debt_delete", "uta_liabilities", "BEFORE DELETE", "0")
+    add("credit_v2_gate_account", "uta_accounts", "BEFORE UPDATE",
+        intent("i.account_id=NEW.account_id", "ACCOUNT", "NEW.account_id", "OLD.version", "NEW.version"))
+    for action in ("INSERT", "UPDATE"):
+        add("credit_v2_gate_journal_" + action.lower(), "ledger_events", "BEFORE " + action,
+            intent("i.journal_id=NEW.event_id", "JOURNAL_" + action,
+                   *("NEW." + name for name in ("sequence", "event_id", "fingerprint", "previous_hash", "event_hash", "sealed"))))
+        old = "NULL" if action == "INSERT" else "OLD.units"
+        add("credit_v2_gate_balance_" + action.lower(), "ledger_balances", "BEFORE " + action,
+            intent("EXISTS(SELECT 1 FROM credit_v2_expected_postings x WHERE x.command_id=i.command_id AND x.account=NEW.account AND x.asset=NEW.asset)",
+                   "BALANCE_" + action, "NEW.account", "NEW.asset", "NEW.units", old))
+    add("credit_v2_gate_posting", "ledger_postings", "BEFORE INSERT",
+        intent("EXISTS(SELECT 1 FROM ledger_events e WHERE e.event_id=i.journal_id AND e.sequence=NEW.sequence) "
+            "AND EXISTS(SELECT 1 FROM credit_v2_expected_postings x WHERE x.command_id=i.command_id AND x.ordinal=NEW.ordinal "
+            "AND x.account=NEW.account AND x.asset=NEW.asset AND x.units=NEW.units)",
+            "POSTING", "NEW.sequence", "NEW.ordinal", "NEW.account", "NEW.asset", "NEW.units"))
+    closure = ("i.scope=NEW.scope AND i.command_id=NEW.command_id AND i.credit_kind=NEW.kind AND i.asset=NEW.asset "
+        "AND i.amount=NEW.amount AND i.journal_id=NEW.journal_event_id "
+        "AND EXISTS(SELECT 1 FROM ledger_events e WHERE e.event_id=i.journal_id AND e.sealed=1 "
+        "AND (SELECT COUNT(*) FROM ledger_postings p WHERE p.sequence=e.sequence)=i.expected_postings "
+        "AND (SELECT COUNT(*) FROM credit_v2_expected_postings x WHERE x.command_id=i.command_id)=i.expected_postings "
+        "AND NOT EXISTS(SELECT 1 FROM credit_v2_expected_postings x WHERE x.command_id=i.command_id AND NOT EXISTS(SELECT 1 FROM ledger_postings p "
+        "WHERE p.sequence=e.sequence AND p.ordinal=x.ordinal AND p.account=x.account AND p.asset=x.asset AND p.units=x.units))) "
+        "AND (i.operation_kind='REPAY' OR EXISTS(SELECT 1 FROM uta_credit_decisions d WHERE d.operation_id=i.operation_id "
+        "AND d.kind=i.decision_kind AND d.account_id=i.account_id AND d.command_id=i.command_id AND d.journal_id=i.journal_id "
+        "AND d.source_id=i.source_id AND d.descriptor_id=i.descriptor_id AND d.allocation_id=i.allocation_id AND d.market_snapshot_id=i.market_snapshot_id))")
+    add("credit_v2_gate_record", "credit_commands", "BEFORE INSERT",
+        intent(closure, "RECORD", *("NEW." + name for name in ("scope", "command_id", "kind", "asset", "amount", "source_reference", "result", "journal_event_id", "created_at"))))
+    add("credit_v2_gate_decision", "uta_credit_decisions", "BEFORE INSERT",
+        intent("i.operation_kind='BORROW' AND i.command_id=NEW.command_id AND i.account_id=NEW.account_id "
+            "AND i.operation_id=NEW.operation_id AND i.journal_id=NEW.journal_id AND i.payload_hash=NEW.payload_hash "
+            "AND i.source_id=NEW.source_id AND i.descriptor_id=NEW.descriptor_id AND i.allocation_id=NEW.allocation_id "
+            "AND i.market_snapshot_id=NEW.market_snapshot_id AND i.pre_version=NEW.pre_version AND i.post_version=NEW.post_version "
+            "AND EXISTS(SELECT 1 FROM credit_v2_config c WHERE c.artifact_id=NEW.artifact_id AND c.policy_id=NEW.policy_id)",
+            "DECISION", "NEW.payload", "NEW.decision_id"))
+    event_gate = gate("SERVICE_EVENT", "NEW.event_type", "NEW.account_id", "NEW.payload", "NEW.created_at")
+    add("credit_v2_gate_service_event", "uta_events", "BEFORE INSERT",
+        "((NEW.event_type IN ('KILL_SWITCH_CHANGED','MARKET_PUBLISHED')) AND " + event_gate + ") OR "
+        "EXISTS(SELECT 1 FROM credit_v2_intents i JOIN credit_commands c ON c.scope=i.scope AND c.command_id=i.command_id "
+        "WHERE NEW.account_id=i.account_id AND NEW.event_type='CREDIT_'||upper(i.credit_kind) AND c.result=NEW.payload AND " + event_gate + ")")
+    add("credit_v2_gate_config", "uta_config", "BEFORE INSERT", gate("CONFIG", "NEW.key", "NEW.value"))
+    add("credit_v2_gate_config_update", "uta_config", "BEFORE UPDATE", gate("CONFIG", "NEW.key", "NEW.value"))
+    add("credit_v2_gate_market", "uta_market", "BEFORE INSERT", gate("MARKET", "NEW.singleton", "NEW.payload"))
+    add("credit_v2_gate_market_update", "uta_market", "BEFORE UPDATE", gate("MARKET", "NEW.singleton", "NEW.payload"))
+    add("credit_v2_gate_market_history", "uta_market_history", "BEFORE INSERT",
+        gate("MARKET_HISTORY", "NEW.snapshot_id", "NEW.content_digest", "NEW.payload", "NEW.origin", "NEW.recorded_at"))
+    return MappingProxyType(result)
+
+
+CATALOG_OBJECT_SQL = OBJECT_SQL  # Explicit primitive-only storage test catalog.
+EFFECT_TRIGGER_SQL = _effect_definitions()
+TRIGGER_SQL = MappingProxyType({**TRIGGER_SQL, **EFFECT_TRIGGER_SQL})
+OBJECT_SQL = MappingProxyType({**TABLE_SQL, **INDEX_SQL,
+    **{name: sql for name, (_, sql) in TRIGGER_SQL.items()}})

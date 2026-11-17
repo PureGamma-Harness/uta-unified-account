@@ -478,6 +478,12 @@ class WriterFence:
                 raise WriterFenceError("credit_v2_internal_owner_required", "internal credit requires its explicit complete native owner path")
             if required_credit_format == 2 and state.get("credit_format") != 2:
                 raise WriterFenceError("credit_v2_not_active", "this authority has no internal credit v2 capability")
+            if required_credit_format == 2:
+                # Acquisition has no in-flight intent: unlike an admission
+                # load it may run the original complete FK/journal/debt check.
+                from .credit_native import _verify_financial_source
+                scales = dict(connection.execute("SELECT asset,scale FROM ledger_assets"))
+                _verify_financial_source(self.database, connection, scales)
             now, boot = _observed(self.database, state)
             if state["owner_nonce"] is not None and boot == state["boot_id"] and state["expires_ns"] > now:
                 raise WriterFenceError("lease_busy", "another live owner holds the authority lease")
@@ -542,6 +548,7 @@ class _TransactionGuard:
         self.started_at = None
         self._udf_registered = False
         self._credit_udf_registered = False
+        self._credit_v2_udf_registered = False
         self.credit_owner_thread = get_ident()
         if self.state is not None:
             _verify_control_schema(connection, self.state)
@@ -552,6 +559,9 @@ class _TransactionGuard:
                 raise WriterFenceError("credit_foreign_keys_required", "native credit requires actual foreign-key enforcement")
             connection.create_function("uta_credit_operation_v1", 3, self._sql_credit_operation)
             self._credit_udf_registered = True
+        elif self.state is not None and self.state.get("credit_format") == 2:
+            from .credit_native_v2 import register_guard
+            register_guard(self)
         if role in ("financial", "batch_metadata") and (self.state is not None or database.writer_token is not None):
             try:
                 _require_guard_format(self.state)
@@ -622,6 +632,8 @@ class _TransactionGuard:
             # In this prepared-only format all financial/metadata writers and
             # their DDL are excluded immediately, including caught DROP/ALTER.
             return self._deny(WriterFenceError("credit_not_active", "native preparation is not a trading or producer capability"))
+        if self.state is not None and self.state.get("credit_format") == 2 and self.role != "control" and action in _DDL:
+            return self._deny(WriterFenceError("credit_v2_ddl_forbidden", "internal credit runtime schema is immutable"))
         if self.role == "control":
             allowed = first in _NAMES
             if action in _DDL:
@@ -629,6 +641,11 @@ class _TransactionGuard:
             if action in _DML and first in {"sqlite_master", "sqlite_schema"}:
                 allowed = True
             return _OK if allowed else self._deny()
+        if self.state is not None and self.state.get("credit_format") == 2:
+            if self.token_error is not None:
+                return self._deny(self.token_error)
+            from .credit_native_v2 import authorize_write
+            return authorize_write(self, action, first)
         if self.role == "inbox":
             if action == _ACTIONS["CREATE_TABLE"]:
                 # AUTOINCREMENT creates SQLite's reserved sequence table;
@@ -683,13 +700,19 @@ class _TransactionGuard:
         state = _load(self.connection)
         if state is not None:
             _verify_control_schema(self.connection, state)
+        if self.state is not None and self.state.get("credit_format") == 2:
+            from .credit_native_v2 import verify_before_commit
+            verify_before_commit(self)
         if self.written and self.state is not None:
             with self.privileged():
                 now, boot = _assert_token(self.database, state, self.database.writer_token)
                 if self.started_at is not None and boot == self.started_at[1] and now < self.started_at[0]:
                     raise WriterFenceError("fence_clock_regressed", "lease clock regressed during a financial transaction")
-                new_tables = _verify_data_guards(self.connection, allow_new=True)
-                _install_table_guards(self.connection, new_tables)
+                if self.state.get("credit_format") == 2:
+                    _verify_data_guards(self.connection)
+                else:
+                    new_tables = _verify_data_guards(self.connection, allow_new=True)
+                    _install_table_guards(self.connection, new_tables)
                 _verify_data_guards(self.connection)
                 self.connection.execute("UPDATE writer_fence_lease SET observed_ns=? WHERE singleton=1", (now,))
         elif self.state is not None and self.state["guard_format"] == 1:
@@ -704,6 +727,9 @@ class _TransactionGuard:
             self.connection.create_function("uta_writer_fence_v1", 0, None)
         if self._credit_udf_registered:
             self.connection.create_function("uta_credit_operation_v1", 3, None)
+        if self._credit_v2_udf_registered:
+            from .credit_native_v2 import close_guard
+            close_guard(self)
 
 
 def _assert_financial_joinable(database, connection):

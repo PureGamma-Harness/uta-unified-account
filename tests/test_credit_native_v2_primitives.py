@@ -68,7 +68,9 @@ def component():
         con = db._connect()
         try:
             con.execute("BEGIN IMMEDIATE")
-            for statement in (*audit.OBJECT_SQL.values(), *native.OBJECT_SQL.values()):
+            # Deliberately the original data/FK catalog, not the complete
+            # runtime effect gates. No permissive fake UDF is installed.
+            for statement in (*audit.OBJECT_SQL.values(), *native.CATALOG_OBJECT_SQL.values()):
                 con.execute(statement)
             con.commit()
             yield db, con
@@ -88,8 +90,11 @@ class CreditNativeV2PrimitiveTests(unittest.TestCase):
         self.assertNotEqual(value.capability_id, value.static_descriptor.descriptor_id)
         with self.assertRaises(native.CreditV2Error):
             native.validate_envelope(raw, expected_authority_id="credit:shard0", expected_artifact_id="credit-artifact:" + "b" * 64)
-        self.assertFalse(hasattr(native, "acquire_credit_v2"))
-        self.assertFalse(hasattr(native, "operation_scope"))
+        # Runtime APIs now exist, but this pure declaration is still no token,
+        # readiness result, registry binding or persistent authority.
+        self.assertEqual(set(vars(value)), {"capability_id", "canonical_payload", "static_descriptor", "artifact_id"})
+        self.assertFalse(hasattr(value, "writer_token"))
+        self.assertFalse(hasattr(value, "ready"))
 
     def test_envelope_unknown_scope_bool_formats_and_noncanonical_data_fail_typed(self):
         for name, value in (("native_format", True), ("batch_size", 1), ("reserve_cache_size", 1),
