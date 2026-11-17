@@ -54,3 +54,25 @@ native否决矩阵尚未执行：
 
 这不是dummy cap放行正例、真实资金或上线GO，也不是金融负责人签字。M3工程授权不改变
 本轮`NATIVE_PREPARED`不能取得写者或产生新金融成功的边界。
+
+## 生产wire公布后的独立标准例
+
+在仍未阅读生产实现时，按作者公布的`validate_native_descriptor`字段合同另写
+[descriptor oracle](../tests/credit_descriptor_reference.py)与
+[157项新标准例](../tests/fixtures/credit_descriptor_reference_v1.json)，保留前108项设计语义输入
+不动。参考仍自行实现严格shape/type、整数求和、canonical hash和外部expect绑定；只复用
+本组已锁定的ASCII整数语法及`10^38`范围oracle，没有生产imports。
+
+新向量覆盖：top/policy/cert/claim多层精确字段与bool/float拒绝；USD scale2..8、BTC0..18；
+version至I64MAX；policy资产集合与cert相同；全局source reference唯一及同片command ID
+跨asset唯一；正funded_units、funded总和边界、pool<=funded；hash全部重算后外部expect仍
+拒绝错配；sealed cert不替换。正控制含零allocation/global、零pool空claims、其他片相同
+command ID合法及大于64位的原币数量。完整funded claim仍不代表实际到账或ledger核验。
+
+allocation数组重排另标`wire_order_pending`：公布接口明确funding claims排序，却尚未说明
+allocation是否必须排序。若生产选择固定顺序，应先记录为wire契约补充，不能把它冒称
+算术漏洞。`expected_authorities`在reference中为发布的完整列表；若实际API采用mapping，
+adapter只转换容器、不改变独立的shard→authority意义。
+
+本轮1个小unittest枚举157项，0差异；[原始记录](../evidence/runs/credit-certificate-reference/descriptor-reference.json)。
+这是与本组oracle比较，尚未与生产函数差分，也没有native或SQL执行。

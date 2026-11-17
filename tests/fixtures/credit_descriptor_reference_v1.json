@@ -1,0 +1,3097 @@
+{
+  "reference_format": 1,
+  "status": "INDEPENDENT_DESCRIPTOR_ORACLE_FROM_PUBLISHED_INTERFACE_BEFORE_IMPLEMENTATION_READ",
+  "base_commit": "aa72a953bcbe5fd809b1b159a751d152afedb5d9",
+  "base_descriptor": {
+    "format": 1,
+    "stage": "NATIVE_PREPARED",
+    "synthetic": true,
+    "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5",
+    "shard": 0,
+    "layout_hash": "3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9",
+    "credit_policy": {
+      "format": 1,
+      "name": "SYNTHETIC-CREDIT-ZERO-v1",
+      "version": 1,
+      "new_interest_rate": "0",
+      "new_borrow_fee_rate": "0",
+      "require_managed_inbox": true,
+      "borrow_batch_size": 0,
+      "production_approved": false,
+      "credit_assets": [
+        "BTC",
+        "USD"
+      ]
+    },
+    "credit_policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf",
+    "certificate": {
+      "format": 1,
+      "budget_id": "independent-reference-budget-1",
+      "version": 1,
+      "layout_hash": "3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9",
+      "credit_policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf",
+      "authorities": [
+        {
+          "shard": 0,
+          "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+        },
+        {
+          "shard": 1,
+          "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041"
+        }
+      ],
+      "assets": {
+        "BTC": {
+          "scale": 8,
+          "global_limit_units": "100000000",
+          "allocations": [
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "100000000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:BTC:source:0",
+                  "command_id": "pool-BTC-0",
+                  "funded_units": "100000000"
+                }
+              ]
+            },
+            {
+              "shard": 1,
+              "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "100000000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:BTC:source:1",
+                  "command_id": "pool-BTC-1",
+                  "funded_units": "100000000"
+                }
+              ]
+            }
+          ]
+        },
+        "USD": {
+          "scale": 2,
+          "global_limit_units": "10000",
+          "allocations": [
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5",
+              "limit_units": "5000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "10000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:USD:source:0",
+                  "command_id": "pool-USD-0",
+                  "funded_units": "10000"
+                }
+              ]
+            },
+            {
+              "shard": 1,
+              "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041",
+              "limit_units": "5000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "10000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:USD:source:1",
+                  "command_id": "pool-USD-1",
+                  "funded_units": "10000"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "certificate_id": "credit-budget:ac5b6992543345b2845cb4cfa70c68dbca67f64e39aa1aebe6336f9d50a27535"
+  },
+  "cases": [
+    {
+      "id": "valid_two_assets_complete_certificate",
+      "category": "positive",
+      "mutations": [],
+      "expected_valid": true
+    },
+    {
+      "id": "unassigned_budget_is_allowed",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "200000000"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "opening_interest_boundary",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "49999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "empty_claims_zero_pool_permitted",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims"
+          ],
+          "value": []
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "zero_allocation_shard_is_not_omitted",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "zero_global_all_allocations_zero",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "certificate_version_i64max",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": 9223372036854775807
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_9007199254740991",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "9007199254740991"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_9007199254740993",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "9007199254740993"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_9223372036854775807",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "9223372036854775807"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_9223372036854775808",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "9223372036854775808"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_9223372036854775809",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "9223372036854775809"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "large_exact_99999999999999999999999999999999999999",
+      "category": "positive_large_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "same_command_id_on_different_shards_is_allowed",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "funding_claims",
+            0,
+            "command_id"
+          ],
+          "value": "pool-BTC-0"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "allocations_order_not_semantic_identity",
+      "category": "wire_order_pending",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations"
+          ],
+          "value": [
+            {
+              "shard": 1,
+              "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "100000000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:BTC:source:1",
+                  "command_id": "pool-BTC-1",
+                  "funded_units": "100000000"
+                }
+              ]
+            },
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "100000000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:BTC:source:0",
+                  "command_id": "pool-BTC-0",
+                  "funded_units": "100000000"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "descriptor_bad_format_True",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "format"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_format_1.0",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "format"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_format_'1'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "format"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_stage_'READY'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "stage"
+          ],
+          "value": "READY"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_stage_'ACTIVE'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "stage"
+          ],
+          "value": "ACTIVE"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_stage_None",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "stage"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_synthetic_1",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "synthetic"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_synthetic_False",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "synthetic"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_shard_True",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_shard_0.0",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "value": 0.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_shard_'0'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_shard_-1",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_shard_2",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "value": 2
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_layout_hash_'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "layout_hash"
+          ],
+          "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_layout_hash_'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "layout_hash"
+          ],
+          "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_bad_authority_id_''",
+      "category": "descriptor_type_identity",
+      "mutations": [
+        {
+          "path": [
+            "authority_id"
+          ],
+          "value": ""
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_format",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "format"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_shard",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "shard"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_stage",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "stage"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_synthetic",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "synthetic"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_authority_id",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "authority_id"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_missing_layout_hash",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "layout_hash"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "descriptor_extra_field",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "enabled"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "policy_bad_format_True",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "format"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_version_True",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "version"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_version_2",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "version"
+          ],
+          "value": 2
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_name_'OTHER'",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "name"
+          ],
+          "value": "OTHER"
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_new_interest_rate_0",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "new_interest_rate"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_new_interest_rate_'0.1'",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "new_interest_rate"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_new_borrow_fee_rate_False",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "new_borrow_fee_rate"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_new_borrow_fee_rate_'0.01'",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "new_borrow_fee_rate"
+          ],
+          "value": "0.01"
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_require_managed_inbox_1",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "require_managed_inbox"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_require_managed_inbox_False",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "require_managed_inbox"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_borrow_batch_size_False",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "borrow_batch_size"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_borrow_batch_size_1",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "borrow_batch_size"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_production_approved_0",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "production_approved"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_production_approved_True",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "production_approved"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_credit_assets_['USD', 'BTC']",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "credit_assets"
+          ],
+          "value": [
+            "USD",
+            "BTC"
+          ]
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_credit_assets_['BTC', 'BTC']",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "credit_assets"
+          ],
+          "value": [
+            "BTC",
+            "BTC"
+          ]
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_credit_assets_[]",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "credit_assets"
+          ],
+          "value": []
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "policy_bad_credit_assets_'BTC'",
+      "category": "policy_invariants",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "credit_assets"
+          ],
+          "value": "BTC"
+        }
+      ],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": null
+      }
+    },
+    {
+      "id": "certificate_bad_format_True",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "format"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_version_0",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_version_True",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_version_1.0",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_version_'1'",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_version_9223372036854775808",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "version"
+          ],
+          "value": 9223372036854775808
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_budget_id_''",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "budget_id"
+          ],
+          "value": ""
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_bad_layout_hash_'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'",
+      "category": "certificate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "layout_hash"
+          ],
+          "value": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_missing_budget_id",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "budget_id"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_missing_assets",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_missing_authorities",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "certificate_extra_field",
+      "category": "strict_shapes",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "borrow_enabled"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_None",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_True",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_False",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_1",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_1.0",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_[]",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": []
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_{}",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": {}
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_''",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": ""
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'-1'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'+1'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "+1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'01'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "01"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'1.0'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "1.0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'1e2'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "1e2"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_' 1'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": " 1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'1 '",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "1 "
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'1_0'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "1_0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'١'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "١"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'１２'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "１２"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'NaN'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "NaN"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'100000000000000000000000000000000000000'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_'99999999999999999999999999999999999999999999999999999999999999999999999999999999'",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_bool",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_float",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_negative",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_fractional",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_overflow",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_bool",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_float",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_negative",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_fractional",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_overflow",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_bool",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_float",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_negative",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_fractional",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_overflow",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_pool_units_bad_bool",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_pool_units_bad_float",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_pool_units_bad_negative",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_pool_units_bad_fractional",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_pool_units_bad_overflow",
+      "category": "strict_units",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_BTC_-1",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "scale"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_BTC_19",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "scale"
+          ],
+          "value": 19
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_BTC_True",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "scale"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_BTC_8.0",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "scale"
+          ],
+          "value": 8.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_USD_1",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD",
+            "scale"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_USD_9",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD",
+            "scale"
+          ],
+          "value": 9
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "scale_bad_USD_False",
+      "category": "precision",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD",
+            "scale"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "asset_scale_rehashed_but_external_context_differs",
+      "category": "external_binding",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "scale"
+          ],
+          "value": 7
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "asset_set_certificate_does_not_match_policy",
+      "category": "asset_set",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocation_sum_exceeded",
+      "category": "global_cap",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "50000001"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocation_sum_no_i64_or_decimal_overflow",
+      "category": "global_cap",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "interest_makes_opening_gross_exceed",
+      "category": "opening_gross",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "50000000"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_gross_addition_cannot_overflow",
+      "category": "opening_gross",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_none",
+      "category": "full_certificate",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities"
+          ],
+          "value": []
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_missing",
+      "category": "full_certificate",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities"
+          ],
+          "value": [
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_duplicate",
+      "category": "full_certificate",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities"
+          ],
+          "value": [
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+            },
+            {
+              "shard": 1,
+              "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041"
+            },
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+            },
+            {
+              "shard": 1,
+              "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041"
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_gap",
+      "category": "full_certificate",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities",
+            1,
+            "shard"
+          ],
+          "value": 2
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_bool_shard",
+      "category": "strict_types",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities",
+            0,
+            "shard"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "authorities_duplicate_identity",
+      "category": "duplicate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "authorities",
+            1,
+            "authority_id"
+          ],
+          "value": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocations_missing_other_shard",
+      "category": "full_certificate",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations"
+          ],
+          "value": [
+            {
+              "shard": 0,
+              "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "opening_pool_units": "100000000",
+              "funding_claims": [
+                {
+                  "source_reference": "reference:BTC:source:0",
+                  "command_id": "pool-BTC-0",
+                  "funded_units": "100000000"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocations_duplicate_shard",
+      "category": "duplicate_identity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "shard"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocation_wrong_authority",
+      "category": "external_binding",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "authority_id"
+          ],
+          "value": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_source_across_shards",
+      "category": "funding_uniqueness",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "funding_claims",
+            0,
+            "source_reference"
+          ],
+          "value": "reference:BTC:source:0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_source_across_assets",
+      "category": "funding_uniqueness",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "source_reference"
+          ],
+          "value": "reference:BTC:source:0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_command_same_shard_cross_asset",
+      "category": "funding_uniqueness",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "USD",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "command_id"
+          ],
+          "value": "pool-BTC-0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "funded_units_bad_zero",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "funded_units_bad_bool",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "funded_units_bad_float",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "funded_units_bad_negative",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "funded_units_bad_overflow",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims",
+            0,
+            "funded_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_exceeds_actual_claim_sum",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "opening_pool_units"
+          ],
+          "value": "100000001"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "claims_sum_exceeds_quantity_bound",
+      "category": "funding_quantity",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims"
+          ],
+          "value": [
+            {
+              "source_reference": "reference:BTC:source:0:a",
+              "command_id": "claim-a",
+              "funded_units": "99999999999999999999999999999999999999"
+            },
+            {
+              "source_reference": "reference:BTC:source:0:b",
+              "command_id": "claim-b",
+              "funded_units": "1"
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "claims_unsorted",
+      "category": "funding_order",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "funding_claims"
+          ],
+          "value": [
+            {
+              "source_reference": "reference:BTC:z",
+              "command_id": "claim-z",
+              "funded_units": "50000000"
+            },
+            {
+              "source_reference": "reference:BTC:a",
+              "command_id": "claim-a",
+              "funded_units": "50000000"
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "hash_certificate_wrong",
+      "category": "content_hash",
+      "mutations": [
+        {
+          "path": [
+            "certificate_id"
+          ],
+          "value": "credit-budget:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "rehash": false
+    },
+    {
+      "id": "hash_policy_wrong",
+      "category": "content_hash",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy_id"
+          ],
+          "value": "credit-policy:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "rehash": false
+    },
+    {
+      "id": "hash_policy_reference_wrong",
+      "category": "content_hash",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "credit_policy_id"
+          ],
+          "value": "credit-policy:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "rehash": false
+    },
+    {
+      "id": "external_expected_mismatch_expected_authority_id_'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_authority_id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_layout_hash_'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_layout_hash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_shard_1",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_shard": 1
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_shard_False",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_shard": false
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_policy_id_'credit-policy:0000000000000000000000000000000000000000000000000000000000000000'",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_policy_id": "credit-policy:0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_certificate_id_'credit-budget:0000000000000000000000000000000000000000000000000000000000000000'",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_certificate_id": "credit-budget:0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_asset_scales_{'BTC': 7, 'USD': 2}",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_asset_scales": {
+          "BTC": 7,
+          "USD": 2
+        }
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_asset_scales_{'BTC': True, 'USD': 2}",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_asset_scales": {
+          "BTC": true,
+          "USD": 2
+        }
+      }
+    },
+    {
+      "id": "external_expected_mismatch_expected_authorities_[{'shard': 1, 'authority_id': 'e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041'}, {'shard': 0, 'authority_id': '279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5'}]",
+      "category": "external_binding",
+      "mutations": [],
+      "expected_valid": false,
+      "context_overrides": {
+        "expected_authorities": [
+          {
+            "shard": 1,
+            "authority_id": "e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041"
+          },
+          {
+            "shard": 0,
+            "authority_id": "279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alternative_partition_static_only",
+      "category": "static_history_boundary",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "100000000"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "unknown_must_not_reallocate_sealed_certificate",
+      "category": "static_history_boundary",
+      "mutations": [
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "certificate",
+            "assets",
+            "BTC",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "100000000"
+        }
+      ],
+      "expected_valid": false,
+      "seal": true
+    },
+    {
+      "id": "sealed_same_certificate_replay",
+      "category": "static_history_boundary",
+      "mutations": [],
+      "expected_valid": true,
+      "seal": true
+    }
+  ],
+  "ordering_note": "funding claims sort by (source_reference,command_id); allocation-order acceptance kept separately tagged pending exact wire contract",
+  "runtime_status": "NO_NATIVE_EXECUTION_NO_OWNER_READY_ACTIVATION_OR_FINANCIAL_SUCCESS_CLAIM"
+}
