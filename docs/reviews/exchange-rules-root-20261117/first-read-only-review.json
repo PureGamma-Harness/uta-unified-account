@@ -1,0 +1,96 @@
+{
+  "reviewed_utc": "2026-11-17T20:56:07.681725+00:00",
+  "author_commit": "5e3b2697ceb7acaedf4623f5b83d4e079f9fbdbd",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "scope": "independent delivery review of retained official document bytes, field directions, unit and version boundaries; no live exchange behavior or financial signoff",
+  "retained_documents": [
+    {
+      "source_id": "BYBIT-WALLET-V5-20261117",
+      "bytes": 9671,
+      "sha256": "002a351976872856bcceee76c11a268c35ffa61573f022a1b9fce04532df51f2",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BYBIT-COLLATERAL-V5-20261117",
+      "bytes": 4308,
+      "sha256": "55120843f43bc581df843f0987c516ec730a23a29a77b340dc4b83f0caf10eec",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BYBIT-ACCOUNT-MODE-V5-20261117",
+      "bytes": 2410,
+      "sha256": "cc9d691b8b8164b46d63bbb22fbc0e8b37b26ce5a7611ac9b0909a62ed320249",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BYBIT-TIER-V5-20261117",
+      "bytes": 1932,
+      "sha256": "9bf6bdf847e9c20c2c5c461f979ba63c98185cf8f7e473aff81e1f9b90bdb280",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BYBIT-CHANGELOG-V5-20261117",
+      "bytes": 136226,
+      "sha256": "5894ec870b2b64c5ed88285e0249dd382e46a110d5b219cbe5306baef7abfde2",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BYBIT-MODE-SWITCH-V5-20261117",
+      "bytes": 2153,
+      "sha256": "0dd54a5f8b8bdb2b4e47b85e1919f09e46fc954b61489dd4b6c2031f360456bc",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": true
+    },
+    {
+      "source_id": "BINANCE-PM-ACCOUNT-20261117",
+      "bytes": 1990560,
+      "sha256": "abc2f41d5b7914ed31c261ab1c1e54ad23f0ee7b28f062c517de9da3d0f284c7",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": null
+    },
+    {
+      "source_id": "BINANCE-PRO-SPAN-ACCOUNT-20261117",
+      "bytes": 995267,
+      "sha256": "5763dead5bb61d034521f38c37e3661097d84778a7655b7693350fb998fe7f3b",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": null
+    },
+    {
+      "source_id": "CME-SPAN2-METHOD-20261117",
+      "bytes": 183967,
+      "sha256": "fc7a9fc02584c2dbe53eba366948a085e4420e9c5099c8a4c042b293fc2b5757",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": null
+    },
+    {
+      "source_id": "BYBIT-GLOSSARY-20261117",
+      "bytes": 468443,
+      "sha256": "6a2b2b6ca72e7007690f6f3d01941ffa45c44d10bae08250a6f594c7474a013c",
+      "retained_raw_matches_public_manifest": true,
+      "official_git_blob_match": null
+    }
+  ],
+  "trace_rows": 12,
+  "raw_bytes_checked": 3794937,
+  "manual_rule_findings": {
+    "gross_and_liabilities_separate": true,
+    "OldWallet_equals_NewWallet_minus_spotBorrow_direction_preserved": true,
+    "coin_tiers_not_automatically_treated_as_USD_marginal_tiers": true,
+    "external_MMR_and_internal_reciprocal_not_mapped_without_components": true,
+    "three_binance_versions_kept_distinct": true,
+    "CME_reference_does_not_claim_replication_or_calibration": true,
+    "existing_seven_document_baseline_acknowledged": true
+  },
+  "runtime_tests_pyproject_unchanged": true,
+  "new_network_requests": false,
+  "product_tests_executed": false,
+  "SQL_or_financial_authority_used": false,
+  "engineering_documentation_draft_acceptable": true,
+  "financial_rules_signed_off": false,
+  "production_approved": false
+}
