@@ -71,6 +71,7 @@ class _OwnedStartup:
         self._keeper = None
         self._exchange = self._credit = None
         self._ledger_verified = False
+        self._verified_schema = {}
         self.last_renew_started = None
 
     def _fail(self, exc):
@@ -164,6 +165,13 @@ class _OwnedStartup:
                 raise StartupError("startup_context_invalid", "initialization scope is not active")
         self._require(database)
 
+    def _schema(self, connection):
+        actual = {row[0]: tuple(row[1:]) for row in connection.execute(
+            "SELECT name,type,tbl_name,sql FROM sqlite_master ORDER BY name")}
+        if any(actual.get(name) != definition for name, definition in self._verified_schema.items()):
+            raise StartupError("startup_schema_changed", "a previously verified schema object changed during initialization")
+        return actual
+
     def verify_ledger(self, exchange):
         from .writer_fence import WriterFence
         self.require_database(exchange.database)
@@ -173,9 +181,11 @@ class _OwnedStartup:
         with self.database.read_transaction() as connection:
             WriterFence(self.database).assert_writer(connection, self.token)
             exchange.ledger.verify(connection=connection)
+            schema = self._schema(connection)
         # The read snapshot's lease row is deliberately NOT checked afterward:
         # it predates concurrent successful renewals. Fresh binding happens later.
         self.check()
+        self._verified_schema = schema
         self._ledger_verified = True
 
     def require_ledger(self, exchange):
@@ -190,8 +200,11 @@ class _OwnedStartup:
             raise StartupError("startup_context_reused", "credit verification cannot be reused")
         with self.database.read_transaction() as connection:
             WriterFence(self.database).assert_writer(connection, self.token)
+            self._schema(connection)
             credit._verify(connection)
+            schema = self._schema(connection)
         self.check()
+        self._verified_schema = schema
         self._credit = credit
 
     def finish(self):
@@ -206,6 +219,7 @@ class _OwnedStartup:
         with self.database.transaction() as connection:
             self._require(self.database)
             WriterFence(self.database).assert_writer(connection, self.token)
+            self._schema(connection)
             connection.execute("UPDATE uta_schema SET version=version")
         self.check()
         self._finished = True
