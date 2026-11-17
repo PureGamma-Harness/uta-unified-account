@@ -247,27 +247,20 @@ class SoakTests(unittest.TestCase):
     def test_unknown_round_preserves_later_queue_without_executing_its_book(self):
         with TemporaryDirectory() as directory:
             job = self.make(directory, duration=1.6, queue_capacity=4)
+            self.addCleanup(job.close)
+            # This fault needs an existing committed backlog, independent of
+            # how fast the producer or filesystem reaches future arrival times.
+            with job.database.transaction() as connection:
+                for sequence in range(3):
+                    planned = job.meta["started_ns"] + int(sequence * 1e9 / job.configuration.rate)
+                    connection.execute("INSERT INTO soak_arrivals VALUES (?,?,'queued',NULL,NULL,NULL)",
+                                       (sequence, planned))
             def unknown(sequence):
-                # Establish the durable precondition, not a wall-clock guess:
-                # a slow producer/heartbeat may not enqueue both later rounds
-                # before a fixed sleep expires. Never execute those rounds here.
-                expected = [(0, "active"), (1, "queued"), (2, "queued")]
-                deadline = time.monotonic() + 3
-                while True:
-                    with soak.readonly(job.path) as connection:
-                        arrivals = [tuple(row) for row in connection.execute(
-                            "SELECT sequence,status FROM soak_arrivals ORDER BY sequence")]
-                    if arrivals == expected:
-                        break
-                    if time.monotonic() >= deadline:
-                        raise AssertionError(
-                            f"durable queue precondition timed out: expected={expected!r}, "
-                            f"observed={arrivals!r}, stopped={job.stop.is_set()}")
-                    time.sleep(.01)
                 job.exchange.submit_order("soak-alice", f"soak:{sequence}:open-buy", "BTC-PERP", D(".02"), D(100))
                 raise RuntimeError("unknown earlier round must fence later financial execution")
-            with patch.object(job, "roundtrip", side_effect=unknown):
+            with patch.object(job, "roundtrip", side_effect=unknown) as roundtrip:
                 report = job.run()
+            roundtrip.assert_called_once_with(0)
             self.assertEqual(report["status"], "failed")
             self.assertEqual([(error["type"], error["message"]) for error in report["errors"]],
                              [("RuntimeError", "unknown earlier round must fence later financial execution")], report)
@@ -275,6 +268,7 @@ class SoakTests(unittest.TestCase):
             self.assertEqual(report["financial_counts"]["uta_orders"], 1)
             self.assertEqual(report["financial_counts"]["uta_matches"], 0)
             recovered = soak.Soak(directory, resume=True, strict_source=False)
+            self.addCleanup(recovered.close)
             for sequence in range(3):
                 recovered.roundtrip(sequence)
             self.assertEqual(recovered._validate(full=True)["uta_matches"], 6)

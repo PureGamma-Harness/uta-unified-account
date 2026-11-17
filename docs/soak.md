@@ -40,14 +40,15 @@ USD 每账户初始 1,000,000；借贷账户另有 1 BTC 利息缓冲，池有 1
 
 ## 启动、状态、停止与恢复
 
-先对工具做短时自检并提交；实际长跑使用该真实提交的独立 worktree，整个作业不修改该 worktree。
+先对工具做短时自检并提交；实际长跑使用该真实提交的独立 worktree，整个作业不修改该 worktree。把下面的 `SOAK_JOB` 改为尚未使用的绝对目录；状态、停止和恢复始终使用同一个目录。
 
 ```bash
 python -m unittest discover -s tests -p 'test_soak.py' -v
-python benchmarks/run_soak.py start --directory /workspace/uta-soak-runs/<唯一job> --duration 86400 --rate .25
-python benchmarks/run_soak.py status --directory /workspace/uta-soak-runs/<唯一job>
-python benchmarks/run_soak.py stop --directory /workspace/uta-soak-runs/<唯一job>
-python benchmarks/run_soak.py resume --directory /workspace/uta-soak-runs/<同一job>
+SOAK_JOB=/workspace/uta-soak-runs/unique-job
+python benchmarks/run_soak.py start --directory "$SOAK_JOB" --duration 86400 --rate .25
+python benchmarks/run_soak.py status --directory "$SOAK_JOB"
+python benchmarks/run_soak.py stop --directory "$SOAK_JOB"
+python benchmarks/run_soak.py resume --directory "$SOAK_JOB"
 ```
 
 正式启动用 `subprocess.Popen(..., start_new_session=True, stdin=DEVNULL, stdout=<private file>, stderr=<private file>)` 脱离调用工具进程，保存实际 PID、源码路径、完整命令及启动 UTC。后台作业依赖该计算环境持续存活，不能保证宿主环境 24 小时不被回收。环境中断时通过 status 识别 pending，必须查原 job 恢复；不得改 started_at 或手工生成未来成功结果。
@@ -67,5 +68,7 @@ job.json 保存不可变原始时间、负载、源摘要、环境及财务 DB �
 ## 首个预检候选与故障后队列屏障
 
 首个候选 69ce43b 于 2026-11-16 21:28:34.484473 UTC 实际启动，后续自审发现未知结果后的队列因果屏障缺口：生成器虽停止，worker 仍可能执行后续 round，消费前一轮尚未完成的盘口。真实 live 作业当时未遇到此错误，但不能据此忽略恢复契约。新增回归在第一轮只提交买单后丢结果、同时已有两轮排队，验证后两轮保持 durable queued 且未创建任何订单，随后按原 ID 逐轮恢复得到恰好六笔真实 match。
+
+该故障用例在真实 SQLite 事务中预置三条 queued 义务，再运行真实 worker 并注入第一轮结果未知；不再用固定睡眠推定后两轮已到达。它还断言本轮只执行 `roundtrip(0)`，保留一张订单、零成交和原 ID 恢复后的六笔 match 检查。此处是持久积压恢复夹具，绝对时间到达与正常短作业另由 `tests/test_soak.py` 的正常运行用例覆盖，不能把预置夹具当作开放环到达或长期稳定性证据。
 
 修复版首个错误后只保留后续义务，不继续金融执行。修复候选使用新的独立 authority、实际 start 与 24 小时 deadline；旧候选 graceful stop 并留下 INTERRUPTED_KNOWN_ISSUE 注记、原 DB、原 start、原 deadline 与历史日志。旧时长不并入新作业，旧源码不被暗中修改，不跨 source resume。首个预检及 known-issue 原始记录见 benchmarks/results/20261116-soak-start。
