@@ -1,0 +1,106 @@
+[
+  {
+    "label": "python312",
+    "source_commit": "26f7c59ec66f4553fcd135816509f02a00550de7",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "tests.test_credit_native",
+      "tests.test_credit_policy",
+      "-v"
+    ],
+    "started_utc": "2026-11-17T11:44:22.716277+00:00",
+    "finished_utc": "2026-11-17T11:44:26.273256+00:00",
+    "duration_seconds": 3.556987296004081,
+    "exit_code": 0,
+    "timed_out": false,
+    "affinity": [
+      4
+    ],
+    "log_sha256": "d1b4721779b26862718af3f2d08ea2f2bfecfa749fa693594256012c16d40edc",
+    "source_sha256": {
+      "uta/writer_fence.py": "dec38cb73956a0db26924fe3c1685644197c54b9abda3ce02026e70ce3f0a3c6",
+      "uta/credit_native.py": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+      "uta/credit_policy.py": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a",
+      "tests/test_credit_native.py": "4fbe32a6e84c6e181bff2ec094f8713f0266c7dd21c6fc48da24e0aaf7216cac"
+    },
+    "trading_enabled": false,
+    "production_approved": false,
+    "environment": {
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "sqlite": "3.53.1"
+    },
+    "tracked_sources_unchanged_after": true
+  },
+  {
+    "label": "python310",
+    "source_commit": "26f7c59ec66f4553fcd135816509f02a00550de7",
+    "command": [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-m",
+      "unittest",
+      "tests.test_credit_native",
+      "tests.test_credit_policy",
+      "-v"
+    ],
+    "started_utc": "2026-11-17T11:44:26.276666+00:00",
+    "finished_utc": "2026-11-17T11:44:29.217590+00:00",
+    "duration_seconds": 2.941007087996695,
+    "exit_code": 0,
+    "timed_out": false,
+    "affinity": [
+      4
+    ],
+    "log_sha256": "cbe660edb23cf4e81d6e2f825aa68cab6a67a5cd94dee271f528a7e4a604dabf",
+    "source_sha256": {
+      "uta/writer_fence.py": "dec38cb73956a0db26924fe3c1685644197c54b9abda3ce02026e70ce3f0a3c6",
+      "uta/credit_native.py": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+      "uta/credit_policy.py": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a",
+      "tests/test_credit_native.py": "4fbe32a6e84c6e181bff2ec094f8713f0266c7dd21c6fc48da24e0aaf7216cac"
+    },
+    "trading_enabled": false,
+    "production_approved": false,
+    "environment": {
+      "python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]",
+      "sqlite": "3.53.1"
+    },
+    "tracked_sources_unchanged_after": true
+  },
+  {
+    "label": "python313",
+    "source_commit": "26f7c59ec66f4553fcd135816509f02a00550de7",
+    "command": [
+      "/usr/bin/python3.13",
+      "-W",
+      "error::ResourceWarning",
+      "-m",
+      "unittest",
+      "tests.test_credit_native",
+      "tests.test_credit_policy",
+      "-v"
+    ],
+    "started_utc": "2026-11-17T11:44:29.218969+00:00",
+    "finished_utc": "2026-11-17T11:44:32.437295+00:00",
+    "duration_seconds": 3.218591444994672,
+    "exit_code": 0,
+    "timed_out": false,
+    "affinity": [
+      4
+    ],
+    "log_sha256": "3a67cf8dfa4c8b46276ea12c61fd10a7ebdbc1bab3ab56d1481ca5f8cb926dc2",
+    "source_sha256": {
+      "uta/writer_fence.py": "dec38cb73956a0db26924fe3c1685644197c54b9abda3ce02026e70ce3f0a3c6",
+      "uta/credit_native.py": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+      "uta/credit_policy.py": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a",
+      "tests/test_credit_native.py": "4fbe32a6e84c6e181bff2ec094f8713f0266c7dd21c6fc48da24e0aaf7216cac"
+    },
+    "trading_enabled": false,
+    "production_approved": false,
+    "environment": {
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sqlite": "3.46.1"
+    },
+    "tracked_sources_unchanged_after": true
+  }
+]

@@ -74,3 +74,10 @@ cause，外部消息不包含SQL/nonce。
 负本金与另一账户正本金抵消、债务与liability ledger不符或pool projection脱离journal。
 新增负例从enable前真实损坏source开始，要求金融原始字段/SQL及generation不变、没有
 native对象；不声称WAL/SHM物理字节不产生正常SQLite变化。实际结果另记，不预填通过。
+
+固定源码`26f7c59ec66f4553fcd135816509f02a00550de7`实际执行native17+policy12，共29项：
+Python3.12为3.248秒，3.10为2.720秒，3.13为3.026秒，三份均通过、零skip；3.13将
+ResourceWarning提升为错误，三份raw未观察到该警告。完整[原始日志与运行时](../evidence/runs/credit-native-26f7c59/manifest.json)
+及前述旧14/122结果分开保留。四种真实损坏source均在marker前以固定源错误拒绝，原SQL/
+金融字段及generation不变。此专项不能充当完整发布验收或新增信用许可；独立peer与
+完整正向credit audit/source/replay/操作阶段仍未完成，格式1依然不能交易。

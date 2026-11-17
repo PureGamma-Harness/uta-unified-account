@@ -1,0 +1,34 @@
+test_actual_batch_aware_old_binary_rejects_prepared_credit_both (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_actual_opening_principal_and_interest_are_preserved (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_actual_pre_fencing_ad3_cannot_write_prepared_authority (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_any_extra_control_event_is_not_the_declared_fresh_prefix (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_corrupt_financial_seed_rejected_before_first_native_ddl (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_financial_ddl_denial_is_immediate_and_cannot_be_caught_into_commit (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_insert_update_delete_and_credit_record_are_all_blocked (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_missing_schema_or_marker_is_never_repaired (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_no_cap_base_and_batch_still_have_real_financial_owners (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_no_scope_or_forged_token_can_authorize_preparation (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_real_fresh_preparation_preserves_money_and_never_acquires (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_real_install_failure_rolls_back_all_ddl_before_retry (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_real_prepare_and_acquire_race_cannot_both_succeed (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_real_savepoint_rollback_does_not_clear_a_native_fatal_denial (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_released_real_owner_is_not_a_fresh_promotion (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_same_descriptor_retries_only_verify_different_descriptor_conflicts (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_wrong_actual_pool_claims_reject_before_any_marker (tests.test_credit_native.PreparedNativeCreditTests) ... ok
+test_beyond_int64_values_remain_exact_bounded_minor_units (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_canonical_typed_global_certificate_and_allocations (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_disabled_policy_fields_cannot_be_rehashed_into_authorization (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_duplicate_json_and_nonstandard_numbers_do_not_normalize_away (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_foreign_objects_and_recursive_payloads_do_not_execute_hooks (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_missing_allocation_lookup_is_not_zero_credit (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_rehashed_duplicate_sources_commands_and_missing_shard_fail (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_rehashed_external_layout_authority_policy_and_scale_mismatch (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_rehashed_overallocation_and_opening_interest_fail (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_rehashed_unreachable_shard_cannot_change_a_sealed_certificate (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_units_never_coerce_float_bool_sign_unicode_or_overflow (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+test_zero_or_unassigned_budget_does_not_invent_funding_equality (tests.test_credit_policy.NativeCreditPolicyTests) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 2.720s
+
+OK
