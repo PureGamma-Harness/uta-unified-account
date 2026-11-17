@@ -1,0 +1,222 @@
+{
+  "status": "PREREGISTERED_V1_PENDING_ACTUAL_QUALIFICATION_NO_EXECUTION",
+  "scope": "synthetic_low_rate_managed_financial_stability; not capacity or production acceptance",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_root": "/workspace/uta-credit-v2-py310-candidate",
+  "observer_core_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "reviewed_observer_and_wrapper_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-combined-validation/final-909acec/python312/summary.json",
+  "qualification": {
+    "status": "PENDING_ALL_THREE_LOCAL_EIGHT_CI_AND_NEW_INDEPENDENT_PACKAGE",
+    "local_full_runs": 3,
+    "tests_each": null,
+    "tests_each_status": "PENDING_ACTUAL_ALL_THREE_EXACT_REPORTS",
+    "ci_runs": [
+      44132222411,
+      44132321549
+    ],
+    "ci_python_jobs": 8,
+    "ci_runs_status": "ATTEMPT1_IN_PROGRESS_AT_PREREGISTRATION",
+    "ci_actual_attempt": 1,
+    "ci_successful_python_jobs": null,
+    "ci_failed_python_jobs": null,
+    "ci_artifact_count": null,
+    "package_tracked_files": null,
+    "source_tracked_files": 5518,
+    "runtime_files": 62,
+    "package_evidence": "PENDING: fresh909 source/runtime artifacts and independent new package review",
+    "no_qualification_inherited_from_any_prior_source": true
+  },
+  "producer": {
+    "duration_seconds": 21600,
+    "rate_rounds_per_second": 0.25,
+    "planned_rounds": 5400,
+    "worker_fault_every_rounds": 30,
+    "parent_fault_every_rounds": 300,
+    "one_original_driver_birth": true,
+    "allow_resume_for_continuous_target": false,
+    "use_original_configuration_defaults_except_explicit_duration": true,
+    "new_private_job_directory_required": true,
+    "source_budget_bytes": 6442450944,
+    "minimum_free_bytes": 1073741824
+  },
+  "observer": {
+    "interval_seconds": 61,
+    "cadence_reason": "supported CLI interval61 is coprime with four-second rounds; every actual timestamp retained",
+    "independent_finance_golden_required_each_1800_second_block": 1,
+    "blocks": 12,
+    "technical_read_unknown_budget": 3,
+    "maximum_consecutive_technical_read_unknown": 1,
+    "all_unknown_samples_and_attempts_reported": true,
+    "planned_fault_inflight_unknown_separate_from_technical_read_unknown": true,
+    "alerts_do_not_imply_finance_proof": true,
+    "final_golden_fk_same_watermark_reopen_and_actual_producer_cold_audit_required": true,
+    "max_private_clone_bytes": 1073741824,
+    "clone_headroom_bytes": 1073741824,
+    "max_address_space_bytes": 2147483648,
+    "private_full_clone_contains_control_nonces_never_publish": true,
+    "private_clone_limit_semantics": "input-estimate admission only; not a physical peak quota; complete schema/log/audit required; exceedance is NO_GO",
+    "output_budget_bytes": 2147483648,
+    "output_budget_semantics": "explicit fullcontrol+observer logical file bytes except validated private clones; periodic threshold, not physical quota; unknown/exceedance requests official owned-driver resource drain and technical NO_GO",
+    "output_budget_check_period_seconds": 30,
+    "output_physical_hard_quota_enforced": false,
+    "output_budget_overshoot_guaranteed_bound_bytes": null
+  },
+  "financial_gates": {
+    "actual_active_seconds_minimum": 21600,
+    "completed_rounds": 5400,
+    "all_original_account_commands": 32400,
+    "unique_matching_receipts": 10800,
+    "paired_fill_legs": 21600,
+    "financial_unknown_or_quarantined": 0,
+    "internal_account_or_control_technical_retries": 0,
+    "extra_or_missing_financial_effects": 0,
+    "original_source_validation_and_log_hashes_unchanged": true,
+    "independent_exact_gross_budget_and_replay_required": true
+  },
+  "reporting": {
+    "financial_stability_and_live_coverage_separate": true,
+    "overall_engineering_target_requires_both": true,
+    "any_budget_miss_remains_no_go": true,
+    "unmeasured_counters": null,
+    "planned_time_not_actual_elapsed": true
+  },
+  "cohost": {
+    "old_producer_pid": 4471,
+    "old_producer_birth": "210004",
+    "old_observer_pid": 8784,
+    "old_observer_birth": "412799",
+    "do_not_signal_or_modify_old_jobs": true,
+    "shared_host_not_dedicated_hardware": true,
+    "cpu_affinity_change_for_old_jobs_allowed": false
+  },
+  "known_failed_gate": {
+    "large_history_250000": "NO_GO; budget exhausted before ownership/command; no final complete proof; does not qualify general large-history recovery",
+    "full_system_acceptance": "NO_GO: no production, real funds, HA, 10k/s or full risk reexecution acceptance"
+  },
+  "production_approved": false,
+  "capacity_10000_approved": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "previous_attempt": {
+    "source_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+    "status": "STOPPED_EARLY_NO_GO",
+    "completed_rounds": 513,
+    "planned_rounds": 5400,
+    "active_seconds": 2072.722098933,
+    "never_resume_or_reclassify": true
+  },
+  "preregistered_at_utc": "2026-11-17T17:03:53.488115+00:00",
+  "execution_gate": "PREP ONLY. Every phase needs root specific GO after actual complete exact909 full3/CI8/freshpackage/floor review and fresh source/PIDbirth/TTL15/free gate. Pending v1 cannot execute; any failed gate remains NO_GO.",
+  "selected_cpu": 0,
+  "copied_preregistration": {
+    "source_plan_sha256": "8c632b5ce294a73044d7776094f0832f93ad1e09c4d35ab435f966b67dafd3c6",
+    "source_amendment_sha256": "412ff6531641b3589e1f51a443db5d775a6abfaa8cf811096958d318d15598c1",
+    "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+    "qualification_inherited": false,
+    "changed_fields": "new exactsource/time/counts/provider pending facts; workload/financial/resource limits unchanged"
+  },
+  "previous_candidates": [
+    {
+      "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+      "status": "NO_GO_LOCAL_CI_COMPATIBILITY_FAILURE",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+      "status": "NO_GO_ACTUAL_READINESS_CI_FAILURES",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+      "status": "NO_GO_ACTUAL_HISTORICAL_REFERENCE_GENERATOR_SOURCE_FOOTER_MISMATCH",
+      "immutable_blocked_profile": "benchmarks/profiles/managed-8b7f544-v2-blocked.json",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+      "status": "NO_GO_ACTUAL_PYTHON313_RECOVERY_CI_FAILURE",
+      "immutable_blocked_profile": "benchmarks/profiles/managed-91e4ae4-v2-blocked.json",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+      "status": "NO_GO_ACTUAL_TWO_PYTHON310_UNIT_FAILURES",
+      "immutable_profile": "benchmarks/profiles/managed-dbc93e5-v1-pending.json",
+      "never_reclassify": true
+    }
+  ],
+  "plan_version_policy": "V1 is immutable. Actual executed count and completed QA require a separately versioned successor; never guess or rewrite this null count.",
+  "resource_policy": {
+    "status": "PENDING_OPERATOR_CONDITIONAL_FLOOR_REVIEW_AND_POST_QA_PACKAGE_PREFLIGHT",
+    "new_source_budget_bytes": 6442450944,
+    "source_declaration_bound_to_actual_original_configuration": true,
+    "new_observer_output_budget_bytes": 2147483648,
+    "new_private_clone_admission_estimate_bytes": 1073741824,
+    "minimum_free_headroom_bytes": 1073741824,
+    "new_total_bytes": 10737418240,
+    "old_full_future_reservation_bytes": 6442450944,
+    "old_observer_additional_floor_bytes": 268435456,
+    "old_observer_declared_byte_cap": null,
+    "floor_is_hard_cap": false,
+    "old_observer_floor_approved": false,
+    "combined_conservative_required_bytes": 17448304640,
+    "current_free_bytes": null,
+    "current_gap_bytes": null,
+    "space_reserved": false,
+    "recheck_after_qualification_and_package_required": true,
+    "clone_limit_is_input_estimate_not_peak_quota": true,
+    "observer_output_is_periodic_threshold_not_os_quota": true,
+    "output_overshoot_bound_bytes": null,
+    "separate_operator_record": null,
+    "separate_operator_record_sha256": null,
+    "old_observer_floor_conditional": true,
+    "historical_1656_free_observation_is_not_post_qualification_package_preflight": true,
+    "source_metadata_maximum_age_seconds": 15,
+    "actual_original_cohost_pid_birth_required": true
+  },
+  "execution_authorized": false,
+  "service_started": false,
+  "source_git_tree_oid": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+  "smoke": {
+    "duration_seconds": 60,
+    "planned_rounds": 15,
+    "worker_fault_every_rounds": 5,
+    "parent_fault_every_rounds": 10,
+    "outer_deadline_seconds": 150,
+    "real_tls_matching_settlement_restarts": true,
+    "startup_normal_active_and_fault_unknown_coverage_required": true,
+    "same_watermark_final_and_private_cold_required": true,
+    "strict_long_receipt_must_be_refused": true,
+    "missing_phase_is_incomplete": true,
+    "automatic_next_phase_allowed": false
+  },
+  "continuous_6h_stability_passed": false,
+  "continuous_24h_stability_passed": false,
+  "root_reported_runtime_sha256": "ec0fa09e2e2e50557300423ddf6983969c9727816288ed79e9de7a17438c5b2b",
+  "runtime_sha256_independently_verified": false,
+  "provider_context": {
+    "push_run_id": 44132222411,
+    "pull_request_run_id": 44132321549,
+    "attempt": 1,
+    "status_at_preregistration": "IN_PROGRESS",
+    "pull_request": 21,
+    "pull_request_url": "https://github.com/PureGamma-Harness/uta-unified-account/pull/21",
+    "actual_merge_sha": "b221fce79e7709d6f1a36d0aff5c24225a61c084",
+    "actual_merge_parents": [
+      "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+      "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+    ],
+    "actual_merge_git_tree_oid": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+    "metadata_record": "/tmp/uta-credit-909-provider-metadata/initial-source-and-runs.json",
+    "qualifies_source": false
+  },
+  "independent_new_clock": {
+    "required_actual_active_seconds": 21600,
+    "deadline_basis": "this new job actual started_boottime_ns plus21600 seconds",
+    "old_24h_2136_deadline_applies_to_this_job": false,
+    "shorten_to_old_job_deadline_allowed": false,
+    "resume_or_count_preparation_time_allowed": false
+  }
+}
