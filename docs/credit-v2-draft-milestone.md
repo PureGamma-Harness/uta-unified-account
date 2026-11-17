@@ -67,10 +67,11 @@ implemented. New fixed-code fixtures do not repair older code-bound databases.
 
 ## Gates that block merge and production
 
-* Whole integration of the latest PR16/history-replay baseline and root's new
-  strict ledger-catalog correction, followed by a frozen SHA and full supported
-  Python matrix, CI and package checks. Current common baseline is8338beef;
-  latest91 integration has not been claimed.
+* Exact stable91e4ae40 is now whole-merged by96b9fdb; all368 previous M3 paths
+  are byte-equal at that merge and23 necessary targeted checks passed. Root's
+  new strict ledger-catalog correction is still pending independent acceptance
+  and integration, followed by a frozen SHA and full supported Python matrix,
+  CI and new package checks. This targeted pass does not replace those gates.
 * Further crash/unknown/corruption/governance tests and complete independent
   acceptance; forward binary/schema upgrade remains unsupported.
 * Normal new-order/matching/spot/withdrawal/mode-switch adapters, lending

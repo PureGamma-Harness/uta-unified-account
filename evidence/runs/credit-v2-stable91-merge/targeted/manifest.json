@@ -1,0 +1,42 @@
+{
+  "scope": "single exact91 whole-merge necessary targeted regression: pinned historical pure references, existing-only factory, public managed501/CID order, actual new source artifact roles; no old raw reattribution, no performance/load/live SQL",
+  "source_commit": "96b9fdb3b6792151299af97b8cd37cb9471f2523",
+  "merged_exact": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "source_sha256": {
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/existing_services.py": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+    "uta/storage.py": "46fc32488cf6b9ffa3c15431b785aea22f4cccceaebd381130e5ef00be4427d5",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+    "uta/private_stream_codec.py": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2",
+    "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+    "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_capacity_review_data_reference",
+    "tests.test_existing_services",
+    "tests.test_managed_borrow_boundary",
+    "tests.test_credit_v2_code_binding",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 30,
+  "begin": "2026-11-17T15:29:37.293763+00:00",
+  "end": "2026-11-17T15:29:38.844062+00:00",
+  "elapsed_seconds": 1.5503035459987586,
+  "exit_code": 0,
+  "raw_sha256": "228d588ebfaf763bec2481f1d1e3e95fa134e99e1bc94876cf7cd86e046a2d03"
+}
