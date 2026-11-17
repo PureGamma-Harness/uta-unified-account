@@ -130,3 +130,46 @@ full local/CI/package acceptance, separately approved real service smoke and
 a newly preregistered job before any six-hour claim. Idle connections do not
 prove a logical stable boundary, full business/risk reexecution, capacity,
 production eligibility or the cause of old uninstrumented read errors.
+
+## Path finding closure: 49eaa02
+
+Follow-up `49eaa02cd290868a22afb000ba4cd19b62010b12` was independently
+inspected through committed blobs. The original finding and initial 6cc6ab0
+evidence remain unchanged. **The metadata-path compatibility finding is now
+closed; no scoped blocker remains in this idle-holder review.**
+
+The helper applies the same `Path(key).parent.resolve() / Path(key).name`
+rule to both a new lookup map and the paths it opens. It retains the final
+component for the existing no-follow regular/private inode checks; it does
+not resolve a final main symlink into an accepted target. A parent alias is
+lookup compatibility, not complete parent-path authorization.
+
+All canonical metadata key collisions are rejected before SQLite, even with
+identical identities. Explicit metadata must be a dict of absolute text keys
+and two-element integer device/inode lists; booleans, negative device, zero
+inode, malformed/missing required identities and explicit None fail with
+ValueError before any connection. Omission alone retains standalone-fixture
+behavior. The producer still always supplies its original metadata. Neither
+the source metadata, producer directory nor original job is rewritten.
+
+The entire producer file is byte-identical to 6cc6ab0, including run/start
+clock, faults, STOP handling, source qualification, financial checks, close
+and final gates. Changes are confined to helper lookup/validation, owned-temp
+fixtures and the appended evidence. Actual initial mixed-metadata lifecycle
+cases retain four tests with eight failing subtests and three errors. The
+follow-up archives ten selected cases on each runtime with zero failure/error/
+skip counts and identical measured source-before/source-after hashes.
+
+The final fixtures use real `../` and parent-symlink roots with checkpoint's
+original canonical key and lexical remaining keys. They check unchanged
+metadata/directory and the same run/status/close lifecycle, same/different
+identity collisions, typed invalid metadata before SQLite, final-main symlink
+refusal, existing cleanup cases and a real kernel-RO read. They start no
+service. Manifest, source and result hashes agree with the archived report;
+the independent reviewer did not execute them again.
+
+No-fork/single-thread ownership, nonuniversal sidecar availability, cleanup
+error limits and final-status secondary-error restrictions remain as described
+above. Full source qualification, actual service smoke and any newly
+authorized six-hour run remain independent open gates; original paused/NO_GO
+and forensic-only records cannot be promoted by this closure.
