@@ -1,0 +1,54 @@
+{
+  "after_sha256": {
+    "evidence/runs/history-perf-rnd/run_uninstrumented_abba.py": "caf46cdf706000c2bb73bb921999be6ea82a04b15c2e836cd67422b6cfc14adb",
+    "tests/test_history_postings_stream.py": "79042a89658d7270b83aa2cbe87a79f8214691fafffd5d9dff104fff07c5f1da",
+    "uta/storage.py": "da519ff4c2f30ddae57d4994278dd193168637ce18b83abadb4187e94a7824a6"
+  },
+  "before_sha256": {
+    "evidence/runs/history-perf-rnd/run_uninstrumented_abba.py": "caf46cdf706000c2bb73bb921999be6ea82a04b15c2e836cd67422b6cfc14adb",
+    "tests/test_history_postings_stream.py": "79042a89658d7270b83aa2cbe87a79f8214691fafffd5d9dff104fff07c5f1da",
+    "uta/storage.py": "da519ff4c2f30ddae57d4994278dd193168637ce18b83abadb4187e94a7824a6"
+  },
+  "candidate": "53b3ba47bbfd2921b407995e8bd5961562655cfa",
+  "child_output_files": {
+    "phases.jsonl": {
+      "bytes": 15894,
+      "sha256": "75ff0aade25176825ba838215831aef3ef1d07d254b35ac837049595ab219d03"
+    },
+    "samples.jsonl": {
+      "bytes": 3292,
+      "sha256": "684626e48d18b282ac13deb1b785ffaa691881d88388dd7255f78d5b87dbf30c"
+    },
+    "summary.json": {
+      "bytes": 23882,
+      "sha256": "8afd8cb7fbda6d5332ac72bdda6efe54bd68c7a5bb72ccbc8db8e2259e9d687a"
+    },
+    "unittest.txt": {
+      "bytes": 3695,
+      "sha256": "c47d31ebcac4e3905f820a1d5b45d158ac3f17488318e882424d3fade96241e3"
+    }
+  },
+  "child_proc_absent": true,
+  "child_reaped": true,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-history-postings-abba/evidence/runs/history-perf-rnd/run_uninstrumented_abba.py",
+    "--output",
+    "/tmp/uta-history-postings-abba-53b3-once"
+  ],
+  "cpu_affinity": [
+    4
+  ],
+  "elapsed_ns": 2423153440,
+  "ended_utc": "2026-11-17T15:51:01.590101+00:00",
+  "exit_code": 0,
+  "forced_cleanup": false,
+  "measurement_boundary": "child process import/full main return/summary+sample+phase+stdout+stderr close, then source/output hashes; final outer metadata serialization follows",
+  "pid": 243400,
+  "runtime_commit": "dd502ae538618c6d17a3bd2eae708e09526e9d4c",
+  "source_unchanged": true,
+  "started_utc": "2026-11-17T15:50:59.166930+00:00",
+  "stderr_bytes": 0,
+  "stdout_bytes": 59,
+  "watchdog": false
+}
