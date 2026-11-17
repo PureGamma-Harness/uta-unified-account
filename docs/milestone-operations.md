@@ -35,6 +35,13 @@ message、SQL、locals、路径或密钥。原金融终态不被故障记录覆�
 | `24ac06b` | 三运行时各 1092，均 1 失败 | 两轮失败 | 不据此宣称新包通过 | NO-GO，保留诊断新增事件夹具失败 |
 | `4608ffe` | 3.12/3.13 各 1096 通过；3.10 有 1 失败 | PR 四版本通过；push 3.10 三项失败，其余通过 | 新安装 8、RO 视图 3 及全部源文件核验通过 | NO-GO，包通过不能抵消完整测试失败 |
 | `7ae94eb` | 三运行时各 1110 通过 | push 四版本通过；PR 3.12 一项 ERROR，其他三版本通过 | 未据失败源码重新构建独立包 | NO-GO，负例在预期故障阶段之前真实过期 |
+| `763202d` | 三运行时各 1110 通过 | push/PR 各四版本通过 | 1475 tracked / 50 runtime；安装 8、RO 3、8 CLI、no.git 7/1/4 与三遗漏负控通过 | 本里程碑工程范围通过，生产仍 NO-GO |
+
+新工程验证固定为 `763202df9cb3ce089721e5281371aff3eab58089`，
+[全部原始结果](../evidence/runs/operations-qa-763202d/README.md)与
+[新包证据](../evidence/20261117-package-763202d/README.md)分别保存。PR checkout 实际为
+merge `831a8e1`，输入 hash 与 head 相同，原始提交字段保持原样。只有明确记录的工程
+范围通过；持续容量、长稳、复制容灾、金融签核及真实资金启用均未通过。
 
 `7ae94eb` 的[三本地及八份 CI 原始结果](../evidence/runs/operations-qa-7ae94eb/README.md)
 全部保留。PR checkout 是 merge 提交 `bd8e5b4`，208 项验证输入与 head 完全相同，但不

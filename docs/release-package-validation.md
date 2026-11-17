@@ -1,6 +1,27 @@
 # Independent release package validation
 
-The current frozen candidate `4608ffeda0651f8dafd2cd151618a71ed99aa62e` passes
+The current frozen candidate `763202df9cb3ce089721e5281371aff3eab58089` passes a
+new complete package exercise. Its sdist contains all **1475 tracked files**
+with exact bytes, including the original historical CI ZIP. Both archives have
+the dynamic **49 Python files plus dashboard**, with runtime tree SHA-256
+`f57e7124063f35ff996132d4d1fc893fae39c8b67d27aa52458c20b1859d631e`.
+A new venv actually passes isolated CLI/protocol **8/8**, view smoke **3/3**, all
+eight console commands and no-`.git` sdist checks **7/1/4**, with no skips.
+Helpers and copied hashes are recomputed from this exact source.
+
+The [763202d artifact hashes and raw evidence](../evidence/20261117-package-763202d/README.md)
+and [exact commands](../evidence/20261117-package-763202d/commands.txt) retain the
+new runs. The tracked ZIP is byte-identical in source, sdist and unpacked source;
+its recorded PR-merge SHA and failed historical CI result remain unchanged.
+Two actual runtime-omission controls and a ZIP-only omission control each make
+the primary gate exit 1. The ZIP-only control preserves both runtime maps and
+fails the all-tracked-source gate. Byte identity with `7ae94eb` is independently
+checked and supplies no borrowed functional PASS. Full matrix/CI qualification
+belongs to the integration gate. This package exercise runs no six-hour or
+pressure load and changes no production/HA/real-funds scope;
+`production_approved` remains false.
+
+The earlier frozen candidate `4608ffeda0651f8dafd2cd151618a71ed99aa62e` passes
 new independent package acceptance: all **1258 tracked files** at that commit
 are exact in the sdist, and both artifacts contain the dynamic **50 runtime
 files**, including `failure_diagnostics.py`. A new venv passes the actual

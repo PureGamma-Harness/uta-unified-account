@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-operations-freeze-763202d/tools/verify_release_archives.py",
+    "--source",
+    "/workspace/uta-operations-freeze-763202d",
+    "--commit",
+    "763202df9cb3ce089721e5281371aff3eab58089",
+    "--wheel",
+    "/tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+    "--sdist",
+    "/tmp/uta-release-763202d-0AyiOQ/ci-zip-checks/negative-missing-ci-zip.tar.gz",
+    "--output",
+    "/tmp/uta-release-763202d-0AyiOQ/ci-zip-checks/negative-zip-report.json"
+  ],
+  "case": "actual_sdist_missing_ci_zip_rejected",
+  "checks": {
+    "entry_points": true,
+    "legacy_fixture_licensed": true,
+    "legacy_fixture_pinned": true,
+    "sdist_required_files_exact": false,
+    "sdist_runtime_exact": true,
+    "version": true,
+    "wheel_runtime_exact": true
+  },
+  "cwd": "/workspace/uta-package-763202d",
+  "negative_archive_sha256": "f92103a792e29481b47be43cc4dd0867434af5c5564f4743e36c0db0b56afb5c",
+  "passed": true,
+  "production_approved": false,
+  "removed_member": "evidence/runs/startup-producer-fixture/original-ci/artifact.zip",
+  "returncode": 1,
+  "sdist_missing": [
+    "evidence/runs/startup-producer-fixture/original-ci/artifact.zip"
+  ],
+  "source_commit": "763202df9cb3ce089721e5281371aff3eab58089"
+}
