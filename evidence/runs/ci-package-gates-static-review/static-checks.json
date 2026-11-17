@@ -1,0 +1,154 @@
+{
+  "artifact_report_allowlist": [
+    "${{ runner.temp }}/uta-package-artifact-manifest.json",
+    "${{ runner.temp }}/uta-installed-validation/installed-report.json",
+    "${{ runner.temp }}/uta-installed-validation/installed-cli-tests.txt",
+    "${{ runner.temp }}/uta-installed-validation/uta*.stdout.txt",
+    "${{ runner.temp }}/uta-installed-validation/uta*.stderr.txt"
+  ],
+  "bash_syntax_checks": [
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Record actual runtime and SQLite build before tests"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Run unit tests"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Compile source"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Run demo"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Preserve and replay research scenario"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Run transactional acceptance scenario"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore bounded reservation model"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore bounded paired settlement model"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore bounded grouped receipt protocol"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore bounded shard scheduling and commit retry models"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore durable command receipt and recovery protocol"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore bounded managed writer and liquidation receipt models"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Explore proposed market epoch and financial batch protocols"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Build installable wheel"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Build and verify exact source distribution and wheel"
+    },
+    {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "step": "Verify installed package outside source tree"
+    }
+  ],
+  "builds_executed": 0,
+  "changed_paths": [
+    ".github/workflows/ci.yml",
+    "docs/automated-package-gates.md"
+  ],
+  "default_pr_checkout_and_actual_github_sha_preserved": true,
+  "file_sha256": {
+    ".github/workflows/ci.yml": "aec9acb103184c984cda33d17c6dd1641db1f652131cb9aa13857b5397347edc",
+    ".gitignore": "a9387425be10889a2626ee067aec754f9ad11c49fc7aef22dd7e30cfdacf9971",
+    "docs/automated-package-gates.md": "f6d5fe61c395becad96b20dc9aa247615cfc16c14699900f616eed717900ef07",
+    "tests/test_durable_cli.py": "401638704e0b0c0d0ba7bd3b1e116b1db266eb16c31f880518021b04a242bf3f",
+    "tools/validate_installed_release.py": "4bd057848f445d6750c83527020f7d49e8a6645aa7584781a7fb1d03d9eeda0c",
+    "tools/verify_release_archives.py": "5e45cd110df625db900435336d4e906f3ab6ccfc10ff362d1c7034de67afbfbc"
+  },
+  "functional_checker_configured_without_identity_only": true,
+  "matrix_python_versions": [
+    "3.10",
+    "3.11",
+    "3.12",
+    "3.13"
+  ],
+  "ordered_package_steps": [
+    "Build installable wheel",
+    "Build and verify exact source distribution and wheel",
+    "Verify installed package outside source tree",
+    "Preserve exact package and installed validation evidence",
+    "Retain installable review artifact"
+  ],
+  "package_result_proven": false,
+  "private_artifact_examples_matched": 0,
+  "production_approved": false,
+  "python_heredocs_syntax_checked": 2,
+  "reviewed_commit": "1eaefb89e0e161033abcd41b8538a7284657f20f",
+  "runtime_or_database_migration_changes": false,
+  "runtime_tests_executed": 0,
+  "scope": "independent_static_ci_package_contract_review",
+  "scoped_static_blockers": [],
+  "services_started": 0,
+  "sql_executed": 0,
+  "static_expected_functional_cases": 8,
+  "wheel_sdist_review_patterns": [
+    "dist/*.whl",
+    "dist/*.tar.gz"
+  ],
+  "workflow_runs_executed": 0,
+  "yaml_parser": "PyYAML BaseLoader",
+  "yaml_parser_version": "6.0.3"
+}
