@@ -440,11 +440,12 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
             # final fresh fenced COMMIT below checks actual ownership/expiry.
             initialization.check()
             initialization.finish()
-        # Transfer the actual last renewal start, not the end of slow startup.
-        renew_at = initialization.last_renew_started + settings["lease_seconds"] / 3
-        if stop.is_set() or os.getppid() != parent_pid:
-            return
-        ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
+            # Keep same-PID actor exclusion through READY publication. Transfer
+            # the actual renewal start, not the end of slow initialization.
+            renew_at = initialization.last_renew_started + settings["lease_seconds"] / 3
+            if stop.is_set() or os.getppid() != parent_pid:
+                return
+            ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
         background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:
             now = monotonic()
