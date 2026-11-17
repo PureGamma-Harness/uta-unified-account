@@ -1,0 +1,31 @@
+{
+  "clock_scope": "real datetime.now(UTC) and monotonic; synthetic prices; original static fixture unchanged",
+  "wall_begin": "2026-11-17T15:00:14.357521+00:00",
+  "wall_end": "2026-11-17T15:00:22.989612+00:00",
+  "monotonic_elapsed_seconds": 8.632090508996043,
+  "first_sid": "market:d1da6e8d4b2d5749a2532b1191eb3a93537f04c0122391488c0cbe08ba1284de",
+  "second_sid": "market:a331f1eb3d2b85806c4651b833a977607d1112d1be06b36cf23996544c490889",
+  "selected_at": "2026-11-17T15:00:15.131488+00:00",
+  "last_checked_at": "2026-11-17T15:00:15.369389+00:00",
+  "recorded_at": "2026-11-17T15:00:15.369403+00:00",
+  "stale_receipt": {
+    "command_id": "realtime-stale",
+    "sequence": 3,
+    "account_id": "alice",
+    "kind": "BORROW",
+    "state": "REJECTED",
+    "ack": "durably_queued",
+    "result": null,
+    "error": {
+      "code": "market_unavailable",
+      "message": "trusted market snapshot is invalid or stale",
+      "status": 503
+    },
+    "attempts": 0,
+    "last_error": null,
+    "enqueued_at": "2026-11-17T15:00:19.589163+00:00",
+    "completed_at": "2026-11-17T15:00:20.024310+00:00",
+    "next_attempt_at": null
+  },
+  "physical_commit_at": null
+}

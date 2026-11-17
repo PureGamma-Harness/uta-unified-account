@@ -1,0 +1,33 @@
+{
+  "scope": "new actual real UTC/monotonic clock runtime services and native freshSID publication after acquire; original static fixture unchanged; true 5-second expiry, known stale rejection, changed SID recovery",
+  "source_commit": "2176bc012d5af3f84d68284a63ab627f6b895cb7",
+  "source_sha256": {
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "tests/credit_v2_runtime_fixture.py": "69d776ca98a649558047c98af8387c654f3996e66a7b12d6f88ba9ba8ffb925a",
+    "tests/test_credit_v2_realtime_clock.py": "02a9b70cfc94c30768001723df4c1e8563f2d388d74d79ed636410d0ccc648f8"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_realtime_clock",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 45,
+  "begin": "2026-11-17T15:00:11.243196+00:00",
+  "end": "2026-11-17T15:00:23.016342+00:00",
+  "elapsed_seconds": 11.7731515580017,
+  "exit_code": 0,
+  "raw_sha256": "427354d0089b47d9365f553c3d1c7e261657704750b58ad251489efbd0eb9938",
+  "private_original_database_retained": true
+}
