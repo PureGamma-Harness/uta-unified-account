@@ -242,12 +242,30 @@ class OwnedStartupTests(unittest.TestCase):
         self.assertEqual(rejected.exception.code, "startup_schema_changed")
 
     def test_real_verified_context_cannot_be_rebound_to_a_different_ledger_object(self):
-        with self.assertRaises(StartupError) as rejected:
-            with self.context() as initialization:
-                exchange = self.construct(initialization)
-                exchange.ledger = object()
+        initialization = self.context()
+        initialization.__enter__()
+        try:
+            # Setup failures must remain setup failures, with their original
+            # keeper cause. They are not evidence that ledger rebinding failed.
+            exchange = self.construct(initialization)
+            initialization.check()
+            initialization._stop_keeper()
+            initialization._renew()  # Genuine successful ACK, unchanged .4 TTL.
+            initialization.check()
+            self.assertIs(exchange.ledger, initialization._ledger)
+            substituted = object()
+            exchange.ledger = substituted
+            self.assertIs(exchange.ledger, substituted)
+            with self.assertRaises(StartupError) as rejected:
                 initialization.finish()
-        self.assertEqual(rejected.exception.code, "startup_not_verified")
+            self.assertEqual(rejected.exception.code, "startup_not_verified",
+                             {"substituted": exchange.ledger is substituted,
+                              "keeper_failure": repr(initialization._failure)})
+            self.assertFalse(initialization._finished)
+        finally:
+            # A caught expected rejection is not a successful context exit.
+            # Use the same failure cleanup without inventing _finished=True.
+            initialization._cleanup()
 
     def test_private_startup_rejects_historical_migration_before_any_version_change(self):
         with self.bound.transaction() as conn:

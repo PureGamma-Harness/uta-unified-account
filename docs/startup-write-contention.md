@@ -48,3 +48,15 @@ of setup failures and clean an unfinished context explicitly; catching the
 expected exception inside a normal `with` exit would otherwise introduce
 `startup_not_finished`. Cross-TTL, expiry, unknown-COMMIT and invalidation cases
 remain independent gates.
+
+The binding fixture now completes context entry and construction outside its
+rejection assertion, checks the genuine lifecycle, drains the keeper and obtains
+one actual synchronous renewal with the same .4-second TTL. Only then does it
+substitute and prove the ledger object changed. Only `finish()` is inside the
+exact `startup_not_verified` assertion. An unfinished context is explicitly
+cleaned without claiming a successful exit. Existing keeper failures are checked
+before that synchronous call, so this cannot wash an earlier unknown renewal
+into success. The scoped case passed on CPython 3.10 in 0.107 seconds; its raw
+output is `/tmp/uta-startup-binding-scoped-py310.txt`. The independent actual
+writer-contention case still fails on the unchanged runtime and remains a
+separate availability gate.
