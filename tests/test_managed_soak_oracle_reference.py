@@ -122,17 +122,21 @@ class ArchivedEvidenceOracleReferenceTests(unittest.TestCase):
     def test_original_historical_fixture_is_a_valid_oracle_control_only(self):
         self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
 
-    def test_wrong_artifact_content_id_currently_passes_the_full_oracle(self):
+    def test_wrong_artifact_content_id_is_rejected_without_repair(self):
         self.connection.execute("UPDATE uta_code_artifacts SET manifest='{}'")
         row = self.connection.execute("SELECT artifact_id,manifest FROM uta_code_artifacts LIMIT 1").fetchone()
         self.assertNotEqual(row[0], "artifact:" + sha256(row[1].encode()).hexdigest())
-        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+        with self.assertRaisesRegex(RuntimeError, "artifact content digest"):
+            self.view.verify(3, full=True)
+        self.assertEqual(self.connection.execute("SELECT manifest FROM uta_code_artifacts LIMIT 1").fetchone()[0], "{}")
 
-    def test_wrong_policy_content_id_currently_passes_the_full_oracle(self):
+    def test_wrong_policy_content_id_is_rejected_without_repair(self):
         self.connection.execute("UPDATE uta_risk_policies SET payload='{}'")
         row = self.connection.execute("SELECT policy_id,payload FROM uta_risk_policies LIMIT 1").fetchone()
         self.assertNotEqual(row[0], "policy:" + sha256(row[1].encode()).hexdigest())
-        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+        with self.assertRaisesRegex(RuntimeError, "policy content digest"):
+            self.view.verify(3, full=True)
+        self.assertEqual(self.connection.execute("SELECT payload FROM uta_risk_policies LIMIT 1").fetchone()[0], "{}")
 
     def test_missing_decision_artifact_is_already_rejected(self):
         self.connection.execute("UPDATE uta_code_artifacts SET artifact_id=?", ("artifact:" + sha256(b"{}").hexdigest(),))
@@ -143,6 +147,49 @@ class ArchivedEvidenceOracleReferenceTests(unittest.TestCase):
         self.connection.execute("UPDATE uta_market_history SET payload='{}'")
         with self.assertRaisesRegex(RuntimeError, "digest"):
             self.view.verify(3, full=True)
+
+    def test_rehashed_artifact_with_old_decision_reference_is_rejected(self):
+        self.connection.execute("UPDATE uta_code_artifacts SET artifact_id=?,manifest='{}'",
+                                ("artifact:" + sha256(b"{}").hexdigest(),))
+        with self.assertRaisesRegex(RuntimeError, "reference"):
+            self.view.verify(3, full=True)
+
+    def test_rehashed_policy_with_old_decision_reference_is_rejected(self):
+        self.connection.execute("UPDATE uta_risk_policies SET policy_id=?,payload='{}'",
+                                ("policy:" + sha256(b"{}").hexdigest(),))
+        with self.assertRaisesRegex(RuntimeError, "reference"):
+            self.view.verify(3, full=True)
+
+    def test_duplicate_keys_noncanonical_and_nonfinite_archive_json_are_rejected(self):
+        for raw in ('{"a":1,"a":2}', '{} ', '{"a":NaN}', '{"a":1e9999}', '[]'):
+            with self.subTest(raw=raw):
+                original = self.connection.execute("SELECT artifact_id,manifest FROM uta_code_artifacts LIMIT 1").fetchone()
+                self.connection.execute("UPDATE uta_code_artifacts SET manifest=? WHERE artifact_id=?", (raw, original[0]))
+                with self.assertRaisesRegex(RuntimeError, "canonical JSON"):
+                    self.view.verify(3, full=True)
+                self.connection.execute("UPDATE uta_code_artifacts SET manifest=? WHERE artifact_id=?", (original[1], original[0]))
+
+    def test_ambiguous_archive_id_is_rejected(self):
+        # Memory-only schema fault removes the primary-key constraint so the
+        # audit's own ambiguity check can be observed; no live guard is removed.
+        self.connection.execute("CREATE TABLE duplicated_artifacts AS SELECT * FROM uta_code_artifacts")
+        self.connection.execute("DROP TABLE uta_code_artifacts")
+        self.connection.execute("ALTER TABLE duplicated_artifacts RENAME TO uta_code_artifacts")
+        self.connection.execute("INSERT INTO uta_code_artifacts SELECT * FROM uta_code_artifacts LIMIT 1")
+        with self.assertRaisesRegex(RuntimeError, "ambiguous archived artifact"):
+            self.view.verify(3, full=True)
+
+    def test_corrupt_unreferenced_archive_is_not_silently_discarded(self):
+        self.connection.execute("INSERT INTO uta_code_artifacts(artifact_id,manifest) VALUES (?,?)",
+                                ("artifact:" + "0" * 64, "{}"))
+        with self.assertRaisesRegex(RuntimeError, "artifact content digest"):
+            self.view.verify(3, full=True)
+
+    def test_content_verification_does_not_call_the_production_audit_replay(self):
+        with patch("uta.decision_audit.DecisionAudit.artifact", side_effect=AssertionError("production artifact helper")), \
+                patch("uta.decision_audit.DecisionAudit.policy_record", side_effect=AssertionError("production policy helper")), \
+                patch("uta.decision_audit.DecisionAudit.replay", side_effect=AssertionError("production financial replay")):
+            self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
 
     def test_extra_gross_debt_row_is_rejected_even_when_its_amounts_are_zero(self):
         self.connection.execute("INSERT INTO uta_liabilities(account_id,asset,principal,interest) VALUES (?,?,?,?)",

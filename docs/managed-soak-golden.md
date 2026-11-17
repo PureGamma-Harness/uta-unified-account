@@ -202,6 +202,11 @@ four ORDER_ACCEPTED and four FILL_CONFIRMED decisions with real market, policy
 and artifact links, assuming an otherwise empty isolated trading fixture. Check
 full market payloads, artifact/policy hashes and each order/fill link. Existing
 archive replay can be an additional check but is not the independent cash oracle.
+The independent full audit requires canonical JSON objects and exact stored-byte
+content IDs for all market, artifact and policy rows, rejects duplicate IDs and
+missing decision references, and also rejects corrupt unreferenced archive rows.
+It never executes an archived manifest or substitutes production financial replay
+for these independent digest checks.
 The current audit capability explicitly does not archive risk-reducing cancels,
 repayments or new credit decisions as risk decisions; their command, credit and
 journal receipts remain required evidence, and this gap must be reported.

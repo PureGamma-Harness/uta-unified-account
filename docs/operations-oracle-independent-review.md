@@ -9,7 +9,8 @@ Production remains **NO-GO**.
 
 Original incorrect behavior and all nine characterization tests are retained at
 `6fc64909fa702afad0ceab7189d7b29e5328eaca`, directly after the reviewed tool SHA.
-The next tool-only correction requires the exact three account IDs and USD/BTC
+The fixed-budget correction `e2e19bd29079d4b9008c5147fdf3dab517c46ec9`
+requires the exact three account IDs and USD/BTC
 scales, compares every ledger owner/asset against a hand-derived closed gross
 budget, and checks the complete debt projection plus one initial pool funding,
 one initial loan and exactly one two-satoshi repayment per completed round.
@@ -20,8 +21,23 @@ money. Existing complete posting conservation/projection and business counts
 remain required. Extra accounts or cash are rejected and retained for evidence;
 the verifier never removes them or adds a compensating top-up.
 
-The historical findings below describe the immutable origin. Archive hash
-coverage remains a separately tracked correction at this stage.
+## Archived-content correction
+
+A separate tool-only correction checks every stored market, artifact and policy
+object, including all decision-referenced objects, with independent standard
+library JSON and SHA-256 operations. Stored bytes must be a canonical JSON
+object without duplicate keys or nonfinite values; content IDs must equal the
+appropriate `market:`, `artifact:` or `policy:` prefix plus the exact-byte digest.
+Market `content_digest` must also agree. Duplicate identities are ambiguous and
+fail. Existing decision joins still reject missing/rehashed objects whose old
+IDs remain referenced; business counts and journal/projection checks remain in
+place. Corrupt unused archive rows are retained and rejected as well.
+
+The verifier never evaluates archived code, invokes a production financial
+replay, rewrites an ID/reference or repairs a payload. These local unsigned
+content checks establish internal consistency, not a signature or protection
+against an administrator consistently rewriting all history. The historical
+findings below describe the immutable origin preserved in `6fc6490`.
 
 Two acceptance-oracle gaps were concretely reproduced. These are validation
 coverage defects, not customer API vulnerabilities or evidence of real money loss.
@@ -83,8 +99,16 @@ Reproduce the independent characterization tests with:
 python -m unittest discover -s tests -p test_managed_soak_oracle_reference.py -v
 ```
 
-These tests initially assert the incorrect origin behavior to preserve its
-reproduction. A subsequent tool-only fix must require rejection of the unchanged
-drifted/faulted inputs, retain correct budget/matching/debt controls, and verify
-content IDs with independent hash/JSON checks rather than calling production
-financial replay as its sole oracle.
+The original nine tests in `6fc6490` assert the incorrect origin behavior to
+preserve its reproduction. The current **17 reference tests** instead require
+rejection of the unchanged drifted/faulted inputs and retain valid budget,
+matching and debt controls. All 17 passed, along with the existing **5 managed
+soak tests** (each actual workload configured for four seconds) and **9 release
+qualification gate tests**. The five-test suite took 10.126 seconds total; no
+individual long workload was started. `git diff --check` passed.
+
+Only benchmark/oracle tools, tests and documentation changed. No `uta` runtime,
+operations integration worktree, root checkout or old long soak was modified.
+These source changes require a newly frozen candidate and a fresh complete
+validation report before the long-run gate can admit any future >60-second job.
+This review does not produce that report or authorize a long/production run.

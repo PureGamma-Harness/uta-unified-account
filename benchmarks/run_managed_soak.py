@@ -57,6 +57,38 @@ def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
+def _verify_archive_content(connection):
+    """Independent exact-byte JSON/content-ID checks, never execute or replay."""
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("duplicate JSON key")
+            result[key] = value
+        return result
+    def nonfinite(_):
+        raise ValueError("nonfinite JSON value")
+    for label, table, identity, content, prefix in (
+            ("market", "uta_market_history", "snapshot_id", "payload", "market:"),
+            ("artifact", "uta_code_artifacts", "artifact_id", "manifest", "artifact:"),
+            ("policy", "uta_risk_policies", "policy_id", "payload", "policy:")):
+        seen = set()
+        for row in connection.execute(f"SELECT * FROM {table}"):
+            key, raw = row[identity], row[content]
+            if key in seen:
+                raise RuntimeError("ambiguous archived " + label + " content identity")
+            seen.add(key)
+            try:
+                value = json.loads(raw, object_pairs_hook=pairs, parse_constant=nonfinite)
+                if not isinstance(raw, str) or not isinstance(value, dict) or canonical(value) != raw:
+                    raise ValueError("canonical JSON object required")
+            except (ValueError, TypeError, RecursionError) as error:
+                raise RuntimeError("archived " + label + " canonical JSON is invalid") from error
+            digest = sha256(raw.encode("utf-8")).hexdigest()
+            if key != prefix + digest or label == "market" and row["content_digest"] != digest:
+                raise RuntimeError("archived " + label + " content digest mismatch")
+
+
 def snapshot(version):
     return MarketSnapshot(version, datetime.now(timezone.utc),
         {"USD": AssetSpec(D(1), D(1)), "BTC": AssetSpec(D(100), D(".8"))},
@@ -695,9 +727,7 @@ class ManagedSoak:
                 for row in connection.execute("SELECT quantity,price,fee FROM uta_fills"):
                     if abs(Fraction(row[0])) != Fraction(1, 100) or Fraction(row[1]) != 100 or Fraction(row[2]) != Fraction(4, 10000):
                         raise RuntimeError("independent per-fill quantity/price/fee mismatch")
-                for row in connection.execute("SELECT payload,content_digest FROM uta_market_history"):
-                    if sha256(row[0].encode()).hexdigest() != row[1]:
-                        raise RuntimeError("archived market content digest mismatch")
+                _verify_archive_content(connection)
                 totals, projections = {}, {}
                 for row in connection.execute("SELECT account,asset,units FROM ledger_postings"):
                     key = row[0], row[1]
