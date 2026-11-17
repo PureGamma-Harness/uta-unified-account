@@ -71,3 +71,25 @@ branch and its test-only helper/tests, preserving raw evidence. Historical CI
 failure and overall production NO_GO remain unchanged.
 
 The first author preparation incorrectly collided with existing tests/test_failure_diagnostics.py. Its unexecuted overwrite/diff and provenance are retained under evidence/reviews/expired-gate-failure-5a/preparation-error. The bad local commit9ba is excluded from this corrected candidate ancestry; every existing test other than the one explicitly amended finally is byte-for-byte preserved.
+
+
+## First authorized pure validation
+
+Exact corrected candidate315a71d0bf67c872a048570038bdf328fb821544 ran the new
+unique suite once on CPU4 with Python3.13.5 at2026-11-17T15:54:24 UTC.
+All11 tests passed in0.116s; whole process duration was0.266144726s, within its
+3-second bound, without watchdog or changed source. Raw BEGIN/END/unittest and
+SHA manifest are under evidence/reviews/expired-gate-failure-5a/pure-once-315a.
+No SQL, service, original native testcase, or follow-up success rerun was used.
+This is test-helper verification only; another group/root review and a later full
+matrix remain required before a new freeze. It does not resolve runtime liveness.
+
+Drop counts describe explicit projection and collection/byte caps, not a global
+count of all possible redactions. Unknown code/type labels remain explicitly
+<unlisted>; unknown nested data summarized only by counters is never traversed.
+The author preparation collision was found before any test execution. The bad
+local9ba commit remains available solely for provenance and is not an ancestor of
+this corrected candidate. All172 existing test files are inventoried:171 are
+byte-identical to5a; the only existing-file difference is the exact six-line
+failure hook in test_durable_faults.py. Existing test_failure_diagnostics.py is
+restored byte-for-byte; the added suite has a new unique name.
