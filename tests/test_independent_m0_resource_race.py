@@ -30,7 +30,25 @@ class ResourceRaceContract(unittest.TestCase):
         with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
             self.assertEqual(m.resource_usage(self.private,self.public),dict(normal=1,escrow=0,cleanup=0,total=1))
     def test_case_tree_aux_disappears_between_enumeration_and_stat(self):
-        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):self.assertEqual(m.tree_bytes(self.case),1)
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):self.assertEqual(m.case_bytes(self.private,self.public,'B'),1)
+    def test_generic_tree_has_no_implicit_private_authority_role(self):
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
+            with self.assertRaises(m.GateError):m.tree_bytes(self.case)
+    def test_public_nested_private_layout_never_gets_aux_exception(self):
+        public_case=self.public/'case-B-safe';authority=public_case/'B/workload/authority';authority.mkdir(parents=True)
+        (authority/'shard-0000.sqlite3').write_bytes(b'm');self.aux=authority/'shard-0000.sqlite3-shm';self.aux.write_bytes(b'aux')
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
+            with self.assertRaises(m.GateError):m.case_bytes(self.private,self.public,'B')
+    def test_private_case_cannot_borrow_nested_other_case_layout(self):
+        authority=self.case/'P/workload/authority';authority.mkdir(parents=True)
+        (authority/'shard-0000.sqlite3').write_bytes(b'm');self.aux=authority/'shard-0000.sqlite3-shm';self.aux.write_bytes(b'aux')
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
+            with self.assertRaises(m.GateError):m.case_bytes(self.private,self.public,'B')
+    def test_explicit_private_case_role_does_not_accept_global_root_layout(self):
+        authority=self.case/'B/workload/authority';authority.mkdir(parents=True)
+        (authority/'shard-0000.sqlite3').write_bytes(b'm');self.aux=authority/'shard-0000.sqlite3-shm';self.aux.write_bytes(b'aux')
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
+            with self.assertRaises(m.GateError):m.tree_bytes(self.case,sqlite_aux_role='private_case')
     def test_stable_main_disappearance_is_not_retried(self):
         calls=[]
         def missing(path,*args,**kwargs):

@@ -118,11 +118,13 @@ def _resource_entries(root, observe, allow_missing_root=False):
             yield path,info,observe(path,info)
 
 def _sqlite_aux_location(path, anchors):
-    for anchor in anchors:
+    for role,anchor in anchors:
         try:relative=path.relative_to(anchor).as_posix()
         except ValueError:continue
-        patterns=[r'[BP]/workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)',r'runtime-probe/private\.sqlite3-(wal|shm)']
-        if anchor.name in {'B','P'}:patterns.append(r'workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)')
+        if role=='private_root':
+            patterns=[r'[BP]/workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)',r'runtime-probe/private\.sqlite3-(wal|shm)']
+        elif role=='private_case':patterns=[r'workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)']
+        else:raise GateError('resource_scan_role')
         if not any(re.fullmatch(pattern,relative) for pattern in patterns):continue
         return anchor,relative
     return None
@@ -180,11 +182,14 @@ def _tree_bytes_once(root, entries_limit, byte_limit, observe):
         if byte_limit is not None:need(total<=byte_limit,'case_output_cap')
     return total
 
-def tree_bytes(root, entries_limit=20000, byte_limit=None):
-    return _fresh_resource_scan(lambda observe:_tree_bytes_once(root,entries_limit,byte_limit,observe),(root,))
+def tree_bytes(root, entries_limit=20000, byte_limit=None, *, sqlite_aux_role=None):
+    need(sqlite_aux_role in {None,'private_root','private_case'},'resource_scan_role')
+    anchors=() if sqlite_aux_role is None else ((sqlite_aux_role,root),)
+    return _fresh_resource_scan(lambda observe:_tree_bytes_once(root,entries_limit,byte_limit,observe),anchors)
 
 def case_bytes(private, public, name):
-    total=tree_bytes(private/name,byte_limit=CASE_CAP)+tree_bytes(public/f'case-{name}-safe',byte_limit=CASE_CAP)
+    need(name in {'B','P'},'resource_case_name')
+    total=tree_bytes(private/name,byte_limit=CASE_CAP,sqlite_aux_role='private_case')+tree_bytes(public/f'case-{name}-safe',byte_limit=CASE_CAP)
     for path in private.iterdir():
         if path.name==f'context-{name}.json' or path.name.startswith(f'case-owner-{name}.'):
             info=path.lstat();need(stat.S_ISREG(info.st_mode),'case_metadata_file')
@@ -219,7 +224,7 @@ def _resource_usage_once(private, public, observe):
 
 def resource_usage(private, public):
     # Only private known SQLite sidecars qualify; public/unknown paths do not.
-    return _fresh_resource_scan(lambda observe:_resource_usage_once(private,public,observe),(private,))
+    return _fresh_resource_scan(lambda observe:_resource_usage_once(private,public,observe),(('private_root',private),))
 
 def validate_environment(approval, environment, actual, controller_sha, *, event='workflow_dispatch', event_commit=None):
     need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')
@@ -669,7 +674,7 @@ def case_pipeline(source, case, staged, name, profile, snapshot, cpu_ids):
     for path in paths:
         need(re.fullmatch(r'(worker-[0-9]+-pid-[0-9]+|dispatcher-[0-9]+)\.prof',path.name) is not None,'profile_filename')
         records.append(public_write(staged,f'{name}-{path.stem}.json',profile_semantic(path,source)))
-    need(tree_bytes(case)<=CASE_CAP and tree_bytes(staged)<=CASE_CAP,'case_output_cap')
+    need(tree_bytes(case,sqlite_aux_role='private_case')<=CASE_CAP and tree_bytes(staged)<=CASE_CAP,'case_output_cap')
     # All output bytes, hashes and fsyncs precede this completion record. Staged
     # partial files stay private after UNKNOWN and cannot enter upload manifests.
     return {'case':name,'status':'PASS','profile':profile,'source_commit':SOURCE,
