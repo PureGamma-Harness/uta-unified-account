@@ -63,8 +63,19 @@ Run one small suite on one CPU:
 taskset -c 0 python -m unittest tests.test_batch_cache_integration -v
 ```
 
-No live schema/config migration is introduced. Disabling both runtime flags in
-a subsequent managed startup retains their original default behavior; these
-tests do not authorize changing an existing authority's batch capability. A new
+No live schema/config migration is introduced. Zero numeric flags stop new
+batch grouping and NORMAL suppression; a batch-capable authority still requires
+capable code to recover existing attempts before READY. This does not turn its
+persistent batch capability into a legacy authority or authorize old-binary
+rollback. A new
 root freeze must independently run full correctness, CI and package gates. No
 previous 38- or 105-test result is promoted to that scope.
+
+Final committed tests `af6cf5c` passed three cases on each of CPython 3.10.22 /
+SQLite 3.53.1 (6.775 s), CPython 3.12.14 / SQLite 3.53.1 (6.767 s), and CPython
+3.13.5 / SQLite 3.46.1 (7.807 s), sequentially on CPU 0. Original logs, actual
+financial/native/recovery observations, source hashes and the actual driver are
+retained in [the evidence archive](../evidence/runs/batch-cache-combination/README.md).
+The archive also preserves the intermediate run and initial instrumentation
+failure with their narrower evidence limits. Runtime files remain byte-identical
+to the fixed 74e base. No corresponding production or capacity claim is made.

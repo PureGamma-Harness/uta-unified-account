@@ -1,0 +1,389 @@
+{
+  "source_base": "74e03a8",
+  "receipts": [
+    {
+      "command_id": "cid:alice",
+      "sequence": 3,
+      "account_id": "alice",
+      "kind": "SUBMIT_ORDER",
+      "state": "SUCCEEDED",
+      "ack": "durably_queued",
+      "result": {
+        "account_id": "alice",
+        "created_at": "2026-11-17T09:34:15.734450+00:00",
+        "decision_evidence": "recorded",
+        "decision_id": "decision:88eedbe52c1542357e58233ca178cbdc43637260a40459e40db40dc280d96716",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "order_id": "oid:alice",
+        "quantity": "1",
+        "reduce_only": false,
+        "reserved_margin": "10.04",
+        "risk_mode": "legacy_reference",
+        "status": "OPEN",
+        "symbol": "BTC-PERP",
+        "version": 2
+      },
+      "error": null,
+      "attempts": 0,
+      "last_error": null,
+      "enqueued_at": "2026-11-17T09:34:10.804411+00:00",
+      "completed_at": "2026-11-17T09:34:15.735630+00:00",
+      "next_attempt_at": null
+    },
+    {
+      "command_id": "cid:bob",
+      "sequence": 4,
+      "account_id": "bob",
+      "kind": "SUBMIT_ORDER",
+      "state": "SUCCEEDED",
+      "ack": "durably_queued",
+      "result": {
+        "account_id": "bob",
+        "created_at": "2026-11-17T09:34:15.737648+00:00",
+        "decision_evidence": "recorded",
+        "decision_id": "decision:3c91f375b0b4b73e732fddd8323404ef77fb4b440092a85686ecbb62fbef0d74",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "order_id": "oid:bob",
+        "quantity": "1",
+        "reduce_only": false,
+        "reserved_margin": "10.04",
+        "risk_mode": "legacy_reference",
+        "status": "OPEN",
+        "symbol": "BTC-PERP",
+        "version": 2
+      },
+      "error": null,
+      "attempts": 0,
+      "last_error": null,
+      "enqueued_at": "2026-11-17T09:34:10.809835+00:00",
+      "completed_at": "2026-11-17T09:34:15.738301+00:00",
+      "next_attempt_at": null
+    },
+    {
+      "command_id": "cid:carol",
+      "sequence": 5,
+      "account_id": "carol",
+      "kind": "SUBMIT_ORDER",
+      "state": "SUCCEEDED",
+      "ack": "durably_queued",
+      "result": {
+        "account_id": "carol",
+        "created_at": "2026-11-17T09:34:15.822423+00:00",
+        "decision_evidence": "recorded",
+        "decision_id": "decision:b57bb8880a2b7f98cc443bf56df48047240461d960a48441f12a73484699f96c",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "order_id": "oid:carol",
+        "quantity": "1",
+        "reduce_only": false,
+        "reserved_margin": "10.04",
+        "risk_mode": "legacy_reference",
+        "status": "OPEN",
+        "symbol": "BTC-PERP",
+        "version": 2
+      },
+      "error": null,
+      "attempts": 0,
+      "last_error": null,
+      "enqueued_at": "2026-11-17T09:34:10.814592+00:00",
+      "completed_at": "2026-11-17T09:34:15.823385+00:00",
+      "next_attempt_at": null
+    }
+  ],
+  "committed_outcomes": [
+    {
+      "commands": [
+        {
+          "command_id": "cid:alice",
+          "state": "SUCCEEDED"
+        },
+        {
+          "command_id": "cid:bob",
+          "state": "SUCCEEDED"
+        },
+        {
+          "command_id": "cid:carol",
+          "state": "PENDING"
+        }
+      ],
+      "executed": [
+        "cid:alice",
+        "cid:bob"
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "account_id": "alice",
+      "order_id": "oid:alice",
+      "admission_decision_id": "decision:88eedbe52c1542357e58233ca178cbdc43637260a40459e40db40dc280d96716"
+    },
+    {
+      "account_id": "bob",
+      "order_id": "oid:bob",
+      "admission_decision_id": "decision:3c91f375b0b4b73e732fddd8323404ef77fb4b440092a85686ecbb62fbef0d74"
+    },
+    {
+      "account_id": "carol",
+      "order_id": "oid:carol",
+      "admission_decision_id": "decision:b57bb8880a2b7f98cc443bf56df48047240461d960a48441f12a73484699f96c"
+    }
+  ],
+  "balances": [
+    [
+      "customer:alice",
+      "100000"
+    ],
+    [
+      "system:custody",
+      "-300000"
+    ],
+    [
+      "customer:bob",
+      "100000"
+    ],
+    [
+      "customer:carol",
+      "100000"
+    ]
+  ],
+  "order_events": [
+    {
+      "account_id": "alice",
+      "payload": "{\"account_id\":\"alice\",\"created_at\":\"2026-11-17T09:34:15.734450+00:00\",\"decision_evidence\":\"recorded\",\"decision_id\":\"decision:88eedbe52c1542357e58233ca178cbdc43637260a40459e40db40dc280d96716\",\"filled_quantity\":\"0\",\"limit_price\":\"100\",\"order_id\":\"oid:alice\",\"quantity\":\"1\",\"reduce_only\":false,\"reserved_margin\":\"10.04\",\"risk_mode\":\"legacy_reference\",\"status\":\"OPEN\",\"symbol\":\"BTC-PERP\",\"version\":2}"
+    },
+    {
+      "account_id": "bob",
+      "payload": "{\"account_id\":\"bob\",\"created_at\":\"2026-11-17T09:34:15.737648+00:00\",\"decision_evidence\":\"recorded\",\"decision_id\":\"decision:3c91f375b0b4b73e732fddd8323404ef77fb4b440092a85686ecbb62fbef0d74\",\"filled_quantity\":\"0\",\"limit_price\":\"100\",\"order_id\":\"oid:bob\",\"quantity\":\"1\",\"reduce_only\":false,\"reserved_margin\":\"10.04\",\"risk_mode\":\"legacy_reference\",\"status\":\"OPEN\",\"symbol\":\"BTC-PERP\",\"version\":2}"
+    },
+    {
+      "account_id": "carol",
+      "payload": "{\"account_id\":\"carol\",\"created_at\":\"2026-11-17T09:34:15.822423+00:00\",\"decision_evidence\":\"recorded\",\"decision_id\":\"decision:b57bb8880a2b7f98cc443bf56df48047240461d960a48441f12a73484699f96c\",\"filled_quantity\":\"0\",\"limit_price\":\"100\",\"order_id\":\"oid:carol\",\"quantity\":\"1\",\"reduce_only\":false,\"reserved_margin\":\"10.04\",\"risk_mode\":\"legacy_reference\",\"status\":\"OPEN\",\"symbol\":\"BTC-PERP\",\"version\":2}"
+    }
+  ],
+  "observations": {
+    "background-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177258154493,
+      "stats": {
+        "capacity": 8,
+        "size": 3,
+        "hits": 3,
+        "misses": 3,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "report": {
+        "state": "running",
+        "accounts": 3,
+        "plans": [
+          {
+            "account_id": "alice",
+            "state": "NORMAL"
+          },
+          {
+            "account_id": "bob",
+            "state": "NORMAL"
+          },
+          {
+            "account_id": "carol",
+            "state": "NORMAL"
+          }
+        ],
+        "linear_trades": 0,
+        "spot_trades": 0,
+        "blocked": [],
+        "normal_cache": {
+          "snapshot_started_ns": 45177242688834,
+          "snapshot_completed_ns": 45177245269008,
+          "accounts_total": 3,
+          "market_version": 1,
+          "revisit_round_bound": 2,
+          "skipped": 3,
+          "supervised": 0,
+          "completed_ns": 45177258113182
+        }
+      },
+      "ddl": []
+    },
+    "background-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182365835147,
+      "stats": {
+        "capacity": 8,
+        "size": 3,
+        "hits": 2,
+        "misses": 4,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "report": {
+        "state": "running",
+        "accounts": 3,
+        "plans": [
+          {
+            "account_id": "alice",
+            "state": "NORMAL"
+          },
+          {
+            "account_id": "bob",
+            "state": "NORMAL"
+          },
+          {
+            "account_id": "carol",
+            "state": "NORMAL"
+          }
+        ],
+        "linear_trades": 0,
+        "spot_trades": 0,
+        "blocked": [],
+        "normal_cache": {
+          "snapshot_started_ns": 45182343566923,
+          "snapshot_completed_ns": 45182345994866,
+          "accounts_total": 3,
+          "market_version": 1,
+          "revisit_round_bound": 2,
+          "skipped": 2,
+          "supervised": 1,
+          "completed_ns": 45182365797151
+        }
+      },
+      "ddl": []
+    },
+    "credit-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177025535931,
+      "nonzero": 0,
+      "query_only": 1
+    },
+    "credit-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182142255908,
+      "nonzero": 0,
+      "query_only": 1
+    },
+    "ledger-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177009500960,
+      "events": 3,
+      "query_only": 1
+    },
+    "ledger-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182131299588,
+      "events": 3,
+      "query_only": 1
+    },
+    "native-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177026984861,
+      "generation": 1,
+      "same_prepared": true,
+      "stats": {
+        "capacity": 8,
+        "size": 0,
+        "hits": 0,
+        "misses": 0,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "thread_started": false,
+      "report": {
+        "state": "not_started"
+      },
+      "settings": {
+        "lease_seconds": 5.0,
+        "poll_interval": 0.02,
+        "background_interval": 0.05,
+        "account_batch": 25,
+        "matches_per_symbol": 10,
+        "max_attempts": 3,
+        "financial_batch_size": 8,
+        "normal_cache_size": 8
+      },
+      "ddl": []
+    },
+    "native-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182143575259,
+      "generation": 2,
+      "same_prepared": true,
+      "stats": {
+        "capacity": 8,
+        "size": 0,
+        "hits": 0,
+        "misses": 0,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "thread_started": false,
+      "report": {
+        "state": "not_started"
+      },
+      "settings": {
+        "lease_seconds": 5.0,
+        "poll_interval": 0.02,
+        "background_interval": 0.05,
+        "account_batch": 25,
+        "matches_per_symbol": 10,
+        "max_attempts": 3,
+        "financial_batch_size": 8,
+        "normal_cache_size": 8
+      },
+      "ddl": []
+    },
+    "paused-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177278685649,
+      "size": 8
+    },
+    "prepared-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177308927981,
+      "attempt_id": "batch:4891704c1c924b2d9ca8760b44914fe9",
+      "size": 8
+    },
+    "ready-116801.json": {
+      "pid": 116801,
+      "observed_ns": 45177057417904,
+      "generation": 1,
+      "unresolved": 0,
+      "outcomes": {},
+      "stats": {
+        "capacity": 8,
+        "size": 0,
+        "hits": 0,
+        "misses": 0,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "ddl": []
+    },
+    "ready-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182192859941,
+      "generation": 2,
+      "unresolved": 0,
+      "outcomes": {
+        "batch:4891704c1c924b2d9ca8760b44914fe9": "RECOVERED"
+      },
+      "stats": {
+        "capacity": 8,
+        "size": 0,
+        "hits": 0,
+        "misses": 0,
+        "evictions": 0,
+        "ineligible": 0
+      },
+      "ddl": []
+    },
+    "recovered-116804.json": {
+      "pid": 116804,
+      "observed_ns": 45182181175069,
+      "attempt_id": "batch:4891704c1c924b2d9ca8760b44914fe9",
+      "disposition": "RECOVERED"
+    }
+  }
+}
