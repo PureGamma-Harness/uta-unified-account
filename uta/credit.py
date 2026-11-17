@@ -41,7 +41,7 @@ class CreditService:
         self._codec = Ledger(exchange.scales)
         if _startup is not None:
             from .startup import _OwnedStartup
-            if not isinstance(_startup, _OwnedStartup):
+            if type(_startup) is not _OwnedStartup:
                 raise ServiceError("invalid_configuration", "invalid internal startup context")
             _startup.require_ledger(exchange)
         with exchange._transaction() as connection:

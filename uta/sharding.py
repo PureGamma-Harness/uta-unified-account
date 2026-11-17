@@ -753,7 +753,7 @@ class ShardWorkerView:
         self.database = database.for_writer(token)
         if _startup is not None:
             from .startup import _OwnedStartup
-            if not isinstance(_startup, _OwnedStartup):
+            if type(_startup) is not _OwnedStartup:
                 raise ServiceError("invalid_configuration", "invalid internal startup context")
             _startup.require_database(self.database)
         options = dict(service_options or {})
