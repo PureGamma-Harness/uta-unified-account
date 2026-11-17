@@ -67,3 +67,75 @@ inspect PIDs 4471/8784, never read/change the earlier 887 source or databases,
 and never reset a failed job to manufacture success. Publish only a small
 allowlisted redacted summary; never recursively archive TLS/auth files or private
 complete clones. Reserve clone/output disk and address-space budgets beforehand.
+
+## Execution-target addendum: 763202d
+
+This addendum supersedes the execution target only; the 7ae94eb preregistration
+above is retained unchanged. The actual target is
+`763202df9cb3ce089721e5281371aff3eab58089` in
+`/workspace/uta-operations-freeze-763202d`. The genuine matching Python 3.12
+report is `/workspace/uta-operations-validation/763202d/python312/summary.json`,
+with 1,110 tests and SHA-256
+`5cf2d73afddbd0cd0da41e895ac46d61368f31d7f0f174741566660fb42e3201`.
+Its actual validator command selected
+`/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python`.
+The prepare invocation read those real fields; it did not fabricate an
+all-passed report or create a job.
+
+Root subsequently confirmed all three local runtime reports, CI and fresh
+package checks passed and issued **GO ONLY for one actual isolated 60-second
+smoke**. There is no six-hour authorization. No actual start/end time or result
+is filled in by this plan; those are recorded only when execution occurs.
+
+The separately prepared `tools/managed_observer_smoke.py` defaults to `prepare`.
+It keeps the frozen observer's main/finance bytes at f6f7167 unchanged and uses
+trusted PIPE capture with bounded stdout, unknown-key filtering, stderr hashes,
+actual PID/birth and measured launch/end timestamps. Only its explicit
+`produce-60` operation starts the real producer, with the exact report-selected
+Python, duration 60, worker-every 5 and parent-every 10. All child processes
+inherit one allowed CPU. Every output remains in a new owned `0700` scratch root.
+
+For the selected fresh scratch root
+`/workspace/uta-managed-observer-runs/763202d-smoke-20261117`, the exact sequence
+from the separately frozen observer checkout is:
+
+```text
+python -B tools/managed_observer_smoke.py produce-60
+  --job SCRATCH/job --output SCRATCH/observer --record producer-response.json
+
+python -B tools/managed_observer_smoke.py observe-once
+  --job SCRATCH/job --output SCRATCH/observer --record live-01.json
+
+python -B tools/managed_observer_smoke.py observe-once
+  --job SCRATCH/job --output SCRATCH/observer --record final-observation.json
+
+python -B tools/managed_observer_smoke.py long-gate
+  --job SCRATCH/job --output SCRATCH/observer --record expected-long-gate-rejection.json
+
+python -B tools/managed_observer_smoke.py short-cold
+  --job SCRATCH/job --output SCRATCH/observer --audit-output SCRATCH/audit
+```
+
+`SCRATCH` denotes that exact root. The producer command runs with cwd at the
+frozen 763 source and explicitly supplies the real 312 summary. The launcher's
+`launch.json` fixes the actual driver identity. Live observations run while the
+producer is active; the final observation runs after the recorded driver exits.
+The 60-second `long-gate` call must reject the unchanged 21,600-second/5,400-round
+gate and must not create a long-run receipt.
+
+`short-cold` is separate engineering-only evidence. It accepts only an actually
+cold, fully reconciled 60-second/15-round snapshot whose remaining long-run
+blockers are exactly the missing six-hour duration and long-run receipt. It
+independently probes the actual report-selected Python/SQLite runtime, makes a
+bounded **private complete** SQLite clone including exact validation sidecars,
+and invokes that exact Python with
+`benchmarks/run_managed_soak.py audit --directory PRIVATE_CLONE` from the frozen
+763 source. Its before/after independent golden/FK/business/checkpoint
+watermarks must agree. The nonce-bearing full clone is private and normally
+removed; only `audit/short-smoke-cold-audit.json` is eligible for reviewed export.
+That file explicitly says smoke-only, `long_run_receipt_issued=false`,
+`final_evidence_eligible=false`, and every long-run/production/10k flag false.
+
+Preparation verification executed 50 one-CPU tiny tests in 1.490 seconds, OK.
+They exercised short ordinary Python PIPE children and synthetic gate fixtures,
+not the real minute service. Actual service evidence is a later execution record.
