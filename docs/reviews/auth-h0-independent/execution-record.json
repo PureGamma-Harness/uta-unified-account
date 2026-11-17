@@ -1,0 +1,23 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "timeout",
+    "5s",
+    "python",
+    "docs/reviews/auth-h0-independent/check_plan.py"
+  ],
+  "cwd": "/workspace/uta-auth-h0-independent",
+  "exit_code": 0,
+  "stdout_capture": "/workspace/uta-auth-h0-independent-first.json",
+  "stderr_capture": "/workspace/uta-auth-h0-independent-first.stderr",
+  "checker_sha256": "0840e9d0e254269f5c204aa64648c5e264b5947842932a066138a6dc86e10fe3",
+  "stdout_sha256": "f1bc8e7fb5a094f8b2aa98069b7407f4eca7c032da92d860acf3db26ea122fd1",
+  "stderr_bytes": 0,
+  "tool_reported_wall_seconds": 0.014157291,
+  "separate_outer_monotonic_interval_recorded": false,
+  "timing_note": "The retained tool wall is shorter than internal UTC start/end span. Both are preserved; neither is advertised as a latency result or complete outer timing proof.",
+  "no_runtime_or_sql_execution": true,
+  "production_approved": false
+}
