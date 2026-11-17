@@ -1,0 +1,228 @@
+{
+  "runtime_commit": "61258109e10f4ea4609e03010d5f25716b2c4256",
+  "case_count": 7,
+  "passed_cases": 6,
+  "results": [
+    {
+      "case": "healthy-history-with-unrelated-profile-advance",
+      "passed": true,
+      "original_first_identity_unchanged": true,
+      "historical_profile1_and_new_profile2_both_retained": true,
+      "all_authorization_flags_false": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "lookup",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "capture",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "control",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        }
+      ],
+      "all_refused_503": true,
+      "no_auth_rows_changed_after_refusal_attempts": true,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 1,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "grant-empty",
+      "passed": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "lookup",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "capture",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "control",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        }
+      ],
+      "all_refused_503": true,
+      "no_auth_rows_changed_after_refusal_attempts": true,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 1,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "grant-boolean-epoch",
+      "passed": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "lookup",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "capture",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "control",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        }
+      ],
+      "all_refused_503": true,
+      "no_auth_rows_changed_after_refusal_attempts": true,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 1,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "grant-noncanonical-space",
+      "passed": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "lookup",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "capture",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "control",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        }
+      ],
+      "all_refused_503": true,
+      "no_auth_rows_changed_after_refusal_attempts": true,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 1,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "revocation-empty",
+      "real_revocation_positive_control": true,
+      "passed": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "lookup",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "capture",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        },
+        {
+          "operation": "control",
+          "refused": true,
+          "typed_code": "credit_auth_outcome_unknown",
+          "status": 503
+        }
+      ],
+      "all_refused_503": true,
+      "no_auth_rows_changed_after_refusal_attempts": true,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 1,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "grant-audit-link",
+      "passed": true
+    },
+    {
+      "operations": [
+        {
+          "operation": "reopen",
+          "refused": false
+        },
+        {
+          "operation": "lookup",
+          "refused": false,
+          "receipt_kind": "auth_query_only",
+          "authorization_flags_all_false": true
+        },
+        {
+          "operation": "capture",
+          "refused": false,
+          "receipt_kind": "auth_first_observation",
+          "authorization_flags_all_false": true
+        },
+        {
+          "operation": "control",
+          "refused": false
+        }
+      ],
+      "all_refused_503": false,
+      "no_auth_rows_changed_after_refusal_attempts": false,
+      "acceptances_before_probe": 1,
+      "acceptances_after_probe": 2,
+      "exact_schema_restored_and_fk_clean": true,
+      "case": "grant-audit-stale-prior-profile",
+      "actual_profile2_committed_before_original_grant": true,
+      "only_one_audit_revision_changed_2_to_1": true,
+      "passed": false
+    }
+  ],
+  "all_passed": false,
+  "finished_at": "2026-11-17T18:33:35.547622+00:00",
+  "literal_hmac_reference_used": true,
+  "fresh_owned_authdb_only": true,
+  "financial_or_source_permission": false
+}
