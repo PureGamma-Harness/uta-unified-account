@@ -172,6 +172,12 @@ def retained_policy(payload, market, policy):
          and static["certificate_id"] == identity("credit-budget:", static["certificate"]), "static policy/certificate digest differs")
     equal(capability["static_budget"], static, "static/capability documents disagree")
     need(capability["static_budget_id"] == payload["descriptor_id"] and capability["artifact_id"] == payload["artifact_id"], "capability references differ")
+    need(capability["production_approved"] is False and capability["synthetic"] is True
+         and capability["stage"] == "SYNTHETIC_INTERNAL", "non-synthetic capability unsupported")
+    for key in ("format", "audit_format", "source_format", "fifo_format", "native_format"):
+        need(type(capability[key]) is int and capability[key] == 2, "capability format differs: " + key)
+    for key in ("batch_size", "reserve_cache_size", "market_cache_size"):
+        need(type(capability[key]) is int and capability[key] == 0, "unsupported execution variant: " + key)
     need(static["authority_id"] == payload["source"]["authority_id"] and static["shard"] == capability["shard"], "authority/shard differs")
     REF.fields(static["certificate"]["assets"], ("BTC",), "static credit assets")
     spec = static["certificate"]["assets"]["BTC"]
@@ -192,6 +198,54 @@ def retained_policy(payload, market, policy):
     for key in ("account_limit_units", "local_asset_limit_units"):
         result[key] = REF.unit_string(payload["pre_state"]["limits"][key], key, nonnegative=True)
     return result
+
+
+def funding_content(payload):
+    """Check original capital legs and local claims, not a self-reported pool."""
+    rows = payload["pool_funding"]
+    need(type(rows) is list and bool(rows), "original pool funding missing")
+    total, commands, references, claims = 0, [], set(), {}
+    for pair in rows:
+        REF.fields(pair, ("command", "journal"), "original funding pair")
+        receipt, journal = pair["command"], pair["journal"]
+        need(receipt["scope"] == "pool" and receipt["kind"] == "pool_funded" and receipt["asset"] == "BTC", "funding kind differs")
+        command, reference = receipt["command_id"], receipt["source_reference"]
+        need(type(command) is str and command and command not in commands
+             and type(reference) is str and reference and reference not in references, "duplicate/empty funding identity")
+        commands.append(command)
+        references.add(reference)
+        amount = decimal_units(receipt["amount"], "original funded capital")
+        need(amount > 0, "nonpositive funding amount")
+        total += amount
+        claims[(command, reference)] = amount
+        event_id = identity("credit:", ["pool", command])
+        need(journal["event_id"] == receipt["journal_event_id"] == event_id, "original funding event differs")
+        need(type(journal["sealed"]) is int and journal["sealed"] == 1, "unsealed original funding")
+        sequence = REF.integer(journal["sequence"], "funding sequence", nonnegative=True)
+        need(0 < sequence <= payload["pre_state"]["journal_head"]["sequence"], "funding lies after original prestate")
+        legs = [{"ordinal": 0, "account": "system:credit-capital", "asset": "BTC", "units": -amount},
+                {"ordinal": 1, "account": "system:credit-pool", "asset": "BTC", "units": amount}]
+        wire_legs = [{**leg, "units": str(leg["units"])} for leg in legs]
+        equal(journal["postings"], wire_legs, "funding capital/pool legs differ")
+        fingerprint, event_hash = REF.journal_hashes(sequence, event_id, journal["previous_hash"], legs)
+        need(journal["fingerprint"] == fingerprint and journal["event_hash"] == event_hash, "funding journal hash differs")
+        result = document(receipt["result"])
+        for key in ("command_id", "asset", "amount", "source_reference", "journal_event_id"):
+            equal(result[key], receipt[key], "original funding receipt differs: " + key)
+    need(commands == sorted(commands), "funding order differs")
+    before = payload["pre_state"]["credit"]
+    need(total == REF.unit_string(before["pool_units"], "pool", nonnegative=True)
+         + REF.unit_string(before["shard_principal_units"], "aggregate principal", nonnegative=True), "funded capital does not reconcile gross pool/principal")
+    static = document(payload["static_budget"])
+    local = [row for row in static["certificate"]["assets"]["BTC"]["allocations"] if row["shard"] == static["shard"]]
+    need(len(local) == 1, "local opening allocation ambiguous")
+    local = local[0]
+    need(total == REF.unit_string(local["opening_principal_units"], "opening principal", nonnegative=True)
+         + REF.unit_string(local["opening_pool_units"], "opening pool", nonnegative=True), "opening capital differs from original funding")
+    for claim in local["funding_claims"]:
+        need(claims.get((claim["command_id"], claim["source_reference"]))
+             == REF.unit_string(claim["funded_units"], "funding claim", nonnegative=True), "static funding claim differs from original journal")
+    return total
 
 
 def compare_risk(observed, policy, state, *, market, base):
@@ -252,6 +306,9 @@ def check_observation(observation):
     manifest = document(artifact["manifest"])
     need(artifact["artifact_id"] == payload["artifact_id"] == identity("credit-artifact:", manifest), "artifact digest differs")
     need(manifest["signed"] is False and manifest["activation_permission"] is False, "artifact must grant no activation")
+    need(manifest["source_digest"] == REF.digest(manifest["source_files"]), "artifact source map digest differs")
+    need(manifest["loaded_engine_digest"] == REF.digest({"functions": manifest["loaded_credit_engine"],
+         "constants": manifest["loaded_credit_constants"]}), "artifact loaded-engine digest differs")
     REF.checkpoint_contract(market["observed_at"], payload["selected_at"], payload["last_checked_at"],
         payload["market_snapshot_id"], market_row["snapshot_id"], max_age_us=policy["base_policy"]["max_price_age_us"],
         future_us=policy["max_future_skew_us"], recorded=payload["recorded_at"])
@@ -261,6 +318,7 @@ def check_observation(observation):
     REF.fields(post, POST, "poststate")
     need(pre["market_snapshot_id"] == payload["market_snapshot_id"] and pre["selected_at"] == payload["selected_at"], "preselection differs")
     own_policy = retained_policy(payload, market, policy)
+    funded_units = funding_content(payload)
     before = retained_state(pre, account_id=payload["account_id"])
     after = retained_state(post, account_id=payload["account_id"])
     amount = REF.unit_string(payload["amount_units"], "borrow amount", nonnegative=True)
@@ -317,6 +375,7 @@ def check_observation(observation):
             "journal_event_id": observation["journal"]["event_id"], "gross_before": expected["gross_components"]["before"],
             "gross_after": expected["gross_components"]["after"], "authorized_before_units": str(REF.authorized_quote(own_policy, before)),
             "observed_borrow_journal_legs": len(observation["journal"]["postings"]),
+            "original_funded_capital_units": str(funded_units),
             "expected_postings_used_as_oracle": False, "interest_cash_balance_observed": False,
             "SQL_COMMIT_native_restart_provenance": "PENDING_SEPARATE_EXECUTION_AND_REOPEN_EVIDENCE",
             "production_approved": False}

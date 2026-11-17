@@ -2,6 +2,7 @@
 from copy import deepcopy
 from fractions import Fraction as F
 import importlib.util
+import json
 from pathlib import Path
 import unittest
 
@@ -23,6 +24,51 @@ def manual_gross_wire():
             "shard_interest_units": "1000000", "pool_units": "90000000", "principal_receivable_units": "10000000",
             "interest_receivable_units": "1000000"},
         "limits": {"account_limit_units": "1000000000", "local_asset_limit_units": "10000000000"}}
+
+
+def artificial_parameters():
+    documents = json.loads((ROOT/"tests/fixtures/managed_credit_v1_canonical_example.json").read_text())["documents"]
+    market = json.loads(documents["market_snapshot"]["canonical_payload"])
+    base = {"risk_mode": "phase1_cross", "scales": {"USD": 8, "BTC": 8}, "fee_rate": "0",
+        "execution_options": {"reserve_cache_size": 0, "market_cache_size": 0},
+        "catalog": json.loads(documents["catalog"]["canonical_payload"]),
+        "rules": json.loads(documents["risk_rules"]["canonical_payload"])}
+    allocation = {"shard": 0, "authority_id": "manual:0", "limit_units": "50000000",
+        "opening_principal_units": "40000000", "opening_interest_units": "0", "opening_pool_units": "60000000",
+        "funding_claims": [{"command_id": "pool:0", "source_reference": "manual:capital:0", "funded_units": "100000000"}]}
+    static = {"authority_id": "manual:0", "shard": 0, "credit_policy": {"new_borrow_fee_rate": "0", "new_interest_rate": "0"},
+              "certificate": {"assets": {"BTC": {"scale": 8, "global_limit_units": "100000000", "allocations": [allocation,
+                  {**allocation, "shard": 1, "authority_id": "manual:1"}]}}}}
+    static["credit_policy_id"] = REF.digest(static["credit_policy"])
+    static["credit_policy_id"] = "credit-policy:"+static["credit_policy_id"]
+    static["certificate_id"] = "credit-budget:"+REF.digest(static["certificate"])
+    descriptor = "credit-native:"+REF.digest(static)
+    capability = {"static_budget": static, "static_budget_id": descriptor, "shard": 0, "artifact_id": "manual:artifact",
+        "format": 2, "audit_format": 2, "source_format": 2, "fifo_format": 2, "native_format": 2,
+        "stage": "SYNTHETIC_INTERNAL", "synthetic": True, "production_approved": False,
+        "batch_size": 0, "reserve_cache_size": 0, "market_cache_size": 0}
+    payload = {"static_budget": REF.canonical(static), "capability_payload": REF.canonical(capability),
+        "descriptor_id": descriptor, "artifact_id": "manual:artifact", "capability_id": "credit-internal-v2:"+REF.digest(capability),
+        "allocation_id": "credit-allocation:"+REF.digest([static["certificate_id"], "BTC", 0, "manual:0"]),
+        "source": {"authority_id": "manual:0"}, "pre_state": {"limits": manual_gross_wire()["limits"],
+            "credit": {"pool_units": "60000000", "shard_principal_units": "40000000"},
+            "journal_head": {"sequence": 4, "event_hash": "1"*64}}}
+    return payload, market, {"base_policy": base}
+
+
+def artificial_funding():
+    payload, _, _ = artificial_parameters()
+    receipt = {"scope": "pool", "command_id": "pool:0", "kind": "pool_funded", "asset": "BTC", "amount": "1",
+        "source_reference": "manual:capital:0", "journal_event_id": "credit:"+REF.digest(["pool", "pool:0"])}
+    receipt["result"] = REF.canonical({key: receipt[key] for key in
+        ("command_id", "asset", "amount", "source_reference", "journal_event_id")})
+    legs = [{"ordinal": 0, "account": "system:credit-capital", "asset": "BTC", "units": "-100000000"},
+            {"ordinal": 1, "account": "system:credit-pool", "asset": "BTC", "units": "100000000"}]
+    journal = {"sequence": 2, "event_id": receipt["journal_event_id"], "previous_hash": "0"*64, "sealed": 1, "postings": legs}
+    journal["fingerprint"], journal["event_hash"] = REF.journal_hashes(2, journal["event_id"], journal["previous_hash"],
+        [{**leg, "units": int(leg["units"])} for leg in legs])
+    payload["pool_funding"] = [{"command": receipt, "journal": journal}]
+    return payload
 
 
 class IndependentCaptureMappingTests(unittest.TestCase):
@@ -114,6 +160,30 @@ class IndependentCaptureMappingTests(unittest.TestCase):
         for value in ({}, {"financial_content_passed": True}, {name: None for name in ADAPTER.OBSERVATION} | {"oracle_passed": True}):
             with self.subTest(value=list(value)), self.assertRaises(REF.ReferenceInputError):
                 ADAPTER.check_observation(value)
+
+    def test_artificial_parameter_translation_matches_frozen_manual_policy(self):
+        payload, market, policy = artificial_parameters()
+        self.assertEqual(ADAPTER.retained_policy(payload, market, policy), REF.POLICY)
+        for field in ("descriptor_id", "capability_id", "allocation_id"):
+            changed = deepcopy(payload)
+            changed[field] = "forged"
+            with self.subTest(field=field), self.assertRaises(REF.ReferenceInputError):
+                ADAPTER.retained_policy(changed, market, policy)
+
+    def test_original_funding_capital_and_pool_cannot_be_forged_by_rehashing(self):
+        payload = artificial_funding()
+        self.assertEqual(ADAPTER.funding_content(payload), 100_000_000)
+        altered = deepcopy(payload)
+        journal = altered["pool_funding"][0]["journal"]
+        journal["postings"][0]["account"] = "system:custody"
+        journal["fingerprint"], journal["event_hash"] = REF.journal_hashes(journal["sequence"], journal["event_id"], journal["previous_hash"],
+            [{**leg, "units": int(leg["units"])} for leg in journal["postings"]])
+        with self.assertRaisesRegex(REF.ReferenceInputError, "capital/pool legs"):
+            ADAPTER.funding_content(altered)
+        altered = deepcopy(payload)
+        altered["pre_state"]["credit"]["pool_units"] = "70000000"
+        with self.assertRaisesRegex(REF.ReferenceInputError, "gross pool/principal"):
+            ADAPTER.funding_content(altered)
 
 
 if __name__ == "__main__":
