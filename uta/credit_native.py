@@ -36,6 +36,7 @@ class _LedgerVerificationView:
     _fingerprint = staticmethod(DurableLedger._fingerprint)
     _hash = staticmethod(DurableLedger._hash)
     _stored_units = staticmethod(DurableLedger._stored_units)
+    _verify_postings_definition = staticmethod(DurableLedger._verify_postings_definition)
     _verify_protection = staticmethod(DurableLedger._verify_protection)
     balance = DurableLedger.balance
 
