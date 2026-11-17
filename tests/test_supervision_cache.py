@@ -2,11 +2,14 @@
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 from pathlib import Path
+import os
 import tempfile
+from time import monotonic, sleep
 import unittest
 from unittest.mock import patch
 
 from uta.ledger import Posting
+from uta.durable_process import DurableProcessRouter
 from uta.market import MarketSnapshot
 from uta.matching import Matcher
 from uta.models import AssetSpec, InstrumentSpec
@@ -190,6 +193,61 @@ class SupervisionCacheTests(unittest.TestCase):
 
     def test_reference_and_optimized_real_partial_liquidation_full_financial_replay_match(self):
         self.assertEqual(self._golden(0), self._golden(8))
+
+    def test_opted_in_spawned_owner_matches_liquidates_and_cold_restarts(self):
+        def bootstrap(router):
+            router.create_account("alice")
+            router.deposit("alice", "initial", "USD", D(1000))
+            router.create_account("bob")
+            router.deposit("bob", "initial", "USD", D(100000))
+        router = DurableProcessRouter.initialize(Path(self.tmp.name) / "managed", 1,
+            {"USD": 8}, managed=True, bootstrap=bootstrap,
+            normal_cache_size=8, poll_interval=.005, background_interval=.02,
+            max_price_age=timedelta(seconds=60))
+        self.addCleanup(router.close)
+        router.start()
+        self.assertNotEqual(router.worker_pid(0), os.getpid())
+        def publish(version, mark):
+            router.publish_market(MarketSnapshot(version, datetime.now(timezone.utc),
+                {"USD": AssetSpec(D(1), D(1))},
+                {"BTC-PERP": InstrumentSpec(D(mark), D(".1"), D(".05"))}), timeout=8)
+        def submit(account, command, quantity, price):
+            router.submit_order(account, command, command, "BTC-PERP", D(quantity), D(price))
+            receipt = router.wait(command, account_id=account, timeout=8)
+            self.assertIsNotNone(receipt, router.diagnostics())
+            self.assertEqual(receipt["state"], "SUCCEEDED", receipt)
+        def matches():
+            with router._database(0).read_transaction() as conn:
+                return conn.execute("SELECT COUNT(*) FROM uta_matches").fetchone()[0]
+        def eventually(predicate):
+            deadline = monotonic() + 8
+            while monotonic() < deadline:
+                if predicate():
+                    return
+                sleep(.01)
+            self.fail(repr(router.diagnostics()))
+        publish(1, "100")
+        router.set_kill_switch(False, timeout=8)
+        submit("alice", "open-a", 90, 100)
+        submit("bob", "open-b", -90, 100)
+        eventually(lambda: matches() == 1)
+        publish(2, "90")
+        # Publication intentionally HALTs globally until explicit activation.
+        router.set_kill_switch(False, timeout=8)
+        submit("bob", "partial", 45, 90)
+        eventually(lambda: matches() == 2)
+        with router._database(0).read_transaction() as conn:
+            self.assertEqual(D(conn.execute("SELECT quantity FROM uta_positions WHERE account_id='alice'").fetchone()[0]), D(45))
+        old_pid = router.worker_pid(0)
+        router.terminate_worker(0)
+        eventually(lambda: router.worker_pid(0) not in (None, old_pid))
+        submit("bob", "remaining", 45, 90)
+        eventually(lambda: matches() == 3)
+        with router._database(0).read_transaction() as conn:
+            self.assertIsNone(conn.execute("SELECT * FROM uta_positions WHERE account_id='alice'").fetchone())
+            self.assertEqual(conn.execute("SELECT units FROM ledger_balances WHERE account='customer:alice' AND asset='USD'").fetchone()[0], "9316000000")
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_fills").fetchone()[0], 6)
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM uta_fills WHERE execution_decision_id IS NULL").fetchone()[0], 0)
 
 
 if __name__ == "__main__":

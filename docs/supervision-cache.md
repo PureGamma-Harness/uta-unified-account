@@ -140,3 +140,9 @@ liability changes, stale hits after a slow preceding miss, transaction failure,
 cross-database join rejection, bounded eviction and cold restart. Independent
 concurrency/fault tests and same-source performance measurements remain separate
 acceptance gates.
+
+The opted-in managed smoke also launches a real separate worker PID with required
+decision audit, opens 90 contracts, confirms a 45-contract liquidation fill,
+kills/replaces the owner, and confirms the remaining 45 contracts. It checks
+93.16 final customer cash, six confirmed fill records and non-null execution
+decision references. It is a lifecycle/correctness test, not a capacity result.
