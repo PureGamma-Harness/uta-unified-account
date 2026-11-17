@@ -1,0 +1,32 @@
+{
+  "observed_source": "072cc77c5a96b48c81a143020ab8ac6c9a794a9b",
+  "base_909": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "recorded_at": "2026-11-17T17:58:18.539561+00:00",
+  "batch_ids": [
+    "legacy-original-909-once",
+    "first-072cc77",
+    "first-072cc77-python310",
+    "first-072cc77-python313-sqlite346"
+  ],
+  "runtime_delta": [
+    "uta/credit_auth_h0.py",
+    "uta/credit_auth_h0_schema.py",
+    "uta/request_signing.py"
+  ],
+  "original_plan_not_run_records_unchanged": true,
+  "actual_component_tests_per_runtime": 12,
+  "component_runtime_count": 3,
+  "full_repository_or_release_approved": false,
+  "financial_source_or_execution_enabled": false,
+  "public_route_or_ready_changed": false,
+  "independent_dynamic_review_completed": false,
+  "coverage_gaps": [
+    "No full supported CI or package qualification on H0 source",
+    "No general legacy test suite or HTTP/TLS/financial tests executed",
+    "FK definition corruption was faulted; PK/CHECK/no-replace alternatives were not individually faulted",
+    "Grant revoke/accept raced; profile replace/accept competition not individually injected",
+    "Opaque foreign-object/copy/issuer/thread/fork checks ran; arbitrary same-process reflection is outside the boundary",
+    "Private-path missing/moved was exercised; symlink/disk-loss/HA not individually qualified",
+    "All H1-H4 and cross-database execution/revocation remain absent"
+  ]
+}
