@@ -56,7 +56,79 @@ substitute and prove the ledger object changed. Only `finish()` is inside the
 exact `startup_not_verified` assertion. An unfinished context is explicitly
 cleaned without claiming a successful exit. Existing keeper failures are checked
 before that synchronous call, so this cannot wash an earlier unknown renewal
-into success. The scoped case passed on CPython 3.10 in 0.107 seconds; its raw
+into success. The scoped case passed on CPython 3.10 in 0.103 seconds; its raw
 output is `/tmp/uta-startup-binding-scoped-py310.txt`. The independent actual
 writer-contention case still fails on the unchanged runtime and remains a
 separate availability gate.
+
+## Implemented scheduling boundary
+
+Runtime commit `4cce708` adds the independent gate outside the existing
+`Database._role_transaction` implementation. An active authority's financial
+and fence-control roles acquire it before `_connect` (including WAL setup) and
+retain it through the existing transaction, rollback/COMMIT and connection close.
+Only an active matching inode/canonical path participates. An unrelated new
+authority follows its existing creation and financial path. No schema, token,
+business formula, SQL busy timeout or TTL changes.
+
+The gate serializes all this scope's fence-control operations, not only keeper
+renewal. Their SQL permissions and actual token/expiry checks remain unchanged.
+Financial actor checks run before waiting, after acquiring the gate, and again
+at the original post-BEGIN guard; COMMIT fencing remains original. No registry
+or metadata lock is held during the gate wait. Local waiting checks stop,
+deadline, identity and already recorded failure. It is bounded by the original
+lease budget and deadline; timeout rechecks any existing failure before returning
+a new scheduling error. A long owned transaction still expires and rolls back.
+
+Read verification and producer-role transactions do not acquire this gate. This
+preserves actual renewal during long RO replay and leaves genuine external
+SQLite contention visible as a technical failure. The SQL operation is invoked
+once. There is no retry of BUSY, expired-token or lost-COMMIT responses. The
+`last_renew_started` diagnostic remains request-start, now including local gate
+waiting. Its scheduling anchor is conservative: waiting can cause an earlier
+subsequent renewal; it cannot postpone expiry or establish an exact SQL-BEGIN
+timestamp.
+
+## Red/green evidence and delivery limits
+
+The final source and test bytes passed 67 targeted cases sequentially on CPU 0:
+
+| Runtime | SQLite | Tests | unittest elapsed |
+| --- | --- | ---: | ---: |
+| CPython 3.10.22 | 3.53.1 | 67 | 10.892 s |
+| CPython 3.12.14 | 3.53.1 | 67 | 11.125 s |
+| CPython 3.13.5 | 3.46.1 | 67 | 12.321 s |
+
+The selection includes all owned-startup, independent owned reference,
+original expiry, storage and writer-fence cases. The new real-lock tests cover
+self-writer success, producer BUSY poison with the original SQLite cause,
+unchanged-TTL COMMIT rejection and rollback, and an unrelated authority's real
+deposit. The original unknown-COMMIT and expired-renewal tests remain unchanged.
+All three final logs report `OK` without skips. This is a component/regression
+result, not a complete repository or production qualification.
+
+Original evidence remains unmodified:
+
+- Full historical failure: `/workspace/uta-operations-validation/4608ffe/python310/unittest.txt`.
+- Genuine self-contention red: `/tmp/uta-startup-binding-4608-red-py310.txt`.
+- Narrow binding assertion: `/tmp/uta-startup-binding-scoped-py310.txt`.
+- Final source/test hashes, exact commands, environments, UTC times and combined
+  stdout/stderr: `/tmp/uta-startup-binding-4cce708-final/manifest.json` and its
+  three `python3*-targeted.txt` logs.
+- Re-runnable driver: `/tmp/uta-startup-binding-final.py`.
+
+The exact runtime diff received independent read-only review with no blocking
+finding; that reviewer did not claim an independent test rerun. The old full-run
+cause remains unknown because its original output did not preserve the keeper
+cause or substitution phase. The deterministic red proves a reachable mechanism
+and the green proves its isolation; neither retroactively recovers missing data.
+
+Deploy as an immutable reviewed source release, draining/stopping the old
+coordinator before normal owner startup. No database migration, flag or stored
+receipt rewrite is required. Reverting only the runtime commit restores the
+prior scheduling behavior and its known self-contention availability gap;
+financial fencing remains in either version. Keep exact scoped assertion tests,
+and retain the red test as evidence of that regression. Root integration,
+complete-suite/remote CI and the other independently tracked diagnostic/grouped
+timing issues remain separate gates. No large history, long load, root/frozen
+workspace or original long-running authority was changed in this investigation.

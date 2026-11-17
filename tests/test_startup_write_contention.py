@@ -1,6 +1,8 @@
 """Deterministic real SQLite writer ordering, without synthetic busy errors."""
 import json
 import sqlite3
+from decimal import Decimal
+from pathlib import Path
 from threading import Event, current_thread
 from time import sleep
 import unittest
@@ -8,7 +10,9 @@ from unittest.mock import patch
 
 from tests import test_owned_startup as fixture
 from uta.startup import StartupError
-from uta.writer_fence import WriterFence
+from uta.service import ExchangeService
+from uta.storage import Database
+from uta.writer_fence import WriterFence, WriterFenceError
 
 
 def describe_error(error):
@@ -80,22 +84,58 @@ class StartupWriteContentionTests(unittest.TestCase):
                 requested.set()
             return original(fence, token, ttl)
         with patch.object(WriterFence, "renew", observe):
-            with self.assertRaises(StartupError) as rejected:
-                with initialization:
-                    self.fixture.construct(initialization)
-                    initialization.check()
-                    # The separate producer role is not an owned financial actor.
-                    # Do not retry or hide its genuine SQLite contention.
-                    with self.fixture.database.inbox_transaction():
-                        held.set()
-                        self.assertTrue(requested.wait(.3))
-                        sleep(.08)
-                    held.clear()
+            initialization.__enter__()
+            try:
+                self.fixture.construct(initialization)
+                initialization.check()
+                # The separate producer role is not an owned financial actor.
+                # Do not retry or hide its genuine SQLite contention.
+                with self.fixture.database.inbox_transaction():
+                    held.set()
+                    self.assertTrue(requested.wait(.3))
+                    sleep(.08)
+                held.clear()
+                with self.assertRaises(StartupError) as rejected:
                     initialization.finish()
+            finally:
+                initialization._cleanup()
         self.assertEqual(rejected.exception.code, "startup_keeper_failed", describe_error(rejected.exception))
         self.assertIsInstance(rejected.exception.__cause__, sqlite3.OperationalError)
         self.assertIn("locked", str(rejected.exception.__cause__))
         self.assertFalse(initialization._finished)
+
+    def test_owned_financial_writer_past_actual_expiry_still_rolls_back(self):
+        initialization = self.fixture.context()
+        initialization.__enter__()
+        try:
+            self.fixture.construct(initialization)
+            initialization.check()
+            with self.assertRaises(WriterFenceError) as expired:
+                with self.fixture.bound.transaction() as conn:
+                    conn.execute("INSERT INTO startup_fk_parent VALUES (11)")
+                    sleep(.55)  # Beyond the unchanged .4-second current lease.
+            self.assertEqual(expired.exception.code, "lease_expired")
+            with self.assertRaises((StartupError, WriterFenceError)) as rejected:
+                initialization.finish()
+            self.assertIn(rejected.exception.code, ("startup_keeper_failed", "lease_expired"),
+                          describe_error(rejected.exception))
+            self.assertFalse(initialization._finished)
+        finally:
+            initialization._cleanup()
+        with self.fixture.database.read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM startup_fk_parent WHERE id=11").fetchone()[0], 0)
+        self.assertFalse(self.fixture.fence.status()["active"])
+
+    def test_an_unrelated_new_authority_keeps_its_normal_financial_path(self):
+        with self.fixture.context() as initialization:
+            self.fixture.construct(initialization)
+            other = ExchangeService(Database(Path(self.fixture.tmp.name) / "other.sqlite3"), {"USD": 2})
+            other.create_account("independent")
+            other.deposit("independent", "synthetic-funding", "USD", Decimal(10))
+            self.assertEqual(other.account("independent")["balances"]["USD"], "10")
+            initialization.finish()
+        with self.fixture.database.read_transaction() as conn:
+            self.assertEqual(conn.execute("SELECT COUNT(*) FROM ledger_events").fetchone()[0], 0)
 
 
 if __name__ == "__main__":
