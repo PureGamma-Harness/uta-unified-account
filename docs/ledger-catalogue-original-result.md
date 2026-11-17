@@ -4,7 +4,7 @@
 Python3.12 from exact `3eaee6cc5ff764e497b5641a85ce0b1404389683`, whose52 UTA
 files equal original `4ad58b2169b02f8982a1cbef8722b79d705d60c8` byte for byte.
 The driver hash is `0f8d9fdb851920b5348ba38528e4480739883a1639c5da5bdba10f1c0674822f`.
-Actual outer start/end were2026-11-17T15:04:25.188745Z through15:04:25.606112Z,
+Actual outer start/end were2026-11-17T15:04:25.188770Z through15:04:25.606112Z,
 0.417366633 seconds including the child process; child observation was0.365630s.
 No timeout, forced cleanup, second case or retry occurred. CPU4 was released
 immediately. The original unmanaged synthetic database remains private; no
