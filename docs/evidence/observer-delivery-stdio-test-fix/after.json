@@ -1,0 +1,24 @@
+{
+  "ResourceWarning_is_error": true,
+  "affinity": "one allowed CPU",
+  "command_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "-W",
+    "error::ResourceWarning",
+    "-c",
+    "import os,unittest;os.sched_setaffinity(0,{min(os.sched_getaffinity(0))});unittest.main(module=None,argv=[\"unittest\",\"discover\",\"-s\",\"tests\",\"-p\",\"test_managed_observer*.py\",\"-v\"])"
+  ],
+  "exit_code": 0,
+  "no_service_no_live_job_access": true,
+  "runner_stdout_stderr_regular_file": true,
+  "runtime_source_sha256_unchanged": {
+    "tools/managed_observer_finance.py": "bf9138431c1d691b5a423a22ecd43683dfcf258402813c264cf31de612295dd7",
+    "tools/managed_observer_smoke.py": "0833dafdd4838733c94cdede51dca1d27f23f90761bf175e60c7a43d04837b89",
+    "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1",
+    "tools/run_managed_long.py": "aaf549d69eab7b1bd7d1965b591ae3d2a47edba721ee0e5a00d77ae9f6fc6130"
+  },
+  "stdout_log_sha256": "39efd657aa1cc9f06759ff25fc730d33342a23fe7cec85e19f5fb69905d4737b",
+  "test_source_sha256_after": "fe84205d461a3271624e281d811e33ee444ac100ddd18b0be8d2685d2cb4d870",
+  "tests_expected": 38
+}

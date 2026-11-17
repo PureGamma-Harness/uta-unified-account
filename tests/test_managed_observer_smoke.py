@@ -69,6 +69,7 @@ print(json.dumps({'sentinel_readonly':bool(os.statvfs(p).f_flag & os.ST_RDONLY),
             identity = {"tests_run": 1110, "command_argv": ["exact-test-python"]}
             stdout = io.StringIO()
             with patch.object(smoke, "identity_report", return_value=identity), \
+                 patch.object(smoke.ro, "safe_standard_descriptors", return_value=True), \
                  patch.object(smoke, "captured", side_effect=AssertionError("must not launch")), redirect_stdout(stdout):
                 code = smoke.main(["--source", str(source), "--report", str(report),
                                    "--job", str(root / "job"), "--output", str(root / "observer")])
@@ -79,6 +80,17 @@ print(json.dumps({'sentinel_readonly':bool(os.statvfs(p).f_flag & os.ST_RDONLY),
             self.assertFalse(value["execution_authorized"])
             self.assertFalse((root / "job").exists())
             self.assertFalse((root / "observer").exists())
+
+    def test_real_smoke_cli_rejects_regular_stdout_without_writing_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'existing-synthetic-output'
+            target.write_bytes(b'original-synthetic-bytes')
+            with target.open('ab') as output:
+                result = subprocess.run([sys.executable, '-B', str(Path(smoke.__file__).resolve()), '--help'],
+                    stdin=subprocess.DEVNULL, stdout=output, stderr=subprocess.PIPE, close_fds=True)
+            self.assertEqual(result.returncode, 1)
+            self.assertEqual(result.stderr, b'')
+            self.assertEqual(target.read_bytes(), b'original-synthetic-bytes')
 
     def test_short_gate_never_treats_unknown_or_failed_final_as_smoke_pass(self):
         with tempfile.TemporaryDirectory() as directory:
