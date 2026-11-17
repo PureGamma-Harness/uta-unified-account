@@ -31,3 +31,38 @@ They do not establish that all otherwise unexecuted paths would pass after
 materialization, nor explain or resolve the earlier PR22 SQLite/publication
 failure. A later all-tracked setup must use a different output directory,
 preserve this failed run, and receive independent review and execution approval.
+
+## Narrow review of the separately proposed tracked closure
+
+Commit `e41861d582b73610342164a76e3fb6104f023717`, controller SHA-256
+`b66632ccf60e61ceecd23394fc6cf41eaeeb0bb413df039d28fc74c2ffc9a594`,
+changes the outer input inventory to all Git-tracked paths and uses the new
+`6b7d473-tracked-closure-once02` output. The unchanged standard runner retains
+its separate, byte-identical 351-file map. All controller functions except
+the input inventory and prepare-output printing are AST-identical to the
+previous revision; fixed source, CPU 4, runtime order, 900s active / 2,730s
+whole budgets, GO, loader and completion rules remain unchanged.
+
+The independent closure checker passed all 16 read-only checks on its first
+run. The 6,162-entry inventory matches the frozen Git object IDs, modes and
+sizes: 169,680,991 logical bytes. The retained after-materialization SHA-256
+map equals the prepare map. The original 877-entry private baseline hash was
+verified with O_NOATIME and all 877 before-byte hashes match that retained
+after map. The source files themselves were not reopened. Zero changes to
+their after-stat fields are the author's recorded observation; a complete
+separate after-stat table was not retained, so this review does not claim an
+independent before/after stat recomputation.
+
+Fresh admission recorded 18,037,989,376 free bytes against the required
+17,881,567,232 bytes. It authorized restoring only 5,285 missing tracked files,
+with 164,827,136 conservative allocated bytes. Afterward 17,880,358,912 bytes
+remained, above floor plus reserve. These are retained admission observations;
+the controller must still check resources before executing each runtime.
+
+The first-failure evidence subtree is unchanged. The new output did not exist
+at this review. The author's new pure suite and prepare were read as retained
+evidence, not rerun by this reviewer. No new QA, SQL or signal was executed.
+There is no remaining specific static blocker in this input-closure change;
+root must separately authorize any new-setup execution. That future outcome
+cannot replace the first FAIL or establish the old CI cause or production
+acceptance.
