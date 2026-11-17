@@ -119,5 +119,7 @@ using the selected Python executable, with a27-second child-group watchdog and
 by phase; undo must add zero native reads and retain the original real BUSY
 exception object. A final barrier keeps the native owner alive until the fresh
 positive proof. A real BUSY5 is required; protocol15 is not manufactured. The
-code has only been compiled, not executed. Further authorization must select
-the exact commit/helper hash and runtime before that one native component.
+code had only been compiled at exact2dda. Subsequent explicit authorization
+selected that exact commit/helper and Python3.13 for one real BUSY component;
+its [scoped result](shared-gate-busy-read-controlled-result.md) retains all raw
+records. It does not qualify8b, rerun publication or prove native protocol15.

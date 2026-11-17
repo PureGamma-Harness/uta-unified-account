@@ -1,0 +1,38 @@
+{
+  "scope": "one independent synthetic exclusive-schema-lock conformance; not historical unique WAL cause or full original case",
+  "source_commit": "2dda177fc023c023f7a7d246f03c1530e4511f9d",
+  "started_at": "2026-11-17T14:28:13.663432+00:00",
+  "finished_at": "2026-11-17T14:28:14.105157+00:00",
+  "duration_seconds": 0.4417303680020268,
+  "checks": {
+    "actual_busy_primary_preserved": true,
+    "fresh_original_owner_generation_active": true,
+    "expiry_not_changed_or_renewed": true,
+    "cleanup_performs_zero_lease_reads": true,
+    "unobserved_is_not_authority": true,
+    "exact_three_parent_native_reads": true,
+    "native_child_normal_exit": true,
+    "financial_rows_unchanged": true,
+    "integer_cash_oracle": true,
+    "no_forced_or_residual_cleanup": true,
+    "logger_and_cleanup_errors_absent": true
+  },
+  "component_passed": true,
+  "observations": {
+    "cleanup_forced_kill": false,
+    "cleanup_errors": [],
+    "injection_undos": [
+      {
+        "reason": "controlled_actual_busy_primary",
+        "pid": 214273,
+        "lease_observed": false,
+        "financial_authority_granted": false,
+        "cleanup": true,
+        "action": "SIGCONT_undo_own_injection"
+      }
+    ]
+  },
+  "trace_sha256": "06938a2e8dd41a55c15526594a5d2140c98826b394c19cd9ac8a5d2b99cea706",
+  "logger_failures": [],
+  "production_approved": false
+}
