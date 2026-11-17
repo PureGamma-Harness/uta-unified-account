@@ -1,0 +1,73 @@
+{
+  "control": {
+    "epoch": 0,
+    "error": null,
+    "halted": true,
+    "market_digest": null,
+    "market_version": null,
+    "publishing": false,
+    "watermarks": {}
+  },
+  "health": {
+    "control": {
+      "epoch": 0,
+      "error": null,
+      "halted": true,
+      "market_version": null,
+      "publishing": false
+    },
+    "control_observed": true,
+    "dispatch_available": false,
+    "financial_ready": false,
+    "managed": true,
+    "mode": "process_router",
+    "qualification": "bounded process/control/market observation; not an individual account risk acceptance or execution permission",
+    "readiness_source": "persistent_market_and_owner",
+    "ready": false,
+    "reason": "publication_incomplete",
+    "state_observed": true,
+    "workers": [
+      {
+        "alive": true,
+        "funding_registry_ready": false,
+        "generation": 1,
+        "lease_active": true,
+        "locally_active": false,
+        "market_ready": false,
+        "owner_pid": 117560,
+        "owner_ready": true,
+        "pid": 117560,
+        "reason": "market_missing",
+        "shard": 0
+      },
+      {
+        "alive": true,
+        "funding_registry_ready": false,
+        "generation": 1,
+        "lease_active": true,
+        "locally_active": false,
+        "market_ready": false,
+        "owner_pid": 117539,
+        "owner_ready": false,
+        "pid": 117561,
+        "reason": "market_missing",
+        "shard": 1
+      }
+    ],
+    "workers_alive": true
+  },
+  "observed_utc": "2026-11-17T09:43:49.270382+00:00",
+  "phase": "owner-ready-before-market",
+  "shards": [
+    {
+      "market_payload": null,
+      "publication_commands": [],
+      "shard": 0
+    },
+    {
+      "market_payload": null,
+      "publication_commands": [],
+      "shard": 1
+    }
+  ]
+}
