@@ -30,7 +30,7 @@ def sample(done=1):
 
 
 def receipt(payload,code=0):
-    return {'exit_code':code,'structured_stdout':{'exit_code':code,'response':payload}}
+    return {'exit_code':code,'stdout_complete':True,'structured_stdout':{'exit_code':code,'timed_out':False,'response':payload}}
 
 
 class FakeIO:
@@ -67,8 +67,8 @@ class FakeIO:
                 'errors':['actual_6h_and_5400_rounds_required','producer_actual_active_duration_incomplete','producer_cold_audit_same_watermark_missing'],
                 'independent_reopen_reconciliation_passed':True,'independent_reopen_same_watermark':True}
             return receipt(s)
-        if stage=='cold':return {'exit_code':0,'structured_stdout':{'short_smoke_cold_audit_passed':True,'watermark_before':{'seq':1},'watermark_after':{'seq':1},'long_run_receipt_issued':False}}
-        if stage=='strict-negative':return receipt({'error_type':'ValueError','error_digest':C.digest(b'producer_audit_requires_other_final_checks_passed')},1)
+        if stage=='cold':return {'exit_code':0,'stdout_complete':True,'structured_stdout':{'short_smoke_cold_audit_passed':True,'watermark_before':{'seq':1},'watermark_after':{'seq':1},'long_run_receipt_issued':False}}
+        if stage=='strict-negative':return receipt({'error_type':'ValueError','error_digest':C.digest(b'producer_audit_requires_other_final_checks_passed'),'final_evidence_eligible':False},1)
         self.row=progress(2,0);return receipt(sample(2))
     def record_stage(self,item,value):self.events.append(('record',item['stage']))
     def finish_producer(self,p):
@@ -118,12 +118,13 @@ class ResultTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'outside_actual_active'):
             C.validate_result('startup',receipt(sample()),progress(),progress(15,3,'completed'),False)
     def test_strict_negative_requires_original_nested_exact_refusal(self):
-        value=receipt({'error_type':'ValueError','error_digest':C.digest(b'producer_audit_requires_other_final_checks_passed')},1)
+        value=receipt({'error_type':'ValueError','error_digest':C.digest(b'producer_audit_requires_other_final_checks_passed'),'final_evidence_eligible':False},1)
         self.assertTrue(C.validate_result('strict-negative',value,{}, {},False)['strict_long_refused'])
         value['structured_stdout']['response']['error_digest']='0'*64
         with self.assertRaisesRegex(ValueError,'not_expected_refusal'):C.validate_result('strict-negative',value,{}, {},False)
     def test_fault_typed_unknown_requires_current_death_and_actual_increment(self):
-        s={'logical_point':'unknown','sample_wall_ns':200_100_000_000,'alerts':['observation_failed_closed'],'final_evidence_eligible':False,**FLAGS}
+        s={'logical_point':'unknown','sample_wall_ns':200_100_000_000,'alerts':['observation_failed_closed'],
+            'error_type':'OperationalError','error_digest':'a'*64,'final_evidence_eligible':False,**FLAGS}
         witness={'pidfd_death_observed':True,'death_wall_ns':200_000_000_000,'old_generation':1,'previous_worker_faults':0}
         self.assertTrue(C.validate_result('fault-live',receipt(s,1),progress(4,0),progress(5,1),True,witness)['inflight_or_unknown_observed'])
         with self.assertRaises(ValueError):C.validate_result('fault-live',receipt(s,1),progress(4,0),progress(4,0),True,witness)

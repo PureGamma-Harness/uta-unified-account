@@ -107,10 +107,42 @@ def nested_payload(value, required):
     raise ValueError('required_original_response_missing')
 
 
+def receipt_payload(stage, data):
+    """Validate the frozen prepare -> managed-smoke -> captured-command schema.
+
+    Child.result checks the actual outer prepare process exit. prepare prints a
+    receipt even if its managed-smoke child failed. short-cold is direct stdout,
+    whereas produce/observe/strict stdout is captured() with timed_out.
+    """
+    require(type(data) is dict and type(data.get('exit_code')) is int
+            and data.get('stdout_complete') is True, 'prepare_receipt_exit_or_capture_missing')
+    require(data.get('timed_out', False) is False, 'prepare_receipt_timeout_not_allowed')
+    body = data.get('structured_stdout')
+    require(type(body) is dict, 'managed_smoke_original_stdout_missing')
+    if stage == 'cold':
+        require(data['exit_code'] == 0 and 'exit_code' not in body and 'timed_out' not in body,
+                'cold_requires_successful_direct_stdout_contract')
+        return body
+    require(type(body.get('exit_code')) is int and body.get('timed_out') is False,
+            'captured_exit_or_literal_no_timeout_missing')
+    payload = body.get('response')
+    require(type(payload) is dict, 'captured_response_missing')
+    typed_fault_unknown = (stage == 'fault-live' and payload.get('logical_point') == 'unknown'
+        and payload.get('alerts') == ['observation_failed_closed'] and type(payload.get('error_type')) is str
+        and bool(payload['error_type']) and type(payload.get('error_digest')) is str
+        and len(payload['error_digest']) == 64 and all(c in '0123456789abcdef' for c in payload['error_digest']))
+    if stage == 'fault-live' and payload.get('logical_point') == 'unknown':
+        require(typed_fault_unknown, 'fault_unknown_transport_not_typed')
+    expected = 1 if stage == 'strict-negative' or typed_fault_unknown else 0
+    require(data['exit_code'] == body['exit_code'] == expected, 'nested_command_exit_not_expected')
+    return payload
+
+
 def validate_result(stage, data, before, after, alive_after, witness=None):
-    require(type(data) is dict, 'phase_stdout_not_object')
+    payload = receipt_payload(stage, data)
     if stage in ('startup', 'normal-live', 'fault-live', 'final'):
-        sample = nested_payload(data, {'logical_point', 'sample_wall_ns'})
+        sample = payload
+        require({'logical_point','sample_wall_ns'} <= sample.keys(), 'sample_response_missing')
         require(type(sample.get('alerts')) is list, 'sample_alerts_unknown')
         classifier = verified_module(FROZEN/'tools/managed_observer_coverage.py', 'frozen_json_classifier', CLASSIFIER_SHA)
         require(not classifier.fatal_financial_codes(sample), 'fatal_financial_code_observed')
@@ -157,14 +189,16 @@ def validate_result(stage, data, before, after, alive_after, witness=None):
                 'normal_worker_generation': sample.get('worker',{}).get('generation') if stage=='normal-live' else None,
                 'fault_witness': witness if stage=='fault-live' else None}
     if stage == 'cold':
-        cold = nested_payload(data, {'short_smoke_cold_audit_passed', 'watermark_before', 'watermark_after'})
+        cold = payload
+        require({'short_smoke_cold_audit_passed','watermark_before','watermark_after'} <= cold.keys(), 'cold_response_missing')
         require(cold['short_smoke_cold_audit_passed'] is True and cold['watermark_before'] == cold['watermark_after']
                 and cold.get('long_run_receipt_issued') is False, 'actual_private_cold_same_watermark_required')
         return {'short_smoke_cold_audit_passed': True, 'long_run_receipt_issued': False}
     if stage == 'strict-negative':
-        error = nested_payload(data, {'error_type', 'error_digest'})
+        error = payload
         require(data.get('exit_code') == 1 and error['error_type'] == 'ValueError'
-                and error['error_digest'] == digest(b'producer_audit_requires_other_final_checks_passed'), 'strict_long_negative_not_expected_refusal')
+                and error['error_digest'] == digest(b'producer_audit_requires_other_final_checks_passed')
+                and error.get('final_evidence_eligible') is False, 'strict_long_negative_not_expected_refusal')
         return {'strict_long_refused': True, 'financial_6h_passed': False}
     return {}
 
@@ -429,6 +463,9 @@ class Live:
 
     def finish_producer(self, producer):
         data = self.finish(producer, {'stage':'produce'})
+        original = receipt_payload('produce', data)
+        require(original.get('status') == 'completed' and original.get('planned_rounds') == 15
+            and original.get('rounds') == {'DONE':15}, 'producer_original_stdout_not_complete')
         row = self.progress()
         require(row.get('status') == 'completed' and row.get('rounds') == {'DONE':15}
             and row.get('fault_signals') == {'worker':3,'parent':1} and row.get('elapsed_seconds',0) >= 60, 'producer_original_schedule_incomplete')
