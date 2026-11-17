@@ -69,3 +69,24 @@ inventory、native token获得、source/FIFO/lease接缝与rebinder仍由native/
 readonly指constructor没有logical schema/row写入；真实SQLite打开/事务可能涉及正常DB/
 WAL/SHM活动，不声明底层文件byte完全不变。未改任何existing/live authority或原baseline。
 本切片无迁移/部署动作，回退代码即可，不能为真实cap降级或回滚已确认的资金水位。
+
+## 后续作者negative矩阵
+
+生产代码固定`bf746b1e7f5437f20fc1f953d7023b3d59615720`后，仅新增测试，未再改三核心
+文件或factory。CPU3于2026-11-17 14:22:22.659362–14:22:23.266834 UTC执行12项新例，
+全部通过：unittest0.484秒、实际进程0.607476秒、无skip，ResourceWarning为error。
+没有重跑前面的helper或3个positive，也没有运行native V2/FIFO恢复。
+
+使用真实public服务/credit构造的源库，随后显式腐化negative，并核特定拒绝phase与所有
+logical schema/rows保持原坏源状态：missing file与whole credit module不创建；原列不变
+但移除CHECK、额外CHECK及未知UNIQUE index拒绝；完整ledger拒pool projection脱离journal；
+完整credit拒逐账户±本金抵消；缺当前artifact不写入回填；两个真实normal constructor
+归档不同execution options时拒绝猜测。另核三个公共ctor均拒financial join，closed/raw
+连接不能构造。约束负例从真实空orders表的原DDL重建为明确坏表并保留原index，未用
+scratch SQL模型当作“官方schema”或正向source。
+
+[新测试](../tests/test_existing_services_negative.py)与
+[唯一实际批次raw](../evidence/runs/existing-services-construction/negative-first-python312.json)
+单独保存。它们仍是代码作者检查，不代替独立PM验收、实际完整native V2/cap/source/
+lease/FIFO或READY。后续完整credit artifact的loaded-role覆盖还需纳入新的factory helper
+模块；本提交不自行扩张原base artifact或声明新授权。
