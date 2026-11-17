@@ -60,6 +60,56 @@ def financial_snapshot(path):
                 for name in FINANCIAL_TABLES if name in existing}
 
 
+def assert_router_ready(testcase, router, *, timeout=10, clock=monotonic, pause=sleep):
+    """Wait for asynchronous supervisor evidence, never substitute for readiness.
+
+    Control receipts may commit before the supervisor consumes the ready pipe.
+    A missing/expired lease or absent report must still fail at the deadline.
+    """
+    deadline = clock() + timeout
+    while True:
+        diagnostic = router.diagnostics()
+        if diagnostic["ready"]:
+            return diagnostic
+        remaining = deadline - clock()
+        if remaining <= 0:
+            testcase.fail(f"router did not become ready within {timeout}s: {diagnostic!r}")
+        pause(min(.01, remaining))
+
+
+class ReadinessWaitTests(unittest.TestCase):
+    def test_waits_for_observed_readiness_without_fixed_sleep(self):
+        class Router:
+            calls = 0
+            def diagnostics(self):
+                self.calls += 1
+                return {"ready": self.calls == 3}
+        router = Router()
+        pauses = []
+        result = assert_router_ready(self, router, clock=lambda: 0, pause=pauses.append)
+        self.assertTrue(result["ready"])
+        self.assertEqual(router.calls, 3)
+        self.assertEqual(pauses, [.01, .01])
+
+    def test_persistent_failure_is_bounded_and_includes_diagnostics(self):
+        class Router:
+            def diagnostics(self):
+                return {"ready": False, "workers": [{"lease_active": False, "report": {}}]}
+        now = [0.0]
+        def advance(seconds):
+            now[0] += seconds
+        with self.assertRaisesRegex(AssertionError, "lease_active.*False"):
+            assert_router_ready(self, Router(), timeout=.025, clock=lambda: now[0], pause=advance)
+        self.assertAlmostEqual(now[0], .025)
+
+    def test_diagnostic_exception_is_not_swallowed(self):
+        class Router:
+            def diagnostics(self):
+                raise RuntimeError("storage unavailable")
+        with self.assertRaisesRegex(RuntimeError, "storage unavailable"):
+            assert_router_ready(self, Router())
+
+
 class DurableFaultFixture(unittest.TestCase):
     def setUp(self):
         temporary = TemporaryDirectory()
@@ -1120,7 +1170,7 @@ class ManagedProcessFaultTests(unittest.TestCase):
         self.assertFalse(result["publishing"])
         result = self.router.set_kill_switch(False, timeout=10)
         self.assertFalse(result["halted"])
-        self.assertTrue(self.router.diagnostics()["ready"])
+        assert_router_ready(self, self.router)
 
     def submit(self, command, order=None, shard=0):
         return self.router.submit_order(self.accounts[shard], command, order or command,
