@@ -1,0 +1,612 @@
+{
+  "affinity": [
+    2
+  ],
+  "cohosted": true,
+  "config_path": "/workspace/uta-package-909acec/evidence/20261117-package-909acec/run-config.json",
+  "config_sha256": "46986efef2eda60a4309c52daca83f9705319ba41fc8d28d546c5a28714d4b82",
+  "cpu_isolation": "CPU2 per-process affinity on shared host; no cpuset or exclusivity",
+  "driver_cwd": "/workspace",
+  "driver_path": "/workspace/uta-package-909acec/evidence/20261117-package-909acec/execution_driver.py",
+  "driver_sha256": "c9594007b2d14feaaa0815aef5417ff5c2d2be71eae241cc0e62d03654c062a8",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": null
+  },
+  "expected_git_tree": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+  "git_archive_format": "tar.gz",
+  "interpreter": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "phase": "core",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "prior_functional_or_binary_results_reused": false,
+  "production_approved": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "runs": [
+    {
+      "argv": [
+        "df",
+        "-B1",
+        "/tmp/uta-release-909acec-7xiri71l"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72133933726887,
+      "finished_utc": "2026-11-17T17:03:27.456410+00:00",
+      "name": "initial-df",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.003734422,
+      "started_monotonic_ns": 72133929992465,
+      "started_utc": "2026-11-17T17:03:27.452678+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/initial-df.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 125,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/initial-df.stdout.txt",
+        "sha256": "a18cf9367c2ce94c549788435c8e534498136de1176edb2ad90d8135552a86d9"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72133937806317,
+      "finished_utc": "2026-11-17T17:03:27.460489+00:00",
+      "name": "frozen-source-commit",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.003647544,
+      "started_monotonic_ns": 72133934158773,
+      "started_utc": "2026-11-17T17:03:27.456844+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-commit.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-commit.stdout.txt",
+        "sha256": "a4ec8eabe46be7a34bccf3502c09259f008a67292b6914690c02c7028ef216f2"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD^{tree}"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72133941748515,
+      "finished_utc": "2026-11-17T17:03:27.464431+00:00",
+      "name": "frozen-source-tree",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.003558573,
+      "started_monotonic_ns": 72133938189942,
+      "started_utc": "2026-11-17T17:03:27.460876+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-tree.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-tree.stdout.txt",
+        "sha256": "2f5fe874cee14a806dd19a53f2cf56b97900a400c7b4a7d914e533a9cfc57914"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short",
+        "--untracked-files=all"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72133980738458,
+      "finished_utc": "2026-11-17T17:03:27.503411+00:00",
+      "name": "frozen-source-status",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.038610624,
+      "started_monotonic_ns": 72133942127834,
+      "started_utc": "2026-11-17T17:03:27.464813+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-status.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-status.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "venv",
+        "/tmp/uta-release-909acec-7xiri71l/venv"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72136204560791,
+      "finished_utc": "2026-11-17T17:03:29.727237+00:00",
+      "name": "venv",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 2.223140748,
+      "started_monotonic_ns": 72133981420043,
+      "started_utc": "2026-11-17T17:03:27.504103+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/venv.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/venv.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "archive",
+        "--format=tar.gz",
+        "--output=/tmp/uta-release-909acec-7xiri71l/frozen-source.tar.gz",
+        "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72139933980888,
+      "finished_utc": "2026-11-17T17:03:33.456658+00:00",
+      "name": "git-archive",
+      "returncode": 0,
+      "scope": "archive-only",
+      "seconds": 3.728544217,
+      "started_monotonic_ns": 72136205436671,
+      "started_utc": "2026-11-17T17:03:29.728122+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/git-archive.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/git-archive.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-package-909acec/evidence/20261117-package-909acec/safe_extract.py",
+        "/tmp/uta-release-909acec-7xiri71l/frozen-source.tar.gz",
+        "/tmp/uta-release-909acec-7xiri71l/build-source"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72142264934310,
+      "finished_utc": "2026-11-17T17:03:35.787611+00:00",
+      "name": "extract-git",
+      "returncode": 0,
+      "scope": "archive-only",
+      "seconds": 2.330403963,
+      "started_monotonic_ns": 72139934530347,
+      "started_utc": "2026-11-17T17:03:33.457215+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/extract-git.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 131,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/extract-git.stdout.txt",
+        "sha256": "4640de9d53cb66a8bbf64dc0bcbe3fc2fde169210c979d6d6e08ee0cfd7cb3a5"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import setuptools.build_meta as b; print(\"WHEEL\",b.build_wheel('/tmp/uta-release-909acec-7xiri71l/artifacts')); print(\"SDIST\",b.build_sdist('/tmp/uta-release-909acec-7xiri71l/artifacts'))"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/build-source",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72151372274480,
+      "finished_utc": "2026-11-17T17:03:44.894945+00:00",
+      "name": "build",
+      "returncode": 0,
+      "scope": "build",
+      "seconds": 9.106411449,
+      "started_monotonic_ns": 72142265863031,
+      "started_utc": "2026-11-17T17:03:35.788548+00:00",
+      "stderr": {
+        "bytes": 1823,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/build.stderr.txt",
+        "sha256": "1d4631a1bb53ff2e6f78b792cf90173ba6430b5623e7a8bbe5021d16fb9d326a"
+      },
+      "stdout": {
+        "bytes": 1070791,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/build.stdout.txt",
+        "sha256": "6322f4fab9d42f451d53ad6299bbc88602604a5bf56f9bb96c64f715b9ac3ff9"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-credit-v2-py310-candidate/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-credit-v2-py310-candidate",
+        "--commit",
+        "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+        "--wheel",
+        "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-909acec-7xiri71l/artifact-manifest.json"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72179235550790,
+      "finished_utc": "2026-11-17T17:04:12.758220+00:00",
+      "name": "verify-archives",
+      "returncode": 0,
+      "scope": "archive-only",
+      "seconds": 27.199585469,
+      "started_monotonic_ns": 72152035965321,
+      "started_utc": "2026-11-17T17:03:45.558606+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/verify-archives.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 399,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/verify-archives.stdout.txt",
+        "sha256": "1286bdbe1de9e1dece4bdea9e8b10880f1791a2e8a0f528bd7ccd9a531d334d6"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-index",
+        "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/external",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72179803705785,
+      "finished_utc": "2026-11-17T17:04:13.326374+00:00",
+      "name": "install",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 0.565830519,
+      "started_monotonic_ns": 72179237875266,
+      "started_utc": "2026-11-17T17:04:12.760558+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/install.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 211,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/install.stdout.txt",
+        "sha256": "bbbd5e3ca9c022064186b60eeb117d0c164986e6cd2d4ef47188793e99b7e8cf"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-I",
+        "/workspace/uta-credit-v2-py310-candidate/tools/validate_installed_release.py",
+        "--source",
+        "/workspace/uta-credit-v2-py310-candidate",
+        "--artifact-manifest",
+        "/tmp/uta-release-909acec-7xiri71l/artifact-manifest.json",
+        "--output",
+        "/tmp/uta-release-909acec-7xiri71l/external/installed"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/external",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72192673710861,
+      "finished_utc": "2026-11-17T17:04:26.196382+00:00",
+      "name": "installed-run",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 12.869264549,
+      "started_monotonic_ns": 72179804446312,
+      "started_utc": "2026-11-17T17:04:13.327132+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/installed-run.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 132,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/installed-run.stdout.txt",
+        "sha256": "a88c6d71aa2b1d1cc35affdd8f4383b14d75c99b822e6b04ba1790e187f81e66"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-I",
+        "/workspace/uta-credit-v2-py310-candidate/evidence/20261117-package-13e6924/validate_installed_views.py",
+        "--source",
+        "/workspace/uta-credit-v2-py310-candidate",
+        "--artifact-manifest",
+        "/tmp/uta-release-909acec-7xiri71l/artifact-manifest.json",
+        "--output",
+        "/tmp/uta-release-909acec-7xiri71l/external/installed-views"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/external",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72193502324428,
+      "finished_utc": "2026-11-17T17:04:27.024996+00:00",
+      "name": "installed-views-run",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 0.826888404,
+      "started_monotonic_ns": 72192675436024,
+      "started_utc": "2026-11-17T17:04:26.198120+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/installed-views-run.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 262,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/installed-views-run.stdout.txt",
+        "sha256": "095e30124dcfb00ba09bc4354412762a837bdbfdd3f62eda0ac534a87f14a00e"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-package-909acec/evidence/20261117-package-909acec/safe_extract.py",
+        "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+        "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72197823906794,
+      "finished_utc": "2026-11-17T17:04:31.346572+00:00",
+      "name": "extract-sdist",
+      "returncode": 0,
+      "scope": "archive-only",
+      "seconds": 4.319186769,
+      "started_monotonic_ns": 72193504720025,
+      "started_utc": "2026-11-17T17:04:27.027403+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/extract-sdist.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 160,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/extract-sdist.stdout.txt",
+        "sha256": "8f4e1a919f4c98d25c54cf89db6bc88f5528afe89aa545830e90b7d2694aa48a"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_writer_fence_legacy.py",
+        "-v"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72198951069587,
+      "finished_utc": "2026-11-17T17:04:32.473700+00:00",
+      "name": "sdist-legacy-tests",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 1.125959944,
+      "started_monotonic_ns": 72197825109643,
+      "started_utc": "2026-11-17T17:04:31.347792+00:00",
+      "stderr": {
+        "bytes": 1479,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-legacy-tests.stderr.txt",
+        "sha256": "604287a3e43e3eb00a6bfce98e43c9777e247f8903ea06c576a64229baa9fc3a"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-legacy-tests.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-c",
+        "from pathlib import Path; import sys,unittest; assert not Path(\".git\").exists(); sys.path.insert(0,\"tests\"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests(\"test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits\")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72199321084480,
+      "finished_utc": "2026-11-17T17:04:32.843750+00:00",
+      "name": "sdist-archival-tests",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 0.367994083,
+      "started_monotonic_ns": 72198953090397,
+      "started_utc": "2026-11-17T17:04:32.475771+00:00",
+      "stderr": {
+        "bytes": 297,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-archival-tests.stderr.txt",
+        "sha256": "38957f1e6385e79c3e2711857765b8009c9df6ccafef837ea6c3e9a06c01fac7"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-archival-tests.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_release_archives.py",
+        "-v"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72205056633282,
+      "finished_utc": "2026-11-17T17:04:38.579260+00:00",
+      "name": "sdist-release-verifier-tests",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 5.734374097,
+      "started_monotonic_ns": 72199322259185,
+      "started_utc": "2026-11-17T17:04:32.844943+00:00",
+      "stderr": {
+        "bytes": 3168,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-release-verifier-tests.stderr.txt",
+        "sha256": "8df140f0904e79e95a1f2c2d9ca2d52b9ea66d22261832360c708da321597149"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/sdist-release-verifier-tests.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "/tmp/uta-release-909acec-7xiri71l/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_capacity_review_data_reference.py",
+        "-v"
+      ],
+      "cwd": "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72205377705803,
+      "finished_utc": "2026-11-17T17:04:38.900374+00:00",
+      "name": "history-reference",
+      "returncode": 0,
+      "scope": "functional",
+      "seconds": 0.319450884,
+      "started_monotonic_ns": 72205058254919,
+      "started_utc": "2026-11-17T17:04:38.580937+00:00",
+      "stderr": {
+        "bytes": 1949,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/history-reference.stderr.txt",
+        "sha256": "e61a605acd22e9795e249859d581104577fbb8aa1fb0cc199995de31963bbae9"
+      },
+      "stdout": {
+        "bytes": 494,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/history-reference.stdout.txt",
+        "sha256": "cd338bc474fd587ebdcac8730d9fea84d0ff15624675088de74d58b9c269334c"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72205382855653,
+      "finished_utc": "2026-11-17T17:04:38.905537+00:00",
+      "name": "frozen-source-final-commit",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.003908073,
+      "started_monotonic_ns": 72205378947580,
+      "started_utc": "2026-11-17T17:04:38.901631+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-final-commit.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 41,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-final-commit.stdout.txt",
+        "sha256": "a4ec8eabe46be7a34bccf3502c09259f008a67292b6914690c02c7028ef216f2"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--short",
+        "--untracked-files=all"
+      ],
+      "cwd": "/workspace/uta-credit-v2-py310-candidate",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 72205430336200,
+      "finished_utc": "2026-11-17T17:04:38.953007+00:00",
+      "name": "frozen-source-final-status",
+      "returncode": 0,
+      "scope": "identity",
+      "seconds": 0.04644326,
+      "started_monotonic_ns": 72205383892940,
+      "started_utc": "2026-11-17T17:04:38.906577+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-final-status.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-909acec-7xiri71l/raw/frozen-source-final-status.stdout.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "timeout_seconds": 60
+    }
+  ],
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_directory": "/workspace/uta-credit-v2-py310-candidate",
+  "sqlite": "3.53.1",
+  "work_directory": "/tmp/uta-release-909acec-7xiri71l"
+}
