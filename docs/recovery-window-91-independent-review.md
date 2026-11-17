@@ -121,3 +121,42 @@ afterwards. No existing job may be signaled. Unknown sampling, observer failure,
 watchdog, forced cleanup or residual state remains incomplete/NO_GO. A passing
 original case is NO_REPRO of the historical assertion; it does not sign source91,
 prove the five-second production claim, or establish the historical cause.
+
+## Independent check of the unique observed run b570
+
+The author preserved the unique run in
+`b5707fe319cf4f07c64e34e8a62f130e5a135803`. Independent checker
+`verify_actual_once.py` reads saved files, Git blobs and current `/proc` metadata
+only. Its first execution passed31 narrow observed-evidence checks without
+running any SQL, original test, new business command, native reproduction or
+signal. All ten raw members match both the original private bytes and the
+committed manifest;266 pre/post source entries match both approved5e26 and
+base91 Git blobs. Actual local runtime is3.13.5/SQLite3.46.1, not CI3.13.18.
+
+The one original case passed, hence **NO_REPRO**, in8.045662904 outer seconds.
+The original323 status calls have one matching finish each, no status exception;
+14 code-only samples observe supervisor and both workers. Three spawn starts
+and returns balance, all three recorded children have pidfd exit and absence
+records, and an independent current scan found no member of new PGID/SID230555.
+The selected old PID230559 has an actual supervisor status record with expired
+lease before its original kill call. The original two CIDs are SUCCEEDED and
+the original financial conservation assertions were reached; this review does
+not independently reopen a database or claim a full financial replay.
+
+Time anchors must remain distinct. Capture to the original **parent's pidfd
+exit observation** is4.753877499 seconds; publication-thread start to that same
+observation is0.284567718 seconds. The separate10ms independent watcher observes
+pidfd exit4.761417844 seconds after capture. These are observation times, not an
+exact timestamp at which the kernel process exited. Reporting only the late
+API-origin duration omits most of the intentionally awaited original lease.
+The original five-second milestones passed in this run; the separate fifteen-
+second publication lifecycle remains a distinct assertion.
+
+**Strict observation-component evidence remains incomplete/NO_GO.** The approved
+driver calls both observer `join(1)` methods but does not record their subsequent
+`is_alive()` values. Worker/session exit proves no thread remains now, not that
+both joins completed before worker exit. The author retained this missing
+positive observation and the independent result preserves it. No value is
+backfilled, no observation is repeated to wash it out, and no runtime fix or
+release qualification follows from this non-reproduction. The historical CI
+failure and its root cause remain unresolved.
