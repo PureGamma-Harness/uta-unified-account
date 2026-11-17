@@ -1,0 +1,17 @@
+from datetime import datetime,timezone
+from hashlib import sha256
+from pathlib import Path
+import json,os,subprocess,sys,time
+root=Path('/workspace/uta-managed-variant-runner');output=Path('/tmp/uta-managed-variants-runner-delivery-tests');output.mkdir(exist_ok=False)
+source={name:sha256((root/name).read_bytes()).hexdigest() for name in ('benchmarks/run_managed_benchmark.py','tools/run_managed_variants.py','tests/test_managed_variant_runner.py','benchmarks/plans/20261117-managed-variants.json','benchmarks/plans/20261117-managed-variants-execution-template.json')}
+runs=[]
+for label,exe,classes in [('py312','/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python','RunnerPureTests,RunnerDummyTests'),('py310','/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10','RunnerPureTests'),('py313','/usr/bin/python3.13','RunnerPureTests')]:
+ code='import sys,os,unittest,gc;os.sched_setaffinity(0,{3});sys.path.insert(0,"tests");from test_managed_variant_runner import '+classes+';suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in ('+classes+',)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())'
+ env=dict(os.environ,PYTHONWARNINGS='error::ResourceWarning',UTA_VARIANT_RUNNER_EVIDENCE=str(output/'dummy'))
+ command=[exe,'-W','error::ResourceWarning','-c',code]
+ started=datetime.now(timezone.utc).isoformat();at=time.monotonic()
+ with (output/(label+'.log')).open('w') as stream:p=subprocess.run(command,cwd=root,env=env,stdout=stream,stderr=subprocess.STDOUT)
+ runs.append({'command':command,'started_utc':started,'finished_utc':datetime.now(timezone.utc).isoformat(),'wall_seconds':time.monotonic()-at,'returncode':p.returncode,'scope':'pure fixtures plus own dummy only on3.12; no financial call','source_before':source,'source_after':{name:sha256((root/name).read_bytes()).hexdigest() for name in source},'cpu_ids':[3],'PYTHONWARNINGS':env['PYTHONWARNINGS']})
+ (output/'execution.json').write_text(json.dumps(runs,indent=2)+'\n')
+ print(label,p.returncode,runs[-1]['wall_seconds'],flush=True)
+ if p.returncode:raise SystemExit(p.returncode)

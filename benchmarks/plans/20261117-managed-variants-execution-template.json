@@ -1,0 +1,148 @@
+{
+  "format": 1,
+  "registration_id": "replace-after-new-freeze-and-go",
+  "source_commit": "0000000000000000000000000000000000000000",
+  "base_plan_sha256": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+  "execution_go": false,
+  "registered_utc": "2026-11-17T00:00:00+00:00",
+  "output_root": "/REPLACE/private/new-diagnostic-root-parent/must-not-exist",
+  "cpu_ids": [
+    2,
+    3
+  ],
+  "limits": {
+    "case_wall_seconds": 60,
+    "grace_seconds": 2,
+    "kill_wait_seconds": 2,
+    "case_bytes": 16777216,
+    "aggregate_bytes": 536870912,
+    "cleanup_bytes": 134217728
+  },
+  "cohosts": [
+    {
+      "pid": 4471,
+      "birth_ticks": 1,
+      "heartbeat": "/REPLACE/private/new-diagnostic-root-parent/cohosts/host-4471.json",
+      "heartbeat_pointer": [
+        "observed_utc"
+      ],
+      "source_pointer": [
+        "source_commit"
+      ],
+      "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "max_age_seconds": 60,
+      "alerts_pointer": [
+        "assessment",
+        "alerts"
+      ],
+      "work_age_pointer": [
+        "assessment",
+        "heartbeat_age_seconds"
+      ]
+    },
+    {
+      "pid": 8784,
+      "birth_ticks": 1,
+      "heartbeat": "/REPLACE/private/new-diagnostic-root-parent/cohosts/host-8784.json",
+      "heartbeat_pointer": [
+        "observed_utc"
+      ],
+      "source_pointer": [
+        "source_commit"
+      ],
+      "source_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "max_age_seconds": 60,
+      "alerts_pointer": [
+        "assessment",
+        "alerts"
+      ],
+      "work_age_pointer": [
+        "assessment",
+        "heartbeat_age_seconds"
+      ]
+    }
+  ],
+  "reserves": {
+    "producer": {
+      "remaining_bytes": 6442450944,
+      "evidence": {
+        "path": "/REPLACE/original-reserve-evidence.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "pointer": [
+        "producer"
+      ]
+    },
+    "future_clone": {
+      "remaining_bytes": 6442450944,
+      "evidence": {
+        "path": "/REPLACE/original-reserve-evidence.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "pointer": [
+        "future_clone"
+      ]
+    },
+    "clone_headroom": {
+      "remaining_bytes": 1073741824,
+      "evidence": {
+        "path": "/REPLACE/original-reserve-evidence.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "pointer": [
+        "clone_headroom"
+      ]
+    },
+    "observer": {
+      "remaining_bytes": 134217728,
+      "evidence": {
+        "path": "/REPLACE/original-reserve-evidence.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "pointer": [
+        "observer"
+      ]
+    },
+    "original_other": {
+      "remaining_bytes": 1073741824,
+      "evidence": {
+        "path": "/REPLACE/original-reserve-evidence.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "pointer": [
+        "original_other"
+      ]
+    }
+  },
+  "qualification": {
+    "expected_tests": 1,
+    "local": [],
+    "ci": [],
+    "package": {
+      "verdict": {
+        "path": "/REPLACE/qualified/verdict.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "archives": {
+        "path": "/REPLACE/qualified/archives.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "installed": {
+        "path": "/REPLACE/qualified/installed.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "views": {
+        "path": "/REPLACE/qualified/views.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "runtime_controls": {
+        "path": "/REPLACE/qualified/runtime_controls.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      },
+      "zip_controls": {
+        "path": "/REPLACE/qualified/zip_controls.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    }
+  }
+}

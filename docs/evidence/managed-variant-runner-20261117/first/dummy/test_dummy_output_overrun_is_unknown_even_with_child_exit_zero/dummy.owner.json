@@ -1,0 +1,29 @@
+{
+  "cpu_ids": [
+    3
+  ],
+  "identity": {
+    "birth_ticks": 5343965,
+    "group": 167529,
+    "parent": 167528,
+    "pid": 167529,
+    "session": 167529,
+    "state": "R"
+  },
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import os,sys; os.sched_setaffinity(0,{3}); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "print(\"x\"*100000)"
+  ],
+  "observed_utc": "2026-11-17T11:51:53.178505+00:00",
+  "owned_session": true,
+  "pidfd_used": true,
+  "protected_pids": [
+    4471,
+    8784,
+    167528
+  ]
+}
