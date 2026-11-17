@@ -1,0 +1,32 @@
+{
+  "scope": "pure artificial mapping/funding only; no actual capture or SQL",
+  "commit": "e3e9c75961b767b7b928920572a2bb2c408a1d29",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_credit_v2_capture_reference.py",
+    "-v"
+  ],
+  "started_at": "2026-11-17T14:43:50.659670+00:00",
+  "finished_at": "2026-11-17T14:43:50.781143+00:00",
+  "wall_seconds": 0.12146993900387315,
+  "timeout_seconds": 15,
+  "returncode": 0,
+  "files": {
+    "scripts/credit_v2_capture_reference.py": "c7a4ea5f0bbb478a00add4aa99ae360dce651abca9b7f84d4b712e4573e129fd",
+    "scripts/credit_v2_financial_reference.py": "37bb40f876951e32304cccb7b21e8fe13b8b27dd1e617eec101fbf5c32b1395e",
+    "tests/test_credit_v2_capture_reference.py": "ef55f3593e74f019da2bfbaaa08498a6d651ca350a9046aeffa71dc8fb955444"
+  },
+  "actual_capture_tested": false,
+  "production_approved": false
+}

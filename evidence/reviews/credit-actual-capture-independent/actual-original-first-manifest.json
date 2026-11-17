@@ -1,0 +1,36 @@
+{
+  "scope": "first independent actual original SQL read-only reopening; no native write or service",
+  "checker_commit": "b3885bb35442013dd27ad4ab88d0d8c99c30ad8d",
+  "actual_capture_source": "3e3e8133d9fc8e734a6fb244bf989d7010aed23e",
+  "actual_capture_evidence": "1156ba1",
+  "actual_observation_sha256_without_trailing_newline": "3c97bea652c42d57706a4fb260c56553a1b51dc9f0d4499d49a7e54989866a1e",
+  "actual_observation_file_sha256": "c3cfc2238d40225a0fd0c9408abcdf0005a298c50fa8876b6af92d309b03b2c7",
+  "observation_bytes": 220089,
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "/workspace/uta-credit-actual-independent/scripts/credit_v2_original_sql_reference.py",
+    "--database",
+    "/tmp/uta-credit-v2-independent-actual-n1x3o3xs/actual-credit-v2-ckkl8xqy/synthetic.sqlite3",
+    "--command-id",
+    "loan-1",
+    "--exported-observation",
+    "/workspace/uta-credit-internal-v2/evidence/runs/credit-v2-first-actual-borrow/attempt-01/actual-borrow-observation.json"
+  ],
+  "started_at": "2026-11-17T14:48:21.904964+00:00",
+  "finished_at": "2026-11-17T14:48:22.001178+00:00",
+  "wall_seconds": 0.09621885899832705,
+  "timeout_seconds": 15,
+  "returncode": 0,
+  "files": {
+    "scripts/credit_v2_capture_reference.py": "c7a4ea5f0bbb478a00add4aa99ae360dce651abca9b7f84d4b712e4573e129fd",
+    "scripts/credit_v2_financial_reference.py": "37bb40f876951e32304cccb7b21e8fe13b8b27dd1e617eec101fbf5c32b1395e",
+    "scripts/credit_v2_original_sql_reference.py": "4533b2129b4d3a713e905f28db0f6533c5700f512babf748254563a359a1bcaa"
+  },
+  "actual_database_private": true,
+  "production_approved": false
+}
