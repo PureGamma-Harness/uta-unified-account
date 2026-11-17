@@ -79,3 +79,36 @@ All 49 recorded runtime hashes match the immutable 7ae base; the actual driver
 is unchanged between controlled red and green. The original manifests/results
 are retained without editing their commit or hash fields. Three-runtime
 targeted validation remains a separate follow-up; no full CI was rerun.
+
+## Final targeted validation
+
+The clean correction commit `27855b50ffaba64c869234ae94218d5ed981e211` was then
+tested sequentially on CPU 0. Original commands, actual environment, UTC times,
+source/test hashes and combined stdout/stderr are retained unchanged in
+`targeted/`, with the actual [targeted driver](targeted/uta-startup-binding-final.py).
+
+| Python | SQLite | Tests | unittest elapsed |
+| --- | --- | ---: | ---: |
+| 3.10.22 | 3.53.1 | 67 | 13.651 s |
+| 3.12.14 | 3.53.1 | 67 | 12.694 s |
+| 3.13.5 | 3.46.1 | 67 | 13.040 s |
+
+All three logs report `OK` without skips. Times above are unittest's own elapsed
+times; driver `elapsed_ns` also includes surrounding measurement/environment
+work. These are targeted tests, not a repeated full CI attempt.
+
+Read-only provenance checks in [targeted-verification.json](targeted-verification.json)
+and the copy list establish that all 49 recorded runtime files remain
+byte-identical to 7ae and all six selected test-file hashes match the clean
+correction commit. Every existing owned-startup test method and all three other
+contention test methods have unchanged AST bodies (19 methods total). Their
+shared fixture default remains .4 seconds. Actual-expiry, cross-TTL and unknown
+renewal-result cases remain in this selection. This result does not claim
+general .4-second setup availability under arbitrary CPU pauses.
+
+The original PR red, controlled old/new pause runs and targeted results are
+separate observations with separate source/test hashes. No original manifest or
+result commit field was rewritten. Runtime, production TTL policy and SQL busy
+timeout implementation were never edited; only the specific external BUSY
+negative's test preconditions changed. Whole-repository, packaging, remote CI,
+large-history, throughput, HA and real-money qualification remain separate gates.
