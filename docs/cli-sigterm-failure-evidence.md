@@ -122,6 +122,12 @@ cannot bypass owned-child poll/kill/communicate cleanup. That fallback preserves
 the primary exception if cleanup is also unknown; it does not claim a complete
 archive when no observer exists. The original business/timeout/assertion AST
 still hashes to a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128.
-Only a new once-authorized pure batch is planned: the original eight controls
-with its helper SHA pin updated, plus strict identity/fallback and AST cases.
-No real native operation or prior test rerun is authorized by this correction.
+The one authorized pure batch ran after freezing CODE commita43ce07: the
+original eight controls, changing only its helper SHA pin, all passed. Three
+additional strict identity/throw/fallback cases and the original business AST
+check passed, four tests/zero failures/errors. In-process CPU affinity was [1],
+measured pure elapsed56,419,901ns, exit0, ten-second watchdog not triggered.
+The adapted script intentionally retains its historical candidate output field;
+the enclosing record binds the actual new CODE commit/helper hash separately.
+No real native operation or original-case rerun occurred. Original 1ef seven
+and independent first 3RED/5PASS raw outputs remain unchanged.
