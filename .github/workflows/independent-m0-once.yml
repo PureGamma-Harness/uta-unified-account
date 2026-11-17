@@ -3,7 +3,7 @@ name: Root-approved once-only hosted M0 diagnostic
 on:
   push:
     branches:
-      - perf/approved-m0-20261117-once
+      - perf/approved-m0-20261117-02
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
     if: >-
       github.repository == 'PureGamma-Harness/uta-unified-account' &&
       github.event_name == 'push' &&
-      github.ref == 'refs/heads/perf/approved-m0-20261117-once' &&
+      github.ref == 'refs/heads/perf/approved-m0-20261117-02' &&
       github.event.created == true &&
       github.event.before == '0000000000000000000000000000000000000000' &&
       github.run_attempt == 1
@@ -78,12 +78,13 @@ jobs:
             /tests/test_independent_m0_controller.py
             /tests/test_independent_m0_integrity.py
             /tests/test_independent_m0_escrow.py
+            /tests/test_independent_m0_checkout_ref.py
             /.github/workflows/independent-m0.yml
             /.github/workflows/independent-m0-once.yml
       - name: Checkout exact qualified workload source separately
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 909acecd153e2e89dfe2238e3ed3a3d3c9f0
+          ref: 909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0
           path: workload
           persist-credentials: false
       - name: Set runtime, then record actual Python and SQLite

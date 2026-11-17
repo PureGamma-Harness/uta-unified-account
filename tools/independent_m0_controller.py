@@ -28,7 +28,8 @@ import time
 
 SOURCE = '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
 SOURCE_TREE = 'cee60bc0b5413551030300e065d0dcaac6a7ff55'
-APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-once'
+APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-02'
+REGISTRATION_ID = 'independent-m0-20261117-02'
 APPROVAL_PATH = 'config/independent-m0-approved.json'
 ONCE_WORKFLOW = '.github/workflows/independent-m0-once.yml'
 TRACKED = 5518
@@ -197,7 +198,7 @@ def validate_once_manifest(value, environment, event, relation):
     need(set(value)==expected,'once_manifest_fields')
     need(type(value['format']) is int and value['format']==2 and value['kind']=='ROOT_REVIEWED_ONCE_M0_V2_ESCROW','once_manifest_format')
     need(value['execution_authorized'] is True,'once_not_authorized')
-    need(value['registration_id']=='independent-m0-20261117-once','registration_id')
+    need(value['registration_id']==REGISTRATION_ID,'registration_id')
     need(value['branch']==environment.get('GITHUB_REF')==event.get('ref')==APPROVED_BRANCH,'exact_once_branch')
     need(environment.get('GITHUB_EVENT_NAME')=='push' and environment.get('GITHUB_RUN_ATTEMPT')=='1','once_first_push_attempt')
     need(event.get('created') is True and event.get('deleted') is False and event.get('forced') is False,'branch_creation_only')

@@ -68,7 +68,7 @@ class PureM0Controls(unittest.TestCase):
     def once(self):
         a=self.approval()
         return {'format':2,'kind':'ROOT_REVIEWED_ONCE_M0_V2_ESCROW','execution_authorized':True,
-            'registration_id':'independent-m0-20261117-once','branch':m.APPROVED_BRANCH,
+            'registration_id':m.REGISTRATION_ID,'branch':m.APPROVED_BRANCH,
             'control_commit':a['control_commit'],'controller_sha256':a['controller_sha256'],'workflow_sha256':'e'*64,
             'source_commit':m.SOURCE,'source_tree':m.SOURCE_TREE,'command_spec':m.command_spec(),'budgets':m.budget_spec(),
             'workspace_boot_id':a['workspace_boot_id'],'workspace_hostname_sha256':a['workspace_hostname_sha256'],
@@ -116,11 +116,17 @@ class PureM0Controls(unittest.TestCase):
         with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
     def test_once_workflow_exact_branch_and_no_manual_main_requirement(self):
         text=(PATH.parents[1]/'.github/workflows/independent-m0-once.yml').read_text()
-        self.assertIn('      - perf/approved-m0-20261117-once',text)
+        self.assertIn('      - perf/approved-m0-20261117-02',text)
         self.assertNotIn('workflow_dispatch:',text)
         self.assertIn("github.event.before == '0000000000000000000000000000000000000000'",text)
         self.assertIn('github.event.created == true',text)
         self.assertIn('git',text);self.assertIn('manifest-only',text)
+    def test_old_actual_registration_cannot_be_reused(self):
+        e,event,relation=self.once_context();value=self.once();value['registration_id']='independent-m0-20261117-once'
+        with self.assertRaises(m.GateError):m.validate_once_manifest(value,e,event,relation)
+    def test_old_actual_branch_cannot_be_recreated_for_new_registration(self):
+        e,event,relation=self.once_context();e['GITHUB_REF']=event['ref']='refs/heads/perf/approved-m0-20261117-once'
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
     def test_prep_has_no_metadata_process_or_sql(self):
         before={name for name in sys.modules if name=='uta' or name.startswith('uta.') or name=='sqlite3'}
         with patch.object(m,'source_snapshot',side_effect=AssertionError('source call')),patch.object(m,'collect_host',side_effect=AssertionError('host call')),patch.object(m.subprocess,'Popen',side_effect=AssertionError('spawn')),redirect_stdout(io.StringIO()) as output:
