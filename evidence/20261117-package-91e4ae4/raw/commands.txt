@@ -1,0 +1,61 @@
+All commands inherit per-process affinity CPU2, PYTHONDONTWRITEBYTECODE=1 and unset PYTHONPATH. Source is read only; output is fresh. No host/cpuset isolation.
+
+cwd /workspace/uta-observer-freeze-91e4ae4
+git rev-parse HEAD
+returncode=0
+
+cwd /workspace/uta-observer-freeze-91e4ae4
+git status --short
+returncode=0
+
+cwd /workspace/uta-package-91e4ae4/raw
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -m venv /tmp/uta-release-91e4ae4-k1knnpel/venv
+returncode=0
+
+cwd /workspace/uta-observer-freeze-91e4ae4
+git archive --format=tar --output=/tmp/uta-release-91e4ae4-k1knnpel/frozen-source.tar HEAD
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/build-source
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel('"'"'/tmp/uta-release-91e4ae4-k1knnpel/artifacts'"'"')); print("SDIST", b.build_sdist('"'"'/tmp/uta-release-91e4ae4-k1knnpel/artifacts'"'"'))'
+returncode=0
+
+cwd /workspace/uta-package-91e4ae4/raw
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-observer-freeze-91e4ae4/tools/verify_release_archives.py --source /workspace/uta-observer-freeze-91e4ae4 --commit 91e4ae40b5e9b884c54026406299df5000c9c100 --wheel /tmp/uta-release-91e4ae4-k1knnpel/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl --sdist /tmp/uta-release-91e4ae4-k1knnpel/artifacts/uta_reference_exchange-0.5.0a1.tar.gz --output /tmp/uta-release-91e4ae4-k1knnpel/artifact-manifest.json
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/external
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-91e4ae4-k1knnpel/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/external
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -I /workspace/uta-observer-freeze-91e4ae4/tools/validate_installed_release.py --source /workspace/uta-observer-freeze-91e4ae4 --artifact-manifest /tmp/uta-release-91e4ae4-k1knnpel/artifact-manifest.json --output /tmp/uta-release-91e4ae4-k1knnpel/external/installed
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/external
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -I /workspace/uta-observer-freeze-91e4ae4/evidence/20261117-package-13e6924/validate_installed_views.py --source /workspace/uta-observer-freeze-91e4ae4 --artifact-manifest /tmp/uta-release-91e4ae4-k1knnpel/artifact-manifest.json --output /tmp/uta-release-91e4ae4-k1knnpel/external/installed-views
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+returncode=0
+
+cwd /tmp/uta-release-91e4ae4-k1knnpel/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-91e4ae4-k1knnpel/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+returncode=0
+
+cwd /workspace/uta-package-91e4ae4/raw
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-observer-freeze-91e4ae4/evidence/20261117-package-4608ffe/runtime_omission_controls.py --source /workspace/uta-observer-freeze-91e4ae4 --manifest /tmp/uta-release-91e4ae4-k1knnpel/artifact-manifest.json --wheel /tmp/uta-release-91e4ae4-k1knnpel/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl --sdist /tmp/uta-release-91e4ae4-k1knnpel/artifacts/uta_reference_exchange-0.5.0a1.tar.gz --output /tmp/uta-release-91e4ae4-k1knnpel/runtime-omission-controls
+returncode=0
+
+cwd /workspace/uta-observer-freeze-91e4ae4
+git rev-parse HEAD
+returncode=0
+
+cwd /workspace/uta-observer-freeze-91e4ae4
+git status --short
+returncode=0
