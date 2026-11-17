@@ -1,0 +1,164 @@
+test_all_known_sidecars_may_disappear_after_discovery (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_all_known_sidecars_may_disappear_after_discovery) ... ok
+test_known_atomic_temporary_removal_is_bounded_to_exact_publishers (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_known_atomic_temporary_removal_is_bounded_to_exact_publishers) ... ok
+test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) ... 
+  test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='checkpoint.sqlite3') ... FAIL
+  test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='managed/router.sqlite3') ... FAIL
+  test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='managed/shard-0000.sqlite3') ... FAIL
+  test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='private/auth.sqlite3') ... FAIL
+test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) ... 
+  test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='checkpoint.sqlite3') ... FAIL
+  test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='managed/router.sqlite3') ... FAIL
+  test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='managed/shard-0000.sqlite3') ... FAIL
+  test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='private/auth.sqlite3') ... FAIL
+test_permission_and_other_io_failures_are_not_ignored_for_aux_or_main (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_permission_and_other_io_failures_are_not_ignored_for_aux_or_main) ... ok
+test_real_sqlite_last_close_between_first_stat_and_size_does_not_abort (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_real_sqlite_last_close_between_first_stat_and_size_does_not_abort) ... ERROR
+test_surviving_auxiliary_and_temporary_bytes_still_exhaust_original_budgets (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_surviving_auxiliary_and_temporary_bytes_still_exhaust_original_budgets) ... ok
+test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) ... 
+  test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='unrelated.sqlite3-wal') ... FAIL
+  test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='unrelated.tmp') ... FAIL
+  test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='logs/unrelated.jsonl.tmp') ... FAIL
+  test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='managed/other.sqlite3-shm') ... FAIL
+  test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='progress.json') ... FAIL
+
+======================================================================
+ERROR: test_real_sqlite_last_close_between_first_stat_and_size_does_not_abort (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_real_sqlite_last_close_between_first_stat_and_size_does_not_abort)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 62, in test_real_sqlite_last_close_between_first_stat_and_size_does_not_abort
+    report = ManagedSoak._resources(job)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-managed-resource-incident/benchmarks/run_managed_soak.py", line 806, in _resources
+    total = sum(path.stat().st_size for path in files)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-managed-resource-incident/benchmarks/run_managed_soak.py", line 806, in <genexpr>
+    total = sum(path.stat().st_size for path in files)
+                ^^^^^^^^^^^
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 56, in disappearing
+    details = original_stat(path, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp97ckjbxp/managed/shard-0000.sqlite3-wal'
+
+======================================================================
+FAIL: test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='checkpoint.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 94, in test_main_disappearance_after_discovery_is_fatal
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='managed/router.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 94, in test_main_disappearance_after_discovery_is_fatal
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='managed/shard-0000.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 94, in test_main_disappearance_after_discovery_is_fatal
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_main_disappearance_after_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_main_disappearance_after_discovery_is_fatal) (name='private/auth.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 94, in test_main_disappearance_after_discovery_is_fatal
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='checkpoint.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 102, in test_missing_required_main_before_discovery_is_fatal
+    with self.assertRaises(FileNotFoundError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='managed/router.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 102, in test_missing_required_main_before_discovery_is_fatal
+    with self.assertRaises(FileNotFoundError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='managed/shard-0000.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 102, in test_missing_required_main_before_discovery_is_fatal
+    with self.assertRaises(FileNotFoundError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_missing_required_main_before_discovery_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_missing_required_main_before_discovery_is_fatal) (name='private/auth.sqlite3')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 102, in test_missing_required_main_before_discovery_is_fatal
+    with self.assertRaises(FileNotFoundError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='unrelated.sqlite3-wal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 113, in test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='unrelated.tmp')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 113, in test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='logs/unrelated.jsonl.tmp')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 113, in test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='managed/other.sqlite3-shm')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 113, in test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+======================================================================
+FAIL: test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions) (name='progress.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 113, in test_unrelated_missing_files_are_not_sidecar_or_temporary_exemptions
+    with self.remove_after_discovery(job, target), self.assertRaises(FileNotFoundError):
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: FileNotFoundError not raised
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.039s
+
+FAILED (failures=13, errors=1)
