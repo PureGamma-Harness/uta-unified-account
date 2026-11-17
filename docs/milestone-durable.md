@@ -2,7 +2,7 @@
 
 本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
 
-**当前整合阻断：** `e6e3afd` 的远端四版本 CI 各执行 845 项并失败，涉及 worker 回执等待超时、一次读 guard inventory 异常及短 soak fixture。完整[原始日志与失败台账](../evidence/runs/durable-ci-preflight/README.md)已保留；根因调查和独立复验尚未完成，不用较早本地通过覆盖。之后的 CI 会在测试前记录实际 SQLite 构建、运行时及 checked-out SHA，避免把环境差异当作未经验证的原因。
+**当前整合阻断：** `e6e3afd` 的远端四版本 CI 各执行 845 项并失败，涉及 worker 回执等待超时、一次读 guard inventory 异常及短 soak fixture。完整[原始日志与失败台账](../evidence/runs/durable-ci-preflight/README.md)已保留；其后已独立复现并修复应用层 POSIX 锁破坏和启动续约调度缺陷；新诊断子类的同型问题也已覆盖。完整整合/远端复验尚未完成，不用较早本地通过或局部修复覆盖。之后的 CI 会在测试前记录实际 SQLite 构建、运行时及 checked-out SHA，避免把环境差异当作未经验证的原因。
 
 ## 交付范围与明确拒绝
 
@@ -33,6 +33,12 @@ HMAC profile 默认要求本机原生 TLS ≥1.2。请求签名覆盖 tenant、�
 另一次独立审查发现审计只核 guard 名称、未核实际 SQL。`f8d96e8` 共享安装/验证的完整定义，逐项核对 SQL、所属表和 inventory；读档、写决策及行情引用均失败关闭。独立 12 项测试在 Python 3.10/3.12 通过，保留原弱化 guard 红态，见 [独立审计故障报告](decision-audit-faults.md)。签名接口另有 [独立 HMAC/TLS 验证](hmac-validation.md)，9 项测试使用独立客户端 MAC 和真实证书验证。
 
 真实 managed 清算用实际盘口完成 90 开仓、45 部分清算、无深度继续持有 45、kill 后新 PID 接管、再成交 45，终态现金 93.16 USD。schema2 与 required schema3 均逐笔核对；当前价格变化后按历史市场重放三个 victim fill，现金 1000→996.4→544.78→93.16，仓位 0→90→45→0。它是功能/恢复证据，不是容量或灾难恢复验收。
+
+## 存储锁缺陷的独立修复
+
+原权限检查在已有 SQLite 主文件上执行 raw open/fstat/close，会取消同进程其他连接的 POSIX 文件锁。SQLite 官方一手说明、跨 PID 的相同红绿测试和原失败均见 [独立锁验收](sqlite-lock-validation.md)、[修复与部署边界](sqlite-connection-locks.md)及 [归档原日志](../evidence/runs/sqlite-posix-locks/collection.json)。修复保留私有权限、inode、符号链接、分片身份与 fencing 检查，使用关闭后才原子发布的新 inode，并将已有文件交由 SQLite 打开；诊断/认证子类另行覆盖。新 worker 在 READY 前续约仍有效的原 token，超时的初始化不能复活租约；没有扩大 TTL 或业务等待期限。
+
+此前形式模型的原子/唯一 writer 是假设，不能替代这些实现缺口的验证。原 `88755a9` 长稳及 `7a06c05` 性能探针仍包含旧连接代码；即使局部对账通过，也不能当作修复后稳定性证据。单个历史 I/O522缺乏完整FD/WAL取证，其精确归因仍有证据缺口。新候选需重新冻结、完整复验与实际长测。
 
 ## 实际 24 小时任务与容量边界
 

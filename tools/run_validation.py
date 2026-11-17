@@ -37,14 +37,14 @@ def main():
     started = datetime.now(timezone.utc).isoformat()
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     def sources():
-        paths = {path for folder in ("uta", "tests", "formal", "tools")
+        paths = {path for folder in ("uta", "tests", "formal", "tools", "benchmarks", "scripts")
                  for path in (ROOT / folder).rglob("*.py")}
         paths.update(path for path in (ROOT / "tests" / "fixtures").rglob("*") if path.is_file())
         paths.update(ROOT / name for name in ("pyproject.toml", "MANIFEST.in", "LICENSE") if (ROOT / name).exists())
         return {path.relative_to(ROOT).as_posix(): sha256(path.read_bytes()).hexdigest()
                 for path in sorted(paths)}
     def clean(manifest):
-        paths = ("uta", "tests", "formal", "tools", "pyproject.toml", "MANIFEST.in", "LICENSE")
+        paths = ("uta", "tests", "formal", "tools", "benchmarks", "scripts", "pyproject.toml", "MANIFEST.in", "LICENSE")
         tracked = set(subprocess.check_output(["git", "ls-files", "-z", "--", *paths], cwd=ROOT).decode().split("\0"))
         return set(manifest) <= tracked and subprocess.run(
             ["git", "diff", "--quiet", "HEAD", "--", *paths], cwd=ROOT).returncode == 0
