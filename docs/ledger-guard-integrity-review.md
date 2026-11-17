@@ -76,3 +76,40 @@ contains the command, source/runtime hashes, machine-readable observation and
 unmodified red logs. A fresh run uses a disposable temporary source and starts
 no managed workers. The trusted OS/database owner remains outside the customer
 threat boundary described by the storage module.
+
+## Integration correction and pending full validation
+
+`DurableLedger` now derives the seven official protection definitions from the
+same fixed `_SCHEMA` used for installation, accounting for SQLite removing
+`IF NOT EXISTS` in stored trigger SQL. Verification checks name, object type,
+table and exact SQL. Reopening an existing ledger validates these protections
+before any schema-install statement, so missing or weakened guards remain
+unchanged evidence rather than being implicitly repaired. A fresh empty ledger
+still installs the original definitions; financial units and journal format are
+unchanged.
+
+Offline managed initialization/takeover additionally performs complete read-only
+journal verification on **all shards before any manifest, queue or fence**.
+This uses verification-only views without invoking financial constructors.
+Corruption raises `503 ledger_corrupt`; it does not release funds or reconstruct
+history. A later post-preflight quiescence violation still follows the existing
+HALTED/incomplete forward-recovery rule. Full historical replay is deliberately
+kept out of the normal market-activation path; this change does not introduce an
+online full-journal scan at each quote.
+
+The first integrated 73-case regression found one existing fixture relying on
+constructor repair after deliberately dropping a guard. Its original error log
+is retained. The fixture now requires reopening to reject and preserve the
+missing guard, then explicitly reinstalls its captured original SQL before the
+existing hash-corruption assertion. The journal/hash assertion is unchanged.
+The original independent red case, three additional all-shard/read-only cases,
+storage, migration and spot/strict-JSON/guard regressions then passed **76 tests
+in 13.518s** on Python 3.12.14 / SQLite 3.53.1. This is targeted evidence;
+independent recheck, full-source matrix, package verification and long-run
+qualification remain pending. Production remains **NO-GO**.
+
+Deploy a fixed new artifact while source writers are stopped and preserve every
+source file and business ID on rejection. Restoration of a damaged definition or
+history requires a separately reviewed offline recovery; this runtime refuses
+automatic repair. Code rollback must not be used to bypass rejection with an
+older permissive verifier or to downgrade managed guards.

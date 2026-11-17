@@ -26,7 +26,7 @@ from uuid import uuid4
 
 from .durable_commands import CommandExecutionError, QueueStore
 from .market import MAX_JSON_BYTES, MarketSnapshot
-from .ledger import Ledger
+from .ledger import Ledger, LedgerError
 from .models import RiskInputError
 from .portfolio import PortfolioRules
 from .products import ProductCatalog
@@ -285,6 +285,25 @@ def _preflight_managed_spot_sources(control):
             _verify_managed_spot_source(connection, database, control.layout["scales"])
 
 
+def _preflight_managed_ledger_sources(control):
+    """Offline all-shard journal validation before any irreversible fence.
+
+    This never constructs a financial service or repairs schema. It is not an
+    online activation step: full historical replay belongs to offline sealing.
+    """
+    layout_hash = sha256(control._descriptor.encode()).hexdigest()
+    for index in range(control.layout["shard_count"]):
+        database = _BoundShardDatabase(control._path(index), index, layout_hash)
+        ledger = DurableLedger.__new__(DurableLedger)
+        ledger.database, ledger.scales = database, dict(control.layout["scales"])
+        ledger._codec = Ledger(ledger.scales)
+        try:
+            with database.read_transaction() as connection:
+                ledger.verify(connection=connection)
+        except (LedgerError, sqlite3.Error, StorageError) as exc:
+            raise ServiceError("ledger_corrupt", "source journal failed read-only verification; no repair was attempted", 503) from exc
+
+
 def _prepare_config(connection, config):
     connection.execute("CREATE TABLE router_durable_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,initialized INTEGER NOT NULL,payload TEXT NOT NULL)")
     connection.execute("INSERT INTO router_durable_config VALUES (1,1,0,?)", (_json(config),))
@@ -515,6 +534,7 @@ class DurableProcessRouter:
         with router._lock(exclusive=True):
             leases = []
             try:
+                _preflight_managed_ledger_sources(router)
                 _preflight_managed_spot_sources(router)
                 router._reconcile_funding()
                 with router.control.transaction() as connection:
@@ -597,6 +617,7 @@ class DurableProcessRouter:
                 control._write_state({**state, "halted": True, "error": "takeover_in_progress"})
                 leases = []
                 try:
+                    _preflight_managed_ledger_sources(control)
                     _preflight_managed_spot_sources(control)
                     first = _BoundShardDatabase(control._path(0), 0, layout_hash)
                     with first.read_transaction() as connection:
