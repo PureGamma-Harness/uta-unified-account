@@ -91,3 +91,33 @@ This is docs/evidence only, without schema, data, runtime or API changes. There
 is nothing to deploy. Reverting these new review files must not delete or modify
 original CI members, frozen source, private experiments, artifacts or clocks.
 Source91 remains NO_GO and no real-funds or long-run approval follows.
+
+## Concrete observation driver 5e26 review
+
+The external candidate is `5e26f0acd04b47cdafad942464e70b537c70d30b`, following
+`1ac5bb633e18634cb5e0a976ccd8efefb8af71ea`. Exact driver SHA-256 is
+`81b9a0c8ee7ed45f58f38174895ad2fa4e7d3043fd6ab7c03903016d69cae2ee`.
+Independent compilation/AST and 266 Git-blob hash checks passed without executing
+the driver or importing the financial runtime. The original test and production
+runtime bytes are unchanged. The status wrapper calls the original once and
+returns or rethrows its result, without added SQL. Stack sampling excludes frame
+locals; publisher error capture reads only its explicitly named errors cell.
+The later candidate moved the whole timer before source preflight and records
+the real interpreter/SQLite versions. Local Python3.13.5 is not CI's3.13.18.
+
+There is no static blocker to **one separately parent-authorized CPU2/Python3.13
+observation**, with these explicit conditions. Set outer `umask 077` and verify
+the new output directory is0700; the driver does not itself set a private umask.
+The27-second worker watchdog and reported30-second whole threshold do not impose
+an OS-wide hard deadline on external IO. Final acceptance must independently AND
+whole time, source hashes, logger/sampling health, observer-thread exit, no forced
+cleanup or residual processes and the original outcome. Exit0 alone is insufficient.
+
+The launcher discovers children from completed `spawn_return` records. A partial
+original `_spawn` can fail after process creation but before that record, so an
+empty recorded child list cannot prove no residual process. Check unmatched spawn
+starts/returns and perform a read-only `/proc` scan for this new worker's PGID/SID
+afterwards. No existing job may be signaled. Unknown sampling, observer failure,
+watchdog, forced cleanup or residual state remains incomplete/NO_GO. A passing
+original case is NO_REPRO of the historical assertion; it does not sign source91,
+prove the five-second production claim, or establish the historical cause.
