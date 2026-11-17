@@ -124,6 +124,7 @@ class BatchCacheIntegrationTests(unittest.TestCase):
         self.directory = Path(temporary.name) / "managed"
 
     def initialize(self, size):
+        self.batch_size = size
         def bootstrap(router):
             for account in ACCOUNTS:
                 router.create_account(account)
@@ -179,7 +180,8 @@ class BatchCacheIntegrationTests(unittest.TestCase):
 
     def enqueue_three(self, pid):
         (self.directory / "test-pause").touch()
-        self.wait(lambda: self.observation("paused", pid))
+        paused = self.wait(lambda: self.observation("paused", pid))
+        self.assertEqual(paused["size"], self.batch_size)
         for account in ACCOUNTS:
             ack = self.router.submit_order(account, "cid:" + account, "oid:" + account, "BTC-PERP", D(1), D(100))
             self.assertEqual((ack["ack"], ack["state"]), ("durably_queued", "PENDING"))
