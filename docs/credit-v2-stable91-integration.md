@@ -33,9 +33,12 @@ does not claim a new performance run. Commands/hashes/raw are in `targeted/`.
 The previously green21-second process-recovery case was not repeated for this
 merge, and old raw was not reattributed to91 or96b.
 
-The root ledger-catalog patch4c260d2 is deliberately absent pending independent
-acceptance and root's integrated SHA. After that integration, the fixed M3 SHA
-still needs the full supported-Python matrix, CI and a new package acceptance.
+At this stable91-only checkpoint, root ledger-catalog patch4c260d2 was absent
+pending independent acceptance and root's integrated SHA. It was subsequently
+integrated with root5a and later F02 MAIN qualification/root7dc; see
+`credit-v2-ledger-catalog-integration.md` and `credit-v2-final-candidate.md`.
+The fixed final M3 SHA still needs the full supported-Python matrix, CI and a
+new package acceptance.
 Whole stable91 integration alone does not meet those gates. The draft remains
 default-disabled, synthetic-only and overall NO-GO for production or real funds.
 

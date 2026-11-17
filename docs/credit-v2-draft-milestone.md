@@ -67,14 +67,15 @@ implemented. New fixed-code fixtures do not repair older code-bound databases.
 
 ## Gates that block merge and production
 
-* Exact stable91e4ae40 is whole-merged by96b9fdb; all368 previous M3 paths
-  are byte-equal at that merge and23 necessary targeted checks passed. Root's
-  independently accepted persistent-MAIN ledger-catalog baseline5a29611 is
-  whole-merged byfbfbfea. Its original native-view interface red and minimal
-  direct-checker alias060022c are retained; three new-source targeted controls
-  passed. The raw unmanaged joined TEMP-shadow boundary remains separately
-  open. A frozen final SHA, full supported Python matrix, CI and new package
-  checks remain required; targeted checks do not replace those gates.
+* Stable91, independently accepted F01 catalogue and F02 MAIN verification
+  identity, safe failure-only diagnostics and their final independent reports
+  are whole-merged through root7dc8ded by6c834ff. Original native-view interface
+  red and direct-checker alias060022c remain; narrow acceptance is explicitly
+  scoped, not universal schema closure. One frozen final PR19 SHA still needs
+  full local three-runtime validation, actual final CI8 and one independent
+  fresh package, then same-artifact synthetic smoke/separate6h observation.
+  Source460's intermediate8/8 and package evidence cannot satisfy final-source
+  gates. See `docs/credit-v2-final-candidate.md`; no enablement is granted.
 * Further crash/unknown/corruption/governance tests and complete independent
   acceptance; forward binary/schema upgrade remains unsupported.
 * Normal new-order/matching/spot/withdrawal/mode-switch adapters, lending
