@@ -1,0 +1,215 @@
+{
+  "actual_SQL_native_profile_workload_Actions": false,
+  "cases": [
+    {
+      "case": "coherent_error_status_population",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "business_label_with503_receipt",
+      "error_code": "receipt_rejection_classification",
+      "error_type": "GateError",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "control_label_with400_receipt",
+      "error_code": "receipt_rejection_classification",
+      "error_type": "GateError",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "rejected_receipt_unparseable_error",
+      "error_code": "rejection_error_json",
+      "error_type": "GateError",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "rejected_receipt_missing_status",
+      "error_code": "rejection_error_shape",
+      "error_type": "GateError",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "legal_status_boundary_100",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "legal_status_boundary_499",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "legal_status_boundary_500",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "legal_status_boundary_599",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "legal_strict_JSON_error_projection_no_code_or_message",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_True",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_400.0",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_99",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_600",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_nan",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "invalid_status_inf",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "success_error_must_be_None_0",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "success_error_must_be_None_3",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "no_bulk_gzip_decompress",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "line_cap_before_JSON_decode",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "incremental_total8MiB_limit",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_includes_hash_parser_fsync",
+      "control_result": "PASS",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "fsync:completed.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_hash",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_parser",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_fsync_preserves_first_bytes",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "parent_collection_over60_quarantined",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "fsync:completed.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    }
+  ],
+  "control_commit": "b2175525fa90595c530999f44140e9411421528d",
+  "controller_process_entry_calls": [],
+  "controller_sha256": "df7e8d3dfc9d22a65b197eda5cf1a0469c7e231eb1ee5ab02b03dca2869723db",
+  "elapsed_monotonic_ns": 368747898,
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T19:31:44.944929+00:00",
+  "production_approved": false,
+  "red_count": 0,
+  "started_at_utc": "2026-11-17T19:31:44.576202+00:00"
+}

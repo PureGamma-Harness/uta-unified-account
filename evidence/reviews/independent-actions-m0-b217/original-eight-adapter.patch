@@ -1,0 +1,37 @@
+--- immutable5f-original-eight
++++ b217-source-shaped-eight
+@@ -20,7 +20,7 @@
+ from types import ModuleType
+ from unittest.mock import patch
+ 
+-CONTROL = "deb3fc56ec249c78833b786b45a2f708fea57dd5"
++CONTROL = "b2175525fa90595c530999f44140e9411421528d"
+ REPO = Path(__file__).resolve().parents[3]
+ 
+ 
+@@ -29,7 +29,7 @@
+     began = time.monotonic_ns()
+     controller = subprocess.check_output(["git", "show", CONTROL + ":tools/independent_m0_controller.py"], cwd=REPO)
+     tests = subprocess.check_output(["git", "show", "e44493f67846adbdee0ff1064743cd1444c5cb4e:tests/test_independent_m0_controller.py"], cwd=REPO)
+-    assert sha256(controller).hexdigest() == "bed27815344703a3180ebf08214157470d0495226571121f85c39aeb62dd455f"
++    assert sha256(controller).hexdigest() == "df7e8d3dfc9d22a65b197eda5cf1a0469c7e231eb1ee5ab02b03dca2869723db"
+     author_tree = ast.parse(tests)
+     fixture = next(node for cls in author_tree.body if isinstance(cls, ast.ClassDef)
+                    for node in cls.body if isinstance(node, ast.FunctionDef) and node.name == "summary")
+@@ -91,7 +91,7 @@
+                          "deadline_exceeded": False, "intended_product_rejection": sequence % 10 == 0,
+                          "receipt": {"command_id": "bench:" + str(sequence), "attempts": 0,
+                                      "state": "SUCCEEDED" if outcome == "financial_succeeded" else "REJECTED",
+-                                     "last_error": None}})
++                                     "last_error": None, "error": None if outcome == "financial_succeeded" else {"code": "synthetic-only", "message": "synthetic source-shaped receipt", "status": 400 if outcome == "business_rejected" else 503}}})
+         assert Counter(r["outcome"] for r in rows) == Counter(baseline["outcome_counts"])
+         with TemporaryDirectory(prefix="m0-pure-parser-review-") as directory:
+             path = Path(directory) / "synthetic-arrivals.jsonl.gz"
+@@ -127,6 +127,7 @@
+             candidate = deepcopy(rows)
+             candidate[199]["outcome"] = "business_rejected"
+             candidate[199]["receipt"]["state"] = "REJECTED"
++            candidate[199]["receipt"]["error"] = {"code": "synthetic-only", "message": "synthetic source-shaped receipt", "status": 400}
+             projected_rows = parsed(candidate)
+             projected_summary = module.project_summary(deepcopy(baseline), False)
+             histogram = dict(Counter(row["outcome"] for row in projected_rows))
