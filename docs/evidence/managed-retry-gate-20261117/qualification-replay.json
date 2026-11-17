@@ -1,0 +1,171 @@
+{
+  "B1": {
+    "command_technical_diagnostics": {
+      "stored_commands": 220,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 10,
+        "SET_HALT": 10,
+        "SUBMIT_ORDER": 200
+      },
+      "internal_execution_attempts": 0,
+      "commands_with_internal_attempts": 0,
+      "commands_with_last_error": 0,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "probe_qualification": {
+      "passed": true,
+      "stop_remaining_cases": false,
+      "reasons": [],
+      "financial_soft_deadline_passed": true,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "original_summary_sha256": "fc7e5e851abc94e979a460e4e343975b24c0016208fc21cd83cfa6c6319ee8fb",
+    "posthoc_only_not_new_load": true
+  },
+  "B2": {
+    "command_technical_diagnostics": {
+      "stored_commands": 220,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 10,
+        "SET_HALT": 10,
+        "SUBMIT_ORDER": 200
+      },
+      "internal_execution_attempts": 0,
+      "commands_with_internal_attempts": 0,
+      "commands_with_last_error": 0,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "probe_qualification": {
+      "passed": true,
+      "stop_remaining_cases": false,
+      "reasons": [],
+      "financial_soft_deadline_passed": true,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "original_summary_sha256": "c2628087b1ce1d0beee3d9a3dd2fd3bd4b493cf79fba9eee053d6ffd86f9698d",
+    "posthoc_only_not_new_load": true
+  },
+  "B3": {
+    "command_technical_diagnostics": {
+      "stored_commands": 220,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 10,
+        "SET_HALT": 10,
+        "SUBMIT_ORDER": 200
+      },
+      "internal_execution_attempts": 0,
+      "commands_with_internal_attempts": 0,
+      "commands_with_last_error": 0,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "probe_qualification": {
+      "passed": true,
+      "stop_remaining_cases": false,
+      "reasons": [],
+      "financial_soft_deadline_passed": true,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "original_summary_sha256": "26f3679978034caf54c1f97b5e671cf8a00ed1360f0551c2adb47459e875ceca",
+    "posthoc_only_not_new_load": true
+  },
+  "P1": {
+    "command_technical_diagnostics": {
+      "stored_commands": 216,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 8,
+        "SET_HALT": 8,
+        "SUBMIT_ORDER": 200
+      },
+      "internal_execution_attempts": 0,
+      "commands_with_internal_attempts": 0,
+      "commands_with_last_error": 0,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "probe_qualification": {
+      "passed": true,
+      "stop_remaining_cases": false,
+      "reasons": [],
+      "financial_soft_deadline_passed": true,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "original_summary_sha256": "eaa8be96ead6cf1af0e273a66b53875912bb421dda7e9b39abdb9d52540d0b7f",
+    "posthoc_only_not_new_load": true
+  },
+  "S1": {
+    "command_technical_diagnostics": {
+      "stored_commands": 907,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 10,
+        "SET_HALT": 10,
+        "SUBMIT_ORDER": 887
+      },
+      "internal_execution_attempts": 1,
+      "commands_with_internal_attempts": 1,
+      "commands_with_last_error": 1,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [
+        {
+          "shard": 0,
+          "command_id": "bench:684",
+          "kind": "SUBMIT_ORDER",
+          "state": "REJECTED",
+          "attempts": 1,
+          "last_error": "technical_execution_failure",
+          "terminal_error_code": "market_unavailable",
+          "terminal_error_status": 503
+        }
+      ],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "probe_qualification": {
+      "passed": false,
+      "stop_remaining_cases": true,
+      "reasons": [
+        "internal_execution_attempts",
+        "persisted_last_error"
+      ],
+      "financial_soft_deadline_passed": false,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "original_summary_sha256": "b2b4b96cddab515000d8e66c3423828031b78083aa857e66e5d6723b932809cf",
+    "posthoc_only_not_new_load": true
+  }
+}
