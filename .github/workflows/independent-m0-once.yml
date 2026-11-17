@@ -3,7 +3,7 @@ name: Root-approved once-only hosted M0 diagnostic
 on:
   push:
     branches:
-      - perf/approved-m0-20261117-03
+      - perf/approved-m0-20261117-04
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
     if: >-
       github.repository == 'PureGamma-Harness/uta-unified-account' &&
       github.event_name == 'push' &&
-      github.ref == 'refs/heads/perf/approved-m0-20261117-03' &&
+      github.ref == 'refs/heads/perf/approved-m0-20261117-04' &&
       github.event.created == true &&
       github.event.before == '0000000000000000000000000000000000000000' &&
       github.run_attempt == 1

@@ -116,18 +116,18 @@ class PureM0Controls(unittest.TestCase):
         with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
     def test_once_workflow_exact_branch_and_no_manual_main_requirement(self):
         text=(PATH.parents[1]/'.github/workflows/independent-m0-once.yml').read_text()
-        self.assertIn('      - perf/approved-m0-20261117-03',text)
+        self.assertIn('      - perf/approved-m0-20261117-04',text)
         self.assertNotIn('workflow_dispatch:',text)
         self.assertIn("github.event.before == '0000000000000000000000000000000000000000'",text)
         self.assertIn('github.event.created == true',text)
         self.assertIn('git',text);self.assertIn('manifest-only',text)
     def test_old_actual_registration_cannot_be_reused(self):
         e,event,relation=self.once_context()
-        for old in ('independent-m0-20261117-once','independent-m0-20261117-02'):
+        for old in ('independent-m0-20261117-once','independent-m0-20261117-02','independent-m0-20261117-03'):
             value=self.once();value['registration_id']=old
             with self.assertRaises(m.GateError):m.validate_once_manifest(value,e,event,relation)
     def test_old_actual_branch_cannot_be_recreated_for_new_registration(self):
-        for old in ('refs/heads/perf/approved-m0-20261117-once','refs/heads/perf/approved-m0-20261117-02'):
+        for old in ('refs/heads/perf/approved-m0-20261117-once','refs/heads/perf/approved-m0-20261117-02','refs/heads/perf/approved-m0-20261117-03'):
             e,event,relation=self.once_context();e['GITHUB_REF']=event['ref']=old
             with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
     def test_prep_has_no_metadata_process_or_sql(self):
