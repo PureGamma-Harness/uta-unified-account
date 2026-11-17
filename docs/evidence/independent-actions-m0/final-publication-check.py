@@ -80,6 +80,7 @@ def main():
             'tools/independent_m0_controller.py','tools/m0_stream_escrow.py','tools/test_m0_stream_escrow_fixture.py',
             'tests/test_independent_m0_controller.py','tests/test_independent_m0_integrity.py','tests/test_independent_m0_escrow.py',
             'tests/test_independent_m0_checkout_ref.py',
+            'tests/test_independent_m0_resource_race.py',
             'config/m0-stream-recipient-public.pem','config/m0-stream-recipient-public-metadata.json'}):
             findings.append({'kind':'unexpected_current_public_path','path':path})
         if Path(path).suffix.lower() in ('.db','.sqlite','.sqlite3','.zip','.whl','.gz','.prof','.cms','.der','.key'):

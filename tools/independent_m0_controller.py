@@ -28,8 +28,8 @@ import time
 
 SOURCE = '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
 SOURCE_TREE = 'cee60bc0b5413551030300e065d0dcaac6a7ff55'
-APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-02'
-REGISTRATION_ID = 'independent-m0-20261117-02'
+APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-03'
+REGISTRATION_ID = 'independent-m0-20261117-03'
 APPROVAL_PATH = 'config/independent-m0-approved.json'
 ONCE_WORKFLOW = '.github/workflows/independent-m0-once.yml'
 TRACKED = 5518
@@ -99,36 +99,106 @@ def public_write(root, name, value):
         stream.write(raw);stream.flush();os.fsync(stream.fileno())
     return {'name':name,'bytes':len(raw),'sha256':sha256(raw).hexdigest()}
 
-def tree_bytes(root, entries_limit=20000):
-    if not root.exists():
-        return 0
-    total = entries = 0
-    for parent,dirs,files in os.walk(root,followlinks=False):
+RESOURCE_SCAN_ATTEMPTS = 3
+RESOURCE_SCAN_RETRY_NS = 50_000_000
+
+def _walk_error(error):raise error
+
+def _resource_entries(root, observe, allow_missing_root=False):
+    try:info=root.lstat()
+    except FileNotFoundError:
+        if allow_missing_root:return
+        raise
+    need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory')
+    observe(root,info)
+    for parent,dirs,files in os.walk(root,followlinks=False,onerror=_walk_error):
         for name in dirs+files:
-            entries += 1
-            need(entries <= entries_limit, 'tree_entries_cap')
-            info = (Path(parent)/name).lstat()
-            need(not stat.S_ISLNK(info.st_mode), 'output_symlink')
-            need(stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'output_special')
-            if stat.S_ISREG(info.st_mode):total += info.st_size
+            path=Path(parent)/name
+            info=path.lstat()
+            yield path,info,observe(path,info)
+
+def _sqlite_aux_location(path, anchors):
+    for anchor in anchors:
+        try:relative=path.relative_to(anchor).as_posix()
+        except ValueError:continue
+        patterns=[r'[BP]/workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)',r'runtime-probe/private\.sqlite3-(wal|shm)']
+        if anchor.name in {'B','P'}:patterns.append(r'workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)')
+        if not any(re.fullmatch(pattern,relative) for pattern in patterns):continue
+        return anchor,relative
+    return None
+
+def _known_missing_sqlite_aux(error, anchors):
+    if error.errno!=2 or not error.filename:return False
+    path=Path(error.filename);location=_sqlite_aux_location(path,anchors)
+    if location is not None:
+        anchor,relative=location
+        # A vanished sidecar never excuses missing/replaced main or parents.
+        parent=anchor
+        for part in Path(relative).parts[:-1]:
+            info=parent.lstat();need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed')
+            parent=parent/part
+        info=parent.lstat();need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed')
+        main=Path(str(path)[:-4]);info=main.lstat()
+        need(stat.S_ISREG(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_main_changed')
+        return True
+    return False
+
+def _fresh_resource_scan(scan, anchors):
+    started=time.monotonic_ns()
+    stable_types={};max_sizes={};current=set()
+    def observe(path,info):
+        kind=stat.S_IFMT(info.st_mode)
+        if _sqlite_aux_location(path,anchors) is None:
+            if path in stable_types:need(stable_types[path]==kind,'resource_stable_type_changed')
+            stable_types[path]=kind;current.add(path)
+        if stat.S_ISREG(info.st_mode):
+            max_sizes[path]=max(max_sizes.get(path,0),info.st_size)
+            return max_sizes[path]
+        return 0
+    for attempt in range(RESOURCE_SCAN_ATTEMPTS):
+        current=set()
+        try:
+            value=scan(observe)
+            if attempt:
+                need(set(stable_types)<=current,'resource_stable_disappeared_during_retry')
+                need(time.monotonic_ns()-started<=RESOURCE_SCAN_RETRY_NS,'resource_aux_retry_deadline')
+            return value
+        except FileNotFoundError as error:
+            need(_known_missing_sqlite_aux(error,anchors),'resource_missing_non_aux')
+            need(attempt+1<RESOURCE_SCAN_ATTEMPTS,'resource_aux_churn_limit')
+            need(time.monotonic_ns()-started<RESOURCE_SCAN_RETRY_NS,'resource_aux_retry_deadline')
+    raise GateError('resource_aux_churn_limit')
+
+def _tree_bytes_once(root, entries_limit, byte_limit, observe):
+    total = entries = 0
+    for path,info,charge in _resource_entries(root,observe,allow_missing_root=True):
+        entries += 1
+        need(entries <= entries_limit, 'tree_entries_cap')
+        need(not stat.S_ISLNK(info.st_mode), 'output_symlink')
+        need(stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'output_special')
+        if stat.S_ISREG(info.st_mode):total += charge
+        if byte_limit is not None:need(total<=byte_limit,'case_output_cap')
     return total
 
+def tree_bytes(root, entries_limit=20000, byte_limit=None):
+    return _fresh_resource_scan(lambda observe:_tree_bytes_once(root,entries_limit,byte_limit,observe),(root,))
+
 def case_bytes(private, public, name):
-    total=tree_bytes(private/name)+tree_bytes(public/f'case-{name}-safe')
+    total=tree_bytes(private/name,byte_limit=CASE_CAP)+tree_bytes(public/f'case-{name}-safe',byte_limit=CASE_CAP)
     for path in private.iterdir():
         if path.name==f'context-{name}.json' or path.name.startswith(f'case-owner-{name}.'):
             info=path.lstat();need(stat.S_ISREG(info.st_mode),'case_metadata_file')
             total+=info.st_size
     return total
 
-def resource_usage(private, public):
+def _resource_usage_once(private, public, observe):
     """Disjoint logical accounting. Escrow namespace accepts fixed files only."""
     counts={'normal':0,'escrow':0,'cleanup':0};entries=0
     streams=r'(driver|case-owner)\.(stdout|stderr)'
     for root in (private,public):
-      for path in root.rglob('*'):
+      for path,info,charge in _resource_entries(root,observe):
         entries+=1;need(entries<=20000,'resource_entries_cap')
-        info=path.lstat();need(not stat.S_ISLNK(info.st_mode),'resource_symlink')
+        need(not stat.S_ISLNK(info.st_mode),'resource_symlink')
         need(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode),'resource_special')
         rel=path.relative_to(root).as_posix()
         if stat.S_ISDIR(info.st_mode):
@@ -141,10 +211,15 @@ def resource_usage(private, public):
             elif re.fullmatch(r'escrow-(context|completed)-[BP]\.json(\.part)?',rel) or re.fullmatch(r'escrow-owner-[BP]\.(stdout|stderr|owner\.json)',rel):bucket='cleanup'
             elif re.fullmatch(r'escrow-[BP]\.json',rel):bucket='escrow'
             else:raise GateError('escrow_file_scope')
-        counts[bucket]+=info.st_size
+        counts[bucket]+=charge
+        need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and sum(counts.values())<=TOTAL_CAP,'resource_compartment_cap')
     counts['total']=sum(counts.values())
     need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and counts['total']<=TOTAL_CAP,'resource_compartment_cap')
     return counts
+
+def resource_usage(private, public):
+    # Only private known SQLite sidecars qualify; public/unknown paths do not.
+    return _fresh_resource_scan(lambda observe:_resource_usage_once(private,public,observe),(private,))
 
 def validate_environment(approval, environment, actual, controller_sha, *, event='workflow_dispatch', event_commit=None):
     need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')

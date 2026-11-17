@@ -1,5 +1,6 @@
 """Pure synthetic closure of immutable e444 review; never starts a process."""
 from collections import Counter
+from contextlib import nullcontext
 from copy import deepcopy
 import gzip
 import importlib.util
@@ -138,10 +139,10 @@ class IntegrityClosure(unittest.TestCase):
         with self.assertRaises(m.GateError):m.verify_timing_footer(summary,rows,footer)
     def test_no_workload_or_sql_import(self):
         self.assertFalse(any(n=='uta' or n.startswith('uta.') or n=='sqlite3' for n in sys.modules))
-    def exercise_owner(self, fail_phase=None):
+    def exercise_owner(self, fail_phase=None, late_ns=None):
         root=Path(self.tmp.name);private=root/'private';public=root/'public'
         private.mkdir();public.mkdir();case=private/'B';staged=case/'safe-staged'
-        events=[];active=False
+        events=[];active=False;finished=False
         real_write=m.public_write;real_read=m.read_json
         def write(folder,name,value):
             if active:events.append(('fsync',name))
@@ -166,7 +167,7 @@ class IntegrityClosure(unittest.TestCase):
                     terminal_observation_finished_monotonic_ns=10_960_000_000,planned_duration_ns=10_000_000_000,setup_and_close_excluded=True)
             return deepcopy(self.summary) if Path(path).name=='summary.json' else real_read(path,limit)
         def owner(argv,cwd,logs,**kw):
-            nonlocal active
+            nonlocal active,finished
             self.assertEqual(kw['wall_seconds'],56);self.assertEqual(kw['grace_seconds'],2);self.assertEqual(kw['kill_wait_seconds'],2)
             self.assertIn('--case-worker',argv);events.append(('owner','start'));active=True
             case.mkdir();(case/'tmp').mkdir();staged.mkdir()
@@ -177,12 +178,13 @@ class IntegrityClosure(unittest.TestCase):
                 staged.rename(public/'case-B-safe');write(case,'completed.json',result)
             except m.GateError:
                 outcome='UNKNOWN';code=-15
-            finally:active=False;events.append(('owner','cleaned'))
+            finally:active=False;finished=True;events.append(('owner','cleaned'))
             (private/'case-owner-B.stderr').write_bytes(b'')
             return dict(outcome=outcome,returncode=code,watchdog_reason=None if code==0 else 'wall_deadline_unknown',
                 leader_reaped=True,stdout_stderr_complete=True,identity={'pid':98764,'birth_ticks':54})
         owned=SimpleNamespace(owned_run=owner,process_identity=lambda pid:{'birth_ticks':53})
-        with patch.dict(m.os.environ,{'RUNNER_TEMP':str(root)}),patch.object(m,'source_snapshot',snapshot),\
+        clock=patch.object(m.time,'monotonic_ns',side_effect=lambda:late_ns if finished else 0) if late_ns is not None else nullcontext()
+        with clock,patch.dict(m.os.environ,{'RUNNER_TEMP':str(root)}),patch.object(m,'source_snapshot',snapshot),\
                 patch.object(m,'case_driver',driver),patch.object(m,'project_arrivals',arrivals),\
                 patch.object(m,'public_write',write),patch.object(m,'read_json',read):
             result=m.supervised_case(owned,Path('/synthetic/source'),private,public,'B',False,{},
@@ -210,8 +212,7 @@ class IntegrityClosure(unittest.TestCase):
         result,events,private,public=self.exercise_owner('hash')
         self.assertEqual(result['status'],'UNKNOWN');self.assertFalse(list(public.iterdir()))
     def test_postprocessing_past_sixty_seconds_is_unknown(self):
-        with patch.object(m.time,'monotonic_ns',side_effect=[0,61_000_000_000,61_000_000_001]):
-            result,events,private,public=self.exercise_owner()
+        result,events,private,public=self.exercise_owner(late_ns=61_000_000_000)
         self.assertEqual(result['status'],'UNKNOWN');self.assertEqual(result['error_code'],'case_complete_outer_deadline')
         self.assertTrue((private/'B/safe-quarantined/case-B.json').is_file());self.assertFalse(list(public.iterdir()))
     def test_nested_public_manifest_is_exact(self):

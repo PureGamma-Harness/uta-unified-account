@@ -1,0 +1,75 @@
+{
+  "git_parent": "74ec6ef",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "pure unittest discovery with all subprocess prohibited",
+    "test_independent_m0_*.py"
+  ],
+  "inputs": {
+    "tools/independent_m0_controller.py": {
+      "bytes": 65040,
+      "sha256": "57fc60bc914264d1fbd4d0b5c907222f3743ebbbbb332af30f8d043cec90302c"
+    },
+    "tools/m0_stream_escrow.py": {
+      "bytes": 21543,
+      "sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+    },
+    "tests/test_independent_m0_controller.py": {
+      "bytes": 19021,
+      "sha256": "338740620d6bd38f4515e8a803fa8d03a826e7740df3de049526ccdf54ec33ef"
+    },
+    "tests/test_independent_m0_integrity.py": {
+      "bytes": 15180,
+      "sha256": "4653fd1f2856d8fb3948fb120cfc9cdb3cd8350439d3b3df5a6ca4d7472e0253"
+    },
+    "tests/test_independent_m0_escrow.py": {
+      "bytes": 14713,
+      "sha256": "f2d64f8217063e560ff07bc3befcf61e6c27b484340b5ec3a2fac5ab60ca3f11"
+    },
+    "tests/test_independent_m0_checkout_ref.py": {
+      "bytes": 2959,
+      "sha256": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58"
+    },
+    "tests/test_independent_m0_resource_race.py": {
+      "bytes": 9482,
+      "sha256": "c26f11d1d02076e7217786ca5737f137b86009e98924c3be8b7445cedeedadec"
+    },
+    ".github/workflows/independent-m0.yml": {
+      "bytes": 3432,
+      "sha256": "ee2201e086b23fb8e99ce25a53d0e88cf3018030747036380c92e6b4228394f1"
+    },
+    ".github/workflows/independent-m0-once.yml": {
+      "bytes": 5294,
+      "sha256": "7ff0842bbc5f1be909ac9f1aa4d240340fb5bf8db35c81a8492552e0deed17f6"
+    },
+    "docs/evidence/independent-actions-m0/once-registration-template.json": {
+      "bytes": 3022,
+      "sha256": "1ebd14e4b84427ae9bfd4e9e7e5853d72f513643d011aac69b6dcd7873ac5bc7"
+    }
+  },
+  "actual_SQL_native_crypto_profile_Actions": false,
+  "actual_root_private_key_or_raw_unaccepted_plaintext_read": false,
+  "production_approved": false,
+  "started_at_utc": "2026-11-17T21:12:49.170120+00:00",
+  "finished_at_utc": "2026-11-17T21:12:50.236569+00:00",
+  "elapsed_monotonic_ns": 1066449428,
+  "tests": 131,
+  "failures": 0,
+  "errors": 0,
+  "process_calls": [],
+  "unexpected_product_SQL_modules": [],
+  "resource-race-final-pure.stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "resource-race-final-pure.stderr.txt": {
+    "bytes": 18998,
+    "sha256": "7f3a7746598d9c7c5e76056e12c025eba6766b7cb01263104d5a44406fdbe2c3"
+  }
+}

@@ -3,7 +3,7 @@ name: Root-approved once-only hosted M0 diagnostic
 on:
   push:
     branches:
-      - perf/approved-m0-20261117-02
+      - perf/approved-m0-20261117-03
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
     if: >-
       github.repository == 'PureGamma-Harness/uta-unified-account' &&
       github.event_name == 'push' &&
-      github.ref == 'refs/heads/perf/approved-m0-20261117-02' &&
+      github.ref == 'refs/heads/perf/approved-m0-20261117-03' &&
       github.event.created == true &&
       github.event.before == '0000000000000000000000000000000000000000' &&
       github.run_attempt == 1
@@ -79,6 +79,7 @@ jobs:
             /tests/test_independent_m0_integrity.py
             /tests/test_independent_m0_escrow.py
             /tests/test_independent_m0_checkout_ref.py
+            /tests/test_independent_m0_resource_race.py
             /.github/workflows/independent-m0.yml
             /.github/workflows/independent-m0-once.yml
       - name: Checkout exact qualified workload source separately

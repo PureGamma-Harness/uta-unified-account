@@ -116,17 +116,20 @@ class PureM0Controls(unittest.TestCase):
         with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
     def test_once_workflow_exact_branch_and_no_manual_main_requirement(self):
         text=(PATH.parents[1]/'.github/workflows/independent-m0-once.yml').read_text()
-        self.assertIn('      - perf/approved-m0-20261117-02',text)
+        self.assertIn('      - perf/approved-m0-20261117-03',text)
         self.assertNotIn('workflow_dispatch:',text)
         self.assertIn("github.event.before == '0000000000000000000000000000000000000000'",text)
         self.assertIn('github.event.created == true',text)
         self.assertIn('git',text);self.assertIn('manifest-only',text)
     def test_old_actual_registration_cannot_be_reused(self):
-        e,event,relation=self.once_context();value=self.once();value['registration_id']='independent-m0-20261117-once'
-        with self.assertRaises(m.GateError):m.validate_once_manifest(value,e,event,relation)
+        e,event,relation=self.once_context()
+        for old in ('independent-m0-20261117-once','independent-m0-20261117-02'):
+            value=self.once();value['registration_id']=old
+            with self.assertRaises(m.GateError):m.validate_once_manifest(value,e,event,relation)
     def test_old_actual_branch_cannot_be_recreated_for_new_registration(self):
-        e,event,relation=self.once_context();e['GITHUB_REF']=event['ref']='refs/heads/perf/approved-m0-20261117-once'
-        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+        for old in ('refs/heads/perf/approved-m0-20261117-once','refs/heads/perf/approved-m0-20261117-02'):
+            e,event,relation=self.once_context();e['GITHUB_REF']=event['ref']=old
+            with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
     def test_prep_has_no_metadata_process_or_sql(self):
         before={name for name in sys.modules if name=='uta' or name.startswith('uta.') or name=='sqlite3'}
         with patch.object(m,'source_snapshot',side_effect=AssertionError('source call')),patch.object(m,'collect_host',side_effect=AssertionError('host call')),patch.object(m.subprocess,'Popen',side_effect=AssertionError('spawn')),redirect_stdout(io.StringIO()) as output:
@@ -213,8 +216,9 @@ class PureM0Controls(unittest.TestCase):
     def test_flat_tree_scan_is_bounded_per_entry(self):
         with TemporaryDirectory() as tmp:
             fake=SimpleNamespace(st_mode=stat.S_IFREG|0o600,st_size=0)
-            with patch.object(m.os,'walk',return_value=[(tmp,[],[f'f{i}' for i in range(20001)])]),patch.object(Path,'lstat',return_value=fake):
-                with self.assertRaises(m.GateError):m.tree_bytes(Path(tmp))
+            directory=SimpleNamespace(st_mode=stat.S_IFDIR|0o700,st_size=0)
+            with patch.object(m.os,'walk',return_value=[(tmp,[],[f'f{i}' for i in range(20001)])]),patch.object(Path,'lstat',lambda path:directory if path==Path(tmp) else fake):
+                with self.assertRaisesRegex(m.GateError,'tree_entries_cap'):m.tree_bytes(Path(tmp))
     def test_profile_schema_has_only_function_counters_no_arguments(self):
         with TemporaryDirectory() as tmp:
             p=Path(tmp)/'stub.prof';p.write_bytes(marshal.dumps({('~',0,'<built-in method len>'):(1,1,.01,.02,{})}))
