@@ -22,6 +22,17 @@ _LIVE = ("OPEN", "PARTIALLY_FILLED")
 _TRANSIENT = {"market_unavailable", "invalid_clock", "storage_unavailable", "trading_halted"}
 
 
+def _immutable_guard_definitions():
+    """One official definition for installing and inspecting receipt guards."""
+    definitions = {}
+    for table, label in (("uta_spot_matches", "receipts"), ("uta_spot_fills", "fills")):
+        for action in ("UPDATE", "DELETE"):
+            name = table + "_no_" + action.lower()
+            definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} "
+                                f"BEGIN SELECT RAISE(ABORT,'spot {label} are immutable'); END")
+    return definitions
+
+
 def locked_assets(connection, account_id: str) -> dict[str, Decimal]:
     """Derived settled-asset encumbrances, shared with credit and risk gates."""
     if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_spot_orders'").fetchone() is None:
@@ -128,12 +139,10 @@ class SpotExchange:
                     PRIMARY KEY(trade_id,account_id),
                     FOREIGN KEY(account_id,order_id) REFERENCES uta_spot_orders(account_id,order_id))""",
                 "CREATE INDEX IF NOT EXISTS uta_spot_live ON uta_spot_orders(symbol,status)",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_matches_no_update BEFORE UPDATE ON uta_spot_matches BEGIN SELECT RAISE(ABORT,'spot receipts are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_matches_no_delete BEFORE DELETE ON uta_spot_matches BEGIN SELECT RAISE(ABORT,'spot receipts are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_fills_no_update BEFORE UPDATE ON uta_spot_fills BEGIN SELECT RAISE(ABORT,'spot fills are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_fills_no_delete BEFORE DELETE ON uta_spot_fills BEGIN SELECT RAISE(ABORT,'spot fills are immutable'); END",
             ):
                 connection.execute(statement)
+            for _, definition in _immutable_guard_definitions().values():
+                connection.execute(definition.replace("CREATE TRIGGER ", "CREATE TRIGGER IF NOT EXISTS ", 1))
             row = connection.execute("SELECT version FROM uta_spot_schema WHERE singleton=1").fetchone()
             if row is None:
                 connection.execute("INSERT INTO uta_spot_schema VALUES (1,1)")
@@ -409,11 +418,11 @@ class SpotExchange:
         self._check_schema(connection)
         self._check_configuration(connection)
         ledger_events = self.exchange.ledger.verify(connection=connection)
-        installed = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger'")}
-        required = {"uta_spot_matches_no_update", "uta_spot_matches_no_delete",
-                    "uta_spot_fills_no_update", "uta_spot_fills_no_delete"}
-        if not required <= installed:
-            raise ServiceError("spot_corrupt", "spot receipt/fill protection is missing", 503)
+        installed = {row["name"]: (row["type"], row["tbl_name"], row["sql"])
+                     for row in connection.execute("SELECT name,type,tbl_name,sql FROM sqlite_master")}
+        for name, (table, definition) in _immutable_guard_definitions().items():
+            if installed.get(name) != ("trigger", table, definition):
+                raise ServiceError("spot_corrupt", "spot receipt/fill protection differs from its official definition", 503)
         journal = {event.event_id: event for event in self.exchange.ledger.journal(connection=connection)}
         # Reconcile both directions: a missing receipt must not hide its
         # retained confirmation event. Index once rather than rescan all audit

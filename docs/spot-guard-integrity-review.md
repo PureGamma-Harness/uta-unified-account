@@ -100,3 +100,15 @@ and its descendants to one CPU. All test processes finished before the later
 performance silence window. No new load, worker spawn or long run was started
 during that window. Runtime repair and rerunning the same four guard rejection
 assertions are pending with the integration owner.
+
+The integration correction uses one official guard-definition builder for both
+installation and inspection. Verification requires the exact trigger name,
+object type, table and stored SQL; it does not derive the expected definition
+from the inspected database. Existing official installation strings remain the
+same after adding `IF NOT EXISTS`. Read-only verification installs nothing, and
+the normal constructor does not replace an existing weak same-name trigger.
+The corrupt definition is preserved when inspection rejects it. Static review
+by the independent author found no new blocker; the same four runtime assertions,
+old-definition compatibility and broader regression still need actual recheck
+after the coordinated performance window. No source recovery or financial
+compensation is performed by this correction.
