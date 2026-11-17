@@ -1,0 +1,134 @@
+{
+  "artifacts": {
+    "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+      "bytes": 279432,
+      "sha256": "db0034891ac15dd1e424ec823c1e733ce08bc5955e8555b7a5c61cf44e0631c5"
+    },
+    "uta_reference_exchange-0.5.0a1.tar.gz": {
+      "bytes": 30532579,
+      "sha256": "f54ebed473b11d3ddfd1b5dd4053b75a4f9faf15f1a69ea5ec976aa5b844aeb6"
+    }
+  },
+  "commands": [
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta-durable",
+        "--help"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta-ops",
+        "--help"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta",
+        "demo"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta",
+        "acceptance"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta",
+        "scenario"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta-durable",
+        "init",
+        "--directory",
+        "/home/runner/work/_temp/uta-installed-validation/empty-cli-authority"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta-durable",
+        "inspect",
+        "--directory",
+        "/home/runner/work/_temp/uta-installed-validation/empty-cli-authority"
+      ],
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/runner/work/_temp/uta-smoke/bin/uta-durable",
+        "status",
+        "--directory",
+        "/home/runner/work/_temp/uta-installed-validation/empty-cli-authority"
+      ],
+      "returncode": 0
+    }
+  ],
+  "console_script_targets": {
+    "uta": "uta.__main__:main",
+    "uta-durable": "uta.durable_cli:main",
+    "uta-ops": "uta.ops:main"
+  },
+  "copied_helper_sha256": "401638704e0b0c0d0ba7bd3b1e116b1db266eb16c31f880518021b04a242bf3f",
+  "expected_tests": 8,
+  "helper_root_override": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages",
+  "helper_sha256": "401638704e0b0c0d0ba7bd3b1e116b1db266eb16c31f880518021b04a242bf3f",
+  "installed_site": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages",
+  "interpreter": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+  "isolated": true,
+  "modules": {
+    "uta": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/__init__.py",
+    "uta.admission": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/admission.py",
+    "uta.credit": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/credit.py",
+    "uta.decision_audit": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/decision_audit.py",
+    "uta.durable_commands": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/durable_commands.py",
+    "uta.durable_process": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/durable_process.py",
+    "uta.failure_diagnostics": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/failure_diagnostics.py",
+    "uta.gateway": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/gateway.py",
+    "uta.ledger": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/ledger.py",
+    "uta.market": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/market.py",
+    "uta.market_cache": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/market_cache.py",
+    "uta.matching": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/matching.py",
+    "uta.models": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/models.py",
+    "uta.portfolio": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/portfolio.py",
+    "uta.products": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/products.py",
+    "uta.request_signing": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/request_signing.py",
+    "uta.reserve_kernel": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/reserve_kernel.py",
+    "uta.risk": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/risk.py",
+    "uta.scenario_margin": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/scenario_margin.py",
+    "uta.service": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/service.py",
+    "uta.sharding": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/sharding.py",
+    "uta.spot": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/spot.py",
+    "uta.startup": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/startup.py",
+    "uta.storage": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/storage.py",
+    "uta.writer_fence": "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages/uta/writer_fence.py"
+  },
+  "passed": true,
+  "production_approved": false,
+  "pythonpath": null,
+  "runtime_tree_sha256": "e6e06e44c1f7bb6e36fc614a5f03a679ba3b21efd1ba9a712584c6730f14a792",
+  "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+  "sqlite": "3.46.1",
+  "sys_path": [
+    "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python313.zip",
+    "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13",
+    "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/lib-dynload",
+    "/home/runner/work/_temp/uta-smoke/lib/python3.13/site-packages"
+  ],
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "run": 8,
+    "skipped": 0
+  },
+  "version": "0.5.0a1"
+}
