@@ -33,6 +33,7 @@ jobs:
           sparse-checkout: |
             /tools/independent_m0_controller.py
             /tests/test_independent_m0_controller.py
+            /tests/test_independent_m0_integrity.py
             /.github/workflows/independent-m0.yml
       - name: Checkout exact qualified workload
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -45,7 +46,7 @@ jobs:
         with:
           python-version: '3.12.14'
       - name: Run pure control tests (no workload)
-        run: python -m unittest discover -s control/tests -p test_independent_m0_controller.py -v
+        run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v
       - name: Run two serial source-pinned diagnostics only after all controller gates
         env:
           M0_APPROVAL_JSON: ${{ inputs.approval_json }}
@@ -63,6 +64,6 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: independent-m0-safe-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/*.json
+          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
           if-no-files-found: warn
           retention-days: 30

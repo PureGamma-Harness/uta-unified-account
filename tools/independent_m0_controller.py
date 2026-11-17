@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from hashlib import sha256, sha1
 import argparse
+from collections import Counter
 import gzip
 import importlib.util
 import json
@@ -57,6 +58,13 @@ def numeric(value):
     need(type(value) in (int,float) and math.isfinite(value), 'numeric_type')
     return value
 
+def nonnegative(value):
+    need(numeric(value)>=0,'negative_numeric')
+    return value
+
+def close_number(actual, expected, code):
+    need(math.isclose(numeric(actual),expected,rel_tol=2e-12,abs_tol=1e-12),code)
+
 def integer(value, lower=0, upper=2**63-1):
     need(type(value) is int and lower <= value <= upper, 'integer_domain')
     return value
@@ -99,6 +107,14 @@ def tree_bytes(root, entries_limit=20000):
             if stat.S_ISREG(info.st_mode):total += info.st_size
     return total
 
+def case_bytes(private, public, name):
+    total=tree_bytes(private/name)+tree_bytes(public/f'case-{name}-safe')
+    for path in private.iterdir():
+        if path.name==f'context-{name}.json' or path.name.startswith(f'case-owner-{name}.'):
+            info=path.lstat();need(stat.S_ISREG(info.st_mode),'case_metadata_file')
+            total+=info.st_size
+    return total
+
 def validate_environment(approval, environment, actual, controller_sha, *, event='workflow_dispatch', event_commit=None):
     need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')
     need(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}',approval['operator_approval_id']) is not None,'approval_id')
@@ -136,7 +152,10 @@ def command_spec():
 def budget_spec():
     return {'case_bytes':CASE_CAP,'aggregate_bytes':AGGREGATE_CAP,'cleanup_bytes':CLEANUP_RESERVE,
         'extra_free_bytes':2*1024**3,'minimum_fresh_free_bytes':MIN_FREE,'case_inner_wall_seconds':50,
-        'grace_seconds':2,'kill_wait_seconds':2,'case_complete_outer_max_seconds':60}
+        'case_pipeline_watchdog_seconds':56,'grace_seconds':2,'kill_wait_seconds':2,
+        'case_complete_outer_max_seconds':60,
+        'watchdog_scope':'new owned session: source checks, driver, parser, hashes, fsync and staged safe output',
+        'physical_os_disk_quota':False}
 
 def validate_once_manifest(value, environment, event, relation):
     expected={'format','kind','execution_authorized','registration_id','branch','control_commit',
@@ -269,7 +288,7 @@ def project_summary(summary, profile):
     for key,value in expected.items():
         need(type(summary['configuration'][key]) is type(value) or type(value) is int and type(summary['configuration'][key]) is float,'configuration_type')
         need(summary['configuration'][key]==value,'configuration_changed')
-    need(summary['offered']==200,'offered_count')
+    need(integer(summary['offered'],200,200)==200,'offered_count')
     outcomes=summary['outcome_counts'];need(set(outcomes)<=OUTCOMES,'unknown_outcome_name')
     need(sum(integer(v,0,200) for v in outcomes.values())==200,'outcomes_not_partition')
     technical=summary['command_technical_diagnostics']
@@ -282,25 +301,42 @@ def project_summary(summary, profile):
     gate=summary['probe_qualification']
     need(gate['passed'] is True and gate['financial_soft_deadline_passed'] is True,'probe_gate')
     check=summary['readonly_reconciliation']
-    need(check['reopened_readonly'] is True and check['pending_count']==0 and check['unobserved_successes_found_on_reopen']==0,'reconciliation')
+    need(check['reopened_readonly'] is True and integer(check['pending_count'])==0 and integer(check['unobserved_successes_found_on_reopen'])==0,'reconciliation')
     count=summary['counts'];need(set(count)<=OUTCOMES|{'durably_enqueued','enqueue_technical_errors','financial_success_late'},'counts_key')
     need(all(type(v) is int and 0<=v<=200 for v in count.values()),'counts_value')
+    need(all(count.get(key,0)==outcomes.get(key,0) for key in OUTCOMES),'summary_outcome_counts_disagree')
+    need(all(count.get(key,0)==0 for key in OUTCOMES-{'financial_succeeded','business_rejected','control_or_market_rejected'}),'technical_outcome')
+    need(count.get('enqueue_technical_errors',0)==count.get('financial_success_late',0)==0,'technical_or_late_count')
     need(integer(count.get('financial_succeeded',0),0,200)>=100,'financial_success_floor')
     need(10<=integer(count.get('business_rejected',0),0,200)<=30,'business_rejection_mix')
     need(summary['environment']['code_commit']==SOURCE and summary['environment']['working_tree_dirty'] is False,'recorded_source')
-    need(summary['environment']['cpu_affinity_count']==1,'recorded_affinity')
-    need(check['observed_financial_successes']==check['persistent_successes']==count['financial_succeeded'],'reopened_success_count')
-    need(check['durable_enqueue_acknowledgements_verified']==count['durably_enqueued'],'reopened_ack_count')
+    need(integer(summary['environment']['cpu_affinity_count'],1,1)==1,'recorded_affinity')
+    need(integer(check['observed_financial_successes'])==integer(check['persistent_successes'])==count['financial_succeeded'],'reopened_success_count')
+    need(integer(check['durable_enqueue_acknowledgements_verified'])==count['durably_enqueued'],'reopened_ack_count')
     runtime=summary['actual_runtime'];need(runtime['durable_batches_capability'] is True and runtime['decision_audit_required'] is True,'actual_runtime_capability')
     settings=runtime['router_settings']
     for key,value in {'normal_cache_size':0,'financial_batch_size':0,'account_batch':25,'matches_per_symbol':10,'max_attempts':3,'lease_seconds':5,'poll_interval':.02,'background_interval':.1}.items():
         need(settings[key]==value and type(settings[key]) is not bool,'actual_runtime_setting')
     workers=summary['actual_spawned_worker_inputs'];need(type(workers) is list and len(workers)==2,'actual_worker_count')
     need(len({integer(w['pid'],1) for w in workers})==2,'actual_worker_identity')
-    need(all(w['pid']!=os.getpid() and w['received_settings']==settings for w in workers),'actual_worker_settings')
+    canonical=lambda value:json.dumps(value,sort_keys=True,allow_nan=False)
+    need(all(w['pid']!=os.getpid() and canonical(w['received_settings'])==canonical(settings) for w in workers),'actual_worker_settings')
     latency=summary['latency_ms']
     need(set(latency)=={'all','financial_succeeded','enqueue_ack'},'latency_classes')
     need(all(set(v)=={'p50','p95','p99','p99_9'} for v in latency.values()),'latency_keys')
+    for group,quantiles in latency.items():
+        values=[quantiles[key] for key in ('p50','p95','p99','p99_9')]
+        population=200 if group=='all' else count['financial_succeeded'] if group=='financial_succeeded' else count['durably_enqueued']
+        if population:
+            values=[nonnegative(value) for value in values]
+            need(values==sorted(values),'quantile_order')
+        else:need(values==[None]*4,'empty_quantiles')
+    elapsed=nonnegative(summary['duration_including_terminal_observation_drain'])
+    need(elapsed>=10,'elapsed_below_planned_window')
+    close_number(summary['drain_seconds'],max(0,elapsed-10),'drain_time_identity')
+    nonnegative(summary['startup_seconds_excluded']);nonnegative(summary['close_seconds_excluded'])
+    close_number(summary['unique_observed_financial_success_per_s'],count['financial_succeeded']/elapsed,'financial_rate_identity')
+    close_number(summary['enqueue_ack_per_s_not_financial_success'],count['durably_enqueued']/elapsed,'enqueue_rate_identity')
     # Explicit projection: no error text, requests, accounts, payload, writer token,
     # key, nonce, signature, profile secrets or raw stream copies are published.
     return {'source_commit':SOURCE,'configuration':expected,'offered':200,'outcome_counts':numeric_tree(outcomes),
@@ -315,9 +351,16 @@ def project_summary(summary, profile):
         'profile_is_instrumented':profile,'speedup_comparison_authorized':False,'production_approved':False,'capacity_10000_per_s_passed':False}
 
 def project_arrivals(path):
-    raw=gzip.decompress(Path(path).read_bytes());need(len(raw)<=8*1024**2,'arrival_unpacked_cap')
-    rows=[]
-    for line in raw.splitlines():
+    rows=[];unpacked=0
+    # Bound decompressed allocation before JSON decoding, including concatenated
+    # gzip members. Never allocate the whole compressed or unpacked stream.
+    with gzip.open(path,'rb') as stream:
+      while True:
+        remaining=8*1024**2-unpacked
+        line=stream.readline(min(65537,remaining+1))
+        if not line:break
+        unpacked+=len(line)
+        need(unpacked<=8*1024**2,'arrival_unpacked_cap')
         need(len(rows)<200 and len(line)<=65536,'arrival_count_or_line_cap')
         row=strict_json(line);sequence=integer(row['sequence'],0,199)
         need(row['command_id']==f'bench:{sequence}' and row['order_id']==f'order:{sequence}','synthetic_cid')
@@ -325,15 +368,66 @@ def project_arrivals(path):
         safe={'sequence':sequence,'command_id':row['command_id'],'outcome':row['outcome']}
         for key in ('planned_ns','offered_ns','enqueue_started_ns','enqueue_ack_ns','enqueue_call_finished_ns','observed_completion_ns','latency_ns'):
             safe[key]=None if row[key] is None else integer(row[key])
+        planned=safe['planned_ns'];offered=safe['offered_ns'];finished=safe['observed_completion_ns']
+        need(planned is not None and offered is not None and finished is not None and planned<=offered<=finished,'arrival_clock_order')
+        need(safe['latency_ns']==finished-planned,'latency_time_identity')
+        start=safe['enqueue_started_ns'];ack=safe['enqueue_ack_ns'];call=safe['enqueue_call_finished_ns']
+        if start is not None:need(offered<=start<=finished and call is not None and start<=call<=finished,'enqueue_clock_order')
+        else:need(ack is None and call is None,'enqueue_without_start')
+        if ack is not None:need(start is not None and start<=ack<=call,'ack_clock_order')
         need(type(row['deadline_exceeded']) is bool and type(row['intended_product_rejection']) is bool,'arrival_boolean')
         safe.update(deadline_exceeded=row['deadline_exceeded'],intended_product_rejection=row['intended_product_rejection'])
+        need(row['deadline_exceeded'] is (safe['latency_ns']>1_000_000_000),'deadline_time_identity')
         receipt=row.get('receipt')
         if receipt is not None:
+            need(receipt['command_id']==row['command_id'],'receipt_original_cid')
             need(receipt['state'] in {'SUCCEEDED','REJECTED','QUARANTINED','PENDING'},'receipt_state')
             safe.update(receipt_state=receipt['state'],receipt_attempts=integer(receipt['attempts']),receipt_last_error_present=receipt['last_error'] is not None)
+        outcome=row['outcome']
+        if outcome in {'financial_succeeded','business_rejected','control_or_market_rejected'}:
+            need(receipt is not None and ack is not None,'terminal_receipt_missing')
+            need(receipt['state']==('SUCCEEDED' if outcome=='financial_succeeded' else 'REJECTED'),'receipt_outcome_identity')
+            need(safe['receipt_attempts']==0 and receipt['last_error'] is None,'receipt_technical_diagnostic')
         rows.append(safe)
     need(len(rows)==200 and {r['sequence'] for r in rows}==set(range(200)),'missing_arrivals')
     return rows
+
+def verify_population(summary, rows):
+    """Join complete projected populations; histogram output is a bucket bound.
+
+    Source909 ceil(log1p(ns)/log1p(.001)) has <=0.1% bucket inflation
+    plus rounding. Permit two nanoseconds and floating roundoff, not arbitrary
+    ordered summary values. Rates use the source's float elapsed denominator.
+    """
+    need(len(rows)==summary['offered']==200,'population_size')
+    counts=Counter(row['outcome'] for row in rows)
+    need(all(counts[key]==summary['outcome_counts'].get(key,0)==summary['counts'].get(key,0) for key in OUTCOMES),'cross_file_outcomes')
+    ack=sum(row['enqueue_ack_ns'] is not None for row in rows)
+    late=sum(row['outcome']=='financial_succeeded' and row['deadline_exceeded'] for row in rows)
+    need(ack==summary['counts']['durably_enqueued'] and late==summary['counts'].get('financial_success_late',0),'cross_file_ack_or_late')
+    by_sequence=sorted(rows,key=lambda row:row['sequence'])
+    origin=by_sequence[0]['planned_ns']
+    need(all(row['planned_ns']==origin+row['sequence']*50_000_000 for row in rows),'planned_open_loop_schedule')
+    populations={'all':[r['latency_ns'] for r in rows],
+        'financial_succeeded':[r['latency_ns'] for r in rows if r['outcome']=='financial_succeeded'],
+        'enqueue_ack':[r['enqueue_ack_ns']-r['planned_ns'] for r in rows if r['enqueue_ack_ns'] is not None]}
+    for group,values in populations.items():
+        values.sort()
+        for key,numerator,denominator in [('p50',1,2),('p95',95,100),('p99',99,100),('p99_9',999,1000)]:
+            reported=summary['latency_ms'][group][key]
+            if not values:need(reported is None,'empty_population_quantile');continue
+            rank=max(1,(len(values)*numerator+denominator-1)//denominator)
+            exact_ns=values[rank-1];reported_ns=numeric(reported)*1e6
+            need(exact_ns-1e-6<=reported_ns<=exact_ns*1.001+2+1e-6,'quantile_bucket_population_bound')
+    return True
+
+def verify_timing_footer(summary, rows, footer):
+    need(type(footer['timing_contract_version']) is int and footer['timing_contract_version']==1,'timing_contract_version')
+    start=integer(footer['started_monotonic_ns']);settled=integer(footer['terminal_observation_finished_monotonic_ns'])
+    need(integer(footer['planned_duration_ns'])==10_000_000_000 and footer['setup_and_close_excluded'] is True,'timing_footer_scope')
+    need(start==min(row['planned_ns'] for row in rows) and max(row['observed_completion_ns'] for row in rows)<=settled,'footer_clock_population')
+    close_number(summary['duration_including_terminal_observation_drain'],max(10,(settled-start)/1e9),'footer_elapsed_identity')
+    return True
 
 def profile_semantic(path, source_root=None):
     need(path.stat().st_size<=4*1024**2,'profile_binary_cap')
@@ -377,11 +471,18 @@ def verify_public(root):
     names=[]
     for item in records:
         need(set(item)=={'name','bytes','sha256'},'public_manifest_fields')
-        name=item['name'];need(re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_.-]{0,145}\.json',name) is not None,'public_filename')
+        name=item['name'];need(re.fullmatch(r'(case-[BP]-safe/)?[a-zA-Z0-9][a-zA-Z0-9_.-]{0,145}\.json',name) is not None,'public_filename')
         path=root/name;info=path.lstat()
+        need(not path.parent.is_symlink(),'public_parent_symlink')
         need(stat.S_ISREG(info.st_mode) and info.st_size==item['bytes'] and digest(path)==item['sha256'],'public_manifest_mismatch')
         names.append(name)
-    need(len(names)==len(set(names)) and set(p.name for p in root.iterdir())==set(names)|{'manifest.json'},'unlisted_public_file')
+    actual=set()
+    for path in root.rglob('*'):
+        info=path.lstat()
+        need(not stat.S_ISLNK(info.st_mode) and (stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode)),'public_special_entry')
+        if path.is_dir():need(path.parent==root and path.name in {'case-B-safe','case-P-safe'},'public_directory_shape')
+        else:actual.add(path.relative_to(root).as_posix())
+    need(len(names)==len(set(names)) and actual==set(names)|{'manifest.json'},'unlisted_public_file')
     return True
 
 
@@ -393,15 +494,153 @@ def cases_sequence(run_case):
         if value['status']!='PASS':break
     return results
 
+def case_driver(command, source, case):
+    """Inherited session is essential: outer watchdog owns every descendant.
+
+    Direct-child wait/terminate/kill never targets a numeric PID learned from a
+    file. The outer frozen pidfd owner retains the session leader until cleanup.
+    Stream growth is observed by the outer health gate, not an OS disk quota.
+    """
+    with (case/'driver.stdout').open('xb') as stdout,(case/'driver.stderr').open('xb') as stderr:
+        with child_environment(case/'tmp'):
+            process=subprocess.Popen(command,cwd=source,stdout=stdout,stderr=stderr,start_new_session=False)
+        fields=Path(f'/proc/{process.pid}/stat').read_text().rsplit(')',1)[1].split()
+        identity={'pid':process.pid,'birth_ticks':integer(int(fields[19]),1),
+            'process_group':int(fields[2]),'session':int(fields[3])}
+        need(identity['session']==identity['process_group']==os.getsid(0),'driver_inherited_owned_session')
+        try:
+            code=process.wait(timeout=50)
+        except BaseException:
+            process.terminate()
+            try:process.wait(timeout=2)
+            except subprocess.TimeoutExpired:process.kill();process.wait(timeout=2)
+            raise
+        need(code==0,'driver_exit_unknown')
+    return identity
+
+def case_pipeline(source, case, staged, name, profile, snapshot, cpu_ids):
+    """Every potentially expensive case operation executes under outer owner."""
+    need(source_snapshot(source)==snapshot,'source_changed_before_case')
+    command=child_argv(source,case/'workload',profile)
+    driver=case_driver(command,source,case)
+    need((case/'driver.stderr').stat().st_size==0,'unclassified_stderr')
+    safe=project_summary(read_json(case/'workload/summary.json'),profile)
+    arrivals=project_arrivals(case/'workload/arrivals.jsonl.gz')
+    verify_population(safe,arrivals)
+    verify_timing_footer(safe,arrivals,read_json(case/'workload/measurement-footer.json',4096))
+    need(source_snapshot(source)==snapshot,'source_changed_after_case')
+    records=[public_write(staged,f'case-{name}.json',safe),public_write(staged,f'arrivals-{name}.json',arrivals)]
+    paths=sorted((case/'workload/profiles').glob('*.prof'))
+    need(len(paths)==(3 if profile else 0),'actual_profile_file_count')
+    if profile:
+        need(sum(p.name=='dispatcher-0.prof' for p in paths)==1 and {int(p.name.split('-')[1]) for p in paths if p.name.startswith('worker-')}=={0,1},'profile_pid_topology')
+    for path in paths:
+        need(re.fullmatch(r'(worker-[0-9]+-pid-[0-9]+|dispatcher-[0-9]+)\.prof',path.name) is not None,'profile_filename')
+        records.append(public_write(staged,f'{name}-{path.stem}.json',profile_semantic(path,source)))
+    need(tree_bytes(case)<=CASE_CAP and tree_bytes(staged)<=CASE_CAP,'case_output_cap')
+    # All output bytes, hashes and fsyncs precede this completion record. Staged
+    # partial files stay private after UNKNOWN and cannot enter upload manifests.
+    return {'case':name,'status':'PASS','profile':profile,'source_commit':SOURCE,
+        'actual_driver_pid':driver['pid'],'driver_birth_ticks':driver['birth_ticks'],
+        'driver_session':driver['session'],'actual_cpu_ids':cpu_ids,'original_child_argv':command,
+        'private_driver_streams':[{'name':p.name,'bytes':p.stat().st_size,'sha256':digest(p)} for p in (case/'driver.stdout',case/'driver.stderr')],
+        'files':records,'private_originals_uploaded':False,'production_approved':False,
+        'private_raw_retention':'private runner lifetime only; provider teardown is not durable escrow'}
+
+def case_worker(descriptor):
+    """Internal child capability: only the approved still-live parent creates it.
+
+    This local mode is not an independent approval interface. Same-user code
+    replacement is outside the authority model, exactly as for the root manifest.
+    No provider tokens or original requests are passed to the new session.
+    """
+    descriptor=descriptor.resolve();info=descriptor.lstat()
+    need(stat.S_ISREG(info.st_mode) and info.st_uid==os.getuid() and stat.S_IMODE(info.st_mode)==0o600,'case_descriptor_owner')
+    value=read_json(descriptor,16384)
+    expected={'source','private','public','case','profile','controller_sha256','source_snapshot_sha256',
+        'control_commit','parent_pid','parent_birth_ticks','boot_id','hostname_sha256','cpu_ids'}
+    need(set(value)==expected,'case_descriptor_fields')
+    source=Path(value['source']);private=Path(value['private']);public=Path(value['public'])
+    need(private.is_absolute() and public.is_absolute() and private.parent==public.parent==Path(os.environ['RUNNER_TEMP']),'case_runner_temp')
+    name=value['case'];need((name,value['profile']) in [('B',False),('P',True)] and type(value['profile']) is bool,'case_fixed_arm')
+    need(descriptor==private/f'context-{name}.json' and not private.is_symlink(),'case_descriptor_path')
+    need(digest(Path(__file__).resolve())==value['controller_sha256'],'case_control_hash')
+    root=Path(__file__).resolve().parents[1]
+    need(subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip()==value['control_commit'],'case_control_commit')
+    need(subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=root)==b'','case_control_dirty')
+    need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==value['boot_id'] and sha256(socket.gethostname().encode()).hexdigest()==value['hostname_sha256'],'case_host_changed')
+    snapshot=source_snapshot(source)
+    need(sha256(json.dumps(snapshot,sort_keys=True).encode()).hexdigest()==value['source_snapshot_sha256'],'case_source_snapshot')
+    owned=load_owned_runner(source)
+    parent=owned.process_identity(integer(value['parent_pid'],1))
+    need(os.getppid()==parent['pid'] and parent['birth_ticks']==integer(value['parent_birth_ticks'],1) and parent['state'] not in ('Z','X'),'case_parent_identity')
+    need(os.getsid(0)==os.getpgrp()==os.getpid(),'case_owned_session')
+    need(type(value['cpu_ids']) is list and len(value['cpu_ids'])==1 and {integer(v) for v in value['cpu_ids']}==os.sched_getaffinity(0),'case_cpu')
+    case=private/name;staged=case/'safe-staged'
+    case.mkdir(mode=0o700);(case/'tmp').mkdir(mode=0o700);staged.mkdir(mode=0o700)
+    result=case_pipeline(source,case,staged,name,value['profile'],snapshot,value['cpu_ids'])
+    os.rename(staged,public/f'case-{name}-safe')
+    public_write(case,'completed.json',result)
+    print(json.dumps({'status':'CASE_STAGED','case':name}))
+    return 0
+
+def supervised_case(owned, source, private, public, name, profile, snapshot, approval, actual, cpu_ids, health):
+    """Separate frozen owner watches worker, parser, hash and fsync as one case."""
+    started=time.monotonic_ns()
+    entry={'case':name,'profile':profile,'status':'UNKNOWN','source_commit':SOURCE,'production_approved':False}
+    descriptor=private/f'context-{name}.json'
+    value={'source':str(source),'private':str(private),'public':str(public),'case':name,'profile':profile,
+        'controller_sha256':digest(Path(__file__).resolve()),'control_commit':approval['control_commit'],
+        'source_snapshot_sha256':sha256(json.dumps(snapshot,sort_keys=True).encode()).hexdigest(),
+        'parent_pid':os.getpid(),'parent_birth_ticks':owned.process_identity(os.getpid())['birth_ticks'],
+        'boot_id':actual['boot_id'],'hostname_sha256':actual['hostname_sha256'],'cpu_ids':cpu_ids}
+    public_write(private,descriptor.name,value)
+    case=private/name
+    try:
+        # Only RUNNER_TEMP survives in addition to the ordinary clean child env.
+        runner_temp=os.environ['RUNNER_TEMP']
+        with child_environment(private):
+            os.environ['RUNNER_TEMP']=runner_temp
+            observed=owned.owned_run([sys.executable,str(Path(__file__).resolve()),'--execute','--case-worker',str(descriptor)],
+                source,private/f'case-owner-{name}',cpu_ids=cpu_ids,wall_seconds=56,grace_seconds=2,kill_wait_seconds=2,
+                output_cap=65536,protected={os.getpid(),os.getppid()},health_check=lambda:health(case))
+        entry['owner_cleanup']={key:observed[key] for key in ('outcome','returncode','watchdog_reason','leader_reaped','stdout_stderr_complete')}
+        entry['pipeline_owner_pid']=observed['identity']['pid']
+        entry['pipeline_owner_birth_ticks']=observed['identity']['birth_ticks']
+        need(observed['outcome']=='EXITED' and observed['returncode']==0 and observed['stdout_stderr_complete'] is True,'whole_case_unknown')
+        need((private/f'case-owner-{name}.stderr').stat().st_size==0,'unclassified_case_worker_stderr')
+        completed=read_json(case/'completed.json',65536)
+        need(completed['case']==name and completed['profile'] is profile and completed['status']=='PASS','case_completion_identity')
+        elapsed=time.monotonic_ns()-started
+        need(elapsed<=60*10**9,'case_complete_outer_deadline')
+        # Worker has completed publication under its independent owner. Only a
+        # bounded completion descriptor is collected here, never original data.
+        entry.update({key:value for key,value in completed.items() if key!='files'})
+        entry.update(complete_outer_monotonic_ns=time.monotonic_ns()-started,
+            files=[dict(item,name=f'case-{name}-safe/'+item['name']) for item in completed['files']])
+        need(entry['complete_outer_monotonic_ns']<=60*10**9,'case_complete_outer_deadline')
+    except BaseException as error:
+        entry.update(status='UNKNOWN',error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure',complete_outer_monotonic_ns=time.monotonic_ns()-started,private_originals_uploaded=False)
+        # Do not publish a partially committed/late case. Retain its original
+        # safe staged bytes privately, without deleting or reclassifying them.
+        if (public/f'case-{name}-safe').exists():
+            os.rename(public/f'case-{name}-safe',case/'safe-quarantined')
+        entry.pop('files',None)
+    return entry
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
+    parser.add_argument('--case-worker',type=Path,help=argparse.SUPPRESS)
     parser.add_argument('--verify-public',type=Path)
     parser.add_argument('--registration-root',type=Path)
     parser.add_argument('--source',type=Path)
     parser.add_argument('--private',type=Path)
     parser.add_argument('--public',type=Path)
     args=parser.parse_args(argv)
+    if args.case_worker is not None:
+        need(args.execute and args.verify_public is None and args.registration_root is None and args.source is None and args.private is None and args.public is None,'case_worker_mode')
+        return case_worker(args.case_worker)
     if args.verify_public is not None:
         need(not args.execute,'mutually_exclusive_modes')
         verify_public(args.verify_public)
@@ -442,7 +681,7 @@ def main(argv=None):
             need(set(cpus)<=os.sched_getaffinity(0),'runner_cpu_unavailable')
             free=os.statvfs(args.private);need(free.f_bavail*free.f_frsize>=MIN_FREE,'fresh_space')
             need(tree_bytes(args.private)+tree_bytes(args.public)<=AGGREGATE_CAP,'aggregate_output_cap')
-            if case_root:need(tree_bytes(case_root)<=CASE_CAP,'case_output_cap')
+            if case_root:need(case_bytes(args.private,args.public,case_root.name)<=CASE_CAP,'case_output_cap')
         # Actual WAL/FULL and SQLite compile metadata are collected in an owned
         # isolated child only after execute approval; no product module is used.
         stage='runtime_probe';probe=args.private/'runtime-probe';probe.mkdir(mode=0o700)
@@ -454,44 +693,16 @@ def main(argv=None):
         need(runtime['journal_mode']=='wal' and runtime['synchronous']==2 and runtime['replication'] is False,'wal_full_required')
         records.append(public_write(args.public,'runtime.json',runtime))
         def run_case(name,profile):
-            case_start=time.monotonic_ns();case=args.private/name;case.mkdir(mode=0o700);tmp=case/'tmp';tmp.mkdir(mode=0o700)
-            command=child_argv(args.source,case/'workload',profile)
-            entry={'case':name,'status':'UNKNOWN','profile':profile,'source_commit':SOURCE,'production_approved':False}
-            try:
-                health(case);need(source_snapshot(args.source)==snapshot,'source_changed_before_case')
-                with child_environment(tmp):
-                    observed=owned.owned_run(command,args.source,case/'driver',cpu_ids=cpus,wall_seconds=50,grace_seconds=2,kill_wait_seconds=2,output_cap=CASE_CAP,protected={os.getpid(),os.getppid()},health_check=lambda:health(case))
-                # Private stdout/stderr/request/database originals remain private.
-                # Only structured projections and semantic profiler data leave it.
-                need(observed['outcome']=='EXITED' and observed['returncode']==0 and observed['stdout_stderr_complete'] is True,'owned_case_unknown')
-                need((case/'driver.stderr').stat().st_size==0,'unclassified_stderr')
-                summary=read_json(case/'workload/summary.json')
-                safe=project_summary(summary,profile)
-                arrivals=project_arrivals(case/'workload/arrivals.jsonl.gz')
-                need(source_snapshot(args.source)==snapshot,'source_changed_after_case')
-                health(case)
-                records.append(public_write(args.public,f'case-{name}.json',safe))
-                records.append(public_write(args.public,f'arrivals-{name}.json',arrivals))
-                profile_paths=sorted((case/'workload/profiles').glob('*.prof'))
-                need(len(profile_paths)==(3 if profile else 0),'actual_profile_file_count')
-                if profile:
-                    need(sum(p.name=='dispatcher-0.prof' for p in profile_paths)==1 and {int(p.name.split('-')[1]) for p in profile_paths if p.name.startswith('worker-')}=={0,1},'profile_pid_topology')
-                for path in profile_paths:
-                    need(re.fullmatch(r'(worker-[0-9]+-pid-[0-9]+|dispatcher-[0-9]+)\.prof',path.name) is not None,'profile_filename')
-                    records.append(public_write(args.public,f'{name}-{path.stem}.json',profile_semantic(path,args.source)))
-                elapsed=time.monotonic_ns()-case_start
-                need(elapsed<=60*10**9,'case_complete_outer_deadline')
-                entry.update(status='PASS',complete_outer_monotonic_ns=elapsed,actual_cpu_ids=cpus,
-                    actual_driver_pid=observed['identity']['pid'],driver_birth_ticks=observed['identity']['birth_ticks'],
-                    launcher_affinity_acknowledged=observed['launcher_affinity_acknowledged'],leader_reaped=observed['leader_reaped'],
-                    original_child_argv=command,private_originals_uploaded=False,
-                    private_raw_retention='private runner lifetime only; provider teardown is not durable escrow')
-            except BaseException as error:
-                entry.update(error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure',complete_outer_monotonic_ns=time.monotonic_ns()-case_start,private_originals_uploaded=False)
+            entry=supervised_case(owned,args.source,args.private,args.public,name,profile,snapshot,approval,actual,cpus,health)
+            records.extend(entry.pop('files',[]))
             return entry
         stage='cases';result['cases']=cases_sequence(run_case)
         result['status']='PASS_COMPONENT_DIAGNOSTIC_ONLY' if len(result['cases'])==2 and all(c['status']=='PASS' for c in result['cases']) else 'UNKNOWN_OR_NO_GO'
+        # Final source replay is global verification, outside each completed
+        # case's explicitly reported endpoint, within the job timeout.
         need(source_snapshot(args.source)==snapshot,'source_changed_at_end')
+        if len(result['cases'])==1:
+            result['cases'].append({'case':'P','profile':True,'status':'NOT_RUN','reason':'first_case_not_passed','production_approved':False})
     except BaseException as error:
         result.update(status='UNKNOWN_OR_NO_GO',stage=stage,error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure')
     result.update(no_external_exchange=True,no_network_sandbox_claim=True,private_originals_uploaded=False,

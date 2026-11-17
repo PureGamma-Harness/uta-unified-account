@@ -73,6 +73,7 @@ jobs:
           sparse-checkout: |
             /tools/independent_m0_controller.py
             /tests/test_independent_m0_controller.py
+            /tests/test_independent_m0_integrity.py
             /.github/workflows/independent-m0.yml
             /.github/workflows/independent-m0-once.yml
       - name: Checkout exact qualified workload source separately
@@ -86,7 +87,7 @@ jobs:
         with:
           python-version: '3.12.14'
       - name: Pure control tests, no workload
-        run: python -m unittest discover -s control/tests -p test_independent_m0_controller.py -v
+        run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v
       - name: Check immutable manifest and run B then P on this independent runner
         run: |
           python control/tools/independent_m0_controller.py --execute \
@@ -103,6 +104,6 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: independent-m0-safe-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/*.json
+          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
           if-no-files-found: warn
           retention-days: 30
