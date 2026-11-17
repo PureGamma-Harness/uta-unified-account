@@ -1,0 +1,35 @@
+test_missing_entire_receipt_bundle_is_not_empty_compatible_history (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_missing_entire_receipt_bundle_is_not_empty_compatible_history) ... reverse-evidence {"remaining_valid_trade": false, "verifier_result": {"matches": 0, "paired_fills": 0, "orders": 0, "ledger_events": 8}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "retained_spot_events": 8, "settled_financial_rows_unchanged": true, "audit_rows_unchanged": true, "remaining_receipts": 0, "remaining_fills": 0}
+FAIL
+test_missing_single_fill_is_already_rejected_without_repair_or_fencing (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_missing_single_fill_is_already_rejected_without_repair_or_fencing) ... ok
+test_one_missing_bundle_among_valid_settlements_is_rejected (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_one_missing_bundle_among_valid_settlements_is_rejected) ... reverse-evidence {"remaining_valid_trade": true, "verifier_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 9}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "retained_spot_events": 13, "settled_financial_rows_unchanged": true, "audit_rows_unchanged": true, "remaining_receipts": 1, "remaining_fills": 2}
+FAIL
+test_unfilled_cancelled_order_events_do_not_imply_a_missing_trade (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_unfilled_cancelled_order_events_do_not_imply_a_missing_trade) ... ok
+
+======================================================================
+FAIL: test_missing_entire_receipt_bundle_is_not_empty_compatible_history (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_missing_entire_receipt_bundle_is_not_empty_compatible_history)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-migration-reverse-review/tests/test_migration_reverse_evidence.py", line 104, in test_missing_entire_receipt_bundle_is_not_empty_compatible_history
+    self.reject_missing_bundle(remaining_trade=False)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-migration-reverse-review/tests/test_migration_reverse_evidence.py", line 97, in reject_missing_bundle
+    self.assertIsNotNone(verifier_error, "retained confirmation events and settlement require their missing receipt bundle")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : retained confirmation events and settlement require their missing receipt bundle
+
+======================================================================
+FAIL: test_one_missing_bundle_among_valid_settlements_is_rejected (tests.test_migration_reverse_evidence.MigrationReverseEvidenceTests.test_one_missing_bundle_among_valid_settlements_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-migration-reverse-review/tests/test_migration_reverse_evidence.py", line 107, in test_one_missing_bundle_among_valid_settlements_is_rejected
+    self.reject_missing_bundle(remaining_trade=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-migration-reverse-review/tests/test_migration_reverse_evidence.py", line 97, in reject_missing_bundle
+    self.assertIsNotNone(verifier_error, "retained confirmation events and settlement require their missing receipt bundle")
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: unexpectedly None : retained confirmation events and settlement require their missing receipt bundle
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.334s
+
+FAILED (failures=2)
