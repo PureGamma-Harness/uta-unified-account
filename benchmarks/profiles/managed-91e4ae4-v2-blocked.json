@@ -1,0 +1,45 @@
+{
+  "source_root": "/workspace/uta-observer-freeze-91e4ae4",
+  "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-observer-validation/final-91e4ae4/python312/summary.json",
+  "plan": "/workspace/uta-managed-91e4ae4-prepare/benchmarks/plans/20261117-managed-91e4ae4-six-hours-v1-pending.json",
+  "amendment": "/workspace/uta-managed-91e4ae4-prepare/benchmarks/plans/20261117-managed-91e4ae4-six-hours-v1-observer-amendment.json",
+  "plan_sha256": "04ef016f5fab6edf8e43656858f4d39db5da75cd81cdaed021e46681958f76ca",
+  "amendment_sha256": "26f8d3c055e8fc0fc38b91761746fd04129521dd0953540987859ceaa1452296",
+  "smoke_scratch": "/workspace/uta-managed-observer-runs/91e4ae4-smoke-20261117-01",
+  "long_scratch": "/workspace/uta-managed-observer-runs/91e4ae4-six-hours-20261117",
+  "qualification": {
+    "status": "BLOCKED",
+    "blocked_reason": "Original push Python3.13 five-second recovery failure; seven successful CI jobs do not satisfy all-eight gate",
+    "all_three_local_passed": true,
+    "all_eight_ci_passed": false,
+    "independent_new_package_passed": true,
+    "actual_executed_tests_each": 1512
+  },
+  "resource_review": {
+    "old_observer_floor_approved": false,
+    "operator_record": null,
+    "operator_record_sha256": null,
+    "old_observer_floor_bytes": 268435456,
+    "current_free_bytes": null,
+    "current_combined_gap_bytes": null
+  },
+  "count_successor_version_required": true,
+  "production_approved": false,
+  "continuous_6h_stability_passed": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "preregistered_at_utc": "2026-11-17T14:33:49.631713+00:00",
+  "execution_authorized": false,
+  "service_started": false,
+  "original_profile_sha256": "23394732ce60cd025c02e73c3e2c65f0b0830c83333d562b7ec779fe14b56286",
+  "original_profile": "benchmarks/profiles/managed-91e4ae4-v1-pending.json",
+  "original_ci_runs": [
+    44104161669,
+    44104172236
+  ],
+  "actual_whole_ci_jobs_successful": 7,
+  "actual_whole_ci_jobs_failed": 1,
+  "blocked_at_utc": "2026-11-17T14:48:55.378193+00:00"
+}

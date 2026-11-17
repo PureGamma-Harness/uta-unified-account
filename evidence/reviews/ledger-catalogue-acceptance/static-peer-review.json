@@ -1,0 +1,15 @@
+{
+  "reviewer": "/root/ledger_fix_acceptance/static_peer",
+  "reviewed_preregistered_head": "66c345b2a4739055d9cb4d9954fde47966973eb5",
+  "scope": "independent second static review, no native execution, SQL or edits",
+  "narrow_fix_blockers": [],
+  "constructor_placement": "original version refusal preserved; main definition check before ledger DDL",
+  "verify_placement": "main definition check before integrity and FK scans",
+  "joined_and_managed_contract": "outer transaction ownership and original managed raw-join refusal preserved",
+  "test_logic_review": "no assertion identified as necessarily invalid among the 18 controls",
+  "known_boundary": "unchanged unqualified replay SQL permits an unmanaged raw connection's TEMP shadow; cannot claim all effective tables validated",
+  "runner_limit": "hard timeout covers child wait; final actual whole duration, including source hashes and driver END write/return, must independently be at most 15 seconds",
+  "exact_artifact_limit": "source52 hashes cover runtime; exact test and driver identities require sealed HEAD and clean-tree guard",
+  "runtime_acceptance_signed_by_static_peer": false,
+  "production_approved": false
+}

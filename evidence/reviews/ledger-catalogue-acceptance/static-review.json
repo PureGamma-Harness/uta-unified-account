@@ -1,0 +1,36 @@
+{
+  "status": "PURE_AST_REVIEW_ONLY_NOT_RUN",
+  "base_candidate": "8003ef6c3e0cf98b4891efea7885ffa141a68fdc",
+  "implementation": "1ce3d6587b62be77120d3ef9914ec15c0b26c825",
+  "author_evidence": "4c260d271ad8c49949f85544db50a2c30944057c",
+  "removed_helpers": 1,
+  "removed_calls": 2,
+  "original_module_ast_recovered": true,
+  "independent_tests": [
+    "test_01_canonical_real_supported_backup_and_exact_metadata",
+    "test_02_original_missing_event_fk_with_orphan_no_ddl",
+    "test_03_missing_asset_fk_no_ddl",
+    "test_04_wrong_fk_target_has_typed_error_before_sqlite_fk_scan",
+    "test_05_missing_pk_no_ddl",
+    "test_06_nullable_column_no_ddl",
+    "test_07_hidden_generated_column_no_ddl",
+    "test_08_missing_check_no_ddl",
+    "test_09_view_substitution_no_ddl",
+    "test_10_missing_table_no_ddl",
+    "test_11_semantically_equivalent_whitespace_is_deliberately_rejected",
+    "test_12_joined_bad_catalogue_keeps_callers_transaction_active",
+    "test_13_joined_canonical_post_and_verify_are_rolled_back_by_caller",
+    "test_14_constructor_version_error_precedes_catalogue_error",
+    "test_15_new_catalogue_error_precedes_original_trigger_error",
+    "test_16_main_bad_definition_cannot_be_hidden_by_canonical_temp_table",
+    "test_17_scope_observation_unmanaged_temp_shadow_is_not_validated",
+    "test_18_real_managed_guards_and_raw_join_boundary"
+  ],
+  "files": {
+    "uta/storage.py": "ddb6ed979bb8e88aefb2a49084829e9bdce3649fb10d6bf93bb0c28298f24a79",
+    "tests/test_ledger_catalogue_acceptance.py": "52d70a64e7329135477747a200a7e676516da577897d6fd57bd7839ead42f462",
+    "evidence/reviews/ledger-catalogue-acceptance/run_acceptance.py": "ebbb6626e3b0cf92c0fe98d2209acbf93f3c854e42c0a0adf92ed3f232816aac"
+  },
+  "sql_executed": false,
+  "production_approved": false
+}

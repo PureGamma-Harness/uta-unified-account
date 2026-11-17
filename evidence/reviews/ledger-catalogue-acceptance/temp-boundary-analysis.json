@@ -1,0 +1,176 @@
+{
+  "classification": "EXISTING_UNMANAGED_RAW_JOIN_TEMP_SHADOW_BOUNDARY_REPRODUCED_ON_CURRENT",
+  "baseline_native_execution": false,
+  "baseline_equivalence_evidence": "original complete storage AST recovered by removing the new helper and two calls; unqualified replay selects unchanged",
+  "current_native_execution": true,
+  "raw_observation": "once/cases/test_17_scope_observation_unmanaged_temp_shadow_is_not_validated/scope-gap.json",
+  "main_definition": [
+    "table",
+    "ledger_postings",
+    "ledger_postings",
+    "CREATE TABLE ledger_postings (\n        sequence INTEGER NOT NULL REFERENCES ledger_events(sequence),\n        ordinal INTEGER NOT NULL CHECK (ordinal >= 0), account TEXT NOT NULL,\n        asset TEXT NOT NULL REFERENCES ledger_assets(asset), units TEXT NOT NULL,\n        PRIMARY KEY (sequence, ordinal))"
+  ],
+  "main_rows": [
+    [
+      1,
+      0,
+      "a",
+      "USD",
+      "-250"
+    ],
+    [
+      1,
+      1,
+      "b",
+      "USD",
+      "250"
+    ],
+    [
+      2,
+      0,
+      "b",
+      "USD",
+      "-25"
+    ],
+    [
+      2,
+      1,
+      "c",
+      "USD",
+      "25"
+    ]
+  ],
+  "main_foreign_keys": [
+    [
+      0,
+      0,
+      "ledger_assets",
+      "asset",
+      "asset",
+      "NO ACTION",
+      "NO ACTION",
+      "NONE"
+    ],
+    [
+      1,
+      0,
+      "ledger_events",
+      "sequence",
+      "sequence",
+      "NO ACTION",
+      "NO ACTION",
+      "NONE"
+    ]
+  ],
+  "main_columns": [
+    [
+      0,
+      "sequence",
+      "INTEGER",
+      1,
+      null,
+      1,
+      0
+    ],
+    [
+      1,
+      "ordinal",
+      "INTEGER",
+      1,
+      null,
+      2,
+      0
+    ],
+    [
+      2,
+      "account",
+      "TEXT",
+      1,
+      null,
+      0,
+      0
+    ],
+    [
+      3,
+      "asset",
+      "TEXT",
+      1,
+      null,
+      0,
+      0
+    ],
+    [
+      4,
+      "units",
+      "TEXT",
+      1,
+      null,
+      0,
+      0
+    ]
+  ],
+  "main_reference_provenance": "Control13 retained main file is byte-identical to Control17 retained main file; reference state from raw Control13 joined.json",
+  "same_main_sha256": "d6518155615ce5b6febc8fc62fb9b19299a8789a299a0f95dd2ba14cb82acf19",
+  "temp_definition_from_exact_executed_test_source": "CREATE TEMP TABLE ledger_postings(sequence,ordinal,account,asset,units)",
+  "temp_fixture_rows_from_exact_executed_test_source": [
+    [
+      1,
+      0,
+      "a",
+      "USD",
+      "-250"
+    ],
+    [
+      1,
+      1,
+      "b",
+      "USD",
+      "250"
+    ],
+    [
+      2,
+      0,
+      "b",
+      "USD",
+      "-25"
+    ],
+    [
+      2,
+      1,
+      "c",
+      "USD",
+      "25"
+    ],
+    [
+      99,
+      0,
+      "temp-orphan",
+      "USD",
+      "1"
+    ]
+  ],
+  "temp_native_assertions": {
+    "row_count": 5,
+    "foreign_key_list": [],
+    "returned_verified_events": 2,
+    "outer_transaction_still_active": true
+  },
+  "temp_primary_key_absent_evidence": "Exact executed CREATE TEMP TABLE source has no primary key; no separate PRAGMA PK assertion was captured.",
+  "temp_connection_closed_and_ephemeral_table_not_retained": true,
+  "main_bad_temp_canonical_refusal": "once/cases/test_16_main_bad_definition_cannot_be_hidden_by_canonical_temp_table/main_guard.json",
+  "scope_verdict": "NARROW_MAIN_CATALOGUE_FIX_ACCEPTED; ALL_EFFECTIVE_TABLE_OR_RAW_JOIN_CLOSURE_REJECTED",
+  "future_fix": "Separate explicit scope to refuse TEMP shadows or consistently qualify all authoritative ledger SQL; no implementation authorized here.",
+  "source_snapshots": {
+    "baseline-storage.py.txt": {
+      "git_revision": "1ce3d6587b62be77120d3ef9914ec15c0b26c825^",
+      "sha256": "9eee296159d0b0347feac3fd2f2b99b3216e8247e579e159e5adda8cbcb08a08",
+      "native_temp_boundary_run": false
+    },
+    "candidate-storage.py.txt": {
+      "git_revision": "8003ef6c3e0cf98b4891efea7885ffa141a68fdc",
+      "sha256": "ddb6ed979bb8e88aefb2a49084829e9bdce3649fb10d6bf93bb0c28298f24a79",
+      "native_temp_boundary_run": true
+    }
+  },
+  "production_approved": false
+}

@@ -1,0 +1,42 @@
+{
+  "status": "AUTHOR_RAW_INDEPENDENT_READ_ONLY_VERIFIED",
+  "author_evidence_commit": "4c260d271ad8c49949f85544db50a2c30944057c",
+  "byte_identical_raw_files": [
+    "BEGIN.json",
+    "END.json",
+    "stdout.txt",
+    "stderr.txt",
+    "observation/result.json",
+    "observation/source-before.json",
+    "observation/source-after.json",
+    "observation/unittest.txt",
+    "observation/cases/test_lc001_canonical_public_join_reopen_and_backup/positive-state.json",
+    "observation/cases/test_lc002_missing_event_fk_with_orphan_refuses/refusal-state.json",
+    "observation/cases/test_lc003_missing_asset_fk_refuses/refusal-state.json",
+    "observation/cases/test_lc004_retargeted_event_fk_refuses_before_fk_scan/refusal-state.json",
+    "observation/cases/test_lc005_missing_composite_pk_refuses/refusal-state.json",
+    "observation/cases/test_lc006_reversed_pk_refuses/refusal-state.json",
+    "observation/cases/test_lc007_nullable_account_refuses/refusal-state.json",
+    "observation/cases/test_lc008_units_type_drift_refuses/refusal-state.json",
+    "observation/cases/test_lc009_missing_ordinal_check_refuses/refusal-state.json",
+    "observation/cases/test_lc010_extra_ordinary_column_refuses/refusal-state.json",
+    "observation/cases/test_lc011_extra_generated_column_refuses/refusal-state.json",
+    "observation/cases/test_lc012_view_substitution_refuses_before_trigger_access/refusal-state.json",
+    "observation/cases/test_lc013_missing_postings_table_is_not_recreated/refusal-state.json",
+    "observation/cases/test_lc014_missing_original_trigger_still_refuses/refusal-state.json",
+    "observation/cases/test_lc015_changed_original_trigger_still_refuses/refusal-state.json",
+    "observation/cases/test_lc016_managed_extension_guards_keep_their_native_boundary/positive-state.json"
+  ],
+  "count": 24,
+  "source52_identical_and_matches_candidate": true,
+  "original_counterexample_sha256_unchanged": "d77b0f8cc1797ac9376d10574927e609e1e93abf9b081bddeb5632639f87bb8a",
+  "author_tests": 29,
+  "author_failures_errors_skips": [
+    0,
+    0,
+    0
+  ],
+  "independent_sql_executed": false,
+  "author_cannot_self_accept": true,
+  "production_approved": false
+}
