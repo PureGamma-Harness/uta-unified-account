@@ -76,3 +76,23 @@ adapter只转换容器、不改变独立的shard→authority意义。
 
 本轮1个小unittest枚举157项，0差异；[原始记录](../evidence/runs/credit-certificate-reference/descriptor-reference.json)。
 这是与本组oracle比较，尚未与生产函数差分，也没有native或SQL执行。
+
+## 首次真实生产纯函数差分
+
+随后固定作者生产提交`1d1dd5461f90caba42bef3f38fa4b7a5cb305721`，
+`uta/credit_policy.py` SHA256
+`18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a`。
+[独立runner](../scripts/run_credit_policy_differential.py)实际调用157次生产validator，16项
+接受，0未解释差异；接受返回的逐asset/allocation整数、canonical bytes及policy/certificate/
+descriptor IDs与独立oracle一致。三个frozen对象层级赋值拒绝，原input修改不影响结果。
+实际纯计算窗口0.074221秒，没有SQL/native、owner、READY、activation或金融成功调用。
+
+原始差异仅1项：原标`wire_order_pending`的allocation逆序，纯语义oracle原认为数学合法，
+作者随后明确allocation和authority均要求连续shard升序，生产正确拒绝。原157语料和
+expected不改，raw同时保留原判断与显式wire澄清后的判断。合法完整context list只经
+独立连续/唯一检查后转成API的mapping；非法list直接传给实际parser并得到typed拒绝，
+未洗掉duplicate/missing数据。完整[首跑记录](../evidence/runs/credit-certificate-reference/production-first-differential.json)。
+
+进一步补强与native差分暂停，优先响应另一个独立冻结源码的cash-deficit replay最小实证；
+本提交不包含该探测或任何M2修复。纯certificate通过不关闭准备状态及真实ledger/source
+边界，后续实际native安装/旧码/跨片UNKNOWN仍待验证。
