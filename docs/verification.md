@@ -27,22 +27,25 @@ python -m uta scenario --shards 4
 python formal/explore_reservation.py
 ```
 
-上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12、3.13 的独立作业中还执行源码编译、认证交易验收、其余有界模型，以及 wheel 构建和源码目录之外的安装验证。任一步失败会阻止该作业继续：
+上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10–3.13 各自运行。`tools/run_validation.py` 包装完整 unittest，保留原始日志与结果；测试证据上传使用 `always()`，失败后的编译、情景和打包步骤仍会跳过。CI 还包含编译、合成 acceptance、八个 Python 有界模型脚本、精确 sdist/wheel 文件核验及源码目录之外的安装/CLI 验证：
 
 ```mermaid
 flowchart TD
-    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13 各自运行"] --> Tests["unittest 测试"]
-    Tests --> Compile["编译 uta / formal / tests"]
-    Compile --> Demo["固定费率 demo"]
-    Demo --> Scenario["4 分片情景、重开与回放"]
-    Scenario --> Acceptance["认证交易 acceptance"]
-    Acceptance --> Model["预占、双侧结算、组提交、分片、持久命令有界枚举"]
-    Model --> Wheel["构建 wheel，独立目录安装与 CLI 验证"]
+    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13"] --> Tests["完整 unittest 与原始证据"]
+    Tests --> Compile["编译检查"]
+    Compile --> Scenarios["demo / 4 分片 replay / acceptance"]
+    Scenarios --> Models["八个 Python 有界模型脚本"]
+    Models --> Package["精确 sdist / wheel 文件核验"]
+    Package --> Installed["隔离安装与 CLI / 安装包验证"]
 ```
 
-额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 `formal/explore_settlement.py`、`formal/explore_group_commit.py`、`formal/explore_shard_admission.py`、`formal/explore_durable_commands.py` 各自的 Python 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，并初始化、inspect、status 一个新的 managed 目录；完整顺序以工作流为准。
+额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 formal 下 reservation、settlement、group_commit、shard_admission、durable_commands、managed_authority、market_epochs、durable_batches 各自的 `explore_*.py` 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，初始化、inspect、status 一个新的 managed 目录，并核对精确包清单与隔离安装行为；完整顺序以工作流为准。
 
 本地单一 Python 版本通过，不等于整个 CI 矩阵已通过。`scenario` 未指定数据库时使用临时目录并清理；要保存并再次回放，使用 [流程文档](workflows.md) 中带 `--db` 的命令。Python 枚举器与 TLA+ TLC 是不同工具；当前 CI 没有执行 TLC，范围见 [形式化模型说明](../formal/README.md)。
+
+## 可选持久账本回放的首错顺序
+
+`DurableLedger.verify` 的逐事件默认路径和显式 `ordered_postings` 试验必须保留相同的金融校验及首个错误。Python 3.10 的游标预取可提前解释未来 TEXT；仅按组计数并不足以隔离这个边界。当前候选将标准 UTF-8 试验载荷投影为带原类型的字节，按当前事件解码，其他编码/factory 使用原路径。完整流程、原失败及性能证据的适用范围见 [预取与解码边界](history-postings-error-order.md)，可运行 [test_history_postings_stream.py](../tests/test_history_postings_stream.py)。该变更保持默认关闭，不缓存验证结果，不代表启动、性能或生产验收通过。
 
 ## 认证链路的 SQLite 锁回归
 

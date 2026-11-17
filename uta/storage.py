@@ -503,16 +503,34 @@ class DurableLedger:
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
                                    "FROM ledger_events ORDER BY sequence").fetchall()
+            # CAST(TEXT AS BLOB) exposes database-encoding bytes. Keep the
+            # original query path for other encodings or caller text factories.
+            stream_postings = (ordered_postings and current.text_factory is str
+                               and current.execute("SELECT CAST('A' AS BLOB)").fetchone()[0] == b"A")
             group_cursor = (current.execute("SELECT sequence,COUNT(*) FROM ledger_postings "
                                            "GROUP BY sequence ORDER BY sequence")
-                            if ordered_postings else None)
+                            if stream_postings else None)
             following_group = next(group_cursor, None) if group_cursor is not None else None
             posting_cursor = None
+
+            def posting_text(value, storage_type, column):
+                if storage_type != "text":
+                    return value  # A stored BLOB must not become valid TEXT.
+                try:
+                    return value.decode("utf-8")
+                except UnicodeDecodeError:
+                    pass
+                # Ask SQLite to report the reached bad TEXT with its original
+                # exception type/message. Do this outside the decoder except
+                # block, without changing the connection's text_factory.
+                return current.execute("SELECT CAST(? AS TEXT) AS " + column,
+                                       (value,)).fetchone()[0]
+
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                if not ordered_postings:
+                if not stream_postings:
                     postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
                                                "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
                 else:
@@ -521,18 +539,27 @@ class DurableLedger:
                         raise LedgerError("journal posting sequence is broken")
                     if following_group is not None and following_group[0] == sequence:
                         if posting_cursor is None:
-                            posting_cursor = current.execute("SELECT sequence, ordinal, account, asset, units "
-                                                             "FROM ledger_postings ORDER BY sequence, ordinal")
+                            posting_cursor = current.execute("""SELECT sequence, ordinal, account, asset, units,
+                                    account_type, asset_type, units_type FROM (
+                                SELECT sequence, ordinal,
+                                    CASE WHEN typeof(account)='text' THEN CAST(account AS BLOB) ELSE account END AS account,
+                                    CASE WHEN typeof(asset)='text' THEN CAST(asset AS BLOB) ELSE asset END AS asset,
+                                    CASE WHEN typeof(units)='text' THEN CAST(units AS BLOB) ELSE units END AS units,
+                                    typeof(account) AS account_type, typeof(asset) AS asset_type, typeof(units) AS units_type
+                                FROM ledger_postings) ORDER BY sequence, ordinal""")
                         count = following_group[1]
                         if type(count) is not int or count < 1:
                             raise LedgerError("journal posting sequence is broken")
-                        # Read exactly this group, never a future payload row:
-                        # SQLite text decoding itself can raise before hashes.
+                        # Drivers may prefetch a future row. Its TEXT is raw
+                        # bytes here; decode only the current checked group.
                         for _ in range(count):
                             posting = next(posting_cursor, None)
                             if posting is None or posting[0] != sequence:
                                 raise LedgerError("journal posting sequence is broken")
-                            postings.append(tuple(posting)[1:])
+                            postings.append((posting[1],
+                                posting_text(posting[2], posting[5], "account"),
+                                posting_text(posting[3], posting[6], "asset"),
+                                posting_text(posting[4], posting[7], "units")))
                         following_group = next(group_cursor, None)
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")

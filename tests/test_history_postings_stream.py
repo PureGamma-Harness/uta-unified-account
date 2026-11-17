@@ -251,6 +251,61 @@ class HistoryPostingsStreamTests(unittest.TestCase):
         self.assertEqual(outcome[0], "OperationalError")
         self.assertIn("Could not decode to UTF-8 column 'units'", outcome[1])
 
+    def test_blob_payload_is_not_reinterpreted_as_valid_text(self):
+        for column, message in (("account", "each posting requires an account of at most 256 characters"),
+                                ("units", "corrupt ledger integer")):
+            with self.subTest(column=column):
+                def blob(c):
+                    c.execute("UPDATE ledger_postings SET account='a',units='-1250' WHERE sequence=1 AND ordinal=0")
+                    c.execute("UPDATE ledger_postings SET " + column + "=CAST(" + column + " AS BLOB) WHERE sequence=1 AND ordinal=0")
+                self.corrupt(blob)
+                self.rejected(message)
+
+    def test_current_group_text_decode_precedes_semantic_checks(self):
+        for fault in ("integer", "ordinal"):
+            with self.subTest(fault=fault):
+                def twice(c):
+                    if fault == "integer":
+                        c.execute("UPDATE ledger_postings SET units='x' WHERE sequence=2 AND ordinal=0")
+                        c.execute("UPDATE ledger_postings SET account=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=1")
+                    else:
+                        c.execute("UPDATE ledger_postings SET units='-300' WHERE sequence=2 AND ordinal=0")
+                        c.execute("UPDATE ledger_postings SET ordinal=ordinal+10 WHERE sequence=2")
+                self.corrupt(twice)
+                outcome = self.outcomes()
+                self.assertEqual(outcome[0], "OperationalError")
+                self.assertIn("Could not decode to UTF-8 column 'account'", outcome[1])
+
+    def test_utf16_authority_retains_default_full_replay(self):
+        path = Path(self.directory.name) / "utf16.sqlite3"
+        path.touch(mode=0o600)
+        with sqlite3.connect(path) as c:
+            c.execute("PRAGMA encoding='UTF-16le'")
+            c.execute("CREATE TABLE encoding_seed(value TEXT)")
+        ledger = DurableLedger(Database(path), {"USD": 2})
+        ledger.post("unicode", [Posting("借方", "USD", Decimal("-1.25")),
+                                Posting("贷方", "USD", Decimal("1.25"))])
+        self.assertEqual(ledger.verify(), 1)
+        self.assertEqual(ledger.verify(ordered_postings=True), 1)
+
+    def test_borrowed_text_factory_preserves_results_errors_and_identity(self):
+        factory = lambda raw: raw.decode("utf-8")
+        with self.database.transaction() as connection:
+            connection.text_factory = factory
+            for mode in (False, True):
+                self.assertEqual(self.ledger.verify(connection=connection, ordered_postings=mode), 2)
+                self.assertIs(connection.text_factory, factory)
+        def twice(c):
+            c.execute("UPDATE ledger_events SET fingerprint='broken' WHERE sequence=1")
+            c.execute("UPDATE ledger_postings SET account=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0")
+        self.corrupt(twice)
+        with self.database.transaction() as connection:
+            connection.text_factory = factory
+            for mode in (False, True):
+                with self.assertRaisesRegex(LedgerError, "journal event fingerprint changed"):
+                    self.ledger.verify(connection=connection, ordered_postings=mode)
+                self.assertIs(connection.text_factory, factory)
+
     def test_empty_history_metadata_only_and_default_zero_queries(self):
         def empty(c):
             for table in ("ledger_postings", "ledger_events", "ledger_balances"):

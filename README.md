@@ -70,6 +70,8 @@ python -m uta.matching --database /var/lib/uta/exchange.sqlite3 \
 
 ## 证据与验收
 
+可选 `DurableLedger.verify(ordered_postings=True)` 的兼容性及首错顺序见 [账本回放的预取与解码边界](docs/history-postings-error-order.md)。该试验默认关闭；完整金融校验和原失败记录保留，旧性能观测不能作为修复后源码的加速或启用依据。
+
 本系统政策不等于 Bybit、Binance 或 CME 的生产参数。参见 [证据库](docs/evidence-register.md)、[规则矩阵](evidence/rules.csv)、[目标架构](docs/target-architecture.md)、[账务规格](docs/accounting-spec.md)、[保证金规则](docs/margin-rules.md)、[清算及违约](docs/liquidation-rules.md)。金融负责人签核和真实资金审批尚未完成。
 
 开放环工具区分纯计算、持久接纳及模拟清算，保留计划到达时间、逐请求结果、profile、环境与校验清单：
