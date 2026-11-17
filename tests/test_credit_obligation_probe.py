@@ -18,9 +18,20 @@ class CandidateCreditObligationTests(unittest.TestCase):
 
     def assert_no_effect(self, result, native_code):
         self.assertFalse(result["committed"], json.dumps(result, sort_keys=True))
-        self.assertEqual(result["error"]["sqlite_errorcode"], native_code, json.dumps(result, sort_keys=True))
+        self.assert_constraint(result["error"], native_code)
         self.assertTrue(result["financial_unchanged"], json.dumps(result, sort_keys=True))
         self.assertEqual(result["after_reopen"]["inbox"], "PENDING")
+
+    def assert_constraint(self, error, native_code):
+        self.assertEqual(error["type"], "IntegrityError", error)
+        category = {787: "foreign_key", 1299: "not_null", 275: "check", 1811: "trigger"}[native_code]
+        self.assertEqual(error["constraint_category"], category, error)
+        if error["native_error_code_attribute_present"]:
+            self.assertEqual(error["sqlite_errorcode"], native_code, error)
+            self.assertEqual(error["constraint_classification_basis"], "native_extended_code")
+        else:
+            self.assertIsNone(error["sqlite_errorcode"])
+            self.assertEqual(error["constraint_classification_basis"], "exact_builtin_integrity_message_not_native_code")
 
     def test_complete_candidate_tuple_really_commits_four_legs(self):
         result = self.run_case()
@@ -43,7 +54,7 @@ class CandidateCreditObligationTests(unittest.TestCase):
                 self.assertTrue(result["native_rollback_observed"])
                 self.assertTrue(result["fk_violations_before_commit"])
                 if missing == "journal":
-                    self.assertEqual(result["statement_errors"][0]["sqlite_errorcode"], 1811)
+                    self.assert_constraint(result["statement_errors"][0], 1811)
 
     def test_null_and_check_bypasses_are_not_fk_safety_passes(self):
         for overrides, code in (({12: None}, 1299), ({4: "REJECTED"}, 275),
@@ -72,7 +83,7 @@ class CandidateCreditObligationTests(unittest.TestCase):
                 for account, asset, units in LEGS]
         result = self.run_case(legs=legs, posting_gate=False)
         self.assert_no_effect(result, 787)
-        self.assertEqual(result["statement_errors"][0]["sqlite_errorcode"], 1811)
+        self.assert_constraint(result["statement_errors"][0], 1811)
 
     def test_full_tuple_caught_late_freshness_failure_rechecked_before_commit(self):
         result = self.run_case(late_stale=True)

@@ -27,6 +27,14 @@ never translate SQLite_ERROR/OperationalError into successful denial, skip the
 case or report an inferred code as an observed native one. No multi-runtime
 pass is claimed here.
 
+The next component-only patch adds a strict portable category: when native
+attributes exist, the actual numeric extended code remains mandatory. Only
+when those attributes are absent can an exact builtin IntegrityError and a
+fixed known constraint-message signature classify the result. It preserves
+`sqlite_errorcode=null` and labels the evidence as message classification,
+never an observed 787/1299/275/1811. Unknown messages, OperationalError and FK
+mismatch remain failures. Its new results must be recorded independently.
+
 No runtime, route, DDL installer, prior source, raw log, frozen code or active
 job changes. Production/runtime remain NO-GO. Only the necessary new positive
 component case will run for the canonical identity change; this is not a rerun

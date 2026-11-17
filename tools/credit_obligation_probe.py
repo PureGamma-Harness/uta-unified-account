@@ -114,9 +114,38 @@ EFFECT_GUARDS = (
 
 
 def error_record(error):
+    native_present = hasattr(error, "sqlite_errorcode")
+    native_code = getattr(error, "sqlite_errorcode", None)
+    categories = {787: "foreign_key", 1299: "not_null", 275: "check", 1811: "trigger"}
+    category, basis = None, "unclassified"
+    if type(error) is sqlite3.IntegrityError:
+        if native_present:
+            if type(native_code) is int:
+                category = categories.get(native_code)
+                if category is not None:
+                    basis = "native_extended_code"
+        elif len(error.args) == 1 and type(error.args[0]) is str:
+            # CPython3.10 omits native-code attributes. Only exact builtin
+            # IntegrityError signatures from this fixed component classify;
+            # unknown text, SQLite_ERROR and FK mismatch are never safety PASS.
+            message = " ".join(error.args[0].split())
+            known = {
+                "FOREIGN KEY constraint failed": "foreign_key",
+                "NOT NULL constraint failed: probe_intents.decision": "not_null",
+                "CHECK constraint failed: terminal_state='SUCCEEDED'": "check",
+                "CHECK constraint failed: typeof(units)='text' AND length(units) BETWEEN 1 AND 38 AND units NOT GLOB '*[^0-9]*' AND substr(units,1,1) BETWEEN '1' AND '9'": "check",
+                "CHECK constraint failed: typeof(sealed)='integer' AND sealed=1": "check",
+                "candidate complete sealed four-leg journal required": "trigger",
+                "candidate matching staged intent required": "trigger",
+                "candidate matching staged debt intent required": "trigger",
+            }
+            category = known.get(message)
+            if category is not None:
+                basis = "exact_builtin_integrity_message_not_native_code"
     return {"type": type(error).__name__, "code": getattr(error, "code", None),
-            "sqlite_errorcode": getattr(error, "sqlite_errorcode", None),
-            "sqlite_errorname": getattr(error, "sqlite_errorname", None)}
+            "sqlite_errorcode": native_code, "sqlite_errorname": getattr(error, "sqlite_errorname", None),
+            "native_error_code_attribute_present": native_present,
+            "constraint_category": category, "constraint_classification_basis": basis}
 
 
 class Component:
