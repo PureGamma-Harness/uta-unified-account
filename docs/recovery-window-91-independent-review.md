@@ -201,3 +201,28 @@ watchdog, observer failure or residual state stops; remaining slots must be
 NOT_RUN, never replaced or added. Sixteen successes would remain NO_REPRO under
 that design, not qualification. No native batch, SQL or original testcase was
 executed while preparing this independent static review.
+
+## Independent closure of the strict serialized-result validator
+
+Candidate `7ce60c197a79f25dac887f352d35749386b812f9`, following `21b473a`,
+adds a pure validator with SHA
+`dbd32f4db11bb6449f63839e46595f574065b03026386dc362bc63f518a05c71`.
+Independent pure controls executed only the audited78-line validator definition,
+without importing the driver, financial runtime or SQL. The original four malformed
+result vectors now refuse. Additional controls cover exact count/boolean types,
+missing fields, one actual unskipped case, mutually consistent outcomes and
+historical-stage flags, source identity, forbidden production approval, exact two
+observer lifecycle records and aggregate consistency. Valid PASS and ordinary
+assertion FAIL records can continue; a valid UNITTEST_ERROR or forced-cleanup
+record requires stop. All26 first-pass controls passed and are retained.
+
+This closes the earlier serialized-result shape finding for that validator. It
+does not approve an entire controller. The controller must also bind the actual
+test worker's recorded runtime, not only its preceding capability probe, and must
+classify original cleanup kills from the event trace. For this fixed testcase,
+normal expired-owner killing occurs in `uta-process-supervisor`; a MainThread
+kill during `router.close` is forced cleanup even when the testcase's local
+`cleanup_forced_kill` observation remains false. Verifying only an event-file hash
+does not independently enforce that safety-stop policy. These concrete integration
+conditions were sent to the author before any batch authorization. No batch ran
+and no original raw result was changed by this review.

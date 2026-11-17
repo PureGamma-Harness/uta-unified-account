@@ -1,0 +1,216 @@
+{
+  "candidate": "7ce60c197a79f25dac887f352d35749386b812f9",
+  "contract_sha256": "dbd32f4db11bb6449f63839e46595f574065b03026386dc362bc63f518a05c71",
+  "pure_controls": [
+    {
+      "name": "literal valid one-case PASS",
+      "valid": true,
+      "safe_to_continue": true,
+      "errors": []
+    },
+    {
+      "name": "ordinary assertion fail retained and safe to continue",
+      "valid": true,
+      "safe_to_continue": true,
+      "errors": []
+    },
+    {
+      "name": "historical assertion fail retained and safe to continue",
+      "valid": true,
+      "safe_to_continue": true,
+      "errors": []
+    },
+    {
+      "name": "UNITTEST_ERROR valid record but technical stop",
+      "valid": true,
+      "safe_to_continue": false,
+      "errors": []
+    },
+    {
+      "name": "original malformed four-field combination",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "case_passed: exact bool required",
+        "worker_observation_complete: exact bool required",
+        "failures: exact non-bool integer 0 or 1 required",
+        "errors: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean error zero",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "errors: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "floating error zero",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "errors: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "string completion flag",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "worker_observation_complete: exact bool required"
+      ]
+    },
+    {
+      "name": "boolean count tests_run",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "tests_run: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean count failures",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "failures: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean count errors",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "errors: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean count skipped",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "skipped: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean count expected_failures",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "expected_failures: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "boolean count unexpected_successes",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "unexpected_successes: exact non-bool integer 0 or 1 required"
+      ]
+    },
+    {
+      "name": "no case executed",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "one actual unskipped case required"
+      ]
+    },
+    {
+      "name": "skip is not a completed original case",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "one actual unskipped case required"
+      ]
+    },
+    {
+      "name": "missing mandatory field",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "was_successful: exact bool required"
+      ]
+    },
+    {
+      "name": "outcome flag does not match counts",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "outcome booleans disagree with actual counts"
+      ]
+    },
+    {
+      "name": "historical flag impossible for PASS",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "historical assertion flag/stage/count mismatch"
+      ]
+    },
+    {
+      "name": "two terminal outcomes for one case",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "one case cannot have multiple terminal outcomes",
+        "outcome booleans disagree with actual counts",
+        "historical assertion flag/stage/count mismatch"
+      ]
+    },
+    {
+      "name": "production approval forbidden",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "diagnosis cannot grant production approval"
+      ]
+    },
+    {
+      "name": "source mismatch",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "original source or testcase identity mismatch"
+      ]
+    },
+    {
+      "name": "observer aggregate forged true",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "observer aggregate disagrees with actual post-join records",
+        "worker completeness aggregate disagrees with exact flags"
+      ]
+    },
+    {
+      "name": "observer lifecycle string is not boolean",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "pidfd: complete lifecycle required"
+      ]
+    },
+    {
+      "name": "missing observer record",
+      "valid": false,
+      "safe_to_continue": false,
+      "errors": [
+        "exactly two observer post-join records required"
+      ]
+    },
+    {
+      "name": "forced cleanup true is technical stop",
+      "valid": true,
+      "safe_to_continue": false,
+      "errors": []
+    }
+  ],
+  "all_controls_passed": true,
+  "ordinary_FAIL_continues_only_with_complete_technical_record": true,
+  "original_four_red_gate_vectors_closed_for_this_validator": true,
+  "does_not_validate_unwritten_controller_or_actual_runtime": true,
+  "native_or_SQL_run": false,
+  "production_approved": false
+}
