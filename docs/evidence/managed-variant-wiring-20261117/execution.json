@@ -1,0 +1,64 @@
+{
+  "source_sha256": {
+    "benchmarks/run_managed_benchmark.py": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+    "tests/test_managed_variant_wiring.py": "ad232e3c1dc644487d80a4a707e81bca69d948fb25bfe8975d738ce87b94ef8a",
+    "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12"
+  },
+  "functional_only": true,
+  "runs": {
+    "py310": {
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,os,sqlite3,sys,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); print({\"python\":sys.version,\"sqlite\":sqlite3.sqlite_version,\"affinity\":sorted(os.sched_getaffinity(0)),\"scope\":\"8-arrival functional wiring only; no performance claim\"},flush=True); suite=unittest.defaultTestLoader.discover(\"tests\",pattern=\"test_managed_variant_wiring.py\"); result=unittest.TextTestRunner(verbosity=2).run(suite); gc.collect(); raise SystemExit(not result.wasSuccessful())"
+      ],
+      "started_utc": "2026-11-17T10:32:00.963453+00:00",
+      "finished_utc": "2026-11-17T10:32:06.288491+00:00",
+      "wall_seconds": 5.325050002997159,
+      "returncode": 0,
+      "environment": {
+        "UTA_MANAGED_VARIANT_EVIDENCE": "/tmp/uta-managed-variant-functional-final/py310",
+        "PYTHONWARNINGS": "error::ResourceWarning"
+      },
+      "log_sha256": "04f7b666372f615027708053cc1f4ecbee7a087466276973929242157d1cc248"
+    },
+    "py312": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,os,sqlite3,sys,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); print({\"python\":sys.version,\"sqlite\":sqlite3.sqlite_version,\"affinity\":sorted(os.sched_getaffinity(0)),\"scope\":\"8-arrival functional wiring only; no performance claim\"},flush=True); suite=unittest.defaultTestLoader.discover(\"tests\",pattern=\"test_managed_variant_wiring.py\"); result=unittest.TextTestRunner(verbosity=2).run(suite); gc.collect(); raise SystemExit(not result.wasSuccessful())"
+      ],
+      "started_utc": "2026-11-17T10:32:06.288983+00:00",
+      "finished_utc": "2026-11-17T10:32:12.119123+00:00",
+      "wall_seconds": 5.830147863998718,
+      "returncode": 0,
+      "environment": {
+        "UTA_MANAGED_VARIANT_EVIDENCE": "/tmp/uta-managed-variant-functional-final/py312",
+        "PYTHONWARNINGS": "error::ResourceWarning"
+      },
+      "log_sha256": "fd50db741c8e327e5522e57d6adbba40eeeabe80b67af1dc6d52a9c3b780a9fe"
+    },
+    "py313": {
+      "command": [
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,os,sqlite3,sys,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); print({\"python\":sys.version,\"sqlite\":sqlite3.sqlite_version,\"affinity\":sorted(os.sched_getaffinity(0)),\"scope\":\"8-arrival functional wiring only; no performance claim\"},flush=True); suite=unittest.defaultTestLoader.discover(\"tests\",pattern=\"test_managed_variant_wiring.py\"); result=unittest.TextTestRunner(verbosity=2).run(suite); gc.collect(); raise SystemExit(not result.wasSuccessful())"
+      ],
+      "started_utc": "2026-11-17T10:32:12.119923+00:00",
+      "finished_utc": "2026-11-17T10:32:18.011064+00:00",
+      "wall_seconds": 5.891149758004758,
+      "returncode": 0,
+      "environment": {
+        "UTA_MANAGED_VARIANT_EVIDENCE": "/tmp/uta-managed-variant-functional-final/py313",
+        "PYTHONWARNINGS": "error::ResourceWarning"
+      },
+      "log_sha256": "07bf15d9ed15e4c1627521fd3a87b7275c71fa4c5ee842ed9f2420159d6419a4"
+    }
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "account": {
+    "account": {
+      "balances": {
+        "USD": {
+          "balance": "100",
+          "scale": 8,
+          "unit": "asset_units"
+        }
+      },
+      "encumbrances": {
+        "status": "not_recomputed"
+      },
+      "liabilities": [],
+      "order_count": 0,
+      "position_count": 0
+    },
+    "snapshot": {
+      "account_events_watermark": 2,
+      "account_id": "read-owner-0",
+      "account_version": 1,
+      "authority_id": "router:e258f75ae7bee900397952d446802585ea570893f4bed680391b83640dbdae1b:shard:0",
+      "checked_at": "2026-11-17T09:43:48.117430+00:00",
+      "events_watermark": 3,
+      "ledger_watermark": 1,
+      "local_halt_observed": true,
+      "market": {
+        "evidence": "recorded",
+        "freshness": "fresh_as_of_read",
+        "observed_at": "2026-11-17T09:43:47.667912+00:00",
+        "payload_digest": "300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7",
+        "version": 1
+      },
+      "market_snapshot_id": "market:300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7",
+      "policy_ref": {
+        "archived_policy_id": null,
+        "id": "config:188039d735026ff3349e4112ae93e676bb0c819424a444714a46bbcdaa89bef4",
+        "kind": "persisted_financial_config",
+        "risk_mode": "legacy_reference"
+      },
+      "reporting_currency": "USD",
+      "risk": {
+        "reason": "live_risk_recomputation_not_enabled",
+        "status": "unsupported"
+      },
+      "shard": 0,
+      "stream_id": "account-stream:2cf0dd034ef8919bdd6cf975ecd87170ad1c780afc9700c84b788cab56536389",
+      "trading_schema": 3
+    }
+  },
+  "control": {
+    "durable_desired_halt": true,
+    "durable_halt_commands": {},
+    "durable_market_commands": {
+      "0": "market:1:0:300db6dec0015242",
+      "1": "market:1:1:300db6dec0015242"
+    },
+    "epoch": 1,
+    "error": "market_fanout_incomplete",
+    "halted": true,
+    "market_digest": null,
+    "market_version": null,
+    "publishing": true,
+    "target_digest": "300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7",
+    "target_version": 1,
+    "watermarks": {}
+  },
+  "observed_utc": "2026-11-17T09:43:48.124205+00:00",
+  "original_command_id": "market:1:0:300db6dec0015242",
+  "phase": "local-publication-committed",
+  "publication": {
+    "durable_desired_halt": true,
+    "durable_halt_commands": {},
+    "durable_market_commands": {
+      "0": "market:1:0:300db6dec0015242",
+      "1": "market:1:1:300db6dec0015242"
+    },
+    "epoch": 1,
+    "error": "market_fanout_incomplete",
+    "halted": true,
+    "market_digest": null,
+    "market_version": null,
+    "publishing": true,
+    "receipts": {
+      "0": {
+        "account_id": null,
+        "ack": "durably_queued",
+        "attempts": 0,
+        "command_id": "market:1:0:300db6dec0015242",
+        "completed_at": null,
+        "enqueued_at": "2026-11-17T09:43:47.671600+00:00",
+        "error": null,
+        "kind": "PUBLISH_MARKET",
+        "last_error": null,
+        "next_attempt_at": null,
+        "result": null,
+        "sequence": 1,
+        "state": "PENDING"
+      },
+      "1": {
+        "account_id": null,
+        "ack": "durably_queued",
+        "attempts": 0,
+        "command_id": "market:1:1:300db6dec0015242",
+        "completed_at": null,
+        "enqueued_at": "2026-11-17T09:43:47.690129+00:00",
+        "error": null,
+        "kind": "PUBLISH_MARKET",
+        "last_error": null,
+        "next_attempt_at": null,
+        "result": null,
+        "sequence": 1,
+        "state": "PENDING"
+      }
+    },
+    "target_digest": "300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7",
+    "target_version": 1,
+    "watermarks": {}
+  },
+  "receipt": {
+    "account_id": null,
+    "ack": "durably_queued",
+    "attempts": 0,
+    "command_id": "market:1:0:300db6dec0015242",
+    "completed_at": "2026-11-17T09:43:48.105174+00:00",
+    "enqueued_at": "2026-11-17T09:43:47.671600+00:00",
+    "error": null,
+    "kind": "PUBLISH_MARKET",
+    "last_error": null,
+    "next_attempt_at": null,
+    "result": {
+      "market_snapshot_id": "market:300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7",
+      "observed_at": "2026-11-17T09:43:47.667912+00:00",
+      "version": 1
+    },
+    "sequence": 1,
+    "state": "SUCCEEDED"
+  },
+  "shards": [
+    {
+      "market_payload": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T09:43:47.667912+00:00\",\"version\":1}",
+      "publication_commands": [
+        {
+          "command_id": "market:1:0:300db6dec0015242",
+          "error": null,
+          "result": "{\"market_snapshot_id\":\"market:300db6dec0015242a6818453b11d33a0ad97d958ab2181747741c3133180d3c7\",\"observed_at\":\"2026-11-17T09:43:47.667912+00:00\",\"version\":1}",
+          "state": "SUCCEEDED"
+        }
+      ],
+      "shard": 0
+    },
+    {
+      "market_payload": null,
+      "publication_commands": [
+        {
+          "command_id": "market:1:1:300db6dec0015242",
+          "error": null,
+          "result": null,
+          "state": "PENDING"
+        }
+      ],
+      "shard": 1
+    }
+  ]
+}

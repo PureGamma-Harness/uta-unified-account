@@ -1,0 +1,152 @@
+{
+  "actual_live_pidfd_snapshot": "/tmp/uta-recovery-763202d-250k-authorized-once.live-outer-pidfd.json",
+  "adopted_reaps": [],
+  "all_persisted_cids": [],
+  "budget_unchanged": {
+    "address_space_bytes": 1073741824,
+    "cpu_affinity_count": 1,
+    "driver_work_budget_seconds": 60,
+    "force_kill_at_seconds": 58,
+    "interrupt_at_seconds": 56,
+    "maximum_file_bytes": 268435456,
+    "nominal_total_including_metadata_seconds": 62,
+    "outer_workload_and_cleanup_cap_seconds": 60,
+    "per_process_cpu_seconds": 55
+  },
+  "capacity_passed": false,
+  "cause_boundary": "The budget ended before command enqueue and supervised worker ownership. No lease was acquired, so this is neither an observed lease expiry nor a completed test of owned read-only startup recovery. Exact setup versus independent replay time is not measured.",
+  "deadline_extensions": 0,
+  "driver_sha": "d886cdbfafbc491e1a7705313080f910712bd185",
+  "driver_summary_present": false,
+  "driver_was_clean": true,
+  "ended_utc": "2026-11-17T09:13:40.690001+00:00",
+  "exit_code": -9,
+  "first_independent_replay_completion": "not established from retained evidence",
+  "full_final_independent_replay": "UNAVAILABLE: not performed after stop; no extra scan was added",
+  "ha_approved": false,
+  "leader_identity": {
+    "pgid": 115568,
+    "pid": 115568,
+    "ppid": 115557,
+    "start_ticks": 4388902,
+    "state": "R",
+    "uid": 1000
+  },
+  "ledger_head_observed_by_bounded_metadata": [
+    [
+      250000,
+      "f7e00648ccf3f0ee30fcdaebf2ad5c21e82aca2788aed2dd87e4362d53734192"
+    ]
+  ],
+  "loaded_wrapper_artifact": "not available; worker never started",
+  "metadata_schema": {
+    "credit_schema": {
+      "unavailable": "OperationalError"
+    },
+    "guard_config": [
+      [
+        1,
+        1
+      ]
+    ],
+    "ledger_schema": [
+      [
+        1,
+        1
+      ]
+    ],
+    "schema_inventory_sha256": "17263a2f2c4026a5dcee4210539fb28cca63f8ceb5d232b1aa4ad77490df9ffe",
+    "trading_schema": [
+      [
+        3
+      ]
+    ]
+  },
+  "native_artifacts": [
+    {
+      "artifact_id": "artifact:d13305fff303ccdac726917e8e085206d30c8d252777f524c956804f7826c7cc",
+      "content_address_matches": true,
+      "runtime_source_files_match": true
+    }
+  ],
+  "outer_exec_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-recovery-retest-plan/tools/run_recovery_retest.py",
+    "--execute",
+    "--cohort",
+    "250k",
+    "--registration",
+    "/workspace/uta-recovery-retest-plan/benchmarks/plans/20261117-recovery-retest-763202d.json",
+    "--source-root",
+    "/workspace/uta-operations-freeze-763202d",
+    "--source-sha",
+    "763202df9cb3ce089721e5281371aff3eab58089",
+    "--contract-evidence",
+    "/tmp/uta-recovery-763202d-contract-authorized-1k",
+    "--output",
+    "/tmp/uta-recovery-763202d-250k-authorized-once"
+  ],
+  "outer_exec_gate": {
+    "boot_id": "REDACTED_BOOT_OR_SESSION_ID_1",
+    "execv_preserved_pid_and_reset_python_state": true,
+    "financial_work_started_at_gate": false,
+    "gate_ready_utc": "2026-11-17T09:12:32.236490+00:00",
+    "pid": 115557,
+    "ppid": 518,
+    "release_utc": "not_separately_recorded",
+    "start_ticks": 4387868
+  },
+  "post_stop_financial_replays": 0,
+  "production_approved": false,
+  "raw_launcher_status": "TIME_BUDGET_ABORTED",
+  "raw_stderr_empty": true,
+  "recovery_component_passed": false,
+  "remaining_owned_members": [],
+  "requested_cid": "recovery-probe",
+  "requested_cid_state": "NOT_ENQUEUED: inbox exists and is empty",
+  "reruns": 0,
+  "runtime_python_source_files": 49,
+  "runtime_sha": "763202df9cb3ce089721e5281371aff3eab58089",
+  "runtime_was_clean": true,
+  "signals": [
+    {
+      "pgid": 115568,
+      "pid": 115568,
+      "ppid": 115557,
+      "signal": 2,
+      "start_ticks": 4388902,
+      "state": "R",
+      "uid": 1000
+    },
+    {
+      "pgid": 115568,
+      "pid": 115568,
+      "ppid": 115557,
+      "signal": 9,
+      "start_ticks": 4388902,
+      "state": "R",
+      "uid": 1000
+    }
+  ],
+  "six_hour_run_started": false,
+  "source_order_evidence": "enabled_guard_v1 persists only after the normal offline native ledger preflight returns; exact setup and independent-scan phase durations were not retained because summary.json was not written",
+  "started_utc": "2026-11-17T09:12:42.421783+00:00",
+  "status": "NO_GO_TIME_BUDGET_ABORTED_BEFORE_COMMAND",
+  "subreaper": {
+    "enabled": true,
+    "launcher": {
+      "pgid": 115557,
+      "pid": 115557,
+      "ppid": 518,
+      "start_ticks": 4387868,
+      "state": "R",
+      "uid": 1000
+    }
+  },
+  "total_including_metadata_seconds": 58.26823022499593,
+  "tracked_runtime_payload_files_matched_registration": 50,
+  "worker_owner_acquisitions": 0,
+  "worker_pids": [],
+  "worker_renewals": 0,
+  "workload_and_cleanup_seconds": 58.26558299599856
+}

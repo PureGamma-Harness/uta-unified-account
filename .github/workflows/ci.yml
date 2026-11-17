@@ -81,6 +81,16 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check 'setuptools>=68' wheel
           python -m pip wheel . --no-deps --no-build-isolation --wheel-dir dist
+      - name: Build and verify exact source distribution and wheel
+        run: |
+          python - <<'PY'
+          import setuptools.build_meta as backend
+          print(backend.build_sdist('dist'))
+          PY
+          python tools/verify_release_archives.py \
+            --source "$GITHUB_WORKSPACE" --commit "$GITHUB_SHA" \
+            --wheel dist/*.whl --sdist dist/*.tar.gz \
+            --output "$RUNNER_TEMP/uta-package-artifact-manifest.json"
       - name: Verify installed package outside source tree
         shell: bash
         run: |
@@ -96,10 +106,30 @@ jobs:
           "$RUNNER_TEMP/uta-smoke/bin/uta-durable" init --directory "$RUNNER_TEMP/uta-managed-installed" --shards 2 --asset-scale USD=8
           "$RUNNER_TEMP/uta-smoke/bin/uta-durable" inspect --directory "$RUNNER_TEMP/uta-managed-installed"
           "$RUNNER_TEMP/uta-smoke/bin/uta-durable" status --directory "$RUNNER_TEMP/uta-managed-installed"
+          env -u PYTHONPATH "$RUNNER_TEMP/uta-smoke/bin/python" -I \
+            "$GITHUB_WORKSPACE/tools/validate_installed_release.py" \
+            --source "$GITHUB_WORKSPACE" \
+            --artifact-manifest "$RUNNER_TEMP/uta-package-artifact-manifest.json" \
+            --output "$RUNNER_TEMP/uta-installed-validation"
+      - name: Preserve exact package and installed validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uta-package-validation-python-${{ matrix.python-version }}
+          path: |
+            ${{ runner.temp }}/uta-package-artifact-manifest.json
+            ${{ runner.temp }}/uta-installed-validation/installed-report.json
+            ${{ runner.temp }}/uta-installed-validation/installed-cli-tests.txt
+            ${{ runner.temp }}/uta-installed-validation/uta*.stdout.txt
+            ${{ runner.temp }}/uta-installed-validation/uta*.stderr.txt
+          if-no-files-found: warn
+          retention-days: 30
       - name: Retain installable review artifact
         uses: actions/upload-artifact@v4
         with:
           name: uta-wheel-python-${{ matrix.python-version }}
-          path: dist/*.whl
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
           if-no-files-found: error
           retention-days: 14

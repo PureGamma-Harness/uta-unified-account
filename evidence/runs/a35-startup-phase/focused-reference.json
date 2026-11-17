@@ -1,0 +1,29 @@
+{
+  "source_commit": "ed1f141",
+  "command": [
+    "taskset",
+    "-c",
+    "1",
+    "python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_owned_startup_reference.py",
+    "-v"
+  ],
+  "tests_run": 13,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "unittest_reported_seconds": 3.219,
+  "exact_start_utc_not_recorded": null,
+  "test_sha256": "e5f4ba50586c74d8bce6c04b45c3d9e52298eeaf5b61904222a09ee17e5535cb",
+  "raw_log_sha256": "7fdb761aeedcd390a43b1fec9cd5b565c5a31cacfba89eb1044e9994fb5ade2b",
+  "full_repository_validation": false,
+  "production_approved": false
+}

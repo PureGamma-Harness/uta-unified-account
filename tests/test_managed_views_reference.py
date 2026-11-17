@@ -444,6 +444,7 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
         temporary = TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
+        self.phase_evidence = []
         self.accounts = []
         def bootstrap(router):
             for shard in range(2):
@@ -480,6 +481,69 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
         finally:
             connection.close()
 
+    def record_phase(self, phase, **observations):
+        shards = []
+        for index in range(2):
+            with self.router._database(index).read_transaction() as connection:
+                market = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+                commands = [dict(row) for row in connection.execute(
+                    "SELECT command_id,state,result,error FROM uta_command_inbox "
+                    "WHERE kind='PUBLISH_MARKET' ORDER BY sequence")]
+            shards.append({"shard": index, "market_payload": None if market is None else market[0],
+                           "publication_commands": commands})
+        row = {"phase": phase, "observed_utc": datetime.now(timezone.utc).isoformat(),
+               "control": self.router._control._state(), "shards": shards, **observations}
+        self.phase_evidence.append(row)
+        output = os.environ.get("UTA_READVIEW_PHASE_EVIDENCE")
+        if output:
+            target = Path(output) / self._testMethodName
+            target.mkdir(parents=True, exist_ok=True)
+            (target / (str(len(self.phase_evidence)) + "-" + phase + ".json")).write_text(
+                json.dumps(row, sort_keys=True, indent=2) + "\n")
+        return row
+
+    def await_owner_ready(self, shard, timeout=2):
+        """Prepare a real owner before stamping the test's first market tick."""
+        from time import monotonic, sleep
+        deadline = monotonic() + timeout
+        last = None
+        while monotonic() < deadline:
+            last = self.get("/v2/worker-health")
+            worker = next(row for row in last["workers"] if row["shard"] == shard)
+            if worker.get("owner_ready") is True and monotonic() < deadline:
+                self.assertTrue(worker["alive"] and worker["lease_active"], last)
+                self.assertEqual(worker["pid"], worker["owner_pid"], last)
+                self.assertNotEqual(worker["pid"], os.getpid(), last)
+                self.record_phase("owner-ready-before-market", health=last)
+                return last
+            sleep(.02)
+        observed = self.record_phase("owner-ready-deadline", health=last)
+        self.fail("real owner did not become ready within the fixture budget: " + json.dumps(observed, sort_keys=True))
+
+    def await_local_publication(self, publication, snapshot, *, shard=0, timeout=1):
+        """Query the original CID; partial fanout is not a local COMMIT ACK."""
+        from hashlib import sha256
+        command_id = publication["durable_market_commands"][str(shard)]
+        receipt = self.router.wait(command_id, shard=shard, timeout=timeout)
+        if receipt is None or receipt["state"] != "SUCCEEDED":
+            observed = self.record_phase("local-publication-deadline", publication=publication,
+                                         original_command_id=command_id, receipt=receipt)
+            self.fail("original publication did not commit within the fixture budget: " + json.dumps(observed, sort_keys=True))
+        self.assertEqual(receipt["command_id"], command_id)
+        self.assertEqual(receipt["kind"], "PUBLISH_MARKET")
+        account = self.get("/v2/accounts/" + self.accounts[shard], token=READER)
+        observed = self.record_phase("local-publication-committed", publication=publication,
+                                     original_command_id=command_id, receipt=receipt, account=account)
+        expected_digest = sha256(snapshot.to_json().encode()).hexdigest()
+        basis = account["snapshot"]
+        self.assertEqual(basis["market"]["freshness"], "fresh_as_of_read", observed)
+        self.assertEqual(basis["market"]["version"], snapshot.version, observed)
+        self.assertEqual(basis["market"]["observed_at"], snapshot.observed_at.isoformat(), observed)
+        self.assertEqual(basis["market"]["payload_digest"], expected_digest, observed)
+        self.assertEqual(basis["market_snapshot_id"], "market:" + expected_digest, observed)
+        self.assertEqual(observed["shards"][shard]["market_payload"], snapshot.to_json(), observed)
+        return account
+
     def activate(self, snapshot):
         self.assertFalse(self.router.publish_market(snapshot, timeout=8)["publishing"])
         self.assertFalse(self.router.set_kill_switch(False, timeout=8)["halted"])
@@ -497,6 +561,7 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
         token = fence.acquire("independent:hold-shard", 5)
         try:
             self.router.start()
+            self.await_owner_ready(0)
             snapshot = self.market()
             publication = self.router.publish_market(snapshot, timeout=.25)
             self.assertTrue(publication["publishing"])
@@ -504,7 +569,11 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
             self.assertFalse(health["financial_ready"])
             self.assertFalse(health["dispatch_available"])
             self.assertTrue(health["control"]["publishing"])
-            observed = self.get("/v2/accounts/" + self.accounts[0], token=READER)
+            observed = self.await_local_publication(publication, snapshot)
+            pending = self.router.status(publication["durable_market_commands"]["1"], shard=1)
+            self.assertEqual(pending["state"], "PENDING", pending)
+            self.assertTrue(self.router._control._state()["halted"])
+            self.assertTrue(self.router._control._state()["publishing"])
             self.assertEqual(observed["snapshot"]["market"]["freshness"], "fresh_as_of_read")
             self.assertTrue(observed["snapshot"]["local_halt_observed"])
             self.assertEqual(observed["snapshot"]["risk"]["status"], "unsupported")
@@ -524,6 +593,42 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
         self.assertEqual(observed["snapshot"]["risk"]["status"], "unsupported")
         self.assertTrue(self.activate(self.market(2))["financial_ready"])
         self.assertEqual(self.get("/v2/accounts/" + self.accounts[0], token=READER)["snapshot"]["market"]["version"], 2)
+
+    def test_pending_partial_publication_does_not_claim_a_local_market_commit(self):
+        held = {}
+        try:
+            for shard in range(2):
+                fence = WriterFence(self.router._database(shard))
+                held[shard] = (fence, fence.acquire("independent:phase-hold-" + str(shard), 5))
+            self.router.start()
+            snapshot = self.market()
+            publication = self.router.publish_market(snapshot, timeout=.25)
+            health = self.get("/v2/worker-health")
+            account = self.get("/v2/accounts/" + self.accounts[0], token=READER)
+            phase = self.record_phase("partial-before-local-owner", publication=publication,
+                                      health=health, account=account)
+            self.assertTrue(publication["publishing"], phase)
+            self.assertEqual(publication["watermarks"], {}, phase)
+            self.assertTrue(all(row["state"] == "PENDING" for row in publication["receipts"].values()), phase)
+            self.assertFalse(health["financial_ready"], phase)
+            self.assertEqual(account["snapshot"]["market"]["freshness"], "missing", phase)
+            self.assertIsNone(phase["shards"][0]["market_payload"], phase)
+            fence, token = held.pop(0)
+            fence.release(token)
+            self.await_local_publication(publication, snapshot)
+            resumed = self.router.publish_market(snapshot, timeout=.05)
+            self.assertEqual(resumed["durable_market_commands"], publication["durable_market_commands"])
+            self.assertEqual(resumed["receipts"]["0"]["state"], "SUCCEEDED", resumed)
+            self.assertEqual(resumed["receipts"]["1"]["state"], "PENDING", resumed)
+            self.assertEqual(resumed["watermarks"], {"0": snapshot.version}, resumed)
+            self.assertTrue(resumed["halted"] and resumed["publishing"], resumed)
+            self.record_phase("same-original-publication-still-partial", publication=resumed)
+        finally:
+            for fence, token in held.values():
+                fence.release(token)
+        # Complete the same publication; never retimestamp or replace the tick
+        # to manufacture success after waiting for a pending original command.
+        self.assertTrue(self.activate(snapshot)["financial_ready"])
 
     def test_actual_control_gate_timeout_returns_unknown_control_over_http(self):
         self.router.start()

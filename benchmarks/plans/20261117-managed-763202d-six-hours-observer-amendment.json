@@ -1,0 +1,22 @@
+{
+  "status": "PREREGISTERED_NOT_STARTED",
+  "amends_plan_file": "benchmarks/plans/20261117-managed-763202d-six-hours.json",
+  "original_plan_commit": "92fd79f",
+  "original_plan_sha256": "9c7520c700ba0ceae85891328bf4211c2c2f0b41e16ccaa35d6a2d5a05f0a15f",
+  "reason": "observed CLI interval minimum is60; respect supported API and avoid four-second alias without bypassing validation",
+  "observer_interval_seconds_original": 59,
+  "observer_interval_seconds_effective": 61,
+  "all_producer_duration_rate_faults_source_and_financial_gates_unchanged": true,
+  "observer_coverage_blocks_and_error_budgets_unchanged": true,
+  "replay_scope": {
+    "independent_full_journal_hash_and_each_currency_posting_conservation": true,
+    "complete_owner_asset_projection_reconstruction": true,
+    "business_receipt_order_match_fill_ledger_joins": true,
+    "full_uta_events_business_state_reexecution": null,
+    "full_risk_engine_reexecution_for_every_decision": null,
+    "not_claimed": "unmeasured whole-business-event replay is not a passed gate"
+  },
+  "production_approved": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false
+}

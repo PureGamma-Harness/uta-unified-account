@@ -1,0 +1,23 @@
+from datetime import datetime, timezone
+from hashlib import sha256
+import json, os
+from pathlib import Path
+import subprocess, time
+root=Path('/workspace/uta-managed-variant-wiring')
+output=Path('/tmp/uta-managed-variant-functional-final')
+output.mkdir(exist_ok=False)
+source={str(p.relative_to(root)):sha256(p.read_bytes()).hexdigest() for p in [root/'benchmarks/run_managed_benchmark.py',root/'tests/test_managed_variant_wiring.py',root/'benchmarks/plans/20261117-managed-variants.json']}
+records={}
+code='import gc,os,sqlite3,sys,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); print({"python":sys.version,"sqlite":sqlite3.sqlite_version,"affinity":sorted(os.sched_getaffinity(0)),"scope":"8-arrival functional wiring only; no performance claim"},flush=True); suite=unittest.defaultTestLoader.discover("tests",pattern="test_managed_variant_wiring.py"); result=unittest.TextTestRunner(verbosity=2).run(suite); gc.collect(); raise SystemExit(not result.wasSuccessful())'
+for label, executable in [('py310','/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10'),('py312','/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python'),('py313','/usr/bin/python3.13')]:
+ env=dict(os.environ,UTA_MANAGED_VARIANT_EVIDENCE=str(output/label),PYTHONWARNINGS='error::ResourceWarning')
+ command=[executable,'-W','error::ResourceWarning','-c',code]
+ started=datetime.now(timezone.utc).isoformat(); at=time.monotonic()
+ with (output/(label+'.log')).open('w') as stream:
+  p=subprocess.run(command,cwd=root,env=env,stdout=stream,stderr=subprocess.STDOUT)
+ record={'command':command,'started_utc':started,'finished_utc':datetime.now(timezone.utc).isoformat(),'wall_seconds':time.monotonic()-at,'returncode':p.returncode,'environment':{'UTA_MANAGED_VARIANT_EVIDENCE':env['UTA_MANAGED_VARIANT_EVIDENCE'],'PYTHONWARNINGS':env['PYTHONWARNINGS']},'log_sha256':sha256((output/(label+'.log')).read_bytes()).hexdigest()}
+ records[label]=record
+ (output/'execution.json').write_text(json.dumps({'source_sha256':source,'functional_only':True,'runs':records},indent=2)+'\n')
+ print(label,p.returncode,record['wall_seconds'],flush=True)
+ if p.returncode: raise SystemExit(p.returncode)
+assert all(sha256((root/k).read_bytes()).hexdigest()==v for k,v in source.items())

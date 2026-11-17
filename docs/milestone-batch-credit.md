@@ -1,7 +1,8 @@
-# 可选持久批处理与连接内借款：工程验收中
+# 可选持久批处理、账户缓存与连接内借款：工程验收中
 
 本里程碑建立在固定工程版本 `763202d` 之上，独立于该版本正在执行的 smoke/长测。
-默认批大小为 0；managed 新借款仍不启用。当前分支未完成全量冻结、安装包、容量或长稳
+声明版本为 `0.5.0a1`，默认批大小和 NORMAL 缓存容量均为 0；managed 新借款仍不启用。
+当前分支未完成全量冻结、安装包、容量或长稳
 验收，**生产 NO-GO**，不得用本文件覆盖此前任何失败或为新源码复用旧报告。
 
 ## 运行时与资金边界
@@ -35,6 +36,21 @@ preseal bootstrap、冲突检测和还款保留。这是当前代码的拒绝政
 旧二进制 SQL 门禁。现有资产限额为单片额度，跨片总预算仅有离线分配设计，未实现全局
 动态预算；不得把单库 sum 当成全交易所原子额度。
 
+`normal_cache_size` 仅复用重复的 NORMAL 监督结果；启用后每次命中仍检查当前 SQL 证明、
+状态、版本及行情新鲜度。冷启动的完整账本和借贷验证、原生 prepared worker、READY 前
+恢复及最终金融 COMMIT 的 fencing 不受此设置绕过。容量范围为 0..65536，默认 0。
+`--normal-cache-size 0` 关闭新缓存使用，不改变持久能力或恢复要求。
+
+| 范围 | 此里程碑行为 | 尚未提供的操作 |
+| --- | --- | --- |
+| 合成 USD 线性永续 / Cross | 原有持久下单、撤单、还款、真实撮合及清算链路；可选批处理与缓存 | 多结算币、交割、反向、期权及合资格现货 PM 抵消不启用 |
+| 新借款与现货订单 | 封存前合成引导与已有借款还款保留；managed v2 两者均返回 501 `unsupported_durable_operation`，trusted credit 新借款返回 501 `unsupported_credit_operation` | 没有在线借款能力、managed 现货撮合入口或动态跨片总额度 |
+| Isolated、PM 与模式转换 | 无对应 managed 启用入口 | 不将研究计算器视为已接纳的账户模式；不以参数静默切换 |
+| 订单与批处理 | 已有受保护限价/只减仓规则；原 CID 查询及重放 | 条件触发、多腿原子策略和外部交易所接入不因批处理而获得支持 |
+
+此表说明本次新增代码的授权范围；精确 HTTP 错误与订单状态遵循现有
+[接口契约](durable-api.md)。不支持的产品未进入可交易目录，输入校验拒绝；不产生资金预占。
+
 ## 证据与审查
 
 - 批运行时在 `ebf8459` 三运行时各 105 项专项通过；真实独立 worker、prepare 后死亡、
@@ -44,12 +60,23 @@ preseal bootstrap、冲突检测和还款保留。这是当前代码的拒绝政
 - 独立恢复组七例三运行时通过：实际 deferred-FK COMMIT 失败、准备/金融回执丢失、
   最后 CID 读取未知、prefix0/1、混合终态换代及 backoff。其 READY 结论是静态顺序审查，
   不冒充独立 HA 测试。
-- 组合 `6730f44` 的 83 项定向测试通过。后续新增测试与未来缓存改动尚须合并后完整冻结
-  验证，不能用各组专项拼成新版本完整通过。
+- NORMAL 缓存已合入，38 项专项在三种运行时通过。独立的批处理与缓存组合三例在三种
+  运行时通过，包含真实 worker 死亡、换代、RECOVERED 先于 READY，以及最终原 CID
+  唯一财务回执。所选三条不保证同一次金融 COMMIT 全部执行，实际 prefix 如实保留。
+- 完整预检 `45818c0` 实际运行 1,219 项，1 项失败、0 错误、0 跳过；原日志保留在
+  `evidence/runs/capacity-preflight-45818c0`。初始 PR CI 的 Python 3.11 同类失败另存
+  `evidence/runs/pr14-initial-ci-4e59084`。修复 `82688a6` 仅使测试等待真实 owner READY
+  和原行情发布 CID 的持久成功；原 0.25 秒 fanout timeout、2 秒行情 TTL 与 missing/
+  partial/stale/recovery 断言保留。三个 API 专项通过不等于新全量报告通过。
+- `0.5.0a1` 的源码声明、冻结源码版本提取、唯一 METADATA Version 及安装版本一致性
+  校验有 19 项专项在 Python 3.10 和 3.12 通过；实际新包尚待生成和独立安装验收。
+- 新基准工具也必须纳入下一次固定源码验收。旧版本的全量、CI、安装与长稳结果均不可
+  晋升为本里程碑结果；重新冻结后执行三运行时全量、push/PR 八个 CI 作业和真实包校验。
 
 具体命令与原始记录见 [批实现](durable-financial-batches-implementation.md)、
 [独立恢复](batch-recovery-independent-review.md)、[借贷边界](managed-credit-boundary.md)
-及[独立金融](managed-credit-independent-review.md)。Agent 审查不替代真实金融或上线签字。
+及[独立金融](managed-credit-independent-review.md)、[组合验证](batch-cache-combination-validation.md)
+和[版本声明](release-version-declarations.md)。Agent 审查不替代真实金融或上线签字。
 
 ## 部署与回滚
 
