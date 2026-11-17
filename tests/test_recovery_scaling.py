@@ -1,3 +1,4 @@
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
@@ -41,6 +42,37 @@ class RecoveryScalingTests(unittest.TestCase):
             self.assertEqual(summary["initial_history"]["ledger_hash"], summary["final_history"]["ledger_hash"])
             with self.assertRaises(AssertionError):
                 check_history(output/"authority/shard-0000.sqlite3", 19)
+
+    def test_archived_expiry_is_distinct_from_late_ready_and_pending(self):
+        root = Path(__file__).resolve().parents[1]/"benchmarks/results/20261117-recovery-scaling"
+        manifest = json.loads((root/"manifest.json").read_text())
+        for name, expected in manifest["files"].items():
+            value = (root/name).read_bytes()
+            self.assertEqual(len(value), expected["bytes"])
+            self.assertEqual(sha256(value).hexdigest(), expected["sha256"])
+        analysis = json.loads((root/"analysis.json").read_text())
+        self.assertFalse(analysis["production_approved"])
+        self.assertFalse(analysis["ha_approved"])
+        self.assertFalse(analysis["capacity_passed"])
+        self.assertEqual([row["events"] for row in analysis["cohorts"]], [1000, 10000, 50000, 200000, 250000])
+        for cohort in analysis["cohorts"]:
+            self.assertTrue(cohort["history_unchanged"])
+            self.assertEqual(cohort["initial_hash"], cohort["final_hash"])
+            self.assertEqual(cohort["child_pids_still_present_after_cleanup"], [])
+            self.assertLess(cohort["total_ns"], 45_000_000_000)
+        expiry = analysis["cohorts"][-1]
+        self.assertIsNone(expiry["observed_ready_ns"])
+        self.assertIsNone(expiry["observed_terminal_ns"])
+        self.assertEqual(expiry["final_query"]["state"], "PENDING")
+        self.assertIsNone(expiry["final_query"]["error"])
+        self.assertEqual(len(expiry["acquisitions"]), 2)
+        self.assertTrue(expiry["expired_alive_observations"])
+        first, second = expiry["acquisitions"]
+        self.assertGreater(second["observed_ns"], first["expires_ns"])
+        reports = expiry["all_child_ready_emissions"]
+        self.assertEqual([row["value"]["generation"] for row in reports], [2])
+        observed = [json.loads(line) for line in (root/"250000/observations.jsonl").read_text().splitlines()]
+        self.assertGreater(reports[0]["monotonic_ns"], observed[-1]["monotonic_ns"])
 
 
 if __name__ == "__main__":
