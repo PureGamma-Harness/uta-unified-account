@@ -23,10 +23,12 @@ try:
     from tools import managed_soak_observer as ro
     from tools.managed_observer_coverage import Coverage, fatal_financial_codes
     from tools.managed_observer_smoke import PUBLIC_FIELDS
+    from tools.managed_output_budget import explicit_output_budget, measured_output_bytes, output_budget_bytes
 except ModuleNotFoundError:
     import managed_soak_observer as ro
     from managed_observer_coverage import Coverage, fatal_financial_codes
     from managed_observer_smoke import PUBLIC_FIELDS
+    from managed_output_budget import explicit_output_budget, measured_output_bytes, output_budget_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = Path('/workspace/uta-next-integration/benchmarks/plans/20261117-managed-763202d-six-hours.json')
@@ -70,6 +72,18 @@ def financial_drain_before_log(producer, fatal, history, path):
     return sent
 
 
+def resource_drain_before_log(producer, code, path, details):
+    """Resource NO_GO is technical; drain this owned driver before fallible IO."""
+    sent = producer.terminate_owned()
+    try:
+        append(path, {'synthetic': True, 'at_wall_ns': time.time_ns(), 'code': code,
+            'action': 'RESOURCE_NO_GO_OFFICIAL_DRIVER_DRAIN', 'signal_sent': sent,
+            'financial_corruption_inferred': False, **details})
+    except OSError:
+        pass
+    return sent
+
+
 def git(root, *args):
     return subprocess.check_output(['git', '--no-optional-locks', *args], cwd=root, stdin=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL, close_fds=True, text=True).strip()
@@ -78,6 +92,7 @@ def git(root, *args):
 def read_plan(path, amendment):
     raw, change = path.read_bytes(), ro.load_json(amendment)
     plan = ro.parse(raw)
+    output_budget_bytes(plan)
     if sha256(raw).hexdigest() != change['original_plan_sha256']:
         raise ValueError('original_preregistration_bytes_changed')
     expected = (plan['producer']['duration_seconds'], plan['producer']['rate_rounds_per_second'],
@@ -148,7 +163,8 @@ def preflight(args):
     if not parent.exists() or parent.stat().st_uid != os.geteuid() or parent.stat().st_mode & 0o777 != 0o700:
         raise ValueError('private_scratch_parent_required')
     free = __import__('shutil').disk_usage(parent).free
-    required = (plan['producer']['source_budget_bytes'] + OUTPUT_CAP + plan['observer']['max_private_clone_bytes']
+    output_budget = output_budget_bytes(plan)
+    required = (plan['producer']['source_budget_bytes'] + output_budget + plan['observer']['max_private_clone_bytes']
                 + plan['observer']['clone_headroom_bytes'])
     if free < required:
         raise ValueError('conservative_source_output_clone_disk_reservation_unavailable')
@@ -161,7 +177,10 @@ def preflight(args):
             'matches': 10800, 'risk_decisions': 43200, 'ledger_events': 27006,
             'partial_cancelled_orders': 5400, 'worker_fault_signals': 180, 'parent_fault_signals': 18},
         'disk_free_bytes': free, 'conservative_required_free_bytes': required,
-        'source_budget_bytes': plan['producer']['source_budget_bytes'], 'observer_output_budget_bytes': OUTPUT_CAP,
+        'source_budget_bytes': plan['producer']['source_budget_bytes'], 'observer_output_budget_bytes': output_budget,
+        'observer_output_measurement_scope': ('control_and_observer_except_validated_private_clones'
+            if explicit_output_budget(plan) else 'historical_timeline_latest_baseline_only'),
+        'observer_output_budget_check_period_seconds': 30, 'observer_output_physical_hard_quota_enforced': False,
         'private_clone_budget_bytes': plan['observer']['max_private_clone_bytes'],
         'clone_headroom_bytes': plan['observer']['clone_headroom_bytes'],
         'observer_address_space_limit_bytes': plan['observer']['max_address_space_bytes'],
@@ -302,15 +321,16 @@ def supervise(args):
     plan, amendment, fingerprints = read_plan(args.plan, args.amendment)
     if any(registered[key] != value for key, value in fingerprints.items()) or registered['observer_freeze_commit'] != git(ROOT, 'rev-parse', 'HEAD'):
         raise ValueError('frozen_launcher_or_plan_changed')
+    output_budget = output_budget_bytes(plan)
+    strict_output = explicit_output_budget(plan)
+    if registered['observer_output_budget_bytes'] != output_budget:
+        raise ValueError('registered_observer_output_budget_changed')
     os.sched_setaffinity(0, {registered['selected_cpu']})
     control, output, job = scratch / 'control', scratch / 'observer', scratch / 'job'
     producer = Pipes(producer_command(plan, job), Path(plan['source_root']))
     identity = producer.identity()
     launch = {'synthetic': True, 'driver_pid': identity['pid'], 'driver_birth': identity['birth'],
         'launched_wall_ns': identity['started_wall_ns'], 'launched_boottime_ns': identity['started_boottime_ns'], **ro.FLAGS}
-    ro.atomic_json(control / 'launch.json', launch)
-    ro.atomic_json(control / 'supervisor-identity.json', {'synthetic': True, 'pid': os.getpid(),
-        'birth': ro.process_identity(os.getpid())['birth'], 'cpu': sorted(os.sched_getaffinity(0))})
     coverage, timeline = Coverage(plan), Timeline(output / 'timeline.jsonl')
     stop, observer, drained, attempt = Event(), None, False, 0
     observer_start_attempted = False
@@ -322,6 +342,40 @@ def supervise(args):
     last_budget_check = 0
     last_sample_elapsed = None
     last_coverage_record = None
+    def resource_no_go(code, error=None, measured=None):
+        nonlocal drained, drain_requested_ns
+        first = code not in collection_errors
+        if first:
+            collection_errors.append(code)
+        details = {'output_budget_bytes': output_budget,
+            'measurement_scope': 'control_and_observer_except_validated_private_clones',
+            'measured_output_bytes': measured, 'financial_drain_requested': False,
+            'official_driver_drain_requested': True}
+        if error is not None:
+            details.update(error_type=type(error).__name__, error_digest=sha256(str(error).encode()).hexdigest())
+        if not drained:
+            drained = True
+            drain_requested_ns = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
+            resource_drain_before_log(producer, code, control / 'collection-errors.jsonl', details)
+        elif first:
+            try:
+                append(control / 'collection-errors.jsonl', {'synthetic': True, 'code': code,
+                    'at_wall_ns': time.time_ns(), 'action': 'RESOURCE_NO_GO_DRAIN_ALREADY_REQUESTED',
+                    'financial_corruption_inferred': False, **details})
+            except OSError:
+                pass
+
+    def write_output(function, *arguments):
+        try:
+            return function(*arguments)
+        except OSError as error:
+            if strict_output:
+                resource_no_go('observer_output_write_failed', error)
+            raise
+
+    write_output(ro.atomic_json, control / 'launch.json', launch)
+    write_output(ro.atomic_json, control / 'supervisor-identity.json', {'synthetic': True, 'pid': os.getpid(),
+        'birth': ro.process_identity(os.getpid())['birth'], 'cpu': sorted(os.sched_getaffinity(0))})
     def coverage_report(elapsed, final=False):
         value = coverage.report(completed_active_seconds=elapsed, final=final)
         if collection_errors:
@@ -331,13 +385,23 @@ def supervise(args):
         return value
     def collect():
         nonlocal attempt, drained, last_budget_check, last_sample_elapsed, coverage, drain_requested_ns, last_coverage_record
+        budget_check_due = time.monotonic() - last_budget_check >= 30
+        if strict_output and budget_check_due:
+            last_budget_check = time.monotonic()
+            try:
+                measured = measured_output_bytes(control, output)
+            except (OSError, ValueError, MemoryError) as error:
+                resource_no_go('observer_output_budget_measurement_unknown', error)
+            else:
+                if measured > output_budget:
+                    resource_no_go('observer_output_budget_exceeded', measured=measured)
         try:
             samples = timeline.read()
         except (OSError, ValueError, TypeError) as error:
             code = 'observer_timeline_unreadable_or_invalid'
             if code not in collection_errors:
                 collection_errors.append(code)
-                append(control / 'collection-errors.jsonl', {'synthetic': True, 'code': code,
+                write_output(append, control / 'collection-errors.jsonl', {'synthetic': True, 'code': code,
                     'at_wall_ns': time.time_ns(), 'error_type': type(error).__name__,
                     'error_digest': sha256(str(error).encode()).hexdigest(), 'financial_drain_requested': False})
             samples = []
@@ -363,47 +427,48 @@ def supervise(args):
                 drained = True
                 drain_requested_ns = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
                 financial_drain_before_log(producer, fatal, historical_financial_alerts, control / 'safety-events.jsonl')
-            append(control / 'sample-classification.jsonl', classified)
+            write_output(append, control / 'sample-classification.jsonl', classified)
         # Close a block only after processing the next snapshot in stream order;
         # a slow sample timestamped in the preceding block must not be discarded.
         live = coverage_report(last_sample_elapsed)
         encoded = ro.canonical(live)
         if encoded != last_coverage_record:
-            ro.atomic_json(control / 'live-coverage.json', live)
+            write_output(ro.atomic_json, control / 'live-coverage.json', live)
             last_coverage_record = encoded
-        if time.monotonic() - last_budget_check >= 30:
+        if budget_check_due:
             last_budget_check = time.monotonic()
-            ro.atomic_json(control / 'supervisor-heartbeat.json', {'synthetic': True, 'at_wall_ns': time.time_ns(),
+            write_output(ro.atomic_json, control / 'supervisor-heartbeat.json', {'synthetic': True, 'at_wall_ns': time.time_ns(),
                 'driver_pid': producer.process.pid, 'driver_birth': producer.birth,
                 'driver_running': producer.process.poll() is None, 'samples_classified': attempt,
                 'financial_readiness_not_inferred': True})
-            size = 0
-            for name in ('timeline.jsonl', 'latest.json', 'baseline.json'):
-                try:
-                    size += (output / name).stat().st_size
-                except FileNotFoundError:
-                    pass
-            if size > OUTPUT_CAP and 'observer_output_budget_exceeded' not in collection_errors:
-                collection_errors.append('observer_output_budget_exceeded')
-                append(control / 'collection-errors.jsonl', {'synthetic': True,
-                    'code': 'observer_output_budget_exceeded', 'at_wall_ns': time.time_ns(),
-                    'measured_known_output_bytes': size, 'financial_drain_requested': False})
+            if not strict_output:
+                size = 0
+                for name in ('timeline.jsonl', 'latest.json', 'baseline.json'):
+                    try:
+                        size += (output / name).stat().st_size
+                    except FileNotFoundError:
+                        pass
+                if size > OUTPUT_CAP and 'observer_output_budget_exceeded' not in collection_errors:
+                    collection_errors.append('observer_output_budget_exceeded')
+                    write_output(append, control / 'collection-errors.jsonl', {'synthetic': True,
+                        'code': 'observer_output_budget_exceeded', 'at_wall_ns': time.time_ns(),
+                        'measured_known_output_bytes': size, 'financial_drain_requested': False})
     try:
         while producer.process.poll() is None:
             try:
                 if not observer_start_attempted and (job / 'progress.json').exists():
                     observer_start_attempted = True
                     observer = Pipes(observer_command(plan, scratch, launch), ROOT)
-                    ro.atomic_json(control / 'observer-identity.json', observer.identity())
+                    write_output(ro.atomic_json, control / 'observer-identity.json', observer.identity())
                 collect()
                 if observer is not None and observer.process.poll() is not None:
                     if 'observer_exited_without_restart' not in collection_errors:
                         collection_errors.append('observer_exited_without_restart')
-                        ro.atomic_json(control / 'observer-exit.json', observer.result())
+                        write_output(ro.atomic_json, control / 'observer-exit.json', observer.result())
                 if stop.is_set() and not drained:
                     drained = True
                     drain_requested_ns = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
-                    append(control / 'safety-events.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
+                    write_output(append, control / 'safety-events.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
                         'action': 'OPERATOR_STOP_OFFICIAL_DRAIN', 'signal_sent': producer.terminate_owned()})
                 if time.clock_gettime_ns(time.CLOCK_BOOTTIME) - producer.started_boottime_ns > (21600 + 600) * 10**9:
                     if not drained:
@@ -413,19 +478,19 @@ def supervise(args):
                 if drain_requested_ns is not None and time.clock_gettime_ns(time.CLOCK_BOOTTIME) - drain_requested_ns > 120 * 10**9:
                     if 'official_drain_still_pending_after_120_seconds' not in collection_errors:
                         collection_errors.append('official_drain_still_pending_after_120_seconds')
-                        append(control / 'safety-events.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
+                        write_output(append, control / 'safety-events.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
                             'action': 'DRAIN_STILL_PENDING_NO_UNSAFE_FORCE_KILL', 'driver_identity': producer.identity()})
             except (OSError, ValueError, KeyError, TypeError, MemoryError, sqlite3.Error, subprocess.SubprocessError) as error:
                 if 'supervision_collection_error' not in collection_errors:
                     collection_errors.append('supervision_collection_error')
                 try:
-                    append(control / 'collection-errors.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
+                    write_output(append, control / 'collection-errors.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
                         'code': 'supervision_collection_error', 'error_type': type(error).__name__,
                         'error_digest': sha256(str(error).encode()).hexdigest(), 'financial_drain_requested': False})
                 except OSError:
                     pass
             time.sleep(.5)
-        ro.atomic_json(control / 'producer-result.json', producer.result())
+        write_output(ro.atomic_json, control / 'producer-result.json', producer.result())
         if observer is not None:
             if not request_observer_stop(observer, output):
                 collection_errors.append('readonly_observer_stop_timeout')
@@ -439,7 +504,7 @@ def supervise(args):
             audit.process.wait(timeout=300)
         except subprocess.TimeoutExpired:
             audit.terminate_owned(); raise ValueError('strict_producer_cold_audit_timeout')
-        ro.atomic_json(control / 'strict-producer-cold-result.json', audit.result())
+        write_output(ro.atomic_json, control / 'strict-producer-cold-result.json', audit.result())
         after = final_once(plan, scratch, launch, 'final-after-cold.json', receipt=True)
         collect()
         final = after.get('response') or {}
@@ -449,8 +514,8 @@ def supervise(args):
         expected_faults = {'worker': 180, 'parent': 18}
         actual_faults = progress.get('fault_signals')
         fault_schedule_complete = actual_faults == expected_faults
-        ro.atomic_json(control / 'live-coverage.json', live)
-        ro.atomic_json(control / 'final-summary.json', {'synthetic': True, 'status': 'COLLECTION_FINISHED',
+        write_output(ro.atomic_json, control / 'live-coverage.json', live)
+        write_output(ro.atomic_json, control / 'final-summary.json', {'synthetic': True, 'status': 'COLLECTION_FINISHED',
             'financial_final_evidence_eligible': final.get('final_evidence_eligible') is True,
             'live_coverage': live, 'collection_errors': collection_errors,
             'historical_financial_alert_codes': sorted(historical_financial_alerts),
@@ -465,9 +530,10 @@ def supervise(args):
         # A supervisor/read/coverage defect is not proof of a financial defect.
         # Keep the original producer collecting; never turn coverage NO_GO into
         # an unrequested interruption or an automatic controller resume.
-        ro.atomic_json(control / 'supervisor-failure.json', {'synthetic': True, 'at_wall_ns': time.time_ns(),
+        write_output(ro.atomic_json, control / 'supervisor-failure.json', {'synthetic': True, 'at_wall_ns': time.time_ns(),
             'error_type': type(error).__name__, 'error_digest': sha256(str(error).encode()).hexdigest(),
-            'financial_drain_requested': drained, 'original_driver_may_still_run': producer.process.poll() is None,
+            'financial_drain_requested': bool(historical_financial_alerts) if strict_output else drained,
+            'official_driver_drain_requested': drained, 'original_driver_may_still_run': producer.process.poll() is None,
             'no_resume_attempted': True, **ro.FLAGS})
         return 1
     finally:
