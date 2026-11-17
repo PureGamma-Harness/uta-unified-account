@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/workspace/uta-reserve-subclass-first-red-private/negative.py", line 11, in <module>
+    actual=calculate_integer_reserve(x)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-reserve-integer-kernel/uta/reserve_integer.py", line 63, in calculate_integer_reserve
+    parts = [_parts(getattr(inputs, name)) for name in _FIELDS]
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-reserve-subclass-first-red-private/negative.py", line 6, in __getattribute__
+    if name=="initial_margin_rate": raise RuntimeError("synthetic margin must not be read in reduce-only")
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: synthetic margin must not be read in reduce-only
