@@ -1,0 +1,93 @@
+{
+  "affinity_dummy": {
+    "parent_actual_cpu_ids": [
+      3,
+      4
+    ],
+    "real_callthrough_affinity_reads": [
+      {
+        "actual_cpu_ids": [
+          3,
+          4
+        ],
+        "pid": 0
+      },
+      {
+        "actual_cpu_ids": [
+          3
+        ],
+        "pid": 196357
+      }
+    ],
+    "result": {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import json,os;print(json.dumps({'actual_child_cpu_ids':sorted(os.sched_getaffinity(0))}))"
+      ],
+      "cpu_ids": [
+        3
+      ],
+      "identity": {
+        "birth_ticks": 5781199,
+        "group": 196357,
+        "parent": 196353,
+        "pid": 196357,
+        "session": 196357,
+        "state": "R"
+      },
+      "launcher_affinity_acknowledged": true,
+      "launcher_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import json,os,sys; os.sched_setaffinity(0,{3}); os.write(4,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(4); os.execv(sys.argv[1],sys.argv[1:])",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import json,os;print(json.dumps({'actual_child_cpu_ids':sorted(os.sched_getaffinity(0))}))"
+      ],
+      "leader_reaped": true,
+      "observed_child_cpu_ids": [
+        3
+      ],
+      "outcome": "EXITED",
+      "pidfd_used": true,
+      "returncode": 0,
+      "stdout_stderr_complete": true,
+      "streams": [
+        {
+          "bytes": 30,
+          "observed_bytes": 30,
+          "path": "/tmp/uta-independent-runner-dummy-nfo3obxm/dummy.stdout",
+          "sha256": "69ce40198fffc6174b654b706e51f71c8063b8322d6ed2d60cd08506920a668e"
+        },
+        {
+          "bytes": 0,
+          "observed_bytes": 0,
+          "path": "/tmp/uta-independent-runner-dummy-nfo3obxm/dummy.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "wall_seconds": 0.09339122899837093,
+      "watchdog_reason": null
+    },
+    "stdout": "{\"actual_child_cpu_ids\": [3]}\n"
+  },
+  "elapsed_seconds": 0.3995000179929775,
+  "original_jobs_accessed": false,
+  "original_vectors": {
+    "returncode": 0,
+    "script_sha256": "1779eaa538edae6a19d0600a3b1bd12d19824cf03c81b507b4870cded786acb5"
+  },
+  "production_approved": false,
+  "protected_existing_processes_signalled": false,
+  "report_output_path_control": {
+    "actual_argv_output_path": "/tmp/uta-independent-runner-report-mtwwmpsr/different-verifier-output.json",
+    "collector_build_install_verifier_SQL_executed": false,
+    "expected_pinned_report_path": "/tmp/uta-independent-runner-report-mtwwmpsr/wheel-report.json",
+    "outcome": {
+      "accepted": true
+    }
+  },
+  "runtime_tests_or_benchmark_executed": false,
+  "source_commit": "673d3195b65cdb9e3fed2fd1b18dbad789d99b46"
+}
