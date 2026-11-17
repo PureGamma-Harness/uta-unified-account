@@ -20,6 +20,12 @@ def output_budget_bytes(plan):
     value = observer['output_budget_bytes']
     if type(value) is not int or not MIN_OUTPUT_BUDGET_BYTES <= value <= DEFAULT_OUTPUT_BUDGET_BYTES:
         raise ValueError('observer_output_budget_bytes_invalid')
+    # The unchanged producer CLI uses Configuration.max_directory_bytes=6GiB;
+    # a plan declaration cannot reduce that actual cap or its reservation.
+    producer = plan.get('producer')
+    source = producer.get('source_budget_bytes') if type(producer) is dict else None
+    if type(source) is not int or source != 6 * GIB:
+        raise ValueError('explicit_output_policy_requires_actual_six_gib_source_budget')
     return value
 
 

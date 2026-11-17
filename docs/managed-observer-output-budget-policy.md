@@ -10,6 +10,11 @@ default and historical measurement behavior. An explicit value must be an exact
 JSON integer (not bool), between 1,073,741,824 and 6,442,450,944 bytes inclusive.
 Integer byte values need not be multiples of GiB. The proposed future value is
 2,147,483,648 bytes. The resolver neither edits nor adds a field to old plans.
+For this explicit policy, `producer.source_budget_bytes` must also be an exact
+JSON integer equal to 6,442,450,944: the unchanged producer command does not
+override Configuration's actual 6 GiB limit. Missing, bool, float or other
+declarations are rejected before operational calls. Missing-output-field
+legacy plans retain their historical validation and declaration semantics.
 
 The existing supervisor only measures `observer/timeline.jsonl`, `latest.json`
 and `baseline.json`. Its exceedance adds a collection error and does not request

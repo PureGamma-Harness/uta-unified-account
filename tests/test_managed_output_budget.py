@@ -41,7 +41,7 @@ class OutputBudgetPolicyTests(unittest.TestCase):
     def test_explicit_integer_byte_boundaries_and_future_two_gib(self):
         for value in (GIB, GIB + 1, 2 * GIB, 6 * GIB):
             with self.subTest(value=value):
-                plan = {'observer': {'output_budget_bytes': value}}
+                plan = {'producer': {'source_budget_bytes': 6 * GIB}, 'observer': {'output_budget_bytes': value}}
                 self.assertEqual(output_budget_bytes(plan), value)
                 self.assertTrue(explicit_output_budget(plan))
 
@@ -61,7 +61,7 @@ class OutputBudgetPolicyTests(unittest.TestCase):
                 output_budget_bytes(plan)
 
     def test_future_reservation_arithmetic_is_not_a_qualification(self):
-        new = 6 * GIB + output_budget_bytes({'observer': {'output_budget_bytes': 2 * GIB}}) + GIB + GIB
+        new = 6 * GIB + output_budget_bytes(long_plan()) + GIB + GIB
         self.assertEqual(new, 10_737_418_240)
         self.assertEqual(new + 6 * GIB + 256 * 1024**2, 17_448_304_640)
 
@@ -149,6 +149,86 @@ class OutputMeasurementTests(unittest.TestCase):
         clone.chmod(0o755)  # Do not let the caller's private umask alter the fixture.
         with self.assertRaisesRegex(ValueError, 'private_clone_identity_invalid'):
             measured_output_bytes(self.control, self.observer)
+
+
+class SourceBudgetBindingTests(unittest.TestCase):
+    def fixture(self, root, source=6 * GIB, *, missing=False, explicit=True):
+        plan = long_plan(explicit)
+        if missing:
+            del plan['producer']['source_budget_bytes']
+        else:
+            plan['producer']['source_budget_bytes'] = source
+        path, amendment = root/'plan.json', root/'amendment.json'
+        raw = json.dumps(plan).encode()
+        path.write_bytes(raw)
+        amendment.write_text(json.dumps(dict(original_plan_sha256=sha256(raw).hexdigest(),
+            observer_interval_seconds_effective=61)))
+        profile = {key: plan[key] for key in ('source_root', 'source_commit', 'python', 'validation_report')}
+        profile.update(plan=str(path), amendment=str(amendment), plan_sha256=sha256(raw).hexdigest(),
+            amendment_sha256=sha256(amendment.read_bytes()).hexdigest(), qualification={},
+            smoke_scratch=str(root/'smoke'), long_scratch=str(root/'long'))
+        profile_path = root/'profile.json'
+        profile_path.write_text(json.dumps(profile))
+        control = root/'control'
+        control.mkdir(exist_ok=True)
+        (control/'preflight.json').write_text('{}')
+        return plan, path, amendment, profile_path
+
+    def test_real_hashed_plan_counterexample_refused_without_mutating_counters_or_bytes(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            plan, path, amendment, _ = self.fixture(root, GIB)
+            raw, counters = path.read_bytes(), deepcopy(plan['producer'])
+            with patch.object(runner.subprocess, 'Popen') as child:
+                with self.assertRaisesRegex(ValueError, 'actual_six_gib_source_budget'):
+                    runner.read_plan(path, amendment)
+                child.assert_not_called()
+            self.assertEqual(path.read_bytes(), raw)
+            self.assertEqual(plan['producer'], counters)
+
+    def test_all_entrypoints_refuse_wrong_missing_or_noninteger_source_before_external_effects(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            for source in (True, False, float(6 * GIB), GIB, 7 * GIB, None, str(6 * GIB)):
+                for missing in (False, True) if source is None else (False,):
+                    _, path, amendment, profile_path = self.fixture(root, source, missing=missing)
+                    args = SimpleNamespace(plan=path, amendment=amendment, scratch=root)
+                    entrypoints = {
+                        'resolver': lambda: output_budget_bytes(json.loads(path.read_text())),
+                        'read_plan': lambda: runner.read_plan(path, amendment),
+                        'preflight': lambda: runner.preflight(args),
+                        'supervise': lambda: runner.supervise(args),
+                        'profile': lambda: prepare.profile(profile_path),
+                        'prepare': lambda: prepare.prepare(profile_path),
+                        'invoke': lambda: prepare.invoke(profile_path, 'long-start', 'no-go'),
+                    }
+                    for name, entry in entrypoints.items():
+                        with self.subTest(source=source, missing=missing, entry=name), \
+                                patch.object(runner.subprocess, 'Popen') as child, \
+                                patch.object(runner.subprocess, 'run') as command, \
+                                patch.object(runner, 'git') as git, \
+                                patch.object(prepare.subprocess, 'check_output') as process, \
+                                patch.object(prepare.importlib, 'import_module') as module, \
+                                patch.object(Path, 'mkdir') as mkdir:
+                            with self.assertRaisesRegex(ValueError, 'actual_six_gib_source_budget'):
+                                entry()
+                            for effect in (child, command, git, process, module, mkdir):
+                                effect.assert_not_called()
+
+    def test_correct_six_gib_accepted_and_legacy_source_declarations_unchanged(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            for explicit, source in ((True, 6 * GIB), (False, GIB), (False, float(6 * GIB))):
+                _, path, amendment, profile_path = self.fixture(root, source, explicit=explicit)
+                value, _, _ = runner.read_plan(path, amendment)
+                self.assertEqual(output_budget_bytes(value), (2 if explicit else 6) * GIB)
+                self.assertEqual(value['producer']['source_budget_bytes'], source)
+                self.assertEqual(prepare.profile(profile_path)['source_commit'], 'a' * 40)
+                self.assertEqual(runner.producer_command(value, root/'never-created-job'),
+                    [value['python'], '-B', 'benchmarks/run_managed_soak.py', 'run', '--directory',
+                     str(root/'never-created-job'), '--duration', '21600', '--allow-long-run',
+                     '--validation-report', value['validation_report']])
+            self.assertFalse((root/'never-created-job').exists())
 
 
 class OutputIntegrationTests(unittest.TestCase):
