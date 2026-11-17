@@ -68,8 +68,11 @@ The first author run used fixed code `c507e0b458f24d2434ed2c24df597ba171113d3c`:
 16 tests, zero failures/errors/skips, CPU2,204,185,580ns before result serialization.
 The same process recorded the actual import path and every63 runtime blob plus the
 test file before execution, and verified unchanged hashes afterward. SQLite
-connect, process creation and signal functions were hard-mocked; all call counts
-were zero. Only `uta` and `uta.interest_accrual` product modules were imported.
+connect, process creation and signal functions were hard-mocked during the test
+scope; all those call counts were zero. The launcher's read-only Git metadata
+commands precede those mocks, so this is not a claim of zero tooling subprocesses
+for the complete launcher. Only `uta` and `uta.interest_accrual` product modules
+were imported.
 The original driver, raw test streams and manifests are retained under
 `evidence/interest-accrual/first-pure/`. They are synthetic arithmetic metadata,
 not customer data. This is not a throughput measurement or full-suite result.
