@@ -43,6 +43,8 @@ def observe(segments, *, prior_booked=0, prior_fraction=Fraction(0)):
     if type(prior_fraction) is not Fraction or not 0 <= prior_fraction < 1:
         raise ReferenceRefusal("carry_fraction")
     total = Fraction(prior_booked) + prior_fraction
+    if prior_booked + int(prior_fraction > 0) >= MAX_UNITS_EXCLUSIVE:
+        raise ReferenceRefusal("units_limit")
     for principal, ppb, elapsed in segments:
         exact_integer(principal, "principal", 0, MAX_UNITS_EXCLUSIVE - 1)
         exact_integer(ppb, "annual_rate", 0, RATE_SCALE)
