@@ -5,6 +5,7 @@ authorize credit, orders, repayment, READY or activation. A later separately
 reviewed format must supply complete audit, source and replay capabilities.
 """
 from contextlib import contextmanager
+from dataclasses import dataclass
 from decimal import Decimal
 from hashlib import sha256
 import json
@@ -22,6 +23,62 @@ class CreditNativeError(StorageError):
     def __init__(self, code, message):
         super().__init__(message)
         self.code = code
+
+
+@dataclass(frozen=True)
+class _LedgerVerificationView:
+    """Only original read methods; no schema constructor or posting surface."""
+    database: Database
+    scales: object
+    _codec: object
+
+    _normalize = DurableLedger._normalize
+    _fingerprint = staticmethod(DurableLedger._fingerprint)
+    _hash = staticmethod(DurableLedger._hash)
+    _stored_units = staticmethod(DurableLedger._stored_units)
+    _verify_protection = staticmethod(DurableLedger._verify_protection)
+    balance = DurableLedger.balance
+
+
+@dataclass(frozen=True)
+class _CreditScalesView:
+    scales: object
+
+
+def _verify_financial_source(database, connection, scales):
+    """Run the original full verifiers on this same control write snapshot.
+
+    No constructor, secondary transaction, startup context, verified flag or
+    authorization token is fabricated. Views are local and never returned.
+    """
+    from .credit import CreditService
+    from .ledger import Ledger
+
+    @dataclass(frozen=True)
+    class CreditVerificationView:
+        exchange: object
+        ledger: object
+        _codec: object
+
+        _check_schema = staticmethod(CreditService._check_schema)
+        _debt = CreditService._debt
+        _stored = CreditService._stored
+        _units = CreditService._units
+        _limit = CreditService._limit
+        _read_result = CreditService._read_result
+        _asset = CreditService._asset
+        principal_account = staticmethod(CreditService.principal_account)
+        interest_account = staticmethod(CreditService.interest_account)
+
+    try:
+        frozen_scales = MappingProxyType(dict(scales))
+        codec = Ledger(frozen_scales)
+        ledger = _LedgerVerificationView(database, frozen_scales, codec)
+        credit = CreditVerificationView(_CreditScalesView(frozen_scales), ledger, codec)
+        DurableLedger.verify(ledger, connection=connection)
+        CreditService._verify(credit, connection)
+    except Exception as error:
+        raise CreditNativeError("credit_financial_source_invalid", "complete existing financial verification failed before credit preparation") from error
 
 
 TABLE_SQL = MappingProxyType({
@@ -253,6 +310,7 @@ def prepare_credit_native(database, raw_descriptor):
         if connection.execute("SELECT 1 FROM uta_command_inbox LIMIT 1").fetchone():
             raise CreditNativeError("credit_fresh_authority_required", "native preparation requires an unused durable inbox")
         DecisionAudit.validate(connection)
+        _verify_financial_source(database, connection, scales)
         validate_opening(connection, record)
         for name in OBJECT_SQL:
             _create_credit_object(connection, name)

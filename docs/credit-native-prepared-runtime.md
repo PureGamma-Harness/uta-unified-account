@@ -59,3 +59,18 @@ UTC2026-11-17 11:33:57.656508–11:34:14.844764，unittest16.830秒、进程17.1
 范围含native16、原writer fence/旧binary、credit/join/gross/A2边界、durable batch及
 policy；零skip/timeout。[原始结果](../evidence/runs/credit-native-20af9cc/manifest-python312.json)
 不替代后续金融源核验修订、三运行时完整验收或性能结果。
+
+## 不可逆准备前的完整金融源校验
+
+后续单独修订在同一原control W事务中，使用本地固定只读view调用原
+`DurableLedger.verify(connection=...)` 和 `CreditService._verify(...)`。不运行服务/账本
+schema构造器，不起第二个事务、伪造startup context、verified flag或writer token，不
+返回或缓存view。view只提供原核验需要的读取和codec方法，没有posting、借还款或
+`_transaction`接口。任一原核验异常固定为`credit_financial_source_invalid`，内部保留
+cause，外部消息不包含SQL/nonce。
+
+完整journal/hash/逐币projection、逐账户principal/interest及信用记录检查通过之后才
+做本地opening/claim核对，再开始第一个native DDL/marker。聚合数相等不能掩盖某账户
+负本金与另一账户正本金抵消、债务与liability ledger不符或pool projection脱离journal。
+新增负例从enable前真实损坏source开始，要求金融原始字段/SQL及generation不变、没有
+native对象；不声称WAL/SHM物理字节不产生正常SQLite变化。实际结果另记，不预填通过。

@@ -31,7 +31,7 @@ from uta.writer_fence import WriterFence, WriterFenceError, WriterToken
 
 
 @contextmanager
-def authority(*, batch=False, opening_loan=False):
+def authority(*, batch=False, opening_loan=False, corruption=None):
     with TemporaryDirectory(prefix="uta-credit-native-") as directory:
         path = Path(directory) / "authority.sqlite3"
         db = Database(path)
@@ -56,6 +56,8 @@ def authority(*, batch=False, opening_loan=False):
             audit.install(con, policy=DecisionAudit.policy(service), recorded_at=now.isoformat())
         if batch:
             BatchStore.initialize(db)
+        if corruption is not None:
+            corruption(db, service)
         fence = WriterFence(db)
         fence.enable("credit:shard0")
         if batch:
@@ -93,6 +95,43 @@ def extract_fixture(archive, destination):
 
 
 class PreparedNativeCreditTests(unittest.TestCase):
+    def test_corrupt_financial_seed_rejected_before_first_native_ddl(self):
+        def corrupt_pool(db, service):
+            with db.transaction() as con:
+                con.execute("UPDATE ledger_balances SET units='99999999' WHERE account='system:credit-pool' AND asset='BTC'")
+        def masked_debt(db, service):
+            service.create_account("bob")
+            with db.transaction() as con:
+                con.execute("INSERT INTO uta_liabilities VALUES('alice','BTC','-0.01','0')")
+                con.execute("INSERT INTO uta_liabilities VALUES('bob','BTC','0.01','0')")
+        def mismatched_debt(db, service):
+            with db.transaction() as con:
+                con.execute("INSERT INTO uta_liabilities VALUES('alice','BTC','0.1','0')")
+        def missing_guard(db, service):
+            with db.transaction() as con:
+                con.execute("DROP TRIGGER ledger_postings_no_update")
+        for name, corruption in (("pool", corrupt_pool), ("masked", masked_debt),
+                                 ("debt", mismatched_debt), ("guard", missing_guard)):
+            with self.subTest(corruption=name), authority(corruption=corruption) as (db, service, credit, fence, doc):
+                allocation = doc["certificate"]["assets"]["BTC"]["allocations"][0]
+                if name == "pool":
+                    allocation["opening_pool_units"] = "99999999"
+                elif name == "debt":
+                    allocation["opening_principal_units"] = "10000000"
+                reseal(doc)
+                before = financial(db)
+                with db.read_transaction() as con:
+                    schema = [tuple(row) for row in con.execute("SELECT name,type,tbl_name,sql FROM sqlite_master ORDER BY name")]
+                with self.assertRaises(CreditNativeError) as blocked:
+                    prepare_credit_native(db, doc)
+                self.assertEqual(blocked.exception.code, "credit_financial_source_invalid")
+                self.assertIsNotNone(blocked.exception.__cause__)
+                self.assertEqual(financial(db), before)
+                self.assertEqual(fence.status()["generation"], 0)
+                with db.read_transaction() as con:
+                    self.assertEqual([tuple(row) for row in con.execute("SELECT name,type,tbl_name,sql FROM sqlite_master ORDER BY name")], schema)
+                    self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE name LIKE 'credit_native_%'").fetchone()[0], 0)
+
     def test_real_fresh_preparation_preserves_money_and_never_acquires(self):
         for batch in (False, True):
             with self.subTest(batch=batch), authority(batch=batch) as (db, service, credit, fence, doc):
