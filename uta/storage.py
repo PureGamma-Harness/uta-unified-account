@@ -131,7 +131,9 @@ class Database:
         identity = self._private_file()
         # Never recreate a path removed after identity validation. URI encoding
         # also preserves literal '?' and '#' in a filesystem path.
-        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=rw", uri=True,
+        read_only = _EXISTING_ONLY_OPEN.get()
+        mode = "ro" if read_only else "rw"
+        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=" + mode, uri=True,
                                      timeout=self.timeout, isolation_level=None)
         try:
             info = os.stat(self.path, follow_symlinks=False)
@@ -141,10 +143,11 @@ class Database:
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             connection.execute(f"PRAGMA busy_timeout = {int(self.timeout * 1000)}")
-            mode = connection.execute("PRAGMA journal_mode = WAL").fetchone()[0]
-            if mode.lower() != "wal":
-                raise StorageError("the database filesystem does not support WAL mode")
-            connection.execute("PRAGMA synchronous = FULL")
+            if not read_only:
+                journal = connection.execute("PRAGMA journal_mode = WAL").fetchone()[0]
+                if journal.lower() != "wal":
+                    raise StorageError("the database filesystem does not support WAL mode")
+                connection.execute("PRAGMA synchronous = FULL")
             return connection
         except BaseException:
             connection.close()

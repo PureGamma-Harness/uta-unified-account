@@ -110,6 +110,38 @@ finally: os.close(fd)
             connection.execute("CREATE TABLE explicit_initializer(id INTEGER)")
         self.assertTrue(path.is_file())
 
+    def test_existing_empty_file_read_does_not_initialize_pages_or_sidecars(self):
+        path = Path(self.database.path).with_name("empty-readonly.sqlite3")
+        path.touch(mode=0o600)
+        before = path.read_bytes()
+        before_files = set(path.parent.iterdir())
+        with Database(path).read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM sqlite_master").fetchone()[0], 0)
+            self.assertEqual(connection.execute("PRAGMA journal_mode").fetchone()[0], "delete")
+            self.assertEqual(set(path.parent.iterdir()), before_files)
+        self.assertEqual(path.read_bytes(), before)
+        self.assertEqual(set(path.parent.iterdir()), before_files)
+
+    def test_delete_mode_read_preserves_bytes_journal_mode_and_sentinel(self):
+        path = Path(self.database.path).with_name("delete-readonly.sqlite3")
+        connection = sqlite3.connect(path)
+        try:
+            self.assertEqual(connection.execute("PRAGMA journal_mode=DELETE").fetchone()[0], "delete")
+            connection.execute("CREATE TABLE sentinel(value TEXT NOT NULL)")
+            connection.execute("INSERT INTO sentinel VALUES ('preserve-me')")
+            connection.commit()
+        finally:
+            connection.close()
+        path.chmod(0o600)
+        before = path.read_bytes()
+        before_files = set(path.parent.iterdir())
+        with Database(path).read_transaction() as observer:
+            self.assertEqual(observer.execute("SELECT value FROM sentinel").fetchone()[0], "preserve-me")
+            self.assertEqual(observer.execute("PRAGMA journal_mode").fetchone()[0], "delete")
+            self.assertEqual(set(path.parent.iterdir()), before_files)
+        self.assertEqual(path.read_bytes(), before)
+        self.assertEqual(set(path.parent.iterdir()), before_files)
+
     def test_committed_new_table_cannot_split_an_existing_read_guard_snapshot(self):
         registered_read, writer_committed = Event(), Event()
         original = fence_module._data_tables
