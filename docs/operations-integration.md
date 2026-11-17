@@ -61,3 +61,16 @@ No complete release validation report has been generated for this final patch
 in this delivery. Freeze the integrated commit and run the real full validator
 before requesting a future long engineering test. Report acceptance is not a
 production approval and does not claim elapsed-time or throughput acceptance.
+
+## Continuous integration evidence
+
+The integration workflow runs the existing full validation recorder instead of
+an unrecorded unittest command. Each Python matrix job retains the actual OS
+stdout/stderr log, result counters, runtime, checked-out commit and before/after
+source hashes as a 30-day artifact, including failed runs. An interrupted job
+may have only a partial log; missing or unsuccessful summaries cannot qualify a
+long run. This artifact covers the unit suite. Later acceptance, formal-model,
+build and installed-package steps must also pass for the overall CI job.
+
+This workflow change does not synthesize a report for any earlier CI run. The
+new integrated source still needs its own complete local/remote validation.

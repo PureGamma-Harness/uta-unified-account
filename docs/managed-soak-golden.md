@@ -6,9 +6,10 @@ This is the synthetic workload contract for a new managed process soak based on
 managed candidate. The first implementation runs only 10-second and 60-second
 smoke cases. A 6-hour or 24-hour job needs a separately frozen source manifest,
 configuration and reviewed start; this document does not start or approve it.
-The SQLite POSIX-close release blocker discovered after these short cases is
-explicitly unresolved for this candidate. Short results do not validate writer
-exclusion; see [the release gate](managed-soak.md#current-storage-lock-release-blocker).
+The historical short-case candidate still contains the SQLite POSIX-close
+defect discovered afterward. Its results do not validate writer exclusion or
+qualify a later fixed candidate; every later candidate must satisfy the
+[exact release gate](managed-soak.md#exact-release-qualification).
 
 ## Authority, transport, and fixed budget
 

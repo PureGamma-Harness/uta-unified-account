@@ -40,7 +40,19 @@ jobs:
                             'cgroup_cpu_max': cpu.read_text().strip() if cpu.exists() else None}, indent=2))
           PY
       - name: Run unit tests
-        run: python -m unittest discover -s tests -v
+        id: unit_tests
+        run: python tools/run_validation.py --output "$RUNNER_TEMP/uta-validation"
+      - name: Preserve complete unit validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uta-unit-validation-python-${{ matrix.python-version }}
+          path: |
+            ${{ runner.temp }}/uta-validation/summary.json
+            ${{ runner.temp }}/uta-validation/worker-result.json
+            ${{ runner.temp }}/uta-validation/unittest.txt
+          if-no-files-found: warn
+          retention-days: 30
       - name: Compile source
         run: python -m compileall -q uta formal tests
       - name: Run demo
