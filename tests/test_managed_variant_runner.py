@@ -46,10 +46,8 @@ def registration(path):
 
 def qualification_fixture(root):
     value = registration(root)
-    hashes = {'uta/__init__.py':'a'*64, 'tools/run_validation.py':'b'*64,
-        'tests/test_durable_cli.py':'d'*64, 'tests/test_durable_views.py':'e'*64,
-        'pyproject.toml':'f'*64, runner.PLAN:runner.PLAN_HASH,
-        'evidence/ci-a.zip':'4'*64, 'evidence/ci-b.zip':'5'*64}
+    from tests.runner_package_fixtures import create_package_evidence
+    hashes,package=create_package_evidence(root,COMMIT)
     expected = {name:sha for name,sha in hashes.items() if name.endswith('.py') or name=='pyproject.toml'}
     worker = dict(tests_run=2,failures=0,errors=0,skipped=0,expected_failures=0,unexpected_successes=0,unittest_passed=True)
     def record(label, version, event=None):
@@ -67,20 +65,7 @@ def qualification_fixture(root):
         return result
     q=value['qualification'];q['local']=[record('local'+v,v) for v in ('3.10','3.12','3.13')]
     q['ci']=[record(event+v,v,event) for event in ('push','pull_request') for v in ('3.10','3.11','3.12','3.13')]
-    artifacts={'fixture.whl':{'sha256':'1'*64,'bytes':1},'fixture.tar.gz':{'sha256':'2'*64,'bytes':2}}
-    common={'source_commit':COMMIT,'passed':True,'version':'0.5.0a1','artifacts':artifacts}
-    archives=dict(common,sdist_required_files=list(hashes),runtime_files={'uta/__init__.py':'a'*64},
-        runtime_tree_sha256='3'*64,sdist_missing=[],sdist_mismatched=[],checks={name:True for name in
-        ('version','wheel_runtime_exact','sdist_runtime_exact','sdist_required_files_exact','legacy_fixture_pinned','legacy_fixture_licensed','entry_points')})
-    installed=dict(common,tests={'run':8,'errors':0,'failures':0,'skipped':0},commands=[{'returncode':0}]*8,
-        isolated=True,pythonpath=None,runtime_tree_sha256='3'*64)
-    views=dict(installed,tests={'run':3,'errors':0,'failures':0,'skipped':0})
-    verdict=dict(common,no_old_artifacts_or_pass_reused=True,actual_negative_controls=4)
-    controls={'source_commit':COMMIT,'passed':True,'cases':[{'returncode':1,'passed':True}]*2}
-    zips={'source_commit':COMMIT,'passed':True,'inclusions':[{'tracked_path':name,'sha256':hashes[name]} for name in hashes if name.endswith('.zip')],
-        'omission_controls':[{'removed_member':name,'returncode':1,'passed':True} for name in hashes if name.endswith('.zip')]}
-    q['package']={name:store(root/('package-'+name+'.json'),data) for name,data in
-        [('verdict',verdict),('archives',archives),('installed',installed),('views',views),('runtime_controls',controls),('zip_controls',zips)]}
+    q['package']=package
     return hashes,value
 
 

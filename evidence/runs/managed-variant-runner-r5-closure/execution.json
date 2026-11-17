@@ -1,0 +1,98 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,gc,unittest;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests)]);r=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not r.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:47:10.054924+00:00",
+    "finished_utc": "2026-11-17T12:47:10.438168+00:00",
+    "wall_seconds": 0.383253842999693,
+    "returncode": 0,
+    "source_before": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "pure_data_only": true,
+    "no_collector_build_install_SQL_or_benchmark": true,
+    "cpu_ids": [
+      3
+    ]
+  },
+  {
+    "argv": [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,gc,unittest;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests)]);r=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not r.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:47:10.438653+00:00",
+    "finished_utc": "2026-11-17T12:47:10.820405+00:00",
+    "wall_seconds": 0.3817648729964276,
+    "returncode": 0,
+    "source_before": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "pure_data_only": true,
+    "no_collector_build_install_SQL_or_benchmark": true,
+    "cpu_ids": [
+      3
+    ]
+  },
+  {
+    "argv": [
+      "/usr/bin/python3.13",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,gc,unittest;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests)]);r=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not r.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:47:10.820917+00:00",
+    "finished_utc": "2026-11-17T12:47:11.146839+00:00",
+    "wall_seconds": 0.325938172005408,
+    "returncode": 0,
+    "source_before": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c976977bfc27e5f0570c9c1eef3c2dccf5bcf3f4e3cc548815e91f3cbbd282ca",
+      "tests/test_managed_variant_runner.py": "8845dbae3ba8f43b2dc3d5588aaf9084bb5e2862cfcb8c525a98292f4a0cc60b",
+      "tests/runner_package_fixtures.py": "e6f4d4488cb79b318b465427691286e666661eadd5a93152d46e222763c9964e",
+      "tests/test_managed_variant_runner_package_closure.py": "f53ac2fcc423b9b0462bc214939ed58f40f84275ee230f0a5f8ba8bf2ec06b08",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "651ade6f929e02ec2bdca52de60957df4816969025a6a7683cb45c186d1060ba"
+    },
+    "pure_data_only": true,
+    "no_collector_build_install_SQL_or_benchmark": true,
+    "cpu_ids": [
+      3
+    ]
+  }
+]

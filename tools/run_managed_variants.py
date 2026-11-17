@@ -24,7 +24,9 @@ import signal
 import stat
 import subprocess
 import sys
+import tarfile
 import time
+import zipfile
 
 PLAN = "benchmarks/plans/20261117-managed-variants.json"
 PLAN_HASH = "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12"
@@ -188,7 +190,126 @@ def source_identity(source, commit):
     return hashes
 
 
-def qualification(source_hashes, registration):
+def artifact_blob(reference):
+    require(set(reference) == {"path", "sha256"}, "artifact reference fields")
+    path = Path(reference["path"])
+    require(path.is_absolute() and re.fullmatch(r"[0-9a-f]{64}", reference["sha256"] or ""), "artifact reference identity")
+    data = read_blob(path, 128 * MiB)
+    require(sha256(data).hexdigest() == reference["sha256"], "physical artifact SHA mismatch")
+    return path, data
+
+
+def member_tree(data, kind):
+    """Read-only logical archive tree, including metadata and bounded payloads."""
+    result, total = {}, 0
+    def content_hash(stream, size):
+        nonlocal total
+        integer(size, 0, 64 * MiB, "archive member size")
+        total += size
+        require(total <= 256 * MiB, "decoded archive bound")
+        value, count = sha256(), 0
+        while True:
+            chunk = stream.read(min(MiB, size - count + 1))
+            if not chunk:
+                break
+            count += len(chunk)
+            require(count <= size, "archive member exceeds declared size")
+            value.update(chunk)
+        require(count == size, "archive member payload truncated")
+        return value.hexdigest()
+    if kind == "wheel":
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            entries = archive.infolist()
+            require(len(entries) <= 20000, "archive member count bound")
+            for item in entries:
+                require(item.filename not in result, "duplicate archive member")
+                with archive.open(item) as stream:
+                    hashed = content_hash(stream, item.file_size)
+                result[item.filename] = ((item.is_dir(), item.external_attr, item.create_system,
+                    item.date_time, item.extra, item.comment, item.compress_type, item.flag_bits,
+                    item.internal_attr, item.create_version, item.extract_version), hashed)
+    else:
+        with tarfile.open(fileobj=io.BytesIO(data), mode="r:*") as archive:
+            for index, item in enumerate(archive):
+                require(index < 20000 and item.name not in result and (item.isfile() or item.isdir()), "invalid/duplicate archive member")
+                if item.isfile():
+                    with archive.extractfile(item) as stream:
+                        hashed = content_hash(stream, item.size)
+                else:
+                    hashed = None
+                result[item.name] = ((item.type, item.mode, item.uid, item.gid, item.uname,
+                    item.gname, item.mtime, item.linkname, item.pax_headers), hashed)
+    return result
+
+
+def omission_binding(package, archives, source_hashes, commit, *, source=None):
+    """Bind actual original/negative bytes and verifier reports, not labels."""
+    require(set(package["artifact_files"]) == {"wheel", "sdist"}
+        and set(package["runtime_reports"]) == {"wheel", "sdist"}, "package physical evidence groups")
+    originals = {kind: artifact_blob(package["artifact_files"][kind]) for kind in ("wheel", "sdist")}
+    require(all(type(item.get("bytes")) is int and item["bytes"] > 0 and isinstance(item.get("sha256"), str)
+        and re.fullmatch(r"[0-9a-f]{64}", item["sha256"]) for item in archives["artifacts"].values()), "qualified artifact facts have invalid types")
+    positive = {path.name: {"bytes": len(data), "sha256": sha256(data).hexdigest()} for path, data in originals.values()}
+    require(len(positive) == 2 and positive == archives["artifacts"], "original wheel/sdist SHA or size differs from qualified manifest")
+    verifier, verifier_bytes = artifact_blob(package["verifier"])
+    require(sha256(verifier_bytes).hexdigest() == source_hashes["tools/verify_release_archives.py"], "verifier is not qualified source")
+    expected_source = Path(source).absolute() if source is not None else verifier.parent.parent
+    require(verifier == expected_source / "tools/verify_release_archives.py", "verifier path is not qualified source")
+    original_trees = {kind: member_tree(data, kind) for kind, (_, data) in originals.items()}
+    controls, zips = proof(package["runtime_controls"]), proof(package["zip_controls"])
+    require(controls["source_commit"] == zips["source_commit"] == commit, "omission collector source differs")
+    runtime_cases = {item["case"]: item for item in controls["cases"]}
+    require(set(runtime_cases) == {kind + "_missing_new_failure_diagnostics_is_rejected" for kind in ("wheel", "sdist")}, "runtime omission directions duplicated/missing")
+    tracked_zips = {name for name in source_hashes if name.endswith(".zip")}
+    require(set(package["zip_reports"]) == tracked_zips, "all ZIP negative reports required")
+    require(len(zips["omission_controls"]) == len(tracked_zips), "ZIP negative controls duplicated/missing")
+    cases = [(kind, "uta/failure_diagnostics.py", runtime_cases[kind + "_missing_new_failure_diagnostics_is_rejected"],
+              package["runtime_reports"][kind], {"wheel_runtime_exact"} if kind == "wheel" else {"sdist_runtime_exact", "sdist_required_files_exact"})
+             for kind in ("wheel", "sdist")]
+    cases += [("sdist", item["removed_member"], item, package["zip_reports"][item["removed_member"]], {"sdist_required_files_exact"})
+              for item in zips["omission_controls"]]
+    for kind, target, item, reference, false_checks in cases:
+        report = proof(reference)
+        argv = item["argv"]
+        require(len(argv) == 12 and argv[1] == str(verifier)
+            and argv[2::2] == ["--source", "--commit", "--wheel", "--sdist", "--output"]
+            and argv[3] == str(expected_source) and argv[5] == commit, "negative verifier argv/source binding")
+        require(type(item["returncode"]) is int and item["returncode"] == 1 and item["passed"] is True and item["removed_member"] == target
+            and type(item["removed_count"]) is int and item["removed_count"] == 1, "negative case identity/actual rejection")
+        require(item.get("source_commit", commit) == commit, "negative case source differs")
+        checkmap = {name: name not in false_checks for name in archives["checks"]}
+        require(item["checks"] == report["checks"] == checkmap and all(type(value) is bool for value in report["checks"].values())
+            and all(type(value) is bool for value in item["checks"].values()), "negative full check matrix differs")
+        missing = [] if kind == "wheel" else [target]
+        require(item["sdist_missing"] == report["sdist_missing"] == missing and report["sdist_mismatched"] == [], "negative exact missing/mismatched paths")
+        require(report["source_commit"] == commit and report["passed"] is False, "negative report source/outcome")
+        for key in ("runtime_files", "runtime_tree_sha256", "sdist_required_files", "version", "metadata_versions", "entry_points", "cli_helper_sha256", "legacy_fixture_provenance"):
+            require(report[key] == archives[key], "negative report changed qualified " + key)
+        paths = {"wheel": Path(argv[7]), "sdist": Path(argv[9])}
+        require(all(path.is_absolute() for path in paths.values()), "negative input paths must be absolute")
+        unchanged = "sdist" if kind == "wheel" else "wheel"
+        require(paths[unchanged] == originals[unchanged][0] and paths[kind] != originals[kind][0], "negative changed unmodified positive side/path")
+        negative_data = read_blob(paths[kind], 128 * MiB)
+        facts = {"bytes": len(negative_data), "sha256": sha256(negative_data).hexdigest()}
+        require(item["negative_archive_sha256"] == facts["sha256"], "negative physical SHA differs")
+        expected_artifacts = {originals[unchanged][0].name: positive[originals[unchanged][0].name], paths[kind].name: facts}
+        require(len(expected_artifacts) == 2 and report["artifacts"] == expected_artifacts, "negative report not bound to actual two input artifacts")
+        before, after = original_trees[kind], member_tree(negative_data, kind)
+        if kind == "wheel":
+            removed = target
+        else:
+            roots = {name.split("/")[0] for name in before}
+            require(len(roots) == 1, "sdist roots differ")
+            removed = next(iter(roots)) + "/" + target
+        require(removed in before and set(after) == set(before) - {removed}
+            and list(after) == [name for name in before if name != removed]
+            and all(after[name] == before[name] for name in after), "negative archive differs beyond the single removed target")
+    # Reread positive inputs after comparisons, so an input change cannot hide.
+    for kind, (path, original) in originals.items():
+        require(artifact_blob(package["artifact_files"][kind])[1] == original, "positive artifact changed during omission validation")
+
+
+def qualification(source_hashes, registration, *, source=None):
     q, commit = registration["qualification"], registration["source_commit"]
     expected = {name: value for name, value in source_hashes.items()
                 if (name.split("/")[0] in {"uta", "tests", "formal", "tools", "benchmarks", "scripts"} and name.endswith(".py"))
@@ -232,7 +353,7 @@ def qualification(source_hashes, registration):
             seen.add(key)
     require({("local", version) for version in ("3.10", "3.12", "3.13")} <= seen, "local matrix incomplete")
     package = q["package"]
-    require(set(package) == {"verdict", "archives", "installed", "views", "runtime_controls", "zip_controls"}, "package evidence groups")
+    require(set(package) == {"verdict", "archives", "installed", "views", "runtime_controls", "zip_controls", "artifact_files", "verifier", "runtime_reports", "zip_reports"}, "package evidence groups")
     verdict, archives, installed, views = (proof(package[name]) for name in ("verdict", "archives", "installed", "views"))
     for value in (verdict, archives, installed, views):
         require(value["source_commit"] == commit and value["passed"] is True, "old/failed package evidence")
@@ -256,6 +377,7 @@ def qualification(source_hashes, registration):
         and all(item["returncode"] == 1 and item["passed"] is True for item in zips["omission_controls"]), "tracked ZIP omission coverage")
     require(all(item["sha256"] == source_hashes[item["tracked_path"]] for item in zips["inclusions"]), "ZIP source bytes differ")
     require(verdict["actual_negative_controls"] == len(negative["cases"]) + len(zips["omission_controls"]), "negative control count inflated")
+    omission_binding(package, archives, source_hashes, commit, source=source)
 
 
 def pointer(value, path):
@@ -743,7 +865,7 @@ def execute(source, registration, registration_file):
     source = Path(source).absolute()
     base_plan(source)
     snapshot = source_identity(source, registration["source_commit"])
-    qualification(snapshot, registration)
+    qualification(snapshot, registration, source=source)
     cpus = registration["cpu_ids"]
     require(set(cpus) <= os.sched_getaffinity(0), "registered CPUs unavailable")
     root = Path(registration["output_root"])
@@ -828,7 +950,7 @@ def main(argv=None):
             return 0
         require(registration is not None, "execute requires an independent registration")
         return 0 if execute(args.source, registration, args.registration) else 2
-    except (GateError, KeyError, TypeError, OSError, ValueError, subprocess.SubprocessError) as error:
+    except (GateError, KeyError, TypeError, OSError, ValueError, subprocess.SubprocessError, zipfile.BadZipFile, tarfile.TarError) as error:
         print(json.dumps({"mode": "REFUSED", "error": str(error), "production_approved": False}), file=sys.stderr)
         return 2
 
