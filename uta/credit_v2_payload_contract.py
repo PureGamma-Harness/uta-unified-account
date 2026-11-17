@@ -46,3 +46,27 @@ POLICY_FIELDS = frozenset({
     "format", "base_policy", "max_future_skew_us", "clock_policy", "physical_commit_time_captured",
 })
 BUNDLE_FIELDS = frozenset({"format", "decision", "market", "artifact", "policy"})
+BASE_POLICY_FIELDS = frozenset({
+    "format", "risk_mode", "catalog", "rules", "scales", "fee_rate", "max_price_age_us",
+    "order_precision", "reserve_formula", "execution_options",
+})
+ORDER_FIELDS = frozenset({
+    "account_id", "order_id", "symbol", "quantity", "limit_price", "reduce_only",
+    "filled_quantity", "status", "version", "created_at", "fee_notional", "charged_fee",
+    "admission_decision_id",
+})
+RISK_FIELDS = frozenset({
+    "accounting_equity", "collateral_value", "risk_equity", "loan_value", "principal_value",
+    "interest_value", "cash_deficit_value", "debt_value", "unrealized_pnl", "frozen_value",
+    "initial_margin", "maintenance_margin", "available_margin", "account_version", "equity",
+    "open_order_margin", "margin_ratio", "market_version", "observed_at", "market_id", "borrowable",
+    "status", "risk_mode", "rule_id", "rule_version", "catalog_version",
+})
+RECEIPT_FIELDS = frozenset({
+    "account_id", "command_id", "asset", "amount", "principal", "interest", "total",
+    "account_version", "journal_event_id", "risk_evidence",
+})
+RECEIPT_RISK_FIELDS = frozenset({
+    "market_version", "market_observed_at", "borrowable_before", "equity", "initial_margin",
+    "maintenance_margin", "open_order_margin", "available_margin", "rule_id", "rule_version", "catalog_version",
+})

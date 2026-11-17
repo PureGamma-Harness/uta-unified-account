@@ -153,3 +153,59 @@ not import production core functions. Real first-source acceptance, same
 transaction/COMMIT, scope, restart and unknown handling remain runtime
 observations with original source/command IDs and reopened storage. Pure fixtures
 with null actual observations remain PENDING, regardless of arithmetic matches.
+
+## Inner field and integer-algorithm clarification
+
+Both account_limit_units and local_asset_limit_units constrain **gross
+principal+interest**, not principal alone. The account limit applies to this
+account's BTC quantity. The local asset limit and sealed allocation each apply
+to the sum of gross BTC principal+interest across this actual shard. Cash deficits
+affect risk debt in USD but do not consume that BTC quantity budget. Comparisons
+are inclusive; a requested addition exactly at a limit is allowed if every
+other gate passes. The quote/quantity-step constraint is separate.
+
+Journal fingerprint is lowercase SHA256 of UTF-8 canonical JSON
+`[[account,asset,integer_units],...]`, with exact JSON integer units (converted
+from bounded canonical strings) and the original normalized posting order.
+Event hash is lowercase SHA256 of canonical JSON
+`[sequence,event_id,previous_hash,fingerprint]`. Event ID for credit scope is
+`credit:sha256(canonical(['account:'+account_id,command_id]))`; funding uses
+`credit:sha256(canonical(['pool',command_id]))`. Funding legs sort capital debit
+before pool credit. No imported production hash function is needed by the oracle.
+
+The added BASE_POLICY_FIELDS, ORDER_FIELDS, RISK_FIELDS, RECEIPT_FIELDS and
+RECEIPT_RISK_FIELDS in the normative code specify exact inner keys:
+
+- Base policy format is integer1, risk_mode phase1_cross, fee_rate string0,
+  order_precision integer8, scales USD8/BTC8; max_price_age_us is a positive
+  integer at most five minutes. Catalog and rules use their complete published
+  canonical object schemas. reserve_formula is
+  `linear-adverse-loss-cumulative-fee-v1`; both execution cache capacities are
+  integer0. Complete rule/catalog/version IDs are retained.
+- Orders are the actual schema3 live rows, status OPEN/PARTIALLY_FILLED, with
+  integer reduce_only0/1 and version; account/order/symbol/created_at are strings;
+  admission_decision_id is a string (nullable only where the original legacy
+  audited upgrade explicitly permits it). Quantity, limit, filled quantity,
+  cumulative fee_notional and charged_fee are exact decimal strings. Positions
+  retain signed quantity and cost_basis; liabilities are sorted asset/p/i rows.
+- Every numeric financial risk field is an exact USD decimal string;
+  account_version, market_version, rule_version and catalog_version are integers.
+  equity aliases risk_equity. borrowable maps asset to native-asset decimal
+  quantity strings. margin_ratio is equity/MM (risk worsening direction down),
+  nullable when MM=0, rounded with decimal precision34/half-even exactly as the
+  original API diagnostic; it is never an admission quantity or a replacement
+  for exact equity/MM boundary checks. status is HEALTHY/MARGIN_CALL/LIQUIDATION.
+  observed_at/market_id identify the original market; risk_mode is phase1_cross,
+  rule_id is the complete retained rule's identifier.
+- Receipt p/i/total/amount are native BTC decimal strings, with total=p+i;
+  account_version is the actual post-version. risk_evidence carries the actual
+  original pre-borrow conservative borrowable quantity and original market
+  version/time, plus the original projected risk/versions. Borrowable_before is
+  a decimal string here, never null because this format requires Cross rules.
+  The full pre/post risk remains separately retained.
+
+The bundle is necessary for numerical/operation replay but cannot by itself
+prove that SQL COMMIT happened. Independent actual observation must separately
+read the original inbox/source/intent/expected-postings/credit-command/decision/
+ledger/terminal rows from reopened storage, check their actual IDs/hashes and
+versions, and retain the original command/response-loss/restart evidence.
