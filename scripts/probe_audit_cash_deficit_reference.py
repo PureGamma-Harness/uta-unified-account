@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Independent cash-deficit audit probe on immutable a35 source, no core edits."""
+"""Independent a35 reference cases, recording the actual tested source identity."""
 
 import argparse
 from copy import deepcopy
@@ -14,6 +14,7 @@ import sqlite3
 import sys
 from tempfile import TemporaryDirectory
 import time
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -215,7 +216,13 @@ def main():
         raise SystemExit("frozen source hashes changed; stop")
     started = time.perf_counter()
     result = pure_probe() if args.phase == "pure" else service_probe()
-    result.update(frozen_commit=FROZEN_COMMIT, python=platform.python_version(), source_sha256=hashes,
+    checkout = subprocess.run(["git", "rev-parse", "--show-toplevel", "HEAD"], cwd=ROOT,
+                              capture_output=True, text=True)
+    identity = checkout.stdout.splitlines()
+    actual_commit = (identity[1] if checkout.returncode == 0 and len(identity) == 2
+                     and Path(identity[0]).resolve() == ROOT.resolve() else None)
+    result.update(reference_commit=FROZEN_COMMIT, code_commit=actual_commit,
+                  python=platform.python_version(), source_sha256=hashes,
                   probe_source_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                   all_uta_source_sha256={str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
                                          for path in sorted((ROOT / "uta").rglob("*.py"))},
