@@ -1,0 +1,18 @@
+fatal: ambiguous argument '4c78b658714a6e0b6d235aca987f06966d2226f0^{tree}': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Traceback (most recent call last):
+  File "/workspace/uta-package-independent-dbc93e5/evidence/reviews/ledger-python310-cleanup/inspect_cleanup.py", line 141, in <module>
+    main()
+  File "/workspace/uta-package-independent-dbc93e5/evidence/reviews/ledger-python310-cleanup/inspect_cleanup.py", line 123, in main
+    assert git("rev-parse", summary["code_commit"] + "^{tree}") == git("rev-parse", BASE + "^{tree}")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-package-independent-dbc93e5/evidence/reviews/ledger-python310-cleanup/inspect_cleanup.py", line 20, in git
+    return subprocess.check_output(["git", *args], cwd=REPO)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', 'rev-parse', '4c78b658714a6e0b6d235aca987f06966d2226f0^{tree}']' returned non-zero exit status 128.
