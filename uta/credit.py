@@ -285,6 +285,10 @@ class CreditService:
             previous = self._replay(connection, scope, command_id, "borrowed", asset, amount_text)
             if previous is not None:
                 return previous
+            from .writer_fence import _load
+            if _load(connection) is not None:
+                raise ServiceError("unsupported_credit_operation",
+                    "managed new borrowing requires a supported credit decision capability", 501)
             # The shared exposure guard includes the global halt and any
             # durable liquidation/supervisor account freeze.
             self.exchange._require_exposure_allowed(connection, account_id)

@@ -44,6 +44,10 @@ registry 中的确切连接、同 authority path、同 writer binding 和 financ
 将 raw/read/inbox/control connection 升格为金融写入者。前后 fence/COMMIT 检查仍由原
 Database 事务承担。针对性三运行时结果见[原始证据](../evidence/runs/managed-credit-joined/README.md)。
 
+随后单独提交的 [managed owner 拒绝边界](managed-credit-boundary.md)将新借款收紧为
+501：真实 persistent authority 已 managed 时，只允许原借款 receipt 的幂等查询，不能
+通过 public/private owner 接口创建缺少完整 audit 的新贷款。pre-seal bootstrap 不变。
+
 ## B：后续设计，当前不实现
 
 建议第一版 managed 新借款只接受预先离线分配的资产预算，不实现动态跨片借额度。

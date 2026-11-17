@@ -138,6 +138,48 @@ class JoinedBorrowTests(unittest.TestCase):
         self.assertEqual(self.exchange.ledger.balance("system:credit-pool", "BTC"), D(".5"))
         self.assertEqual(self.credit.verify()["nonzero_liabilities"], 2)
 
+    def test_late_business_rejection_requires_real_caller_savepoint_rollback(self):
+        # The compatibility calculator has no conservative pre-borrow quote:
+        # an unfunded account reaches the real projected-risk rejection after
+        # ledger/debt writes. The private helper does not own error rollback.
+        legacy = ExchangeService(Database(self.path), {"USD": 8, "BTC": 8},
+            fee_rate=D(0), clock=lambda: self.now)
+        legacy.create_account("poor")
+        legacy.publish_market(MarketSnapshot(1, self.now,
+            {"USD": AssetSpec(D(1), D(1)), "BTC": AssetSpec(D(100), D(".8"))},
+            {"BTC-PERP": InstrumentSpec(D(100), D(".1"), D(".05"))}))
+        legacy.set_kill_switch(False)
+        credit = CreditService(legacy)
+        credit.configure_asset_limit("BTC", D(100))
+        credit.configure_limit("poor", "BTC", D(10))
+        credit.fund_pool("pool", "BTC", D(50), source_reference="synthetic:savepoint:pool")
+        with legacy._transaction() as connection:
+            connection.execute("CREATE TABLE test_borrow_receipts(id TEXT PRIMARY KEY,result TEXT NOT NULL)")
+        before = legacy.account("poor"), legacy.ledger.journal(), legacy.events(limit=1000)
+        with legacy._transaction() as connection:
+            connection.execute("SAVEPOINT borrow_business")
+            with self.assertRaises(ServiceError) as rejected:
+                credit._borrow(connection, "poor", "late-rejected", "BTC", D(".1"))
+            self.assertEqual((rejected.exception.code, rejected.exception.status), ("insufficient_margin", 409))
+            self.assertEqual(legacy.ledger.balance(legacy._customer("poor"), "BTC", connection=connection), D(".1"))
+            self.assertEqual(connection.execute("SELECT principal FROM uta_liabilities WHERE account_id='poor'").fetchone()[0], "0.1")
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM ledger_events").fetchone()[0], 2)
+            connection.execute("ROLLBACK TO borrow_business")
+            connection.execute("RELEASE borrow_business")
+            connection.execute("INSERT INTO test_borrow_receipts VALUES ('late-rejected','REJECTED:insufficient_margin')")
+        self.assertEqual((legacy.account("poor"), legacy.ledger.journal(), legacy.events(limit=1000)), before)
+        reopened = ExchangeService(Database(self.path), {"USD": 8, "BTC": 8},
+            fee_rate=D(0), clock=lambda: self.now)
+        credit = CreditService(reopened)
+        self.assertEqual(credit.verify()["nonzero_liabilities"], 0)
+        self.assertEqual(reopened.ledger.verify(), 1)
+        with reopened.database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM credit_commands WHERE command_id='late-rejected'").fetchone()[0], 0)
+            self.assertEqual(connection.execute("SELECT result FROM test_borrow_receipts").fetchone()[0], "REJECTED:insufficient_margin")
+        reopened.deposit("poor", "adequate-collateral", "USD", D(20))
+        self.assertEqual(credit.borrow("poor", "late-rejected", "BTC", D(".1"))["principal"], "0.1")
+        self.assertEqual(reopened.ledger.verify(), 3)
+
     def test_halt_and_stale_quote_reject_joined_new_risk_without_effects(self):
         self.prepare()
         self.exchange.set_kill_switch(True)
