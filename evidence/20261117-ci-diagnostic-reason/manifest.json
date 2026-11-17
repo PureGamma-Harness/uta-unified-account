@@ -1,0 +1,276 @@
+{
+  "branch": "fix/diagnostic-reason",
+  "cross_review": {
+    "additional_harness_fix": "Offline DROP connection now explicitly closes; earlier ResourceWarning outputs remain failed evidence.",
+    "harness_improvements_applied": [
+      "External elapsed tolerance allows host scheduling while configured diagnostic budget is unchanged.",
+      "Release pipe BrokenPipe handled; lock holder timeout kills and reaps the child."
+    ],
+    "reviewer": "/root/recovery_scaling/retest_contract_review",
+    "runtime_findings": []
+  },
+  "fixed_source_sha256": {
+    "docs/diagnostic-contention-reason.md": "a77d0b203c91212aa9b7cf31e400d232919bf42a2711faaf2b41ed2a267cacf0",
+    "tests/test_diagnostic_contention.py": "8fdc4b4d62fb9b4d743a2f247bdefea601bcbdc8aea94e91ca5d1e22a9f3f735",
+    "uta/durable_process.py": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e"
+  },
+  "limits": [
+    "Controlled real SQLite contention reproduces a classification defect, not the unique original CI cause.",
+    "No newly captured natural reproduction of the original CI failures.",
+    "Focused results do not replace the original failed full CI run or a final full-suite result.",
+    "No production retry, business timeout, fixture TTL, writer lease or transient allowlist was enlarged.",
+    "Typed IOERR_READ is injected classification coverage, not a real disk-failure claim.",
+    "No profiling, large cohort, long-duration job or old 24-hour job was run or modified."
+  ],
+  "original_ci": {
+    "artifact_directory": "/workspace/uta-ci-4608-push-310",
+    "code_commit": "4608ffeda0651f8dafd2cd151618a71ed99aa62e",
+    "errors": 0,
+    "failures": 3,
+    "files_sha256": {
+      "artifact.zip": "bd20e985bd53e58572b3a2f5dba0860799ba55750ce9c2e02c9fd20b271c366d",
+      "summary.json": "54a7c86479a7a7a343e98810a211ad7d553107c70f0e73e915aafc00d9ac5bb1",
+      "unittest.txt": "03ae4c27618fceb581499b415fc8c289c0a9dbf8f848938b750dd3e64aa6534e",
+      "worker-result.json": "b6a1f3df4cf771b322c6a37be4e1a3754389c6fff464aeb1df9616fc554558a0"
+    },
+    "job_id": 133881910052,
+    "natural_exception_not_recorded": true,
+    "passed": false,
+    "python": "3.10.22",
+    "run_id": 44036919027,
+    "source_runtime_sha256": "5c1979d15f9dae3fa5aec96c7057df09fe9c3c593e6d5e9b92bc8bdff2466471",
+    "sqlite": "3.46.1",
+    "tests_run": 1096
+  },
+  "production_approved": false,
+  "recorded_at_utc": "2026-11-17T07:37:17.750619+00:00",
+  "source_commit": "4608ffeda0651f8dafd2cd151618a71ed99aa62e",
+  "validation": {
+    "cpu_affinity": [
+      1
+    ],
+    "final_summary": {
+      "all_final_results_passed_without_resource_warnings": true,
+      "final_contention_tests_per_runtime": 9,
+      "focused_tests_per_runtime": 29
+    },
+    "focused_modules": [
+      "test_diagnostic_contention",
+      "test_process_readiness",
+      "test_readiness_sampling",
+      "test_durable_diagnostic_adapter",
+      "test_durable_faults.ManagedProcessFaultTests.test_real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel"
+    ],
+    "interpreters": {
+      "python310": "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "python312": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "python313": "/usr/bin/python3.13"
+    },
+    "resource_warnings_are_errors": true,
+    "runs": [
+      {
+        "classification": "shared_cache_message_harness_failure",
+        "file": "fixed-python310-attempt1-harness.txt",
+        "passed": false,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 3.624,
+        "sha256": "cc3aa437cf06e77afd72a3dea96d2c39ece4a75fa179b8b4097730ad2f8c2ce0",
+        "test_count": 8,
+        "unittest_passed": false
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python310-contention.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 3.721,
+        "sha256": "ff35e1a4f78191186981572f8e17cbab6497d2aac4615a0a547d2cc0f9bab888",
+        "test_count": 8,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python310-final-29.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 22.611,
+        "sha256": "00a23eb5c965c65955acd05e3c2968f281be4788f17b01d87031f31feca5dfca",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "final_test_file_contention",
+        "file": "fixed-python310-post-review-9.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 5.562,
+        "sha256": "038e918e1260cfdf83dfc46a595b71e27a79eb5e1735b310ee83893c7b5d64ef",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python310-pre-closing-9.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 5.127,
+        "sha256": "4b56c7db7372eca746fc99e6731d91cc55af14586b7941b12486539fde7becee",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python310-pre-final-27.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 21.861,
+        "sha256": "920557932c569d6d4d1e534a1c198c99ff8a283661426a8894b07b437d073807",
+        "test_count": 27,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python310-pre-review-29.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 23.895,
+        "sha256": "89a9f26efc2f87c3cd20192d6b0d4c15e50218cc0047c49093b1e4bbf251bca5",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python312-final-29.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 25.404,
+        "sha256": "a6ef299df13c9f8e36eebd1e9f285338de7e5c5a37a7e8fbf7adfd20f95e2330",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "final_test_file_contention",
+        "file": "fixed-python312-post-review-9.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 4.617,
+        "sha256": "c8b0373a686bec9b1cb99b06beaa3c4e9bff39c57b1fb02a87233755a413bdff",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python312-pre-closing-9.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 4.823,
+        "sha256": "a19c40c6a1918b45881349c2066f8f4d757399ba7990aec202761aed19028c44",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python312-pre-review-29.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 23.169,
+        "sha256": "89dc5e38f422c31e03e2534be644f73b03fa74350ac8e1fa28675313efd4342d",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "focused_validation",
+        "file": "fixed-python313-final-29.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 26.163,
+        "sha256": "ac97fed4aaa460634d659bcf6d42fc374014ee06198d6fe7e56510df574b8213",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "harness_resource_warning",
+        "file": "fixed-python313-harness-resource-warning-29.txt",
+        "passed": false,
+        "resource_warning_present": true,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 25.389,
+        "sha256": "7656ba3d0b49e735f8a83400edd6c1619a3d8aff1aedb97fc48d160cd01f1cb4",
+        "test_count": 29,
+        "unittest_passed": true
+      },
+      {
+        "classification": "harness_resource_warning",
+        "file": "fixed-python313-harness-resource-warning.txt",
+        "passed": false,
+        "resource_warning_present": true,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 5.427,
+        "sha256": "6c23703740d495a188d3bb2ffa171b017e29496e1b6fb0c08723c5480639df4f",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "final_test_file_contention",
+        "file": "fixed-python313-post-review-9.txt",
+        "passed": true,
+        "resource_warning_present": false,
+        "runtime_sha256": "d8460d3b1019bb1f478502dec8cfcb53627828d8e17f9d835f2c21527703ba7e",
+        "seconds": 5.529,
+        "sha256": "c6fc98592a9e3f27c440deaeaabb93efdfae78482e56780f85d219045587e6dd",
+        "test_count": 9,
+        "unittest_passed": true
+      },
+      {
+        "classification": "controlled_source_red",
+        "file": "source4608ffe-python310-red-corrected-harness.txt",
+        "passed": false,
+        "resource_warning_present": false,
+        "runtime_sha256": "5c1979d15f9dae3fa5aec96c7057df09fe9c3c593e6d5e9b92bc8bdff2466471",
+        "seconds": 2.026,
+        "sha256": "36ebd9412da7a23f0d28f909901e381f23d21ac0573dd57c3fe7195183515e86",
+        "test_count": 2,
+        "unittest_passed": false
+      },
+      {
+        "classification": "controlled_source_red_with_initial_mutex_harness_failure",
+        "file": "source4608ffe-python310-red.txt",
+        "passed": false,
+        "resource_warning_present": false,
+        "runtime_sha256": "5c1979d15f9dae3fa5aec96c7057df09fe9c3c593e6d5e9b92bc8bdff2466471",
+        "seconds": 2.415,
+        "sha256": "3a9053cd173a055d250a16abb184526a9c246873e19be13edda129c143a99ce7",
+        "test_count": 2,
+        "unittest_passed": false
+      },
+      {
+        "classification": "controlled_source_red",
+        "file": "source4608ffe-python313-red.txt",
+        "passed": false,
+        "resource_warning_present": false,
+        "runtime_sha256": "5c1979d15f9dae3fa5aec96c7057df09fe9c3c593e6d5e9b92bc8bdff2466471",
+        "seconds": 1.269,
+        "sha256": "670b40aeb653f74673ec7f5545ffba0b4d3aa5c1adc0eb789e6df5278d47ab6b",
+        "test_count": 1,
+        "unittest_passed": false
+      }
+    ],
+    "sqlites": {
+      "python310": "3.53.1",
+      "python312": "3.53.1",
+      "python313": "3.46.1"
+    }
+  }
+}

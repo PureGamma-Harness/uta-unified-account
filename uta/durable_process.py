@@ -55,6 +55,38 @@ def _diagnostic_code(error, fallback="diagnostic_unavailable"):
     return fallback
 
 
+def _diagnostic_failure(error, deadline, fallback="diagnostic_unavailable"):
+    """Classify only known observation contention; never expose error text.
+
+    Python 3.10 lacks SQLite's native error attributes. Its fallback accepts
+    only exact built-in OperationalError instances with canonical lock args.
+    A supplied native code takes precedence over text, including fatal codes.
+    """
+    native = getattr(error, "sqlite_errorcode", None) if isinstance(error, sqlite3.Error) else None
+    native = native if type(native) is int and 0 <= native < 2**31 else None
+    kind = ("sqlite_operational_error" if isinstance(error, sqlite3.OperationalError) else
+            "sqlite_database_error" if isinstance(error, sqlite3.Error) else
+            "writer_fence_error" if isinstance(error, WriterFenceError) else
+            "service_error" if isinstance(error, ServiceError) else
+            "storage_error" if isinstance(error, StorageError) else
+            "os_error" if isinstance(error, OSError) else "unexpected_error")
+    detail = {"type": kind}
+    if isinstance(error, sqlite3.Error):
+        detail["sqlite_errorcode"] = native
+    exact_operational = type(error) is sqlite3.OperationalError
+    lacks_native = exact_operational and not hasattr(error, "sqlite_errorcode")
+    canonical_message = (error.args[0] if lacks_native and len(error.args) == 1
+                         and type(error.args[0]) is str else None)
+    busy = (exact_operational and native is not None and native & 255 in {5, 6}
+            or lacks_native and canonical_message in {"database is locked", "database table is locked"})
+    interrupted = (exact_operational and native is not None and native & 255 == 9
+                   or lacks_native and canonical_message == "interrupted")
+    code = _diagnostic_code(error, fallback)
+    if busy or monotonic() >= deadline and (interrupted or code == "router_busy"):
+        code = "diagnostic_timeout"
+    return code, detail
+
+
 class _DiagnosticDatabase(Database):
     """Existing-file, mode=ro reads with a shared overall SQL/guard deadline."""
     def __init__(self, source, deadline):
@@ -1204,8 +1236,8 @@ class DurableProcessRouter:
                         observed.append((row, reader, lease, snapshot))
                         row["reason"] = "observed"
                     except Exception as exc:
-                        row["reason"] = ("diagnostic_timeout" if monotonic() >= deadline
-                                         else _diagnostic_code(exc, "shard_unavailable"))
+                        row["reason"], row["observation_error"] = _diagnostic_failure(
+                            exc, deadline, "shard_unavailable")
                 # Slow guard/claim checks cannot leave an early-shard quote or
                 # lease marked fresh after it expires during this observation.
                 for row, reader, lease, snapshot in observed:
@@ -1230,7 +1262,12 @@ class DurableProcessRouter:
                         row["market_ready"] = True
                         row["reason"] = "ready"
                 result["workers_alive"] = all(row["alive"] for row in rows)
-                _diagnostic_remaining(deadline)
+                # A later busy shard/deadline must not hide a known fatal read
+                # from an earlier shard and invite another readiness sample.
+                fatal_read = next((row["reason"] for row in rows
+                                   if row["reason"] not in {"ready", "diagnostic_timeout"}), None)
+                if fatal_read is None:
+                    _diagnostic_remaining(deadline)
                 financial_ready = (complete and not state["halted"] and all(
                     row["owner_ready"] and row["market_ready"] and row.get("locally_active", False)
                     and row["funding_registry_ready"] for row in rows))
@@ -1241,12 +1278,14 @@ class DurableProcessRouter:
                     result["reason"] = "router_halted"
                 elif financial_ready:
                     result["reason"] = "ready"
+                elif fatal_read is not None:
+                    result["reason"] = fatal_read
                 else:
                     result["reason"] = next((row["reason"] for row in rows if not row["market_ready"]),
                                             "worker_unready" if not all(row["owner_ready"] for row in rows) else "local_halt")
         except Exception as exc:
-            result.update(financial_ready=False, ready=False,
-                          reason="diagnostic_timeout" if monotonic() >= deadline else _diagnostic_code(exc))
+            reason, detail = _diagnostic_failure(exc, deadline)
+            result.update(financial_ready=False, ready=False, reason=reason, observation_error=detail)
         finally:
             if acquired:
                 self._mutex.release()

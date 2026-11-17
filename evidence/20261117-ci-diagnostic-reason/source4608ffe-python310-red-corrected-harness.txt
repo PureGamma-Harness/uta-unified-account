@@ -1,0 +1,19 @@
+test_real_busy_is_unknown_then_release_recovers_current_readiness (test_diagnostic_contention.DiagnosticContentionTests) ... diagnostic-contention-evidence {"actual_sql_errors": [{"canonical_lock_message": true, "sqlite_errorcode": null, "type": "OperationalError"}], "contended": {"decision_audit_required": true, "financial_ready": false, "managed": true, "profile": "managed_audit_required", "ready": false, "reason": "shard_unavailable", "recovered_orphans": [], "state": {"epoch": 1, "error": null, "halted": false, "market_digest": "992bcc8443424501db68e0806c2e72bfdf14c5cd88a396645cc3ddf5918a9d56", "market_version": 1, "publishing": false, "watermarks": {"0": 1, "1": 1}}, "state_observed": true, "workers": [{"alive": true, "funding_registry_ready": true, "generation": 1, "lease_active": true, "locally_active": true, "market_digest": "992bcc8443424501db68e0806c2e72bfdf14c5cd88a396645cc3ddf5918a9d56", "market_observed_at": "2026-11-17T07:24:31.602735+00:00", "market_ready": true, "market_version": 1, "owner_pid": 87327, "owner_ready": true, "pid": 87327, "reason": "ready", "report": {"generation": 1, "pid": 87327, "shard": 0, "state": "ready"}, "shard": 0}, {"alive": true, "funding_registry_ready": false, "generation": null, "lease_active": false, "locally_active": false, "market_ready": false, "owner_pid": null, "owner_ready": false, "pid": 87328, "reason": "shard_unavailable", "report": {"generation": 1, "pid": 87328, "shard": 1, "state": "ready"}, "shard": 1}], "workers_alive": true}, "elapsed_seconds": 0.031051197998749558, "python": "3.10.22", "released": {"decision_audit_required": true, "financial_ready": true, "managed": true, "profile": "managed_audit_required", "ready": true, "reason": "ready", "recovered_orphans": [], "state": {"epoch": 1, "error": null, "halted": false, "market_digest": "992bcc8443424501db68e0806c2e72bfdf14c5cd88a396645cc3ddf5918a9d56", "market_version": 1, "publishing": false, "watermarks": {"0": 1, "1": 1}}, "state_observed": true, "workers": [{"alive": true, "funding_registry_ready": true, "generation": 1, "lease_active": true, "locally_active": true, "market_digest": "992bcc8443424501db68e0806c2e72bfdf14c5cd88a396645cc3ddf5918a9d56", "market_observed_at": "2026-11-17T07:24:31.602735+00:00", "market_ready": true, "market_version": 1, "owner_pid": 87327, "owner_ready": true, "pid": 87327, "reason": "ready", "report": {"generation": 1, "pid": 87327, "shard": 0, "state": "ready"}, "shard": 0}, {"alive": true, "funding_registry_ready": true, "generation": 1, "lease_active": true, "locally_active": true, "market_digest": "992bcc8443424501db68e0806c2e72bfdf14c5cd88a396645cc3ddf5918a9d56", "market_observed_at": "2026-11-17T07:24:31.602735+00:00", "market_ready": true, "market_version": 1, "owner_pid": 87328, "owner_ready": true, "pid": 87328, "reason": "ready", "report": {"generation": 1, "pid": 87328, "shard": 1, "state": "ready"}, "shard": 1}], "workers_alive": true}, "sqlite": "3.53.1"}
+FAIL
+test_two_actual_busy_shards_share_one_deadline (test_diagnostic_contention.DiagnosticContentionTests) ... ok
+
+======================================================================
+FAIL: test_real_busy_is_unknown_then_release_recovers_current_readiness (test_diagnostic_contention.DiagnosticContentionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-diagnostic-reason/tests/test_diagnostic_contention.py", line 93, in test_real_busy_is_unknown_then_release_recovers_current_readiness
+    self.assertEqual(report["reason"], "diagnostic_timeout")
+AssertionError: 'shard_unavailable' != 'diagnostic_timeout'
+- shard_unavailable
++ diagnostic_timeout
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 2.026s
+
+FAILED (failures=1)
