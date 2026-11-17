@@ -89,8 +89,8 @@ Original CI and component files, source hashes, function-identity checks and
 the driver are under `evidence/reviews/readiness-d421-fixture/`. The driver
 requires a new output-stage directory and keeps all failed records. The final
 sampling-only stage has an owned observation watchdog and does not rerun the
-other already recorded controls. Standard test discovery sees the same1413
-suite count; no additional TestCase was imported into a module namespace.
+other already recorded controls. The two modules add no test methods or
+imported TestCase classes; the next full gate must verify its discovery count.
 
 All591 runtime/source assets under uta/tools/benchmarks/formal/scripts/config/
 deploy and packaging configuration compare byte-for-byte with d421. There is
