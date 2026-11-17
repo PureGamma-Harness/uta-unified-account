@@ -1,0 +1,20 @@
+{
+  "actual_transition_sha256": "8423116055adc885077ac920d0ca135dffeb8738197a059d61fe53c2ef1728e0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "scripts/probe_credit_transition_reference.py",
+    "/workspace/uta-credit-transition-reference/evidence/runs/credit-transition-independent/original-red.json"
+  ],
+  "cwd": "/workspace/uta-credit-transition-reference",
+  "elapsed_wall_seconds": 0.157425,
+  "oracle_sha256": "d6026a3b69d25634c82c109205e13799a03ac7950b899a5f136abcb8970aa2db",
+  "probe_sha256": "aa671dc81ae32b907e708dcb2434325e11f5222c90f7385c52eefb2d0ee0096e",
+  "returncode": 1,
+  "reviewed_source_commit": "23efd5f4121ea7509a544741d3e0a2fe98be50ea",
+  "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-credit-transition-reference/scripts/probe_credit_transition_reference.py\", line 238, in <module>\n    main(args.output.resolve(), args.expected_source_sha256, args.reviewed_commit)\n  File \"/workspace/uta-credit-transition-reference/scripts/probe_credit_transition_reference.py\", line 229, in main\n    assert not failures, \"independent pure transition contract failures retained in raw evidence\"\n           ^^^^^^^^^^^^\nAssertionError: independent pure transition contract failures retained in raw evidence\n",
+  "stdout": "{\"ordinary_cases\": 51, \"failed_safety_assertions\": [\"version_last_advancable_roundtrip\", \"forged_exact_descriptor_immutable_budget_changed\", \"forged_exact_expected_double_postings_unchanged_delta\", \"unknown_asset_transition_error_contract\"], \"elapsed_after_imports_seconds\": 0.017941}\n",
+  "timeout_seconds": 3
+}
