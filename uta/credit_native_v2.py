@@ -403,12 +403,30 @@ def assert_operation_context(credit, connection, *, command_id, account_id, asse
         raise CreditV2Error("credit_v2_context_invalid", "credit operation requires its exact financial transaction")
     if guard.state is None or guard.state.get("credit_format") != 2:
         raise CreditV2Error("credit_v2_not_active", "this authority has no internal credit v2 capability")
-    _assert_token(guard.database, guard.state, guard.database.writer_token)
+    try:
+        _assert_token(guard.database, guard.state, guard.database.writer_token)
+    except StorageError as error:
+        guard._deny(error)
+        raise
     context = getattr(guard, "credit_v2_operation", None)
+    if context is None:
+        try:
+            orphan = connection.execute("SELECT 1 FROM credit_v2_intents WHERE command_id=?", (command_id,)).fetchone()
+        except sqlite3.Error as cause:
+            error = CreditV2Error("credit_v2_context_invalid", "actual native intent inventory cannot be verified")
+            guard._deny(error)
+            raise error from cause
+        if orphan is not None:
+            error = CreditV2Error("credit_v2_context_invalid", "actual intent exists without its transaction operation context")
+            guard._deny(error)
+            raise error
+        raise CreditV2Error("credit_v2_scope_missing", "internal credit v2 requires its actual operation scope")
     if (type(context) is not _CreditOperation or context.guard is not guard or context.credit is not credit
             or context.process_id != os.getpid() or context.thread_id != get_ident()
             or context.generation != guard.state["generation"] or guard.denied is not None):
-        raise CreditV2Error("credit_v2_context_invalid", "no actual native operation is bound to this transaction")
+        error = CreditV2Error("credit_v2_context_invalid", "no actual native operation is bound to this transaction")
+        guard._deny(error)
+        raise error
     try:
         view = context.view
         if (type(view) is not CreditOperationView
@@ -441,5 +459,7 @@ def assert_operation_context(credit, connection, *, command_id, account_id, asse
                 original_source.actor_id, original_source.canonical_payload):
             raise ValueError("actual first source differs")
         return view
-    except (sqlite3.Error, TypeError, ValueError, AttributeError, IndexError, KeyError) as error:
-        raise CreditV2Error("credit_v2_context_invalid", "operation context does not match actual staged identity") from error
+    except (StorageError, sqlite3.Error, TypeError, ValueError, AttributeError, IndexError, KeyError) as cause:
+        error = CreditV2Error("credit_v2_context_invalid", "operation context does not match actual staged identity")
+        guard._deny(error)
+        raise error from cause
