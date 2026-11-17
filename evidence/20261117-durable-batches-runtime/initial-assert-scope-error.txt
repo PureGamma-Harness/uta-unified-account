@@ -1,0 +1,35 @@
+test_missing_capability_is_not_silently_installed (test_durable_batches.DurableBatchTests.test_missing_capability_is_not_silently_installed) ... ERROR
+
+======================================================================
+ERROR: test_missing_capability_is_not_silently_installed (test_durable_batches.DurableBatchTests.test_missing_capability_is_not_silently_installed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-durable-batch-runtime/uta/storage.py", line 202, in _role_transaction
+    yield connection
+  File "/workspace/uta-durable-batch-runtime/uta/storage.py", line 184, in _fence_transaction
+    yield connection
+  File "/workspace/uta-durable-batch-runtime/tests/test_durable_batches.py", line 198, in test_missing_capability_is_not_silently_installed
+    connection.execute("DROP TABLE writer_fence_batch_capability")
+sqlite3.DatabaseError: not authorized
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-durable-batch-runtime/tests/test_durable_batches.py", line 196, in test_missing_capability_is_not_silently_installed
+    with self.database._fence_transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/uta-durable-batch-runtime/uta/storage.py", line 183, in _fence_transaction
+    with self._role_transaction("control") as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/uta-durable-batch-runtime/uta/storage.py", line 215, in _role_transaction
+    raise guard.denied from exc
+uta.writer_fence.WriterFenceError: transaction role cannot write this protected authority object
+
+----------------------------------------------------------------------
+Ran 1 test in 0.072s
+
+FAILED (errors=1)

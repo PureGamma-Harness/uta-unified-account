@@ -172,6 +172,12 @@ class Database:
             yield connection
 
     @contextmanager
+    def _batch_metadata_transaction(self) -> Iterator[sqlite3.Connection]:
+        """Internal fenced append-only batch metadata; never financial DML."""
+        with self._role_transaction("batch_metadata") as connection:
+            yield connection
+
+    @contextmanager
     def _fence_transaction(self) -> Iterator[sqlite3.Connection]:
         """Internal lease control role; never grants financial write access."""
         with self._role_transaction("control") as connection:
