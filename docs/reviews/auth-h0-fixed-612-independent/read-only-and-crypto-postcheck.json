@@ -1,0 +1,42 @@
+{
+  "runtime_commit": "61258109e10f4ea4609e03010d5f25716b2c4256",
+  "finished_independent_databases_only": true,
+  "read_only_uri_query_only_authorizer_one_snapshot_each": true,
+  "exact_catalogue_equal": true,
+  "foreign_key_checks_empty": true,
+  "all_key_grant_revocation_rows_unchanged": true,
+  "all_original_acceptance_rows_unchanged": true,
+  "only_old_audit_row_delta": "one grant_created revision 2 -> 1",
+  "healthy_before_latest_profile_check_passed": true,
+  "new_stale_profile_mismatches": [
+    {
+      "event": "grant_created",
+      "audit_sequence": 3,
+      "expected_latest_preceding_profile_revision": 2,
+      "actual_control_revision": 1
+    }
+  ],
+  "before_table_counts": {
+    "auth_config": 1,
+    "auth_keys": 3,
+    "auth_nonces": 1,
+    "auth_audit": 6,
+    "auth_credit_grants": 3,
+    "auth_credit_grant_revocations": 0,
+    "auth_credit_acceptances": 1
+  },
+  "after_table_counts": {
+    "auth_config": 1,
+    "auth_keys": 3,
+    "auth_nonces": 3,
+    "auth_audit": 8,
+    "auth_credit_grants": 3,
+    "auth_credit_grant_revocations": 0,
+    "auth_credit_acceptances": 2
+  },
+  "independent_exact_private_request_mac_checks": 22,
+  "actual_key_nonce_signature_values_exported": false,
+  "author_original_historical_mac_verified": false,
+  "financial_scope": false,
+  "production_approved": false
+}

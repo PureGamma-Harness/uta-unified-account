@@ -1,0 +1,561 @@
+{
+  "document_kind": "credit-hmac-h0-normative-addendum-v1",
+  "status": "DESIGN_DRAFT_NO_RUNTIME_OR_SQL_AUTHORIZATION",
+  "base_plan_commit": "431225d01439cba1a4acce6529e35368eac391df",
+  "independent_required_refinement_commit": "6063268d4da26f8b8b229c421775a3f96bb3e303",
+  "refinement_branch_cherry_pick": "c3aa351",
+  "created_at": "2026-11-17T17:22:27.523422+00:00",
+  "original_plan_files_sha256_must_remain_unchanged": {
+    "docs/credit-v2-hmac-integration-plan.md": "b40bbdd8271ad5db8a84b1d6abd3b36b391de6db93660f97e60e4fb5620aa2cd",
+    "docs/contracts/credit-v2-hmac-bridge-v1.json": "b00d7c89786730ee7099061f45166f94043afd3d8126e66a107844ee659d93a4"
+  },
+  "normative_scope": "H0 only; this addendum overrides H0 ambiguity in immutable original v1, grants no H1-H4 execution approval",
+  "overrides": [
+    {
+      "original_location": "HC-04 wording valid-auth nonce may be consumed and HC-07",
+      "normative_replacement": "fixed nonce_policy table; after core success every business/role/grant/conflict rejection consumes nonce with actual denial audit in same COMMIT or returns503 UNKNOWN"
+    },
+    {
+      "original_location": "same-CID retry receipt / proposed_auth_receipt_fields",
+      "normative_replacement": "immutable first acceptance forever; any later transport produces only current-authorized passive query receipt; never grants source/financial execution"
+    },
+    {
+      "original_location": "unknown_protocol original financial CID query",
+      "normative_replacement": "H0 implements only actual signed AuthDB original-CID lookup with current credit.read; no financial source/status API exists"
+    },
+    {
+      "original_location": "phase H0 schema unspecified",
+      "normative_replacement": "fresh AuthDB format2 exact MAIN schema in separate DDL text, old format1 unchanged/no upgrade and actual old-reader refusal required"
+    },
+    {
+      "original_location": "quotas/epoch grant retention unspecified",
+      "normative_replacement": "explicit immutable capacities and reserved query/control budget; no accepted/grant/audit pruning, permanent tombstones and same-transaction revision"
+    },
+    {
+      "original_location": "future HMAC_CREDIT3/revocation_ordering/T_E_AUTH",
+      "normative_replacement": "none exists in H0; only same-AuthDB acceptance/grant serializability is in scope"
+    }
+  ],
+  "current_authorization": {
+    "documentation": true,
+    "pure_json_ast_git_hash_validation": true,
+    "runtime_code": false,
+    "sql_parse_or_execution": false,
+    "database_open": false,
+    "product_import": false,
+    "tls_or_listener": false,
+    "financial_source_or_pending": false,
+    "native_or_financial_execution": false,
+    "whole_qa_package_benchmark": false,
+    "push": false,
+    "change_frozen_909": false
+  },
+  "formats": {
+    "legacy_auth_database": 1,
+    "fresh_h0_auth_database": 2,
+    "h0_observation_wire": "credit-auth-observation-v1",
+    "h0_financial_format": null,
+    "future_financial_hmac3": "NOT_IMPLEMENTED_NOT_AUTHORIZED"
+  },
+  "api": [
+    {
+      "symbol": "CreditNonceStoreV2.initialize(path, *, tenant_id, producer_binding, domain_id, domain_epoch=1, account_id, limits)",
+      "caller": "explicit trusted offline initializer",
+      "behavior": "fresh exclusive private file only; compiled MAIN schema format2 and unique authority/audience; no migration/repair/copy/financial objects",
+      "return": "existing exact CreditNonceStoreV2 after verification"
+    },
+    {
+      "symbol": "CreditHmacIngressV2(auth_database, profile_path, *, tenant_id, producer_binding, domain_id, domain_epoch, account_id, enabled=False, max_handles=256, query_handle_reserve=32)",
+      "caller": "trusted local factory",
+      "behavior": "enabled is not literal True rejects501 before opening files; opens actual existing V2 authority and private real profile loader; no caller principal/authenticator/verifier callback accepted",
+      "return": "issuer bound to PID, random boot and registry; no listener or financial authority"
+    },
+    {
+      "symbol": "issuer.capture(headers, *, method, request_target, body)",
+      "caller": "local HMAC request adapter; no HTTP listener in H0",
+      "behavior": "real shared MAC verification once; one real AuthDB nonce transaction; exact POST /v2/accounts/{account}/borrow or /repay; strict body command_id/asset/amount",
+      "return": "new CID auth_first_observation or existing same CID auth_query_only after actual COMMIT return; never financial/source-delivery handle"
+    },
+    {
+      "symbol": "issuer.lookup(headers, *, method, request_target, body=b'')",
+      "caller": "current authorized HMAC requester",
+      "behavior": "real shared MAC once; exact GET /v2/accounts/{account}/credit/commands/{cid}, no query and empty body; actual current reader/funding plus credit.read; one nonce+query audit transaction",
+      "return": "auth_query_only; found is only AuthDB first acceptance presence, never financial absence or terminal"
+    },
+    {
+      "symbol": "issuer.inspect(handle)",
+      "caller": "same issuer/PID/current Thread object",
+      "behavior": "exact registered opaque observation; no JSON/copy/fork/thread/restart reconstruction; export immutable evidence only, no DB lookup or permission renewal",
+      "return": "MappingProxyType passive record with three authorization booleans false"
+    },
+    {
+      "symbol": "issuer.release(handle)",
+      "caller": "same issuer/PID/current Thread object",
+      "behavior": "forgets local handle only; first acceptance and permanent business reservation are untouched",
+      "return": "None"
+    },
+    {
+      "symbol": "issuer.replace_profile(profile_path)",
+      "caller": "trusted local operator only",
+      "behavior": "real private loader; fixed profile RLock then same AuthDB BEGIN IMMEDIATE; actual monotonic profile registration/permanent key revocation; no automatic grant",
+      "return": "normal only after actual COMMIT return; unknown remains unknown"
+    },
+    {
+      "symbol": "store.put_grant(grant_id, *, key_id, account_id, asset, operation, expected_grant_revision)",
+      "caller": "trusted offline exact-control surface, no network role bypass",
+      "behavior": "under same AuthDB BEGIN IMMEDIATE verifies active stored key/role/account, CAS revision, no active duplicate; immutable ID/epoch and actual audit; duplicate identical ID returns original only, changed identity409",
+      "return": "auth-only immutable grant observation; grant epoch sampled/generated under lock"
+    },
+    {
+      "symbol": "store.revoke_grant(grant_id, *, expected_grant_revision)",
+      "caller": "trusted offline exact-control surface",
+      "behavior": "same AuthDB transaction; append permanent revocation tombstone and actual audit+revision; already revoked returns original tombstone, never unrevokes",
+      "return": "known only after actual COMMIT; no cross-financial revocation guarantee"
+    },
+    {
+      "symbol": "RequestAuthenticator.authenticate(headers, *, method, request_target, body)",
+      "caller": "existing format1 callers",
+      "behavior": "same public signature/return Credential and original format1 nonce semantics; one shared private MAC/header and nonce core; V2 ingress is not a NonceStore subclass accepted by legacy factory",
+      "return": "Credential unchanged"
+    }
+  ],
+  "nonce_policy": [
+    {
+      "case": "disabled, wrong issuer PID/thread, unavailable local handle slot",
+      "new_nonce_committed": false,
+      "denial_audit_committed": false,
+      "result": "501 disabled or typed local403/503; no authority opened or accepted receipt fabricated"
+    },
+    {
+      "case": "invalid or duplicate auth headers, invalid canonical request, wrong MAC/key/tenant/audience",
+      "new_nonce_committed": false,
+      "denial_audit_committed": false,
+      "result": "401 signature_required/invalid_signature; no AuthDB mutation"
+    },
+    {
+      "case": "AuthDB missing, private identity/schema/format mismatch, DB/clock acquisition failure",
+      "new_nonce_committed": false,
+      "denial_audit_committed": false,
+      "result": "503 UNKNOWN; no success handle; original acceptance may require authorized lookup"
+    },
+    {
+      "case": "clock regression after trusted clock sample",
+      "new_nonce_committed": false,
+      "denial_audit_committed": "only if one available audit slot and actual COMMIT returns; otherwise false/unknown",
+      "result": "503 UNKNOWN; retain durable highwater; no success handle"
+    },
+    {
+      "case": "inactive/revoked/mismatched key identity or key validity/request timestamp refusal",
+      "new_nonce_committed": false,
+      "denial_audit_committed": "true only after actual audit COMMIT return; inability becomes503 UNKNOWN",
+      "result": "401 typed key/time refusal after known audit COMMIT, otherwise503 UNKNOWN"
+    },
+    {
+      "case": "duplicate nonce within replay window",
+      "new_nonce_committed": false,
+      "denial_audit_committed": "true only after actual audit COMMIT return; inability becomes503 UNKNOWN",
+      "result": "409 request_replayed; no replacement acceptance"
+    },
+    {
+      "case": "active nonce quota reached for effective request class",
+      "new_nonce_committed": false,
+      "denial_audit_committed": "true only after actual audit COMMIT return; inability becomes503 UNKNOWN",
+      "result": "503 signing_capacity_exhausted; no nonce or acceptance eviction"
+    },
+    {
+      "case": "core checks pass; malformed business JSON/path/amount, role/account/exact-grant refusal, or same-CID kind/payload conflict",
+      "new_nonce_committed": true,
+      "denial_audit_committed": true,
+      "atomic_with": "same BEGIN IMMEDIATE COMMIT",
+      "result": "400/403/409 only after actual COMMIT return; no acceptance/reservation inserted"
+    },
+    {
+      "case": "core checks pass; new CID but acceptance reservation capacity reached",
+      "new_nonce_committed": true,
+      "denial_audit_committed": true,
+      "atomic_with": "same BEGIN IMMEDIATE COMMIT",
+      "result": "503 credit_auth_reservation_capacity after known COMMIT; existing first acceptance never evicted"
+    },
+    {
+      "case": "audit capacity/append failure/COMMIT failure or reply loss at any mutating stage",
+      "new_nonce_committed": "UNKNOWN; no success assumed from exception",
+      "denial_audit_committed": "UNKNOWN; no committed403/409 claim",
+      "result": "503 UNKNOWN; no success handle; new-nonce current credit.read lookup of original AuthDB CID"
+    },
+    {
+      "case": "new CID permitted and accepted",
+      "new_nonce_committed": true,
+      "denial_audit_committed": false,
+      "acceptance_and_audit_committed": true,
+      "result": "one first auth observation handle only after actual successful COMMIT return; financial/source delivery authorization false"
+    },
+    {
+      "case": "existing same business CID or explicit authorized lookup",
+      "new_nonce_committed": true,
+      "denial_audit_committed": false,
+      "query_audit_committed": true,
+      "result": "auth_query_only handle pointing to immutable original first acceptance, or found=false for AuthDB-only lookup miss; no execution handle"
+    }
+  ],
+  "acceptance_identity": {
+    "business_key": [
+      "domain_id",
+      "tenant_namespace",
+      "account_id",
+      "business_CID"
+    ],
+    "excluded_key_dimensions": [
+      "kind",
+      "payload_hash",
+      "epoch",
+      "physical_authority",
+      "transport_nonce",
+      "key_id",
+      "grant_id"
+    ],
+    "reservation_is_same_row_as_first_acceptance": true,
+    "first_row_update_delete_replace": false,
+    "new_nonce_same_cid": "query-only original reference, current exact credit.read mandatory in addition to capture operation grant for POST retry",
+    "new_nonce_changed_kind_or_payload": "409 after active requested operation authorization and actual nonce+denial audit COMMIT",
+    "first_acceptance_may_be_rebound_after_grant_revocation": false,
+    "source_delivery_or_execution_handle_ever_issued_by_h0": false
+  },
+  "observation_fields": {
+    "first": [
+      "format",
+      "receipt_kind",
+      "auth_authority_id",
+      "domain_id",
+      "domain_epoch",
+      "tenant_id",
+      "audience",
+      "producer_binding",
+      "account_id",
+      "command_id",
+      "kind",
+      "command_payload",
+      "payload_hash",
+      "key_id",
+      "key_identity",
+      "grant_id",
+      "grant_epoch",
+      "profile_revision",
+      "grant_revision",
+      "auth_audit_sequence",
+      "request_hash",
+      "body_hash",
+      "nonce_hash",
+      "request_ms",
+      "auth_checked_server_ms",
+      "financial_authorized",
+      "source_delivery_authorized",
+      "execution_authorized"
+    ],
+    "query": [
+      "format",
+      "receipt_kind",
+      "auth_authority_id",
+      "domain_id",
+      "domain_epoch",
+      "tenant_id",
+      "account_id",
+      "command_id",
+      "found",
+      "first_acceptance_id",
+      "first_acceptance_payload_or_null",
+      "query_audit_sequence",
+      "queried_by_key_id",
+      "query_grant_id",
+      "auth_checked_server_ms",
+      "financial_authorized",
+      "source_delivery_authorized",
+      "execution_authorized"
+    ],
+    "all_authorization_booleans_literal_false": [
+      "financial_authorized",
+      "source_delivery_authorized",
+      "execution_authorized"
+    ],
+    "first_receipt_kind": "auth_first_observation",
+    "query_receipt_kind": "auth_query_only",
+    "all_handles_local_pid_boot_current_thread_object_registry_bound": true,
+    "physical_commit_at": "not present; no physical COMMIT clock invented"
+  },
+  "permissions": {
+    "new_borrow": "funding + exact current BTC credit.borrow",
+    "new_repay": "funding + exact current BTC credit.repay, auth observation only",
+    "lookup": "reader or funding + exact current BTC credit.read, same declared account",
+    "retry_post": "same capture-operation authorization plus current credit.read, query-only",
+    "admin_risk_trader_implicit_permission": false,
+    "unchanged_key_invalidated_by_unrelated_profile_revision": false,
+    "grant_or_key_revocation_tombstone_permanent": true
+  },
+  "capacities": {
+    "defaults": {
+      "max_acceptances": 256,
+      "max_grants": 64,
+      "max_nonces": 2048,
+      "query_nonce_reserve": 128,
+      "max_audit": 8192,
+      "query_audit_reserve": 512,
+      "control_audit_reserve": 64,
+      "max_handles": 256,
+      "query_handle_reserve": 32,
+      "maximum_signed_body_bytes": 65536,
+      "past_window_ms": 30000,
+      "future_skew_ms": 5000,
+      "maximum_profile_bytes": 65536,
+      "maximum_profile_keys": 256
+    },
+    "ordinary_nonce_limit": 1920,
+    "eligible_query_nonce_limit": 2048,
+    "ordinary_audit_limit": 7616,
+    "eligible_query_audit_limit": 8128,
+    "trusted_control_audit_limit": 8192,
+    "ordinary_handle_limit": 224,
+    "eligible_query_handle_limit": 256,
+    "acceptance_count_is_total_retained_distinct_business_keys": true,
+    "existing_cid_and_query_increment_acceptance_count": false,
+    "grants_and_audit_retained_permanently": true,
+    "nonce_prune_condition": "expires_ms < committed/transactional highwater; equality retained",
+    "query_reserve_eligibility": "only syntactically exact AuthDB lookup or same-business POST retry after actual current same-account credit.read and active key validation",
+    "audit_capacity_inability": "rollback;503 UNKNOWN; no assertion that nonce or403/409 denial was committed",
+    "capacity_increase_or_archival_not_implemented": true,
+    "eviction_or_ttl_reset_of_accepted_unknown_identity": false
+  },
+  "lock_and_single_core": {
+    "mac_header_core": "one private implementation in request_signing shared by old authenticate and new ingress; real key loader/MAC only",
+    "nonce_time_core": "one private on-held-connection implementation for highwater/prune/key/time/replay/count/insert; old/new wrappers append exact version audit and outcome",
+    "no_caller_supplied_principal_authenticator_sql_callback": true,
+    "profile_lock_order": "copy/release immutable profile snapshot before AuthDB or profile RLock -> AuthDB; never AuthDB -> profile RLock",
+    "grant_mutation_and_acceptance": "same AuthDB BEGIN IMMEDIATE",
+    "issuer_registry_lock": "reserve bounded slot briefly and release before authentication/DB; after commit fill reserved slot; no DB-held path reacquires profile lock",
+    "key_grant_epoch_audit_from_actual_locked_rows": true,
+    "h0_proves_cross_database_barrier": false
+  },
+  "schema": {
+    "draft_file": "credit-hmac-h0-schema-v2.sql.txt",
+    "draft_sha256": "c9c468407ed06e3873548e91407b34746936740cfd46e3d41c478132285b1988",
+    "sqlite_syntax_or_execution_tested": false,
+    "tables": [
+      "auth_config",
+      "auth_keys",
+      "auth_nonces",
+      "auth_audit",
+      "auth_credit_grants",
+      "auth_credit_grant_revocations",
+      "auth_credit_acceptances"
+    ],
+    "fresh_only": true,
+    "existing_format1_upgrade_or_repair": false,
+    "all_schema_lookup_and_data_reads_use_main": true,
+    "required_checks": [
+      "exact compiled MAIN table/index/trigger DDL and full inventory",
+      "table_xinfo full column types/nullability/PK/default/hidden columns",
+      "foreign_key_list and main foreign_key_check",
+      "all declared unique identity no-replace guards",
+      "private service-owner regular file/canonical path/auth authority/tenant/audience/producer/domain/account",
+      "foreign_keys ON and normal WAL/FULL assumptions"
+    ],
+    "old_reader_prewrite_failure": "format2 changes base auth_config/auth_keys/auth_audit columns and format; unchanged legacy NonceStore._config fails before configure/consume first UPDATE/INSERT; real negative controls required",
+    "copy_or_path_move_supported": false,
+    "draft_is_nonexecuted_documentation_text": true,
+    "manifest_compatibility": ".txt is included by the existing docs manifest; no manifest/runtime change proposed in this design"
+  },
+  "future_diff_touchpoints": [
+    {
+      "path": "uta/request_signing.py",
+      "change": "extract shared private real MAC/header and on-connection nonce core; retain existing format1 public signatures and outcomes; no financial APIs"
+    },
+    {
+      "path": "uta/credit_auth_h0.py (new)",
+      "change": "fresh exact format2 initializer/store/grants/audit/acceptance/lookup/opaque auth-only issuer; imports install nothing; no HTTP/financial/native"
+    },
+    {
+      "path": "tests/test_credit_auth_h0.py (new)",
+      "change": "actual fresh private AuthDB cases only; all tests NOT_RUN in this design"
+    },
+    {
+      "path": "tests/test_request_signing.py and tests/test_credit_hmac_source.py",
+      "change": "old behavior positive/negative regression; PR18 original remains candidate-only"
+    },
+    {
+      "path": "financial/runtime/listener/READY files",
+      "change": "NONE authorized in H0"
+    }
+  ],
+  "planned_h0_cases": [
+    {
+      "id": "H0-I01",
+      "case": "legacy format1 authenticate positive and return contract after shared-core refactor",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "run real fresh format1 positive before/after shared-core refactor; compare authenticate signature and actual Credential return",
+        "real MAC/body/nonce/time/rotation negatives retain old decisions; no fake principal or callback verifier"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I02",
+      "case": "disabled ingress produces no database/marker/schema; existing missing/corrupt/unknown format never auto-created",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "literal enabled=False with missing paths must touch neither profile nor DB",
+        "unknown/corrupt/missing/moved V2 read/capture refuses without CREATE IF NOT EXISTS/repair"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I03",
+      "case": "new exact format reopen; old reader refusal; altered FK/PK/CHECK/triggers with same table/column names refuse",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "actual fresh V2 install/reopen; old unchanged format1 constructor refuses it before configuration",
+        "explicit temp-only already-live format1 object confronted with newly created V2 at original test path must refuse configure/consume before writes; retain original v1 fixture bytes",
+        "same-names/columns bad PK/FK/CHECK/no-replace guards or main corruption with better TEMP rejects"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I04",
+      "case": "same-auth-transaction role/grant/input rejection consumes nonce plus denial; repeated nonce gives replay rather than replacement acceptance",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "actual valid-MAC malformed JSON, role/admin, scope/grant and changed CID denials",
+        "reopen to prove nonce+one denial audit same COMMIT, no acceptance; repeated original nonce replay",
+        "audit failure/rollback/lost response returns503 UNKNOWN, not claimed committed403"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I05",
+      "case": "auth COMMIT response loss, issuer restart, current credit.read original-CID lookup, immutable first acceptance and no successful execution handle",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "wrap actual T_A return after COMMIT and lose reply; no returned handle",
+        "new issuer/current real credit.read signed nonce lookup returns original auth-only first acceptance; other key cannot replace original grant"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I06",
+      "case": "same CID different kind/payload conflicts; canonical equivalent amount refers to same payload; request hash remains exact raw signed bytes",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "canonical-equivalent amounts refer to identical business payload but distinct exact raw request hashes",
+        "same stable key with changed kind or payload gives409 and preserves first bytes; key excludes epoch/kind/hash"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I07",
+      "case": "original grant revoked; retry under a different active key/epoch cannot rebind original identity; current read and independent repay are separate grants",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "revoke original grant and/or key, grant a different active key/epoch",
+        "current credit.read sees original passive bytes; retry cannot rebind first key/grant/epoch or mint execution handle",
+        "credit.repay grant is separate from original borrow grant; H0 observes auth only"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I08",
+      "case": "real competing profile/grant update and accept; receipt sequence/revision/epoch matches committed locked state",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "two actual connections/processes coordinate real BEGIN IMMEDIATE acceptance vs profile/grant mutation",
+        "receipt audit sequence/profile revision/grant epoch match actually committed locked rows",
+        "unrelated profile revision retains unchanged identity; permanent key/grant revocation cannot reverse"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I09",
+      "case": "nonce expiry prunes only expired nonces strictly older than highwater, never original acceptance/reservation",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "nonce boundary expires_ms==highwater retained; strictly older nonce may prune",
+        "accepted first-CID rows/grants/audit remain exact across nonce expiry/reopen/capacity pressure"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I10",
+      "case": "reservation capacity, nonce capacity, audit inability and query under pressure all yield documented typed result without eviction or fake successful audit",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "small configured capacities exercise normal/query/control thresholds and no unsafe eviction",
+        "full acceptance quota refuses new CID; existing retry/read does not allocate second acceptance",
+        "query reserve requires current exact credit.read; audit-capacity inability returns503 UNKNOWN and no false persisted denial"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I11",
+      "case": "unknown commit, rollback and private path/identity failure never issue a success handle; first raw outcome retained",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "real post-COMMIT reply loss versus actual rollback handled separately, first outcomes retained",
+        "private file/canonical authority/schema/clock errors never produce handle; query reconciles original AuthDB only"
+      ],
+      "phase_go_required": true
+    },
+    {
+      "id": "H0-I12",
+      "case": "cross issuer/account/tenant, forged/copy/JSON/thread/fork/restart handle denied before any future producer capability",
+      "execution_status": "NOT_RUN",
+      "required_steps": [
+        "actual same-class forged/copy/JSON/other issuer/thread/fork/restart receipts deny before inspection or any future source grant",
+        "PID checked before inherited lock; release frees only registry slot; every exported authorization boolean remainsfalse"
+      ],
+      "phase_go_required": true
+    }
+  ],
+  "proposed_actual_component_bounds": {
+    "status": "AWAIT_ROOT_CONCRETE_GO",
+    "code_base": "final909 source SHA supplied by root; separate sparse runtime/tests branch, never edit freeze",
+    "source_data": "fresh private synthetic AuthDB and fresh random keyfiles only",
+    "cpu": "root-assigned3 or4",
+    "batch_wall_limit_seconds": 30,
+    "runtimes": "one target batch per root-approved Python; do not infer complete matrix",
+    "no_network": true,
+    "no_financial_db": true,
+    "no_fixture_fake_authenticator_or_grant": true,
+    "actual_fault_injection": "call-through wrapper loses real transaction response only after original COMMIT, no fabricated success",
+    "per_batch_record": [
+      "exact commit and dirty/source status",
+      "command/cwd",
+      "actual runtime/SQLite/affinity",
+      "actual UTC and monotonic outer interval",
+      "exit/original stdoutstderr",
+      "before-after source hash",
+      "typed failure/UNKNOWN kept without rerun-to-green"
+    ]
+  },
+  "validation": {
+    "schema_runtime_acceptance": false,
+    "all_12_additional_cases": "NOT_RUN",
+    "original_30_cases": "unchanged NOT_RUN",
+    "no_product_import_or_sql": true,
+    "pure_design_check": {
+      "checked_at": "2026-11-17T17:27:25.970449+00:00",
+      "checker_scope": "JSON/Git/hash/regular-expression text checks only; no SQL parser or execution",
+      "original_plan_files_unchanged": true,
+      "h0_cases": 12,
+      "h0_cases_run": 0,
+      "ddl_object_name_count": 34,
+      "ddl_object_names_unique": true,
+      "ddl_main_tables": [
+        "auth_config",
+        "auth_keys",
+        "auth_nonces",
+        "auth_audit",
+        "auth_credit_grants",
+        "auth_credit_grant_revocations",
+        "auth_credit_acceptances"
+      ],
+      "schema_runtime_acceptance": false,
+      "product_import_or_db_open": false
+    }
+  }
+}

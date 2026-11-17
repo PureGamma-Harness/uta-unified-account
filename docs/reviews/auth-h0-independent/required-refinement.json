@@ -1,0 +1,113 @@
+{
+  "review_kind": "INDEPENDENT_H0_DESIGN_REFINEMENT_ONLY",
+  "reviewed_plan_commit": "431225d01439cba1a4acce6529e35368eac391df",
+  "recommendation": "ROOT_MAY_CONSIDER_NARROW_H0_IMPLEMENTATION_ONLY_AFTER_NORMATIVE_ADDENDUM",
+  "dynamic_acceptance": false,
+  "implementation_execution_authorized": false,
+  "production_approved": false,
+  "mandatory_rules": [
+    {
+      "id": "H0-R1",
+      "rule": "Use one private shared MAC/header/time verification core and one actual fresh-AuthDB nonce transaction. Legacy authenticate still returns Credential and preserves format1 behavior. No principal/SQL callback supplied by a client."
+    },
+    {
+      "id": "H0-R2",
+      "rule": "A valid MAC after active key/time/nonce checks consumes its fresh nonce with denial audit for bad business JSON, role/grant/scope refusal or logical-CID conflict. Invalid MAC/headers do not consume; inactive key/time/replay/nonce quota refusal does not consume a new nonce. Clock/store/audit inability yields 503 UNKNOWN and no success handle."
+    },
+    {
+      "id": "H0-R3",
+      "rule": "Fresh recognized auth format only, exact MAIN schema and constraints/foreign keys/immutable guards. Persist key identity-bound nonsecret role/account/validity and immutable grant identities/epochs. Old format1 authorities are not upgraded or repaired; old format1 behavior remains positive and old reader refuses new format."
+    },
+    {
+      "id": "H0-R4",
+      "rule": "Actual accepted audit sequence, profile revision, grant identity/epoch and authority are read/written in the same BEGIN IMMEDIATE transaction as nonce, accepted receipt and immutable business reservation. Receipt is issued only after actual successful COMMIT return; recorded check time is not physical COMMIT time."
+    },
+    {
+      "id": "H0-R5",
+      "rule": "The logical business key excludes kind, payload hash and epoch. First acceptance/credential/grant binding never changes. A new nonce with same business content may obtain only an explicitly passive/query receipt pointing to original acceptance; it never mints a replacement execution capability. Changed kind/payload is 409. New grant cannot revive a revoked original CID."
+    },
+    {
+      "id": "H0-R6",
+      "rule": "H0 must provide a current-authorized AuthDB original-CID lookup for reply loss, requiring effective same-account credit.read permission. Foreign/revoked/forked/thread-moved/copied/JSON handles deny. Exported evidence cannot be imported as authority. All H0 handles are financial_authorized=false; no financial source, inbox, dispatch or listener exists."
+    },
+    {
+      "id": "H0-R7",
+      "rule": "Nonce expiry cannot delete accepted receipts or unresolved business reservations. Exact capacities and rejection precedence are explicit. New CID at reservation capacity fails closed; an existing reservation is never evicted or counted twice. No claim of committed denial audit when storage or audit capacity prevents that commit."
+    },
+    {
+      "id": "H0-R8",
+      "rule": "Profile/grant change and acceptance serialize through the same AuthDB transaction. Never acquire authenticator RLock from a held AuthDB connection or reauthenticate during a financial phase. Unrelated profile revision does not revoke unchanged identity; revocation tombstones remain permanent. H0 proves no cross-DB execution barrier."
+    }
+  ],
+  "proposed_api_boundaries": [
+    "explicit fresh auth authority initializer; disabled ingress constructor does not create a DB",
+    "private authenticated-request core reused by existing authenticate and new ingress, not a second MAC/nonce implementation",
+    "accept exact immutable headers/method/target/body -> opaque local auth-only receipt after commit",
+    "inspect local auth-only handle -> passive immutable evidence; no import-from-JSON route",
+    "lookup original auth business CID under fresh signed current credit.read authorization; one nonce transaction",
+    "trusted offline exact grant/profile mutation with durable audit; no public admin bypass or new management listener"
+  ],
+  "additional_h0_cases_not_run": [
+    {
+      "id": "H0-I01",
+      "case": "legacy format1 authenticate positive and return contract after shared-core refactor",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I02",
+      "case": "disabled ingress produces no database/marker/schema; existing missing/corrupt/unknown format never auto-created",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I03",
+      "case": "new exact format reopen; old reader refusal; altered FK/PK/CHECK/triggers with same table/column names refuse",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I04",
+      "case": "same-auth-transaction role/grant/input rejection consumes nonce plus denial; repeated nonce gives replay rather than replacement acceptance",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I05",
+      "case": "auth COMMIT response loss, issuer restart, current credit.read original-CID lookup, immutable first acceptance and no successful execution handle",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I06",
+      "case": "same CID different kind/payload conflicts; canonical equivalent amount refers to same payload; request hash remains exact raw signed bytes",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I07",
+      "case": "original grant revoked; retry under a different active key/epoch cannot rebind original identity; current read and independent repay are separate grants",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I08",
+      "case": "real competing profile/grant update and accept; receipt sequence/revision/epoch matches committed locked state",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I09",
+      "case": "nonce expiry prunes only expired nonces strictly older than highwater, never original acceptance/reservation",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I10",
+      "case": "reservation capacity, nonce capacity, audit inability and query under pressure all yield documented typed result without eviction or fake successful audit",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I11",
+      "case": "unknown commit, rollback and private path/identity failure never issue a success handle; first raw outcome retained",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "id": "H0-I12",
+      "case": "cross issuer/account/tenant, forged/copy/JSON/thread/fork/restart handle denied before any future producer capability",
+      "execution_status": "NOT_RUN"
+    }
+  ],
+  "validation_scope": "All cases above remain NOT_RUN; pure Git/AST/model checks are not dynamic test evidence."
+}

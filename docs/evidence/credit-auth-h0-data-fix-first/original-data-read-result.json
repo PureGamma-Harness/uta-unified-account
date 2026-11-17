@@ -1,0 +1,37 @@
+{
+  "source_runtime_commit": "61258109e10f4ea4609e03010d5f25716b2c4256",
+  "records": [
+    {
+      "case": "original-grant-red",
+      "constructor_refused": true,
+      "typed_error_code": "credit_auth_outcome_unknown",
+      "reason": "GRANT_PAYLOAD_COLUMNS",
+      "db_main_sha256_before": "2122c053df1923c0ff7577ab42cecfae92ad87e4fb948e3c9fe7d316bad653a6",
+      "db_main_sha256_after": "2122c053df1923c0ff7577ab42cecfae92ad87e4fb948e3c9fe7d316bad653a6",
+      "db_main_bytes_unchanged": true,
+      "expected_behavior_observed": true
+    },
+    {
+      "case": "original-revocation-red",
+      "constructor_refused": true,
+      "typed_error_code": "credit_auth_outcome_unknown",
+      "reason": "REVOCATION_PAYLOAD_COLUMNS",
+      "db_main_sha256_before": "8fc1c2f65a1166f71be2051270d4e6e0f8c85002a02bde677751162fbcb10283",
+      "db_main_sha256_after": "8fc1c2f65a1166f71be2051270d4e6e0f8c85002a02bde677751162fbcb10283",
+      "db_main_bytes_unchanged": true,
+      "expected_behavior_observed": true
+    },
+    {
+      "case": "original-072-healthy",
+      "constructor_refused": false,
+      "typed_error_code": null,
+      "reason": null,
+      "db_main_sha256_before": "7ceb5672dd7acfd69354116401285deccd4ee08c921cb848521834acdd1a4d23",
+      "db_main_sha256_after": "7ceb5672dd7acfd69354116401285deccd4ee08c921cb848521834acdd1a4d23",
+      "db_main_bytes_unchanged": true,
+      "expected_behavior_observed": true
+    }
+  ],
+  "all_expected": true,
+  "scope": "read-only actual H0 constructor/config; no HMAC query, repair, data mutation or financial access"
+}

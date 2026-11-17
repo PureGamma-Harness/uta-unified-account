@@ -1,0 +1,25 @@
+{
+  "decision": "ACCEPT_SCOPED_H0_AUTH_DATA_INTEGRITY_FIXES_AT_5750_ONLY",
+  "source_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "original_faults_closed_by_equivalent_fresh_cases": [
+    "grant descriptor payload equality",
+    "revocation descriptor payload equality",
+    "latest-preceding grant profile association"
+  ],
+  "new_fixed_source_only_case": "latest-preceding revocation profile association refuses corruption; no claim old612 was dynamically tested for this variant",
+  "independent_cases": 8,
+  "all_passed": true,
+  "runtime_unchanged": true,
+  "full_h0_accepted": false,
+  "production_approved": false,
+  "financial_or_source_delivery_authorized": false,
+  "unverified": [
+    "exhaustive old format1 API/differential regression",
+    "all author original databases and historic MAC inputs",
+    "profile-replace race",
+    "full H0 quota/handle/fork/unknown matrix",
+    "repository fullQA CI package and installed behavior",
+    "TLS public routes H1-H4 financial execution",
+    "HA antirollback capacity and real-funds readiness"
+  ]
+}

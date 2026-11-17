@@ -1,0 +1,95 @@
+{
+  "P2_harness_sha256": "f2ecd948ab3b5b261282dfa1650beac60c1c610da6783c65669cd79ef133b1e1",
+  "P3_as_of_P2_seal": "NOT_RUN",
+  "actual_first32_prefix": {
+    "actual_accepted_and_retained": 32,
+    "actual_elapsed_seconds": 0.180794612,
+    "budget_seconds": 25,
+    "conservative_projected_seconds": 13.119595064578125,
+    "discarded_warmup": false,
+    "planned_invocations": 262,
+    "prefix_is_part_of_fixed224_target": true,
+    "projection_is_not_measured_final_duration": true
+  },
+  "affinity": [
+    4
+  ],
+  "all_retained_own_thread_handles_released": true,
+  "as_of": "P2sealed_before_P3_execution",
+  "completed_at": "2026-11-17T20:56:02.032976+00:00",
+  "completed_steps": [
+    "retain224_ordinary_actual_default_handles",
+    "ordinary225th_refused_without_acceptance",
+    "valid_mac_without_read_grant_cannot_use_query_reserve",
+    "32_current_read_queries_reach_total256_preserving_first_identity",
+    "query33rd_refused_at_total256",
+    "ordinary_still_refused_at_total255_and224",
+    "normal_readmitted_only_below_total224_not_independent_class_counters"
+  ],
+  "completion_record_serialization_follows_clock": true,
+  "decision": "ACCEPT_P2_DEFAULT_RETAINED_HANDLE_THRESHOLDS_ONLY",
+  "financial_authorized": false,
+  "original_private_artifact_hashes": {
+    "cases/actual-prefix32.json": "b829c9c19f98a5801b2e2fd5093f5cd17864085d30f3dabb156adea06456a043",
+    "completion.json": "8ab44185fa84c46376b1aa400cc74d0db28db171246bef34316fec7dbcc25a0c",
+    "launch-intent.json": "090d370dcd1fadde9f0761c7befaa8c7391d3e63f4901bdafe5133e71f9ceaf4",
+    "probe-actual-Popen.json": "ca50d09c257ea0826cd07d22c5d59235608eb32ef508a65ecfc1db85637be2f8",
+    "probe-result.json": "c6d64f246a1b84d01fcc22137570de121f7075ba3e89fa86b0ecf69be9312479",
+    "start-record.json": "b2aae8d0c36f21a83a7dbb5b93d7c248ea81eebff0a57442e8f68090b3238a7a",
+    "supervisor-owner.json": "75d9f3faaa2e6398c0de089685510e77ec36f7990bad737e9a38fd6a22d364cf",
+    "supervisor-result.json": "2a65d0d747e9e8f75308fcbe8cd4a97827c72c8167c1bb110d54ad6566b179f9"
+  },
+  "outer_elapsed_ns_after_raw_and_result_fsync": 1856552275,
+  "planning_private_budget_bytes": 33554432,
+  "primary_control_error": null,
+  "private_data_bytes_observed": 976704,
+  "private_stream_metadata_hashes_only": {
+    "private-probe-stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private-probe-stdout.txt": {
+      "bytes": 1416,
+      "sha256": "4046eec4ed130aaea22755e04d49e80520d7f8385db77e882e5e71ae446203f2"
+    }
+  },
+  "probe_elapsed_ns_before_result_write": 1388966848,
+  "production_approved": false,
+  "progress": {
+    "actual_invocations": 262,
+    "expected_refusals": 5,
+    "ordinary_accepted": 224,
+    "planned_invocations": 262,
+    "query_accepted": 32
+  },
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "raw_hashes_final_only_if_subject_reaped": true,
+  "runtime_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "source_and_harness_unchanged": true,
+  "source_commit": "912f2a4e5ed74f7a3fbf892ff0172e4eacc9c45a",
+  "sqlite": "3.53.1",
+  "subject_actual_Popen": {
+    "birth": "8608682",
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 431704,
+    "ppid": 431623,
+    "state": "R",
+    "uid": 1000
+  },
+  "subject_exit_code": 0,
+  "subject_pidfd_bound": true,
+  "subject_wait_reaped": true,
+  "supervisor_not_reaped_by_short_starter": true,
+  "supervisor_original_start_identity": {
+    "birth": "8608660",
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 431623,
+    "ppid": 431530,
+    "state": "R",
+    "uid": 1000
+  },
+  "supervisor_sha256": "670bd0a1f78e8d0f9ec656aa0bd7936368aac788f1d26c95fd35e9cfaeacae9e",
+  "supervisor_started_at": "2026-11-17T20:56:00.176427+00:00",
+  "support_sha256": "5498be6b04d32250128c2f1edebae339180dc99b061b84eff99c3fb01e497152",
+  "watchdog_reason": null
+}

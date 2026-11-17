@@ -1,0 +1,57 @@
+{
+  "source_commit": "912f2a4e5ed74f7a3fbf892ff0172e4eacc9c45a",
+  "runtime_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "supervisor_result_and_raw_hashes_match": true,
+  "case_count": 4,
+  "cases": [
+    {
+      "case": "borrow-grant-revoke-vs-same-cid-retry",
+      "read_only_snapshot": true,
+      "foreign_keys_clean": true,
+      "actual_audit_sequence_profile_and_control_checks_passed": true,
+      "retained_auth_acceptances": 1,
+      "profile_revisions": [
+        1
+      ]
+    },
+    {
+      "case": "profile-revoke-vs-capture",
+      "read_only_snapshot": true,
+      "foreign_keys_clean": true,
+      "actual_audit_sequence_profile_and_control_checks_passed": true,
+      "retained_auth_acceptances": 0,
+      "profile_revisions": [
+        1,
+        2
+      ]
+    },
+    {
+      "case": "read-grant-revoke-vs-current-lookup",
+      "read_only_snapshot": true,
+      "foreign_keys_clean": true,
+      "actual_audit_sequence_profile_and_control_checks_passed": true,
+      "retained_auth_acceptances": 1,
+      "profile_revisions": [
+        1
+      ]
+    },
+    {
+      "case": "unrelated-profile-vs-capture",
+      "read_only_snapshot": true,
+      "foreign_keys_clean": true,
+      "actual_audit_sequence_profile_and_control_checks_passed": true,
+      "retained_auth_acceptances": 1,
+      "profile_revisions": [
+        1,
+        2
+      ]
+    }
+  ],
+  "private_exact_request_macs_independently_recomputed": 11,
+  "actual_private_secret_values_exported": false,
+  "statement_authorizer_read_only": true,
+  "consistent_snapshot_each_finished_authority": true,
+  "only_observed_schedules_checked": true,
+  "no_product_import_or_financial_scope": true,
+  "production_approved": false
+}

@@ -1,0 +1,59 @@
+{
+  "reviewed_fixed_commit": "39cddde7159fb0307aba97c4fa355cd52a807b1b",
+  "decision": "R1_R8_NORMATIVE_DESIGN_CLOSED_WITH_IMPLEMENTATION_CONSTRAINTS_A_B_C",
+  "recommendation": "NARROW_ROOT_SCOPED_DEFAULT_OFF_H0_CODE_AND_TEMP_AUTHDB_COMPONENT_VALIDATION_CAN_BE_CONSIDERED",
+  "this_review_grants_sql_or_runtime_execution": false,
+  "dynamic_schema_or_product_acceptance": false,
+  "production_approved": false,
+  "rules": {
+    "1": "normatively closed for design; actual implementation and tests remain unverified",
+    "2": "normatively closed for design; actual implementation and tests remain unverified",
+    "3": "normatively closed for design; actual implementation and tests remain unverified",
+    "4": "normatively closed for design; actual implementation and tests remain unverified",
+    "5": "normatively closed for design; actual implementation and tests remain unverified",
+    "6": "normatively closed for design; actual implementation and tests remain unverified",
+    "7": "normatively closed for design; actual implementation and tests remain unverified",
+    "8": "normatively closed for design; actual implementation and tests remain unverified"
+  },
+  "implementation_constraints": [
+    {
+      "id": "A",
+      "issue": "Effective query reserve class is not known until authoritative key/grant/route/first-CID reads, while draft core order places quota before business checks.",
+      "required_resolution": "On the one held AuthDB connection, shared precheck performs clock/key/time/replay/prune; read-only actual classifier determines ordinary/query thresholds; shared core counts/inserts nonce; business verdict and one audit follow. Classifier produces no authority or early business refusal. Preserve legacy format1 order and outcomes."
+    },
+    {
+      "id": "B",
+      "issue": "Fresh auth_keys_no_replace BEFORE INSERT guards make legacy INSERT ... ON CONFLICT DO UPDATE unsuitable for existing keys.",
+      "required_resolution": "New format2 configure explicitly SELECTs actual keys, UPDATEs an existing immutable identity only within supported revoked transition, and INSERTs new keys. Do not reuse legacy configure UPSERT. Old format1 path remains unchanged."
+    },
+    {
+      "id": "C",
+      "issue": "Pre-DB handle reservation cannot know actual current query permission; naive normal-full rejection defeats query reserve, and path-only reservation lets unauthorized input occupy it.",
+      "required_resolution": "Use bounded non-authority intake separate from reserved query handles, or an equivalent demonstrated protocol. After actual held-DB read classification, reserve the correct handle class under a short registry lock. No registry lock spans authentication or DB acquisition; fill only after successful COMMIT and release failed reservations. Real H0-I10 must show legitimate query survives normal-full and unauthorized query cannot take query reserve."
+    }
+  ],
+  "component_boundary": {
+    "default_disabled": true,
+    "base_source": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0 separate branch only",
+    "fresh_private_authdb_only": true,
+    "shared_core_old_api_regression_required": true,
+    "financial_source_pending_or_dispatch": false,
+    "financial_database_or_native": false,
+    "tls_listener_or_public_route": false,
+    "ready_change": false,
+    "hmac3_financial_authority": false
+  },
+  "unproven_required_dynamic_checks": [
+    "SQLite syntax/actual object inventory including autoindexes",
+    "new initializer/reopen/exact corruption refusal",
+    "real unchanged legacy format1 positive and old-reader prewrite refusal",
+    "actual nonce/audit/acceptance atomicity",
+    "original-CID lookup after real COMMIT reply loss",
+    "current grant/profile contention and immutable first acceptance",
+    "reserve capacity and handle lifecycle under concurrency",
+    "process/fork/thread/unknown boundary and original API regression"
+  ],
+  "all_original_30_cases": "NOT_RUN unchanged",
+  "all_12_refinement_cases": "NOT_RUN unchanged",
+  "no_general_throughput_ha_rollback_or_antirollback_claim": true
+}

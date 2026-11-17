@@ -1,0 +1,114 @@
+{
+  "P3_harness_sha256": "7fd73d8a77173528f21dd94604e50437f4e91dfce4a4ab744b617cf4bf9a668d",
+  "affinity_parent": [
+    4
+  ],
+  "completed_at": "2026-11-17T20:59:37.158782+00:00",
+  "completed_steps": [
+    "actual_owned_worker_ready_pidfd_bound_before_GO",
+    "real_commit_return_marker_fsynced_then_self_exit73_without_application_response",
+    "new_issuer_current_read_and_sameCID_retry_query_original_without_second_acceptance"
+  ],
+  "completion_record_serialization_follows_clock": true,
+  "decision": "ACCEPT_P3_AFTER_AUTHDB_COMMIT_RETURN_APPLICATION_REPLYLOSS_ONLY",
+  "financial_authorized": false,
+  "midCOMMIT_powerloss_financial_or_HA_tested": false,
+  "original_private_artifact_hashes": {
+    "completion.json": "aed020e57b857a693a625415171d2d1d05df8648b45a50d668c412bddb92ccfd",
+    "probe-actual-Popen.json": "acb5c652baab75e6fa9b55a2f89e7edea1a1392d0971eb6579c5d5e1618bb582",
+    "probe-result.json": "36014ea1b1a004c9fb82160b913fd75d6a5df2b229a91e18447d0fd2d4045f46",
+    "start-record.json": "b15e550a513bad6b446d82f2acf2cbcf5eedd75d5536a3f3dfa725e00df5cd52",
+    "supervisor-owner.json": "66df2a9793cbe7063fbe80644fc7f2266d86174f1d27e5de1a45878bf54d17fa",
+    "supervisor-result.json": "d815d60594e62853e64439a81212e73b8d3a98f36a9ba3fee36dafd009dab659"
+  },
+  "outer_elapsed_ns_after_raw_and_result_fsync": 778994900,
+  "owned_worker_cleanup": {
+    "exit_code": 73,
+    "forced": false,
+    "identity_verified": false,
+    "reaped": true,
+    "signals": []
+  },
+  "physical_commit_epoch_claimed": false,
+  "planning_private_budget_bytes": 16777216,
+  "postcheck_exact_proc_states": {
+    "subject": {
+      "expected_birth": "8630300",
+      "pid": 437263,
+      "present": false
+    },
+    "supervisor": {
+      "actual_birth": "8630281",
+      "expected_birth": "8630281",
+      "kernel_encoded_exit_if_present": "0",
+      "pid": 437182,
+      "ppid": 1,
+      "present": true,
+      "state": "Z"
+    },
+    "worker": {
+      "expected_birth": "8630330",
+      "pid": 437342,
+      "present": false
+    }
+  },
+  "postcheck_proc_observed_at": "2026-11-17T21:02:47.775586+00:00",
+  "primary_control_error": null,
+  "private_data_bytes_observed": 169482,
+  "private_marker_READY_worker_Popen_hashes_only": {
+    "READY": "9abbabac66440ef8ea3b9f58faaefacec184843e9ee8f9637f3433d710a394d8",
+    "marker": "b9da16ace74f5717f4deafde4171a77612e42832a1cfdf125430c6a418a2dd1a",
+    "worker_Popen": "8d46c2e80110c986101c5b00865782b7fa927ea530f801fc20305ec18747171b"
+  },
+  "private_stream_metadata_hashes_only": {
+    "private-probe-stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "private-probe-stdout.txt": {
+      "bytes": 1464,
+      "sha256": "df6faa7ac841a0a0d431e961498c51acc8eea110be7f73d173ef0bac45728cfd"
+    }
+  },
+  "probe_elapsed_ns_before_result_write": 326733807,
+  "production_approved": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "raw_hashes_final_only_if_subject_reaped": true,
+  "runtime_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "source_and_harness_unchanged": true,
+  "source_commit": "912f2a4e5ed74f7a3fbf892ff0172e4eacc9c45a",
+  "sqlite": "3.53.1",
+  "subject_actual_Popen": {
+    "birth": "8630300",
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 437263,
+    "ppid": 437182,
+    "state": "R",
+    "uid": 1000
+  },
+  "subject_exit_code": 0,
+  "subject_pidfd_bound": true,
+  "subject_wait_reaped": true,
+  "supervisor_not_reaped_by_short_starter": true,
+  "supervisor_original_start_identity": {
+    "birth": "8630281",
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 437182,
+    "ppid": 437076,
+    "state": "R",
+    "uid": 1000
+  },
+  "supervisor_sha256": "670bd0a1f78e8d0f9ec656aa0bd7936368aac788f1d26c95fd35e9cfaeacae9e",
+  "supervisor_started_at": "2026-11-17T20:59:36.379789+00:00",
+  "support_sha256": "5498be6b04d32250128c2f1edebae339180dc99b061b84eff99c3fb01e497152",
+  "watchdog_reason": null,
+  "worker_affinity_evidence": "inherited CPU4 from exact parent/code; no departed-process affinity invented",
+  "worker_detail": {
+    "actual_request_count": 3,
+    "first_acceptance_count": 1,
+    "original_first_identity_unchanged": true,
+    "worker_actual_exit_code": 73,
+    "worker_wait_reaped": true
+  },
+  "worker_raw_final_only_if_reaped": true
+}

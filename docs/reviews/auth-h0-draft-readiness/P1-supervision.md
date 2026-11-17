@@ -1,0 +1,11 @@
+# Detached P1 supervision scope
+
+Root authorized one actual P1 execution against unchanged harness SHA `c8de834b0dcd96a1617ab5d32f593088de871923497052bde53104998b4eab90`, exact source912/runtime5750, CPU4 and30-second watchdog. This adds a separate [supervisor](p1_detached_supervisor.py); it does not edit the original full-suite launcher or rewrite its incomplete records.
+
+The short starter exclusively creates the proposed private outer directory after source/harness/free-space validation. It starts the supervisor with `start_new_session=True`, stdinDEVNULL and exclusive private stdout/stderr files, then returns actual PID/birth metadata. The supervisor has no exec-server stream pipe. Existing outer directories refuse a second start; connection loss means inspect the original PID/files, never launch another P1 automatically.
+
+The supervisor rechecks source/harness, sets CPU4, starts exactly the approved harness with private file streams and no input, binds its actual direct-child identity/pidfd where available, and waits/reaps. On watchdog it may kill only that same still-unreaped direct child after identity checks; such an attempt cannot pass. It flushes/fsyncs/closes the raw files, hashes them, verifies source/harness stability and writes its result. Completion timing is measured after result fsync; the small completion record serialization follows that clock and is declared separately. This is not a hard OS/storage quota guarantee.
+
+The probe has only its fresh AuthDBs and owned daemon threads. Unjoined-thread self exit91 remains UNKNOWN. No external service, native financial worker, old PID, old authority, fixed source or long job is touched. The supervisor waits/reaps the probe; starter ownership of the detached supervisor itself is separate and no false supervisor-reap claim is made. A namespace-wide computer failure can still interrupt supervision and remains outside this local exec-pipe failure fix.
+
+All actual keys, nonces, signatures, profiles, requests, original streams and AuthDB files remain under the private outer directory. Public evidence is projected from explicit safe fields only. First actual outcomes are retained; any failure or unknown requires root's next decision rather than a repeat-to-green run.
