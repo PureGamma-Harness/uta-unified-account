@@ -1,0 +1,268 @@
+{
+  "all_cids": [
+    [
+      "recovery-probe",
+      "REJECTED",
+      0,
+      null,
+      "{\"code\":\"order_not_found\",\"message\":\"unknown order\",\"status\":404}"
+    ]
+  ],
+  "capacity_passed": false,
+  "child_pid": 115424,
+  "cleanup": {
+    "adopted_reaps": [],
+    "no_restart_or_expiry_or_failed_reports": true,
+    "remaining_owned_members": [],
+    "termination_actions": []
+  },
+  "diagnostics": {
+    "decision_audit_required": true,
+    "financial_ready": false,
+    "managed": true,
+    "profile": "managed_audit_required",
+    "ready": false,
+    "reason": "publication_incomplete",
+    "recovered_orphans": [],
+    "state": {
+      "epoch": 0,
+      "error": null,
+      "halted": true,
+      "market_digest": null,
+      "market_version": null,
+      "publishing": false,
+      "watermarks": {}
+    },
+    "state_observed": true,
+    "workers": [
+      {
+        "alive": true,
+        "funding_registry_ready": false,
+        "generation": 1,
+        "lease_active": true,
+        "locally_active": false,
+        "market_ready": false,
+        "observation_error": {
+          "type": "service_error"
+        },
+        "owner_pid": 115424,
+        "owner_ready": true,
+        "pid": 115424,
+        "reason": "market_missing",
+        "report": {
+          "generation": 1,
+          "pid": 115424,
+          "shard": 0,
+          "state": "ready"
+        },
+        "shard": 0
+      }
+    ],
+    "workers_alive": true
+  },
+  "driver_sha": "d886cdbfafbc491e1a7705313080f910712bd185",
+  "ended_utc": "2026-11-17T09:08:07.343993+00:00",
+  "financial_fixture": "system-only balanced synthetic journal; zero-funded customers; no orders/fills/matches/positions; actual absent-order cancellation rejected",
+  "ha_approved": false,
+  "ledger_events": 1000,
+  "ledger_head": "de51ebb7d0c775683e243709e7dd154d3cf78103a5598a23e3a180ab3909aea1",
+  "limitations": [
+    "1k replay is shorter thanTTL and does not establish250k recovery scalability",
+    "financial_ready remainsfalse because market/activation intentionallyabsent",
+    "cohost identity plus two JSON snapshots were read under explicit coordinator authorization; no oldSQLite opened or job modified",
+    "No250k executed or authorized by this result"
+  ],
+  "matching_validation_summary": "/workspace/uta-operations-validation/763202d/python312/summary.json",
+  "matching_validation_summary_sha256": "5cf2d73afddbd0cd0da41e895ac46d61368f31d7f0f174741566660fb42e3201",
+  "observed_ready_ns": 684686119,
+  "observed_terminal_ns": 684686119,
+  "outer_console_capture": {
+    "stderr": "/tmp/uta-recovery-763202d-contract-authorized-1k.console.stderr.txt",
+    "stdout": "/tmp/uta-recovery-763202d-contract-authorized-1k.console.stdout.json"
+  },
+  "outer_exec_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-recovery-retest-plan/tools/run_recovery_retest.py",
+    "--execute",
+    "--cohort",
+    "contract",
+    "--registration",
+    "/workspace/uta-recovery-retest-plan/benchmarks/plans/20261117-recovery-retest-763202d.json",
+    "--source-root",
+    "/workspace/uta-operations-freeze-763202d",
+    "--source-sha",
+    "763202df9cb3ce089721e5281371aff3eab58089",
+    "--output",
+    "/tmp/uta-recovery-763202d-contract-authorized-1k"
+  ],
+  "outer_exec_gate": {
+    "boot_id": "REDACTED_BOOT_OR_SESSION_ID_1",
+    "execv_preserved_pid_and_reset_python_state": true,
+    "financial_work_started_at_gate": false,
+    "gate_ready_utc": "2026-11-17T09:07:49.925546+00:00",
+    "pid": 115403,
+    "ppid": 518,
+    "release_utc": "not_separately_recorded",
+    "start_ticks": 4359635
+  },
+  "phase_ends": [
+    {
+      "boottime_ns": 43613170879209,
+      "elapsed_ns": 24896194,
+      "event": "end",
+      "monotonic_ns": 43613170878117,
+      "phase": "child_router_constructor",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.693570+00:00"
+    },
+    {
+      "boottime_ns": 43613176093561,
+      "elapsed_ns": 4994379,
+      "event": "end",
+      "generation": 1,
+      "monotonic_ns": 43613176092850,
+      "owner_pid": 115424,
+      "phase": "fence_acquire",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.698784+00:00"
+    },
+    {
+      "boottime_ns": 43613190032552,
+      "elapsed_ns": 251560,
+      "event": "end",
+      "monotonic_ns": 43613190032241,
+      "phase": "funding_claims",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.712722+00:00"
+    },
+    {
+      "boottime_ns": 43613190442114,
+      "elapsed_ns": 11306207,
+      "event": "end",
+      "monotonic_ns": 43613190441744,
+      "phase": "fence_renew",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.713132+00:00"
+    },
+    {
+      "boottime_ns": 43613192698194,
+      "elapsed_ns": 115680,
+      "event": "end",
+      "monotonic_ns": 43613192697823,
+      "phase": "shard_reconcile",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.715388+00:00"
+    },
+    {
+      "boottime_ns": 43613230870232,
+      "elapsed_ns": 14028292,
+      "event": "end",
+      "monotonic_ns": 43613230869711,
+      "phase": "ledger_constructor",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.753561+00:00"
+    },
+    {
+      "boottime_ns": 43613346082910,
+      "elapsed_ns": 63462010,
+      "event": "end",
+      "monotonic_ns": 43613346081739,
+      "phase": "ledger_verify",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.868774+00:00",
+      "verified_events": 1000
+    },
+    {
+      "boottime_ns": 43613355653503,
+      "elapsed_ns": 162092580,
+      "event": "end",
+      "monotonic_ns": 43613355653082,
+      "phase": "exchange_constructor",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.878344+00:00"
+    },
+    {
+      "boottime_ns": 43613362255057,
+      "elapsed_ns": 428671,
+      "event": "end",
+      "monotonic_ns": 43613362254736,
+      "phase": "credit_verify",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.884946+00:00"
+    },
+    {
+      "boottime_ns": 43613363624432,
+      "elapsed_ns": 7832235,
+      "event": "end",
+      "monotonic_ns": 43613363624021,
+      "phase": "credit_constructor",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.886315+00:00"
+    },
+    {
+      "boottime_ns": 43613363714905,
+      "elapsed_ns": 175613284,
+      "event": "end",
+      "monotonic_ns": 43613363714695,
+      "phase": "worker_view_constructor",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.886405+00:00"
+    },
+    {
+      "boottime_ns": 43613371029257,
+      "elapsed_ns": 4414595,
+      "event": "end",
+      "monotonic_ns": 43613371028867,
+      "phase": "fence_renew",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.893720+00:00"
+    },
+    {
+      "boottime_ns": 43613409368992,
+      "elapsed_ns": 351627,
+      "event": "end",
+      "monotonic_ns": 43613409368651,
+      "phase": "funding_claims",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.932059+00:00"
+    },
+    {
+      "boottime_ns": 43613411646483,
+      "elapsed_ns": 126316,
+      "event": "end",
+      "monotonic_ns": 43613411646243,
+      "phase": "shard_reconcile",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.934336+00:00"
+    },
+    {
+      "boottime_ns": 43613421562784,
+      "elapsed_ns": 278620,
+      "event": "end",
+      "monotonic_ns": 43613421562484,
+      "phase": "funding_claims",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.944253+00:00"
+    },
+    {
+      "boottime_ns": 43613449856076,
+      "elapsed_ns": 466036,
+      "event": "end",
+      "monotonic_ns": 43613449855746,
+      "phase": "funding_claims",
+      "pid": 115424,
+      "utc": "2026-11-17T09:08:06.972546+00:00"
+    }
+  ],
+  "pidfd_evidence": "Frozen launcher opens and retains leader pidfd before the recorded leader identity; successful execution confirms that call did not fail. FD numeric handle is not logged. No signals were needed or sent.",
+  "production_approved": false,
+  "runtime_python_sources_matched_validation": 49,
+  "runtime_sha": "763202df9cb3ce089721e5281371aff3eab58089",
+  "schema_inventory_sha256": "f75c9efef8d7d5c76cead080290a2695509bb4fb40d094284af8fe747121fef1",
+  "started_utc": "2026-11-17T09:08:05.527660+00:00",
+  "status": "ACTUAL_1K_CONTRACT_PASSED_STOPPED_BEFORE_250K",
+  "strict_contract_checker": "PASS",
+  "total_including_metadata_seconds": 1.8163458939961856,
+  "tracked_runtime_payload_files_matched_registration": 50,
+  "workload_and_cleanup_seconds": 1.8117165520015988
+}
