@@ -1,0 +1,156 @@
+{
+  "status": "PREREGISTERED_V1_PENDING_ACTUAL_TEST_COUNT_NO_EXECUTION",
+  "scope": "synthetic_low_rate_managed_financial_stability; not capacity or production acceptance",
+  "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "source_root": "/workspace/uta-observer-freeze-91e4ae4",
+  "observer_core_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "reviewed_observer_and_wrapper_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-observer-validation/final-91e4ae4/python312/summary.json",
+  "qualification": {
+    "local_full_runs": 3,
+    "tests_each": null,
+    "ci_runs": null,
+    "ci_python_jobs": 8,
+    "package_tracked_files": null,
+    "runtime_files": 52,
+    "package_evidence": "PENDING: fresh exact91e4 source/runtime artifacts, omission controls and independent package review",
+    "status": "PENDING_ALL_THREE_LOCAL_EIGHT_CI_AND_NEW_INDEPENDENT_PACKAGE",
+    "tests_each_status": "PENDING_ACTUAL_COMPLETE_MATCHING_RUN_REPORT",
+    "ci_runs_status": "PENDING_ROOT_ACTUAL_IDS",
+    "source_tracked_files": 3633
+  },
+  "producer": {
+    "duration_seconds": 21600,
+    "rate_rounds_per_second": 0.25,
+    "planned_rounds": 5400,
+    "worker_fault_every_rounds": 30,
+    "parent_fault_every_rounds": 300,
+    "one_original_driver_birth": true,
+    "allow_resume_for_continuous_target": false,
+    "use_original_configuration_defaults_except_explicit_duration": true,
+    "new_private_job_directory_required": true,
+    "source_budget_bytes": 6442450944,
+    "minimum_free_bytes": 1073741824
+  },
+  "observer": {
+    "interval_seconds": 61,
+    "cadence_reason": "supported CLI interval61 is coprime with four-second rounds; every actual timestamp retained",
+    "independent_finance_golden_required_each_1800_second_block": 1,
+    "blocks": 12,
+    "technical_read_unknown_budget": 3,
+    "maximum_consecutive_technical_read_unknown": 1,
+    "all_unknown_samples_and_attempts_reported": true,
+    "planned_fault_inflight_unknown_separate_from_technical_read_unknown": true,
+    "alerts_do_not_imply_finance_proof": true,
+    "final_golden_fk_same_watermark_reopen_and_actual_producer_cold_audit_required": true,
+    "max_private_clone_bytes": 1073741824,
+    "clone_headroom_bytes": 1073741824,
+    "max_address_space_bytes": 2147483648,
+    "private_full_clone_contains_control_nonces_never_publish": true,
+    "private_clone_limit_semantics": "input-estimate admission only; not a physical peak quota; complete schema/log/audit required; exceedance is NO_GO",
+    "output_budget_bytes": 2147483648,
+    "output_budget_semantics": "explicit fullcontrol+observer logical file bytes except validated private clones; periodic threshold, not physical quota; unknown/exceedance requests official owned-driver resource drain and technical NO_GO",
+    "output_budget_check_period_seconds": 30,
+    "output_physical_hard_quota_enforced": false,
+    "output_budget_overshoot_guaranteed_bound_bytes": null
+  },
+  "financial_gates": {
+    "actual_active_seconds_minimum": 21600,
+    "completed_rounds": 5400,
+    "all_original_account_commands": 32400,
+    "unique_matching_receipts": 10800,
+    "paired_fill_legs": 21600,
+    "financial_unknown_or_quarantined": 0,
+    "internal_account_or_control_technical_retries": 0,
+    "extra_or_missing_financial_effects": 0,
+    "original_source_validation_and_log_hashes_unchanged": true,
+    "independent_exact_gross_budget_and_replay_required": true
+  },
+  "reporting": {
+    "financial_stability_and_live_coverage_separate": true,
+    "overall_engineering_target_requires_both": true,
+    "any_budget_miss_remains_no_go": true,
+    "unmeasured_counters": null,
+    "planned_time_not_actual_elapsed": true
+  },
+  "cohost": {
+    "old_producer_pid": 4471,
+    "old_producer_birth": "210004",
+    "old_observer_pid": 8784,
+    "old_observer_birth": "412799",
+    "do_not_signal_or_modify_old_jobs": true,
+    "shared_host_not_dedicated_hardware": true,
+    "cpu_affinity_change_for_old_jobs_allowed": false
+  },
+  "known_failed_gate": {
+    "large_history_250000": "NO_GO; budget exhausted before ownership/command; no final complete proof; does not qualify general large-history recovery",
+    "full_system_acceptance": "NO_GO: no production, real funds, HA, 10k/s or full risk reexecution acceptance"
+  },
+  "production_approved": false,
+  "capacity_10000_approved": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "previous_attempt": {
+    "source_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+    "status": "STOPPED_EARLY_NO_GO",
+    "completed_rounds": 513,
+    "planned_rounds": 5400,
+    "active_seconds": 2072.722098933,
+    "never_resume_or_reclassify": true
+  },
+  "preregistered_at_utc": "2026-11-17T14:33:49.631713+00:00",
+  "execution_gate": "Separate root GO only after complete exact-source qualification, independently reviewed package, and new 60-second real matching/restart/cold-reopen smoke. This plan grants no execution.",
+  "selected_cpu": 0,
+  "copied_preregistration": {
+    "source_plan_sha256": "36ccc4558bb2dc5fb8cd3b2412d8594ae16a3a6eb110dd2c20336ebcf685203d",
+    "source_amendment_sha256": "9538b54c1ead7a28d6a3661c1866946a92ce447fea2e7224e1edfb804811caf7",
+    "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+    "changed_fields": "new exactsource/time and PENDING qualification; explicit output2GiB resource policy; base and effective supported interval61"
+  },
+  "previous_candidates": [
+    {
+      "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+      "status": "NO_GO_LOCAL_CI_COMPATIBILITY_FAILURE",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+      "status": "NO_GO_ACTUAL_READINESS_CI_FAILURES",
+      "never_reclassify": true
+    },
+    {
+      "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+      "status": "NO_GO_ACTUAL_HISTORICAL_REFERENCE_GENERATOR_SOURCE_FOOTER_MISMATCH",
+      "immutable_blocked_profile": "benchmarks/profiles/managed-8b7f544-v2-blocked.json",
+      "never_reclassify": true
+    }
+  ],
+  "plan_version_policy": "V1 is immutable. Actual executed count and completed QA require a separately versioned successor; never guess or rewrite this null count.",
+  "resource_policy": {
+    "status": "PENDING_OPERATOR_FLOOR_REVIEW_AND_POST_QUALIFICATION_PREFLIGHT",
+    "new_source_budget_bytes": 6442450944,
+    "source_declaration_bound_to_actual_original_configuration": true,
+    "new_observer_output_budget_bytes": 2147483648,
+    "new_private_clone_admission_estimate_bytes": 1073741824,
+    "minimum_free_headroom_bytes": 1073741824,
+    "new_total_bytes": 10737418240,
+    "old_full_future_reservation_bytes": 6442450944,
+    "old_observer_additional_floor_bytes": 268435456,
+    "old_observer_declared_byte_cap": null,
+    "floor_is_hard_cap": false,
+    "old_observer_floor_approved": false,
+    "combined_conservative_required_bytes": 17448304640,
+    "current_free_bytes": null,
+    "current_gap_bytes": null,
+    "space_reserved": false,
+    "recheck_after_qualification_and_package_required": true,
+    "clone_limit_is_input_estimate_not_peak_quota": true,
+    "observer_output_is_periodic_threshold_not_os_quota": true,
+    "output_overshoot_bound_bytes": null,
+    "separate_operator_record": null,
+    "separate_operator_record_sha256": null
+  },
+  "execution_authorized": false,
+  "service_started": false
+}
