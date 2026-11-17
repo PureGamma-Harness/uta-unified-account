@@ -1,0 +1,34 @@
+{
+  "free_bytes_before_start": 17603035136,
+  "harness_sha256": "c8de834b0dcd96a1617ab5d32f593088de871923497052bde53104998b4eab90",
+  "no_exec_server_pipe_for_supervisor_streams": true,
+  "runtime_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "source_commit": "912f2a4e5ed74f7a3fbf892ff0172e4eacc9c45a",
+  "start_new_session": true,
+  "started_at": "2026-11-17T19:41:31.099674+00:00",
+  "stdin": "DEVNULL",
+  "stdout_stderr": "exclusive private files",
+  "supervisor_actual_Popen": {
+    "birth": "8161757",
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 328881,
+    "ppid": 328800,
+    "state": "R",
+    "uid": 1000
+  },
+  "supervisor_code_sha256": "0504e35b3ef2113de06fa0f7b6c856cd1a261b6debe9bd81e35300c646245b32",
+  "command_template": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-I",
+    "-B",
+    "/workspace/uta-auth-h0-draft-readiness/docs/reviews/auth-h0-draft-readiness/p1_detached_supervisor.py",
+    "supervise",
+    "--source",
+    "/workspace/uta-auth-h0-qa-912f2a4",
+    "--harness",
+    "/workspace/uta-auth-h0-draft-readiness/tests/auth_h0_readiness_independent/concurrent_profile_probe.py",
+    "--outer",
+    "<operator-private-outer>"
+  ],
+  "exact_command_retained_private": true
+}
