@@ -10,8 +10,10 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from hashlib import sha256
 import json
+import os
 import re
 import sqlite3
+from threading import get_ident
 from types import MappingProxyType
 
 from .credit_policy import validate_native_descriptor
@@ -331,3 +333,113 @@ def read_source(connection, command_id, *, expected_authority_id):
         raise
     except (sqlite3.Error, TypeError, ValueError, AttributeError, IndexError) as error:
         raise CreditV2Error("credit_v2_source_invalid", "stored source and original inbox identity cannot be verified") from error
+
+
+@dataclass(frozen=True)
+class CreditOperationView:
+    """Safe audit inputs; constructing this class never binds an operation."""
+    operation_kind: str
+    account_id: str
+    command_id: str
+    asset: str
+    amount: str
+    amount_units: int
+    capability_id: str
+    static_descriptor: object
+    allocation_id: str
+    journal_id: str
+    payload_hash: str
+    source_id: str
+    actor_id: str
+    source_payload: str
+    intent_digest: str
+    pre_version: int
+    pre_state_payload: str
+    pre_state_hash: str
+    selected_at: object
+    market_snapshot_id: object
+
+
+@dataclass(frozen=True)
+class _CreditOperation:
+    # This private structure is not itself a capability either. Its actual
+    # transaction registry binding and staged SQL intent must both validate.
+    guard: object
+    credit: object
+    process_id: int
+    thread_id: int
+    generation: int
+    view: CreditOperationView
+    intent_row: tuple
+    expected_postings: tuple
+
+
+_INTENT_COLUMNS = ("command_id", "account_id", "scope", "operation_kind", "inbox_kind", "credit_kind",
+    "asset", "amount", "amount_units", "payload_hash", "source_id", "authority_id", "allocation_id",
+    "descriptor_id", "intent_digest", "journal_id", "pre_state_payload", "pre_state_hash",
+    "isolation_payload", "isolation_hash", "journal_sealed", "terminal_state", "operation_id",
+    "decision_kind", "market_dependency", "market_snapshot_id", "selected_at", "expected_postings",
+    "old_principal_units", "old_interest_units", "new_principal_units", "new_interest_units", "pre_version", "post_version")
+
+
+def assert_operation_context(credit, connection, *, command_id, account_id, asset, amount,
+                             operation_kind="BORROW"):
+    """Require actual registry/token/scope and actual staged SQL intent.
+
+    There is no positive scope constructor/installer in this primitive slice.
+    A fabricated frozen capture/view, object flag or detached connection cannot
+    satisfy this interface. It grants no role and opens no transaction.
+    """
+    from .credit import CreditService
+    from .service import _text
+    from .writer_fence import _REGISTRY, _REGISTRY_LOCK, _assert_token
+    if type(credit) is not CreditService or connection is None:
+        raise CreditV2Error("credit_v2_context_invalid", "credit operation requires its actual initialized service and transaction")
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is None or guard.connection is not connection or guard.database is not credit.database
+            or guard.role != "financial" or guard.credit_owner_thread != get_ident()
+            or not connection.in_transaction):
+        raise CreditV2Error("credit_v2_context_invalid", "credit operation requires its exact financial transaction")
+    if guard.state is None or guard.state.get("credit_format") != 2:
+        raise CreditV2Error("credit_v2_not_active", "this authority has no internal credit v2 capability")
+    _assert_token(guard.database, guard.state, guard.database.writer_token)
+    context = getattr(guard, "credit_v2_operation", None)
+    if (type(context) is not _CreditOperation or context.guard is not guard or context.credit is not credit
+            or context.process_id != os.getpid() or context.thread_id != get_ident()
+            or context.generation != guard.state["generation"] or guard.denied is not None):
+        raise CreditV2Error("credit_v2_context_invalid", "no actual native operation is bound to this transaction")
+    try:
+        view = context.view
+        if (type(view) is not CreditOperationView
+                or (view.operation_kind, view.command_id, view.account_id, view.asset, view.amount)
+                   != (operation_kind, command_id, account_id, asset, _text(amount))):
+            raise ValueError("operation identity differs")
+        row = connection.execute("SELECT " + ",".join(_INTENT_COLUMNS)
+                                 + " FROM credit_v2_intents WHERE command_id=?", (command_id,)).fetchone()
+        if row is None or tuple(row) != context.intent_row:
+            raise ValueError("actual staged intent is absent or different")
+        bindings = dict(zip(_INTENT_COLUMNS, tuple(row)))
+        actual_values = {"command_id": view.command_id, "account_id": view.account_id,
+            "operation_kind": view.operation_kind, "asset": view.asset, "amount": view.amount,
+            "amount_units": str(view.amount_units), "allocation_id": view.allocation_id,
+            "journal_id": view.journal_id, "payload_hash": view.payload_hash, "source_id": view.source_id,
+            "intent_digest": view.intent_digest, "pre_version": view.pre_version,
+            "pre_state_payload": view.pre_state_payload, "pre_state_hash": view.pre_state_hash,
+            "selected_at": view.selected_at, "market_snapshot_id": view.market_snapshot_id}
+        if (type(view.pre_version) is not int or type(view.amount_units) is not int or view.amount_units <= 0
+                or any(bindings[name] != value for name, value in actual_values.items())
+                or view.pre_state_hash != _digest(view.pre_state_payload)
+                or view.capability_id != guard.state["credit_capability_id"]):
+            raise ValueError("actual operation prestate is not bound")
+        static = validate_native_descriptor(view.static_descriptor.canonical_payload,
+            expected_authority_id=guard.state["authority_id"])
+        if static != view.static_descriptor or static.descriptor_id != bindings["descriptor_id"]:
+            raise ValueError("actual static declaration differs")
+        original_source = read_source(connection, command_id, expected_authority_id=guard.state["authority_id"])
+        if (view.source_id, view.actor_id, view.source_payload) != (original_source.source_id,
+                original_source.actor_id, original_source.canonical_payload):
+            raise ValueError("actual first source differs")
+        return view
+    except (sqlite3.Error, TypeError, ValueError, AttributeError, IndexError, KeyError) as error:
+        raise CreditV2Error("credit_v2_context_invalid", "operation context does not match actual staged identity") from error

@@ -293,3 +293,34 @@ in `evidence/runs/credit-native-v2-primitives/`.
 ```sh
 taskset -c 4 timeout 30s python3 -W error::ResourceWarning -m unittest tests.test_credit_native_v2_primitives -v
 ```
+
+## Actual context assertion boundary, with no positive scope constructor
+
+The next small slice adds `CreditOperationView` and the real read-only
+`assert_operation_context` interface. It checks the actual connection registry,
+identical initialized service/Database object, financial role, process/thread,
+fenced generation/token, exact complete staged intent tuple, the view's repeated
+relational identities, canonical prestate hash, actual original source/inbox and
+validated static descriptor. It returns no registry, guard, token or nonce. A
+publicly constructed frozen view or a service object's `ready`/context flag does
+not establish those facts. It opens no transaction and confers no role.
+
+There is still no V2 recognized loader, publisher, acquire or operation-scope
+constructor, so there is no supported way to enter its positive return branch.
+That branch needs actual complete capability and positive-chain testing after
+the writer/SQL/FIFO/audit integration; this slice does not simulate it.
+
+Four genuine boundary tests use a private real core database and its actual
+financial/read transactions, a real raw transaction, and non-authoritative
+caller flags. All fail typed closed with no debt/credit/version effect. The
+first run passed in0.081s. Exact view-to-intent/source/static binding checks were
+then added before the final source's negative controls passed in0.075s, actual
+window 2026-11-17 13:00:34.124545 through 13:00:34.340537 UTC, CPU4. Both original
+and final raw/source hashes remain under
+`evidence/runs/credit-native-v2-context-boundary/`. No V2 owner, scoped loan,
+decision, fake context or successful permission callback was created. Unexecuted
+positive context checks remain explicit NV2 acceptance work.
+
+```sh
+taskset -c 4 timeout 30s python3 -W error::ResourceWarning -m unittest tests.test_credit_native_v2_context_boundary -v
+```

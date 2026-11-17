@@ -1,0 +1,31 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_context_boundary",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T12:58:33.154523+00:00",
+  "exit_code": 0,
+  "financial_borrow": false,
+  "native_owner": false,
+  "no_cap_positive_or_context_simulated": true,
+  "process_seconds": 0.18966065199492732,
+  "raw_sha256": "2fd8179d2818c070077898436000406844f124b7deb1934daf7e450230c779fa",
+  "services": false,
+  "source_sha256": {
+    "tests/test_credit_native_v2_context_boundary.py": "9036b08fde5b4126959f4db7fc3a8e5272212fe605ddddc95a8c913f3df6c95c",
+    "uta/credit_native_v2.py": "17d4a7b6f57af1b3c3c833861b7fb550cfa967e61722a4219f60087847a6d338",
+    "uta/writer_fence.py": "dec38cb73956a0db26924fe3c1685644197c54b9abda3ce02026e70ce3f0a3c6"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T12:58:32.965087+00:00"
+}
