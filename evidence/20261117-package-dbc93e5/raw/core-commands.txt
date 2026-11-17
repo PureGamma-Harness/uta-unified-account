@@ -1,0 +1,73 @@
+Shared-host CPU2 per-process affinity; no exclusive-host claim. PYTHONPATH unset; PYTHONDONTWRITEBYTECODE=1.
+
+cwd /workspace/uta-combined-freeze-dbc93e5
+git rev-parse HEAD
+returncode=0
+
+cwd /workspace/uta-combined-freeze-dbc93e5
+git status --short
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -m venv /tmp/uta-release-dbc93e5-oor3dlj4/venv
+returncode=0
+
+cwd /workspace/uta-combined-freeze-dbc93e5
+git archive --format=tar.gz --output=/tmp/uta-release-dbc93e5-oor3dlj4/frozen-source.tar.gz dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5/safe_extract.py /tmp/uta-release-dbc93e5-oor3dlj4/frozen-source.tar.gz /tmp/uta-release-dbc93e5-oor3dlj4/build-source
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/build-source
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel('"'"'/tmp/uta-release-dbc93e5-oor3dlj4/artifacts'"'"')); print("SDIST", b.build_sdist('"'"'/tmp/uta-release-dbc93e5-oor3dlj4/artifacts'"'"'))'
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-combined-freeze-dbc93e5/tools/verify_release_archives.py --source /workspace/uta-combined-freeze-dbc93e5 --commit dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b --wheel /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl --sdist /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1.tar.gz --output /tmp/uta-release-dbc93e5-oor3dlj4/artifact-manifest.json
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/external
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/external
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -I /workspace/uta-combined-freeze-dbc93e5/tools/validate_installed_release.py --source /workspace/uta-combined-freeze-dbc93e5 --artifact-manifest /tmp/uta-release-dbc93e5-oor3dlj4/artifact-manifest.json --output /tmp/uta-release-dbc93e5-oor3dlj4/external/installed
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/external
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -I /workspace/uta-combined-freeze-dbc93e5/evidence/20261117-package-13e6924/validate_installed_views.py --source /workspace/uta-combined-freeze-dbc93e5 --artifact-manifest /tmp/uta-release-dbc93e5-oor3dlj4/artifact-manifest.json --output /tmp/uta-release-dbc93e5-oor3dlj4/external/installed-views
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5/safe_extract.py /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1.tar.gz /tmp/uta-release-dbc93e5-oor3dlj4/sdist-unpacked
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4/sdist-unpacked/uta_reference_exchange-0.5.0a1
+/tmp/uta-release-dbc93e5-oor3dlj4/venv/bin/python -m unittest discover -s tests -p test_capacity_review_data_reference.py -v
+returncode=0
+
+cwd /tmp/uta-release-dbc93e5-oor3dlj4
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python /workspace/uta-combined-freeze-dbc93e5/evidence/20261117-package-4608ffe/runtime_omission_controls.py --source /workspace/uta-combined-freeze-dbc93e5 --manifest /tmp/uta-release-dbc93e5-oor3dlj4/artifact-manifest.json --wheel /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl --sdist /tmp/uta-release-dbc93e5-oor3dlj4/artifacts/uta_reference_exchange-0.5.0a1.tar.gz --output /tmp/uta-release-dbc93e5-oor3dlj4/runtime-omission-controls
+returncode=0
+
+cwd /workspace/uta-combined-freeze-dbc93e5
+git rev-parse HEAD
+returncode=0
+
+cwd /workspace/uta-combined-freeze-dbc93e5
+git status --short
+returncode=0
