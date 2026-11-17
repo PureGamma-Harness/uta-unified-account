@@ -1,0 +1,912 @@
+{
+  "bounds": {
+    "clock_ticks": 3,
+    "config_transitions": 1,
+    "decisions": 1,
+    "ordinary_children": 2,
+    "owners_per_shard": 2,
+    "shards": 2
+  },
+  "composition_proven": false,
+  "execution": {
+    "cpu_affinity": "single CPU 0 via taskset",
+    "system_cpu_seconds": 0.004246,
+    "user_cpu_seconds": 0.056427,
+    "wall_seconds": 0.021899
+  },
+  "models": {
+    "checkpoint": {
+      "complete": true,
+      "coverage": {
+        "accepted_old_local_quote": 28,
+        "committed_ack_unknown": 0,
+        "current_parent_child_authorized": 0,
+        "divergent_shards": 0,
+        "recovered_with_durable_history": 0
+      },
+      "states": 148,
+      "transitions": 275,
+      "violations": []
+    },
+    "delivery": {
+      "complete": true,
+      "coverage": {
+        "accepted_old_local_quote": 0,
+        "committed_ack_unknown": 630,
+        "current_parent_child_authorized": 0,
+        "divergent_shards": 396,
+        "recovered_with_durable_history": 400
+      },
+      "states": 819,
+      "transitions": 4260,
+      "violations": []
+    },
+    "hard_barrier": {
+      "complete": true,
+      "coverage": {
+        "accepted_old_local_quote": 0,
+        "committed_ack_unknown": 0,
+        "current_parent_child_authorized": 12,
+        "divergent_shards": 0,
+        "recovered_with_durable_history": 0
+      },
+      "states": 23,
+      "transitions": 31,
+      "violations": []
+    }
+  },
+  "negative_controls": {
+    "authorize_old_parent_after_config_change": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 0,
+            "installed_parent": [
+              0,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": true
+          }
+        },
+        {
+          "action": "hard_freeze_and_create_config_parent_1",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 1,
+            "installed_parent": [
+              0,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": false
+          }
+        },
+        {
+          "action": "authorize_child_of_retired_parent_0",
+          "state": {
+            "child_witness": [
+              0,
+              1
+            ],
+            "global_epoch": 1,
+            "installed_parent": [
+              0,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": false
+          }
+        }
+      ],
+      "expected_violation": "child_requires_current_parent",
+      "replayed": true,
+      "states": 14,
+      "transitions": 15,
+      "violations": [
+        "child_requires_current_parent"
+      ]
+    },
+    "delayed_delivery_regresses_pointer": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "authorized": 0,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "authorize_child_1",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "authorize_child_2",
+          "state": {
+            "authorized": 2,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "install_2_on_0_ack_unknown",
+          "state": {
+            "authorized": 2,
+            "replicas": [
+              {
+                "archive": 5,
+                "life": 0,
+                "observed": 1,
+                "pointer": 2,
+                "receipts": 5
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "delayed_1_regresses_0",
+          "state": {
+            "authorized": 2,
+            "replicas": [
+              {
+                "archive": 5,
+                "life": 0,
+                "observed": 1,
+                "pointer": 1,
+                "receipts": 5
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        }
+      ],
+      "expected_violation": "monotone_pointer",
+      "replayed": true,
+      "states": 111,
+      "transitions": 203,
+      "violations": [
+        "atomic_install",
+        "monotone_pointer"
+      ]
+    },
+    "delivery_is_success_ack": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "authorized": 0,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "authorize_child_1",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "observe_success_1_on_0",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 3,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        }
+      ],
+      "expected_violation": "ack_requires_durable_receipt",
+      "replayed": true,
+      "states": 29,
+      "transitions": 32,
+      "violations": [
+        "ack_requires_durable_receipt"
+      ]
+    },
+    "fresh_only_at_entry": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        },
+        {
+          "action": "clock_advances",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 1,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        },
+        {
+          "action": "begin_decision_pin_local_snapshot_and_shared_gate",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 1,
+            "open": true,
+            "pointer": 0,
+            "selected": 0
+          }
+        },
+        {
+          "action": "clock_advances",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 2,
+            "open": true,
+            "pointer": 0,
+            "selected": 0
+          }
+        },
+        {
+          "action": "final_checkpoint_and_abstract_commit",
+          "state": {
+            "accepted": [
+              0,
+              0,
+              2,
+              true,
+              0
+            ],
+            "authorized": 0,
+            "done": true,
+            "now": 2,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        }
+      ],
+      "expected_violation": "fresh_at_final_checkpoint",
+      "replayed": true,
+      "states": 74,
+      "transitions": 113,
+      "violations": [
+        "fresh_at_final_checkpoint"
+      ]
+    },
+    "old_generation_commits_after_restart": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "authorized": 0,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "authorize_child_1",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "worker_0_dies",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 1,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "worker_0_recovers_with_new_generation",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 2,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "old_token_installs_1_on_0",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 3,
+                "life": 2,
+                "observed": 1,
+                "pointer": 1,
+                "receipts": 3
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": true
+          }
+        }
+      ],
+      "expected_violation": "current_writer_generation",
+      "replayed": true,
+      "states": 127,
+      "transitions": 270,
+      "violations": [
+        "current_writer_generation"
+      ]
+    },
+    "pointer_without_archive_receipt": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "authorized": 0,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "authorize_child_1",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        },
+        {
+          "action": "install_1_on_0_ack_unknown",
+          "state": {
+            "authorized": 1,
+            "replicas": [
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 1,
+                "receipts": 1
+              },
+              {
+                "archive": 1,
+                "life": 0,
+                "observed": 1,
+                "pointer": 0,
+                "receipts": 1
+              }
+            ],
+            "stale_commit": false
+          }
+        }
+      ],
+      "expected_violation": "atomic_install",
+      "replayed": true,
+      "states": 21,
+      "transitions": 24,
+      "violations": [
+        "atomic_install",
+        "monotone_pointer"
+      ]
+    },
+    "release_shared_gate_before_commit": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        },
+        {
+          "action": "begin_decision_pin_local_snapshot_and_shared_gate",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": 0
+          }
+        },
+        {
+          "action": "hard_freeze_durable",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 0,
+            "open": false,
+            "pointer": 0,
+            "selected": 0
+          }
+        },
+        {
+          "action": "final_checkpoint_and_abstract_commit",
+          "state": {
+            "accepted": [
+              0,
+              0,
+              0,
+              false,
+              0
+            ],
+            "authorized": 0,
+            "done": true,
+            "now": 0,
+            "open": false,
+            "pointer": 0,
+            "selected": -1
+          }
+        }
+      ],
+      "expected_violation": "hard_barrier_excludes_commit",
+      "replayed": true,
+      "states": 61,
+      "transitions": 93,
+      "violations": [
+        "hard_barrier_excludes_commit"
+      ]
+    },
+    "replace_pointer_during_decision": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "accepted": [],
+            "authorized": 0,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        },
+        {
+          "action": "authorize_child_1_without_freeze",
+          "state": {
+            "accepted": [],
+            "authorized": 1,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": -1
+          }
+        },
+        {
+          "action": "begin_decision_pin_local_snapshot_and_shared_gate",
+          "state": {
+            "accepted": [],
+            "authorized": 1,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 0,
+            "selected": 0
+          }
+        },
+        {
+          "action": "install_authorized_child_1",
+          "state": {
+            "accepted": [],
+            "authorized": 1,
+            "done": false,
+            "now": 0,
+            "open": true,
+            "pointer": 1,
+            "selected": 0
+          }
+        },
+        {
+          "action": "final_checkpoint_and_abstract_commit",
+          "state": {
+            "accepted": [
+              0,
+              1,
+              0,
+              true,
+              1
+            ],
+            "authorized": 1,
+            "done": true,
+            "now": 0,
+            "open": true,
+            "pointer": 1,
+            "selected": -1
+          }
+        }
+      ],
+      "expected_violation": "decision_snapshot_is_pinned",
+      "replayed": true,
+      "states": 82,
+      "transitions": 131,
+      "violations": [
+        "decision_snapshot_is_pinned"
+      ]
+    },
+    "thaw_after_one_shard": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 0,
+            "installed_parent": [
+              0,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": true
+          }
+        },
+        {
+          "action": "hard_freeze_and_create_config_parent_1",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 1,
+            "installed_parent": [
+              0,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": false
+          }
+        },
+        {
+          "action": "install_config_parent_1_on_0",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 1,
+            "installed_parent": [
+              1,
+              0
+            ],
+            "observed_parent": [
+              0,
+              0
+            ],
+            "open": false
+          }
+        },
+        {
+          "action": "verify_parent_1_receipt_and_payload_on_0",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 1,
+            "installed_parent": [
+              1,
+              0
+            ],
+            "observed_parent": [
+              1,
+              0
+            ],
+            "open": false
+          }
+        },
+        {
+          "action": "explicit_thaw",
+          "state": {
+            "child_witness": [],
+            "global_epoch": 1,
+            "installed_parent": [
+              1,
+              0
+            ],
+            "observed_parent": [
+              1,
+              0
+            ],
+            "open": true
+          }
+        }
+      ],
+      "expected_violation": "thaw_requires_complete_new_parent",
+      "replayed": true,
+      "states": 24,
+      "transitions": 29,
+      "violations": [
+        "thaw_requires_complete_new_parent"
+      ]
+    }
+  },
+  "passed": true,
+  "physical_commit_age_proven": false,
+  "physical_commit_boundary_counterexample": {
+    "complete": false,
+    "counterexample": [
+      {
+        "action": "initial",
+        "state": {
+          "checked": false,
+          "committed_at": -1,
+          "now": 0
+        }
+      },
+      {
+        "action": "os_or_io_delay",
+        "state": {
+          "checked": false,
+          "committed_at": -1,
+          "now": 1
+        }
+      },
+      {
+        "action": "last_userland_freshness_check_then_enter_sqlite_commit",
+        "state": {
+          "checked": true,
+          "committed_at": -1,
+          "now": 1
+        }
+      },
+      {
+        "action": "os_or_io_delay",
+        "state": {
+          "checked": true,
+          "committed_at": -1,
+          "now": 2
+        }
+      },
+      {
+        "action": "physical_durable_commit",
+        "state": {
+          "checked": true,
+          "committed_at": 2,
+          "now": 2
+        }
+      }
+    ],
+    "states": 12,
+    "transitions": 12,
+    "violations": [
+      "physical_commit_age_unbounded"
+    ]
+  },
+  "production_approved": false,
+  "python": "3.12.14",
+  "runtime_refinement_proven": false,
+  "scope": "independent bounded specifications; runtime unchanged",
+  "source_sha256": "60df96b838e112e587812d8458e92dac39a12071ae416aeb84bcef662c04ce28"
+}

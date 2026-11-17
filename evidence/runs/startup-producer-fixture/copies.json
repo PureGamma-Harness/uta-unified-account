@@ -1,0 +1,121 @@
+{
+  "format": 1,
+  "copies": [
+    {
+      "source": "/workspace/uta-ci-7ae-pr-312/artifact.zip",
+      "archived": "original-ci/artifact.zip",
+      "bytes": 47935,
+      "sha256": "097dd0d4e266d82a85404c32c9e9c6ec8ea19c7bd8817831b76a6c4b44893bdf"
+    },
+    {
+      "source": "/workspace/uta-ci-7ae-pr-312/summary.json",
+      "archived": "original-ci/summary.json",
+      "bytes": 44013,
+      "sha256": "e84a3dbcfbe47bdd3244b275b4651b035a2f5d096ee0b899b0a4590718f0f1c0"
+    },
+    {
+      "source": "/workspace/uta-ci-7ae-pr-312/unittest.txt",
+      "archived": "original-ci/unittest.txt",
+      "bytes": 224907,
+      "sha256": "458ece9c5c89cc8ef1abb0fc45538ce0fdbb78a769c9dd4b60da6b4dbd5ac5a3"
+    },
+    {
+      "source": "/workspace/uta-ci-7ae-pr-312/worker-result.json",
+      "archived": "original-ci/worker-result.json",
+      "bytes": 155,
+      "sha256": "ae4c058712110bc176588f28ee564dfe562b04d2a56c2a3e39f6e5ed4104eb30"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-7ae-red/result.json",
+      "archived": "controlled-pause-old/result.json",
+      "bytes": 5734,
+      "sha256": "a8eab5ddad3c38abaa6ca7a1850e3788f60bc736766991a9b87d1d9dc81c1b64"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-7ae-red/unittest.txt",
+      "archived": "controlled-pause-old/unittest.txt",
+      "bytes": 2995,
+      "sha256": "80bc2019401b02afaca06fe0fd2eab63f69fcd74407d7c40e14de84b31a3b4e0"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-pause.py",
+      "archived": "uta-producer-fixture-pause.py",
+      "bytes": 4425,
+      "sha256": "cd4f52f9211def853913da1e0944324471f650540fcf39534db7ed514dbdaf3e"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-7ae-green/result.json",
+      "archived": "controlled-pause-new/result.json",
+      "bytes": 5700,
+      "sha256": "9f35b56965d5b2d3a15875d46f98f1c2458b108755408e79e9f20051aaac4b8e"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-7ae-green/unittest.txt",
+      "archived": "controlled-pause-new/unittest.txt",
+      "bytes": 302,
+      "sha256": "372a5485998c0751d6843b6fb69a6ef385bc383e089b0355f9caf5a99ac045fc"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-27855b5-final/manifest.json",
+      "archived": "targeted/manifest.json",
+      "bytes": 7841,
+      "sha256": "19e09816c13daa77a9e6081c913140c1aef09cdc96269c6aaa5472c5f18add01"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-27855b5-final/python310-targeted.txt",
+      "archived": "targeted/python310-targeted.txt",
+      "bytes": 9318,
+      "sha256": "fccb91fdd3ee368c52ccda3e4a9dce972491b5a77951f8ccc5fbd082aefd8e3c"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-27855b5-final/python312-targeted.txt",
+      "archived": "targeted/python312-targeted.txt",
+      "bytes": 13745,
+      "sha256": "0d2efce42829d2e72efdb24f913def93ad6f11311600a6ab64349d1b110bba7b"
+    },
+    {
+      "source": "/tmp/uta-producer-fixture-27855b5-final/python313-targeted.txt",
+      "archived": "targeted/python313-targeted.txt",
+      "bytes": 14052,
+      "sha256": "68971f577da5bd123369f5f3d4bbf5d69a2be6ffa5e9fdfbc12e538129522a88"
+    },
+    {
+      "source": "/tmp/uta-startup-binding-final.py",
+      "archived": "targeted/uta-startup-binding-final.py",
+      "bytes": 2601,
+      "sha256": "2302a06b1b3cda0c95aa0341a602f93ca6d654371cb7cbece67e7e229dfddc65"
+    }
+  ],
+  "original_ci_artifact_id": 14310790845,
+  "source_summary_commit": "bd8e5b452166477bb15adeb5807f2c1b98b782ab",
+  "all_208_original_source_hashes_match": "7ae94eb8a783f8e134ac90c11a713df7bb02d5f1",
+  "controlled_green_runtime_files_match_base": "7ae94eb8a783f8e134ac90c11a713df7bb02d5f1",
+  "controlled_green_test_hashes_match_correction_files": true,
+  "final_targeted_runtime_hashes_match": "7ae94eb8a783f8e134ac90c11a713df7bb02d5f1",
+  "final_targeted_test_hashes_match": "27855b50ffaba64c869234ae94218d5ed981e211",
+  "all_owned_and_other_contention_test_method_asts_unchanged": {
+    "tests/test_owned_startup.py": [
+      "test_full_real_read_verification_spans_multiple_ordinary_leases",
+      "test_same_pid_other_thread_token_reuse_is_rejected_then_registry_drains",
+      "test_context_nested_reused_and_wrong_nonce_are_not_success_capabilities",
+      "test_real_renew_commit_with_lost_response_poisoned_no_success",
+      "test_real_deferred_foreign_key_commit_failure_cannot_finish",
+      "test_balance_corruption_is_still_rejected_by_full_original_replay",
+      "test_credit_projection_corruption_rejected_after_successful_full_ledger_replay",
+      "test_stop_before_start_leaves_no_registry_or_keeper_and_allows_clean_retry",
+      "test_existing_missing_credit_business_guard_is_not_repaired",
+      "test_existing_same_name_weak_match_guard_is_not_repaired",
+      "test_additional_guarded_schema_after_full_replay_cannot_extend_frozen_manifest",
+      "test_changed_existing_business_schema_after_full_replay_cannot_finish",
+      "test_real_verified_context_cannot_be_rebound_to_a_different_ledger_object",
+      "test_private_startup_rejects_historical_migration_before_any_version_change",
+      "test_prepared_worker_is_reused_without_any_post_freeze_ddl",
+      "test_finite_deadline_stops_renewing_and_cannot_finish"
+    ],
+    "tests/test_startup_write_contention.py": [
+      "test_own_short_financial_writer_does_not_poison_live_startup_renewal",
+      "test_owned_financial_writer_past_actual_expiry_still_rolls_back",
+      "test_an_unrelated_new_authority_keeps_its_normal_financial_path"
+    ]
+  }
+}

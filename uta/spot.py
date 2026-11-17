@@ -10,6 +10,7 @@ from decimal import Decimal
 from fractions import Fraction
 from hashlib import sha256
 import json
+import sqlite3
 from uuid import uuid4
 
 from .ledger import Ledger, LedgerError, Posting
@@ -19,6 +20,17 @@ from .service import ExchangeService, ServiceError, _amount, _exact, _json, _key
 
 _LIVE = ("OPEN", "PARTIALLY_FILLED")
 _TRANSIENT = {"market_unavailable", "invalid_clock", "storage_unavailable", "trading_halted"}
+
+
+def _immutable_guard_definitions():
+    """One official definition for installing and inspecting receipt guards."""
+    definitions = {}
+    for table, label in (("uta_spot_matches", "receipts"), ("uta_spot_fills", "fills")):
+        for action in ("UPDATE", "DELETE"):
+            name = table + "_no_" + action.lower()
+            definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} "
+                                f"BEGIN SELECT RAISE(ABORT,'spot {label} are immutable'); END")
+    return definitions
 
 
 def locked_assets(connection, account_id: str) -> dict[str, Decimal]:
@@ -72,9 +84,11 @@ class SpotExchange:
     order notional, rounded up once and charged by increment.
     """
 
-    def __init__(self, exchange: ExchangeService, catalog: ProductCatalog):
+    def __init__(self, exchange: ExchangeService, catalog: ProductCatalog, *, initialize: bool = True):
         if not isinstance(exchange, ExchangeService) or not isinstance(catalog, ProductCatalog):
             raise ServiceError("invalid_configuration", "SpotExchange requires an exchange and ProductCatalog")
+        if type(initialize) is not bool:
+            raise ServiceError("invalid_configuration", "initialize must be a boolean")
         configured = getattr(exchange, "product_catalog", None)
         if configured is not None and configured != catalog:
             raise ServiceError("configuration_conflict", "spot and account product catalogs must match", 409)
@@ -89,6 +103,10 @@ class SpotExchange:
                 raise ServiceError("spot_product_unsupported", "base and quote must be different assets")
             self._units(product.underlying, product.quantity_step)
             self._units(product.quote_asset, _exact(Fraction(product.quantity_step) * Fraction(product.price_tick)))
+        if not initialize:
+            # Verification views must inspect the existing schema and guards,
+            # never recreate them before discovering that they were missing.
+            return
         with exchange._transaction() as connection:
             for statement in (
                 "CREATE TABLE IF NOT EXISTS uta_spot_schema (singleton INTEGER PRIMARY KEY CHECK(singleton=1),version INTEGER NOT NULL)",
@@ -121,12 +139,10 @@ class SpotExchange:
                     PRIMARY KEY(trade_id,account_id),
                     FOREIGN KEY(account_id,order_id) REFERENCES uta_spot_orders(account_id,order_id))""",
                 "CREATE INDEX IF NOT EXISTS uta_spot_live ON uta_spot_orders(symbol,status)",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_matches_no_update BEFORE UPDATE ON uta_spot_matches BEGIN SELECT RAISE(ABORT,'spot receipts are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_matches_no_delete BEFORE DELETE ON uta_spot_matches BEGIN SELECT RAISE(ABORT,'spot receipts are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_fills_no_update BEFORE UPDATE ON uta_spot_fills BEGIN SELECT RAISE(ABORT,'spot fills are immutable'); END",
-                "CREATE TRIGGER IF NOT EXISTS uta_spot_fills_no_delete BEFORE DELETE ON uta_spot_fills BEGIN SELECT RAISE(ABORT,'spot fills are immutable'); END",
             ):
                 connection.execute(statement)
+            for _, definition in _immutable_guard_definitions().values():
+                connection.execute(definition.replace("CREATE TRIGGER ", "CREATE TRIGGER IF NOT EXISTS ", 1))
             row = connection.execute("SELECT version FROM uta_spot_schema WHERE singleton=1").fetchone()
             if row is None:
                 connection.execute("INSERT INTO uta_spot_schema VALUES (1,1)")
@@ -140,9 +156,14 @@ class SpotExchange:
             self._verify(connection)
 
     def _check_schema(self, connection) -> None:
-        row = connection.execute("SELECT version FROM uta_spot_schema WHERE singleton=1").fetchone()
-        if row is None or row["version"] != 1:
+        rows = [tuple(row) for row in connection.execute("SELECT singleton,version FROM uta_spot_schema")]
+        if rows != [(1, 1)]:
             raise ServiceError("spot_schema_version", "unsupported spot schema", 503)
+
+    def _check_configuration(self, connection) -> None:
+        rows = [tuple(row) for row in connection.execute("SELECT singleton,catalog,fee_rate FROM uta_spot_config")]
+        if rows != [(1, self.catalog.to_json(), _text(self.exchange.fee_rate))]:
+            raise ServiceError("spot_corrupt", "persisted spot catalog or fee policy differs", 503)
 
     def _units(self, asset: str, amount: Decimal) -> int:
         try:
@@ -395,28 +416,56 @@ class SpotExchange:
 
     def _verify(self, connection) -> dict:
         self._check_schema(connection)
+        self._check_configuration(connection)
         ledger_events = self.exchange.ledger.verify(connection=connection)
-        installed = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger'")}
-        required = {"uta_spot_matches_no_update", "uta_spot_matches_no_delete",
-                    "uta_spot_fills_no_update", "uta_spot_fills_no_delete"}
-        if not required <= installed:
-            raise ServiceError("spot_corrupt", "spot receipt/fill protection is missing", 503)
+        installed = {row["name"]: (row["type"], row["tbl_name"], row["sql"])
+                     for row in connection.execute("SELECT name,type,tbl_name,sql FROM sqlite_master")}
+        for name, (table, definition) in _immutable_guard_definitions().items():
+            if installed.get(name) != ("trigger", table, definition):
+                raise ServiceError("spot_corrupt", "spot receipt/fill protection differs from its official definition", 503)
         journal = {event.event_id: event for event in self.exchange.ledger.journal(connection=connection)}
-        audit = []
+        # Reconcile both directions: a missing receipt must not hide its
+        # retained confirmation event. Index once rather than rescan all audit
+        # rows for each historical match.
+        audit = {"SPOT_MATCH_CONFIRMED": {}, "SPOT_TRADE_CONFIRMED": {}}
+        def invalid_number(value):
+            # The recorded confirmation contract uses strings for money and
+            # JSON integers for versions/sequence, never floating point values.
+            raise ValueError("floating point confirmation value")
+        def unique_object(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("duplicate confirmation field")
+                result[key] = value
+            return result
         for row in connection.execute("SELECT event_type,account_id,payload FROM uta_events WHERE event_type IN ('SPOT_MATCH_CONFIRMED','SPOT_TRADE_CONFIRMED')"):
             try:
-                payload = json.loads(row["payload"])
+                payload = json.loads(row["payload"], parse_float=invalid_number,
+                                     parse_constant=invalid_number, object_pairs_hook=unique_object)
             except (ValueError, TypeError) as exc:
                 raise ServiceError("spot_corrupt", "spot audit payload is invalid", 503) from exc
-            audit.append((row["event_type"], row["account_id"], payload))
+            if (not isinstance(payload, dict) or not isinstance(payload.get("trade_id"), str)
+                    or not payload["trade_id"]):
+                raise ServiceError("spot_corrupt", "spot confirmation event has no valid trade identity", 503)
+            audit[row["event_type"]].setdefault(payload["trade_id"], []).append((row["account_id"], payload))
         matches = connection.execute("SELECT * FROM uta_spot_matches ORDER BY sequence").fetchall()
+        trade_ids = {row["trade_id"] for row in matches}
+        if any(set(events) != trade_ids for events in audit.values()):
+            raise ServiceError("spot_corrupt", "spot confirmation events and receipts do not resolve in both directions", 503)
+        fills_by_trade, fills_by_order = {}, {}
+        for fill in connection.execute("SELECT * FROM uta_spot_fills"):
+            if fill["trade_id"] not in trade_ids:
+                raise ServiceError("spot_corrupt", "spot fill has no confirmed receipt", 503)
+            fills_by_trade.setdefault(fill["trade_id"], []).append(fill)
+            fills_by_order.setdefault((fill["account_id"], fill["order_id"]), []).append(fill)
         for trade in matches:
             quantity, notional = Decimal(trade["quantity"]), Decimal(trade["notional"])
             if quantity <= 0 or Decimal(trade["price"]) <= 0 or min(Decimal(trade["buy_fee"]), Decimal(trade["sell_fee"])) < 0:
                 raise ServiceError("spot_corrupt", "invalid spot receipt amounts", 503)
             if Fraction(quantity) * Fraction(Decimal(trade["price"])) != Fraction(notional):
                 raise ServiceError("spot_corrupt", "receipt notional does not match actual quantity and price", 503)
-            fills = connection.execute("SELECT * FROM uta_spot_fills WHERE trade_id=?", (trade["trade_id"],)).fetchall()
+            fills = fills_by_trade.get(trade["trade_id"], [])
             expected = {
                 trade["buy_account_id"]: (trade["buy_order_id"], quantity, Decimal(trade["buy_fee"])),
                 trade["sell_account_id"]: (trade["sell_order_id"], quantity.copy_negate(), Decimal(trade["sell_fee"]))}
@@ -434,21 +483,30 @@ class SpotExchange:
             key = lambda posting: (posting.account, posting.asset, Fraction(posting.amount))
             if event is None or sorted(event.postings, key=key) != sorted(expected_postings, key=key):
                 raise ServiceError("spot_corrupt", "spot receipt does not match its balanced settlement journal", 503)
-            global_events = [payload for kind, account, payload in audit if kind == "SPOT_MATCH_CONFIRMED"
-                             and account is None and payload.get("trade_id") == trade["trade_id"]]
-            private_events = [(account, payload) for kind, account, payload in audit if kind == "SPOT_TRADE_CONFIRMED"
-                              and payload.get("trade_id") == trade["trade_id"]]
-            if global_events != [dict(trade)] or len(private_events) != 2:
+            global_events = audit["SPOT_MATCH_CONFIRMED"][trade["trade_id"]]
+            private_events = audit["SPOT_TRADE_CONFIRMED"][trade["trade_id"]]
+            if (len(global_events) != 1 or global_events[0][0] is not None
+                    or _json(global_events[0][1]) != _json(dict(trade)) or len(private_events) != 2
+                    or {account for account, _ in private_events} != set(expected)):
                 raise ServiceError("spot_corrupt", "spot confirmation events differ from committed receipt", 503)
             for account, payload in private_events:
                 own = expected.get(account)
-                if (own is None or payload.get("order_id") != own[0]
-                        or payload.get("quantity") != _text(own[1]) or payload.get("fee") != _text(own[2])
-                        or payload.get("price") != trade["price"] or payload.get("symbol") != trade["symbol"]):
+                expected_payload = {"trade_id": trade["trade_id"], "symbol": trade["symbol"],
+                    "order_id": own[0], "quantity": _text(own[1]), "price": trade["price"],
+                    "fee": _text(own[2]), "market_version": trade["market_version"],
+                    "catalog_version": trade["catalog_version"]}
+                if _json(payload) != _json(expected_payload):
                     raise ServiceError("spot_corrupt", "private spot event differs from confirmed side", 503)
         orders = connection.execute("SELECT * FROM uta_spot_orders").fetchall()
+        if not set(fills_by_order) <= {(row["account_id"], row["order_id"]) for row in orders}:
+            raise ServiceError("spot_corrupt", "spot fill has no original order", 503)
         for order in orders:
-            fills = connection.execute("SELECT * FROM uta_spot_fills WHERE account_id=? AND order_id=?", (order["account_id"], order["order_id"])).fetchall()
+            product = self.catalog.products.get(order["symbol"])
+            if (product is None or product.kind not in (ProductKind.SPOT, ProductKind.SPOT_MARGIN)
+                    or (order["base_asset"], order["quote_asset"]) != (product.underlying, product.quote_asset)
+                    or order["status"] not in (*_LIVE, "FILLED", "CANCELLED")):
+                raise ServiceError("spot_corrupt", "spot order product metadata or status differs", 503)
+            fills = fills_by_order.get((order["account_id"], order["order_id"]), [])
             quantity = sum((Fraction(Decimal(fill["quantity"])) for fill in fills), Fraction(0))
             notional = sum((Fraction(Decimal(fill["notional"])) for fill in fills), Fraction(0))
             fee = sum((Fraction(Decimal(fill["fee"])) for fill in fills), Fraction(0))
@@ -461,12 +519,23 @@ class SpotExchange:
             if (not original or abs(quantity) > abs(original) or quantity and (quantity > 0) != (original > 0)
                     or order["status"] in _LIVE and quantity == original):
                 raise ServiceError("spot_corrupt", "spot cumulative fill exceeds its signed order", 503)
+            if order["reserved_asset"] != (product.quote_asset if original > 0 else product.underlying):
+                raise ServiceError("spot_corrupt", "spot order reservation asset differs from its side", 503)
             expected_asset, expected_amount = self._reservation(order) if order["status"] in _LIVE else (order["reserved_asset"], Decimal(0))
             if (order["reserved_asset"], Decimal(order["reserved_amount"])) != (expected_asset, expected_amount):
                 raise ServiceError("spot_corrupt", "spot order lock differs from remaining obligation", 503)
         return {"matches": len(matches), "paired_fills": len(matches) * 2,
                 "orders": len(orders), "ledger_events": ledger_events}
 
-    def verify(self) -> dict:
-        with self.exchange._transaction() as connection:
-            return self._verify(connection)
+    def verify(self, *, connection=None) -> dict:
+        """Inspect existing history without installing schema or changing guards."""
+        try:
+            if connection is None:
+                with self.exchange.database.read_transaction() as connection:
+                    return self._verify(connection)
+            with self.exchange.database._using(connection) as connection:
+                return self._verify(connection)
+        except LedgerError as exc:
+            raise ServiceError("ledger_rejected", str(exc), 409) from exc
+        except sqlite3.OperationalError as exc:
+            raise ServiceError("storage_unavailable", "storage transaction could not complete", 503) from exc

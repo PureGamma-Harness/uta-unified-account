@@ -38,3 +38,20 @@ python formal/explore_reservation.py
 - 容量固定，订单数量有限，一次订单 ID 只进入一次生命周期；模型不包含持久化、数据库隔离、交易所执行、事件交付、价格更新、费用、金额精度、业务幂等键冲突或抵押品变化。
 - `[][Next]_vars` 允许停滞，无公平性或最终完成保证；这只检查安全性，并不证明活性。
 - 对比模型会故意错误地采用申请时记录的余量且不验证版本，枚举器打印可复现的超额预占反例；它是反例演示，不是对真实实现的漏洞指控。
+
+## Managed 持久金融批处理的独立设计模型
+
+`explore_durable_batches.py` 是只依赖标准库的新模型，不导入 runtime 或其他模型函数。
+它枚举同一个 router SH gate/本地金融事务内的 savepoint、成功/拒绝、whole rollback、
+actual-COMMIT unknown、持久原 CID manifest 与重启/query-all、累计 reduce-only、
+duplicate OID、prefix budget 和 poison 隔离，并要求 13 个故意错误变体命中指定反例。
+
+```sh
+timeout 10s python -c 'import os, runpy; os.sched_setaffinity(0, {min(os.sched_getaffinity(0))}); runpy.run_path("formal/explore_durable_batches.py", run_name="__main__")'
+```
+
+设计、逐入口追踪、profile 证据和未证明范围见
+[durable-financial-batches-design.md](../docs/durable-financial-batches-design.md)，独立审阅见
+[review record](../docs/durable-financial-batches-review.md)，本次小枚举输出见
+[results/durable-batches-design-20261117.json](results/durable-batches-design-20261117.json)。
+它没有接入或改变 managed runtime，不是实现 refinement、活性、物理 RPO 或生产资格证明。

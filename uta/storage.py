@@ -179,6 +179,15 @@ class Database:
 
     @contextmanager
     def _role_transaction(self, role) -> Iterator[sqlite3.Connection]:
+        from .startup import _initialization_write_gate
+        # Include connection setup (WAL pragma) and close in owned write
+        # scheduling. The actual SQL transaction is executed exactly once.
+        with _initialization_write_gate(self, role):
+            with self._role_transaction_body(role) as connection:
+                yield connection
+
+    @contextmanager
+    def _role_transaction_body(self, role) -> Iterator[sqlite3.Connection]:
         from .writer_fence import _TransactionGuard, WriterFenceError
         # Scope creation policy to this connection attempt, retaining existing
         # no-argument subclass hooks without mutating a shared Database object.
@@ -292,6 +301,17 @@ class DurableLedger:
         self.database = database
         self.scales = MappingProxyType(dict(scales))
         with database.transaction() as connection:
+            existing = {row[0] for row in connection.execute(
+                "SELECT name FROM sqlite_master WHERE name IN "
+                "('ledger_schema','ledger_assets','ledger_events','ledger_postings','ledger_balances')")}
+            if existing:
+                if "ledger_schema" in existing:
+                    version = connection.execute("SELECT version FROM ledger_schema WHERE singleton=1").fetchone()
+                    if version is not None and version[0] != _SCHEMA_VERSION:
+                        raise StorageError(f"unsupported ledger schema version: {version[0]}")
+                # An existing authority must retain its original protection.
+                # Do not silently install a missing guard before checking it.
+                self._verify_protection(connection)
             for statement in _SCHEMA:
                 connection.execute(statement)
             version = connection.execute("SELECT version FROM ledger_schema WHERE singleton = 1").fetchone()
@@ -304,6 +324,23 @@ class DurableLedger:
                 connection.executemany("INSERT INTO ledger_assets VALUES (?, ?)", sorted(self.scales.items()))
             elif stored != self.scales:
                 raise LedgerError("configured asset scales differ from the persistent ledger")
+
+    @staticmethod
+    def _verify_protection(connection):
+        expected = {}
+        for statement in _SCHEMA:
+            if statement.startswith("CREATE TRIGGER IF NOT EXISTS "):
+                definition = statement.replace("CREATE TRIGGER IF NOT EXISTS ", "CREATE TRIGGER ", 1)
+                name = definition.split()[2]
+                table = definition.split(" ON ", 1)[1].split()[0]
+                expected[name] = ("trigger", table, definition)
+        installed = {row[0]: tuple(row[1:]) for row in connection.execute(
+            "SELECT name,type,tbl_name,sql FROM sqlite_master")}
+        for name, definition in expected.items():
+            if name not in installed:
+                raise LedgerError("journal protection trigger is missing")
+            if installed[name] != definition:
+                raise LedgerError("journal protection trigger definition changed")
 
     def _normalize(self, event_id: str, postings: Sequence[Posting]) -> tuple[tuple[str, str, int], ...]:
         if not isinstance(event_id, str) or not event_id.strip() or len(event_id) > 256:
@@ -450,11 +487,7 @@ class DurableLedger:
                 raise LedgerError("ledger schema version changed")
             if dict(current.execute("SELECT asset, scale FROM ledger_assets")) != self.scales:
                 raise LedgerError("ledger asset scales changed")
-            expected_triggers = {statement.split("EXISTS ", 1)[1].split()[0]
-                                 for statement in _SCHEMA if statement.startswith("CREATE TRIGGER")}
-            installed = {row[0] for row in current.execute("SELECT name FROM sqlite_master WHERE type = 'trigger'")}
-            if not expected_triggers <= installed:
-                raise LedgerError("journal protection trigger is missing")
+            self._verify_protection(current)
             projected: dict[tuple[str, str], int] = {}
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "

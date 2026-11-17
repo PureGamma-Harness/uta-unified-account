@@ -1,0 +1,14 @@
+test_legacy_caller_retains_generic_fields_and_explicit_missing_cause (tests.test_failure_diagnostics.FailureDiagnosticTests.test_legacy_caller_retains_generic_fields_and_explicit_missing_cause) ... FAIL
+
+======================================================================
+FAIL: test_legacy_caller_retains_generic_fields_and_explicit_missing_cause (tests.test_failure_diagnostics.FailureDiagnosticTests.test_legacy_caller_retains_generic_fields_and_explicit_missing_cause)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-failure-diagnostics/tests/test_failure_diagnostics.py", line 72, in test_legacy_caller_retains_generic_fields_and_explicit_missing_cause
+    self.assertEqual(len(events), 1, "generic last_error alone cannot identify the actual cause")
+AssertionError: 0 != 1 : generic last_error alone cannot identify the actual cause
+
+----------------------------------------------------------------------
+Ran 1 test in 0.073s
+
+FAILED (failures=1)

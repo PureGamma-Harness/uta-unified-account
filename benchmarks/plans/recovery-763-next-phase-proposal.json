@@ -1,0 +1,101 @@
+{
+  "actual_case_outcome_unchanged": "250k NO_GO_TIME_BUDGET_ABORTED_BEFORE_DURABLE_COMMAND_OR_OWNER",
+  "actual_driver_sha": "d886cdbfafbc491e1a7705313080f910712bd185",
+  "actual_runtime_sha": "763202df9cb3ce089721e5281371aff3eab58089",
+  "capacity_passed": false,
+  "full_history_paths": [
+    {
+      "events": 0,
+      "phase": "freshservice constructor"
+    },
+    {
+      "full_history_verifies": 0,
+      "phase": "bootstrap",
+      "post_calls": 250000,
+      "seed_batch_commits_expected": 977
+    },
+    {
+      "events": 250000,
+      "phase": "offline native ledger preflight"
+    },
+    {
+      "actual_completion": "unknown",
+      "events": 250000,
+      "phase": "initial independent reference"
+    },
+    {
+      "actual_execution": "not reached",
+      "events": 250000,
+      "phase": "ownedworker replay"
+    },
+    {
+      "actual_execution": "unknown",
+      "events": 250000,
+      "phase": "finally independent reference"
+    }
+  ],
+  "future_event_fields": [
+    "phase/call/parent",
+    "pid/thread",
+    "UTC/monotonic/boottime",
+    "self user/systemCPU",
+    "maxRSS",
+    "realCOMMITcount",
+    "error/partialstate"
+  ],
+  "future_phase_events": [
+    "environment/provenance",
+    "initialize",
+    "bootstrap/account creation",
+    "seedbatchCOMMITreturn",
+    "ledgerpreflight",
+    "spotpreflight",
+    "fundingreconcile",
+    "queue/fenceseal",
+    "initializereturn",
+    "initialreference",
+    "enqueue/query",
+    "spawn/acquire",
+    "ownedverify",
+    "READY",
+    "closerequest",
+    "finalreference",
+    "cleanup"
+  ],
+  "future_scopes": [
+    "small singlethread bootstrap counts/profile",
+    "separatelyprepared fullyvalidated canonicalfixture ownerstart",
+    "actualpreviousREADYowner crashrecovery"
+  ],
+  "ha_approved": false,
+  "known_from_existing_metadata": [
+    "head250000matches expected",
+    "inboxexists empty",
+    "onlygen0enabled marker",
+    "noworker/acquire/renew/READY",
+    "nativepreflight returned before enabled marker under unchanged source order"
+  ],
+  "never_change_current_result": [
+    "no budgetextension",
+    "no originalphasebackfill",
+    "no verifierbypass",
+    "no fakecommit/terminal",
+    "no head-only preparedflag",
+    "no moved/copiedmanagedauthority",
+    "no capacity/HA/6hclaim"
+  ],
+  "new_cohorts": 0,
+  "new_full_replays": 0,
+  "new_profiles": 0,
+  "new_sqlite_opens": 0,
+  "production_approved": false,
+  "static_ast_comparisons": "benchmarks/results/20261117-recovery-763-authorized/static-attribution.json",
+  "status": "PROPOSED_NOT_RUN_ROOT_APPROVAL_REQUIRED",
+  "unknown": [
+    "initialize return",
+    "initial independent reference completion",
+    "signal exact phase",
+    "finally reference begin/completion",
+    "per-phasewallCPUioallocation"
+  ]
+}

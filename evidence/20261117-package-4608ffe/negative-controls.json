@@ -1,0 +1,80 @@
+{
+  "cases": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-operations-freeze-4608ffe/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-operations-freeze-4608ffe",
+        "--commit",
+        "4608ffeda0651f8dafd2cd151618a71ed99aa62e",
+        "--wheel",
+        "/tmp/uta-release-4608ffe-QxAxe9/negative-controls/missing-failure-diagnostics.whl",
+        "--sdist",
+        "/tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-4608ffe-QxAxe9/negative-controls/wheel-report.json"
+      ],
+      "case": "wheel_missing_new_failure_diagnostics_is_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": true,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": false
+      },
+      "cwd": "/workspace/uta-package-4608ffe",
+      "negative_archive_sha256": "2703402ba7dfc674f603c8206244afea5e6f1d2e4e9b02e291b7451583b8cdb1",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "uta/failure_diagnostics.py",
+      "returncode": 1,
+      "sdist_missing": [],
+      "source_commit": "4608ffeda0651f8dafd2cd151618a71ed99aa62e"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-operations-freeze-4608ffe/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-operations-freeze-4608ffe",
+        "--commit",
+        "4608ffeda0651f8dafd2cd151618a71ed99aa62e",
+        "--wheel",
+        "/tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-4608ffe-QxAxe9/negative-controls/missing-failure-diagnostics.tar.gz",
+        "--output",
+        "/tmp/uta-release-4608ffe-QxAxe9/negative-controls/sdist-report.json"
+      ],
+      "case": "sdist_missing_new_failure_diagnostics_is_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": false,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "cwd": "/workspace/uta-package-4608ffe",
+      "negative_archive_sha256": "832ed34eb10c1a9cbfdcab6f46247bee364674510cbf463669b419953d648ba4",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "uta/failure_diagnostics.py",
+      "returncode": 1,
+      "sdist_missing": [
+        "uta/failure_diagnostics.py"
+      ],
+      "source_commit": "4608ffeda0651f8dafd2cd151618a71ed99aa62e"
+    }
+  ],
+  "functional_tests_executed": 0,
+  "negative_artifacts_installed": false,
+  "passed": true,
+  "production_approved": false,
+  "scope": "actual new runtime omission controls only",
+  "source_commit": "4608ffeda0651f8dafd2cd151618a71ed99aa62e"
+}

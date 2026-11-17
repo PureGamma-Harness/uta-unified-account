@@ -1,0 +1,37 @@
+{
+  "reviewed_commit": "3729b562f0935509322e8cffd684520069145420",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "sqlite": "3.53.1",
+  "cpus_per_focused_run": 1,
+  "original_red_tests_unchanged": true,
+  "test_sources": {
+    "tests/test_migration_reverse_evidence.py": "7fffdaf066e36e4f6cc13d838aeb891df9fc08bc333ab9250021ec7d9068cd81",
+    "tests/test_spot_confirmation_integrity.py": "3db936a555547e6d52b9e6d3387f023d895cd6acd7e1bbe5c2a28a72bb3e4d5e",
+    "tests/test_spot_guard_integrity_review.py": "059fe9df905c892cb1a98ed710676038b9d494148ab94064eba9efe66a5733e2"
+  },
+  "runtime_source_sha256": {
+    "uta/spot.py": "6e842fe1cc4717b69eeabb010fea5b1d41484ffab3d8eb33ab253965a95f4377",
+    "uta/durable_process.py": "2424fb0a17e0d3fd532bcd818555f0137398df95465c6c2c0ca23b885cec3730",
+    "uta/writer_fence.py": "6d375edf8165b8d6f989600bc933ffd45b11ed269c83993bf00e9149449902e5"
+  },
+  "artifacts": {
+    "guard-red-py312.txt": "5a2122a907a041d83b115d68fbce4822621b5185873158e2c118b5885fc7d743",
+    "reverse-green-py312.txt": "1fc14321feba46a2730a89111f09d2a17ce505531757c7e573f8b7020ea1f4ae"
+  },
+  "reverse_verification": {
+    "tests_run": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 2.285
+  },
+  "guard_rejection_tests": {
+    "tests_run": 4,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 1.324
+  },
+  "runtime_changed": false,
+  "production_approved": false
+}

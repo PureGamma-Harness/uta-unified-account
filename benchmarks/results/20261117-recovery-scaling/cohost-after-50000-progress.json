@@ -1,0 +1,72 @@
+{
+  "status": "running",
+  "stored_status": "running",
+  "process_alive": true,
+  "heartbeat_age_seconds": 0.048938896,
+  "source_commit": "88755a9f2ba3bb672ca5d354b3037796f00c6611",
+  "started_utc": "2026-11-16T21:36:13.820942+00:00",
+  "original_started_ns": 1794864973820942405,
+  "deadline_ns": 1794951373820942405,
+  "observed_ns": 1794893163336400598,
+  "planned_rounds": 21600,
+  "counts": {
+    "done": 7048
+  },
+  "financial_counts": {
+    "uta_orders": 29602,
+    "uta_fills": 28192,
+    "uta_matches": 14096,
+    "ledger_events": 28551,
+    "soak_evidence": 141800,
+    "cancelled_orders": 2115,
+    "partial_cancelled_orders": 705,
+    "live_orders": 0,
+    "positions": 0,
+    "credit_commands": {
+      "borrowed": 118,
+      "interest_accrued": 118,
+      "pool_funded": 1,
+      "repaid": 118
+    }
+  },
+  "golden_for_completed_rounds": {
+    "matches": 14096,
+    "fill_legs": 28192,
+    "orders": 29602,
+    "cancelled_orders": 2115,
+    "partial_cancelled_orders": 705,
+    "borrow_interest_repay_cycles": 118
+  },
+  "completed_round_golden_matches_financial_state": true,
+  "logs_verified": false,
+  "configured_workload_completed": false,
+  "sessions": [
+    {
+      "id": "32adb2827ad246c096da107615bac7f3",
+      "pid": 4471,
+      "started_ns": 1794864973825199889,
+      "heartbeat_ns": 1794893163287451897,
+      "ended_ns": null,
+      "active_ns": 28189460569322,
+      "status": "running",
+      "process_identity": "210004"
+    }
+  ],
+  "confirmed_active_seconds": 28189.460569322,
+  "wall_seconds_since_original_start": 28189.515460015,
+  "market_version": 27894,
+  "market_age_seconds": 0.317,
+  "roundtrip_latency_ms": {
+    "p50": 112.980995,
+    "p95": 168.345809,
+    "p99": 221.60197,
+    "p99_9": 1726.508655
+  },
+  "directory_bytes": 157029504,
+  "free_disk_bytes": 29657284608,
+  "stability_target_passed": false,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "cohosted": true,
+  "rss_max_kib": 355784
+}

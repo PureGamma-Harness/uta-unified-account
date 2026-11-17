@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-operations-freeze-13e6924/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-operations-freeze-13e6924",
+        "--commit",
+        "13e6924377f031bb3da7ec94aa88df25ed7612ec",
+        "--wheel",
+        "/tmp/uta-release-13e6924-yHMFC2/negative-missing-startup.whl",
+        "--sdist",
+        "/tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-13e6924-yHMFC2/negative-wheel-report.json"
+      ],
+      "case": "actual_wheel_missing_new_runtime_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": true,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": false
+      },
+      "construction": "copy actual new artifact and omit exactly one existing new runtime member; do not install the negative artifact",
+      "cwd": "/workspace/uta-package-13e6924",
+      "negative_artifact_sha256": "c892ac3e117cc8331151e6aa4d3252389c22483d93b468920946b73fdf79b270",
+      "passed": true,
+      "removed_member": "uta/startup.py",
+      "returncode": 1,
+      "sdist_missing": [],
+      "source_commit": "13e6924377f031bb3da7ec94aa88df25ed7612ec"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-operations-freeze-13e6924/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-operations-freeze-13e6924",
+        "--commit",
+        "13e6924377f031bb3da7ec94aa88df25ed7612ec",
+        "--wheel",
+        "/tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-13e6924-yHMFC2/negative-missing-durable_views.tar.gz",
+        "--output",
+        "/tmp/uta-release-13e6924-yHMFC2/negative-sdist-report.json"
+      ],
+      "case": "actual_sdist_missing_new_runtime_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": false,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "construction": "copy actual new artifact and omit exactly one existing new runtime member; do not install the negative artifact",
+      "cwd": "/workspace/uta-package-13e6924",
+      "negative_artifact_sha256": "7a6193b39c5ed63df8a561af531954d5ed4b41453842695d52dc76fc57d3ab26",
+      "passed": true,
+      "removed_member": "uta/durable_views.py",
+      "returncode": 1,
+      "sdist_missing": [
+        "uta/durable_views.py"
+      ],
+      "source_commit": "13e6924377f031bb3da7ec94aa88df25ed7612ec"
+    }
+  ],
+  "passed": true,
+  "production_approved": false
+}

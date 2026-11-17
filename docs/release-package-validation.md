@@ -1,6 +1,65 @@
 # Independent release package validation
 
-The frozen candidate `7200097ce9f92fa678907bee9a99933f60d65bc3` passes complete
+The current frozen candidate `763202df9cb3ce089721e5281371aff3eab58089` passes a
+new complete package exercise. Its sdist contains all **1475 tracked files**
+with exact bytes, including the original historical CI ZIP. Both archives have
+the dynamic **49 Python files plus dashboard**, with runtime tree SHA-256
+`f57e7124063f35ff996132d4d1fc893fae39c8b67d27aa52458c20b1859d631e`.
+A new venv actually passes isolated CLI/protocol **8/8**, view smoke **3/3**, all
+eight console commands and no-`.git` sdist checks **7/1/4**, with no skips.
+Helpers and copied hashes are recomputed from this exact source.
+
+The [763202d artifact hashes and raw evidence](../evidence/20261117-package-763202d/README.md)
+and [exact commands](../evidence/20261117-package-763202d/commands.txt) retain the
+new runs. The tracked ZIP is byte-identical in source, sdist and unpacked source;
+its recorded PR-merge SHA and failed historical CI result remain unchanged.
+Two actual runtime-omission controls and a ZIP-only omission control each make
+the primary gate exit 1. The ZIP-only control preserves both runtime maps and
+fails the all-tracked-source gate. Byte identity with `7ae94eb` is independently
+checked and supplies no borrowed functional PASS. Full matrix/CI qualification
+belongs to the integration gate. This package exercise runs no six-hour or
+pressure load and changes no production/HA/real-funds scope;
+`production_approved` remains false.
+
+The earlier frozen candidate `4608ffeda0651f8dafd2cd151618a71ed99aa62e` passes
+new independent package acceptance: all **1258 tracked files** at that commit
+are exact in the sdist, and both artifacts contain the dynamic **50 runtime
+files**, including `failure_diagnostics.py`. A new venv passes the actual
+isolated **8/8** CLI/protocol cases, all eight console commands and **3/3** frozen
+read-view smoke cases. The no-`.git` sdist passes its 7 legacy, 1 historical
+profile and 4 archive-verifier cases. Actual copies of the new wheel and sdist
+with the diagnostic module omitted each make the primary gate exit 1.
+
+The [4608ffe evidence and artifact hashes](../evidence/20261117-package-4608ffe/README.md)
+and [exact commands](../evidence/20261117-package-4608ffe/commands.txt) bind this
+result to that source and a freshly built/installed runtime. Earlier 13e results
+and intermediate full-suite failures remain unchanged. The integration gate
+owns the separate full runtime matrix and diagnostic/corrupt-inbox regression
+validation. This package exercise runs no six-hour or capacity workload and
+changes no production/HA/real-funds scope; `production_approved` remains false.
+
+The earlier frozen candidate `13e6924377f031bb3da7ec94aa88df25ed7612ec` passes
+fresh independent package acceptance. Its sdist contains all **1171 tracked
+files at that commit** with exact bytes, and both artifacts contain the dynamic
+**49 runtime files**, including the added startup protocol and read projections.
+The runtime tree differs from the earlier 47-file candidate; no previous
+functional result is reused. A new venv passes the actual isolated 8/8 CLI/
+protocol tests and all eight recorded console commands. Three unchanged frozen
+view cases also pass against installed modules, and the unpacked sdist passes
+the 7 legacy, 1 historical-profile and 4 archive checks without `.git`.
+
+The [current source/artifact evidence](../evidence/20261117-package-13e6924/README.md)
+records both artifact hashes, dynamic runtime identity, exact commands and raw
+logs, including the initial zero-test view-harness selection error. Actual new
+artifact controls omitting `startup.py` or `durable_views.py` fail the primary
+gate. The view smoke includes constructor tripwires and localhost HTTP HMAC;
+its separate fixture/nonce writes and transport limits are explicit. CLI TLS
+acceptance is recorded independently. This package exercise runs no six-hour
+recovery test or capacity load, and does not change production/HA/real-funds
+scope. The integration gate owns the separate full runtime matrix.
+`production_approved` remains false.
+
+The earlier frozen candidate `7200097ce9f92fa678907bee9a99933f60d65bc3` passes complete
 source/archive and fresh installed-wheel acceptance. Its sdist contains all
 862 tracked source/evidence files with exact bytes; both artifacts contain the
 same 47 frozen runtime files. The isolated installed exercise passes 8/8 tests

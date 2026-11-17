@@ -1,0 +1,74 @@
+{
+  "artifacts": {
+    "uta_reference_exchange-0.4.0a1-py3-none-any.whl": {
+      "bytes": 257034,
+      "sha256": "8a89f68cc201cf07b3e599e020dd38e9cb565353fc10b561e7f66f86415d52a7"
+    },
+    "uta_reference_exchange-0.4.0a1.tar.gz": {
+      "bytes": 21326149,
+      "sha256": "e97557d711ae0b9cf3f17edc68430c539566ad96d0190341b4d5ef90b3b832d6"
+    }
+  },
+  "constructor_tripwires": "unchanged frozen tests reject writer/ledger initialization during reads",
+  "copied_helper_sha256": "47a76f76b3d1557b4f37d483974e74ab6dcd18a16c5b931d2a703de7592574af",
+  "expected_tests": 3,
+  "fixture_writes": "synthetic financial setup; read phases assert financial rows unchanged",
+  "helper_sha256": "47a76f76b3d1557b4f37d483974e74ab6dcd18a16c5b931d2a703de7592574af",
+  "hmac_view_transport": "localhost HTTP require_tls=False; auth nonce writes expected",
+  "installed_site": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages",
+  "interpreter": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "isolated": true,
+  "modules": {
+    "uta": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/__init__.py",
+    "uta.admission": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/admission.py",
+    "uta.credit": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/credit.py",
+    "uta.decision_audit": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/decision_audit.py",
+    "uta.durable_commands": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/durable_commands.py",
+    "uta.durable_gateway": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/durable_gateway.py",
+    "uta.durable_process": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/durable_process.py",
+    "uta.durable_views": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/durable_views.py",
+    "uta.gateway": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/gateway.py",
+    "uta.ledger": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/ledger.py",
+    "uta.market": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/market.py",
+    "uta.market_cache": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/market_cache.py",
+    "uta.matching": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/matching.py",
+    "uta.models": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/models.py",
+    "uta.portfolio": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/portfolio.py",
+    "uta.products": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/products.py",
+    "uta.request_signing": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/request_signing.py",
+    "uta.reserve_kernel": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/reserve_kernel.py",
+    "uta.risk": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/risk.py",
+    "uta.scenario_margin": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/scenario_margin.py",
+    "uta.service": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/service.py",
+    "uta.sharding": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/sharding.py",
+    "uta.spot": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/spot.py",
+    "uta.startup": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/startup.py",
+    "uta.storage": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/storage.py",
+    "uta.writer_fence": "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages/uta/writer_fence.py"
+  },
+  "passed": true,
+  "production_approved": false,
+  "pythonpath": null,
+  "runtime_file_count": 49,
+  "runtime_tree_sha256": "5ff942d526d904fd74e1843f29e955ca923a223a425d88cb08bfa436f5c6f36b",
+  "scope": "three frozen installed read-view smoke tests",
+  "selected_tests": [
+    "DurableViewTests.test_all_read_resources_are_consistent_exact_and_never_initialize_financial_services",
+    "DurableViewTests.test_hmac_authenticated_reader_gets_only_its_own_view_without_financial_writes",
+    "RouterReadTests.test_existing_router_reads_only_owning_shard_without_financial_constructors"
+  ],
+  "source_commit": "13e6924377f031bb3da7ec94aa88df25ed7612ec",
+  "sys_path": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python312.zip",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/lib-dynload",
+    "/tmp/uta-release-13e6924-yHMFC2/venv/lib/python3.12/site-packages"
+  ],
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "run": 3,
+    "skipped": 0
+  },
+  "version": "0.4.0a1"
+}

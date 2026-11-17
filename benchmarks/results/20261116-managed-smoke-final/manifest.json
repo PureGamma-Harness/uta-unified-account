@@ -1,0 +1,86 @@
+{
+  "synthetic": true,
+  "real_funds": false,
+  "cases": {
+    "smoke10": {
+      "candidate_commit": "d73f4eddb1deef440afe5f50c9c9752b4a72f6d7",
+      "duration": 10.0,
+      "status": "completed",
+      "actual_elapsed": 10.075580279,
+      "faults": {
+        "worker": 3,
+        "parent": 1
+      },
+      "sha256": {
+        "bootstrap-plan.json": "6a77be2ea05832850ec6bb29ecde85318e15371e20d9bb27f19fb166a43864a3",
+        "checkpoint-snapshot.json.gz": "40c75e77ed23f679cf1cb9b12fa1118a4d37575d55b87ce5811b2482d3a21b12",
+        "cold-audit.json": "c35a3f75a40262d8ee6d31931ddf973735621960bf58a24442a54b5a9c6e3025",
+        "financial-snapshot.json.gz": "cc84d14aa9d251b9a4e3b64af9e80774168862c11b1a3fec22381bdacf38ff01",
+        "job.json": "036b519756ebde7681ede7a97dc8ad1f8cd16a04327d9c9c02b0b80523f89e43",
+        "log-segments.json": "063ab7a810fdee1cfd1140cb4d76b051754d40ad88f6c83ecf9e5ca017db91d4",
+        "logs/events-000000001-000000073.jsonl.gz": "543ff397f2d8bc5f4d032382d75e2ae9fe3a2dd24ab2d0b831b2f9e1f04566f6",
+        "progress.json": "be89d2a90b98f358f57e175d749c2d2859b10ece67cc35e04bbf3f0a3bc64cb6"
+      }
+    },
+    "smoke60": {
+      "candidate_commit": "d73f4eddb1deef440afe5f50c9c9752b4a72f6d7",
+      "duration": 60.0,
+      "status": "completed",
+      "actual_elapsed": 60.107898894,
+      "faults": {
+        "worker": 3,
+        "parent": 2
+      },
+      "sha256": {
+        "bootstrap-plan.json": "78c6fbab83287832712a75d543a7ac18a8af189b2a631d436be170e0b4f420c4",
+        "checkpoint-snapshot.json.gz": "6cc82fa329acc9af6707b45881014c05620bb4950787d9e6fb92f7fc19cc2bf5",
+        "cold-audit.json": "1cee9dc472867b627df30adb8421e6070ea146f9032a07ff76b43aeac6b1bf13",
+        "financial-snapshot.json.gz": "577647770e44138e6cf1310c40af9f87ed267ac31d5e7e171fe6f4d25f0123a0",
+        "job.json": "2ed8afeb53c708e59a49fbfc48e1459ab9d97e8971707d805b9a02c8776843df",
+        "log-segments.json": "92936d6680b486087dc51212b5637fbef3734a432e04989757e8146034c03406",
+        "logs/events-000000001-000000256.jsonl.gz": "421a416b683ad4a3b03ec5a438b07862fbe8ba9ccb3f8e4aea6b0b320f77c3b5",
+        "logs/events-000000257-000000316.jsonl.gz": "06bdb36624730ebf1d6f9128ad6e81b269044c3651e4c98091878de39450fdd3",
+        "progress.json": "8e216f5ccaa8f12902536db6ac976f13a05fa7aa509824c6ec8cf6f83a6ae706"
+      }
+    }
+  },
+  "excluded": [
+    "private/",
+    "auth database",
+    "TLS private key",
+    "signing profile"
+  ],
+  "capacity_10000_per_s_passed": false,
+  "production_approved": false,
+  "validation_files_sha256": {
+    "collect_evidence.py": "c3c5dfc8d36c5de31ecbe974510b7ea4d1472ab10251c351565e195890a06560",
+    "unittest-python312.txt": "a758d84583eb815fd1342da66b4fc50c29811d155ddad34e31e58f6f4786252e",
+    "unittest-python310.txt": "6366ff321be87c730e21369366bae90f066697e97b04275e81e64a4f368acef7",
+    "host.json": "93b1704199b9cabf41039e5848d74500ea2f8254e50256582ae16aad977ea116",
+    "README.md": "9c2afa2c1fe9fb135a79d9c9f5d75f410567cfe8b70305cb560a4c31af6d5292"
+  },
+  "unit_test_execution": {
+    "python312": {
+      "tests": 4,
+      "seconds": 9.989,
+      "exit_code": 0
+    },
+    "python310": {
+      "tests": 4,
+      "seconds": 9.838,
+      "exit_code": 0
+    }
+  },
+  "scope_notes": [
+    {
+      "date": "2026-11-17",
+      "reason": "Known SQLite POSIX-close lock ownership issue is not release-wide validated; historical short observations do not unblock long runs.",
+      "file": "README.md",
+      "previous_sha256": "25bf4a11acfd30ad896d6924b9a104a07d7692c215c6c5c107502d82387c41d3",
+      "current_sha256": "9c2afa2c1fe9fb135a79d9c9f5d75f410567cfe8b70305cb560a4c31af6d5292",
+      "case_payloads_changed": false,
+      "smokes_rerun": false,
+      "posix_close_release_validated": false
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+test_blob_kind_can_quarantine_and_unblock_same_account_cancel (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_blob_kind_can_quarantine_and_unblock_same_account_cancel) ... ERROR
+test_blob_payload_can_quarantine_without_changing_original_bytes (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_blob_payload_can_quarantine_without_changing_original_bytes) ... ERROR
+test_both_blob_fields_can_quarantine_without_false_business_rejection (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_both_blob_fields_can_quarantine_without_false_business_rejection) ... ERROR
+
+======================================================================
+ERROR: test_blob_kind_can_quarantine_and_unblock_same_account_cancel (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_blob_kind_can_quarantine_and_unblock_same_account_cancel)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 84, in test_blob_kind_can_quarantine_and_unblock_same_account_cancel
+    self.poison_then_cancel(b"SUBMIT_ORDER", "{}")
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 55, in poison_then_cancel
+    receipt = self.queue.record_failure(self.writer, "blob-poison", cause=caught.exception.cause,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 425, in record_failure
+    "command_kind_sha256": _payload_digest(row["kind"]), "attempt": attempts,
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 67, in _payload_digest
+    digest.update(text[start:start + 8192].encode("utf-8"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bytes' object has no attribute 'encode'. Did you mean: 'decode'?
+
+======================================================================
+ERROR: test_blob_payload_can_quarantine_without_changing_original_bytes (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_blob_payload_can_quarantine_without_changing_original_bytes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 87, in test_blob_payload_can_quarantine_without_changing_original_bytes
+    self.poison_then_cancel("SUBMIT_ORDER", b"\xff\x00private-binary\xfe")
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 55, in poison_then_cancel
+    receipt = self.queue.record_failure(self.writer, "blob-poison", cause=caught.exception.cause,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 426, in record_failure
+    "canonical_payload_sha256": _payload_digest(row["payload"]),
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 67, in _payload_digest
+    digest.update(text[start:start + 8192].encode("utf-8"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bytes' object has no attribute 'encode'. Did you mean: 'decode'?
+
+======================================================================
+ERROR: test_both_blob_fields_can_quarantine_without_false_business_rejection (tests.test_diagnostic_storage_types.DiagnosticStorageTypeTests.test_both_blob_fields_can_quarantine_without_false_business_rejection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 90, in test_both_blob_fields_can_quarantine_without_false_business_rejection
+    self.poison_then_cancel(b"\xffKIND", b"{}")
+  File "/workspace/uta-diagnostic-storage-types/tests/test_diagnostic_storage_types.py", line 55, in poison_then_cancel
+    receipt = self.queue.record_failure(self.writer, "blob-poison", cause=caught.exception.cause,
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 425, in record_failure
+    "command_kind_sha256": _payload_digest(row["kind"]), "attempt": attempts,
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-diagnostic-storage-types/uta/durable_commands.py", line 67, in _payload_digest
+    digest.update(text[start:start + 8192].encode("utf-8"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'bytes' object has no attribute 'encode'. Did you mean: 'decode'?
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.213s
+
+FAILED (errors=3)

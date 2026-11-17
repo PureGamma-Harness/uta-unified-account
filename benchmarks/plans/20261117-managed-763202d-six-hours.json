@@ -1,0 +1,85 @@
+{
+  "status": "PREREGISTERED_NOT_STARTED",
+  "scope": "synthetic_low_rate_managed_financial_stability; not capacity or production acceptance",
+  "source_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+  "source_root": "/workspace/uta-operations-freeze-763202d",
+  "observer_core_commit": "f6f71673dd4919ec832ecd054da8f611d734f9ed",
+  "reviewed_observer_and_wrapper_commit": "41ab285c598b1eb5f5d5129388397efe7e16ca83",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-operations-validation/763202d/python312/summary.json",
+  "qualification": {
+    "local_full_runs": 3,
+    "tests_each": 1110,
+    "ci_runs": [
+      44046228852,
+      44046236328
+    ],
+    "ci_python_jobs": 8,
+    "package_tracked_files": 1475,
+    "runtime_files": 50,
+    "package_evidence": "evidence/20261117-package-763202d/README.md"
+  },
+  "producer": {
+    "duration_seconds": 21600,
+    "rate_rounds_per_second": 0.25,
+    "planned_rounds": 5400,
+    "worker_fault_every_rounds": 30,
+    "parent_fault_every_rounds": 300,
+    "one_original_driver_birth": true,
+    "allow_resume_for_continuous_target": false,
+    "use_original_configuration_defaults_except_explicit_duration": true,
+    "new_private_job_directory_required": true,
+    "source_budget_bytes": 6442450944,
+    "minimum_free_bytes": 1073741824
+  },
+  "observer": {
+    "interval_seconds": 59,
+    "cadence_reason": "avoid harmonic alias with four-second rounds; all actual timestamps retained",
+    "independent_finance_golden_required_each_1800_second_block": 1,
+    "blocks": 12,
+    "technical_read_unknown_budget": 3,
+    "maximum_consecutive_technical_read_unknown": 1,
+    "all_unknown_samples_and_attempts_reported": true,
+    "planned_fault_inflight_unknown_separate_from_technical_read_unknown": true,
+    "alerts_do_not_imply_finance_proof": true,
+    "final_golden_fk_same_watermark_reopen_and_actual_producer_cold_audit_required": true,
+    "max_private_clone_bytes": 6442450944,
+    "clone_headroom_bytes": 1073741824,
+    "max_address_space_bytes": 2147483648,
+    "private_full_clone_contains_control_nonces_never_publish": true
+  },
+  "financial_gates": {
+    "actual_active_seconds_minimum": 21600,
+    "completed_rounds": 5400,
+    "all_original_account_commands": 32400,
+    "unique_matching_receipts": 10800,
+    "paired_fill_legs": 21600,
+    "financial_unknown_or_quarantined": 0,
+    "internal_account_or_control_technical_retries": 0,
+    "extra_or_missing_financial_effects": 0,
+    "original_source_validation_and_log_hashes_unchanged": true,
+    "independent_exact_gross_budget_and_replay_required": true
+  },
+  "reporting": {
+    "financial_stability_and_live_coverage_separate": true,
+    "overall_engineering_target_requires_both": true,
+    "any_budget_miss_remains_no_go": true,
+    "unmeasured_counters": null,
+    "planned_time_not_actual_elapsed": true
+  },
+  "cohost": {
+    "old_producer_pid": 4471,
+    "old_producer_birth": "210004",
+    "old_observer_pid": 8784,
+    "old_observer_birth": "412799",
+    "do_not_signal_or_modify_old_jobs": true,
+    "shared_host_not_dedicated_hardware": true
+  },
+  "known_failed_gate": {
+    "large_history_250000": "NO_GO; budget exhausted before ownership/command; no final complete proof; does not qualify general large-history recovery"
+  },
+  "production_approved": false,
+  "capacity_10000_approved": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false
+}

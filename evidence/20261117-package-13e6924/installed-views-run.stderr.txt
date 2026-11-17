@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/case.py", line 403, in __init__
+    testMethod = getattr(self, methodName)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'DurableViewTests' object has no attribute 'test_existing_router_reads_only_owning_shard_without_financial_constructors'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/uta-package-13e6924/evidence/20261117-package-13e6924/validate_installed_views.py", line 111, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/uta-package-13e6924/evidence/20261117-package-13e6924/validate_installed_views.py", line 83, in main
+    suite = unittest.TestSuite(helper.DurableViewTests(name) for name in SELECTED)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/suite.py", line 24, in __init__
+    self.addTests(tests)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/suite.py", line 57, in addTests
+    for test in tests:
+                ^^^^^
+  File "/workspace/uta-package-13e6924/evidence/20261117-package-13e6924/validate_installed_views.py", line 83, in <genexpr>
+    suite = unittest.TestSuite(helper.DurableViewTests(name) for name in SELECTED)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/case.py", line 408, in __init__
+    raise ValueError("no such test method in %s: %s" %
+ValueError: no such test method in <class 'frozen_test_durable_views.DurableViewTests'>: test_existing_router_reads_only_owning_shard_without_financial_constructors

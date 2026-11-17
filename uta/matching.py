@@ -46,7 +46,17 @@ class Matcher:
             # them, or its attempt to inspect corruption could mask the problem.
             return
         with exchange._transaction() as connection:
-            for statement in (
+            for statement in self._schema_statements():
+                connection.execute(statement)
+            row = connection.execute("SELECT version FROM uta_matching_schema WHERE singleton=1").fetchone()
+            if row is None:
+                connection.execute("INSERT INTO uta_matching_schema VALUES (1,1)")
+            elif row["version"] != 1:
+                raise ServiceError("matching_schema_version", "unsupported matching schema", 503)
+
+    @staticmethod
+    def _schema_statements() -> tuple[str, ...]:
+        return (
                 "CREATE TABLE IF NOT EXISTS uta_matching_schema (singleton INTEGER PRIMARY KEY CHECK(singleton=1),version INTEGER NOT NULL)",
                 """CREATE TABLE IF NOT EXISTS uta_matches (
                     sequence INTEGER PRIMARY KEY AUTOINCREMENT, trade_id TEXT NOT NULL UNIQUE,
@@ -64,13 +74,7 @@ class Matcher:
                 """CREATE TRIGGER IF NOT EXISTS uta_matches_no_delete BEFORE DELETE ON uta_matches
                     BEGIN SELECT RAISE(ABORT,'match receipts are immutable'); END""",
                 "CREATE INDEX IF NOT EXISTS uta_matches_symbol ON uta_matches(symbol,sequence)",
-            ):
-                connection.execute(statement)
-            row = connection.execute("SELECT version FROM uta_matching_schema WHERE singleton=1").fetchone()
-            if row is None:
-                connection.execute("INSERT INTO uta_matching_schema VALUES (1,1)")
-            elif row["version"] != 1:
-                raise ServiceError("matching_schema_version", "unsupported matching schema", 503)
+        )
 
     @staticmethod
     def _remaining(row) -> Fraction:

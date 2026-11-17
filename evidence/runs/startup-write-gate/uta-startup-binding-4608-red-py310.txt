@@ -1,0 +1,15 @@
+test_own_short_financial_writer_does_not_poison_live_startup_renewal (tests.test_startup_write_contention.StartupWriteContentionTests) ... FAIL
+test_uncoordinated_producer_writer_busy_is_still_technical_poison (tests.test_startup_write_contention.StartupWriteContentionTests) ... ok
+
+======================================================================
+FAIL: test_own_short_financial_writer_does_not_poison_live_startup_renewal (tests.test_startup_write_contention.StartupWriteContentionTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-startup-binding/tests/test_startup_write_contention.py", line 66, in test_own_short_financial_writer_does_not_poison_live_startup_renewal
+    self.assertIsNone(failure, json.dumps(evidence, sort_keys=True))
+AssertionError: StartupError('owned initialization lost its renewal/verification lifecycle') is not None : {"error": [{"code": "startup_keeper_failed", "message": "owned initialization lost its renewal/verification lifecycle", "sqlite_errorcode": null, "sqlite_errorname": null, "type": "StartupError"}, {"code": null, "message": "database is locked", "sqlite_errorcode": null, "sqlite_errorname": null, "type": "OperationalError"}], "keeper_error": [{"code": null, "message": "database is locked", "sqlite_errorcode": null, "sqlite_errorname": null, "type": "OperationalError"}], "phases": {"constructed": true, "entered": true, "finished": false, "renewal_requested": true, "writer_held": true}}
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.520s
+
+FAILED (failures=1)

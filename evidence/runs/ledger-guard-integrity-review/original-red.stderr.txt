@@ -1,0 +1,14 @@
+test_disabled_same_name_posting_update_guard_is_rejected_before_takeover (tests.test_ledger_guard_integrity_review.LedgerGuardIntegrityReviewTests.test_disabled_same_name_posting_update_guard_is_rejected_before_takeover) ... FAIL
+
+======================================================================
+FAIL: test_disabled_same_name_posting_update_guard_is_rejected_before_takeover (tests.test_ledger_guard_integrity_review.LedgerGuardIntegrityReviewTests.test_disabled_same_name_posting_update_guard_is_rejected_before_takeover)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-guard-review/tests/test_ledger_guard_integrity_review.py", line 115, in test_disabled_same_name_posting_update_guard_is_rejected_before_takeover
+    self.assertIsNotNone(verify_error, "same name/table with WHEN 0 is not an immutable journal guard")
+AssertionError: unexpectedly None : same name/table with WHEN 0 is not an immutable journal guard
+
+----------------------------------------------------------------------
+Ran 1 test in 0.133s
+
+FAILED (failures=1)

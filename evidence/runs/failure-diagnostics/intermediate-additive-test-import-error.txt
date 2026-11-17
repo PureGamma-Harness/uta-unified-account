@@ -1,0 +1,127 @@
+test_before_commit_failure_rolls_back_event_and_attempt_then_can_recover (tests.test_failure_diagnostics.FailureDiagnosticTests.test_before_commit_failure_rolls_back_event_and_attempt_then_can_recover) ... ok
+test_deep_cycles_frames_and_hostile_exception_access_are_bounded (tests.test_failure_diagnostics.FailureDiagnosticTests.test_deep_cycles_frames_and_hostile_exception_access_are_bounded) ... ok
+test_deep_traceback_is_bounded_and_attempt_gaps_cannot_invent_failures (tests.test_failure_diagnostics.FailureDiagnosticTests.test_deep_traceback_is_bounded_and_attempt_gaps_cannot_invent_failures) ... ok
+test_expired_lease_cannot_claim_a_diagnostic_or_attempt (tests.test_failure_diagnostics.FailureDiagnosticTests.test_expired_lease_cannot_claim_a_diagnostic_or_attempt) ... ok
+test_failure_record_commit_reply_unknown_recovery_is_idempotent_for_same_attempt (tests.test_failure_diagnostics.FailureDiagnosticTests.test_failure_record_commit_reply_unknown_recovery_is_idempotent_for_same_attempt) ... ok
+test_invalid_persisted_kind_does_not_make_event_unbounded (tests.test_failure_diagnostics.FailureDiagnosticTests.test_invalid_persisted_kind_does_not_make_event_unbounded) ... ok
+test_lease_expiring_after_diagnostic_insert_rolls_back_at_commit (tests.test_failure_diagnostics.FailureDiagnosticTests.test_lease_expiring_after_diagnostic_insert_rolls_back_at_commit) ... ok
+test_legacy_caller_retains_generic_fields_and_explicit_missing_cause (tests.test_failure_diagnostics.FailureDiagnosticTests.test_legacy_caller_retains_generic_fields_and_explicit_missing_cause) ... ok
+test_native_metadata_access_does_not_call_dict_key_or_metaclass_hooks (tests.test_failure_diagnostics.FailureDiagnosticTests.test_native_metadata_access_does_not_call_dict_key_or_metaclass_hooks) ... ok
+test_real_cause_digest_attempt_and_global_visibility_without_financial_effect (tests.test_failure_diagnostics.FailureDiagnosticTests.test_real_cause_digest_attempt_and_global_visibility_without_financial_effect) ... ok
+test_real_sqlite_full_rolls_back_attempt_and_diagnostic (tests.test_failure_diagnostics.FailureDiagnosticTests.test_real_sqlite_full_rolls_back_attempt_and_diagnostic) ... ok
+test_terminal_commit_reply_unknown_is_never_rewritten_or_diagnosed (tests.test_failure_diagnostics.FailureDiagnosticTests.test_terminal_commit_reply_unknown_is_never_rewritten_or_diagnosed) ... ok
+test_unknown_public_code_is_not_copied_from_exception_data (tests.test_failure_diagnostics.FailureDiagnosticTests.test_unknown_public_code_is_not_copied_from_exception_data) ... ok
+test_backoff_and_technical_quarantine_release_account_head (tests.test_durable_commands.DurableCommandTests.test_backoff_and_technical_quarantine_release_account_head) ... ok
+test_bounded_financial_cancel_and_separate_control_capacity (tests.test_durable_commands.DurableCommandTests.test_bounded_financial_cancel_and_separate_control_capacity) ... ok
+test_canonical_identity_conflicts_and_stable_terminal_retries (tests.test_durable_commands.DurableCommandTests.test_canonical_identity_conflicts_and_stable_terminal_retries) ... ok
+test_control_lane_publishes_fresh_market_and_halt_atomically (tests.test_durable_commands.DurableCommandTests.test_control_lane_publishes_fresh_market_and_halt_atomically) ... ok
+test_guard_and_precommit_market_age_share_financial_receipt_transaction (tests.test_durable_commands.DurableCommandTests.test_guard_and_precommit_market_age_share_financial_receipt_transaction) ... ok
+test_late_business_rejection_rolls_back_order_event_and_reserve (tests.test_durable_commands.DurableCommandTests.test_late_business_rejection_rolls_back_order_event_and_reserve) ... ok
+test_lost_commit_reply_is_queried_before_failure_recording (tests.test_durable_commands.DurableCommandTests.test_lost_commit_reply_is_queried_before_failure_recording) ... ok
+test_old_writer_and_unmanaged_worker_cannot_change_financial_state (tests.test_durable_commands.DurableCommandTests.test_old_writer_and_unmanaged_worker_cannot_change_financial_state) ... ok
+test_per_account_fifo_rejection_cancel_and_exact_capacity (tests.test_durable_commands.DurableCommandTests.test_per_account_fifo_rejection_cancel_and_exact_capacity) ... ok
+test_producer_cannot_forge_replace_or_update_terminal_receipt (tests.test_durable_commands.DurableCommandTests.test_producer_cannot_forge_replace_or_update_terminal_receipt) ... ok
+test_queued_ack_has_no_reserve_and_survives_queue_restart (tests.test_durable_commands.DurableCommandTests.test_queued_ack_has_no_reserve_and_survives_queue_restart) ... ok
+test_technical_failure_rolls_back_business_and_receipt_then_retries (tests.test_durable_commands.DurableCommandTests.test_technical_failure_rolls_back_business_and_receipt_then_retries) ... ok
+test_unknown_operations_and_liquidation_ids_never_enter_queue (tests.test_durable_commands.DurableCommandTests.test_unknown_operations_and_liquidation_ids_never_enter_queue) ... ok
+test_repayment_business_rejections_and_missing_worker_credit (tests.test_durable_commands.DurableRepaymentTests.test_repayment_business_rejections_and_missing_worker_credit) ... ok
+test_repayment_ledger_and_receipt_rollback_together_on_technical_failure (tests.test_durable_commands.DurableRepaymentTests.test_repayment_ledger_and_receipt_rollback_together_on_technical_failure) ... ok
+test_repayment_pays_interest_then_principal_during_halt_and_price_outage (tests.test_durable_commands.DurableRepaymentTests.test_repayment_pays_interest_then_principal_during_halt_and_price_outage) ... ok
+test_repayment_uses_the_same_reserved_pending_budget_as_cancel (tests.test_durable_commands.DurableRepaymentTests.test_repayment_uses_the_same_reserved_pending_budget_as_cancel) ... ok
+test_120_seeded_commands_match_independent_per_account_cash_book_and_fifo (tests.test_durable_reference.IndependentDurableCommandTests.test_120_seeded_commands_match_independent_per_account_cash_book_and_fifo) ... ok
+test_backoff_holds_only_its_account_head_until_equal_deadline (tests.test_durable_reference.IndependentDurableCommandTests.test_backoff_holds_only_its_account_head_until_equal_deadline) ... ok
+test_business_rejection_after_attempted_financial_writes_rolls_back_only_finance (tests.test_durable_reference.IndependentDurableCommandTests.test_business_rejection_after_attempted_financial_writes_rolls_back_only_finance) ... ok
+test_durable_queue_ack_has_no_order_or_reserve_and_survives_service_restart (tests.test_durable_reference.IndependentDurableCommandTests.test_durable_queue_ack_has_no_order_or_reserve_and_survives_service_restart) ... ok
+test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice (tests.test_durable_reference.IndependentDurableCommandTests.test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice) ... ok
+test_equivalent_retry_and_conflicting_command_never_add_financial_effect (tests.test_durable_reference.IndependentDurableCommandTests.test_equivalent_retry_and_conflicting_command_never_add_financial_effect) ... ok
+test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection (tests.test_durable_reference.IndependentDurableCommandTests.test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection) ... ERROR
+test_queued_order_uses_execution_time_market_and_old_rejection_does_not_revive (tests.test_durable_reference.IndependentDurableCommandTests.test_queued_order_uses_execution_time_market_and_old_rejection_does_not_revive) ... ok
+test_same_command_rejection_stays_terminal_after_capacity_recovers (tests.test_durable_reference.IndependentDurableCommandTests.test_same_command_rejection_stays_terminal_after_capacity_recovers) ... ok
+test_unknown_after_real_commit_preserves_terminal_during_failure_recording_and_retry (tests.test_durable_reference.IndependentDurableCommandTests.test_unknown_after_real_commit_preserves_terminal_during_failure_recording_and_retry) ... ok
+test_safe_bounded_protocol_and_five_negative_controls (tests.test_durable_reference.IndependentDurableProtocolModelTests.test_safe_bounded_protocol_and_five_negative_controls) ... ok
+test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity (tests.test_durable_reference.IndependentProcessReceiptTests.test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity) ... Process uta-shard-0:
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/uta-failure-diagnostics/uta/durable_process.py", line 431, in _run_worker
+    view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/sharding.py", line 770, in __init__
+    self._exchange = ExchangeService(self.database, self._control.layout["scales"], _startup=_startup, **options)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/service.py", line 158, in __init__
+    with database.transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/sharding.py", line 64, in transaction
+    with super().transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/storage.py", line 159, in transaction
+    with self._role_transaction("financial") as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/storage.py", line 195, in _role_transaction
+    guard = _TransactionGuard(self, connection, role)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-failure-diagnostics/uta/writer_fence.py", line 408, in __init__
+    _assert_initialization_actor(database)
+  File "/workspace/uta-failure-diagnostics/uta/startup.py", line 43, in _assert_initialization_actor
+    matching._require(database)
+  File "/workspace/uta-failure-diagnostics/uta/startup.py", line 100, in _require
+    self.check()
+  File "/workspace/uta-failure-diagnostics/uta/startup.py", line 91, in check
+    raise StartupError("startup_cancelled", "initializer was stopped or lost its parent")
+uta.startup.StartupError: initializer was stopped or lost its parent
+ok
+test_original_precision_replays_exactly_and_keeps_future_balance_limit (tests.test_durable_reference.IndependentReplayPrecisionTests.test_original_precision_replays_exactly_and_keeps_future_balance_limit) ... ok
+test_replay_rejects_invalid_precision_instead_of_inferencing_history (tests.test_durable_reference.IndependentReplayPrecisionTests.test_replay_rejects_invalid_precision_instead_of_inferencing_history) ... ok
+test_wide_history_cannot_implicitly_expand_default_precision (tests.test_durable_reference.IndependentReplayPrecisionTests.test_wide_history_cannot_implicitly_expand_default_precision) ... ok
+test_boot_change_requires_new_generation_and_minimum_ttl_expires_at_equality (tests.test_durable_reference.IndependentWriterLeaseTests.test_boot_change_requires_new_generation_and_minimum_ttl_expires_at_equality) ... ok
+test_clock_high_water_regression_and_invalid_ttl_fail_closed (tests.test_durable_reference.IndependentWriterLeaseTests.test_clock_high_water_regression_and_invalid_ttl_fail_closed) ... ok
+test_competing_lease_and_read_transaction_never_grant_financial_authority (tests.test_durable_reference.IndependentWriterLeaseTests.test_competing_lease_and_read_transaction_never_grant_financial_authority) ... ok
+test_lease_equality_expires_and_financial_changes_roll_back_before_commit (tests.test_durable_reference.IndependentWriterLeaseTests.test_lease_equality_expires_and_financial_changes_roll_back_before_commit) ... ok
+test_preexisting_unfenced_service_cannot_write_after_enable_but_still_reads (tests.test_durable_reference.IndependentWriterLeaseTests.test_preexisting_unfenced_service_cannot_write_after_enable_but_still_reads) ... ok
+test_absent_query_defaults_and_nonempty_malformed_queries_remain_strict (tests.test_durable_views.DurableViewTests.test_absent_query_defaults_and_nonempty_malformed_queries_remain_strict) ... ok
+test_all_read_resources_are_consistent_exact_and_never_initialize_financial_services (tests.test_durable_views.DurableViewTests.test_all_read_resources_are_consistent_exact_and_never_initialize_financial_services) ... ok
+test_asset_balances_and_gross_principal_interest_are_not_netted_or_priced (tests.test_durable_views.DurableViewTests.test_asset_balances_and_gross_principal_interest_are_not_netted_or_priced) ... ok
+test_event_pages_filter_before_limit_preserve_gaps_and_resume_at_the_watermark (tests.test_durable_views.DurableViewTests.test_event_pages_filter_before_limit_preserve_gaps_and_resume_at_the_watermark) ... ok
+test_exact_scientific_liabilities_and_redundant_zeros_ignore_decimal_context (tests.test_durable_views.DurableViewTests.test_exact_scientific_liabilities_and_redundant_zeros_ignore_decimal_context) ... ok
+test_global_failure_diagnostics_are_hidden_from_customers_and_legacy_feed_is_trusted (tests.test_durable_views.DurableViewTests.test_global_failure_diagnostics_are_hidden_from_customers_and_legacy_feed_is_trusted) ... ok
+test_historical_decision_keeps_its_own_market_and_policy_after_current_market_changes (tests.test_durable_views.DurableViewTests.test_historical_decision_keeps_its_own_market_and_policy_after_current_market_changes) ... ok
+test_hmac_authenticated_reader_gets_only_its_own_view_without_financial_writes (tests.test_durable_views.DurableViewTests.test_hmac_authenticated_reader_gets_only_its_own_view_without_financial_writes) ... ok
+test_ledger_only_exposes_the_requested_customers_postings (tests.test_durable_views.DurableViewTests.test_ledger_only_exposes_the_requested_customers_postings) ... ok
+test_legacy_evidence_is_an_explicit_gap_and_never_backfilled_by_a_read (tests.test_durable_views.DurableViewTests.test_legacy_evidence_is_an_explicit_gap_and_never_backfilled_by_a_read) ... ok
+test_liabilities_reject_fractional_minor_units_negatives_and_ledger_overflow (tests.test_durable_views.DurableViewTests.test_liabilities_reject_fractional_minor_units_negatives_and_ledger_overflow) ... ok
+test_missing_file_or_audit_guard_is_not_created_or_repaired (tests.test_durable_views.DurableViewTests.test_missing_file_or_audit_guard_is_not_created_or_repaired) ... ok
+test_nonstandard_monetary_strings_fail_closed_over_http_without_repair (tests.test_durable_views.DurableViewTests.test_nonstandard_monetary_strings_fail_closed_over_http_without_repair) ... ok
+test_overflowing_json_numbers_fail_with_view_error_before_http_serialization (tests.test_durable_views.DurableViewTests.test_overflowing_json_numbers_fail_with_view_error_before_http_serialization) ... ok
+test_read_preflight_never_raw_opens_or_closes_a_financial_inode (tests.test_durable_views.DurableViewTests.test_read_preflight_never_raw_opens_or_closes_a_financial_inode) ... ok
+test_roles_are_checked_before_any_view_query_and_command_receipts_stay_compatible (tests.test_durable_views.DurableViewTests.test_roles_are_checked_before_any_view_query_and_command_receipts_stay_compatible) ... ok
+test_stale_future_and_unevaluated_states_do_not_claim_risk_readiness (tests.test_durable_views.DurableViewTests.test_stale_future_and_unevaluated_states_do_not_claim_risk_readiness) ... ok
+test_stream_and_account_version_mismatch_require_rebuild_not_cursor_reset (tests.test_durable_views.DurableViewTests.test_stream_and_account_version_mismatch_require_rebuild_not_cursor_reset) ... ok
+test_writer_commit_between_metadata_and_rows_cannot_split_a_view_snapshot (tests.test_durable_views.DurableViewTests.test_writer_commit_between_metadata_and_rows_cannot_split_a_view_snapshot) ... ok
+test_existing_router_reads_only_owning_shard_without_financial_constructors (tests.test_durable_views.RouterReadTests.test_existing_router_reads_only_owning_shard_without_financial_constructors) ... ok
+test_real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel (tests.test_durable_faults.ManagedProcessFaultTests.test_real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel) ... ok
+
+======================================================================
+ERROR: test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection (tests.test_durable_reference.IndependentDurableCommandTests.test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-failure-diagnostics/tests/test_durable_reference.py", line 383, in test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection
+    diagnostic = json.loads(diagnostics[0][3])
+                 ^^^^
+NameError: name 'json' is not defined. Did you forget to import 'json'
+
+----------------------------------------------------------------------
+Ran 71 tests in 10.526s
+
+FAILED (errors=1)

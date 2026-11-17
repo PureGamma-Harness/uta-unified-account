@@ -117,6 +117,87 @@ def terminal_outcome(receipt):
     return "business_rejected" if error["status"] < 500 else "control_or_market_rejected"
 
 
+def command_technical_diagnostics(commands):
+    """Count overlapping technical facts from every persisted CID, not outcomes.
+
+    A final rejection or success does not erase earlier internal failures.
+    Control/market CIDs are included; terminal_error is not the original cause.
+    """
+    facts, keys, kinds = [], set(), Counter()
+    attempts_total = retried = last_error_count = quarantined = nonterminal = control_failed = 0
+    for command in commands:
+        key = command["shard"], command["command_id"]
+        if key in keys:
+            raise ValueError("duplicate persisted command identity in diagnostics")
+        keys.add(key)
+        attempts = command["attempts"]
+        if type(attempts) is not int or attempts < 0:
+            raise ValueError("invalid internal execution attempt count")
+        kinds[command["kind"]] += 1
+        has_last_error = command["last_error"] is not None
+        attempts_total += attempts
+        retried += bool(attempts)
+        last_error_count += has_last_error
+        quarantined += command["state"] == "QUARANTINED"
+        is_nonterminal = command["state"] not in TERMINAL
+        control_not_succeeded = command["kind"] in {"PUBLISH_MARKET", "SET_HALT"} and command["state"] != "SUCCEEDED"
+        nonterminal += is_nonterminal
+        control_failed += control_not_succeeded
+        if attempts or has_last_error or command["state"] == "QUARANTINED" or is_nonterminal or control_not_succeeded:
+            terminal_error = command.get("error")
+            if isinstance(terminal_error, str):
+                terminal_error = json.loads(terminal_error)
+            facts.append({"shard": command["shard"], "command_id": command["command_id"],
+                "kind": command["kind"], "state": command["state"], "attempts": attempts,
+                "last_error": command["last_error"],
+                "terminal_error_code": terminal_error.get("code") if terminal_error else None,
+                "terminal_error_status": terminal_error.get("status") if terminal_error else None})
+    return {"stored_commands": len(keys), "commands_by_kind": dict(kinds),
+        "internal_execution_attempts": attempts_total, "commands_with_internal_attempts": retried,
+        "commands_with_last_error": last_error_count, "quarantined_commands": quarantined,
+        "nonterminal_commands": nonterminal, "control_commands_not_succeeded": control_failed,
+        "affected_commands": sorted(facts, key=lambda row: (row["shard"], row["command_id"])),
+        "diagnostics_overlap_outcomes": True,
+        "original_internal_exception_available": False}
+
+
+def probe_qualification(summary):
+    """Fail closed after preserving evidence; this gate is not production approval."""
+    reasons = []
+    technical = summary.get("command_technical_diagnostics")
+    if technical is None:
+        reasons.append("missing_all_cid_technical_diagnostics")
+    else:
+        if technical["internal_execution_attempts"]:
+            reasons.append("internal_execution_attempts")
+        if technical["commands_with_last_error"]:
+            reasons.append("persisted_last_error")
+        if technical["quarantined_commands"]:
+            reasons.append("quarantined_command")
+        if technical["nonterminal_commands"]:
+            reasons.append("persisted_nonterminal_command")
+        if technical["control_commands_not_succeeded"]:
+            reasons.append("control_command_not_succeeded")
+    if summary.get("poll_errors"):
+        reasons.append("receipt_poll_error")
+    counts = summary["counts"]
+    if counts.get("enqueue_technical_errors", 0):
+        reasons.append("enqueue_technical_error")
+    if counts.get("technical_quarantined", 0):
+        reasons.append("observed_quarantined_command")
+    if any(value and ("unknown" in name or "timeout" in name) for name, value in counts.items()):
+        reasons.append("timeout_or_unknown")
+    if any("error" in row for row in summary.get("feed_publications", [])):
+        reasons.append("feed_publication_error")
+    check = summary["readonly_reconciliation"]
+    if not check["reopened_readonly"] or check["pending_count"] or check["unobserved_successes_found_on_reopen"]:
+        reasons.append("reconciliation_or_pending_gap")
+    return {"passed": not reasons, "stop_remaining_cases": bool(reasons), "reasons": reasons,
+            "financial_soft_deadline_passed": counts.get("financial_success_late", 0) == 0,
+            "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+            "production_approved": False, "capacity_10000_per_s_passed": False, "stability_passed": False}
+
+
 def error_details(error):
     result = {"error_type": type(error).__name__, "error_code": getattr(error, "code", None)}
     stack, seen = [error], set()
@@ -238,7 +319,7 @@ def verify_ledger(connection):
 def verify(paths, rows, account_shards):
     """Reopen every store RO after workers stop; verify all original IDs."""
     by_id = {row["command_id"]: row for row in rows}
-    committed, pending, stored_commands, reports = set(), set(), set(), []
+    committed, pending, stored_commands, reports, all_cid_facts = set(), set(), set(), [], []
     for shard, path in enumerate(paths):
         with readonly(path) as connection:
             if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok" or connection.execute("PRAGMA foreign_key_check").fetchone() is not None:
@@ -248,7 +329,9 @@ def verify(paths, rows, account_shards):
             DecisionAudit.validate(connection)
             if connection.execute("SELECT version FROM uta_schema").fetchone()[0] != 3:
                 raise RuntimeError("required decision audit is not enabled")
-            commands = {row["command_id"]: dict(row) for row in connection.execute("SELECT * FROM uta_command_inbox WHERE kind='SUBMIT_ORDER'")}
+            persisted = [dict(row) for row in connection.execute("SELECT * FROM uta_command_inbox")]
+            all_cid_facts.extend({"shard": shard, **row} for row in persisted)
+            commands = {row["command_id"]: row for row in persisted if row["kind"] == "SUBMIT_ORDER"}
             stored_commands.update(commands)
             orders = {(row["account_id"], row["order_id"]): row for row in connection.execute("SELECT * FROM uta_orders")}
             accepted_rows = [json.loads(row[0]) for row in connection.execute("SELECT payload FROM uta_events WHERE event_type='ORDER_ACCEPTED'")]
@@ -314,7 +397,8 @@ def verify(paths, rows, account_shards):
         raise RuntimeError("observed successful financial receipt was lost after reopening")
     return {"shards": reports, "observed_financial_successes": len(observed), "persistent_successes": len(committed),
         "unobserved_successes_found_on_reopen": len(committed - observed), "pending_original_ids": sorted(pending),
-        "pending_count": len(pending), "durable_enqueue_acknowledgements_verified": len(acknowledged), "reopened_readonly": True}
+        "pending_count": len(pending), "durable_enqueue_acknowledgements_verified": len(acknowledged), "reopened_readonly": True,
+        "command_technical_diagnostics": command_technical_diagnostics(all_cid_facts)}
 
 
 def profile_report(directory):
@@ -524,6 +608,7 @@ def run(configuration, directory):
         raise RuntimeError("offered command IDs were lost or duplicated")
     checks = verify(paths, results, account_shards)
     counts = dict(Counter(row["outcome"] for row in results))
+    outcome_counts = dict(counts)  # Exactly one terminal/local outcome per arrival.
     counts["durably_enqueued"] = sum(row["enqueue_ack_ns"] is not None for row in results)
     counts["enqueue_technical_errors"] = sum(bool(row.get("enqueue_error")) for row in results if row["outcome"] not in ("durable_queue_full", "enqueue_business_rejected"))
     counts["financial_success_late"] = sum(row["outcome"] == "financial_succeeded" and row["deadline_exceeded"] for row in results)
@@ -536,6 +621,7 @@ def run(configuration, directory):
             histograms["enqueue_ack"].observe(row["enqueue_ack_ns"] - row["planned_ns"])
     elapsed = max(configuration.duration, (settled - started) / 1e9)
     summary = {"configuration": asdict(configuration), "offered": offered, "counts": counts,
+        "outcome_counts": outcome_counts,
         "duration_including_terminal_observation_drain": elapsed, "drain_seconds": max(0, elapsed - configuration.duration),
         "close_seconds_excluded": close_seconds, "startup_seconds_excluded": setup_seconds,
         "unique_observed_financial_success_per_s": counts.get("financial_succeeded", 0) / elapsed,
@@ -544,9 +630,11 @@ def run(configuration, directory):
         "initial_real_pid_and_fence": initial, "startup_readiness_observation": startup_observation,
         "final_diagnostics": final_diagnostics,
         "poll_errors": poll_errors, "feed_publications": feed_rows, "readonly_reconciliation": checks,
+        "command_technical_diagnostics": checks["command_technical_diagnostics"],
         "profile": profile_report(profiles), "environment": environment,
         "production_approved": False, "capacity_10000_per_s_passed": False,
         "scope": "<=10s managed local process inbox admission diagnostic; all successful orders OPEN, no simulated or real fills, no replication; profiling includes instrumentation overhead"}
+    summary["probe_qualification"] = probe_qualification(summary)
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     for name, data in (("arrivals", (directory / "arrivals.jsonl").read_bytes()),
                        ("telemetry", ("\n".join(json.dumps(row) for row in telemetry) + "\n").encode())):
@@ -574,7 +662,7 @@ def main(argv=None):
     result = run(Configuration(duration=args.duration, rate=args.rate, accounts=args.accounts,
         shards=args.shards, profile=args.profile), args.output)
     print(json.dumps(result, indent=2))
-    return 0
+    return 0 if result["probe_qualification"]["passed"] else 2
 
 
 if __name__ == "__main__":

@@ -32,18 +32,28 @@ class CreditService:
     paying interest before principal, and is available during halts/price outages.
     """
 
-    def __init__(self, exchange: ExchangeService):
+    def __init__(self, exchange: ExchangeService, *, _startup=None):
         if not isinstance(exchange, ExchangeService):
             raise ServiceError("invalid_configuration", "exchange must be an ExchangeService")
         self.exchange = exchange
         self.database = exchange.database
         self.ledger = exchange.ledger
         self._codec = Ledger(exchange.scales)
-        with exchange._transaction() as connection:
-            self._schema(connection)
-            if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_liabilities'").fetchone() is None:
-                raise ServiceError("credit_integration_missing", "exchange schema must include gross principal and interest liabilities", 503)
-            self._verify(connection)
+        if _startup is not None:
+            from .startup import _OwnedStartup
+            if type(_startup) is not _OwnedStartup:
+                raise ServiceError("invalid_configuration", "invalid internal startup context")
+            _startup.require_ledger(exchange)
+        if _startup is None:
+            with exchange._transaction() as connection:
+                self._schema(connection)
+                if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_liabilities'").fetchone() is None:
+                    raise ServiceError("credit_integration_missing", "exchange schema must include gross principal and interest liabilities", 503)
+                self._verify(connection)
+        else:
+            # All fixed schemas were prepared before the ledger RO snapshot;
+            # post-freeze construction executes verification only, never DDL.
+            _startup.verify_credit(self)
 
     @staticmethod
     def principal_account(account_id: str) -> str:
@@ -54,8 +64,8 @@ class CreditService:
         return "liability:interest:" + account_id
 
     @staticmethod
-    def _schema(connection: sqlite3.Connection) -> None:
-        statements = (
+    def _schema_statements() -> tuple[str, ...]:
+        return (
             "CREATE TABLE IF NOT EXISTS credit_schema (singleton INTEGER PRIMARY KEY CHECK(singleton=1), version INTEGER NOT NULL)",
             "CREATE TABLE IF NOT EXISTS credit_asset_limits (asset TEXT PRIMARY KEY REFERENCES ledger_assets(asset), units TEXT NOT NULL)",
             """CREATE TABLE IF NOT EXISTS credit_account_limits (
@@ -75,14 +85,20 @@ class CreditService:
             "CREATE TRIGGER IF NOT EXISTS credit_account_limits_no_update BEFORE UPDATE ON credit_account_limits BEGIN SELECT RAISE(ABORT,'credit limits are immutable'); END",
             "CREATE TRIGGER IF NOT EXISTS credit_account_limits_no_delete BEFORE DELETE ON credit_account_limits BEGIN SELECT RAISE(ABORT,'credit limits are immutable'); END",
         )
-        for statement in statements:
+    @staticmethod
+    def _pool_index() -> str:
+        return ("CREATE UNIQUE INDEX IF NOT EXISTS credit_pool_source_unique "
+                "ON credit_commands(source_reference) WHERE kind='pool_funded'")
+
+    @staticmethod
+    def _schema(connection: sqlite3.Connection) -> None:
+        for statement in CreditService._schema_statements():
             connection.execute(statement)
         row = connection.execute("SELECT version FROM credit_schema WHERE singleton=1").fetchone()
         if row is not None and row[0] not in (1, 2):
             raise ServiceError("credit_schema_version", "unsupported credit schema version", 503)
         try:
-            connection.execute("CREATE UNIQUE INDEX IF NOT EXISTS credit_pool_source_unique "
-                               "ON credit_commands(source_reference) WHERE kind='pool_funded'")
+            connection.execute(CreditService._pool_index())
         except sqlite3.IntegrityError as exc:
             raise ServiceError("credit_corrupt", "duplicate historical pool funding references require reconciliation", 503) from exc
         if row is None:

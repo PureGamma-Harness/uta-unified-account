@@ -12,7 +12,16 @@ from uta.writer_fence import WriterFence
 
 def _delayed_owner(directory, settings, stop, ready, parent_pid, gate, expire=False):
     import uta.durable_process as runtime
+    from uta.startup import _OwnedStartup
     original = runtime.ShardWorkerView
+    original_keeper = _OwnedStartup._keep
+    if expire:
+        # A healthy owned-RO keeper now renews throughout initialization. To
+        # test a REAL persisted expiry rather than the superseded initial
+        # deadline, this child alone stalls renewal without extending the TTL.
+        def stalled_keeper(initialization):
+            initialization._keeper_stop.wait(5)
+        _OwnedStartup._keep = stalled_keeper
     class DelayedView(original):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -26,6 +35,7 @@ def _delayed_owner(directory, settings, stop, ready, parent_pid, gate, expire=Fa
                             "delayed-startup-owner", "startup-regression")
     finally:
         runtime.ShardWorkerView = original
+        _OwnedStartup._keep = original_keeper
 
 
 class StartupLeaseTests(unittest.TestCase):

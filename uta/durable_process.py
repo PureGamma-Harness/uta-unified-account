@@ -26,7 +26,7 @@ from uuid import uuid4
 
 from .durable_commands import CommandExecutionError, QueueStore
 from .market import MAX_JSON_BYTES, MarketSnapshot
-from .ledger import Ledger
+from .ledger import Ledger, LedgerError
 from .models import RiskInputError
 from .portfolio import PortfolioRules
 from .products import ProductCatalog
@@ -35,7 +35,7 @@ from .sharding import (_BoundShardDatabase, ShardRouter, ShardWorkerView,
                        _json, _open_router_control)
 from .writer_fence import (WriterFence, WriterFenceError,
                            _load as _load_writer_lease, _observed as _observe_writer_clock)
-from .storage import Database, StorageError
+from .storage import Database, DurableLedger, StorageError
 
 
 _TERMINAL = frozenset({"SUCCEEDED", "REJECTED", "QUARANTINED"})
@@ -53,6 +53,38 @@ def _diagnostic_code(error, fallback="diagnostic_unavailable"):
     if isinstance(code, str) and code.isascii() and len(code) <= 80 and code.replace("_", "").isalnum():
         return code
     return fallback
+
+
+def _diagnostic_failure(error, deadline, fallback="diagnostic_unavailable"):
+    """Classify only known observation contention; never expose error text.
+
+    Python 3.10 lacks SQLite's native error attributes. Its fallback accepts
+    only exact built-in OperationalError instances with canonical lock args.
+    A supplied native code takes precedence over text, including fatal codes.
+    """
+    native = getattr(error, "sqlite_errorcode", None) if isinstance(error, sqlite3.Error) else None
+    native = native if type(native) is int and 0 <= native < 2**31 else None
+    kind = ("sqlite_operational_error" if isinstance(error, sqlite3.OperationalError) else
+            "sqlite_database_error" if isinstance(error, sqlite3.Error) else
+            "writer_fence_error" if isinstance(error, WriterFenceError) else
+            "service_error" if isinstance(error, ServiceError) else
+            "storage_error" if isinstance(error, StorageError) else
+            "os_error" if isinstance(error, OSError) else "unexpected_error")
+    detail = {"type": kind}
+    if isinstance(error, sqlite3.Error):
+        detail["sqlite_errorcode"] = native
+    exact_operational = type(error) is sqlite3.OperationalError
+    lacks_native = exact_operational and not hasattr(error, "sqlite_errorcode")
+    canonical_message = (error.args[0] if lacks_native and len(error.args) == 1
+                         and type(error.args[0]) is str else None)
+    busy = (exact_operational and native is not None and native & 255 in {5, 6}
+            or lacks_native and canonical_message in {"database is locked", "database table is locked"})
+    interrupted = (exact_operational and native is not None and native & 255 == 9
+                   or lacks_native and canonical_message == "interrupted")
+    code = _diagnostic_code(error, fallback)
+    if busy or monotonic() >= deadline and (interrupted or code == "router_busy"):
+        code = "diagnostic_timeout"
+    return code, detail
 
 
 class _DiagnosticDatabase(Database):
@@ -210,6 +242,100 @@ def _financial_head(connection):
             "positions": connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0]}
 
 
+def _spot_source_present(connection):
+    return (connection.execute("SELECT 1 FROM sqlite_master WHERE name GLOB 'uta_spot_*' LIMIT 1").fetchone() is not None
+            or connection.execute("SELECT 1 FROM uta_events WHERE event_type GLOB 'SPOT_*' LIMIT 1").fetchone() is not None)
+
+
+def _verify_managed_spot_source(connection, database, scales):
+    """LOCAL-MANAGED-MIG-001: retain verified history, reject live obligations.
+
+    This joins the caller's read-only preflight or token-owned final snapshot.
+    The explicitly limited verification views bypass constructors because both
+    ExchangeService and DurableLedger constructors install/repair schema. These
+    partial views issue verification queries only and never escape this helper.
+    """
+    from .service import ExchangeService
+    from .spot import SpotExchange
+
+    if not _spot_source_present(connection):
+        return
+    objects = {row["name"]: row["type"] for row in connection.execute(
+        "SELECT name,type FROM sqlite_master WHERE name GLOB 'uta_spot_*'")}
+    tables = {name for name, kind in objects.items() if kind == "table"}
+    required = {"uta_spot_schema", "uta_spot_config", "uta_spot_orders",
+                "uta_spot_matches", "uta_spot_fills"}
+    try:
+        if tables != required:
+            raise ServiceError("spot_corrupt", "spot source schema is incomplete or unsupported; no repair was attempted", 503)
+        for row in connection.execute("SELECT status,reserved_amount FROM uta_spot_orders"):
+            reservation = Decimal(row["reserved_amount"])
+            if not reservation.is_finite() or reservation < 0:
+                raise ServiceError("spot_corrupt", "spot source reservation is invalid", 503)
+            if row["status"] in ("OPEN", "PARTIALLY_FILLED") or reservation:
+                raise ServiceError("managed_spot_state_unsupported",
+                    "managed trading cannot service live spot orders or remaining asset locks; "
+                    "cancel or settle on the original authority before sealing; after fencing use forward recovery", 409)
+            if row["status"] not in ("FILLED", "CANCELLED"):
+                raise ServiceError("spot_corrupt", "spot source order status is unsupported", 503)
+        policy = json.loads(connection.execute("SELECT value FROM uta_config WHERE key='policy'").fetchone()[0])
+        risk = json.loads(connection.execute("SELECT value FROM uta_config WHERE key='risk_policy'").fetchone()[0])
+        configured = (ProductCatalog.from_json(_json(risk["catalog"]))
+                      if risk["mode"] == "phase1_cross" else None)
+        if risk["mode"] not in ("phase1_cross", "legacy_reference"):
+            raise ServiceError("spot_corrupt", "spot source account policy is unsupported", 503)
+        rows = connection.execute("SELECT singleton,catalog,fee_rate FROM uta_spot_config").fetchall()
+        if len(rows) != 1 or rows[0]["singleton"] != 1:
+            raise ServiceError("spot_corrupt", "spot source configuration is missing or invalid", 503)
+        catalog = ProductCatalog.from_json(rows[0]["catalog"])
+        if configured is not None and catalog != configured:
+            raise ServiceError("spot_corrupt", "spot source catalog differs from its account policy", 503)
+        exchange = ExchangeService.__new__(ExchangeService)
+        exchange.database, exchange.scales = database, dict(scales)
+        exchange._product_catalog = configured
+        exchange.fee_rate = Decimal(policy["fee_rate"])
+        if not exchange.fee_rate.is_finite() or not 0 <= exchange.fee_rate <= Decimal(".01"):
+            raise ServiceError("spot_corrupt", "spot source fee policy is invalid", 503)
+        ledger = DurableLedger.__new__(DurableLedger)
+        ledger.database, ledger.scales, ledger._codec = database, dict(scales), Ledger(scales)
+        exchange.ledger = ledger
+        SpotExchange(exchange, catalog, initialize=False).verify(connection=connection)
+    except ServiceError as exc:
+        if exc.code == "managed_spot_state_unsupported" or exc.status == 503:
+            raise
+        raise ServiceError("spot_corrupt", "spot source configuration failed read-only verification", 503) from exc
+    except (sqlite3.Error, ArithmeticError, ValueError, TypeError, KeyError, IndexError, AttributeError) as exc:
+        raise ServiceError("spot_corrupt", "spot source history failed read-only verification; no repair was attempted", 503) from exc
+
+
+def _preflight_managed_spot_sources(control):
+    """Check every source before creating pending manifests or any shard fence."""
+    layout_hash = sha256(control._descriptor.encode()).hexdigest()
+    for index in range(control.layout["shard_count"]):
+        database = _BoundShardDatabase(control._path(index), index, layout_hash)
+        with database.read_transaction() as connection:
+            _verify_managed_spot_source(connection, database, control.layout["scales"])
+
+
+def _preflight_managed_ledger_sources(control):
+    """Offline all-shard journal validation before any irreversible fence.
+
+    This never constructs a financial service or repairs schema. It is not an
+    online activation step: full historical replay belongs to offline sealing.
+    """
+    layout_hash = sha256(control._descriptor.encode()).hexdigest()
+    for index in range(control.layout["shard_count"]):
+        database = _BoundShardDatabase(control._path(index), index, layout_hash)
+        ledger = DurableLedger.__new__(DurableLedger)
+        ledger.database, ledger.scales = database, dict(control.layout["scales"])
+        ledger._codec = Ledger(ledger.scales)
+        try:
+            with database.read_transaction() as connection:
+                ledger.verify(connection=connection)
+        except (LedgerError, sqlite3.Error, StorageError) as exc:
+            raise ServiceError("ledger_corrupt", "source journal failed read-only verification; no repair was attempted", 503) from exc
+
+
 def _prepare_config(connection, config):
     connection.execute("CREATE TABLE router_durable_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL,initialized INTEGER NOT NULL,payload TEXT NOT NULL)")
     connection.execute("INSERT INTO router_durable_config VALUES (1,1,0,?)", (_json(config),))
@@ -329,19 +455,29 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                 stop.wait(min(settings["poll_interval"], .1))
         if token is None:
             return
-        _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
-                        _process_identity(os.getpid()), coordinator)
-        view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
-                               account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"])
-        store = parent._queue(shard)
-        # Initialization consumes the acquired lease. Renew the same still-live
-        # token before advertising readiness; an expired initializer must fail,
-        # never revive its generation or publish a misleading READY receipt.
-        renew_at = monotonic() + settings["lease_seconds"] / 3
-        fence.renew(token, settings["lease_seconds"])
-        with database.read_transaction() as connection:
-            fence.assert_writer(connection, token)
-        ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
+        from .startup import _OwnedStartup
+        with _OwnedStartup(database.for_writer(token), lease_seconds=settings["lease_seconds"],
+                           stop=stop, parent_pid=parent_pid) as initialization:
+            _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
+                            _process_identity(os.getpid()), coordinator)
+            view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+                                   account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"],
+                                   _startup=initialization)
+            store = parent._queue(shard)
+            with initialization.database.read_transaction() as connection:
+                fence.assert_writer(connection, token)
+                _verify_managed_spot_source(connection, initialization.database, parent.layout["scales"])
+            # A long read sees the original lease row, while the keeper renews
+            # the current one. Validate current lifecycle after closing it; the
+            # final fresh fenced COMMIT below checks actual ownership/expiry.
+            initialization.check()
+            initialization.finish()
+            # Keep same-PID actor exclusion through READY publication. Transfer
+            # the actual renewal start, not the end of slow initialization.
+            renew_at = initialization.last_renew_started + settings["lease_seconds"] / 3
+            if stop.is_set() or os.getppid() != parent_pid:
+                return
+            ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
         background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:
             now = monotonic()
@@ -369,7 +505,8 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                     with view._control._lock():
                         store.record_failure(view._exchange, exc.command_id,
                                              max_attempts=settings["max_attempts"],
-                                             backoff_seconds=settings["poll_interval"])
+                                             backoff_seconds=settings["poll_interval"],
+                                             cause=exc.cause, attempt=exc.attempt)
             if monotonic() >= background_at:
                 view.run_background_once()  # Real risk plans and paired trades.
                 background_at = monotonic() + settings["background_interval"]
@@ -432,14 +569,44 @@ class DurableProcessRouter:
                             "market_capacity": market_capacity}}
         router.set_kill_switch(True)
         with router._lock(exclusive=True):
-            router._reconcile_funding()
-            with router.control.transaction() as connection:
-                _prepare_config(connection, config)
-            for index, service in enumerate(router._services):
-                QueueStore(service.database, initialize=True, **config["queue"])
-                WriterFence(service.database).enable(_authority(router._descriptor, index))
-            with router.control.transaction() as connection:
-                connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
+            leases = []
+            try:
+                _preflight_managed_ledger_sources(router)
+                _preflight_managed_spot_sources(router)
+                router._reconcile_funding()
+                with router.control.transaction() as connection:
+                    _prepare_config(connection, config)
+                for index, service in enumerate(router._services):
+                    QueueStore(service.database, initialize=True, **config["queue"])
+                    fence = WriterFence(service.database)
+                    fence.enable(_authority(router._descriptor, index))
+                    # Preserve the fresh no-spot generation-zero contract. Once
+                    # fenced, an old standalone writer cannot add a new schema.
+                    # Any spot footprint still needs token-owned final checking.
+                    with service.database.read_transaction() as connection:
+                        if not _spot_source_present(connection):
+                            continue
+                    token = fence.acquire("initialize:" + uuid4().hex, 60)
+                    leases.append((fence, token))
+                    database = service.database.for_writer(token)
+                    with database.read_transaction() as connection:
+                        fence.assert_writer(connection, token)
+                        _verify_managed_spot_source(connection, database, router.layout["scales"])
+                        fence.assert_writer(connection, token)
+                for fence, token in leases:
+                    fence.renew(token, 60)
+                with router.control.transaction() as connection:
+                    connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
+            except BaseException as exc:
+                router._write_state({**router._state(), "halted": True,
+                                     "error": getattr(exc, "code", "managed_bootstrap_incomplete")})
+                raise
+            finally:
+                for fence, token in reversed(leases):
+                    try:
+                        fence.release(token)
+                    except WriterFenceError:
+                        pass
         return cls(path, **runtime)
 
     @classmethod
@@ -487,6 +654,8 @@ class DurableProcessRouter:
                 control._write_state({**state, "halted": True, "error": "takeover_in_progress"})
                 leases = []
                 try:
+                    _preflight_managed_ledger_sources(control)
+                    _preflight_managed_spot_sources(control)
                     first = _BoundShardDatabase(control._path(0), 0, layout_hash)
                     with first.read_transaction() as connection:
                         policies = dict(connection.execute("SELECT key,value FROM uta_config WHERE key IN ('policy','risk_policy')"))
@@ -543,6 +712,8 @@ class DurableProcessRouter:
                         owned.set_kill_switch(True)
                         CreditService(owned).verify()
                         with owned._transaction() as connection:
+                            _verify_managed_spot_source(connection, owned.database, control.layout["scales"])
+                            fence.assert_writer(connection, token)
                             control._batch_reconcile_shard(connection, index, claims)
                             for row in connection.execute("SELECT account_id FROM uta_accounts UNION SELECT account_id FROM uta_command_inbox WHERE account_id IS NOT NULL"):
                                 if control.shard_for(row[0]) != index:
@@ -741,6 +912,7 @@ class DurableProcessRouter:
                 if status.get("guard_format") != 1:
                     raise WriterFenceError("fence_upgrade_required", "stop existing writers and explicitly upgrade persistent SQL guards before starting processes")
                 with self._database(index).read_transaction() as connection:
+                    _verify_managed_spot_source(connection, self._database(index), self.layout["scales"])
                     version = connection.execute("SELECT version FROM uta_schema").fetchone()
                     if self.decision_audit_required:
                         if version is None or version[0] != 3:
@@ -1064,8 +1236,8 @@ class DurableProcessRouter:
                         observed.append((row, reader, lease, snapshot))
                         row["reason"] = "observed"
                     except Exception as exc:
-                        row["reason"] = ("diagnostic_timeout" if monotonic() >= deadline
-                                         else _diagnostic_code(exc, "shard_unavailable"))
+                        row["reason"], row["observation_error"] = _diagnostic_failure(
+                            exc, deadline, "shard_unavailable")
                 # Slow guard/claim checks cannot leave an early-shard quote or
                 # lease marked fresh after it expires during this observation.
                 for row, reader, lease, snapshot in observed:
@@ -1090,7 +1262,12 @@ class DurableProcessRouter:
                         row["market_ready"] = True
                         row["reason"] = "ready"
                 result["workers_alive"] = all(row["alive"] for row in rows)
-                _diagnostic_remaining(deadline)
+                # A later busy shard/deadline must not hide a known fatal read
+                # from an earlier shard and invite another readiness sample.
+                fatal_read = next((row["reason"] for row in rows
+                                   if row["reason"] not in {"ready", "diagnostic_timeout"}), None)
+                if fatal_read is None:
+                    _diagnostic_remaining(deadline)
                 financial_ready = (complete and not state["halted"] and all(
                     row["owner_ready"] and row["market_ready"] and row.get("locally_active", False)
                     and row["funding_registry_ready"] for row in rows))
@@ -1101,12 +1278,14 @@ class DurableProcessRouter:
                     result["reason"] = "router_halted"
                 elif financial_ready:
                     result["reason"] = "ready"
+                elif fatal_read is not None:
+                    result["reason"] = fatal_read
                 else:
                     result["reason"] = next((row["reason"] for row in rows if not row["market_ready"]),
                                             "worker_unready" if not all(row["owner_ready"] for row in rows) else "local_halt")
         except Exception as exc:
-            result.update(financial_ready=False, ready=False,
-                          reason="diagnostic_timeout" if monotonic() >= deadline else _diagnostic_code(exc))
+            reason, detail = _diagnostic_failure(exc, deadline)
+            result.update(financial_ready=False, ready=False, reason=reason, observation_error=detail)
         finally:
             if acquired:
                 self._mutex.release()
@@ -1178,6 +1357,12 @@ class DurableProcessRouter:
             self._control._write_state(state)
             if not enabled and (state["publishing"] or state["market_version"] is None):
                 raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
+            if not enabled:
+                try:
+                    _preflight_managed_spot_sources(self._control)
+                except ServiceError as exc:
+                    self._control._write_state({**state, "halted": True, "error": exc.code})
+                    raise
             transition = uuid4().hex
             commands = {str(index): f"halt:{transition}:{index}" for index in range(self.layout["shard_count"])}
             state.update(durable_halt_commands=commands, durable_desired_halt=enabled, error=None)
@@ -1198,6 +1383,7 @@ class DurableProcessRouter:
                 claims = self._control._batch_funding_claims()
                 for index in commands:
                     with self._database(int(index)).read_transaction() as connection:
+                        _verify_managed_spot_source(connection, self._database(int(index)), self.layout["scales"])
                         self._control._batch_reconcile_shard(connection, int(index), claims)
                         local_halt = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
                         if local_halt is None or local_halt[0] != "false":

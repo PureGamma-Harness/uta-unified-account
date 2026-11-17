@@ -1,0 +1,72 @@
+{
+  "status": "running",
+  "stored_status": "running",
+  "process_alive": true,
+  "heartbeat_age_seconds": 0.060628833,
+  "source_commit": "88755a9f2ba3bb672ca5d354b3037796f00c6611",
+  "started_utc": "2026-11-16T21:36:13.820942+00:00",
+  "original_started_ns": 1794864973820942405,
+  "deadline_ns": 1794951373820942405,
+  "observed_ns": 1794893331274022529,
+  "planned_rounds": 21600,
+  "counts": {
+    "done": 7090
+  },
+  "financial_counts": {
+    "uta_orders": 29778,
+    "uta_fills": 28360,
+    "uta_matches": 14180,
+    "ledger_events": 28722,
+    "soak_evidence": 142642,
+    "cancelled_orders": 2127,
+    "partial_cancelled_orders": 709,
+    "live_orders": 0,
+    "positions": 0,
+    "credit_commands": {
+      "borrowed": 119,
+      "interest_accrued": 119,
+      "pool_funded": 1,
+      "repaid": 119
+    }
+  },
+  "golden_for_completed_rounds": {
+    "matches": 14180,
+    "fill_legs": 28360,
+    "orders": 29778,
+    "cancelled_orders": 2127,
+    "partial_cancelled_orders": 709,
+    "borrow_interest_repay_cycles": 119
+  },
+  "completed_round_golden_matches_financial_state": true,
+  "logs_verified": false,
+  "configured_workload_completed": false,
+  "sessions": [
+    {
+      "id": "32adb2827ad246c096da107615bac7f3",
+      "pid": 4471,
+      "started_ns": 1794864973825199889,
+      "heartbeat_ns": 1794893331213383101,
+      "ended_ns": null,
+      "active_ns": 28357385053876,
+      "status": "running",
+      "process_identity": "210004"
+    }
+  ],
+  "confirmed_active_seconds": 28357.385053876,
+  "wall_seconds_since_original_start": 28357.453081757,
+  "market_version": 28059,
+  "market_age_seconds": 0.981081,
+  "roundtrip_latency_ms": {
+    "p50": 113.20707,
+    "p95": 168.851352,
+    "p99": 223.827988,
+    "p99_9": 1726.508655
+  },
+  "directory_bytes": 157965707,
+  "free_disk_bytes": 29484376064,
+  "stability_target_passed": false,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "cohosted": true,
+  "rss_max_kib": 355784
+}

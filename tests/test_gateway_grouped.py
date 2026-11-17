@@ -78,17 +78,38 @@ class GroupedGatewayTests(unittest.TestCase):
     def order(self, identifier="order", **changes):
         return {"order_id": identifier, "symbol": "X", "quantity": "1", "limit_price": "100", **changes}
 
+    def request_until_known(self, method, path, payload):
+        """Same original identity/content; never infer acceptance from a 503.
+
+        The fixture's 50ms HTTP observation deadline is deliberately unchanged.
+        A running command may finish after it, and a cancelled queued attempt
+        has no effect. Both permit a finite retry of the original operation.
+        """
+        deadline = time.monotonic() + 3
+        observations = []
+        while True:
+            status, result = self.request(method, path, payload)
+            observations.append((status, result))
+            if status != 503:
+                return status, result
+            if result.get("error", {}).get("code") not in {
+                    "command_result_unknown", "admission_queue_timeout"}:
+                self.fail("unexpected grouped result: " + json.dumps(observations))
+            if time.monotonic() >= deadline:
+                self.fail("original operation remained unknown: " + json.dumps(observations))
+            time.sleep(.005)
+
     def test_real_submit_cancel_and_response_loss_retry_preserve_one_business_effect(self):
         command = self.order()
-        status, admitted = self.request("POST", "/v1/accounts/alice/orders", command)
+        status, admitted = self.request_until_known("POST", "/v1/accounts/alice/orders", command)
         self.assertEqual(status, 201, admitted)
         events = self.exchange.events(limit=1000)
-        status, retried = self.request("POST", "/v1/accounts/alice/orders", command)
+        status, retried = self.request_until_known("POST", "/v1/accounts/alice/orders", command)
         self.assertEqual((status, retried), (201, admitted))
         self.assertEqual(self.exchange.events(limit=1000), events)
         status, queried = self.request("GET", "/v1/accounts/alice/orders/order")
         self.assertEqual((status, queried), (200, admitted))
-        status, cancelled = self.request("POST", "/v1/accounts/alice/orders/order/cancel", {})
+        status, cancelled = self.request_until_known("POST", "/v1/accounts/alice/orders/order/cancel", {})
         self.assertEqual(status, 200, cancelled)
         self.assertEqual(cancelled["status"], "CANCELLED")
         self.assertEqual(cancelled["reserved_margin"], "0")
@@ -98,6 +119,28 @@ class GroupedGatewayTests(unittest.TestCase):
         self.assertEqual(reopened.order("alice", "order")["status"], "CANCELLED")
         self.assertEqual(len([event for event in reopened.events(limit=1000)
                               if event["event_type"] == "ORDER_ACCEPTED"]), 1)
+        self.assertEqual(len([event for event in reopened.events(limit=1000)
+                              if event["event_type"] == "ORDER_CANCELLED"]), 1)
+        self.assertEqual(reopened.ledger.balance("customer:alice", "USD"), D(1000))
+        self.assertEqual(reopened.ledger.verify(), 2)  # Only the two original deposits.
+
+    def test_full_original_id_flow_accepts_an_actual_running_unknown_reply(self):
+        original = self.request
+        replies = []
+        entered, release, hold = self.block_admission("order")
+        def observe_reply(method, path, payload=None, *, token=ALICE):
+            response = original(method, path, payload, token=token)
+            replies.append(response)
+            if response[0] == 503 and response[1].get("error", {}).get("code") == "command_result_unknown":
+                self.assertTrue(entered.is_set())
+                release.set()  # The actual HTTP caller has observed UNKNOWN.
+            return response
+        with hold, patch.object(self, "request", side_effect=observe_reply):
+            self.test_real_submit_cancel_and_response_loss_retry_preserve_one_business_effect()
+        self.assertEqual(replies[0][0], 503)
+        self.assertEqual(replies[0][1]["error"]["code"], "command_result_unknown")
+        self.assertTrue(any(status == 201 for status, _ in replies))
+        self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D(1000))
 
     def test_scope_and_input_rejections_never_enter_the_admission_queue(self):
         with patch.object(self.admission, "submit_order", wraps=self.admission.submit_order) as submit:

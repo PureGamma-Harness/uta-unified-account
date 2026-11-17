@@ -1,0 +1,18 @@
+test_invalid_grouping_bounds_fail_before_creating_financial_state (test_gateway_grouped.GroupedCLITests) ... ok
+test_sigterm_drains_a_real_grouped_order_before_clean_exit (test_gateway_grouped.GroupedCLITests) ... ok
+test_business_rejection_keeps_its_status_and_does_not_create_an_order (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_cancellation_keeps_its_reserved_capacity_when_the_submit_queue_is_full (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_cleanup_still_closes_http_and_group_worker_if_risk_worker_stop_fails (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_configured_catalog_and_margin_gates_are_preserved_through_grouped_http (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_full_original_id_flow_accepts_an_actual_running_unknown_reply (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_metrics_and_readiness_reflect_the_actual_batch_worker (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_queue_overload_is_explicit_and_has_no_business_effect (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_real_submit_cancel_and_response_loss_retry_preserve_one_business_effect (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_running_timeout_reports_unknown_and_original_id_recovers_exactly_once (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_scope_and_input_rejections_never_enter_the_admission_queue (test_gateway_grouped.GroupedGatewayTests) ... ok
+test_wait_timeout_cancels_only_a_still_queued_command (test_gateway_grouped.GroupedGatewayTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 1.409s
+
+OK

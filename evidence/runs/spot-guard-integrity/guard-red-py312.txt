@@ -1,0 +1,53 @@
+test_weakened_fill_delete_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_fill_delete_guard_is_rejected) ... spot-guard-evidence {"guard": "uta_spot_fills_no_delete", "protected_operation": "DELETE", "original_operation_blocked": true, "weakened_operation_succeeded_then_rolled_back": true, "verifier_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "business_rows_unchanged": true, "financial_rows_unchanged": true, "weak_sql_preserved": true}
+FAIL
+test_weakened_fill_update_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_fill_update_guard_is_rejected) ... spot-guard-evidence {"guard": "uta_spot_fills_no_update", "protected_operation": "UPDATE", "original_operation_blocked": true, "weakened_operation_succeeded_then_rolled_back": true, "verifier_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "business_rows_unchanged": true, "financial_rows_unchanged": true, "weak_sql_preserved": true}
+FAIL
+test_weakened_match_delete_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_match_delete_guard_is_rejected) ... spot-guard-evidence {"guard": "uta_spot_matches_no_delete", "protected_operation": "DELETE", "original_operation_blocked": true, "weakened_operation_succeeded_then_rolled_back": true, "verifier_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "business_rows_unchanged": true, "financial_rows_unchanged": true, "weak_sql_preserved": true}
+FAIL
+test_weakened_match_update_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_match_update_guard_is_rejected) ... spot-guard-evidence {"guard": "uta_spot_matches_no_update", "protected_operation": "UPDATE", "original_operation_blocked": true, "weakened_operation_succeeded_then_rolled_back": true, "verifier_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verifier_error": null, "migration_error": null, "manifest": [{"initialized": 1}], "business_rows_unchanged": true, "financial_rows_unchanged": true, "weak_sql_preserved": true}
+FAIL
+
+======================================================================
+FAIL: test_weakened_fill_delete_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_fill_delete_guard_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 95, in test_weakened_fill_delete_guard_is_rejected
+    self.reject_semantically_disabled_guard("uta_spot_fills", "DELETE")
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 79, in reject_semantically_disabled_guard
+    self.assertIsNotNone(verifier_error, "a guard name does not establish its immutable-receipt semantics")
+AssertionError: unexpectedly None : a guard name does not establish its immutable-receipt semantics
+
+======================================================================
+FAIL: test_weakened_fill_update_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_fill_update_guard_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 92, in test_weakened_fill_update_guard_is_rejected
+    self.reject_semantically_disabled_guard("uta_spot_fills", "UPDATE")
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 79, in reject_semantically_disabled_guard
+    self.assertIsNotNone(verifier_error, "a guard name does not establish its immutable-receipt semantics")
+AssertionError: unexpectedly None : a guard name does not establish its immutable-receipt semantics
+
+======================================================================
+FAIL: test_weakened_match_delete_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_match_delete_guard_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 89, in test_weakened_match_delete_guard_is_rejected
+    self.reject_semantically_disabled_guard("uta_spot_matches", "DELETE")
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 79, in reject_semantically_disabled_guard
+    self.assertIsNotNone(verifier_error, "a guard name does not establish its immutable-receipt semantics")
+AssertionError: unexpectedly None : a guard name does not establish its immutable-receipt semantics
+
+======================================================================
+FAIL: test_weakened_match_update_guard_is_rejected (tests.test_spot_guard_integrity_review.SpotGuardIntegrityReviewTests.test_weakened_match_update_guard_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 86, in test_weakened_match_update_guard_is_rejected
+    self.reject_semantically_disabled_guard("uta_spot_matches", "UPDATE")
+  File "/workspace/uta-spot-guard-review/tests/test_spot_guard_integrity_review.py", line 79, in reject_semantically_disabled_guard
+    self.assertIsNotNone(verifier_error, "a guard name does not establish its immutable-receipt semantics")
+AssertionError: unexpectedly None : a guard name does not establish its immutable-receipt semantics
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.324s
+
+FAILED (failures=4)

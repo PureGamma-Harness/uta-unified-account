@@ -187,13 +187,21 @@ for number in range(12):
             self.ledger.verify()
         with self.database.transaction() as connection:
             connection.execute("UPDATE ledger_balances SET units = '12500000' WHERE account = 'customer'")
+            original_guard = connection.execute(
+                "SELECT sql FROM sqlite_master WHERE name='ledger_events_seal_only'").fetchone()[0]
             connection.execute("DROP TRIGGER ledger_events_seal_only")
         with self.assertRaisesRegex(LedgerError, "trigger is missing"):
             self.ledger.verify()
+        with self.assertRaisesRegex(LedgerError, "trigger is missing"):
+            DurableLedger(Database(self.path), {"USD": 6, "BTC": 8})
+        with self.database.read_transaction() as connection:
+            self.assertIsNone(connection.execute(
+                "SELECT 1 FROM sqlite_master WHERE name='ledger_events_seal_only'").fetchone())
         # A file owner can replace protections; hash verification must still
         # detect a changed journal even after protections have been reinstalled.
         with self.database.transaction() as connection:
             connection.execute("UPDATE ledger_events SET event_hash = ?", ("f" * 64,))
+            connection.execute(original_guard)  # Explicit fixture repair by its file owner.
         restored = DurableLedger(Database(self.path), {"USD": 6, "BTC": 8})
         with self.assertRaisesRegex(LedgerError, "event hash changed"):
             restored.verify()

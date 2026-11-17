@@ -128,6 +128,7 @@ class ManagedBenchmarkTests(unittest.TestCase):
         self.assertFalse(summary["capacity_10000_per_s_passed"])
         self.assertTrue(summary["initial_real_pid_and_fence"]["decision_audit_required"])
         if live:
+            self.assertEqual(sum(summary["outcome_counts"].values()), expected)
             startup = summary["startup_readiness_observation"]
             observations = [json.loads(line) for line in (directory / startup["observations_file"]).read_text().splitlines()]
             self.assertEqual(observations[-1]["outcome"], "ready")
@@ -156,6 +157,12 @@ class ManagedBenchmarkTests(unittest.TestCase):
             self.assertEqual(len(profiles), 1)
             self.assertTrue(all(row["enqueue_ack_ns"] is not None for row in rows))
             self.assertLess(rows[0]["planned_ns"], rows[1]["planned_ns"])
+            technical = summary["command_technical_diagnostics"]
+            self.assertGreaterEqual(technical["stored_commands"], 4)
+            self.assertGreater(technical["commands_by_kind"]["PUBLISH_MARKET"], 0)
+            self.assertGreater(technical["commands_by_kind"]["SET_HALT"], 0)
+            self.assertEqual(technical["internal_execution_attempts"], 0)
+            self.assertTrue(summary["probe_qualification"]["passed"])
 
     def test_missing_enqueue_ack_queries_original_cid_and_preserves_error_count(self):
         original = DurableProcessRouter.submit_order
@@ -172,6 +179,8 @@ class ManagedBenchmarkTests(unittest.TestCase):
             self.assertEqual(summary["counts"]["financial_succeeded"], 1)
             self.assertIsNone(rows[0]["enqueue_ack_ns"])
             self.assertEqual(rows[0]["receipt"]["command_id"], "bench:0")
+            self.assertFalse(summary["probe_qualification"]["passed"])
+            self.assertIn("enqueue_technical_error", summary["probe_qualification"]["reasons"])
 
     def test_real_pid_startup_observes_delayed_parent_ready_pipe_then_reconciles(self):
         entered, deliver = Event(), Event()
