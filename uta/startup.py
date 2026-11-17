@@ -9,6 +9,7 @@ from __future__ import annotations
 from copy import copy
 import math
 import os
+import re
 from threading import Event, RLock, Thread, get_ident
 from time import monotonic
 
@@ -69,9 +70,10 @@ class _OwnedStartup:
         self._failure = None
         self._active = self._finished = self._entered = False
         self._keeper = None
-        self._exchange = self._credit = None
+        self._exchange = self._credit = self._ledger = None
+        self._prepared_worker = None
         self._ledger_verified = False
-        self._verified_schema = {}
+        self._verified_schema = None
         self.last_renew_started = None
 
     def _fail(self, exc):
@@ -166,11 +168,60 @@ class _OwnedStartup:
         self._require(database)
 
     def _schema(self, connection):
-        actual = {row[0]: tuple(row[1:]) for row in connection.execute(
-            "SELECT name,type,tbl_name,sql FROM sqlite_master ORDER BY name")}
-        if any(actual.get(name) != definition for name, definition in self._verified_schema.items()):
-            raise StartupError("startup_schema_changed", "a previously verified schema object changed during initialization")
+        actual = tuple(tuple(row) for row in connection.execute(
+            "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name,sql"))
+        if self._verified_schema is not None and actual != self._verified_schema:
+            raise StartupError("startup_schema_changed", "the frozen verified schema inventory or definition changed")
         return actual
+
+    def require_trading_schema(self, database, audit_required):
+        self.require_database(database)
+        with database.read_transaction() as connection:
+            versions = [row[0] for row in connection.execute("SELECT version FROM uta_schema")]
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(uta_orders)")}
+            if versions != [3 if audit_required else 2] or not {"fee_notional", "charged_fee"} <= columns:
+                raise StartupError("startup_offline_upgrade_required", "managed startup cannot migrate a historical trading schema")
+
+    @staticmethod
+    def _validate_module(connection, statements, version=None):
+        expected = {}
+        for statement in statements:
+            matched = re.match(r"CREATE (TABLE|TRIGGER|(?:UNIQUE )?INDEX) IF NOT EXISTS ([a-z_]+)\b", statement)
+            if matched is None:
+                raise StartupError("startup_fixed_schema_invalid", "compiled startup schema is not a declared fixed object")
+            kind, name = matched.groups()
+            table = name if kind == "TABLE" else re.search(r"\bON ([a-z_]+)\b", statement).group(1)
+            expected[name] = ("index" if "INDEX" in kind else kind.lower(), table,
+                              statement.replace(" IF NOT EXISTS", "", 1))
+        actual = tuple(tuple(row) for row in connection.execute(
+            "SELECT name,type,tbl_name,sql FROM sqlite_master WHERE name IN (" +
+            ",".join("?" for _ in expected) + ") ORDER BY name,type,tbl_name,sql", tuple(expected)))
+        if not actual:
+            return  # Only a wholly absent module can use fixed initialization.
+        if actual != tuple(sorted((name, *definition) for name, definition in expected.items())):
+            raise StartupError("startup_module_corrupt", "an existing runtime module is partial or differs from its fixed definitions")
+        if version is not None:
+            table, required = version
+            rows = [tuple(row) for row in connection.execute("SELECT singleton,version FROM " + table)]
+            if rows != [(1, required)]:
+                raise StartupError("startup_offline_upgrade_required", "managed startup cannot migrate a historical runtime module")
+
+    def prepare_schema(self, exchange):
+        from .credit import CreditService
+        from .matching import Matcher
+        from .supervisor import ExchangeWorker
+        self.require_database(exchange.database)
+        if self._prepared_worker is not None or self._exchange is not None:
+            raise StartupError("startup_context_reused", "startup schema preparation is single-use")
+        with self.database.read_transaction() as connection:
+            self._validate_module(connection, CreditService._schema_statements() + (CreditService._pool_index(),), ("credit_schema", 2))
+            self._validate_module(connection, Matcher._schema_statements(), ("uta_matching_schema", 1))
+            self._validate_module(connection, (ExchangeWorker._schedule_schema(),))
+        with self.database.transaction() as connection:
+            CreditService._schema(connection)
+        # Source-defined constructor only: initializes matcher/scheduler metadata,
+        # creates an Event, but never starts, supervises, matches or moves cash.
+        self._prepared_worker = ExchangeWorker(exchange)
 
     def verify_ledger(self, exchange):
         from .writer_fence import WriterFence
@@ -178,6 +229,7 @@ class _OwnedStartup:
         if self._exchange is not None:
             raise StartupError("startup_context_reused", "ledger verification cannot be reused")
         self._exchange = exchange
+        self._ledger = exchange.ledger
         with self.database.read_transaction() as connection:
             WriterFence(self.database).assert_writer(connection, self.token)
             exchange.ledger.verify(connection=connection)
@@ -190,7 +242,7 @@ class _OwnedStartup:
 
     def require_ledger(self, exchange):
         self.require_database(exchange.database)
-        if self._exchange is not exchange or not self._ledger_verified:
+        if self._exchange is not exchange or self._ledger is not exchange.ledger or not self._ledger_verified:
             raise StartupError("startup_not_verified", "this exact exchange has not completed full replay")
 
     def verify_credit(self, credit):
@@ -202,9 +254,8 @@ class _OwnedStartup:
             WriterFence(self.database).assert_writer(connection, self.token)
             self._schema(connection)
             credit._verify(connection)
-            schema = self._schema(connection)
+            self._schema(connection)
         self.check()
-        self._verified_schema = schema
         self._credit = credit
 
     def finish(self):
@@ -213,6 +264,9 @@ class _OwnedStartup:
         self.require_database(self.database)
         if self._finished or not self._ledger_verified or self._credit is None:
             raise StartupError("startup_not_verified", "complete exchange and credit verification is required")
+        self.require_ledger(self._exchange)
+        if self._credit.ledger is not self._ledger:
+            raise StartupError("startup_not_verified", "verified credit ledger identity changed")
         self._stop_keeper()
         self.check()
         self._renew()

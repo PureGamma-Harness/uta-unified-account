@@ -125,6 +125,8 @@ class ExchangeService:
             _startup.require_database(database)
         if type(decision_audit) is not bool:
             raise ServiceError("invalid_configuration", "decision_audit must be a bool")
+        if _startup is not None:
+            _startup.require_trading_schema(database, decision_audit)
         if type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= MAX_RESERVE_CACHE_CAPACITY:
             raise ServiceError("invalid_configuration", "reserve_cache_size must be an integer from 0 through 65536")
         if type(market_cache_size) is not int or not 0 <= market_cache_size <= MAX_MARKET_CACHE_CAPACITY:
@@ -164,6 +166,7 @@ class ExchangeService:
             # lease-control renewal is not blocked by historical verification.
             with database.transaction() as connection:
                 self._schema(connection, audit_required=decision_audit)
+            _startup.prepare_schema(self)
             _startup.verify_ledger(self)
         with database.transaction() as connection:
             if _startup is None:

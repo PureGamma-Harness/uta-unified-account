@@ -30,9 +30,13 @@ class ExchangeWorker:
         self._thread = None
         self.last_report: dict = {"state": "not_started"}
         with exchange._transaction() as conn:
-            conn.execute("""CREATE TABLE IF NOT EXISTS uta_supervisor_schedule (
-                singleton INTEGER PRIMARY KEY CHECK(singleton=1), last_account TEXT NOT NULL)""")
+            conn.execute(self._schedule_schema())
             conn.execute("INSERT OR IGNORE INTO uta_supervisor_schedule VALUES (1,'')")
+
+    @staticmethod
+    def _schedule_schema() -> str:
+        return """CREATE TABLE IF NOT EXISTS uta_supervisor_schedule (
+                singleton INTEGER PRIMARY KEY CHECK(singleton=1), last_account TEXT NOT NULL)"""
 
     def run_once(self) -> dict:
         report = {"state": "running", "accounts": 0, "plans": [], "linear_trades": 0,
