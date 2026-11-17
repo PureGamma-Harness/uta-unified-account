@@ -24,7 +24,7 @@ if __name__ == "__main__":  # spawn 入口必须有此保护
 
 示例存款是合成 bootstrap 数据，不能替代真实外部资金证明。初始化先经既有 router 的账户、账本及全局资金证明检查完成离线准备，再创建 inbox 并不可逆启用各分片 fencing，最后封存控制配置。若中途崩溃而未封存，运行器拒绝启动，不会自动补建缺失财务状态或把旧库变为 managed。已经存在的旧布局必须另走显式接管流程，本版初始化不提供自动迁移。
 
-正常重启直接使用 `DurableProcessRouter("/private/uta")`，随后 `start()`。使用当前存储代码构造并保留的旧无 token `ShardRouter` / `ExchangeService` 对象会被 Database 层拒绝写入。这项对象级验证不等于真实历史二进制防护：不认识 fencing 的旧源码需要持久 SQL 触发器/受控 UDF 格式门禁及独立旧进程验证，在该防护合入前不能宣称历史二进制已失效。只有子进程启动后才 acquire token，父进程不会把 token 传入 fork/spawn，也不能用父进程 token 冒充子进程 owner。
+正常重启直接使用 `DurableProcessRouter("/private/uta")`，随后 `start()`。使用当前存储代码构造并保留的旧无 token `ShardRouter` / `ExchangeService` 对象会被 Database 层拒绝写入。当前候选另有持久 SQL 触发器/受控 UDF 格式门禁及实际历史进程验证，见下文 [历史二进制及格式升级](#历史二进制及格式升级)；对象级拒绝与历史二进制门禁分别验证，不能互相替代。只有子进程启动后才 acquire token，父进程不会把 token 传入 fork/spawn，也不能用父进程 token 冒充子进程 owner。
 
 ## 持久命令与真实后台工作
 
@@ -35,6 +35,57 @@ if __name__ == "__main__":  # spawn 入口必须有此保护
 父进程自动监督真实子 PID，退出后重新 spawn。旧租约未到期时新 owner 等待，不能凭进程退出通知抢写；续租失败、租约过期或 PID 绑定不符，Database 在事务及提交边界拒绝。生命周期 FD/Pipe 只传启动/停止信号和进程诊断，不承载任何需要恢复的命令、资金或回执。父进程死亡后子进程检测 PPID 变化并退出，避免永久孤儿续租。父进程还检查其自有子进程的持久租约：若 PID 对应当前 owner 但租约已到期，会 SIGKILL 该尚未回收的子进程，释放 SIGSTOP 可能持有的 shared flock/SQLite 锁，再启动新 PID。它不会仅凭一个任意外部 owner PID 去杀无关进程。当前运行器另以持久的出生身份登记和 pidfd 处理“父进程已死、旧子进程仍 SIGSTOP”的已登记 worker 组合故障，具体证明与边界见下文。发布和 halt 的 exclusive flock 等待有显式 timeout，不会把等待锁的无限阻塞当成有限 receipt timeout。
 
 worker 不仅处理挂单。它在同一个受控循环中调用真实 `ExchangeWorker.run_once()`，执行账户风险监督、持久清算规划和 `Matcher` 双腿撮合；没有额外模拟 tick 成交或假填单。已接纳订单可在新 owner 重启后继续匹配。后台工作每个金融事务同样受 token fencing，整个工作轮次还持有 router shared gate，校验资金证明、固定分片和行情 barrier。停止或不完整 publication 时不运行后台撮合。
+
+## 入队、接纳与成交的事务边界
+
+下图示例为 required 审计配置下的新下单命令，先返回 ACK 再由已取得 PID 绑定 token 的 worker 执行。实际 worker 可在 HTTP 响应发出前并发处理，ACK 不能用来推断当下金融状态。`DB` 始终是该账户所在的同一个分片文件，入队与接纳使用两次独立事务。若启用 HMAC，认证 nonce 在进入本图的业务入队前已在独立认证库提交，见 [认证与重试契约](durable-api.md)。
+
+```mermaid
+sequenceDiagram
+    participant C as 客户端
+    participant H as v2 parent HTTP
+    participant D as shard-N.sqlite3
+    participant W as fenced worker / QueueStore
+    participant S as ExchangeService
+    C->>H: POST 原账户、command_id、订单内容
+    H->>D: BEGIN IMMEDIATE（inbox 角色）
+    H->>D: 插入 PENDING
+    D-->>H: WAL/FULL COMMIT 返回
+    H-->>C: 202 durably_queued
+    Note over C,D: 202 仅证明意图提交，不证明预占或成交
+    W->>W: 获取 router shared gate
+    W->>D: BEGIN IMMEDIATE、校验 token、选择账户队头
+    W->>D: SAVEPOINT durable_command
+    W->>D: router guard 校验分片、行情与资金证明
+    W->>S: _admit_order（共享连接）
+    alt 风控通过
+        S->>D: 写订单预占事实、版本、required 审计及 outbox
+        S-->>W: 接纳结果
+        W->>D: 更新 SUCCEEDED 终态回执
+    else 可识别业务拒绝
+        S-->>W: 业务 ServiceError
+        W->>D: 回滚命令 savepoint、更新 REJECTED 回执
+    end
+    W->>D: 新单复核行情、提交前校验 token、COMMIT
+    D-->>W: WAL/FULL COMMIT 返回
+    W->>W: 释放 router shared gate
+    C->>H: GET 原账户及 command_id
+    H->>D: 只读查询已存回执
+    D-->>H: SUCCEEDED 或 REJECTED
+    H-->>C: 200 terminal_receipt，必须检查 state
+    Note over W,S: 后台清算与撮合另开金融事务，不改写原接纳回执
+```
+
+源码对应：[HTTP producer 与回执](../uta/durable_gateway.py)、[QueueStore.enqueue / process_one](../uta/durable_commands.py)、[ShardWorkerView guard 与 shared gate](../uta/sharding.py)、[ExchangeService._admit_order](../uta/service.py) 和 [Database 事务与提交检查](../uta/storage.py)。订单预占由持久订单事实和对应行情重算；接纳不调用撮合器，也不代表现金已发生双侧成交结算。
+
+| 情况 | 持久事实与后续动作 |
+| --- | --- |
+| 相同 ID/规范内容重复入队 | enqueue 先查已有记录，返回 PENDING 或原终态；不因重试再创建订单；内容冲突则拒绝 |
+| 执行或 COMMIT 前技术失败 | 整个金融事务回滚，保留原 PENDING；持有效租约的 worker 可按有界策略记录失败/退避，达到上限才 QUARANTINED；失租 worker 停止并等待新 owner |
+| COMMIT 后响应或处理结果丢失 | 按原账户/ID 查询终态；worker 也先检查已存终态，再决定是否记录失败，不覆盖已提交事实 |
+| 之后存在可成交对手 | 同一分片内由后台 `Matcher.match_once` 校验两侧并同事务结算；无对手或不交叉则不生成成交 |
+
+重试与恢复入口见 [独立进程循环](../uta/durable_process.py)，实际后台事务见 [ExchangeWorker](../uta/supervisor.py) 和 [Matcher](../uta/matching.py)。这里没有另存 RUNNING 状态，也没有 inbox 跨库原子提交或跨分片成交协议。
 
 ## 行情、停机和全局部分发布
 
