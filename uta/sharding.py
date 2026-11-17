@@ -743,7 +743,7 @@ class ShardWorkerView:
     """
 
     def __init__(self, directory, shard, token, *, service_options=None,
-                 account_batch=25, matches_per_symbol=10, _startup=None):
+                 account_batch=25, matches_per_symbol=10, normal_cache_size=0, _startup=None):
         from .supervisor import ExchangeWorker
 
         self._control = _open_router_control(directory)
@@ -771,10 +771,12 @@ class ShardWorkerView:
                     self._exchange.credit = CreditService(self._exchange, _startup=_startup)
                 if _startup is None:
                     self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
-                                                      matches_per_symbol=matches_per_symbol)
+                                                      matches_per_symbol=matches_per_symbol,
+                                                      normal_cache_size=normal_cache_size)
                 else:
                     self._background = _startup.take_worker(self._exchange, account_batch=account_batch,
-                                                            matches_per_symbol=matches_per_symbol)
+                                                            matches_per_symbol=matches_per_symbol,
+                                                            normal_cache_size=normal_cache_size)
         except ServiceError as exc:
             if exc.code in _INTEGRITY_FAULTS:
                 self._freeze(exc.code)

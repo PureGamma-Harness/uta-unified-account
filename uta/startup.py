@@ -100,7 +100,8 @@ class _OwnedStartup:
     No context may attest success without executing the original verifiers.
     Defaults of public service constructors never select this path.
     """
-    def __init__(self, database, *, lease_seconds, stop, parent_pid, timeout=60.0):
+    def __init__(self, database, *, lease_seconds, stop, parent_pid, timeout=60.0,
+                 normal_cache_size=0):
         if (isinstance(lease_seconds, bool) or not isinstance(lease_seconds, (int, float))
                 or not math.isfinite(lease_seconds) or not .001 <= lease_seconds <= 3600):
             raise ValueError("lease seconds must be finite and in .001..3600")
@@ -109,6 +110,9 @@ class _OwnedStartup:
             raise ValueError("startup timeout must be finite and in .01..300 seconds")
         if database.writer_token is None:
             raise StartupError("startup_token_required", "owned initialization requires a bound writer")
+        if type(normal_cache_size) is not int or not 0 <= normal_cache_size <= 65536:
+            raise ValueError("normal_cache_size requires an integer in 0..65536")
+        self._normal_cache_size = normal_cache_size
         self.database, self.token = database, database.writer_token
         self.path, self.owner_thread = database.path, get_ident()
         info = os.stat(self.path, follow_symlinks=False)
@@ -274,16 +278,25 @@ class _OwnedStartup:
             CreditService._schema(connection)
         # Source-defined constructor only: initializes matcher/scheduler metadata,
         # creates an Event, but never starts, supervises, matches or moves cash.
-        self._prepared_worker = ExchangeWorker(exchange)
+        self._prepared_worker = ExchangeWorker(exchange, normal_cache_size=self._normal_cache_size)
 
-    def take_worker(self, exchange, *, account_batch, matches_per_symbol):
+    def take_worker(self, exchange, *, account_batch, matches_per_symbol, normal_cache_size=0):
+        from .supervisor import ExchangeWorker
         self.require_ledger(exchange)
         if self._credit is None or self._worker_taken or self._prepared_worker is None:
             raise StartupError("startup_not_verified", "prepared worker is single-use after complete credit verification")
         if (type(account_batch) is not int or not 1 <= account_batch <= 1000
                 or type(matches_per_symbol) is not int or not 1 <= matches_per_symbol <= 1000):
             raise ValueError("worker scheduling bounds require integers in 1..1000")
+        if type(normal_cache_size) is not int or not 0 <= normal_cache_size <= 65536:
+            raise ValueError("normal_cache_size requires an integer in 0..65536")
         worker = self._prepared_worker
+        if (type(worker) is not ExchangeWorker or worker.exchange is not exchange
+                or worker._normal_capacity != self._normal_cache_size
+                or normal_cache_size != self._normal_cache_size
+                or worker._thread is not None or worker.last_report != {"state": "not_started"}
+                or worker.normal_cache_stats()["size"] != 0):
+            raise StartupError("startup_worker_configuration_conflict", "the native prepared worker configuration or lifecycle changed")
         worker.account_batch, worker.matches_per_symbol = account_batch, matches_per_symbol
         self._worker_taken = True
         return worker

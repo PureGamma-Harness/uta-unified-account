@@ -111,7 +111,7 @@ def _tls(cert, key):
 
 def _runtime(args):
     return {key: getattr(args, key) for key in ("lease_seconds", "poll_interval", "background_interval",
-                                              "account_batch", "matches_per_symbol", "max_attempts", "financial_batch_size")}
+                                              "account_batch", "matches_per_symbol", "max_attempts", "financial_batch_size", "normal_cache_size")}
 
 
 def _existing(args):
@@ -250,6 +250,8 @@ def _parser():
             command.add_argument("--matches-per-symbol", type=_integer(1, 1000), default=10)
             command.add_argument("--max-attempts", type=_integer(1, 100), default=3)
             command.add_argument("--financial-batch-size", type=int, choices=(0,3,4,5,6,7,8), default=0)
+            command.add_argument("--normal-cache-size", type=_integer(0, 65536), default=0)
+
     return parser
 
 
