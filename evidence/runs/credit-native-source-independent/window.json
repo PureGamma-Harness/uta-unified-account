@@ -1,0 +1,60 @@
+{
+  "cpu_affinity": [
+    3
+  ],
+  "expected_old_red_new_green_observed": true,
+  "financial_fix_commit": "26f7c59ec66f4553fcd135816509f02a00550de7",
+  "financial_fix_credit_native_sha256": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+  "frozen_new_commit": "a4d4facc3235a324afbc0fdb19635bf0bbc86a75",
+  "global_budget_seconds": 5,
+  "old_commit": "9e8d4ea0406db80ee93c94eb0bbfecd7b5058bfc",
+  "probe_source_sha256": "b50072760f4c4f1633305b475ab7ce073a6e114a604acf17aeb419d74df06ce3",
+  "records": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-credit-native-preflight-reference/scripts/probe_credit_native_source_preflight.py",
+        "--child",
+        "old",
+        "--source",
+        "/tmp/uta-independent-source-exports-gtzwwgoo/old",
+        "--output",
+        "/workspace/uta-credit-native-preflight-reference/evidence/runs/credit-native-source-independent/old.json"
+      ],
+      "cwd": "/tmp/uta-independent-source-exports-gtzwwgoo/old",
+      "elapsed_seconds": 0.396612,
+      "returncode": 1,
+      "source_commit": "9e8d4ea0406db80ee93c94eb0bbfecd7b5058bfc",
+      "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-credit-native-preflight-reference/scripts/probe_credit_native_source_preflight.py\", line 275, in <module>\n    child(args.source, args.child, args.output)\n  File \"/workspace/uta-credit-native-preflight-reference/scripts/probe_credit_native_source_preflight.py\", line 205, in child\n    assert all(r[\"safety_assertion_passed\"] for r in results), \"corrupt financial source was admitted to irreversible native preparation\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: corrupt financial source was admitted to irreversible native preparation\n",
+      "stdout": "{\"variant\": \"old\", \"accepted\": [\"old:pool_projection\", \"old:masked_principal\"], \"safety_assertions\": [false, false]}\n",
+      "timed_out": false,
+      "timeout_seconds": 4.967867604005733,
+      "variant": "old"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-credit-native-preflight-reference/scripts/probe_credit_native_source_preflight.py",
+        "--child",
+        "new",
+        "--source",
+        "/tmp/uta-independent-source-exports-gtzwwgoo/new",
+        "--output",
+        "/workspace/uta-credit-native-preflight-reference/evidence/runs/credit-native-source-independent/new.json"
+      ],
+      "cwd": "/tmp/uta-independent-source-exports-gtzwwgoo/new",
+      "elapsed_seconds": 0.427624,
+      "returncode": 0,
+      "source_commit": "a4d4facc3235a324afbc0fdb19635bf0bbc86a75",
+      "stderr": "",
+      "stdout": "{\"variant\": \"new\", \"accepted\": [\"new:healthy\"], \"safety_assertions\": [true, true, true]}\n",
+      "timed_out": false,
+      "timeout_seconds": 4.539299656004005,
+      "variant": "new"
+    }
+  ],
+  "scope": "actual future native PREPARED source admission only; no public borrow, owner, READY, activation or funds permission",
+  "source_exports_cleaned": true,
+  "subprocess_timeout_ceiling_seconds": 30,
+  "window_seconds": 0.890334
+}
