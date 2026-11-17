@@ -1,0 +1,25 @@
+Organizing branch base: 4608ffeda0651f8dafd2cd151618a71ed99aa62e
+Report worktree: /workspace/uta-qa-evidence-archive
+Historical local originals: /workspace/uta-operations-validation
+CI originals: /workspace/uta-ci-4608-push-310 (artifact.zip and three raw member files; never modified)
+All Git operations selected their stated working directory explicitly. No QA test or financial process is rerun by these commands.
+
+At /workspace/uta-next-integration:
+git worktree add -b docs/qa-evidence-archive-4608ffe /workspace/uta-qa-evidence-archive 4608ffeda0651f8dafd2cd151618a71ed99aa62e
+
+At the report worktree:
+taskset -c 0 python evidence/runs/operations-qa-archive/collect_records.py --local-root /workspace/uta-operations-validation --ci-root /workspace/uta-ci-4608-push-310 --repo /workspace/uta-qa-evidence-archive --output /workspace/uta-qa-evidence-archive/evidence/runs/operations-qa-archive/records > /tmp/uta-qa-evidence-archive-collect.stdout.txt 2> /tmp/uta-qa-evidence-archive-collect.stderr.txt
+Observed exit 0. Thirty raw files and twenty clearly derived before/after source-manifest sidecars are recorded. Original hashes are checked again after collection; raw copies match byte-for-byte. Each summary log hash, worker result and runner counts agrees. All selected source hashes match the exact historical Git commit. The stdout/stderr copies are collection.*.txt.
+
+The collector's read-only Git operations use cwd=/workspace/uta-qa-evidence-archive, with an explicit historical commit each time:
+git ls-tree -r --name-only COMMIT
+git archive --format=tar COMMIT SOURCE_PATHS...
+The source archive bytes are read in memory for hashes, not written as a release or executed. No currently modified source tree is substituted for the recorded commit.
+
+The same program checks that the original CI ZIP has exactly summary.json, worker-result.json and unittest.txt; each member is byte-identical to its original directory file. It records the ZIP's sha256/size and each member digest. It does not copy the ZIP binary or any download metadata. No SAS URL is fetched or stored.
+
+To repeat collection, select a new empty output directory; do not overwrite records/ or the original inputs. The collector refuses an existing output directory. It refuses named secret/value or query-URL pattern matches before copying a raw file. Failures in QA stay in the original fields; the collector never changes them.
+
+Static MANIFEST selection is checked with setuptools._distutils.filelist.FileList over the tracked base files plus new archive/docs paths. Process each actual MANIFEST.in line and assert every new path is selected. The resulting format-selection.json is a static inclusion check only; no wheel/sdist is built, and no MANIFEST rule is changed because no ZIP binary is committed.
+
+Archive overall QA disposition for 4608ffe is NO-GO. The successful collection/integrity check does not count as QA, package, capacity, six-hour, HA or production qualification.

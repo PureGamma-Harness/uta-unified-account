@@ -1,0 +1,45 @@
+test_uncoordinated_producer_writer_busy_is_still_technical_poison (tests.test_startup_write_contention.StartupWriteContentionTests.test_uncoordinated_producer_writer_busy_is_still_technical_poison) ... ERROR
+
+======================================================================
+ERROR: test_uncoordinated_producer_writer_busy_is_still_technical_poison (tests.test_startup_write_contention.StartupWriteContentionTests.test_uncoordinated_producer_writer_busy_is_still_technical_poison)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-startup-producer-fixture/uta/startup.py", line 182, in _keep
+    self._renew()
+  File "/workspace/uta-startup-producer-fixture/uta/startup.py", line 170, in _renew
+    WriterFence(keeper_database).renew(self.token, self.lease_seconds)
+  File "/workspace/uta-startup-producer-fixture/tests/test_startup_write_contention.py", line 85, in observe
+    return original(fence, token, ttl)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-startup-producer-fixture/uta/writer_fence.py", line 370, in renew
+    now, boot = _assert_token(self.database, state, token)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-startup-producer-fixture/uta/writer_fence.py", line 207, in _assert_token
+    raise WriterFenceError("lease_expired", "writer lease expired; renew cannot revive it")
+uta.writer_fence.WriterFenceError: writer lease expired; renew cannot revive it
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-startup-producer-fixture/tests/test_startup_write_contention.py", line 89, in test_uncoordinated_producer_writer_busy_is_still_technical_poison
+    self.fixture.construct(initialization)
+  File "/tmp/uta-producer-fixture-pause.py", line 51, in construct
+    result = originals[0](case, scope)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-startup-producer-fixture/tests/test_owned_startup.py", line 59, in construct
+    exchange = ExchangeService(self.bound, {"USD": 2}, _startup=initialization)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-startup-producer-fixture/uta/service.py", line 125, in __init__
+    _startup.require_database(database)
+  File "/workspace/uta-startup-producer-fixture/uta/startup.py", line 221, in require_database
+    self._require(database)
+  File "/workspace/uta-startup-producer-fixture/uta/startup.py", line 152, in _require
+    self.check()
+  File "/workspace/uta-startup-producer-fixture/uta/startup.py", line 141, in check
+    raise StartupError("startup_keeper_failed", "owned initialization lost its renewal/verification lifecycle") from failure
+uta.startup.StartupError: owned initialization lost its renewal/verification lifecycle
+
+----------------------------------------------------------------------
+Ran 1 test in 0.630s
+
+FAILED (errors=1)
