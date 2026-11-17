@@ -103,7 +103,11 @@ class HistoryPostingsStreamTests(unittest.TestCase):
             self.assertEqual(self.ledger.verify(**kwargs), 2)
             counts.append(sum("FROM ledger_postings" in sql and sql.startswith("SELECT")
                               for sql in self.database.statements))
-        self.assertEqual(counts, [2, 2, 1])
+        self.assertEqual(counts, [2, 2, 2])
+        stream_queries = [sql for sql in self.database.statements
+                          if sql.startswith("SELECT") and "FROM ledger_postings" in sql]
+        self.assertEqual(sum("COUNT(*)" in sql for sql in stream_queries), 1)
+        self.assertEqual(sum("account, asset, units" in sql for sql in stream_queries), 1)
 
     def test_option_types_reject_before_storage(self):
         with patch.object(self.database, "_using", side_effect=AssertionError("opened storage")):
@@ -226,6 +230,40 @@ class HistoryPostingsStreamTests(unittest.TestCase):
             c.execute("UPDATE ledger_postings SET asset=CAST(X'ff' AS TEXT) WHERE sequence=1 AND ordinal=0")
         self.corrupt(twice)
         self.rejected("database foreign-key check failed")
+
+    def test_missing_first_group_before_future_invalid_utf8(self):
+        def twice(c):
+            c.execute("DELETE FROM ledger_postings WHERE sequence=1")
+            c.execute("UPDATE ledger_postings SET account=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0")
+        self.corrupt(twice)
+        self.rejected("at least two postings are required")
+
+    def test_later_chain_error_before_same_group_invalid_utf8(self):
+        def twice(c):
+            c.execute("UPDATE ledger_events SET previous_hash='broken' WHERE sequence=2")
+            c.execute("UPDATE ledger_postings SET account=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0")
+        self.corrupt(twice)
+        self.rejected("journal sequence or hash chain is broken")
+
+    def test_invalid_utf8_without_earlier_fault_is_not_hidden(self):
+        self.corrupt(lambda c: c.execute("UPDATE ledger_postings SET units=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0"))
+        outcome = self.outcomes()
+        self.assertEqual(outcome[0], "OperationalError")
+        self.assertIn("Could not decode to UTF-8 column 'units'", outcome[1])
+
+    def test_empty_history_metadata_only_and_default_zero_queries(self):
+        def empty(c):
+            for table in ("ledger_postings", "ledger_events", "ledger_balances"):
+                c.execute("DELETE FROM " + table)
+        self.corrupt(empty)
+        self.assertEqual(self.outcomes(), ("ok", 0))
+        counts = []
+        for mode in (False, True):
+            self.database.statements.clear()
+            self.assertEqual(self.ledger.verify(ordered_postings=mode), 0)
+            counts.append(sum(sql.startswith("SELECT") and "FROM ledger_postings" in sql
+                              for sql in self.database.statements))
+        self.assertEqual(counts, [0, 1])
 
     def test_protection_missing(self):
         with sqlite3.connect(self.path) as c:
