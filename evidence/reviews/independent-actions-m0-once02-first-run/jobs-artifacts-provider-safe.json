@@ -1,0 +1,121 @@
+{
+  "jobs": [
+    {
+      "id": 134353729679,
+      "run_id": 44172126501,
+      "name": "diagnostic",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Checkout manifest-only execution commit M",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Resolve reviewed parent C without executing workload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Checkout exact reviewed controller C",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Checkout exact qualified workload source separately",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Set runtime, then record actual Python and SQLite",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Pure control tests, no workload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "Check immutable manifest and run B then P on this independent runner",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 8
+        },
+        {
+          "name": "Verify exact public file allowlist",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "Preserve only verified safe evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "Post Set runtime, then record actual Python and SQLite",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Post Checkout exact qualified workload source separately",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Post Checkout exact reviewed controller C",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        },
+        {
+          "name": "Post Checkout manifest-only execution commit M",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14366519733,
+      "name": "independent-m0-safe-44172126501-1",
+      "size_in_bytes": 228850,
+      "digest": "sha256:1ae12dfbdb8f7798b6579de4d6988bb0628a481320f7d7e04e98b000d3f290d4",
+      "expired": false,
+      "created_at": "2026-11-17T20:42:49Z",
+      "updated_at": "2026-11-17T20:42:49Z",
+      "workflow_run": {
+        "id": 44172126501,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "perf/approved-m0-20261117-02",
+        "head_sha": "07c3dc6c3d8a6cbd239e3463b55f8904cac99340"
+      }
+    }
+  ]
+}
