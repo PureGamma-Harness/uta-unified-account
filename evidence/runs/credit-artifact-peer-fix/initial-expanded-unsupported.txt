@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/workspace/uta-credit-native-integration/uta/credit_artifact.py", line 213, in credit_code_artifact
+    functions, constants = _loaded_modules(_MODULES)
+  File "/workspace/uta-credit-native-integration/uta/credit_artifact.py", line 184, in _loaded_modules
+    constants[module.__name__ + "." + attribute] = _hash(_static(value))
+  File "/workspace/uta-credit-native-integration/uta/credit_artifact.py", line 119, in _static
+    raise CreditArtifactError("credit_artifact_unavailable", "unsupported loaded financial constant type")
+uta.credit_artifact.CreditArtifactError: unsupported loaded financial constant type

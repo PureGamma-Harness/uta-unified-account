@@ -10,6 +10,7 @@ import dataclasses
 from datetime import timedelta, timezone
 from decimal import Decimal
 from enum import Enum
+from fractions import Fraction
 from hashlib import sha256
 import importlib
 import inspect
@@ -31,14 +32,27 @@ CREDIT_ARTIFACT_FORMAT = 1
 _MODULES = ("service", "credit", "credit_policy", "credit_native", "credit_artifact",
             "decision_audit", "writer_fence", "durable_commands", "durable_batches",
             "reserve_kernel", "portfolio", "products", "models", "market", "ledger", "storage",
-            "startup", "sharding", "durable_process", "gateway", "durable_gateway", "request_signing")
+            "startup", "sharding", "durable_process", "gateway", "durable_gateway", "request_signing",
+            "market_cache", "risk", "scenario_margin", "admission", "failure_diagnostics", "matching",
+            "supervisor", "durable_views", "spot", "liquidation", "reservations", "configuration",
+            "store", "ops", "reconciliation", "migration", "cutover", "durable_liquidation",
+            "bridge", "shadow_adapter", "shard_admission", "worker", "acceptance")
 _REQUIRED_FUNCTIONS = frozenset({"uta.credit.CreditService._borrow", "uta.credit.CreditService._repay",
     "uta.credit_policy.validate_native_descriptor", "uta.credit_native.prepare_credit_native",
-    "uta.writer_fence._TransactionGuard.before_commit", "uta.durable_commands.QueueStore._execute"})
+    "uta.writer_fence._TransactionGuard.before_commit", "uta.durable_commands.QueueStore._execute",
+    "uta.market_cache.MarketDecodeCache.parse", "uta.ledger.Ledger._units"})
 # These are live process/connection registries and ContextVars, not financial
 # constants. Their account, connection or nonce contents must never be archived.
 _LIVE_GLOBALS = frozenset({"_REGISTRY", "_REGISTRY_LOCK", "_CONTROL_DDL_OVERRIDE",
     "_ACTIVE", "_ACTIVE_LOCK", "_EXISTING_ONLY_OPEN"})
+# Compare the actual stdlib wrapper CodeType, never a caller-selected function
+# name/freevars pattern. Retain its bytecode identity as a compiled constant.
+@dataclasses.dataclass(frozen=True)
+class _ReprCodeTemplate:
+    pass
+
+
+_DATACLASS_REPR_CODE = _ReprCodeTemplate.__repr__.__code__
 _ARTIFACT_FIELDS = frozenset({"format", "audit_kind", "signed", "activation_permission", "app_version",
     "python_implementation", "python_version", "python_optimize", "sqlite_version", "openssl_version",
     "source_files", "source_digest", "loaded_credit_engine", "loaded_credit_constants", "loaded_engine_digest",
@@ -67,6 +81,8 @@ def _static(value, *, depth=0):
         return value
     if type(value) is bytes:
         return {"bytes": value.hex()}
+    if type(value) is CodeType:
+        return {"code_type": _code_value(value)}
     if type(value) is float:
         return {"float": value.hex()}
     if type(value) is complex:
@@ -76,6 +92,8 @@ def _static(value, *, depth=0):
             raise CreditArtifactError("credit_artifact_unavailable", "nonfinite loaded financial constant")
         sign, digits, exponent = value.as_tuple()
         return {"decimal": [sign, list(digits), exponent]}
+    if type(value) is Fraction:
+        return {"fraction": [value.numerator, value.denominator]}
     if type(value) is timedelta:
         return {"timedelta": [value.days, value.seconds, value.microseconds]}
     if type(value) is timezone:
@@ -101,6 +119,11 @@ def _static(value, *, depth=0):
     if type(value) in (dict, MappingProxyType):
         return {"mapping": sorted([[_static(key, depth=depth + 1), _static(item, depth=depth + 1)]
                                    for key, item in value.items()], key=_json)}
+    # Only this known compiled immutable scenario record is a static module
+    # constant. Do not serialize arbitrary caller dataclasses or invoke hooks.
+    from .scenario_margin import _Scenario
+    if type(value) is _Scenario:
+        return {"scenario": _static(vars(value), depth=depth + 1)}
     if inspect.isclass(value):
         return {"class": value.__module__ + "." + value.__qualname__}
     if inspect.isbuiltin(value):
@@ -114,7 +137,7 @@ def _static(value, *, depth=0):
     raise CreditArtifactError("credit_artifact_unavailable", "unsupported loaded financial constant type")
 
 
-def _closure(function, *, depth=0):
+def _closure(function, *, depth=0, allow_repr_memo=False):
     if depth > 16:
         raise CreditArtifactError("credit_artifact_unavailable", "loaded function closure exceeds bounds")
     result = {}
@@ -128,8 +151,8 @@ def _closure(function, *, depth=0):
         # dataclasses' standard repr recursion memo contains transient object/
         # thread IDs. It is not used for financial execution. Its user_function
         # and wrapper bytecode are still fingerprinted; no other closure skips.
-        if (name == "repr_running" and function.__name__ == "__repr__"
-                and function.__code__.co_freevars == ("repr_running", "user_function")
+        if (allow_repr_memo and function.__code__ is _DATACLASS_REPR_CODE
+                and name == "repr_running" and function.__name__ == "__repr__"
                 and inspect.unwrap(function).__name__ == "__repr__"):
             result[name] = {"nonfinancial_repr_recursion_memo": "excluded"}
         else:
@@ -156,6 +179,14 @@ def _module_functions(module):
     return functions
 
 
+def _allows_repr_memo(module, attribute, function):
+    if not attribute.endswith(".__repr__"):
+        return False
+    owner = vars(module).get(attribute.rsplit(".", 1)[0])
+    return (inspect.isclass(owner) and owner.__module__ == module.__name__
+            and dataclasses.is_dataclass(owner) and vars(owner).get("__repr__") is function)
+
+
 def _loaded_modules(names):
     functions, constants = {}, {}
     try:
@@ -168,7 +199,7 @@ def _loaded_modules(names):
                     "unwrapped": _code_value(unwrapped.__code__),
                     "defaults": _static(function.__defaults__),
                     "kwdefaults": _static(function.__kwdefaults__),
-                    "closure": _closure(function),
+                    "closure": _closure(function, allow_repr_memo=_allows_repr_memo(module, attribute, function)),
                     "unwrapped_defaults": _static(unwrapped.__defaults__),
                     "unwrapped_kwdefaults": _static(unwrapped.__kwdefaults__),
                     "unwrapped_closure": _closure(unwrapped)})
@@ -177,9 +208,17 @@ def _loaded_modules(names):
                     # Uppercase scalar/container bindings are compiled financial
                     # constants (including SQL definitions), not inferred state.
                     constants[module.__name__ + "." + attribute] = _hash(_static(value))
+                if inspect.isclass(value) and value.__module__ == module.__name__:
+                    # Class financial bounds, notably Ledger._LIMIT, are used
+                    # by actual admission/storage code. They are not live
+                    # connection state and must not be lost by a module-only
+                    # constant scan. Read raw class vars without descriptors.
+                    for member, item in vars(value).items():
+                        if member.lstrip("_").isupper():
+                            constants[module.__name__ + "." + attribute + "." + member] = _hash(_static(item))
     except CreditArtifactError:
         raise
-    except (ImportError, OSError, ValueError, TypeError, AttributeError, RecursionError) as exc:
+    except (ImportError, OSError, ValueError, TypeError, AttributeError, RecursionError, StorageError) as exc:
         raise CreditArtifactError("credit_artifact_unavailable", "actual credit engine cannot be fingerprinted") from exc
     return functions, constants
 

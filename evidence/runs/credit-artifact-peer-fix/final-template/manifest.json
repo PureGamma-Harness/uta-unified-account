@@ -1,0 +1,71 @@
+{
+  "source_sha256": {
+    "uta/credit_artifact.py": "bcf68bc8114a92739c03feb29e1bff3eb48ca1fcffe32f4053ebe9a607f35691",
+    "tests/test_credit_artifact.py": "e6b0ee3bd7d4233123e44c37d7c2992c5aa904a922366c962d799f38935484e8",
+    "uta/credit_transition.py": "8423116055adc885077ac920d0ca135dffeb8738197a059d61fe53c2ef1728e0",
+    "tests/test_credit_transition.py": "dc6e00fa4a069f5bb9500a1f9e20791fd20f538b276676ec8580a0cbd146530b"
+  },
+  "scope": "unwired identity and accounting only; previous private-stdlib-API 3.13 failure retained in parent directory",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:57:18.031746+00:00",
+      "completed_at": "2026-11-17T11:57:19.605264+00:00",
+      "elapsed_seconds": 1.5732995030048187,
+      "exit_code": 0,
+      "raw_sha256": "35ba2f86d627632602805f9652308fdf826bb44ecdba31ded1345e12483f2ab5"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:57:19.605328+00:00",
+      "completed_at": "2026-11-17T11:57:21.157846+00:00",
+      "elapsed_seconds": 1.552317118999781,
+      "exit_code": 0,
+      "raw_sha256": "6ab6101f8d4142c51fdaab0b56b92061b23f5c01b08b61a351f42de83cad4178"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:57:21.157898+00:00",
+      "completed_at": "2026-11-17T11:57:22.777929+00:00",
+      "elapsed_seconds": 1.6198329179969733,
+      "exit_code": 0,
+      "raw_sha256": "2e7dae42445e2068a0a4e9ef3516e8dd4deff9672beeae3a55973623b11dfeb4"
+    }
+  ]
+}
