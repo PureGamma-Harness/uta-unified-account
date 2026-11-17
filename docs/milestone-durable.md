@@ -2,7 +2,9 @@
 
 本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9) 及保留并行作者历史的 [集成 PR #10](https://github.com/PureGamma-Harness/uta-unified-account/pull/10)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
 
-**当前整合阻断：** 新增启动观测、orphan 故障夹具和发布包修复后的最终候选仍需完整本地与远端复验。历史 `e6e3afd` 四版本 845 项失败的[完整台账](../evidence/runs/durable-ci-preflight/README.md)保留；其后已独立复现并修复应用层 POSIX 锁破坏、启动续约及只读连接缺陷。固定 `89bd349` 在两种 SQLite、三个 Python 上各 894 项通过；`8eeab43` 的 PR CI 四版本各 899 项通过，但本地一次完整验证及同提交 push CI 的两个 job 仍失败，后者分别暴露即时 READY 假设和历史 PID 注入竞争，不能只引用成功的一次。各次原始结果与局部调查见[预检归档](../evidence/runs/durable-final-preflight/README.md)。当前修复不改变生产 readiness、租约、业务等待或风险准入，未使用重跑成功来抹去失败；原未记录完整 observation 的失败，其唯一根因仍缺证。3.13 成功日志中的连接 ResourceWarning 也在独立追踪。
+**本轮工程验证完成，生产仍阻断：** 发布源码固定 `7200097ce9f92fa678907bee9a99933f60d65bc3`，三个本地 Python／两种 SQLite 各 916 项通过；同 SHA 的 push 与 PR CI 两轮、各四版本也全部通过。全部原始结果、源摘要与范围见[完整验证](../evidence/runs/durable-acceptance-7200097/README.md)。[新发布包](../evidence/20261117-package-7200097/README.md)逐字节包含 862 个 tracked 源文件，fresh `-I` 安装 8/8、全部入口及无 `.git` sdist 的 7+1+4 项通过，真实删文件负控拒绝。后来附加报告的提交不冒充这个发布 SHA。持续容量、真实产品完整接入、长稳、复制容灾与金融签核仍未完成；下一阶段查询、迁移与恢复改动必须另行冻结验收。
+
+历史 `e6e3afd` 四版本 845 项失败的[完整台账](../evidence/runs/durable-ci-preflight/README.md)、`8eeab43` 本地/CI 失败与阶段性成功的[预检归档](../evidence/runs/durable-final-preflight/README.md)均保留。不能只引用同一旧提交的成功一次。已修复的连接夹具 ResourceWarning 保留分配堆栈红绿证据；新 720 本地及八份 CI 日志未观察到该警告。当前修复不放宽生产 readiness、租约、业务等待或风险准入；原缺少完整 observation 的失败仍不能事后宣称唯一根因已证实。
 
 ## 交付范围与明确拒绝
 
@@ -28,7 +30,7 @@ HMAC profile 默认要求本机原生 TLS ≥1.2。请求签名覆盖 tenant、�
 2. 实际 SIGSTOP owner 持 shared gate 时曾阻塞 publication。监督器现在在租约过期后清理其已核验的自有进程，且 exclusive gate 等待有界。实际 supervisor SIGKILL 与已登记停止子进程的组合故障另有 pidfd 恢复测试。
 3. 独立审查发现控制事务 DDL 授权过宽，存在金融投影一致性风险；`62f4336` 将 DDL 限制为官方精确 schema，26 项专项与 38 项独立原故障回归通过。[新增独立权限边界复验](fence-control-validation.md)的同一测试在旧源码产生 26 个失败子断言，修复后 8 项在 Python 3.10/3.12 均通过；原失败证据保留。
 
-固定 `6a61c44` 在单独不可变工作树完成双 Python 全量预检，各 **793 项通过**，零失败、错误和跳过：[Python 3.12 原始输出](../evidence/runs/durable-preflight/python312-6a61c44/summary.json)（96.20 秒）及 [Python 3.10 原始输出](../evidence/runs/durable-preflight/python310-6a61c44/summary.json)（98.99 秒）。最终候选尚未冻结；该结果不能改写为后续新增代码已验，也不关闭独立审查已找到的阻断项。原记录器只重定向 Python 层输出，部分实际 spawn stderr 仍输出到调用端；新记录器改用 OS 文件描述符重定向并校验源码前后一致，最终复验使用新记录器，不篡改旧日志补齐。实现组已有针对性测试，独立组覆盖实际 COMMIT 失败、磁盘满、响应丢失、旧进程、部分 publication、同账户 FIFO、poison command、还款和四侧对账，详见 [独立协议验证](durable-validation.md)、[故障验证](durable-faults.md)。
+历史固定 `6a61c44` 在单独不可变工作树完成双 Python 全量预检，各 **793 项通过**，零失败、错误和跳过：[Python 3.12 原始输出](../evidence/runs/durable-preflight/python312-6a61c44/summary.json)（96.20 秒）及 [Python 3.10 原始输出](../evidence/runs/durable-preflight/python310-6a61c44/summary.json)（98.99 秒）。当时最终候选尚未冻结；该结果不代表后续代码已验。原记录器只重定向 Python 层输出，部分实际 spawn stderr 仍输出到调用端；新记录器改用 OS 文件描述符重定向并校验源码前后一致，720 复验使用新记录器，不篡改旧日志补齐。实现组已有针对性测试，独立组覆盖实际 COMMIT 失败、磁盘满、响应丢失、旧进程、部分 publication、同账户 FIFO、poison command、还款和四侧对账，详见 [独立协议验证](durable-validation.md)、[故障验证](durable-faults.md)。
 
 另一次独立审查发现审计只核 guard 名称、未核实际 SQL。`f8d96e8` 共享安装/验证的完整定义，逐项核对 SQL、所属表和 inventory；读档、写决策及行情引用均失败关闭。独立 12 项测试在 Python 3.10/3.12 通过，保留原弱化 guard 红态，见 [独立审计故障报告](decision-audit-faults.md)。签名接口另有 [独立 HMAC/TLS 验证](hmac-validation.md)，9 项测试使用独立客户端 MAC 和真实证书验证。
 
