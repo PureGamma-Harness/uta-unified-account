@@ -264,3 +264,43 @@ measurement must cover writing END and stop if that whole interval exceeds30,
 retaining the original sample record rather than rewriting it. This is a timing
 bookkeeping repair, not permission to change an original5-second assertion, add
 samples or repeat a failure. No batch was run during this review.
+
+## Final80fa clock closure and conditional diagnostic recommendation
+
+Final candidate `80fae18c7afafdbb0145e5e8b44741323994b74f` binds controller SHA
+`5ce9884cfd39238482c0282cf357aab52497b7fbacb395505eecb97f67eec15e`
+and registration SHA
+`e5b67407cc1ddec6e2b85bd96037649f8803d0e714b99ff15a95f867e717b13e`.
+Independent Git-blob inspection confirms all seven registered dependencies match
+their hashes, all266 original source entries remain unchanged, and the previously
+reviewed result/runtime/event contracts, bound helper and no-SQL probe are byte
+identical to1e6e. Earlier controls therefore still apply; no original red vector,
+proposal, raw file or single-run result is rewritten.
+
+The final controller remeasures after all verification/posthash operations and
+uses one final elapsed value for sample budget, safe flag and report. Independent
+pure extracted-code controls now reject the original29.95→30.10 hash-overrun
+vector. A29.99-second on-time synthetic finalizer may pass. The caller also measures
+through sample return, including original END writing. A synthetic END tail that
+crosses30 stops after the first slot and marks the remaining15 NOT_RUN. The
+original sample END remains unchanged and its exact hash is retained in the
+separate OUTER-END record. END exceptions likewise stop. A technically complete
+synthetic ordinary assertion FAIL follows all16 registered ABBA slots without
+retries. All seven clock/caller controls first passed, with no native or SQL run.
+
+There is no remaining concrete static blocker to **one exact, root-authorized
+fixed16-sample diagnostic batch** under these bindings. This is a conditional
+engineering recommendation, not execution permission from this review alone.
+Require fresh private output, CPU2, registered per-process environment and actual
+runtime checks, unchanged original windows and both watchdog/whole clocks. Stop
+on technical evidence/runtime/source error, forced cleanup or residual state;
+preserve every raw attempt and all NOT_RUN slots. Fully observed original native
+status errors remain diagnostic observations under root's explicit amendment,
+never healthy authority or permission to kill without a fresh expired-owner
+witness. Unbound residuals are escalated, not signaled by guessed SID.
+
+The actual controller and both real runtimes have not been executed by this
+independent review. Remaining empirical behavior is deliberately pending. Sixteen
+case successes would be NO_REPRO within this design; the historical CI failure,
+source91 NO_GO and production acceptance stay unresolved. A captured failure is
+retained by its original stage without authorizing an unreviewed runtime fix.
