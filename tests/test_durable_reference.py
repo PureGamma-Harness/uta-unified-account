@@ -154,6 +154,8 @@ class IndependentDurableCommandTests(unittest.TestCase):
         self.service = self.reopen()
         self.service.publish_market(self.market())
         self.service.set_kill_switch(False)
+        if self._testMethodName == "test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice":
+            self._bootstrap_existing_repayment_loan()
         self.queue = QueueStore(self.database, clock=lambda: self.now, initialize=True)
         self.fence = WriterFence(self.database)
         self.fence.enable('independent-inbox')
@@ -387,7 +389,8 @@ class IndependentDurableCommandTests(unittest.TestCase):
         after['uta_events'] = [row for row in after['uta_events'] if row[1] != 'COMMAND_EXECUTION_FAILED']
         self.assertEqual(after, before)
 
-    def test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice(self):
+    def _bootstrap_existing_repayment_loan(self):
+        """Seed the existing source obligation before its persistent fence."""
         self.fund('alice', '1000')
         self.service.deposit('alice', 'btc-capital', 'BTC', D(1))
         credit = CreditService(self.service)
@@ -395,6 +398,9 @@ class IndependentDurableCommandTests(unittest.TestCase):
         credit.configure_limit('alice', 'BTC', D(1))
         credit.fund_pool('pool-capital', 'BTC', D(1), source_reference='synthetic:durable:capital')
         credit.borrow('alice', 'borrow', 'BTC', D('.1'))
+
+    def test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice(self):
+        credit = CreditService(self.service)
         credit.accrue_interest('alice', 'interest', 'BTC', D('.001'))
         before = self.financial_rows()
         queued = self.queue.enqueue_repay('alice', 'partial-repay', 'BTC', D('.0005'))

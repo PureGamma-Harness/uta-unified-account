@@ -1,0 +1,30 @@
+test_existing_debt_same_asset_repayment_remains_supported (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_existing_debt_same_asset_repayment_remains_supported) ... ok
+test_old_command_replay_precedes_unsupported_halt_and_stale_checks (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_old_command_replay_precedes_unsupported_halt_and_stale_checks) ... ok
+test_private_joined_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_private_joined_owner_cannot_create_unaudited_credit) ... FAIL
+test_public_trusted_managed_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_public_trusted_managed_owner_cannot_create_unaudited_credit) ... FAIL
+test_real_schema3_capability_still_declares_new_credit_not_captured (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_real_schema3_capability_still_declares_new_credit_not_captured) ... ok
+
+======================================================================
+FAIL: test_private_joined_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_private_joined_owner_cannot_create_unaudited_credit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-credit/tests/test_managed_borrow_boundary.py", line 71, in test_private_joined_owner_cannot_create_unaudited_credit
+    self.assert_new_borrow_rejected(joined=True)
+  File "/workspace/uta-managed-credit/tests/test_managed_borrow_boundary.py", line 62, in assert_new_borrow_rejected
+    self.assertIsNotNone(error, json.dumps({"joined": joined, "unexpected_committed_receipt": result,
+AssertionError: unexpectedly None : {"after": {"account": {"account_id": "alice", "balances": {"BTC": "0.2", "USD": "100"}, "liabilities": {"BTC": {"interest": "0", "principal": "0.2", "total": "0.2"}}, "open_order_margin": "0", "positions": {}, "version": 3}, "borrow_commands": 2, "borrow_events": 2, "ledger_events": 5, "pool_balance": "0.80000000", "risk_decisions": 0}, "before": {"account": {"account_id": "alice", "balances": {"BTC": "0.1", "USD": "100"}, "liabilities": {"BTC": {"interest": "0", "principal": "0.1", "total": "0.1"}}, "open_order_margin": "0", "positions": {}, "version": 2}, "borrow_commands": 1, "borrow_events": 1, "ledger_events": 4, "pool_balance": "0.90000000", "risk_decisions": 0}, "joined": true, "unexpected_committed_receipt": {"account_id": "alice", "account_version": 3, "amount": "0.1", "asset": "BTC", "command_id": "unsupported-joined", "interest": "0", "journal_event_id": "credit:a0ceb562b50329df0daaf2fbf7fa86ef1a1fd274836e313e4f478ed5ca6430cb", "principal": "0.2", "risk_evidence": {"available_margin": "92", "borrowable_before": "0.44", "catalog_version": 1, "equity": "96", "initial_margin": "4", "maintenance_margin": "2", "market_observed_at": "2026-11-17T00:00:00+00:00", "market_version": 1, "open_order_margin": "0", "rule_id": "UTA-CROSS-LOAN-v1", "rule_version": 1}, "total": "0.2"}}
+
+======================================================================
+FAIL: test_public_trusted_managed_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_public_trusted_managed_owner_cannot_create_unaudited_credit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-credit/tests/test_managed_borrow_boundary.py", line 68, in test_public_trusted_managed_owner_cannot_create_unaudited_credit
+    self.assert_new_borrow_rejected(joined=False)
+  File "/workspace/uta-managed-credit/tests/test_managed_borrow_boundary.py", line 62, in assert_new_borrow_rejected
+    self.assertIsNotNone(error, json.dumps({"joined": joined, "unexpected_committed_receipt": result,
+AssertionError: unexpectedly None : {"after": {"account": {"account_id": "alice", "balances": {"BTC": "0.2", "USD": "100"}, "liabilities": {"BTC": {"interest": "0", "principal": "0.2", "total": "0.2"}}, "open_order_margin": "0", "positions": {}, "version": 3}, "borrow_commands": 2, "borrow_events": 2, "ledger_events": 5, "pool_balance": "0.80000000", "risk_decisions": 0}, "before": {"account": {"account_id": "alice", "balances": {"BTC": "0.1", "USD": "100"}, "liabilities": {"BTC": {"interest": "0", "principal": "0.1", "total": "0.1"}}, "open_order_margin": "0", "positions": {}, "version": 2}, "borrow_commands": 1, "borrow_events": 1, "ledger_events": 4, "pool_balance": "0.90000000", "risk_decisions": 0}, "joined": false, "unexpected_committed_receipt": {"account_id": "alice", "account_version": 3, "amount": "0.1", "asset": "BTC", "command_id": "unsupported-public", "interest": "0", "journal_event_id": "credit:3234bd9372a06a965a342ba3a48fc59e7ea2b06efc65b6c5bca97b523c65793b", "principal": "0.2", "risk_evidence": {"available_margin": "92", "borrowable_before": "0.44", "catalog_version": 1, "equity": "96", "initial_margin": "4", "maintenance_margin": "2", "market_observed_at": "2026-11-17T00:00:00+00:00", "market_version": 1, "open_order_margin": "0", "rule_id": "UTA-CROSS-LOAN-v1", "rule_version": 1}, "total": "0.2"}}
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.629s
+
+FAILED (failures=2)

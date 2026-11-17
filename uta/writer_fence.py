@@ -598,6 +598,22 @@ class _TransactionGuard:
             self.connection.create_function("uta_writer_fence_v1", 0, None)
 
 
+def _assert_financial_joinable(database, connection):
+    """Require an existing financial role; never create or elevate one.
+
+    The legacy ledger join contract below intentionally permits raw unmanaged
+    transactions. New composable admission paths use this stricter contract.
+    """
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is not None and guard.connection is connection
+            and guard.database.path == database.path
+            and guard.database.writer_token == database.writer_token
+            and guard.role == "financial"):
+        return
+    raise WriterFenceError("unguarded_connection", "borrowing requires the existing authority's financial transaction")
+
+
 def _assert_joinable(database, connection):
     with _REGISTRY_LOCK:
         guard = _REGISTRY.get(id(connection))
