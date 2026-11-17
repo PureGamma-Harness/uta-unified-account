@@ -72,3 +72,11 @@ No SQL, worker process, trading command, liquidation, performance load, deployme
 ## Deployment and rollback
 
 This is a documentation/evidence-only commit and changes no schema, package configuration, service or runtime behavior. Reviewers can reproduce metadata inspection with the six run IDs and compare the recorded SHA-256 values to the retained originals. Revert this evidence commit to withdraw the report; retain all private originals and earlier failed outcomes. This report does not authorize deployment or replacement of an active writer.
+
+## Separate manifest correction review
+
+The later fix `e486d13d68cde98e1a1246b1274bf92bb3b1a29c` changes exactly one line in `MANIFEST.in`: `include deploy/review-manifest.template.json`. It does not broadly include other deployment JSON or change runtime code. The root's first bounded build and existing verifier completed in 137.309870728 seconds within its 180-second budget; all seven checks passed. That is a new local packaging result for a changed source, not a rerun or relabeling of any failed CI result above.
+
+A separate [independent reader](../evidence/reviews/release-ci-first-outcomes-20261117/independent_package_reader.py) ran once, on CPU 3 with a 15-second process bound, and completed in 1,308,375,228 ns, exit 0, empty stderr. Its [result](../evidence/reviews/release-ci-first-outcomes-20261117/deployment-package-independent.json) independently checks both archive digests/sizes, all 6,298 required path names against Git, the template's unique source distribution member and exact Git bytes, and all 62 runtime payloads (61 Python files and one HTML asset) in both archive formats against Git. Other non-runtime payload contents retain the root verifier's evidence; this reader does not claim to have independently compared all 6,298 payloads a second time.
+
+No build, installation, full test, SQL, worker, signal or CI rerun was performed by that independent check. The concrete packaging omission is closed for this local fixed-source artifact pair; original failures, native process diagnostics, production and capacity gates remain open.
