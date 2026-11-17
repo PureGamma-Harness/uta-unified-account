@@ -1,0 +1,122 @@
+{
+  "base_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "file_sha256": {
+    "docs/pm-independent-next-golden.md": "546d9e7de3b529deca397dbc4bb4f131ff697675f89f99dfdefa09aac818e20c",
+    "evidence/runs/pm-independent-next/oracle-first.json": "57fb8deeef2767b6b12449b981ea43d409261bbb976933ba7caccdaf1c0d22c3",
+    "evidence/runs/pm-independent-next/oracle-first.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/runs/pm-independent-next/oracle-first.stdout.txt": "2d7b7dba4713f701e01e717e1ba5b2aea316cf4fe06ffbbebaf45f15d30d2b0f",
+    "evidence/runs/pm-independent-next/related-pure-python312.json": "7c9b63434530f254c597acdf2a6ff67f2a9b1fa81326ab7855bc20cf039af381",
+    "evidence/runs/pm-independent-next/related-pure-python312.stderr.txt": "f0f61e89fda085e82be8410be33723cbe4f2f18ae781e5675fd03143de7e4aaa",
+    "evidence/runs/pm-independent-next/related-pure-python312.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/runs/pm-independent-next/run.py": "05424b624d6c2748ec788a93d8a47a0b8c0ab348cbfd2b0d8acdbdc1236d7bf1",
+    "evidence/runs/pm-independent-next/sut-first-python312.json": "c4b896e76df0a26a981fb81eed885e7d10fb88e97ac1a98478b06759e2d4f972",
+    "evidence/runs/pm-independent-next/sut-first-python312.stderr.txt": "ef23a03ded5c137aa6189374d0cac3d24fc6fa292e483359fbff10210cf2b9cd",
+    "evidence/runs/pm-independent-next/sut-first-python312.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/runs/pm-independent-next/sut-python310.json": "0c35bd90b99e1c429f550b53011c504480ae0cf4bde72b7e441d9bb984b532a5",
+    "evidence/runs/pm-independent-next/sut-python310.stderr.txt": "e93266adf7e5e84c7d2098a1ad2323b3dd4597fa51589634ffe80bf1a2b8bf90",
+    "evidence/runs/pm-independent-next/sut-python310.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "evidence/runs/pm-independent-next/sut-python313.json": "f35ff77dd73572b016c47916f53fd0c891f89732e0ce0ac44be65a3f687294f7",
+    "evidence/runs/pm-independent-next/sut-python313.stderr.txt": "e6eb16a325f2121b180316e51a5967ac6b9410ce95fdcde65bc431ca926a1f20",
+    "evidence/runs/pm-independent-next/sut-python313.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "tests/pm_independent_next_oracle.py": "11f33badeafc2d4d46e4baa06d5e7b07d5a95d8eadddaad1353aaefc3d03fa48",
+    "tests/test_pm_independent_next.py": "3b9dfe51a6881e2d79459242272041acaebaffa42755c795a490f618787951ce"
+  },
+  "oracle_first_commit": "cc8e69d864fd08302fa816af29fe9c64838959d3",
+  "oracle_imports_from_ast": [
+    "copy",
+    "fractions",
+    "json"
+  ],
+  "policy": "repository-defined synthetic UTA-CROSS-LOAN-v1 / UTA-PRODUCT-GATE-v1",
+  "production_and_config_diff_exit_code": 0,
+  "production_bug_reproduced": false,
+  "production_changes": false,
+  "rollback": "Revert the two additive commits; no database, schema, service, process, financial state or activation changed.",
+  "runs": {
+    "oracle-first": {
+      "argv": [
+        "taskset",
+        "-c",
+        "4",
+        "python",
+        "tests/pm_independent_next_oracle.py"
+      ],
+      "elapsed_seconds": 0.03513783300149953,
+      "exit_code": 0
+    },
+    "related-pure-python312": {
+      "argv": [
+        "taskset",
+        "-c",
+        "4",
+        "python",
+        "-m",
+        "unittest",
+        "-v",
+        "test_portfolio_reference.IndependentCrossReferenceTests",
+        "test_portfolio_reference.IndependentStressReferenceTests",
+        "test_products.ProductCatalogTests",
+        "test_portfolio.PortfolioTests",
+        "test_risk_boundaries.RiskBoundaryTests"
+      ],
+      "elapsed_seconds": 0.9384439879941056,
+      "exit_code": 0
+    },
+    "sut-first-python312": {
+      "argv": [
+        "taskset",
+        "-c",
+        "4",
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-v",
+        "-s",
+        "tests",
+        "-p",
+        "test_pm_independent_next.py"
+      ],
+      "elapsed_seconds": 0.20357632100058254,
+      "exit_code": 0
+    },
+    "sut-python310": {
+      "argv": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-m",
+        "unittest",
+        "discover",
+        "-v",
+        "-s",
+        "tests",
+        "-p",
+        "test_pm_independent_next.py"
+      ],
+      "elapsed_seconds": 0.11364196999784326,
+      "exit_code": 0
+    },
+    "sut-python313": {
+      "argv": [
+        "taskset",
+        "-c",
+        "4",
+        "/usr/bin/python3.13",
+        "-m",
+        "unittest",
+        "discover",
+        "-v",
+        "-s",
+        "tests",
+        "-p",
+        "test_pm_independent_next.py"
+      ],
+      "elapsed_seconds": 0.12128442399989581,
+      "exit_code": 0
+    }
+  },
+  "scope": "Pure calculators and product permission gates only; CPU4 and 30-second per-command limit. No services, stress jobs, network, original SQL or frozen-worktree changes. No PM/Isolated/V2/M3 activation or production/10k/HA claim.",
+  "vector_groups": 6
+}

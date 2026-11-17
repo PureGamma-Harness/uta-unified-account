@@ -50,4 +50,37 @@ cash-deficit 修复/正控再称为缺陷发现。
 activation/native M3。CPU affinity 固定为 CPU4，单次测试命令限时 30 秒。
 回滚是撤销本组新增文件的提交；没有资金、数据库或运行状态需要迁移。
 
-本文件在首次 SUT 对比之前写入；运行记录和最后结论在测试完成后追加。
+## 实际执行结果
+
+Oracle、规则表与首次独立自检先提交为
+`cc8e69d864fd08302fa816af29fe9c64838959d3`，随后才添加 SUT 对比测试。
+运行器按参数列表执行子进程，每条命令真实设置 `taskset -c 4` 并施加 30 秒 timeout；
+没有启动服务或网络。新测试的首次运行即为绿色，没有生产 red 或生产修复提交。
+
+| 实际窗口 | 结果 | 测试日志耗时 / 进程墙钟耗时 |
+| --- | --- | --- |
+| Oracle-first / Python 3.12.14 | 六组手算自检通过，exit0 | 0.035秒进程 |
+| 首次 SUT / Python 3.12.14 | 6 tests、0失败、0错误、0跳过，exit0 | 0.041 / 0.204秒 |
+| 同一新测试 / Python 3.10.22 | 6 tests、0失败、0错误、0跳过，exit0 | 0.040 / 0.114秒 |
+| 同一新测试 / Python 3.13.5 | 6 tests、0失败、0错误、0跳过，exit0 | 0.024 / 0.121秒 |
+| 相关已有纯测试 / Python 3.12.14 | 25 tests、0失败、0错误、0跳过，exit0 | 0.764 / 0.938秒 |
+
+相关检查仅选择 `IndependentCrossReferenceTests`、`IndependentStressReferenceTests`、
+`ProductCatalogTests`、`PortfolioTests` 与 `RiskBoundaryTests`，没有执行同文件中的
+服务集成类。新测试入口为 [test_pm_independent_next.py](../tests/test_pm_independent_next.py)。
+原始 stdout/stderr、argv、退出码、版本、实际亲和性查询和逐文件 SHA256 均保存在
+[证据目录](../evidence/runs/pm-independent-next)。其中首次 Oracle 的版本辅助查询
+未设置 CPU 亲和性，显示 `[0,1,2,3,4]`；实际 Oracle 子进程的 argv 已设置 CPU4。
+后续运行器的辅助查询也固定 CPU4，原记录保留原样。
+
+本组 SUT 的 `uta/portfolio.py` SHA256 为
+`c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879`；
+`uta/products.py` 为
+`c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29`。
+两个核心文件和所有 `uta/` 文件均没有改动。首次比较时测试尚未提交，其精确内容由
+当次 metadata 的测试/oracle SHA256 绑定；没有把旧提交 HEAD 冒充包含未提交测试。
+
+结论是这六组合成边界与自定义规则吻合，未发现待修生产缺陷。现金亏空作为债务计入且
+不重复收贷款保证金的既有行为仍成立；本组不重写此前 a35 的实际负现金正控结论。
+该局部结果不解除固定 bb34 来源的 Python3.10 全量兼容错误/NO-GO，也不证明完整模式
+支持、真实交易所 PM、安全性、10k 或 HA。

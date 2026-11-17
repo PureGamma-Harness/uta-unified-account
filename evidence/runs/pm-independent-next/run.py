@@ -15,7 +15,7 @@ OUT = Path(__file__).resolve().parent
 LABEL, PYTHON, TARGET = sys.argv[1:]
 ARGV = ["taskset", "-c", "4", PYTHON] + (
     ["tests/pm_independent_next_oracle.py"] if TARGET == "oracle" else
-    ["-m", "unittest", "-v"] + TARGET.split(","))
+    ["-m", "unittest"] + TARGET.split(","))
 START = datetime.now(timezone.utc).isoformat()
 BEFORE = time.monotonic()
 try:
@@ -36,7 +36,7 @@ METADATA = {"started_at": START, "argv": ARGV, "timeout_seconds": 30, "exit_code
             "runner_python": sys.version, "runner_sqlite": sqlite3.sqlite_version,
             "platform": platform.platform(),
             "source_head": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-            "sut_runtime": subprocess.check_output([PYTHON, "-c", "import os,sys; print(sys.version); print(sorted(os.sched_getaffinity(0)))"], text=True).strip(),
+            "sut_runtime": subprocess.check_output(["taskset", "-c", "4", PYTHON, "-c", "import os,sys; print(sys.version); print(sorted(os.sched_getaffinity(0)))"], text=True).strip(),
             "file_sha256": {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
                             for name in FILES if (ROOT / name).exists()}}
 (OUT / (LABEL + ".json")).write_text(json.dumps(METADATA, indent=2, sort_keys=True) + "\n")
