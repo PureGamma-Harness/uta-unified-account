@@ -1,0 +1,41 @@
+{
+  "actual_transition_sha256": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "scripts/probe_credit_transition_reference.py",
+    "/workspace/uta-credit-transition-0941-review/evidence/runs/credit-transition-independent-0941/green.json",
+    "--expected-source-sha256",
+    "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99",
+    "--reviewed-commit",
+    "0941c1ac1e9bbafc189979b11e27e5dd5b9175fb"
+  ],
+  "cwd": "/workspace/uta-credit-transition-0941-review",
+  "elapsed_wall_seconds": 0.125748,
+  "original_red_commit": "17ed1b98c1cb72c3bd1bf2d052797d94b929d5c0",
+  "original_red_sha256": {
+    "original-red-execution.json": "e2f088bf430f0ac1ba81acd2c3d9aa00ef1746ffce07e9076ed432260a215ee3",
+    "original-red.json": "c4ead1b4721b598c06de7ca0ff366e05b001091941dea63af5ecaa6ad17f5c91"
+  },
+  "returncode": 0,
+  "reviewed_source_commit": "0941c1ac1e9bbafc189979b11e27e5dd5b9175fb",
+  "stderr": "",
+  "stdout": "{\"ordinary_cases\": 51, \"failed_safety_assertions\": [], \"elapsed_after_imports_seconds\": 0.02375}\n",
+  "timeout_seconds": 30,
+  "unaltered_original_reference_blobs": {
+    "scripts/probe_credit_transition_reference.py": {
+      "actual_blob": "53531ab06ec1b873211a998d72d51b9aac92fbaf",
+      "identical": true,
+      "original_7ece_blob": "53531ab06ec1b873211a998d72d51b9aac92fbaf",
+      "sha256": "aa671dc81ae32b907e708dcb2434325e11f5222c90f7385c52eefb2d0ee0096e"
+    },
+    "tests/reference_credit_transition_math.py": {
+      "actual_blob": "f88d0e84441d34730ed9f61675e0405cc36de2b4",
+      "identical": true,
+      "original_7ece_blob": "f88d0e84441d34730ed9f61675e0405cc36de2b4",
+      "sha256": "d6026a3b69d25634c82c109205e13799a03ac7950b899a5f136abcb8970aa2db"
+    }
+  }
+}
