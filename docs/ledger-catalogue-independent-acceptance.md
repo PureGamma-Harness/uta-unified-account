@@ -1,4 +1,70 @@
-# Independent acceptance preregistration: NOT_RUN
+# Independent acceptance: narrow main-catalogue fix accepted
+
+The independent group accepts the minimal persistent-main postings catalogue
+fix at exact `8003ef6c3e0cf98b4891efea7885ffa141a68fdc`, subject to root
+integration review and combined-source gates. It rejects any broader claim
+that effective TEMP tables, all raw joins, all five base catalogues or partial
+catalogue repair behavior have been closed. Production approval remains false.
+
+Root authorized preregistration
+`66c345b2a4739055d9cb4d9954fde47966973eb5` without changing its tests or
+driver. One fresh-scratch CPU4/Python3.12.14/SQLite3.53.1 component ran
+2026-11-17T15:29:16.793718Z to15:29:17.425224Z. The outer observer measured
+0.631523342 seconds through the driver END write and process return; the
+worker took0.348310007 seconds and unittest0.312 seconds. All18 tests completed
+with zero failures, errors or skips:17 positive/negative acceptance controls
+and one deliberately separate known-gap observation. No retry or watchdog
+occurred. All52 source hashes stayed unchanged. CPU4 was released. The worker
+was reaped and its own `/proc` entry was later absent; the outer observer
+reaped the returned driver. No other process was inspected or signalled.
+
+The original missing-event-FK plus orphan99 fixture was independently rebuilt
+in new private scratch. Both the retained-object verifier and existing
+constructor rejected it. Every independently selected FK/PK/column/CHECK/view/
+missing-table defect also received the intended typed error. Complete main
+logical states stayed unchanged. Constructor traces contained no DDL or DML
+before refusal. A failed joined verification retained its caller's active
+transaction and marker; a successful joined post/verification was undone by
+the caller's rollback. A real `uta.ops.backup_database` backup reopened and
+verified the same two events. Real managed guards accepted a bound token and
+read-role verification while rejecting an unmanaged raw join at its original
+native boundary.
+
+Equivalent whitespace DDL with matching PRAGMA columns/FKs was refused, as the
+strict canonical contract requires. Constructor version99 errors still precede
+catalogue errors. Verification deliberately prioritizes the new catalogue
+error; malformed FK targets and missing native triggers do not displace it.
+
+The TEMP observation **did reproduce**: a canonical main ledger plus a raw
+unmanaged connection's TEMP postings table with5 rows, no FK/PK and orphan99
+still returned2 verified events. A malformed main table hidden by a canonical
+TEMP table was correctly refused. The former does not bypass the narrow main
+definition check, and unchanged unqualified replay SQL shows that this raw-join
+boundary predates the patch. Only the current source was executed natively for
+this TEMP observation; no baseline native run is claimed. Separate baseline
+and candidate source snapshots, exact executed fixture SQL, asserted counts,
+and byte-identical retained main-file evidence are preserved in the
+[boundary analysis](../evidence/reviews/ledger-catalogue-acceptance/temp-boundary-analysis.json).
+The ephemeral TEMP connection was closed; no later query or reconstructed
+raw TEMP dump is presented as an actual observation. Any patch refusing TEMP
+shadows needs a separately authorized scope and regression contract.
+
+The [manifest](../evidence/reviews/ledger-catalogue-acceptance/once/manifest.json)
+binds29 byte-identical safe copies of this independent run, with19 private
+database hashes including the supported backup. No database binary or
+control-owner/token row is published. The original counterexample SHA256
+remained `d77b0f8cc1797ac9376d10574927e609e1e93abf9b081bddeb5632639f87bb8a`.
+Author evidence was separately read-only verified: all24 safe copies matched
+the original raw bytes and source52 matched this candidate. A second static
+peer found no narrow-scope blocker. The raw independent files remain at
+`/tmp/uta-ledger-catalogue-independent-66c345b-once-20261117` without edits.
+
+No runtime source was changed by this group. No financial migration,
+deployment, HA, capacity or real-funds approval follows. The following original
+preregistration remains as historical context; its NOT_RUN status was true
+when sealed at66c345b and is superseded only by the actual records above.
+
+## Original preregistration
 
 The independent worktree starts from exact candidate
 `8003ef6c3e0cf98b4891efea7885ffa141a68fdc`; runtime implementation is
