@@ -1,31 +1,53 @@
 # Managed process soak tool
 
-`benchmarks/run_managed_soak.py` is a new synthetic stability tool based on
-`4c68f01`. It does not alter `run_soak.py` or the live 887/observer directories.
+`benchmarks/run_managed_soak.py` is a synthetic stability tool originally
+developed at `4c68f01` and integrated with the corrected `8eeab43` release base.
+It does not alter `run_soak.py` or the live 887/observer directories.
 Read [the golden workload](managed-soak-golden.md) for independently calculated
 fees, gross debt, account balances, matching and audit expectations. Earlier
 887 results cannot qualify this different code, transport or authority.
 
-## Current storage-lock release blocker
+## Exact release qualification
 
-Long runs are currently hard-blocked, including with `--allow-long-run` or the
-direct Python API. The underlying SQLite POSIX-close issue is documented at
-https://www.sqlite.org/howtocorrupt.html#posix_close_bug. Closing an unrelated
-descriptor for a database inode can release that process's POSIX advisory locks;
-an apparently passing short workload does not establish writer exclusion.
+Runs longer than 60 seconds require explicit `--allow-long-run`, clean frozen
+source and the complete `tools/run_validation.py` report for that exact Git SHA.
+The direct Python API enforces the same conditions. A missing or inconsistent
+report is rejected **before** creating the job directory, lock, checkpoint,
+financial authority, listener or any subprocess. Dirty development never opts
+into a long job.
 
-The historical 10/60-second results remain unchanged as observations of their
-recorded candidate. They predate release-wide verification of this issue and
-cannot unblock a 6/24-hour run, prove lock ownership, or qualify a repaired
-release. This recovery session does not rerun those jobs or alter the live
-887/observer source or processes.
+The gate requires literal successful flags, positive executed test count,
+integer-zero failures/errors/skips/expected failures/unexpected successes and
+worker exit code, matching worker-result counts, the raw unittest log checksum
+and successful final result, the full runner command, and matching Python and
+SQLite versions. Both report source manifests must exactly equal the current
+complete validator input set (runtime, tests, fixtures, formal models, scripts,
+tools and benchmark dependencies). Current Git HEAD must equal `code_commit`;
+the entire checkout, including tracked documentation and untracked files, must
+be clean. Source and HEAD are checked again before qualification returns.
+The validator's `passed=true` alone is insufficient because unittest can pass
+with skipped tests or expected failures.
 
-The gate has no CLI/environment override. Removing it requires a separately
-reviewed complete release/source manifest and independent lock-ownership
-regressions across base, bound-shard, authentication, diagnostics, read-view and
-every other database override. A single storage patch SHA, capability attribute,
-clean Git status, or another passing smoke is insufficient. After that review,
-freeze a new candidate with its evidence; do not relabel these historical cases.
+Accepted `summary.json`, `worker-result.json` and `unittest.txt` are copied as
+private immutable-by-checksum job evidence under `validation/`; their hashes
+and the qualified commit are recorded in `job.json` and progress. Resume uses
+the original evidence and preserves those exact hashes; an alternative report
+cannot replace it. Runtime source and evidence are checked during execution
+and before the final audit. An offline cold audit also checks evidence hashes.
+
+These are engineering test eligibility checks. They do not sign evidence or
+protect against a trusted OS owner fabricating all runner artifacts, grant
+production approval, prove HA or certify a 6/24-hour duration before it actually
+completes. Run the full validator through its real command and preserve the
+original raw output. An earlier checkout's report, a capability attribute, a
+manual allow flag or a short smoke cannot substitute for that run.
+
+The historical `d73f4ed` 10/60-second results predate release-wide verification
+of the SQLite POSIX-close issue documented at
+https://www.sqlite.org/howtocorrupt.html#posix_close_bug. They remain unsafe
+historical observations, not qualification for this fixed integration. The
+base, shard, auth, diagnostic and view lock-ownership tests belong to the new
+full-release validation. Existing 887/observer source and processes are untouched.
 
 The default is a 60-second smoke, at exactly 0.25 scheduled rounds/s with one
 active round. A 10-second window schedules arrivals at 0, 4 and 8 seconds. There
@@ -154,17 +176,24 @@ continuous 6/24-hour run. `production_approved` and
 
 ## Preparing a future long job
 
-No 6-hour or 24-hour job is started by this delivery. The current storage-lock
-release blocker denies every run or resume longer than 60 seconds before state
-creation, even with explicit opt-in. After the complete release blocker has been
-resolved, long runs would additionally require `--allow-long-run` and clean
-frozen source; dirty development cannot opt into them. After reviewing the new
-release's validation and final source manifest,
-reserve a separately reviewed resource window and a new directory. Defaults are
-one worker kill each 30 rounds and one parent kill each 300 rounds. There are disk
-budgets and one active round, not an unbounded in-memory workload queue.
+No 6-hour or 24-hour job is started by this delivery. Freeze the final candidate,
+then generate a new complete report **outside** the source checkout. Adding even
+a documentation commit afterward changes the exact SHA and requires a fresh
+report; use the tested freeze checkout for execution.
 
-A future approved command would specify the duration explicitly, for example
-`--duration 21600 --allow-long-run`; 24 hours uses `86400`. This syntax is not a
-launch approval and is rejected while the blocker remains. Do not reuse an earlier directory, alter a live source checkout,
-reset debt/funding, or present the earlier 887 result as evidence for this tool.
+```sh
+python tools/run_validation.py --output /private/candidate-validation
+python benchmarks/run_managed_soak.py run --directory /private/new-managed-long \
+  --duration 21600 --allow-long-run \
+  --validation-report /private/candidate-validation/summary.json
+```
+
+These example commands are not recorded test results or production approval.
+The new tool's own unit tests must be in the frozen candidate before validation.
+Use a separately coordinated resource window and a new private directory;
+24 hours uses duration `86400`. Defaults are one worker kill each 30 rounds and
+one parent kill each 300 rounds. There are disk budgets and one active round,
+not an unbounded in-memory queue. A long resume also requires `--allow-long-run`
+and revalidates its stored report before touching the authority or listener.
+Do not reset debt/funding, reuse an earlier directory for a new job, alter a live
+source checkout or present the earlier 887 result as evidence for this tool.

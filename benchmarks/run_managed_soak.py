@@ -34,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from benchmarks.run_soak import _atomic, _pid_identity, environment, readonly
 from benchmarks.run_benchmark import LatencyHistogram
+from benchmarks.managed_qualification import qualify
 from uta.durable_process import DurableProcessRouter
 from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
@@ -43,14 +44,13 @@ from uta.storage import Database
 
 ACCOUNTS = ("managed-soak-alice", "managed-soak-bob", "managed-soak-credit")
 SCALE = 100_000_000
-# Deliberately no CLI/environment override. Short historical observations do
-# not validate the release-wide SQLite connection ownership/close contract.
-LONG_RUN_BLOCKERS = ("sqlite_posix_close_regression_not_release_validated",)
-
-
-def require_long_run_ready(duration):
-    if duration > 60 and LONG_RUN_BLOCKERS:
-        raise RuntimeError("managed long run blocked: validate the complete release against SQLite POSIX-close locking regressions first")
+def require_long_run_ready(duration, *, allow_long_run=False, strict_source=True, validation_report=None):
+    if duration > 60:
+        if allow_long_run is not True or strict_source is not True:
+            raise RuntimeError("managed long run requires explicit --allow-long-run and frozen clean source")
+        if validation_report is None:
+            raise RuntimeError("managed release validation required: supply the exact complete validation report")
+    return None if validation_report is None else qualify(validation_report)
 
 
 def canonical(value):
@@ -132,19 +132,26 @@ def alive(pid, identity):
 
 
 class ManagedSoak:
-    def __init__(self, directory, configuration=None, *, resume=False, strict_source=True):
+    def __init__(self, directory, configuration=None, *, resume=False, strict_source=True,
+                 allow_long_run=False, validation_report=None):
         self.directory = Path(directory).absolute()
         if self.directory.is_symlink():
             raise ValueError("job directory must not be a symlink")
         if resume:
-            original_configuration = json.loads((self.directory / "job.json").read_text())["configuration"]
+            persisted = json.loads((self.directory / "job.json").read_text())
+            original_configuration = persisted["configuration"]
             if configuration is not None and asdict(configuration) != original_configuration:
                 raise RuntimeError("resume cannot change workload or duration")
             requested = Configuration(**original_configuration)
+            if validation_report is None and persisted.get("validation_evidence") is not None:
+                validation_report = self.directory / "validation" / "summary.json"
         else:
             requested = configuration or Configuration()
         requested.validate()
-        require_long_run_ready(requested.duration)
+        self.validation = require_long_run_ready(requested.duration, allow_long_run=allow_long_run,
+            strict_source=strict_source, validation_report=validation_report)
+        if resume and persisted.get("validation_evidence") != (None if self.validation is None else self.validation.evidence):
+            raise RuntimeError("resume validation evidence differs from the original frozen candidate")
         self.directory.mkdir(mode=0o700, parents=True, exist_ok=True)
         if self.directory.stat().st_uid != os.geteuid() or self.directory.stat().st_mode & 0o077:
             raise ValueError("job directory must be private")
@@ -169,6 +176,8 @@ class ManagedSoak:
         self.env = environment()
         self.env["source_sha256"]["benchmarks/run_managed_soak.py"] = sha256(Path(__file__).read_bytes()).hexdigest()
         self.env["source_sha256"]["benchmarks/run_benchmark.py"] = sha256((ROOT / "benchmarks/run_benchmark.py").read_bytes()).hexdigest()
+        for relative in ("benchmarks/managed_qualification.py", "tools/run_validation.py"):
+            self.env["source_sha256"][relative] = sha256((ROOT / relative).read_bytes()).hexdigest()
         self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
         try:
             if strict_source and self.env["tracked_changes"]:
@@ -179,7 +188,6 @@ class ManagedSoak:
                 if configuration is not None and asdict(configuration) != self.meta["configuration"]:
                     raise RuntimeError("resume cannot change workload or duration")
                 self.configuration = Configuration(**self.meta["configuration"])
-                require_long_run_ready(self.configuration.duration)
                 if strict_source and any(self.env[key] != self.meta["environment"][key] for key in ("commit", "source_sha256", "workload_spec_sha256")):
                     raise RuntimeError("resume source differs from the frozen candidate")
                 for path, original in self.meta["file_identities"].items():
@@ -207,6 +215,8 @@ class ManagedSoak:
             raise
 
     def _initialize(self):
+        if self.validation is not None:
+            self.validation.record(self.directory / "validation")
         self.secrets.mkdir(mode=0o700)
         job_id = secrets.token_hex(12)
         proof = "synthetic-managed-soak:" + job_id
@@ -253,6 +263,7 @@ class ManagedSoak:
             connection.execute("CREATE TRIGGER event_no_delete BEFORE DELETE ON events BEGIN SELECT RAISE(ABORT,'immutable event'); END")
         files = [self.financial, self.authority / "router.sqlite3", self.secrets / "auth.sqlite3", Path(self.checkpoint.path)]
         self.meta = {"format": 1, "job_id": job_id, "configuration": asdict(self.configuration), "environment": self.env,
+            "validation_evidence": None if self.validation is None else self.validation.evidence,
             "bootstrap": provenance, "accounts": ACCOUNTS, "planned_rounds": self.configuration.rounds,
             "file_identities": {str(path): [path.stat().st_dev, path.stat().st_ino] for path in files},
             "cross_database_atomicity": False, "production_approved": False, "capacity_10000_per_s_passed": False}
@@ -272,6 +283,8 @@ class ManagedSoak:
             return
         if subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip() != self.env["commit"]:
             raise RuntimeError("frozen source commit changed during managed soak")
+        if subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"], cwd=ROOT, text=True).strip():
+            raise RuntimeError("frozen source checkout is no longer clean")
         tracked = subprocess.run(["git", "ls-files", "--error-unmatch", *self.env["source_sha256"], "docs/managed-soak-golden.md"], cwd=ROOT, capture_output=True)
         if tracked.returncode:
             raise RuntimeError("frozen runtime and workload files must belong to the recorded commit")
@@ -280,6 +293,15 @@ class ManagedSoak:
                 raise RuntimeError("frozen source bytes changed during managed soak")
         if sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest() != self.env["workload_spec_sha256"]:
             raise RuntimeError("frozen workload specification changed")
+        if self.validation is not None and hasattr(self, "meta"):
+            self._assert_validation_evidence()
+
+    def _assert_validation_evidence(self):
+        if self.validation is None:
+            return
+        for name, expected in self.validation.evidence["artifact_sha256"].items():
+            if sha256((self.directory / "validation" / name).read_bytes()).hexdigest() != expected:
+                raise RuntimeError("frozen release validation evidence changed during managed soak")
 
     @staticmethod
     def _append_event(connection, kind, payload):
@@ -750,7 +772,7 @@ class ManagedSoak:
         qualified = (status == "completed" and final is not None and final.get("golden_passed")
             and rounds.get("DONE", 0) == self.configuration.rounds and not unresolved and not unresolved_faults
             and self.strict_source and self._state("controller_sessions") == 1
-            and all(faults.values()) and self._state("logs_verified") is True and not LONG_RUN_BLOCKERS)
+            and all(faults.values()) and self._state("logs_verified") is True and self.validation is not None)
         report = {"status": status, "mode": "managed-process-required-audit-native-tls-hmac",
             "synthetic": True, "planned_rounds": self.configuration.rounds, "rounds": rounds,
             "unresolved_steps": unresolved, "unresolved_faults": unresolved_faults, "elapsed_seconds": elapsed, "fault_signals": faults,
@@ -759,7 +781,8 @@ class ManagedSoak:
             "controller_sessions": self._state("controller_sessions") or 0,
             "verified_tls": self.tls.verify_mode == ssl.CERT_REQUIRED and self.tls.check_hostname,
             "logs_verified": self._state("logs_verified") is True, "final_audit": final, "error": error,
-            "long_run_blockers": list(LONG_RUN_BLOCKERS),
+            "long_run_blockers": [] if self.validation is not None else ["exact_full_release_validation_required"],
+            "validation_evidence": self.meta.get("validation_evidence"),
             "continuous_6h_stability_passed": bool(qualified and elapsed >= 21600 and self.configuration.duration >= 21600),
             "continuous_24h_stability_passed": bool(qualified and elapsed >= 86400 and self.configuration.duration >= 86400),
             "capacity_10000_per_s_passed": False, "production_approved": False,
@@ -858,6 +881,7 @@ class ManagedSoak:
                 state, error = "failed", {"type": type(caught).__name__, "message": str(caught)}
         if state == "completed":
             try:
+                self._assert_source()
                 final = self.verify(self.configuration.rounds, full=True)
             except BaseException as caught:
                 state, error = "failed", {"type": type(caught).__name__, "message": str(caught)}
@@ -905,6 +929,10 @@ def audit_job(directory):
     for relative, expected in meta["environment"]["source_sha256"].items():
         if sha256((ROOT / relative).read_bytes()).hexdigest() != expected:
             raise RuntimeError("audit source differs from the frozen source bytes")
+    if meta.get("validation_evidence") is not None:
+        for name, expected in meta["validation_evidence"]["artifact_sha256"].items():
+            if sha256((directory / "validation" / name).read_bytes()).hexdigest() != expected:
+                raise RuntimeError("audit release validation evidence checksum mismatch")
     class CheckpointReader:
         def read_transaction(self):
             return readonly(directory / "checkpoint.sqlite3")
@@ -927,7 +955,8 @@ def main(argv=None):
     parser.add_argument("--source-reference")
     parser.add_argument("--min-free-bytes", type=int, default=1024**3)
     parser.add_argument("--allow-dirty-development", action="store_true")
-    parser.add_argument("--allow-long-run", action="store_true", help="request long-run opt-in; release lock validation must also pass")
+    parser.add_argument("--allow-long-run", action="store_true", help="explicit engineering long-run opt-in; exact full release validation is also required")
+    parser.add_argument("--validation-report", type=Path, help="exact clean commit's full run_validation.py summary.json and sidecars")
     args = parser.parse_args(argv)
     if args.operation in ("status", "audit"):
         print(canonical((inspect_job if args.operation == "status" else audit_job)(args.directory)))
@@ -936,10 +965,6 @@ def main(argv=None):
                 if args.operation == "resume" else args.duration)
     if duration > 60 and (not args.allow_long_run or args.allow_dirty_development):
         parser.error("runs longer than 60s require --allow-long-run and frozen clean source")
-    try:
-        require_long_run_ready(duration)
-    except RuntimeError as error:
-        parser.error(str(error))
     if args.operation == "bootstrap":
         if type(args.rounds) is not int or not 1 <= args.rounds <= 21600 or not args.source_reference:
             parser.error("bootstrap requires bounded rounds and a synthetic source reference")
@@ -947,7 +972,12 @@ def main(argv=None):
         return 0
     configuration = None if args.operation == "resume" else Configuration(duration=args.duration,
         worker_every=args.worker_every, parent_every=args.parent_every, min_free_bytes=args.min_free_bytes)
-    job = ManagedSoak(args.directory, configuration, resume=args.operation == "resume", strict_source=not args.allow_dirty_development)
+    try:
+        job = ManagedSoak(args.directory, configuration, resume=args.operation == "resume",
+            strict_source=not args.allow_dirty_development, allow_long_run=args.allow_long_run,
+            validation_report=args.validation_report)
+    except RuntimeError as error:
+        parser.error(str(error))
     previous = {}
     for number in (signal.SIGTERM, signal.SIGINT):
         previous[number] = signal.signal(number, lambda signum, frame: job.stop.set())

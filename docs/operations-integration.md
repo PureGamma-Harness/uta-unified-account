@@ -42,3 +42,22 @@ remain unsafe historical observations and do not qualify this release. Deploy
 only in a separate synthetic environment using existing durable CLI procedures;
 rollback stops and drains it before selecting the previous immutable checkout.
 Do not downgrade a live managed schema or reuse/reset authoritative test state.
+
+## Long-run qualification follow-up
+
+The follow-up replaces the fixed historical blocker with the exact-release
+contract in [managed-soak.md](managed-soak.md). Nine gate tests and the five
+real managed TLS/process tests pass on both Python 3.12.14 and 3.10.22. Gate
+fixtures are explicitly synthetic records used to exercise rejection/acceptance
+logic; they are not full validation evidence. Their positive case verifies
+preserved report bytes and false production/duration flags. Negative cases
+cover all outcome counters, boolean/missing values, contradictory success,
+missing/changed log and sidecars, manifest omissions/digest changes, documentation
+and untracked dirt, same bytes at a different commit, runtime mismatch, source
+movement during qualification, changed stored evidence, API opt-in and rejection
+before run/resume state changes.
+
+No complete release validation report has been generated for this final patch
+in this delivery. Freeze the integrated commit and run the real full validator
+before requesting a future long engineering test. Report acceptance is not a
+production approval and does not claim elapsed-time or throughput acceptance.

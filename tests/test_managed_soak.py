@@ -35,22 +35,25 @@ class ManagedSoakTests(unittest.TestCase):
                 main(["run", "--directory", str(target), "--duration", "21600"])
             self.assertFalse(target.exists())
 
-    def test_long_job_release_lock_gate_has_no_cli_or_direct_api_bypass(self):
+    def test_long_job_release_report_gate_has_no_cli_or_direct_api_bypass(self):
         with TemporaryDirectory() as directory:
             target = Path(directory) / "blocked-unverified-release"
             with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 main(["run", "--directory", str(target), "--duration", "21600", "--allow-long-run"])
             self.assertFalse(target.exists())
-            with self.assertRaisesRegex(RuntimeError, "POSIX-close"):
-                ManagedSoak(target, Configuration(duration=86400), strict_source=False)
+            with self.assertRaisesRegex(RuntimeError, "release validation"):
+                ManagedSoak(target, Configuration(duration=86400), allow_long_run=True)
+            self.assertFalse(target.exists())
+            with self.assertRaisesRegex(RuntimeError, "frozen clean"):
+                ManagedSoak(target, Configuration(duration=86400), allow_long_run=True, strict_source=False)
             self.assertFalse(target.exists())
             # Resume must inspect its persisted duration before touching a
             # listener, checkpoint, lock file, or financial authority.
             target.mkdir(mode=0o700)
             original = json.dumps({"configuration": Configuration(duration=21600).__dict__})
             (target / "job.json").write_text(original)
-            with self.assertRaisesRegex(RuntimeError, "POSIX-close"):
-                ManagedSoak(target, resume=True, strict_source=False)
+            with self.assertRaisesRegex(RuntimeError, "release validation"):
+                ManagedSoak(target, resume=True, allow_long_run=True)
             self.assertEqual([entry.name for entry in target.iterdir()], ["job.json"])
             self.assertEqual((target / "job.json").read_text(), original)
 
