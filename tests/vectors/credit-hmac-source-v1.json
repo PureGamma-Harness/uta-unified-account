@@ -1,0 +1,17 @@
+{
+  "audience": "uta:canonical-vector",
+  "body_sha256": "6b5cbcec1836f4448dfe64ba3a9215de45c57a70167f0d50a1e4a68b9fbabe02",
+  "body_utf8": "{\"command_id\":\"credit-vector-1\",\"asset\":\"BTC\",\"amount\":\"1.00\"}",
+  "canonical_request_ascii": "[\"UTA-HMAC-SHA256\",\"1\",\"tenant-a\",\"uta:canonical-vector\",\"funding-alice-v1\",\"1000000\",\"nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn\",\"POST\",\"/v2/accounts/alice/borrow\",\"6b5cbcec1836f4448dfe64ba3a9215de45c57a70167f0d50a1e4a68b9fbabe02\"]",
+  "canonical_request_sha256": "9c70b920fbd4bc6fbd09a869ea762d1d359a6fe9e47e57b7aae527be960a43e7",
+  "command_payload": "{\"account_id\":\"alice\",\"amount\":\"1\",\"asset\":\"BTC\"}",
+  "description": "Public canonical/hash vector only; contains no signing secret, signature, or authority.",
+  "format": "credit-hmac-source-vector-v1",
+  "key_id": "funding-alice-v1",
+  "method": "POST",
+  "nonce": "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn",
+  "payload_sha256": "e1f08b6cc131b4bc2f4429bee362f6e40f461ea507127757e827ae3c1cdefb00",
+  "request_target": "/v2/accounts/alice/borrow",
+  "tenant_id": "tenant-a",
+  "timestamp_ms": 1000000
+}
