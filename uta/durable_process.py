@@ -1005,6 +1005,7 @@ class DurableProcessRouter:
         self._start_gates = {}
         self._spawn_retry_at, self._spawn_failures = {}, {}
         self._spawn_blocked = set()
+        self._spawn_pending_cleanup = {}
         self._recovered_orphans = []
         self._coordinator = None
         self._mutex, self._stop = RLock(), Event()
@@ -1104,6 +1105,8 @@ class DurableProcessRouter:
         self._supervisor_fd = descriptor
 
     def _spawn(self, shard):
+        if shard in self._spawn_blocked or shard in self._spawn_pending_cleanup:
+            raise ServiceError("spawn_recovery_pending", "prior worker cleanup or registration requires resolution", 503)
         stop_read, stop_write = self._context.Pipe(duplex=False)
         gate_read, gate_write = self._context.Pipe(duplex=False)
         stop, start_gate = _SignalSender(stop_write), _SignalSender(gate_write)
@@ -1127,32 +1130,11 @@ class DurableProcessRouter:
             # A reply can be lost AFTER registry COMMIT. Never repeat this
             # INSERT, delete its possible audit row, or release this child gate.
             child_pid = process.pid
-            cleanup_complete = True
-            try:
-                stop.set()
-                if child_pid is not None:
-                    process.join(timeout=.1)
-                    if process.is_alive():
-                        process.kill()  # Our own unreaped multiprocessing child.
-                        process.join(timeout=1)
-                    cleanup_complete = not process.is_alive()
-            except BaseException:
-                cleanup_complete = False
-            if cleanup_complete:
-                if self._workers.get(shard, (None,))[0] is process:
-                    self._workers.pop(shard, None)
-                if self._start_gates.get(shard) is start_gate:
-                    self._start_gates.pop(shard, None)
-                for handle in (stop_read, gate_read, send, receive, stop, start_gate):
-                    try:
-                        handle.close()
-                    except BaseException:
-                        cleanup_complete = False
-                if child_pid is not None:
-                    try:
-                        process.close()
-                    except BaseException:
-                        cleanup_complete = False
+            self._spawn_pending_cleanup[shard] = {
+                "process": process, "stop": stop, "gate": start_gate,
+                "pid": child_pid, "child_exit_confirmed": child_pid is None,
+                "handles": [stop_read, gate_read, send, receive, stop, start_gate]}
+            cleanup_complete = self._cleanup_gated_spawn(shard)
             failure = _SpawnRegistrationFailure(child_pid=child_pid,
                 cleanup_complete=cleanup_complete,
                 retryable=cleanup_complete and _retryable_spawn_registration(error))
@@ -1165,6 +1147,42 @@ class DurableProcessRouter:
         if shard in self._spawn_failures:
             self._spawn_failures[shard]["recovered"] = True
         start_gate.set()
+
+    def _cleanup_gated_spawn(self, shard):
+        """Retain every unclosed resource until both exit and close are known."""
+        pending = self._spawn_pending_cleanup[shard]
+        process = pending["process"]
+        try:
+            pending["stop"].set()
+            if not pending["child_exit_confirmed"]:
+                process.join(timeout=.1)
+                if process.is_alive():
+                    process.kill()  # Only our own unreaped multiprocessing child.
+                    process.join(timeout=1)
+                pending["child_exit_confirmed"] = not process.is_alive()
+            if not pending["child_exit_confirmed"]:
+                return False
+            for handle in list(pending["handles"]):
+                try:
+                    handle.close()
+                except BaseException:
+                    continue
+                pending["handles"] = [item for item in pending["handles"] if item is not handle]
+            if pending["handles"]:
+                return False
+            process.close()
+        except BaseException:
+            return False
+        # Do not lose references before the last close succeeds.
+        if self._workers.get(shard, (None,))[0] is process:
+            self._workers.pop(shard, None)
+        if self._start_gates.get(shard) is pending["gate"]:
+            self._start_gates.pop(shard, None)
+        self._spawn_pending_cleanup.pop(shard)
+        self._spawn_blocked.discard(shard)
+        if shard in self._spawn_failures:
+            self._spawn_failures[shard]["cleanup_complete"] = True
+        return True
 
     def _note_spawn_failure(self, shard, failure, cause):
         """Bounded in-memory diagnostics; not a replacement registry receipt."""
@@ -1252,6 +1270,8 @@ class DurableProcessRouter:
         if isinstance(recovery_timeout, bool) or not isinstance(recovery_timeout, (float, int)) or not math.isfinite(recovery_timeout) or not 0 <= recovery_timeout <= 3600:
             raise ValueError("recovery_timeout requires seconds in 0..3600")
         with self._mutex:
+            if self._spawn_pending_cleanup or self._spawn_blocked:
+                raise ServiceError("spawn_recovery_pending", "prior worker cleanup or registration requires resolution", 503)
             if self._supervisor_fd is not None:
                 raise ServiceError("supervisor_started", "supervisor is already running", 409)
             self._claim_supervisor()
@@ -1288,8 +1308,11 @@ class DurableProcessRouter:
     def _supervise(self):
         while not self._stop.wait(.05):
             with self._mutex:
+                if self._stop.is_set():
+                    return  # close may have set stop while this thread waited for the mutex.
                 for shard, retry_at in list(self._spawn_retry_at.items()):
-                    if shard in self._spawn_blocked or shard in self._workers or monotonic() < retry_at:
+                    if (self._stop.is_set() or shard in self._spawn_blocked
+                            or shard in self._workers or monotonic() < retry_at):
                         continue
                     try:
                         self._spawn(shard)
@@ -1602,7 +1625,11 @@ class DurableProcessRouter:
         if monitor is not None and monitor is not current_thread():
             monitor.join(timeout=5)
         with self._mutex:
-            workers, self._workers = self._workers, {}
+            for shard in list(self._spawn_pending_cleanup):
+                self._cleanup_gated_spawn(shard)
+            pending = set(self._spawn_pending_cleanup)
+            workers = {shard: item for shard, item in self._workers.items() if shard not in pending}
+            self._workers = {shard: item for shard, item in self._workers.items() if shard in pending}
             for process, stop, pipe in workers.values():
                 stop.set()
             for process, stop, pipe in workers.values():
@@ -1612,13 +1639,13 @@ class DurableProcessRouter:
                     process.join(timeout=5)
                 pipe.close()
                 stop.close()
-            if self._supervisor_fd is not None:
+            if self._supervisor_fd is not None and not pending:
                 os.close(self._supervisor_fd)
                 self._supervisor_fd = None
             self._monitor = None
-            for gate in self._start_gates.values():
-                gate.close()
-            self._start_gates.clear()
+            for shard in list(self._start_gates):
+                if shard not in pending:
+                    self._start_gates.pop(shard).close()
 
     def __enter__(self):
         return self.start()

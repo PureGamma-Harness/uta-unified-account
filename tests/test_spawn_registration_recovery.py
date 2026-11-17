@@ -28,6 +28,7 @@ class _Wire:
 class _Connection:
     def __init__(self, wire):
         self.wire, self.closed = wire, False
+        self.close_failures = 0
 
     def send_bytes(self, value):
         self.wire.messages.append(value)
@@ -39,6 +40,9 @@ class _Connection:
         return bool(self.wire.messages)
 
     def close(self):
+        if self.close_failures:
+            self.close_failures -= 1
+            raise OSError("modeled close failure")
         self.closed = True
 
 
@@ -71,12 +75,15 @@ class _Process:
 
 
 class _Context:
-    def __init__(self, *, stuck=False):
+    def __init__(self, *, stuck=False, fail_receive_close=False):
         self.pipes, self.processes, self.stuck = [], [], stuck
+        self.fail_receive_close = fail_receive_close
 
     def Pipe(self, duplex=False):
         wire = _Wire()
         pair = (_Connection(wire), _Connection(wire))
+        if self.fail_receive_close and len(self.pipes) == 2:
+            pair[0].close_failures = 1
         self.pipes.append(pair)
         return pair
 
@@ -93,16 +100,18 @@ def _model_router(context):
     router._control, router._coordinator = SimpleNamespace(), "model-coordinator"
     router._workers, router._start_gates, router._reports = {}, {}, {}
     router._spawn_retry_at, router._spawn_failures, router._spawn_blocked = {}, {}, set()
-    from threading import RLock
+    router._spawn_pending_cleanup = {}
+    from threading import Event, RLock
     router._mutex = RLock()
+    router._stop, router._monitor, router._supervisor_fd = Event(), None, None
     router._database = lambda shard: SimpleNamespace(timeout=10)
     return router
 
 
 class SpawnRegistrationUnitTests(unittest.TestCase):
     """No SQLite connections, process creation, signals or sleeps."""
-    def run_failure(self, *, stuck=False, append_first=False, message="locking protocol"):
-        context = _Context(stuck=stuck)
+    def run_failure(self, *, stuck=False, append_first=False, message="locking protocol", fail_receive_close=False):
+        context = _Context(stuck=stuck, fail_receive_close=fail_receive_close)
         router = _model_router(context)
         records = []
         def record(*args):
@@ -149,6 +158,34 @@ class SpawnRegistrationUnitTests(unittest.TestCase):
         self.assertNotIn(0, router._spawn_retry_at)
         self.assertFalse(router._spawn_failures[0]["cleanup_complete"])
         self.assertFalse(router._spawn_failures[0]["retryable_new_child"])
+        for operation in (lambda: router._spawn(0), router.start):
+            with self.assertRaises(Exception) as caught:
+                operation()
+            self.assertEqual(getattr(caught.exception, "code", None), "spawn_recovery_pending")
+        router.close()
+        self.assertIn(0, router._spawn_pending_cleanup)
+        with self.assertRaises(Exception) as caught:
+            router.start()
+        self.assertEqual(getattr(caught.exception, "code", None), "spawn_recovery_pending")
+        self.assertEqual(len(context.processes), 1)
+        context.stuck = False
+        router.close()
+        self.assertEqual(router._spawn_pending_cleanup, {})
+        self.assertNotIn(0, router._spawn_blocked)
+
+    def test_handle_close_failure_keeps_its_reference_until_later_cleanup(self):
+        router, context, _, _ = self.run_failure(fail_receive_close=True)
+        process = context.processes[0]
+        self.assertFalse(process.alive)
+        self.assertFalse(process.closed)
+        self.assertIs(router._workers[0][0], process)
+        self.assertIs(router._spawn_pending_cleanup[0]["handles"][0], context.pipes[2][0])
+        self.assertIn(0, router._spawn_blocked)
+        router.close()
+        self.assertTrue(process.closed)
+        self.assertEqual(router._workers, {})
+        self.assertEqual(router._spawn_pending_cleanup, {})
+        self.assertTrue(router._spawn_failures[0]["cleanup_complete"])
 
     def test_unknown_error_is_not_retried_or_exposed(self):
         secret = "private path or nonce must never become a diagnostic"
@@ -191,13 +228,61 @@ class SpawnRegistrationUnitTests(unittest.TestCase):
         self.assertTrue(context.processes[1].alive)
         self.assertTrue(router._spawn_failures[0]["recovered"])
 
+    def test_monitor_does_not_retry_if_close_sets_stop_while_it_waits_for_mutex(self):
+        router = _model_router(_Context())
+        class Stop:
+            stopped = False
+            def wait(self, timeout):
+                return self.stopped
+            def is_set(self):
+                return self.stopped
+        class ContendedMutex:
+            def __enter__(self):
+                router._stop.stopped = True
+            def __exit__(self, *args):
+                pass
+        router._stop, router._mutex = Stop(), ContendedMutex()
+        router._spawn_retry_at[0] = 0
+        with patch.object(router, "_spawn", side_effect=AssertionError("spawn after close")) as spawn:
+            router._supervise()
+        spawn.assert_not_called()
+
+    def test_http_diagnostic_projection_exposes_only_typed_recovery_fields(self):
+        from uta.durable_gateway import _RouterProducer
+        failure = {"code": "worker_registration_failed", "phase": "spawn_registration",
+            "pid": 900_001, "count": 1, "registration_outcome": "UNKNOWN", "cleanup_complete": True,
+            "retryable_new_child": True, "recovered": False, "sqlite_errorcode": 15,
+            "nonce": "model-secret-excluded", "message": "private SQL and path excluded"}
+        report = {"workers": [{"shard": 0, "last_spawn_failure": failure}], "managed": True,
+            "supervisor_alive": False, "state_observed": True,
+            "state": {"halted": False, "publishing": False, "epoch": 1, "market_version": 1},
+            "ready": True, "financial_ready": True}
+        adapter = _RouterProducer(SimpleNamespace(diagnostics=lambda: report))
+        result = adapter.diagnostics()
+        self.assertFalse(result["ready"])
+        self.assertFalse(result["supervisor_alive"])
+        self.assertNotIn("model-secret-excluded", json.dumps(result))
+        self.assertNotIn("private SQL", json.dumps(result))
+        self.assertEqual(result["workers"][0]["last_spawn_failure"]["registration_outcome"], "UNKNOWN")
+        failure["count"] = True
+        with self.assertRaises(Exception) as caught:
+            adapter.diagnostics()
+        self.assertEqual(getattr(caught.exception, "code", None), "diagnostic_unavailable")
+
 
 class NativeSpawnRegistrationTests(unittest.TestCase):
     """Fresh one-shard synthetic authorities; requires separate native-test GO."""
+    _artifact_root = None
+
     def setUp(self):
-        self.tmp = TemporaryDirectory(prefix="uta-registration-recovery-")
-        self.addCleanup(self.tmp.cleanup)
-        self.router = DurableProcessRouter.initialize(Path(self.tmp.name) / "managed", 1,
+        if self._artifact_root is None:
+            self.tmp = TemporaryDirectory(prefix="uta-registration-recovery-")
+            self.addCleanup(self.tmp.cleanup)
+            directory = Path(self.tmp.name)
+        else:
+            directory = Path(self._artifact_root) / self._testMethodName
+            directory.mkdir(parents=True, mode=0o700, exist_ok=False)
+        self.router = DurableProcessRouter.initialize(directory / "managed", 1,
             {"USD": 2}, managed=True, lease_seconds=.6, poll_interval=.01, background_interval=.03)
         self.addCleanup(self.router.close)
         self.pidfds = []
