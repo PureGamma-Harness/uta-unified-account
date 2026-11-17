@@ -29,7 +29,10 @@
     {"id": "HPS-015", "mutation": "one materialized balance differs", "expect": "LedgerError: materialized balances differ from journal replay"},
     {"id": "HPS-016", "mutation": "event-one hash chain broken and later malformed units", "expect": "first original chain error, no early later-group decode"},
     {"id": "HPS-017", "mutation": "missing or altered original trigger", "expect": "original protection error in both paths"},
-    {"id": "HPS-018", "mutation": "change configured asset scale or ledger schema version", "expect": "original scale/schema error in both paths"}
+    {"id": "HPS-018", "mutation": "change configured asset scale or ledger schema version", "expect": "original scale/schema error in both paths"},
+    {"id": "HPS-019", "mutation": "first event broken chain plus same-event invalidUTF8 account/units via SQLite CAST", "expect": "original chain error before posting decode; root early-prefetch hypothesis NOT_RUN"},
+    {"id": "HPS-020", "mutation": "first event fingerprint broken plus next-event invalidUTF8 account/units via SQLite CAST", "expect": "original fingerprint error before next-group decode; root lookahead hypothesis NOT_RUN"},
+    {"id": "HPS-021", "mutation": "first event broken chain plus invalidUTF8 asset without matching ledger asset", "expect": "original foreign-key error precedes event chain in both paths"}
   ],
   "option_controls": ["omitted is false/default original path", "explicit false original path", "true opt-in only", "0/1/null/string/list rejected before storage"],
   "runtime_and_profile_executed": false,

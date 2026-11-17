@@ -197,6 +197,31 @@ class HistoryPostingsStreamTests(unittest.TestCase):
         self.corrupt(twice)
         self.rejected("journal sequence or hash chain is broken")
 
+    def test_first_chain_error_before_initial_invalid_utf8(self):
+        for column in ("account", "units"):
+            with self.subTest(column=column):
+                def twice(c):
+                    c.execute("UPDATE ledger_events SET previous_hash='broken' WHERE sequence=1")
+                    c.execute("UPDATE ledger_postings SET " + column + "=CAST(X'ff' AS TEXT) WHERE sequence=1 AND ordinal=0")
+                self.corrupt(twice)
+                self.rejected("journal sequence or hash chain is broken")
+
+    def test_fingerprint_error_before_future_invalid_utf8(self):
+        for column in ("account", "units"):
+            with self.subTest(column=column):
+                def twice(c):
+                    c.execute("UPDATE ledger_events SET fingerprint='broken' WHERE sequence=1")
+                    c.execute("UPDATE ledger_postings SET " + column + "=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0")
+                self.corrupt(twice)
+                self.rejected("journal event fingerprint changed")
+
+    def test_invalid_utf8_asset_keeps_original_foreign_key_priority(self):
+        def twice(c):
+            c.execute("UPDATE ledger_events SET previous_hash='broken' WHERE sequence=1")
+            c.execute("UPDATE ledger_postings SET asset=CAST(X'ff' AS TEXT) WHERE sequence=1 AND ordinal=0")
+        self.corrupt(twice)
+        self.rejected("database foreign-key check failed")
+
     def test_protection_missing(self):
         with sqlite3.connect(self.path) as c:
             c.execute("DROP TRIGGER ledger_events_no_delete")
