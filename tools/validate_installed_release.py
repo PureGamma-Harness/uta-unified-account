@@ -63,13 +63,14 @@ def main():
         raise AssertionError("source checkout must not be an import location")
     if os.environ.get("PYTHONPATH"):
         raise AssertionError("unset PYTHONPATH before installed acceptance")
-    if importlib.metadata.version("uta-reference-exchange") != "0.4.0a1":
+    manifest = json.loads(args.artifact_manifest.read_text())
+    if (importlib.metadata.version("uta-reference-exchange") != manifest["version"]
+            or uta.__version__ != manifest["version"]):
         raise AssertionError("unexpected installed distribution version")
     entries = {entry.name: entry.value for entry in importlib.metadata.distribution("uta-reference-exchange").entry_points
                if entry.group == "console_scripts"}
     if entries != {"uta": "uta.__main__:main", "uta-ops": "uta.ops:main", "uta-durable": "uta.durable_cli:main"}:
         raise AssertionError("installed console-script targets differ from frozen contract")
-    manifest = json.loads(args.artifact_manifest.read_text())
     installed_runtime = {str(path.relative_to(site)): sha256(path.read_bytes()).hexdigest()
                          for path in (site / "uta").rglob("*")
                          if path.is_file() and path.suffix in (".py", ".html")}
