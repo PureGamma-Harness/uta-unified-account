@@ -105,12 +105,14 @@ def bound_router_shared_flocks(pid, identity, path, file_identity):
     return records
 
 
-def router_writer_available_without_dml(path):
+def router_writer_available_without_dml(path, *, own_injected_stop=False):
     """Probe real SQLite writer availability; do not install an owner or write.
 
     The stopped child must hold SH before its financial write transaction, or
     the subsequent durable enqueue could itself wait for lease recovery.
     """
+    if type(own_injected_stop) is not bool:
+        raise ValueError("injected-stop context must be an explicit boolean")
     with closing(sqlite3.connect(Path(path).as_uri() + "?mode=rw", uri=True,
                                  timeout=0, isolation_level=None)) as connection:
         changes = connection.total_changes
@@ -123,6 +125,16 @@ def router_writer_available_without_dml(path):
             if (not hasattr(error, "sqlite_errorcode") and type(error) is sqlite3.OperationalError
                     and error.args == ("database is locked",)):
                 return {"available": False, "classification": "sqlite_busy_legacy_builtin", "native_errorcode": None}
+            # A genuine protocol error has also occurred while this fixture's
+            # selected child was stopped. This is technical UNKNOWN during
+            # our own capture, never a healthy quote/lease or runtime grant.
+            if own_injected_stop and type(code) is int and code & 255 == 15:
+                return {"available": False, "classification": "technical_unknown_own_stop_protocol",
+                        "native_errorcode": code, "lease_observed": False}
+            if (own_injected_stop and not hasattr(error, "sqlite_errorcode")
+                    and type(error) is sqlite3.OperationalError and error.args == ("locking protocol",)):
+                return {"available": False, "classification": "technical_unknown_own_stop_protocol_legacy_builtin",
+                        "native_errorcode": None, "lease_observed": False}
             raise
         assert connection.in_transaction
         connection.rollback()
@@ -1402,7 +1414,8 @@ class ManagedProcessFaultTests(unittest.TestCase):
                                                         "candidate": candidate,
                                                         "retained_after_stop": retained})
                 if retained:
-                    writer_probe = router_writer_available_without_dml(self.shard_path(0))
+                    writer_probe = router_writer_available_without_dml(
+                        self.shard_path(0), own_injected_stop=stopped)
                     observation["capture_attempts"][-1]["writer_availability_probe"] = writer_probe
                 if retained and writer_probe["available"]:
                     descriptor = os.open(lock_path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW)

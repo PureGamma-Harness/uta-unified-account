@@ -14,6 +14,14 @@ never a complete-release PASS. Local3.10/3.12 had only the separate history
 failure; the new3.13 error must not be collapsed into a uniform single failure.
 No conclusion about the current remote CI matrix is made from these local logs.
 
+Subsequent original PR artifacts are preserved separately under `remote/`.
+Python3.11 has the paused native lease BUSY and repeated cleanup BUSY. Python3.13
+instead fails first at probe BEGIN IMMEDIATE with `locking protocol`, then the
+same message masks it during cleanup. Both actual PR merge reports retain
+`5cdc9b5abbd6ad86fb031512890d7b685219f8a6`; their263 input maps equal8b but
+their Git SHA is not rewritten to8b. Both remain1472/1FAIL/1ERROR, not uniform
+BUSY. The original traces do not print the native numeric error attribute.
+
 ## Narrow test-only change
 
 An unsuccessful capture must undo only the fault injection it issued. It must
@@ -53,6 +61,23 @@ Successful captures followed by an unexpected unknown native read still fail.
 No production supervision, lease, timeout, schema guard or financial formula
 is changed. The original .1-second reader budget is not enlarged.
 
+## Explicit own-stop protocol policy follow-up
+
+The newly observed protocol message warrants a separate test-only UNKNOWN
+policy. `router_writer_available_without_dml` keeps its strict BUSY-only default.
+Only an explicit boolean `own_injected_stop=True`, supplied by this case after
+its bound pidfd stop and retained native SH proof, permits native SQLITE_PROTOCOL
+base15 or Python3.10's exact builtin no-native-code `locking protocol` form to
+return `available=false`, `lease_observed=false`, technical UNKNOWN. It is never
+a healthy lease, database or financial result. The same undo/progress/one-fresh
+proof protocol must succeed before another capture within the same8/5 budget.
+
+Native IOERR, CORRUPT, NOTADB, LOCKED and other errors still raise; they permit
+cleanup of an injected fault, never continuing capture. Present invalid native
+attributes cannot use a string fallback. No production error classification is
+changed. Pure synthetic exception-vector definitions cover this dispatch and
+are labelled as such, not as an actual reproduction of native protocol15.
+
 ## Proposed real BUSY microcomponent, not yet authorized to execute
 
 Create a new synthetic temporary managed database and one explicitly owned
@@ -86,3 +111,13 @@ own-group pidfd cleanup and new private output. All forced cleanup, logger
 errors, unknown results or residual children are NO-GO. No old job SQL/signals,
 pressure workload or second original-case attempt is authorized by this plan.
 Only static edits and archival have occurred; `production_approved=false`.
+
+The explicit driver is `controlled_lease_busy.py` in this evidence directory.
+It has no default action; `--run NEW_OUTPUT` launches one CPU2 scratch component
+using the selected Python executable, with a27-second child-group watchdog and
+<=30-second whole budget. Parent status calls are actual call-throughs counted
+by phase; undo must add zero native reads and retain the original real BUSY
+exception object. A final barrier keeps the native owner alive until the fresh
+positive proof. A real BUSY5 is required; protocol15 is not manufactured. The
+code has only been compiled, not executed. Further authorization must select
+the exact commit/helper hash and runtime before that one native component.
