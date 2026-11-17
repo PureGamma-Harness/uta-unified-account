@@ -55,4 +55,3 @@ typed refusal without repair, schema migration or rewriting original failures.
 Root and another group must review any fix; this independent observer cannot
 sign off its own later implementation. The separate ordered-postings R&D
 branch remains unmodified and is not imported by this experiment.
-
