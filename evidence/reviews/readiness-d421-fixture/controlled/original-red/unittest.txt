@@ -1,0 +1,48 @@
+test_controlled_original_sampling (__main__.ExpiredPartialGeneration.test_controlled_original_sampling) ... FAIL
+test_controlled_original_actual_expiration (__main__.PartialStaleRead.test_controlled_original_actual_expiration) ... FAIL
+test_controlled_original_clock_rollback (__main__.RestoredClockContention.test_controlled_original_clock_rollback) ... FAIL
+test_successful_activation_does_not_force_a_contended_observation_true (test_readiness_sampling.ReadinessSamplingTests.test_successful_activation_does_not_force_a_contended_observation_true) ... ok
+test_market_probe_never_promotes_persistently_unknown_native_owners (test_readiness_sampling.ReadinessSamplingTests.test_market_probe_never_promotes_persistently_unknown_native_owners) ... ok
+test_market_probe_rejects_a_real_expired_owner_lease_without_retry (test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry) ... ok
+
+======================================================================
+FAIL: test_controlled_original_sampling (__main__.ExpiredPartialGeneration.test_controlled_original_sampling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-readiness-d421-fixture-fix/evidence/reviews/readiness-d421-fixture/controlled/run_components.py", line 52, in test_controlled_original_sampling
+    self.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes()
+  File "/workspace/uta-readiness-d421-fixture-fix/tests/test_readiness_sampling.py", line 311, in test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes
+    self.assertFalse(router.publish_market(snapshot, timeout=10)["publishing"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_controlled_original_actual_expiration (__main__.PartialStaleRead.test_controlled_original_actual_expiration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-readiness-d421-fixture-fix/evidence/reviews/readiness-d421-fixture/controlled/run_components.py", line 82, in test_controlled_original_actual_expiration
+    self.test_actual_expiration_keeps_workers_alive_and_new_price_recovers()
+  File "/workspace/uta-readiness-d421-fixture-fix/tests/test_process_readiness.py", line 114, in test_actual_expiration_keeps_workers_alive_and_new_price_recovers
+    self.assertEqual([row["reason"] for row in result["workers"]], ["market_stale"] * 2)
+AssertionError: Lists differ: ['market_stale', 'diagnostic_timeout'] != ['market_stale', 'market_stale']
+
+First differing element 1:
+'diagnostic_timeout'
+'market_stale'
+
+- ['market_stale', 'diagnostic_timeout']
++ ['market_stale', 'market_stale']
+
+======================================================================
+FAIL: test_controlled_original_clock_rollback (__main__.RestoredClockContention.test_controlled_original_clock_rollback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-readiness-d421-fixture-fix/evidence/reviews/readiness-d421-fixture/controlled/run_components.py", line 103, in test_controlled_original_clock_rollback
+    self.test_clock_rollback_detects_future_without_relabeling_prices()
+  File "/workspace/uta-readiness-d421-fixture-fix/tests/test_process_readiness.py", line 131, in test_clock_rollback_detects_future_without_relabeling_prices
+    self.assertTrue(self.router.diagnostics()["ready"])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 6 tests in 12.685s
+
+FAILED (failures=3)

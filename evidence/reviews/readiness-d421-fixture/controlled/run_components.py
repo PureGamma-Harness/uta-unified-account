@@ -42,15 +42,28 @@ class ExpiredPartialGeneration(sampling.ReadinessSamplingTests):
         injected = []
         def completed_after_expiry(router, snapshot, **kwargs):
             result = original(router, snapshot, **kwargs)
+            record("actual_publication_return", snapshot_json=snapshot.to_json(), publication=result)
             if snapshot.version == 1 and not result["publishing"] and not injected:
+                self.assertTrue(all(receipt is not None and receipt["state"] == "SUCCEEDED"
+                                    for receipt in result["receipts"].values()), result)
                 injected.append(snapshot.to_json())
                 expiry = snapshot.observed_at + timedelta(seconds=1.06)
                 Event().wait(max(0, (expiry-datetime.now(timezone.utc)).total_seconds()))
                 record("actual_completed_SID1_delayed_beyond_original_TTL", snapshot_json=snapshot.to_json(), original_observed_at=snapshot.observed_at.isoformat())
             return result
-        with patch.object(sampling.DurableProcessRouter, "publish_market", completed_after_expiry):
-            self.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes()
-        self.assertEqual(len(injected), 1)
+        original_diagnostics = sampling.DurableProcessRouter.diagnostics
+        def witnessed(router, *args, **kwargs):
+            report = original_diagnostics(router, *args, **kwargs)
+            record("actual_sampling_diagnostic", report=report)
+            return report
+        try:
+            with patch.object(sampling.DurableProcessRouter, "publish_market", completed_after_expiry), \
+                    patch.object(sampling.DurableProcessRouter, "diagnostics", witnessed):
+                self.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes()
+            self.assertEqual(len(injected), 1)
+        finally:
+            if hasattr(self, "initial_native_owner"):
+                record("actual_prequote_owner_witness", **self.initial_native_owner)
 
 
 class PartialStaleRead(process.ProcessReadinessTests):
@@ -113,14 +126,19 @@ def main():
     output.mkdir()
     paths = ["tests/test_readiness_sampling.py", "tests/test_process_readiness.py", "uta/durable_process.py"]
     source = {name: sha256((ROOT/name).read_bytes()).hexdigest() for name in paths}
-    suite = unittest.TestSuite([
+    cases = [
         ExpiredPartialGeneration("test_controlled_original_sampling"),
         PartialStaleRead("test_controlled_original_actual_expiration"),
         RestoredClockContention("test_controlled_original_clock_rollback"),
-        sampling.ReadinessSamplingTests("test_successful_activation_does_not_force_a_contended_observation_true"),
         sampling.ReadinessSamplingTests("test_market_probe_never_promotes_persistently_unknown_native_owners"),
         sampling.ReadinessSamplingTests("test_market_probe_rejects_a_real_expired_owner_lease_without_retry"),
-    ])
+    ]
+    # The original extra gate-only control already passed. The restored-clock
+    # control exercises that gate again; retain only persistent unknown/native
+    # inactive controls in the final narrow round.
+    if stage == "original-red":
+        cases.append(sampling.ReadinessSamplingTests("test_successful_activation_does_not_force_a_contended_observation_true"))
+    suite = unittest.TestSuite(cases)
     t0 = monotonic()
     with (output/"unittest.txt").open("w") as log:
         result = unittest.TextTestRunner(stream=log, verbosity=2).run(suite)

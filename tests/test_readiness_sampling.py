@@ -42,7 +42,15 @@ class ReadinessSamplingTests(unittest.TestCase):
             report = router.diagnostics(timeout=min(.1, max(.001, deadline - monotonic())))
             samples.append(report)
             if report["ready"]:
+                self.assertIs(report["ready"], True, report)
+                self.assertIs(report["financial_ready"], True, report)
                 return report
+            self.assertIs(report["ready"], False, report)
+            self.assertIs(report["financial_ready"], False, report)
+            inactive = [row for row in report["workers"]
+                        if row["generation"] is not None and row["owner_pid"] == row["pid"]
+                        and row["owner_pid"] is not None and not row["lease_active"]]
+            self.assertFalse(inactive, "observed inactive native lease: " + json.dumps(report, sort_keys=True))
             if report.get("reason") not in {"worker_unready", "diagnostic_timeout"}:
                 self.fail("non-transient readiness observation: " + json.dumps(report, sort_keys=True))
             sleep(min(.01, max(0, deadline - monotonic())))
@@ -299,23 +307,65 @@ class ReadinessSamplingTests(unittest.TestCase):
                                   {"X": InstrumentSpec(D(100), D(".1"), D(".05"))})
         fence = WriterFence(router._database(1))
         token = fence.acquire("sampling:external-owner", 5)
-        router.start()
-        snapshot = market(1)
         try:
+            router.start()
+            # Warm the unblocked native owner before starting the one-second quote
+            # clock. Shard1 remains deliberately owned by the original test fence.
+            deadline, initialized = monotonic() + 1, None
+            while monotonic() < deadline:
+                report = router.diagnostics(timeout=min(.1, max(.001, deadline-monotonic())))
+                self.assertIs(report["ready"], False, report)
+                self.assertIs(report["financial_ready"], False, report)
+                row = report["workers"][0]
+                if row["owner_pid"] is not None and row["owner_pid"] == row["pid"]:
+                    self.assertTrue(row["lease_active"], "observed inactive native lease: " + json.dumps(report))
+                if row["owner_ready"]:
+                    self.assertTrue(row["lease_active"], report)
+                    self.assertEqual(row["report"].get("state"), "ready", report)
+                    self.assertEqual(row["pid"], row["owner_pid"], report)
+                    self.assertEqual(row["report"].get("generation"), row["generation"], report)
+                    with router._mutex:
+                        process = router._workers[0][0]
+                        self.assertTrue(process.is_alive(), report)
+                        self.assertEqual(process.pid, row["owner_pid"], report)
+                        owner_birth = (Path("/proc") / str(process.pid) / "stat").read_text().rsplit(")", 1)[1].split()[19]
+                    self.initial_native_owner = {"pid": process.pid, "birth_ticks": owner_birth,
+                        "generation": row["generation"], "witness_utc": datetime.now(timezone.utc).isoformat()}
+                    initialized = report
+                    break
+                self.assertIn(row["reason"], {"market_missing", "diagnostic_timeout", "not_observed"}, report)
+                sleep(.01)
+            self.assertIsNotNone(initialized, "unblocked native owner did not initialize within one second")
+            snapshot = market(1)
+            self.assertGreaterEqual(snapshot.observed_at.isoformat(), self.initial_native_owner["witness_utc"])
+            self.assertEqual(router.worker_pid(0), self.initial_native_owner["pid"])
+            self.assertEqual((Path("/proc") / str(self.initial_native_owner["pid"]) / "stat").read_text().rsplit(")", 1)[1].split()[19],
+                             self.initial_native_owner["birth_ticks"])
             self.assertTrue(router.publish_market(snapshot, timeout=.1)["publishing"])
             with self.assertRaises(AssertionError) as caught:
                 self.wait_ready(router, timeout=.1)
             self.assertIn("publication_incomplete", str(caught.exception))
         finally:
             fence.release(token)
-        self.assertFalse(router.publish_market(snapshot, timeout=10)["publishing"])
+        publication = router.publish_market(snapshot, timeout=10)
+        self.assertFalse(publication["publishing"], publication)
+        self.assertTrue(all(receipt is not None and receipt["state"] == "SUCCEEDED"
+                            for receipt in publication["receipts"].values()), publication)
+        for shard in range(2):
+            with router._database(shard).read_transaction() as connection:
+                self.assertEqual(connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()[0],
+                                 snapshot.to_json())
+        # SID1 is complete, even if its original timestamp is now stale. A new
+        # current generation supplies the separate activation precondition.
+        current = market(2)
+        self.assertFalse(router.publish_market(current, timeout=10)["publishing"])
         self.assertFalse(router.set_kill_switch(False, timeout=10)["halted"])
         self.wait_ready(router)
-        sleep(max(0, (snapshot.observed_at + timedelta(seconds=1) - datetime.now(timezone.utc)).total_seconds()) + .03)
+        sleep(max(0, (current.observed_at + timedelta(seconds=1) - datetime.now(timezone.utc)).total_seconds()) + .03)
         with self.assertRaises(AssertionError) as caught:
             self.wait_ready(router, timeout=.1)
         self.assertIn("market_stale", str(caught.exception))
-        self.assertFalse(router.publish_market(market(2), timeout=10)["publishing"])
+        self.assertFalse(router.publish_market(market(3), timeout=10)["publishing"])
         self.assertFalse(router.set_kill_switch(False, timeout=10)["halted"])
         self.assertTrue(self.wait_ready(router)["ready"])
 
