@@ -304,3 +304,67 @@ independent review. Remaining empirical behavior is deliberately pending. Sixtee
 case successes would be NO_REPRO within this design; the historical CI failure,
 source91 NO_GO and production acceptance stay unresolved. A captured failure is
 retained by its original stage without authorizing an unreviewed runtime fix.
+
+## Independent review of the completed fixed ABBA16 experiment
+
+The registered batch ran once from2026-11-17T15:31:02.991727Z through
+15:33:08.844121Z, outer125.852420290 seconds. Author evidence commit
+`6ee8b3149e1793d2d6441a88e8c4ae2b0aaa6d89` preserves327 captured files. An
+independent read-only integrity pass compared every original file with both its
+manifest hash and committed Git bytes; all match. The separate independent
+`verify_ab16_actual.py` checks saved files, exact80fa Git source and current native
+process metadata. It executes no SQL, original testcase, replay, runtime probe
+or signal. Its first full inspection took0.872 seconds on CPU3; the later newly
+available327-file archive integrity pass took0.720 seconds.
+
+All16 predetermined slots ran exactly once in ABBA repeated four times, with A/B
+each eight. Both actual worker start/result identities, their real probe records,
+scoped environment, mapped libpython hashes, provider/executable/library posthashes
+and266 source maps match their bindings. A is3.13.5 with embedded Python core;
+B is3.13.18 with its pinned prefix libpython. This remains a different host/compiler/
+libc context from the failed CI job. All16 cases passed without failure, error,
+skip, expected failure or unexpected success, and every recorded technical gate
+and independent check passed. Each inner finalizer and caller-through-END interval
+was under30 seconds; original sample END bytes and outer hashes agree.
+
+The traces contain12,483 events,5,190 original status calls with matching finishes
+and **zero original native status exceptions**,48 original spawn bindings and16
+supervisor expiry kills. Every kill has its original expired-owner witness; no
+MainThread cleanup kill, forced signal, logger/sampling unknown or original fixture
+cleanup error occurred. Both observers have actual start/end and post-join
+nonalive observations in every sample. All32 recorded launcher/worker sessions
+were empty at the original final scans and at the independent current `/proc`
+scan. The32 original publication CIDs are unique and SUCCEEDED. Each original
+case reached its unchanged financial conservation assertions; this review does
+not independently reopen a financial DB or claim full replay.
+
+Maximum observed intervals across the fixed16 samples were:
+
+| Clock origin and observation | Maximum seconds |
+| --- | ---: |
+| Native SH capture to parent old-PID pidfd observation | 4.815680910 |
+| Publication start to that old-PID observation | 0.310596608 |
+| Publication start to actual parent EX entry | 0.376912652 |
+| Publication start to fresh new-generation observation | 0.917738792 |
+| Publication start to publication completion | 1.256557170 |
+
+The capture clock includes most of the intentionally awaited five-second lease.
+These are observed timestamps in this experiment, not a production RTO guarantee
+or exact kernel exit instants. Raw per-sample times remain available independently
+of these maxima. The original testcase hash is unchanged and its original5-second
+acquisition/recovery and separate15-second lifecycle assertions were reached.
+
+The conclusion is **16 diagnostic NO_REPRO results**. This neither resolves the
+historical root cause nor establishes that a five-second runtime defect was
+fixed: no production runtime fix was introduced by this experiment. Source91's
+original failing CI remains NO_GO, and b570's first observation remains incomplete.
+The new complete observer evidence does not retrospectively fill that old gap.
+
+A fresh diagnostic candidate may collect richer full-QA/CI and synthetic long-run
+evidence while retaining the original assertions and unresolved release blocker.
+It must have a concrete new diagnostic scope; repeatedly testing unchanged source
+until it turns green is not a fix. Full local/CI/package and short-chain/resource
+requirements for a separately planned six-hour synthetic observation remain in
+force; these16 samples replace none of them. No suppressed failure, widened
+window, production qualification, capacity/HA claim or real-funds enablement is
+accepted by this review.
