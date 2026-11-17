@@ -161,6 +161,8 @@ def _golden(tables, planned, completed):
     check(sum(r["account_id"] is not None for r in inbox) == 6 * completed, "account_command_count")
     check(all(r["attempts"] == 0 and r["last_error"] is None for r in inbox), "internal_retry_observed")
     account_commands = [r for r in inbox if r["account_id"] is not None]
+    command_by_id = {r["command_id"]: r for r in account_commands}
+    check(len(command_by_id) == len(account_commands), "duplicate_account_command_identity")
     expected_command_owners = {"open-buy": ACCOUNTS[0], "open-sell": ACCOUNTS[1],
         "cancel-partial": ACCOUNTS[0], "close-sell": ACCOUNTS[0], "close-buy": ACCOUNTS[1], "repay": ACCOUNTS[2]}
     command_rounds = Counter()
@@ -267,10 +269,11 @@ def _golden(tables, planned, completed):
               ("account:" + ACCOUNTS[2], "synthetic-initial-loan", "BTC")
               and _minor(row["amount"]) == 2 * planned and row["source_reference"] is None, "original_loan_budget")
     for row in repayments:
+        original = command_by_id.get(row["command_id"])
         check(row["scope"] == "account:" + ACCOUNTS[2] and row["asset"] == "BTC"
               and _minor(row["amount"]) == 2 and row["source_reference"] is None
-              and any(c["command_id"] == row["command_id"] and c["account_id"] == ACCOUNTS[2]
-                      and c["kind"] == "REPAY" for c in account_commands), "two_satoshi_repayment")
+              and original is not None and original["account_id"] == ACCOUNTS[2]
+              and original["kind"] == "REPAY", "two_satoshi_repayment")
         try:
             result = _strict_object(row["result"])
             command = _COMMAND.fullmatch(row["command_id"])
@@ -281,8 +284,7 @@ def _golden(tables, planned, completed):
                   and _minor(result["principal"]) == 2 * (planned - int(command[1]))
                   and _minor(result["interest"]) == 0
                   and result["journal_event_id"] == row["journal_event_id"], "repayment_principal_receipt")
-            check(any(c["command_id"] == row["command_id"] and c["result"] == row["result"]
-                      for c in account_commands), "repayment_inbox_credit_receipt")
+            check(original is not None and original["result"] == row["result"], "repayment_inbox_credit_receipt")
         except (ValueError, KeyError, TypeError, RecursionError):
             check(False, "repayment_principal_receipt")
     event_ids = {r["event_id"] for r in rows["ledger_events"]}
