@@ -96,6 +96,16 @@ source hashes, begin/end, command and raw output are retained in
 `evidence/runs/credit-v2-audit-schema/`. Actual FK closure, capture and positive
 financial admission remain unimplemented at this schema checkpoint.
 
+An additional catalog correction covers every unique decision identity in the
+no-replace trigger: decision content ID, stable operation ID, and
+`(kind,account,CID)`. Protecting only the primary key would not preserve all
+identities under `INSERT OR REPLACE` with recursive delete triggers disabled.
+Six tests passed (0.640s), including actual duplicate replacement attempts on an
+explicitly invalid, uncommitted SQL-only candidate. The candidate has no native
+source, intent or journal; it and both archive rows are always rolled back and
+never represented as a valid credit decision or successful loan. Raw evidence is
+in `evidence/runs/credit-v2-audit-unique-identities/`.
+
 Rollback of this unwired schema slice is a code revert. A later persisted fresh
 V2 authority cannot be downgraded by deleting markers, changing allocation or
 rewinding financial history; forward recovery must reconcile the original CID

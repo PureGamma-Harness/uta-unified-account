@@ -55,7 +55,10 @@ def _guard_definitions():
             name = f"credit_audit_v2_{table}_no_{action.lower()}"
             definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'credit audit history is immutable'); END")
         name = f"credit_audit_v2_{table}_no_replace"
-        definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE INSERT ON {table} WHEN EXISTS(SELECT 1 FROM {table} WHERE {key}=NEW.{key}) BEGIN SELECT RAISE(ABORT,'credit audit identity cannot replace'); END")
+        identity = f"{key}=NEW.{key}"
+        if table == "uta_credit_decisions":
+            identity += " OR operation_id=NEW.operation_id OR (kind=NEW.kind AND account_id=NEW.account_id AND command_id=NEW.command_id)"
+        definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE INSERT ON {table} WHEN EXISTS(SELECT 1 FROM {table} WHERE {identity}) BEGIN SELECT RAISE(ABORT,'credit audit identity cannot replace'); END")
     return MappingProxyType(definitions)
 
 

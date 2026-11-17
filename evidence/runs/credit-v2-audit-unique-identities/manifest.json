@@ -1,0 +1,23 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_audit_v2_schema",
+    "-v"
+  ],
+  "begin": "2026-11-17T12:32:59.239594+00:00",
+  "end": "2026-11-17T12:33:00.032849+00:00",
+  "elapsed_seconds": 0.7932844129973091,
+  "exit_code": 0,
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "311503690cc4f2572869f5cdd335052e0e85ab4229c2225d61708105c6f79e8d",
+    "tests/test_credit_audit_v2_schema.py": "de1ea0d2121864a9c82f6d08d5de84b178495212a8bfed32366c8b496a85a2a7"
+  },
+  "scope": "catalog only; transient incomplete SQL candidate always rolled back, zero committed credit decision/archive/loan, no native-v2 activation or service"
+}
