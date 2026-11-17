@@ -1,0 +1,643 @@
+{
+  "actual_runtime_omissions": 2,
+  "actual_tracked_zip_omissions": 11,
+  "collector_sources_modified": false,
+  "controls": [
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": true,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": false
+      },
+      "expected_false_checks": [
+        "wheel_runtime_exact"
+      ],
+      "kind": "wheel",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "172237aa8b455c26fa120da7249440394e28cad12dde97f6b8c712fb4090b975",
+        "positive_index_sha256": "30dd831c0d604175d88e93ab2f30252993dac5e0f9ad720c660db91707215be2",
+        "removed": [
+          "uta/failure_diagnostics.py"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 67
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/runtime-omission-controls/missing-failure-diagnostics.whl",
+      "negative_identity": {
+        "bytes": 354975,
+        "sha256": "27c710e12dbc1eb15c3d48f945160def08537fcd0a9b0e210342b36c3d001e82"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/runtime-omission-controls/wheel-report.json",
+      "primary_report_identity": {
+        "bytes": 441438,
+        "sha256": "1ad7ccc6dc17b1da11d0e526f7d212dcf044341a1bf48dfcddc55071de41d486"
+      },
+      "primary_returncode": 1,
+      "removed_target": "uta/failure_diagnostics.py",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1.tar.gz": {
+          "bytes": 40342597,
+          "sha256": "a7fdf7265407d6fbbad18e1b8ac6477cb4cf988d2cc982571a0065bf96a772d5"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": false,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact",
+        "sdist_runtime_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "944b8684ca9d4dfa3d42745a1fbe3ae27c7e4a6885af8afee37e9b4961740b79",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/uta/failure_diagnostics.py"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/runtime-omission-controls/missing-failure-diagnostics.tar.gz",
+      "negative_identity": {
+        "bytes": 40340452,
+        "sha256": "0a322752a2eaf82f080937e3b795c74d2a4f839a4911bd59f3273e90f0daae11"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/runtime-omission-controls/sdist-report.json",
+      "primary_report_identity": {
+        "bytes": 441488,
+        "sha256": "589739d2eb369cc8a3ae4119b51d4fdd4bd7fe0c9dd90d958e37e334b327faf4"
+      },
+      "primary_returncode": 1,
+      "removed_target": "uta/failure_diagnostics.py",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "cea91a0cc6d50489e8e0ae6a3247282bb87b4f5407568e0f8bb5717c12e028ac",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/reviews/capacity-history-8b/ci-original-pr312/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-0-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40272353,
+        "sha256": "171a2781b4f43239eb84c44f1f8aee9b3f62dba5bb2da43c5e6235abc03d862c"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-0-report.json",
+      "primary_report_identity": {
+        "bytes": 441526,
+        "sha256": "ef5754a7f4ee67eedfa5be0e16a387d0e5c78994897729b65b060e72c23ce6e2"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/reviews/capacity-history-8b/ci-original-pr312/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "441a70a24b5f2670a15ca1cbef9768096fa40facef2d7caa2d05b8333b31e445",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/reviews/observer-py310-fixture/ci-originals/pull_request-python310/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-1-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40288439,
+        "sha256": "fe78bdd8636b628b8688cae55f1661114a2cafd1861f26ad6cb6427595e114a1"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-1-report.json",
+      "primary_report_identity": {
+        "bytes": 441547,
+        "sha256": "0f2f96f9a50ef75c84a7486a171638de3683bd9e6a732e13f4eff7da778b2467"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/reviews/observer-py310-fixture/ci-originals/pull_request-python310/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "4e18f473c1974598de7099eb444d13fee714c3651567e117950da90683da28bb",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/reviews/observer-py310-fixture/ci-originals/push-python310/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-2-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40291029,
+        "sha256": "91556700681432a1fb5cabbe652dc068ae9624903d8b0c21d196c38f89a63abc"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-2-report.json",
+      "primary_report_identity": {
+        "bytes": 441539,
+        "sha256": "570f9b0201f6c536496de3e3e0dc9bd12ee3aa6c3de67d9fdc8f0b6e9fb253f6"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/reviews/observer-py310-fixture/ci-originals/push-python310/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "b3a6e89916965062ace1213cc84f624114d3baedb55204fc89a3d61211b72053",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/reviews/readiness-d421-fixture/ci-originals/pull_request-python313/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-3-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40274555,
+        "sha256": "ab220cf0ce87bb694553796fc983309320c5bf3f8bc70573a0f532ea4e9a50b9"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-3-report.json",
+      "primary_report_identity": {
+        "bytes": 441547,
+        "sha256": "2198672e5f900c3c0a5ed00cfd0b59cf063da8b2799ebe3212862b8a9ec55ce0"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/reviews/readiness-d421-fixture/ci-originals/pull_request-python313/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "65a81a990a6fe39d2919adb93da6ef2068be14ccdf54a86a9aaa52bc0f26870c",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/reviews/readiness-d421-fixture/ci-originals/push-python311/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-4-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40282938,
+        "sha256": "be3681e0f3ac04b72e4dd9257bb6fca249adf7632bd125a3ad9e7a16762de159"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-4-report.json",
+      "primary_report_identity": {
+        "bytes": 441539,
+        "sha256": "1f25ff18e53275aae600758d2c7810fdfb7f74ed527a66ba2586fd449596cb2b"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/reviews/readiness-d421-fixture/ci-originals/push-python311/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "162adbe06571d42e18f03edfb28400b46ce4679459dfcd42507dfe08010d92f4",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/a35-startup-phase/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-5-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40292061,
+        "sha256": "28413738131351f41aa02441674c69c14285560568db1a3b3fae91ffd9feffe5"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-5-report.json",
+      "primary_report_identity": {
+        "bytes": 441503,
+        "sha256": "c421630b0e2ed180d6089490622e5a57c7032f30f77b8b0eb0d77340375c1c80"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/a35-startup-phase/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "a9e90335b95afa34afae39074626f14e0679ca3c9696090b33e29fadf7f1b790",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/capacity-qa-a35fd56/ci/44066483487/uta-unit-validation-python-3.13/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-6-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40291288,
+        "sha256": "f255cbfd2b42683c1a9b5b479dbf4fc6156fc03c9dd0d42c6a2f4308f05f1dce"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-6-report.json",
+      "primary_report_identity": {
+        "bytes": 441552,
+        "sha256": "4612c776eeee7d1b997c160ba1d44dfa4ad6d3620f9cb955c72c6c3b39e0e859"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/capacity-qa-a35fd56/ci/44066483487/uta-unit-validation-python-3.13/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "c6bab7e5a394c6b82e9ed3ea4daf03a7030729b00dfef8e32632d2a67b59fb9e",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/capacity-qa-a35fd56/ci/44066492849/uta-unit-validation-python-3.12/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-7-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40289281,
+        "sha256": "e25c6344c9a0575d154b5243f2885e135fcefacdad96cb58270002bf6e72f66e"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-7-report.json",
+      "primary_report_identity": {
+        "bytes": 441552,
+        "sha256": "6d2ab21fc6f5cffcb71042e806eccfb686c343c888c925de347e6e313bd89a8d"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/capacity-qa-a35fd56/ci/44066492849/uta-unit-validation-python-3.12/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "5b6857e4ad5986ec15a530426a28d56104b28cb5c55267c5f03d2826cc0e0d9a",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/ci-4e-view-phase/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-8-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40290815,
+        "sha256": "6591bb19f767f601e14ec84486a22ee61eaa1c057e8ae6c2824e09c08f87b228"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-8-report.json",
+      "primary_report_identity": {
+        "bytes": 441502,
+        "sha256": "f489482665d6b1c670d8e23876c20d14a1de32b96e389177303c1b7b48f3638a"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "b394c6b24f2653c1523c8d0c85caab6518b03a8800d68d02edbf44ea908707ee",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/ci-a35-gateway-readiness/original-push-python313/original-ci-artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-9-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40286978,
+        "sha256": "2f4891dfe97e433ccb2f7dd9ef46e303637df9ba7adf2e7ff3720853f70c6d00"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-9-report.json",
+      "primary_report_identity": {
+        "bytes": 441534,
+        "sha256": "5d69749343c3f5a17e308a681ca1e1098e4849b73bc52a5439a9c8c96f4b1ced"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/ci-a35-gateway-readiness/original-push-python313/original-ci-artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    },
+    {
+      "complete_seven_checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "expected_false_checks": [
+        "sdist_required_files_exact"
+      ],
+      "kind": "sdist",
+      "member_difference": {
+        "added": [],
+        "changed": [],
+        "member_order_preserved": true,
+        "negative_index_sha256": "ebe28213f1de82b573d91fc25d89314d40f0b70ec0dcd3a2a79314786471b4ca",
+        "positive_index_sha256": "4e8009f31b597f11905e6a412021bd2a5d5b35c504e752c2330f1a2a1a1827a1",
+        "removed": [
+          "uta_reference_exchange-0.5.0a1/evidence/runs/startup-producer-fixture/original-ci/artifact.zip"
+        ],
+        "stable_member_metadata_and_bytes_exact": true,
+        "unchanged_member_count": 6042
+      },
+      "negative_archive": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-10-omitted.tar.gz",
+      "negative_identity": {
+        "bytes": 40292025,
+        "sha256": "d8a9510f07901441f7205d984457d2d55ae5c6b69f8f039a6e53af0fa05b6384"
+      },
+      "passed": true,
+      "primary_report": "/tmp/uta-release-dbc93e5-oor3dlj4/tracked-ci-zip-checks/zip-10-report.json",
+      "primary_report_identity": {
+        "bytes": 441511,
+        "sha256": "2b50b1c220f1dc24172ae7b58a50360879a4535019c6c2999ccd80bb9819038e"
+      },
+      "primary_returncode": 1,
+      "removed_target": "evidence/runs/startup-producer-fixture/original-ci/artifact.zip",
+      "unchanged_other_positive": {
+        "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+          "bytes": 357465,
+          "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+        }
+      }
+    }
+  ],
+  "historical_ci_results_are_current_qualification": false,
+  "negative_artifacts_installed": false,
+  "passed": true,
+  "positive_artifacts": {
+    "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+      "bytes": 357465,
+      "sha256": "a7c478138c9d1adaa98648efbdca5838aacddbc1d9528d185adf510d008aaa7e"
+    },
+    "uta_reference_exchange-0.5.0a1.tar.gz": {
+      "bytes": 40342597,
+      "sha256": "a7fdf7265407d6fbbad18e1b8ac6477cb4cf988d2cc982571a0065bf96a772d5"
+    }
+  },
+  "positive_complete_seven_checks": {
+    "entry_points": true,
+    "legacy_fixture_licensed": true,
+    "legacy_fixture_pinned": true,
+    "sdist_required_files_exact": true,
+    "sdist_runtime_exact": true,
+    "version": true,
+    "wheel_runtime_exact": true
+  },
+  "positive_manifest": {
+    "bytes": 441452,
+    "sha256": "1ca3a6717f591dd1cd9df8d2a4f20e3114b90a14db1c7e9bb6966b46226c34be"
+  },
+  "production_approved": false,
+  "report_checker": {
+    "bytes": 15291,
+    "sha256": "e7d9f05b3513bedff5dad971720cd494d5e77cfd787af860a90e2ccacfd73cd5"
+  },
+  "scope": "independent report-only inspection of actual package and primary negative executions",
+  "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "source_proof": {
+    "bytes": 785212,
+    "sha256": "4a93ac9f019842d0e4d2dea06db28d42f6b90986665d436170f70fde216aaa50"
+  }
+}

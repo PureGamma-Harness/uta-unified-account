@@ -107,7 +107,9 @@ class LedgerMainSchemaTests(unittest.TestCase):
                             "code": getattr(caught.exception, "code", None), "error_message": str(caught.exception)}
         finally:
             if deny_temp:
-                connection.set_authorizer(None)
+                # Python 3.10 needs a callable for the raw fixture's cleanup;
+                # verification above still denies every TEMP-table read.
+                connection.set_authorizer(lambda *_: sqlite3.SQLITE_OK)
         self.assertTrue(connection.in_transaction)
         self.assertEqual(self.snapshot(connection, "main"), before_main)
         self.assertEqual(self.snapshot(connection, "temp"), before_temp)

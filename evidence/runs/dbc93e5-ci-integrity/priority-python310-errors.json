@@ -1,0 +1,175 @@
+{
+  "scope": "original Python3.10 CI errors, no rerun",
+  "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "overall_acceptance": "NO_GO",
+  "original_runs": [
+    {
+      "run_id": 44125869999,
+      "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+      "tests_run": 1801,
+      "failures": 0,
+      "errors": 11,
+      "input_hash_count": 348,
+      "all_inputs_match_original_dbc_Git_blobs": true,
+      "raw_directory": "ci/44125869999/uta-unit-validation-python-3.10",
+      "original_errors": [
+        {
+          "header": "test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1919,
+          "traceback": "ERROR: test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 159, in test_01_bad_main_hash_refuses_despite_genuine_good_temp\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1929,
+          "traceback": "ERROR: test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 166, in test_02_bad_main_balance_refuses_despite_genuine_good_temp\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1939,
+          "traceback": "ERROR: test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 173, in test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission\n    self.joined(connection)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1949,
+          "traceback": "ERROR: test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 195, in test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1959,
+          "traceback": "ERROR: test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 203, in test_05_main_version_error_precedes_hash_and_balance_errors\n    self.joined(connection, message=\"ledger schema version changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1969,
+          "traceback": "ERROR: test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 210, in test_06_main_scales_error_precedes_hash_error\n    self.joined(connection, message=\"ledger asset scales changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1979,
+          "traceback": "ERROR: test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 218, in test_07_main_trigger_error_precedes_hash_error\n    self.joined(connection, message=\"journal protection trigger is missing\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1989,
+          "traceback": "ERROR: test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 225, in test_08_query_only_verification_preserves_uncommitted_callers_marker\n    self.joined(connection, active=True)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1999,
+          "traceback": "ERROR: test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 293, in test_12_read_method_alias_protocol_uses_original_main_checkers\n    self.joined(connection, view=view, message=\"journal event hash changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 2009,
+          "traceback": "ERROR: test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 310, in test_14_main_foreign_key_failure_precedes_version_and_hash_errors\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests)",
+          "original_log_line": 2019,
+          "traceback": "ERROR: test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 134, in test_ms002_healthy_temp_copies_need_no_temp_read_permission\n    self.joined(connection, deny_temp=True)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 112, in joined\n    self.assertEqual(self.snapshot(connection, \"main\"), before_main)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 52, in snapshot\n    present = {row[0] for row in connection.execute('SELECT name FROM ' + schema + '.sqlite_master')}\nsqlite3.DatabaseError: not authorized\n\n----------------------------------------------------------------------\nRan 1801 tests in 412.697s\n\nFAILED (errors=11)\n"
+        }
+      ],
+      "raw_files": [
+        {
+          "path": "ci/44125869999/uta-unit-validation-python-3.10/summary.json",
+          "bytes": 75944,
+          "sha256": "e1f2a3dde77d23e4fd433fdebc306e3937eceb6eb7e29af2809c8670d40f97fc"
+        },
+        {
+          "path": "ci/44125869999/uta-unit-validation-python-3.10/unittest.txt",
+          "bytes": 249505,
+          "sha256": "d69a9d63083579c007e4ebfd658d5ba4febb8a72957859e17546aa5786a7fbd5"
+        },
+        {
+          "path": "ci/44125869999/uta-unit-validation-python-3.10/worker-result.json",
+          "bytes": 156,
+          "sha256": "e7762a4dacfd00c659d7abf72e948315f7e4a978fc92dd2013c8d75e34095d8b"
+        }
+      ]
+    },
+    {
+      "run_id": 44125881372,
+      "source_commit": "4c78b658714a6e0b6d235aca987f06966d2226f0",
+      "tests_run": 1801,
+      "failures": 0,
+      "errors": 11,
+      "input_hash_count": 348,
+      "all_inputs_match_original_dbc_Git_blobs": true,
+      "raw_directory": "ci/44125881372/uta-unit-validation-python-3.10",
+      "original_errors": [
+        {
+          "header": "test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1906,
+          "traceback": "ERROR: test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 159, in test_01_bad_main_hash_refuses_despite_genuine_good_temp\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1916,
+          "traceback": "ERROR: test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 166, in test_02_bad_main_balance_refuses_despite_genuine_good_temp\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1926,
+          "traceback": "ERROR: test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 173, in test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission\n    self.joined(connection)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1936,
+          "traceback": "ERROR: test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 195, in test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1946,
+          "traceback": "ERROR: test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 203, in test_05_main_version_error_precedes_hash_and_balance_errors\n    self.joined(connection, message=\"ledger schema version changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1956,
+          "traceback": "ERROR: test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 210, in test_06_main_scales_error_precedes_hash_error\n    self.joined(connection, message=\"ledger asset scales changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1966,
+          "traceback": "ERROR: test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 218, in test_07_main_trigger_error_precedes_hash_error\n    self.joined(connection, message=\"journal protection trigger is missing\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1976,
+          "traceback": "ERROR: test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 225, in test_08_query_only_verification_preserves_uncommitted_callers_marker\n    self.joined(connection, active=True)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1986,
+          "traceback": "ERROR: test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 293, in test_12_read_method_alias_protocol_uses_original_main_checkers\n    self.joined(connection, view=view, message=\"journal event hash changed\")\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance)",
+          "original_log_line": 1996,
+          "traceback": "ERROR: test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 310, in test_14_main_foreign_key_failure_precedes_version_and_hash_errors\n    self.joined(connection, message=message)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_acceptance.py\", line 137, in joined\n    self.assertEqual(connection.execute(\"PRAGMA query_only\").fetchone()[0], 1)\nsqlite3.DatabaseError: not authorized\n"
+        },
+        {
+          "header": "test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests)",
+          "original_log_line": 2006,
+          "traceback": "ERROR: test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 134, in test_ms002_healthy_temp_copies_need_no_temp_read_permission\n    self.joined(connection, deny_temp=True)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 112, in joined\n    self.assertEqual(self.snapshot(connection, \"main\"), before_main)\n  File \"/home/runner/work/uta-unified-account/uta-unified-account/tests/test_ledger_main_schema.py\", line 52, in snapshot\n    present = {row[0] for row in connection.execute('SELECT name FROM ' + schema + '.sqlite_master')}\nsqlite3.DatabaseError: not authorized\n\n----------------------------------------------------------------------\nRan 1801 tests in 363.793s\n\nFAILED (errors=11)\n"
+        }
+      ],
+      "raw_files": [
+        {
+          "path": "ci/44125881372/uta-unit-validation-python-3.10/summary.json",
+          "bytes": 75949,
+          "sha256": "3d1150f522aaa26266806bd688920dd671cca5eb2f6f4eb7bc3f71b92a16158a"
+        },
+        {
+          "path": "ci/44125881372/uta-unit-validation-python-3.10/unittest.txt",
+          "bytes": 248734,
+          "sha256": "d9565329f7967d2e484edf086f42071e3a074caefdbeaa949dafe8a9312c929a"
+        },
+        {
+          "path": "ci/44125881372/uta-unit-validation-python-3.10/worker-result.json",
+          "bytes": 156,
+          "sha256": "e7762a4dacfd00c659d7abf72e948315f7e4a978fc92dd2013c8d75e34095d8b"
+        }
+      ]
+    }
+  ]
+}

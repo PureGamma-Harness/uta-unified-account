@@ -1,0 +1,61 @@
+{
+  "affinity": [
+    2
+  ],
+  "cohosted": true,
+  "cpu_isolation": "per-process CPU2 affinity only; shared host; no cpuset or exclusivity",
+  "driver_cwd": "/workspace",
+  "driver_path": "/workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5/execution_driver.py",
+  "driver_sha256": "b19763faeb7d6f9dc6ed3a35c41e53977ba5f9d77a2604a72b0cd583538a20d3",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONPATH": null
+  },
+  "git_archive_format": "tar.gz",
+  "phase": "strict",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_approved": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "runs": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5/verify_control_bindings.py",
+        "--source",
+        "/workspace/uta-combined-freeze-dbc93e5",
+        "--work",
+        "/tmp/uta-release-dbc93e5-oor3dlj4",
+        "--records",
+        "/workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5",
+        "--provenance",
+        "/workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5/ci-zip-provenance.json",
+        "--output",
+        "/tmp/uta-release-dbc93e5-oor3dlj4/strict-control-bindings.json"
+      ],
+      "cwd": "/tmp/uta-release-dbc93e5-oor3dlj4",
+      "expected_returncode": 0,
+      "finished_monotonic_ns": 70727889422177,
+      "finished_utc": "2026-11-17T16:40:01.412091+00:00",
+      "name": "strict-control-bindings",
+      "returncode": 0,
+      "seconds": 21.256388964,
+      "started_monotonic_ns": 70706633033213,
+      "started_utc": "2026-11-17T16:39:40.155711+00:00",
+      "stderr": {
+        "bytes": 0,
+        "path": "/tmp/uta-release-dbc93e5-oor3dlj4/raw/strict-control-bindings.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdout": {
+        "bytes": 441,
+        "path": "/tmp/uta-release-dbc93e5-oor3dlj4/raw/strict-control-bindings.stdout.txt",
+        "sha256": "76354abe1cc9f6eba2490338ce8e301f7d35e5edaef2e79d5750ea6f103e082a"
+      },
+      "timeout_seconds": 60
+    }
+  ],
+  "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "source_directory": "/workspace/uta-combined-freeze-dbc93e5",
+  "sqlite": "3.53.1",
+  "work_directory": "/tmp/uta-release-dbc93e5-oor3dlj4"
+}
