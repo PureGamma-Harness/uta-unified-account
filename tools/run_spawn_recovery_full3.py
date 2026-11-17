@@ -20,7 +20,7 @@ import time
 
 SOURCE = Path("/workspace/uta-stopped-owner-gate")
 COMMIT = "6b7d473c0fbf92b17c146140c88eb2c25d38dce1"
-OUTPUT = Path("/workspace/uta-spawn-full3-validation/6b7d473-first")
+OUTPUT = Path("/workspace/uta-spawn-full3-validation/6b7d473-tracked-closure-once02")
 FLOOR = 17_448_304_640
 RESERVE = 256 * 1024**2
 RUNTIME_SECONDS = 900
@@ -115,7 +115,10 @@ def source_pin():
     if git("rev-parse", "HEAD") != COMMIT or git("status", "--porcelain", "--untracked-files=all"):
         raise RuntimeError("frozen QA checkout moved or became dirty")
     full, selected = {}, {}
-    for line in git("ls-tree", "-r", COMMIT, "--", *DIRECTORIES, "pyproject.toml", "MANIFEST.in", "LICENSE").splitlines():
+    # Tests import executable reference artifacts and read retained fixtures
+    # outside the standard runner's six folders. All Git-tracked files form
+    # the outer input closure; the standard selected map remains separate.
+    for line in git("ls-tree", "-r", COMMIT).splitlines():
         header, name = line.split("\t", 1)
         path = SOURCE / name
         if not path.is_file() or path.is_symlink():
@@ -124,7 +127,7 @@ def source_pin():
         if sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest() != header.split()[2]:
             raise RuntimeError("tracked QA input differs from source Git blob")
         full[name] = sha256(data).hexdigest()
-        if name.endswith(".py") or name.startswith("tests/fixtures/") or \
+        if (name.endswith(".py") and name.split("/", 1)[0] in DIRECTORIES) or name.startswith("tests/fixtures/") or \
                 name in {"pyproject.toml", "MANIFEST.in", "LICENSE"}:
             selected[name] = full[name]
     # Match the standard runner's selected-file inventory, including unexpected
@@ -136,7 +139,7 @@ def source_pin():
     if actual != set(selected):
         raise RuntimeError("standard QA selected input inventory differs from frozen Git")
     return {"commit": COMMIT, "tree": git("rev-parse", COMMIT + "^{tree}"),
-            "all_tracked_QA_input_sha256": full, "standard_runner_source_sha256": selected,
+            "all_tracked_source_sha256": full, "standard_runner_source_sha256": selected,
             "run_validation_sha256": full["tools/run_validation.py"],
             "owned_cleanup_helper_sha256": full["tools/run_managed_variants.py"],
             "orphan_reaper_source_sha256": full["tests/test_durable_process.py"]}
@@ -488,7 +491,7 @@ def main():
         if args.prepare_output:
             save(args.prepare_output, admission)
         print(json.dumps({"prepare_only": True, "selected_input_count": len(admission["source"]["standard_runner_source_sha256"]),
-                          "all_QA_input_count": len(admission["source"]["all_tracked_QA_input_sha256"]),
+                          "all_tracked_input_count": len(admission["source"]["all_tracked_source_sha256"]),
                           "supervisor_sha256": admission["supervisor_sha256"], "commands": admission["commands"]}, indent=2))
         return 0
     os.umask(0o077)

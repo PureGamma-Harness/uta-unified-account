@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from tempfile import TemporaryDirectory
 import subprocess
+from hashlib import sha1
 import unittest
 from unittest.mock import patch
 
@@ -201,6 +202,40 @@ class Full3ControllerPureTests(unittest.TestCase):
         for argv, (_, executable, _) in zip(control.commands(), control.RUNTIMES):
             self.assertEqual(argv[:3], [executable, "-B", str(control.SOURCE / "tools/run_validation.py")])
             self.assertEqual(len(argv), 5)
+
+    def test_full_tracked_closure_includes_outside_reference_and_keeps_standard_map_separate(self):
+        files = {name: b"# synthetic input\n" for name in (
+            "uta/__init__.py", "tests/test_synthetic.py", "tests/test_durable_process.py",
+            "tools/run_validation.py", "tools/run_managed_variants.py",
+            "evidence/runs/reference.py", "docs/evidence/retained.json",
+            "pyproject.toml", "MANIFEST.in", "LICENSE")}
+        listing = "\n".join("100644 blob " + sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+                            + "\t" + name for name, data in files.items())
+        def git(*args):
+            if args == ("rev-parse", "HEAD"):
+                return control.COMMIT
+            if args == ("rev-parse", control.COMMIT + "^{tree}"):
+                return "b" * 40
+            if args[0] == "status":
+                return ""
+            if args == ("ls-tree", "-r", control.COMMIT):
+                return listing
+            raise AssertionError("unexpected Git query")
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, data in files.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(data)
+            with patch.object(control, "SOURCE", root), patch.object(control, "git", side_effect=git):
+                result = control.source_pin()
+                self.assertEqual(len(result["all_tracked_source_sha256"]), 10)
+                self.assertIn("evidence/runs/reference.py", result["all_tracked_source_sha256"])
+                self.assertNotIn("evidence/runs/reference.py", result["standard_runner_source_sha256"])
+                self.assertNotIn("docs/evidence/retained.json", result["standard_runner_source_sha256"])
+                (root / "docs/evidence/retained.json").unlink()
+                with self.assertRaisesRegex(RuntimeError, "not fully materialized"):
+                    control.source_pin()
 
 
 if __name__ == "__main__":

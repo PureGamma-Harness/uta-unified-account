@@ -1,4 +1,4 @@
-# Proposed once-only full QA for frozen 6b7d473
+# Proposed full-tracked-inputs batch once02 for frozen 6b7d473
 
 This preparation does not authorize or execute the matrix. Root must separately
 approve the final supervisor SHA and launch command. The source is frozen at
@@ -31,13 +31,36 @@ each runtime. During execution loss of the floor halts the current owned
 synthetic session and stops the matrix with UNKNOWN. No old file is deleted
 to make admission pass.
 
-Preparation checked all 874 tracked QA-folder inputs and metadata against the
-exact Git tree, including benchmark data used by tests. It separately records
-the standard runner's exact 351-file selected input map. The unchanged runner
+The previous first execution failed on 16 missing public docs/evidence inputs
+and remains NO_GO. Its six-folder 874-entry pin was incomplete. This separate
+once02 proposal checks all 6,162 tracked files (169,680,991 logical bytes) against
+the exact Git tree. It separately records the unchanged standard runner's exact
+351-file selected input map. The reason for a new batch is the corrected public
+fixture dependency closure; source/runtime logic and version limits are unchanged. The unchanged runner
 SHA256 is `e9bff08c57bb1296388bf346c9e88f25e14f1d234c87fa60677702216e2368cc`.
 The selected map must exactly match both source maps in each actual summary;
 the complete QA input map and executable hashes are rechecked before/after
 each runtime. Full maps are in the retained prepare-only JSON.
+
+
+The current full-tracked materialization was separately authorized after first
+execution naturally ended. Fresh free space was 18,037,989,376 bytes, above the
+17,881,567,232-byte floor/reserve/allocation requirement. Only 5,285 missing Git
+files were restored using an explicit NUL path list; logical missing size was
+141,962,095 bytes, conservatively 164,827,136 including 4KiB rounding/directories
+and an 8MiB margin. All 6,162 actual file blobs match Git afterward. The original
+877 already present tracked entities, including the previous 874 map, retained
+identical bytes and dev/ino/mode/nlink/uid/gid/size/atime/mtime/ctime, checked with
+O_NOATIME reads. HEAD/status stayed unchanged. Free space afterward was
+17,880,358,912 bytes. No new QA execution was part of this materialization.
+
+The original first private summary SHA is
+bea146e87d0ae259179e8a06d66bf5adea715cbdbdd44954d3625c0e6c5472f5,
+worker SHA01f9a90d875789bc89cc61f9d5f2caf3f23c8be3b1aa8beb5dc014f862151d9d,
+and full unittest raw SHAfe173f0d54c176c4cd1d47e64e37d7f75b08d943b4eb89ad89aad1f29662db81.
+Those originals, their 16 complete FileNotFoundError tracebacks and actual
+supervisor exit1 were retained before preparing this corrected batch. The
+first 3.12/3.13 outputs remain NOT STARTED, never retroactively supplied.
 
 ## Exact commands and environment
 
@@ -45,9 +68,9 @@ CPU affinity is [4], sequential order Python3.10, Python3.12, Python3.13.
 The three exact inner argv are:
 
 ```text
-/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10 -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-first/python310
-/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-first/python312
-/usr/bin/python3.13 -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-first/python313-sqlite346
+/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10 -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-tracked-closure-once02/python310
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-tracked-closure-once02/python312
+/usr/bin/python3.13 -B /workspace/uta-stopped-owner-gate/tools/run_validation.py --output /workspace/uta-spawn-full3-validation/6b7d473-tracked-closure-once02/python313-sqlite346
 ```
 
 Actual interpreter builds and SQLite versions will come from each original
@@ -163,11 +186,13 @@ matching worker/summary results, source maps and raw-log digest, clean source,
 normal reaped leader, no watchdog and successful matrix completion within its
 budget. A unit-level pass never repairs a missing outer completion record.
 
-Prepare-only execution and sixteen pure ownership/report-policy cases have
+Prepare-only execution and seventeen pure ownership/report-policy cases have
 passed. These include visible-ACK/fsync failure withholding GO with direct-child
 reaping, and a group-signal error still attempting direct-child reap/pidfd close.
 Additional cases cover GO delivery followed by lost reply, new live adopted
-sessions, loader/build mismatch and a deadline crossed during END persistence.
+sessions, loader/build mismatch, a deadline crossed during END persistence, and
+an outside-folder reference/data file being required while excluded from the
+unchanged standard selected map.
 The original eight-case result is retained separately. No full QA, financial SQL, process-fault probe, package build or capacity
 test has been performed by this plan. Capacity 10k/s, HA, multi-node durability,
 custody and real-funds approval remain outside its acceptance scope.
