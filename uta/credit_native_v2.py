@@ -1,7 +1,8 @@
 """Compiled contract for a future fresh internal synthetic credit authority.
 
 This catalog is not an installer or an authorization capability. Writer fencing
-does not recognize this marker yet. There is no positive operation context,
+recognizes its reserved namespace but refuses incomplete capabilities. There is
+no positive operation context,
 activation, ownership, intake, HTTP or CLI entry point in this schema slice.
 Format1 NATIVE_PREPARED is never upgraded. Actual primitive enforcement and
 independent positive-chain acceptance must precede any internal execution.
@@ -13,6 +14,7 @@ import json
 import os
 import re
 import sqlite3
+import importlib
 from threading import get_ident
 from types import MappingProxyType
 
@@ -463,3 +465,95 @@ def assert_operation_context(credit, connection, *, command_id, account_id, asse
         error = CreditV2Error("credit_v2_context_invalid", "operation context does not match actual staged identity")
         guard._deny(error)
         raise error from cause
+
+
+def _runtime_dependencies():
+    """Fixed real implementation dependencies, never archive-chosen imports.
+
+    This is an additional fail-closed check, not proof by method presence: a
+    real loader also validates exact SQL, current code and actual persisted
+    state. Missing runtime pieces cannot publish or acquire a marker.
+    """
+    try:
+        audit = importlib.import_module("uta.credit_audit_v2")
+        fifo = importlib.import_module("uta.credit_fifo_v2")
+        artifact = importlib.import_module("uta.credit_artifact")
+        required = ("operation_scope", "synthetic_intake_scope", "rejection_scope", "metadata_scope",
+                    "register_guard", "verify_before_commit", "install_internal_credit_v2")
+        if (any(not callable(globals().get(name)) for name in required)
+                or getattr(audit, "FORMAT", None) != 2
+                or not isinstance(getattr(audit, "CreditAuditV2", None), type)
+                or not isinstance(getattr(fifo, "InternalCreditFIFO", None), type)
+                or not callable(getattr(fifo, "verify_existing_queue", None))
+                or not {"credit_native_v2", "credit_audit_v2", "credit_fifo_v2", "credit_transition",
+                        "credit_audit_v2_replay", "credit_v2_payload_contract"}
+                    <= set(artifact._MODULES)):
+            raise ValueError("complete internal credit implementation is absent")
+        for name in ("runtime_evidence", "begin_borrow", "complete_borrow", "verify_staged_borrow", "replay"):
+            if not callable(getattr(audit.CreditAuditV2, name, None)):
+                raise ValueError("actual credit audit entry point is absent")
+        for name in ("enqueue_borrow", "enqueue_repay", "process_one", "status"):
+            if not callable(getattr(fifo.InternalCreditFIFO, name, None)):
+                raise ValueError("actual internal credit FIFO entry point is absent")
+        return audit, fifo, artifact
+    except (ImportError, AttributeError, TypeError, ValueError) as error:
+        raise CreditV2Error("credit_v2_runtime_incomplete", "complete native credit, audit, source, FIFO and code identity are required") from error
+
+
+def verify_schema(connection):
+    """Exact catalog plus real writer guards; never install or repair on read."""
+    from .writer_fence import _guard_sql
+    expected = {}
+    for name, sql in OBJECT_SQL.items():
+        if name in TABLE_SQL:
+            expected[name] = ("table", name, sql)
+        elif name in INDEX_SQL:
+            expected[name] = ("index", sql.split(" ON ", 1)[1].split("(", 1)[0], sql)
+        else:
+            expected[name] = ("trigger", TRIGGER_SQL[name][0], sql)
+    for table in TABLE_SQL:
+        actions = "UD" if table == "credit_v2_sources" else "IUD"
+        for action in actions:
+            name, sql = _guard_sql(table, action)
+            expected[name] = ("trigger", table, sql)
+        for row in connection.execute(f"PRAGMA index_list({table})"):
+            if row[1].startswith("sqlite_autoindex_"):
+                expected[row[1]] = ("index", table, None)
+    actual = {row[0]: tuple(row)[1:] for row in connection.execute(
+        "SELECT name,type,tbl_name,sql FROM sqlite_master WHERE name LIKE 'credit_v2_%' OR tbl_name LIKE 'credit_v2_%'")}
+    if actual != expected:
+        raise CreditV2Error("credit_v2_schema_corrupt", "internal credit objects or writer guards differ; automatic repair is forbidden")
+
+
+def load_marker(connection, row, *, authority_id):
+    """A complete persisted format2, never promotion of prepared format1."""
+    audit, fifo, artifact = _runtime_dependencies()
+    if connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
+        raise CreditV2Error("credit_v2_foreign_keys_required", "internal credit requires actual foreign-key enforcement")
+    if len(row) != 5 or tuple(row)[:3] != (1, FORMAT, STAGE):
+        raise CreditV2Error("credit_v2_corrupt", "unsupported internal credit marker")
+    current = artifact.credit_code_artifact()
+    current_id = artifact.credit_artifact_id(current)
+    scales = dict(connection.execute("SELECT asset,scale FROM ledger_assets"))
+    if scales != {"USD": 8, "BTC": 8}:
+        raise CreditV2Error("credit_v2_corrupt", "internal credit requires the explicit USD8/BTC8 catalog")
+    envelope = validate_envelope(row[4], expected_authority_id=authority_id,
+        expected_artifact_id=current_id, expected_asset_scales=scales)
+    if row[3] != envelope.capability_id:
+        raise CreditV2Error("credit_v2_corrupt", "internal credit marker differs from its full content identity")
+    verify_schema(connection)
+    audit.verify_schema(connection)
+    fifo.verify_existing_queue(connection)
+    config = connection.execute("SELECT format,capability_id,descriptor_id,authority_id,artifact_id,payload FROM credit_v2_config WHERE singleton=1").fetchall()
+    if [tuple(item) for item in config] != [(2, envelope.capability_id, envelope.static_descriptor.descriptor_id,
+            authority_id, current_id, envelope.canonical_payload)]:
+        raise CreditV2Error("credit_v2_corrupt", "internal credit configuration identity differs")
+    retained = connection.execute("SELECT manifest FROM uta_credit_code_artifacts WHERE artifact_id=?", (current_id,)).fetchone()
+    if retained is None or artifact.parse_credit_artifact(retained[0], expected_id=current_id) != current:
+        raise CreditV2Error("credit_v2_corrupt", "actual current credit code artifact is not retained")
+    allocation = envelope.static_descriptor.allocation_for("BTC", envelope.static_descriptor.shard)
+    expected = (allocation.allocation_id, envelope.static_descriptor.descriptor_id,
+        envelope.static_descriptor.certificate_id, authority_id, allocation.shard, "BTC", 8, str(allocation.limit_units))
+    if [tuple(item) for item in connection.execute("SELECT * FROM credit_v2_allocations")] != [expected]:
+        raise CreditV2Error("credit_v2_corrupt", "actual local immutable allocation differs")
+    return envelope
