@@ -1,0 +1,137 @@
+{
+  "scope": "one small pure reference group in three actual runtimes; no SQL/services/benchmark",
+  "records": [
+    {
+      "source_commit": "24df7d63653aa5245ec6a6fb2757c27989675d9d",
+      "runtime": "py310",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_capacity_review_data_reference.py",
+        "-v"
+      ],
+      "started_utc": "2026-11-17T13:54:37.649965+00:00",
+      "finished_utc": "2026-11-17T13:54:37.908019+00:00",
+      "wall_seconds": 0.2580574359963066,
+      "returncode": 0,
+      "CPU_ids": [
+        3
+      ],
+      "source_before": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "source_after": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "stdout_sha256": "cd338bc474fd587ebdcac8730d9fea84d0ff15624675088de74d58b9c269334c",
+      "stderr_sha256": "65cf807a6f28d7f2ccb557123b67075734a4e714c7b18856370fdca08b0f7024"
+    },
+    {
+      "source_commit": "24df7d63653aa5245ec6a6fb2757c27989675d9d",
+      "runtime": "py312",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_capacity_review_data_reference.py",
+        "-v"
+      ],
+      "started_utc": "2026-11-17T13:54:37.908349+00:00",
+      "finished_utc": "2026-11-17T13:54:38.148788+00:00",
+      "wall_seconds": 0.24045033500442514,
+      "returncode": 0,
+      "CPU_ids": [
+        3
+      ],
+      "source_before": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "source_after": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "stdout_sha256": "cd338bc474fd587ebdcac8730d9fea84d0ff15624675088de74d58b9c269334c",
+      "stderr_sha256": "182f39bd14861bce46f6f2c648ffc125c9e890f1d9bfaf3c2bce6c45ccbc930d"
+    },
+    {
+      "source_commit": "24df7d63653aa5245ec6a6fb2757c27989675d9d",
+      "runtime": "py313",
+      "command": [
+        "/usr/bin/python3.13",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_capacity_review_data_reference.py",
+        "-v"
+      ],
+      "started_utc": "2026-11-17T13:54:38.149143+00:00",
+      "finished_utc": "2026-11-17T13:54:38.358552+00:00",
+      "wall_seconds": 0.20942074900085572,
+      "returncode": 0,
+      "CPU_ids": [
+        3
+      ],
+      "source_before": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "source_after": {
+        "tests/test_capacity_review_data_reference.py": "38d6378ba418373ba3356194d2da96340178871c5acd72d10c14b5ba96c5b660",
+        "evidence/runs/capacity-independent-review/recompute.py": "41d2599e5b221ec5becb4c24e1a0214466efb43da15394e05ddf7886ab03dab4",
+        "evidence/runs/capacity-independent-review/historical-source/provenance.json": "614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb",
+        "evidence/runs/capacity-independent-review/historical-source/run_managed_benchmark.5caf874.py.txt": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+        "evidence/runs/capacity-independent-review/historical-source/LICENSE.Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+      },
+      "stdout_sha256": "cd338bc474fd587ebdcac8730d9fea84d0ff15624675088de74d58b9c269334c",
+      "stderr_sha256": "7c15a6d58e1b6d264e776ff011a59c9748a64f3faefd9cb69ea8166a22d6b7c4"
+    }
+  ],
+  "total_wall_seconds": 0.7095369070011657,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false
+}
