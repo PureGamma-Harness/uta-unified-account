@@ -1,0 +1,42 @@
+test_bytearray_header_does_not_change_published_wire (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_bytearray_header_does_not_change_published_wire) ... FAIL
+test_bytearray_header_does_not_make_release_accounting_negative (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_bytearray_header_does_not_make_release_accounting_negative) ... FAIL
+test_memoryview_header_cannot_change_controlled_frame_opcode (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_memoryview_header_cannot_change_controlled_frame_opcode) ... ERROR
+
+======================================================================
+ERROR: test_memoryview_header_cannot_change_controlled_frame_opcode (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_memoryview_header_cannot_change_controlled_frame_opcode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-private-stream-codec-review/tests/test_private_stream_codec_reference.py", line 51, in test_memoryview_header_cannot_change_controlled_frame_opcode
+    value=self.observe('memoryview')
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-private-stream-codec-review/tests/test_private_stream_codec_reference.py", line 30, in observe
+    changed=frame.to_bytes()
+            ^^^^^^^^^^^^^^^^
+  File "/workspace/uta-private-stream-codec-review/uta/private_stream_codec.py", line 169, in to_bytes
+    return self.header + bytes(self._payload)
+           ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'memoryview' and 'bytes'
+
+======================================================================
+FAIL: test_bytearray_header_does_not_change_published_wire (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_bytearray_header_does_not_change_published_wire)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-private-stream-codec-review/tests/test_private_stream_codec_reference.py", line 43, in test_bytearray_header_does_not_change_published_wire
+    self.assertEqual(value['sent_wire_hex'],'810178')
+AssertionError: '8201797a78' != '810178'
+- 8201797a78
++ 810178
+
+
+======================================================================
+FAIL: test_bytearray_header_does_not_make_release_accounting_negative (test_private_stream_codec_reference.MutableHeaderReferenceTests.test_bytearray_header_does_not_make_release_accounting_negative)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-private-stream-codec-review/tests/test_private_stream_codec_reference.py", line 48, in test_bytearray_header_does_not_make_release_accounting_negative
+    self.assertEqual(value['after_release_accounted_wire_bytes'],0)
+AssertionError: -2 != 0
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (failures=2, errors=1)
