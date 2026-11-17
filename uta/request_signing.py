@@ -185,6 +185,97 @@ class _ExistingAuthDatabase(Database):
         return info.st_dev, info.st_ino
 
 
+@dataclass(frozen=True)
+class _NonceCheck:
+    server_ms: int
+    nonce_hash: str = field(repr=False)
+    expires_ms: int | None
+    error: SigningError | None
+
+
+def _nonce_precheck(connection, config, key, *, timestamp_ms, nonce, clock_ms):
+    """One nonce/time policy, on the caller's actual held AuthDB transaction.
+
+    This returns observations, not a permission. H0 may read its current grants
+    after this precheck, before the same core performs count/insert. The legacy
+    caller immediately finishes with its unchanged configured capacity.
+    """
+    nonce_hash = hashlib.sha256(nonce.encode("ascii")).hexdigest()
+    try:
+        server_ms = clock_ms()
+        _integer(server_ms, "server clock")
+    except Exception:
+        raise SigningError("auth_clock_unavailable", "trusted server authentication clock unavailable", 503) from None
+    error = None
+    if server_ms < config["highwater"]:
+        error = SigningError("auth_clock_regressed", "server wall clock is behind durable authentication highwater", 503)
+    else:
+        connection.execute("UPDATE main.auth_config SET highwater=? WHERE singleton=1", (server_ms,))
+        connection.execute("DELETE FROM main.auth_nonces WHERE expires_ms < ?", (server_ms,))
+        stored = connection.execute("SELECT * FROM main.auth_keys WHERE key_id=?", (key.key_id,)).fetchone()
+        if stored is None or stored["revoked"] or stored["identity"] != key.identity() or key.revoked:
+            error = SigningError("signing_key_inactive", "signing key is not active")
+        elif not key.not_before_ms <= server_ms < key.expires_at_ms or not key.not_before_ms <= timestamp_ms < key.expires_at_ms:
+            error = SigningError("signing_key_inactive", "signing key is outside its validity period")
+        elif not -config["future_skew"] <= server_ms - timestamp_ms <= config["past_window"] or timestamp_ms > _MAX_INT - config["past_window"]:
+            error = SigningError("request_timestamp_out_of_window", "request timestamp is outside the accepted window")
+        elif connection.execute("SELECT 1 FROM main.auth_nonces WHERE key_id=? AND nonce_hash=?", (key.key_id, nonce_hash)).fetchone():
+            error = SigningError("request_replayed", "request nonce was already consumed", 409)
+    return _NonceCheck(server_ms, nonce_hash,
+                       timestamp_ms + config["past_window"] if error is None else None, error)
+
+
+def _nonce_finish(connection, checked, *, key_id, limit):
+    """Finish the same nonce core once; classification never inserts a nonce."""
+    if checked.error is not None:
+        return checked.error
+    if connection.execute("SELECT COUNT(*) FROM main.auth_nonces").fetchone()[0] >= limit:
+        return SigningError("signing_capacity_exhausted", "replay protection capacity exhausted; no unsafe eviction", 503)
+    connection.execute("INSERT INTO main.auth_nonces VALUES(?,?,?)",
+                       (key_id, checked.nonce_hash, checked.expires_ms))
+    return None
+
+
+@dataclass(frozen=True)
+class _VerifiedRequest:
+    key: SigningKey
+    timestamp_ms: int
+    nonce: str = field(repr=False)
+    request_hash: str
+    body_hash: str
+
+
+def _verify_request(profile, headers, *, method, request_target, body):
+    """Single real MAC/header core shared by format1 and auth-only H0 ingress."""
+    names = ("Authorization", "X-UTA-Version", "X-UTA-Tenant", "X-UTA-Audience", "X-UTA-Key-Id",
+             "X-UTA-Timestamp-Ms", "X-UTA-Nonce", "X-UTA-Signature")
+    values = {}
+    try:
+        for name in names:
+            found = headers.get_all(name, []) if hasattr(headers, "get_all") else ([headers[name]] if name in headers else [])
+            if len(found) != 1 or not isinstance(found[0], str) or len(found[0]) > 256:
+                raise ValueError("missing or duplicate signing header")
+            values[name] = found[0]
+        if values["Authorization"].lower() != _AUTH_HEADER.lower() or values["X-UTA-Version"] != "1":
+            raise ValueError("unsupported authentication profile")
+        timestamp = values["X-UTA-Timestamp-Ms"]
+        if not re.fullmatch(r"0|[1-9][0-9]{0,18}", timestamp, re.ASCII) or not _HEX.fullmatch(values["X-UTA-Signature"]):
+            raise ValueError("invalid signing field")
+        timestamp = int(timestamp)
+        key = next((key for key in profile.keys if key.key_id == values["X-UTA-Key-Id"]), None)
+        canonical = canonical_request(tenant_id=values["X-UTA-Tenant"], audience=values["X-UTA-Audience"],
+            key_id=values["X-UTA-Key-Id"], timestamp_ms=timestamp, nonce=values["X-UTA-Nonce"],
+            method=method, request_target=request_target, body=body)
+    except (ValueError, TypeError, KeyError):
+        raise SigningError("signature_required", "valid HMAC request authentication is required") from None
+    expected = hmac.new(key.secret if key is not None else b"\0" * 32, canonical, hashlib.sha256).hexdigest()
+    matched = hmac.compare_digest(expected, values["X-UTA-Signature"])
+    if not matched or key is None or (values["X-UTA-Tenant"], values["X-UTA-Audience"]) != (profile.tenant_id, profile.audience):
+        raise SigningError("invalid_signature", "request signature is invalid")
+    return _VerifiedRequest(key, timestamp, values["X-UTA-Nonce"],
+                            hashlib.sha256(canonical).hexdigest(), hashlib.sha256(body).hexdigest())
+
+
 class NonceStore:
     """Existing authentication authority. No constructor silently creates one."""
     @classmethod
@@ -285,40 +376,16 @@ class NonceStore:
             self._audit(connection, "profile_configured")
 
     def consume(self, key, *, timestamp_ms, nonce, request_hash, clock_ms):
-        nonce_hash = hashlib.sha256(nonce.encode("ascii")).hexdigest()
-        error = None
         with self._transaction() as connection:
             config = self._config(connection)
-            # Sample after acquiring BEGIN IMMEDIATE. Concurrent callers must
-            # not present stale pre-lock samples as a fictitious clock rollback.
-            try:
-                server_ms = clock_ms()
-                _integer(server_ms, "server clock")
-            except Exception:
-                raise SigningError("auth_clock_unavailable", "trusted server authentication clock unavailable", 503) from None
-            if server_ms < config["highwater"]:
-                error = SigningError("auth_clock_regressed", "server wall clock is behind durable authentication highwater", 503)
-            else:
-                connection.execute("UPDATE auth_config SET highwater=? WHERE singleton=1", (server_ms,))
-                # Strict '<': a timestamp at the oldest allowed boundary is
-                # still replayable and its nonce must remain present.
-                connection.execute("DELETE FROM auth_nonces WHERE expires_ms < ?", (server_ms,))
-                stored = connection.execute("SELECT * FROM auth_keys WHERE key_id=?", (key.key_id,)).fetchone()
-                if stored is None or stored["revoked"] or stored["identity"] != key.identity() or key.revoked:
-                    error = SigningError("signing_key_inactive", "signing key is not active")
-                elif not key.not_before_ms <= server_ms < key.expires_at_ms or not key.not_before_ms <= timestamp_ms < key.expires_at_ms:
-                    error = SigningError("signing_key_inactive", "signing key is outside its validity period")
-                elif not -config["future_skew"] <= server_ms - timestamp_ms <= config["past_window"] or timestamp_ms > _MAX_INT - config["past_window"]:
-                    error = SigningError("request_timestamp_out_of_window", "request timestamp is outside the accepted window")
-                elif connection.execute("SELECT 1 FROM auth_nonces WHERE key_id=? AND nonce_hash=?", (key.key_id, nonce_hash)).fetchone():
-                    error = SigningError("request_replayed", "request nonce was already consumed", 409)
-                elif connection.execute("SELECT COUNT(*) FROM auth_nonces").fetchone()[0] >= config["max_nonces"]:
-                    error = SigningError("signing_capacity_exhausted", "replay protection capacity exhausted; no unsafe eviction", 503)
-                else:
-                    connection.execute("INSERT INTO auth_nonces VALUES(?,?,?)", (key.key_id, nonce_hash, timestamp_ms + config["past_window"]))
+            checked = _nonce_precheck(connection, config, key, timestamp_ms=timestamp_ms,
+                                      nonce=nonce, clock_ms=clock_ms)
+            error = _nonce_finish(connection, checked, key_id=key.key_id,
+                                  limit=config["max_nonces"])
             self._audit(connection, error.code if error else "nonce_consumed", key_id=key.key_id,
-                        nonce_hash=nonce_hash, request_hash=request_hash, request_ms=timestamp_ms, server_ms=server_ms)
-        # Both success and authenticated-denial audit commit before returning.
+                        nonce_hash=checked.nonce_hash, request_hash=request_hash,
+                        request_ms=timestamp_ms, server_ms=checked.server_ms)
+        # The legacy public API preserves its original commit and return contract.
         if error:
             raise error
 
@@ -342,33 +409,11 @@ class RequestAuthenticator:
             self._profile = profile
 
     def authenticate(self, headers, *, method, request_target, body):
-        names = ("Authorization", "X-UTA-Version", "X-UTA-Tenant", "X-UTA-Audience", "X-UTA-Key-Id",
-                 "X-UTA-Timestamp-Ms", "X-UTA-Nonce", "X-UTA-Signature")
-        values = {}
-        try:
-            for name in names:
-                found = headers.get_all(name, []) if hasattr(headers, "get_all") else ([headers[name]] if name in headers else [])
-                if len(found) != 1 or not isinstance(found[0], str) or len(found[0]) > 256:
-                    raise ValueError("missing or duplicate signing header")
-                values[name] = found[0]
-            if values["Authorization"].lower() != _AUTH_HEADER.lower() or values["X-UTA-Version"] != "1":
-                raise ValueError("unsupported authentication profile")
-            timestamp = values["X-UTA-Timestamp-Ms"]
-            if not re.fullmatch(r"0|[1-9][0-9]{0,18}", timestamp, re.ASCII) or not _HEX.fullmatch(values["X-UTA-Signature"]):
-                raise ValueError("invalid signing field")
-            timestamp = int(timestamp)
-            with self._lock:
-                profile = self._profile
-                key = next((key for key in profile.keys if key.key_id == values["X-UTA-Key-Id"]), None)
-            canonical = canonical_request(tenant_id=values["X-UTA-Tenant"], audience=values["X-UTA-Audience"],
-                key_id=values["X-UTA-Key-Id"], timestamp_ms=timestamp, nonce=values["X-UTA-Nonce"],
-                method=method, request_target=request_target, body=body)
-        except (ValueError, TypeError, KeyError):
-            raise SigningError("signature_required", "valid HMAC request authentication is required") from None
-        expected = hmac.new(key.secret if key is not None else b"\0" * 32, canonical, hashlib.sha256).hexdigest()
-        matched = hmac.compare_digest(expected, values["X-UTA-Signature"])
-        if not matched or key is None or (values["X-UTA-Tenant"], values["X-UTA-Audience"]) != (profile.tenant_id, profile.audience):
-            raise SigningError("invalid_signature", "request signature is invalid")
-        self.store.consume(key, timestamp_ms=timestamp, nonce=values["X-UTA-Nonce"],
-                           request_hash=hashlib.sha256(canonical).hexdigest(), clock_ms=self.clock_ms)
-        return key.principal()
+        with self._lock:
+            profile = self._profile
+        verified = _verify_request(profile, headers, method=method,
+                                   request_target=request_target, body=body)
+        self.store.consume(verified.key, timestamp_ms=verified.timestamp_ms,
+                           nonce=verified.nonce, request_hash=verified.request_hash,
+                           clock_ms=self.clock_ms)
+        return verified.key.principal()
