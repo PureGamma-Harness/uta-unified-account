@@ -1,0 +1,2064 @@
+{
+  "analysis_script_sha256": "f4910908ef668e73497bf5aced9f337c88c5f932b42b39865b97bf4628c8a05b",
+  "financial_session_approved": false,
+  "kind": "read_only_existing_profile_attribution",
+  "new_workload_executed": false,
+  "original_manifest_sha256": "5498aff185ecc5613c719fbea23166fe1b8048a4546598341fb35b75b86107f6",
+  "original_source": "7200097ce9f92fa678907bee9a99933f60d65bc3",
+  "performance_improvement_measured": false,
+  "production_approved": false,
+  "profiles": [
+    {
+      "close_outside_transaction_scope": [
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            273,
+            "_state"
+          ],
+          "calls": 224,
+          "cumulative_profile_seconds": 0.008581805000000001,
+          "primitive_calls": 224,
+          "self_profile_seconds": 0.008581805000000001
+        },
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            419,
+            "_batch_funding_claims"
+          ],
+          "calls": 217,
+          "cumulative_profile_seconds": 0.006624876,
+          "primitive_calls": 217,
+          "self_profile_seconds": 0.006624876
+        },
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            688,
+            "_open_router_control"
+          ],
+          "calls": 2,
+          "cumulative_profile_seconds": 8.207e-05,
+          "primitive_calls": 2,
+          "self_profile_seconds": 8.207e-05
+        }
+      ],
+      "connection_setup_sql": [
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            130,
+            "_connect"
+          ],
+          "calls": 4134,
+          "cumulative_profile_seconds": 0.865927627,
+          "primitive_calls": 4134,
+          "self_profile_seconds": 0.865927627
+        }
+      ],
+      "function_count": 661,
+      "metrics": {
+        "admission": {
+          "calls": 88,
+          "cumulative_profile_seconds": 0.364103907,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            734,
+            "_admit_order"
+          ],
+          "primitive_calls": 88,
+          "self_profile_seconds": 0.003716776
+        },
+        "connection_open": {
+          "calls": 1037,
+          "cumulative_profile_seconds": 1.021441529,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            130,
+            "_connect"
+          ],
+          "primitive_calls": 1037,
+          "self_profile_seconds": 0.01958936
+        },
+        "control_schema_validation": {
+          "calls": 2068,
+          "cumulative_profile_seconds": 0.6428748510000001,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            94,
+            "_verify_control_schema"
+          ],
+          "primitive_calls": 2068,
+          "self_profile_seconds": 0.170652026
+        },
+        "data_guard_validation": {
+          "calls": 2919,
+          "cumulative_profile_seconds": 1.725315962,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            241,
+            "_verify_data_guards"
+          ],
+          "primitive_calls": 2919,
+          "self_profile_seconds": 0.500099045
+        },
+        "guard_before_commit": {
+          "calls": 1037,
+          "cumulative_profile_seconds": 1.730493024,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            523,
+            "before_commit"
+          ],
+          "primitive_calls": 1037,
+          "self_profile_seconds": 0.041009707
+        },
+        "guard_constructor": {
+          "calls": 1037,
+          "cumulative_profile_seconds": 1.1227216130000002,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            405,
+            "__init__"
+          ],
+          "primitive_calls": 1037,
+          "self_profile_seconds": 0.033535016
+        },
+        "json_deserialization": {
+          "calls": 2653,
+          "cumulative_profile_seconds": 0.056688827000000004,
+          "function": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+            299,
+            "loads"
+          ],
+          "primitive_calls": 2653,
+          "self_profile_seconds": 0.010844014
+        },
+        "json_serialization": {
+          "calls": 4630,
+          "cumulative_profile_seconds": 0.060102600000000006,
+          "function": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+            183,
+            "dumps"
+          ],
+          "primitive_calls": 4630,
+          "self_profile_seconds": 0.010687941000000001
+        },
+        "queue_processing": {
+          "calls": 187,
+          "cumulative_profile_seconds": 1.877135167,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+            307,
+            "process_one"
+          ],
+          "primitive_calls": 187,
+          "self_profile_seconds": 0.005679436
+        },
+        "risk": {
+          "calls": 861,
+          "cumulative_profile_seconds": 0.753059824,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            481,
+            "_risk"
+          ],
+          "primitive_calls": 861,
+          "self_profile_seconds": 0.043119277000000004
+        },
+        "sqlite_close": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                273,
+                "_state"
+              ],
+              "calls": 224,
+              "cumulative_profile_seconds": 0.008581805000000001,
+              "primitive_calls": 224,
+              "self_profile_seconds": 0.008581805000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                419,
+                "_batch_funding_claims"
+              ],
+              "calls": 217,
+              "cumulative_profile_seconds": 0.006624876,
+              "primitive_calls": 217,
+              "self_profile_seconds": 0.006624876
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                688,
+                "_open_router_control"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 8.207e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 8.207e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 1037,
+              "cumulative_profile_seconds": 0.58443694,
+              "primitive_calls": 1037,
+              "self_profile_seconds": 0.58443694
+            }
+          ],
+          "calls": 1480,
+          "cumulative_profile_seconds": 0.5997256910000001,
+          "function": [
+            "~",
+            0,
+            "<method 'close' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 1480,
+          "self_profile_seconds": 0.5997256910000001
+        },
+        "sqlite_commit": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 1037,
+              "cumulative_profile_seconds": 1.1993592720000001,
+              "primitive_calls": 1037,
+              "self_profile_seconds": 1.199231065
+            }
+          ],
+          "calls": 1037,
+          "cumulative_profile_seconds": 1.1993592720000001,
+          "function": [
+            "~",
+            0,
+            "<method 'commit' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 1037,
+          "self_profile_seconds": 1.199231065
+        },
+        "sqlite_execute": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                35,
+                "__init__"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 9.384e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 8.743e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                56,
+                "_schema"
+              ],
+              "calls": 13,
+              "cumulative_profile_seconds": 0.000460813,
+              "primitive_calls": 13,
+              "self_profile_seconds": 0.00040493100000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                130,
+                "_debt"
+              ],
+              "calls": 49,
+              "cumulative_profile_seconds": 7.525400000000001e-05,
+              "primitive_calls": 49,
+              "self_profile_seconds": 7.4224e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                382,
+                "_check_schema"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 6.129e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 5.548e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                388,
+                "_verify"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.000103152,
+              "primitive_calls": 4,
+              "self_profile_seconds": 9.811200000000001e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                190,
+                "_insert"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 4.7009000000000003e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 4.5226000000000004e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                198,
+                "install"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 2.334e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 2.334e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                244,
+                "validate"
+              ],
+              "calls": 6060,
+              "cumulative_profile_seconds": 0.102095445,
+              "primitive_calls": 6060,
+              "self_profile_seconds": 0.09300720900000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                262,
+                "archive_market"
+              ],
+              "calls": 8,
+              "cumulative_profile_seconds": 0.002966704,
+              "primitive_calls": 8,
+              "self_profile_seconds": 0.0020835510000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                275,
+                "market_ref"
+              ],
+              "calls": 2264,
+              "cumulative_profile_seconds": 0.026174709,
+              "primitive_calls": 2264,
+              "self_profile_seconds": 0.024728973
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                290,
+                "record"
+              ],
+              "calls": 75,
+              "cumulative_profile_seconds": 0.019335754,
+              "primitive_calls": 75,
+              "self_profile_seconds": 0.008978028
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                175,
+                "_existing"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 3.468e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 3.2708e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                188,
+                "_validate_existing"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.000111933,
+              "primitive_calls": 4,
+              "self_profile_seconds": 0.000105573
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                307,
+                "process_one"
+              ],
+              "calls": 634,
+              "cumulative_profile_seconds": 0.059988820000000005,
+              "primitive_calls": 634,
+              "self_profile_seconds": 0.045388830000000005
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                226,
+                "_read_audit_capability"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 8.563000000000001e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 7.32e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                265,
+                "_record_process"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 1.5994e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 1.5994e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                688,
+                "__init__"
+              ],
+              "calls": 3,
+              "cumulative_profile_seconds": 3.6724e-05,
+              "primitive_calls": 3,
+              "self_profile_seconds": 3.1666000000000005e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/matching.py",
+                38,
+                "__init__"
+              ],
+              "calls": 7,
+              "cumulative_profile_seconds": 0.00029032900000000003,
+              "primitive_calls": 7,
+              "self_profile_seconds": 0.000255188
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/matching.py",
+                89,
+                "match_once"
+              ],
+              "calls": 29,
+              "cumulative_profile_seconds": 0.001145502,
+              "primitive_calls": 29,
+              "self_profile_seconds": 0.0009782900000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                111,
+                "__init__"
+              ],
+              "calls": 5,
+              "cumulative_profile_seconds": 0.000264398,
+              "primitive_calls": 5,
+              "self_profile_seconds": 7.289400000000001e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                183,
+                "_claim_authority"
+              ],
+              "calls": 5,
+              "cumulative_profile_seconds": 0.00011867600000000001,
+              "primitive_calls": 5,
+              "self_profile_seconds": 0.00011241900000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                203,
+                "_schema"
+              ],
+              "calls": 16,
+              "cumulative_profile_seconds": 0.000166254,
+              "primitive_calls": 16,
+              "self_profile_seconds": 0.000132616
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                283,
+                "_event"
+              ],
+              "calls": 86,
+              "cumulative_profile_seconds": 0.012591529,
+              "primitive_calls": 86,
+              "self_profile_seconds": 0.002836345
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                297,
+                "_halted"
+              ],
+              "calls": 313,
+              "cumulative_profile_seconds": 0.002801042,
+              "primitive_calls": 313,
+              "self_profile_seconds": 0.002676158
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                340,
+                "_locked_assets"
+              ],
+              "calls": 1011,
+              "cumulative_profile_seconds": 0.024606215,
+              "primitive_calls": 1011,
+              "self_profile_seconds": 0.023717759
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                362,
+                "_require_account"
+              ],
+              "calls": 2521,
+              "cumulative_profile_seconds": 0.022000732000000002,
+              "primitive_calls": 2521,
+              "self_profile_seconds": 0.020987474000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                369,
+                "_bump"
+              ],
+              "calls": 150,
+              "cumulative_profile_seconds": 0.010725686,
+              "primitive_calls": 150,
+              "self_profile_seconds": 0.004394671
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                374,
+                "_market"
+              ],
+              "calls": 1057,
+              "cumulative_profile_seconds": 0.009645237000000001,
+              "primitive_calls": 1057,
+              "self_profile_seconds": 0.008801496
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                406,
+                "_positions"
+              ],
+              "calls": 1797,
+              "cumulative_profile_seconds": 0.020565958000000002,
+              "primitive_calls": 1797,
+              "self_profile_seconds": 0.019145057
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                410,
+                "_live_orders"
+              ],
+              "calls": 1797,
+              "cumulative_profile_seconds": 0.047653776,
+              "primitive_calls": 1797,
+              "self_profile_seconds": 0.044020726
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                481,
+                "_risk"
+              ],
+              "calls": 861,
+              "cumulative_profile_seconds": 0.012518549,
+              "primitive_calls": 861,
+              "self_profile_seconds": 0.011322296
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                569,
+                "_audit_state"
+              ],
+              "calls": 300,
+              "cumulative_profile_seconds": 0.003268744,
+              "primitive_calls": 300,
+              "self_profile_seconds": 0.0029166780000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                628,
+                "_publish_market"
+              ],
+              "calls": 20,
+              "cumulative_profile_seconds": 0.001244784,
+              "primitive_calls": 20,
+              "self_profile_seconds": 0.000580612
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                734,
+                "_admit_order"
+              ],
+              "calls": 238,
+              "cumulative_profile_seconds": 0.015998356000000002,
+              "primitive_calls": 238,
+              "self_profile_seconds": 0.008369656000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                793,
+                "_require_unfrozen"
+              ],
+              "calls": 75,
+              "cumulative_profile_seconds": 0.0011572700000000002,
+              "primitive_calls": 75,
+              "self_profile_seconds": 0.0010706650000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1026,
+                "_liquidation_state"
+              ],
+              "calls": 711,
+              "cumulative_profile_seconds": 0.169919532,
+              "primitive_calls": 711,
+              "self_profile_seconds": 0.055694891
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1042,
+                "supervise_account"
+              ],
+              "calls": 1422,
+              "cumulative_profile_seconds": 0.028621887000000002,
+              "primitive_calls": 1422,
+              "self_profile_seconds": 0.025731433
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1209,
+                "_set_kill_switch"
+              ],
+              "calls": 15,
+              "cumulative_profile_seconds": 0.001479845,
+              "primitive_calls": 15,
+              "self_profile_seconds": 0.00042105
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                62,
+                "transaction"
+              ],
+              "calls": 1021,
+              "cumulative_profile_seconds": 0.021560081000000002,
+              "primitive_calls": 1021,
+              "self_profile_seconds": 0.018379782
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                87,
+                "_check_read_identity"
+              ],
+              "calls": 13,
+              "cumulative_profile_seconds": 0.00021432300000000001,
+              "primitive_calls": 13,
+              "self_profile_seconds": 0.00018022100000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                273,
+                "_state"
+              ],
+              "calls": 672,
+              "cumulative_profile_seconds": 0.045375881,
+              "primitive_calls": 672,
+              "self_profile_seconds": 0.045375881
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                419,
+                "_batch_funding_claims"
+              ],
+              "calls": 434,
+              "cumulative_profile_seconds": 0.03069935,
+              "primitive_calls": 434,
+              "self_profile_seconds": 0.03069935
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                448,
+                "_batch_reconcile_shard"
+              ],
+              "calls": 271,
+              "cumulative_profile_seconds": 0.012800001,
+              "primitive_calls": 271,
+              "self_profile_seconds": 0.012377921
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                688,
+                "_open_router_control"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.000519453,
+              "primitive_calls": 4,
+              "self_profile_seconds": 0.000519453
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                770,
+                "_reconcile"
+              ],
+              "calls": 136,
+              "cumulative_profile_seconds": 0.001355931,
+              "primitive_calls": 136,
+              "self_profile_seconds": 0.001275981
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                130,
+                "_connect"
+              ],
+              "calls": 4134,
+              "cumulative_profile_seconds": 0.865927627,
+              "primitive_calls": 4134,
+              "self_profile_seconds": 0.865927627
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 1044,
+              "cumulative_profile_seconds": 0.40947510200000004,
+              "primitive_calls": 1044,
+              "self_profile_seconds": 0.40947510200000004
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                216,
+                "_using"
+              ],
+              "calls": 1111,
+              "cumulative_profile_seconds": 0.007619449,
+              "primitive_calls": 1111,
+              "self_profile_seconds": 0.005851546
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                286,
+                "__init__"
+              ],
+              "calls": 14,
+              "cumulative_profile_seconds": 0.00010052700000000001,
+              "primitive_calls": 14,
+              "self_profile_seconds": 8.6835e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                419,
+                "balance"
+              ],
+              "calls": 1110,
+              "cumulative_profile_seconds": 0.018179360000000002,
+              "primitive_calls": 1110,
+              "self_profile_seconds": 0.015580131
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                437,
+                "verify"
+              ],
+              "calls": 56,
+              "cumulative_profile_seconds": 0.000821567,
+              "primitive_calls": 56,
+              "self_profile_seconds": 0.00080796
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/supervisor.py",
+                17,
+                "__init__"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 0.00016410100000000002,
+              "primitive_calls": 2,
+              "self_profile_seconds": 0.00015411800000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/supervisor.py",
+                37,
+                "run_once"
+              ],
+              "calls": 101,
+              "cumulative_profile_seconds": 0.003921169,
+              "primitive_calls": 101,
+              "self_profile_seconds": 0.002208247
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                94,
+                "_verify_control_schema"
+              ],
+              "calls": 2068,
+              "cumulative_profile_seconds": 0.014773889,
+              "primitive_calls": 2068,
+              "self_profile_seconds": 0.013319689000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                147,
+                "_load"
+              ],
+              "calls": 11376,
+              "cumulative_profile_seconds": 0.144063345,
+              "primitive_calls": 11376,
+              "self_profile_seconds": 0.133405362
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                222,
+                "_data_tables"
+              ],
+              "calls": 2919,
+              "cumulative_profile_seconds": 0.014773077,
+              "primitive_calls": 2919,
+              "self_profile_seconds": 0.014411858000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                241,
+                "_verify_data_guards"
+              ],
+              "calls": 5838,
+              "cumulative_profile_seconds": 0.079939508,
+              "primitive_calls": 5838,
+              "self_profile_seconds": 0.078317142
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                260,
+                "_install_table_guards"
+              ],
+              "calls": 28,
+              "cumulative_profile_seconds": 0.000740978,
+              "primitive_calls": 28,
+              "self_profile_seconds": 0.0007352000000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                341,
+                "_event"
+              ],
+              "calls": 8,
+              "cumulative_profile_seconds": 0.00023530500000000002,
+              "primitive_calls": 8,
+              "self_profile_seconds": 0.000229676
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                345,
+                "acquire"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 6.407400000000001e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 5.8919e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                365,
+                "renew"
+              ],
+              "calls": 6,
+              "cumulative_profile_seconds": 0.00016441,
+              "primitive_calls": 6,
+              "self_profile_seconds": 0.00014530400000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                377,
+                "release"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 2.9564e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 2.6431e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                523,
+                "before_commit"
+              ],
+              "calls": 851,
+              "cumulative_profile_seconds": 0.025280112,
+              "primitive_calls": 851,
+              "self_profile_seconds": 0.024793189
+            }
+          ],
+          "calls": 54778,
+          "cumulative_profile_seconds": 2.2970558860000003,
+          "function": [
+            "~",
+            0,
+            "<method 'execute' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 54778,
+          "self_profile_seconds": 2.083600269
+        },
+        "supervision": {
+          "calls": 711,
+          "cumulative_profile_seconds": 5.847457071,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            1042,
+            "supervise_account"
+          ],
+          "primitive_calls": 711,
+          "self_profile_seconds": 0.026349787000000003
+        },
+        "transaction_scope": {
+          "calls": 2074,
+          "cumulative_profile_seconds": 6.112745348000001,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            180,
+            "_role_transaction"
+          ],
+          "primitive_calls": 2074,
+          "self_profile_seconds": 0.019876244
+        }
+      },
+      "path": "benchmarks/results/20261117-managed-corrected-7200097/raw/P1/profiles/worker-0-pid-57001.prof",
+      "per_role_connect_close_seconds": null,
+      "per_role_timing_gap": "All role opens/closes have the same _role_transaction caller; cProfile does not preserve the role argument or individual invocations. No financial-only timing allocation is established.",
+      "role_context_count_estimates": {
+        "control": {
+          "estimated_completed_contexts": 8,
+          "generator_resumes": 16
+        },
+        "financial": {
+          "estimated_completed_contexts": 1022,
+          "generator_resumes": 2044
+        },
+        "inbox": {
+          "estimated_completed_contexts": 0,
+          "generator_resumes": 0
+        },
+        "read": {
+          "estimated_completed_contexts": 7,
+          "generator_resumes": 14
+        }
+      },
+      "role_estimate_assumption": "720 storage wrappers each yield once; two generator resumes estimate a completed scope. Counts are checked against observed connects; they are not per-role timing traces.",
+      "role_estimate_reconciles_to_connect_count": true,
+      "self_exceeds_cumulative": [],
+      "sha256": "7062f121e7ebf8f1d7c7bc4f762b551d94c7781dd7170dcf7d7611f78054eabc",
+      "total_profile_self_seconds": 10.49405152200001
+    },
+    {
+      "close_outside_transaction_scope": [
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            273,
+            "_state"
+          ],
+          "calls": 256,
+          "cumulative_profile_seconds": 0.012937296000000001,
+          "primitive_calls": 256,
+          "self_profile_seconds": 0.012937296000000001
+        },
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            419,
+            "_batch_funding_claims"
+          ],
+          "calls": 248,
+          "cumulative_profile_seconds": 0.008594358,
+          "primitive_calls": 248,
+          "self_profile_seconds": 0.008594358
+        },
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/sharding.py",
+            688,
+            "_open_router_control"
+          ],
+          "calls": 2,
+          "cumulative_profile_seconds": 7.855600000000001e-05,
+          "primitive_calls": 2,
+          "self_profile_seconds": 7.855600000000001e-05
+        }
+      ],
+      "connection_setup_sql": [
+        {
+          "caller": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            130,
+            "_connect"
+          ],
+          "calls": 3822,
+          "cumulative_profile_seconds": 0.815897807,
+          "primitive_calls": 3822,
+          "self_profile_seconds": 0.815897807
+        }
+      ],
+      "function_count": 661,
+      "metrics": {
+        "admission": {
+          "calls": 91,
+          "cumulative_profile_seconds": 0.437516473,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            734,
+            "_admit_order"
+          ],
+          "primitive_calls": 91,
+          "self_profile_seconds": 0.004043965
+        },
+        "connection_open": {
+          "calls": 959,
+          "cumulative_profile_seconds": 0.9540672440000001,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            130,
+            "_connect"
+          ],
+          "primitive_calls": 959,
+          "self_profile_seconds": 0.016124369
+        },
+        "control_schema_validation": {
+          "calls": 1912,
+          "cumulative_profile_seconds": 0.63395464,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            94,
+            "_verify_control_schema"
+          ],
+          "primitive_calls": 1912,
+          "self_profile_seconds": 0.192069766
+        },
+        "data_guard_validation": {
+          "calls": 2647,
+          "cumulative_profile_seconds": 1.631021357,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            241,
+            "_verify_data_guards"
+          ],
+          "primitive_calls": 2647,
+          "self_profile_seconds": 0.518599409
+        },
+        "guard_before_commit": {
+          "calls": 959,
+          "cumulative_profile_seconds": 1.6157020260000001,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            523,
+            "before_commit"
+          ],
+          "primitive_calls": 959,
+          "self_profile_seconds": 0.042188099
+        },
+        "guard_constructor": {
+          "calls": 959,
+          "cumulative_profile_seconds": 1.117631413,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+            405,
+            "__init__"
+          ],
+          "primitive_calls": 959,
+          "self_profile_seconds": 0.034480574
+        },
+        "json_deserialization": {
+          "calls": 2518,
+          "cumulative_profile_seconds": 0.054014361000000004,
+          "function": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+            299,
+            "loads"
+          ],
+          "primitive_calls": 2518,
+          "self_profile_seconds": 0.010146618000000001
+        },
+        "json_serialization": {
+          "calls": 4405,
+          "cumulative_profile_seconds": 0.065526688,
+          "function": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py",
+            183,
+            "dumps"
+          ],
+          "primitive_calls": 4405,
+          "self_profile_seconds": 0.009684532000000001
+        },
+        "queue_processing": {
+          "calls": 213,
+          "cumulative_profile_seconds": 2.070623055,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+            307,
+            "process_one"
+          ],
+          "primitive_calls": 213,
+          "self_profile_seconds": 0.0059145230000000005
+        },
+        "risk": {
+          "calls": 758,
+          "cumulative_profile_seconds": 0.6959674130000001,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            481,
+            "_risk"
+          ],
+          "primitive_calls": 758,
+          "self_profile_seconds": 0.047791388000000004
+        },
+        "sqlite_close": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                273,
+                "_state"
+              ],
+              "calls": 256,
+              "cumulative_profile_seconds": 0.012937296000000001,
+              "primitive_calls": 256,
+              "self_profile_seconds": 0.012937296000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                419,
+                "_batch_funding_claims"
+              ],
+              "calls": 248,
+              "cumulative_profile_seconds": 0.008594358,
+              "primitive_calls": 248,
+              "self_profile_seconds": 0.008594358
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                688,
+                "_open_router_control"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 7.855600000000001e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 7.855600000000001e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 959,
+              "cumulative_profile_seconds": 0.522932147,
+              "primitive_calls": 959,
+              "self_profile_seconds": 0.522932147
+            }
+          ],
+          "calls": 1465,
+          "cumulative_profile_seconds": 0.5445423570000001,
+          "function": [
+            "~",
+            0,
+            "<method 'close' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 1465,
+          "self_profile_seconds": 0.5445423570000001
+        },
+        "sqlite_commit": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 959,
+              "cumulative_profile_seconds": 1.1747541270000001,
+              "primitive_calls": 959,
+              "self_profile_seconds": 1.174613678
+            }
+          ],
+          "calls": 959,
+          "cumulative_profile_seconds": 1.1747541270000001,
+          "function": [
+            "~",
+            0,
+            "<method 'commit' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 959,
+          "self_profile_seconds": 1.174613678
+        },
+        "sqlite_execute": {
+          "callers": [
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                35,
+                "__init__"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 9.464000000000001e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 8.743e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                56,
+                "_schema"
+              ],
+              "calls": 13,
+              "cumulative_profile_seconds": 0.000660698,
+              "primitive_calls": 13,
+              "self_profile_seconds": 0.00060004
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                130,
+                "_debt"
+              ],
+              "calls": 51,
+              "cumulative_profile_seconds": 9.793800000000001e-05,
+              "primitive_calls": 51,
+              "self_profile_seconds": 9.6687e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                382,
+                "_check_schema"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 6.039e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 5.359000000000001e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/credit.py",
+                388,
+                "_verify"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.000277058,
+              "primitive_calls": 4,
+              "self_profile_seconds": 0.00027075600000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                190,
+                "_insert"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 5.7906000000000004e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 5.5993000000000004e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                198,
+                "install"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 2.9240000000000003e-06,
+              "primitive_calls": 1,
+              "self_profile_seconds": 2.9240000000000003e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                244,
+                "validate"
+              ],
+              "calls": 5705,
+              "cumulative_profile_seconds": 0.109523721,
+              "primitive_calls": 5705,
+              "self_profile_seconds": 0.100573941
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                262,
+                "archive_market"
+              ],
+              "calls": 8,
+              "cumulative_profile_seconds": 0.0008269740000000001,
+              "primitive_calls": 8,
+              "self_profile_seconds": 0.000551106
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                275,
+                "market_ref"
+              ],
+              "calls": 2100,
+              "cumulative_profile_seconds": 0.017627244,
+              "primitive_calls": 2100,
+              "self_profile_seconds": 0.016428216000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/decision_audit.py",
+                290,
+                "record"
+              ],
+              "calls": 86,
+              "cumulative_profile_seconds": 0.014458501,
+              "primitive_calls": 86,
+              "self_profile_seconds": 0.007784555
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                175,
+                "_existing"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 2.5839e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 2.4298e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                188,
+                "_validate_existing"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.00011296500000000001,
+              "primitive_calls": 4,
+              "self_profile_seconds": 0.00010593100000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_commands.py",
+                307,
+                "process_one"
+              ],
+              "calls": 669,
+              "cumulative_profile_seconds": 0.049747098000000003,
+              "primitive_calls": 669,
+              "self_profile_seconds": 0.038340369
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                226,
+                "_read_audit_capability"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 1.0335e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 8.202e-06
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                265,
+                "_record_process"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 1.1938000000000002e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 1.1938000000000002e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/durable_process.py",
+                688,
+                "__init__"
+              ],
+              "calls": 3,
+              "cumulative_profile_seconds": 3.7506e-05,
+              "primitive_calls": 3,
+              "self_profile_seconds": 3.2118e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/matching.py",
+                38,
+                "__init__"
+              ],
+              "calls": 7,
+              "cumulative_profile_seconds": 0.00031203700000000003,
+              "primitive_calls": 7,
+              "self_profile_seconds": 0.00027646800000000004
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/matching.py",
+                89,
+                "match_once"
+              ],
+              "calls": 34,
+              "cumulative_profile_seconds": 0.0039306060000000006,
+              "primitive_calls": 34,
+              "self_profile_seconds": 0.0010600520000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                111,
+                "__init__"
+              ],
+              "calls": 5,
+              "cumulative_profile_seconds": 0.000411103,
+              "primitive_calls": 5,
+              "self_profile_seconds": 0.00017493400000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                183,
+                "_claim_authority"
+              ],
+              "calls": 5,
+              "cumulative_profile_seconds": 6.943200000000001e-05,
+              "primitive_calls": 5,
+              "self_profile_seconds": 6.3402e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                203,
+                "_schema"
+              ],
+              "calls": 16,
+              "cumulative_profile_seconds": 0.000100618,
+              "primitive_calls": 16,
+              "self_profile_seconds": 7.7698e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                283,
+                "_event"
+              ],
+              "calls": 97,
+              "cumulative_profile_seconds": 0.008729707,
+              "primitive_calls": 97,
+              "self_profile_seconds": 0.003192068
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                297,
+                "_halted"
+              ],
+              "calls": 349,
+              "cumulative_profile_seconds": 0.002639125,
+              "primitive_calls": 349,
+              "self_profile_seconds": 0.002508246
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                340,
+                "_locked_assets"
+              ],
+              "calls": 930,
+              "cumulative_profile_seconds": 0.028870044,
+              "primitive_calls": 930,
+              "self_profile_seconds": 0.028056681000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                362,
+                "_require_account"
+              ],
+              "calls": 2193,
+              "cumulative_profile_seconds": 0.018946536,
+              "primitive_calls": 2193,
+              "self_profile_seconds": 0.017936853000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                369,
+                "_bump"
+              ],
+              "calls": 172,
+              "cumulative_profile_seconds": 0.011105064000000001,
+              "primitive_calls": 172,
+              "self_profile_seconds": 0.00393906
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                374,
+                "_market"
+              ],
+              "calls": 964,
+              "cumulative_profile_seconds": 0.008558302,
+              "primitive_calls": 964,
+              "self_profile_seconds": 0.007732035000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                406,
+                "_positions"
+              ],
+              "calls": 1602,
+              "cumulative_profile_seconds": 0.015452755,
+              "primitive_calls": 1602,
+              "self_profile_seconds": 0.014219564
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                410,
+                "_live_orders"
+              ],
+              "calls": 1602,
+              "cumulative_profile_seconds": 0.0608191,
+              "primitive_calls": 1602,
+              "self_profile_seconds": 0.057728365000000004
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                481,
+                "_risk"
+              ],
+              "calls": 758,
+              "cumulative_profile_seconds": 0.012045491,
+              "primitive_calls": 758,
+              "self_profile_seconds": 0.010647525000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                569,
+                "_audit_state"
+              ],
+              "calls": 344,
+              "cumulative_profile_seconds": 0.003693093,
+              "primitive_calls": 344,
+              "self_profile_seconds": 0.0032556240000000004
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                628,
+                "_publish_market"
+              ],
+              "calls": 20,
+              "cumulative_profile_seconds": 0.000993432,
+              "primitive_calls": 20,
+              "self_profile_seconds": 0.00048682500000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                734,
+                "_admit_order"
+              ],
+              "calls": 263,
+              "cumulative_profile_seconds": 0.017817291000000002,
+              "primitive_calls": 263,
+              "self_profile_seconds": 0.008776859
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                793,
+                "_require_unfrozen"
+              ],
+              "calls": 86,
+              "cumulative_profile_seconds": 0.0016756870000000001,
+              "primitive_calls": 86,
+              "self_profile_seconds": 0.001546375
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1026,
+                "_liquidation_state"
+              ],
+              "calls": 586,
+              "cumulative_profile_seconds": 0.134871817,
+              "primitive_calls": 586,
+              "self_profile_seconds": 0.045534285
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1042,
+                "supervise_account"
+              ],
+              "calls": 1172,
+              "cumulative_profile_seconds": 0.020847604000000002,
+              "primitive_calls": 1172,
+              "self_profile_seconds": 0.018112003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/service.py",
+                1209,
+                "_set_kill_switch"
+              ],
+              "calls": 15,
+              "cumulative_profile_seconds": 0.001106147,
+              "primitive_calls": 15,
+              "self_profile_seconds": 0.000367984
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                62,
+                "transaction"
+              ],
+              "calls": 942,
+              "cumulative_profile_seconds": 0.023447796,
+              "primitive_calls": 942,
+              "self_profile_seconds": 0.018835092
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                87,
+                "_check_read_identity"
+              ],
+              "calls": 14,
+              "cumulative_profile_seconds": 0.000224775,
+              "primitive_calls": 14,
+              "self_profile_seconds": 0.000188924
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                273,
+                "_state"
+              ],
+              "calls": 768,
+              "cumulative_profile_seconds": 0.058676226000000005,
+              "primitive_calls": 768,
+              "self_profile_seconds": 0.058676226000000005
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                419,
+                "_batch_funding_claims"
+              ],
+              "calls": 496,
+              "cumulative_profile_seconds": 0.043729018,
+              "primitive_calls": 496,
+              "self_profile_seconds": 0.043729018
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                448,
+                "_batch_reconcile_shard"
+              ],
+              "calls": 289,
+              "cumulative_profile_seconds": 0.011266743000000001,
+              "primitive_calls": 289,
+              "self_profile_seconds": 0.010681983
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                688,
+                "_open_router_control"
+              ],
+              "calls": 4,
+              "cumulative_profile_seconds": 0.000473356,
+              "primitive_calls": 4,
+              "self_profile_seconds": 0.000473356
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/sharding.py",
+                770,
+                "_reconcile"
+              ],
+              "calls": 145,
+              "cumulative_profile_seconds": 0.001170419,
+              "primitive_calls": 145,
+              "self_profile_seconds": 0.0010860590000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                130,
+                "_connect"
+              ],
+              "calls": 3822,
+              "cumulative_profile_seconds": 0.815897807,
+              "primitive_calls": 3822,
+              "self_profile_seconds": 0.815897807
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                180,
+                "_role_transaction"
+              ],
+              "calls": 966,
+              "cumulative_profile_seconds": 0.32803289,
+              "primitive_calls": 966,
+              "self_profile_seconds": 0.32803289
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                216,
+                "_using"
+              ],
+              "calls": 1034,
+              "cumulative_profile_seconds": 0.007312636000000001,
+              "primitive_calls": 1034,
+              "self_profile_seconds": 0.0054246450000000005
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                286,
+                "__init__"
+              ],
+              "calls": 14,
+              "cumulative_profile_seconds": 0.000155858,
+              "primitive_calls": 14,
+              "self_profile_seconds": 0.000122416
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                419,
+                "balance"
+              ],
+              "calls": 1033,
+              "cumulative_profile_seconds": 0.014595399,
+              "primitive_calls": 1033,
+              "self_profile_seconds": 0.013421166
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/storage.py",
+                437,
+                "verify"
+              ],
+              "calls": 58,
+              "cumulative_profile_seconds": 0.005218428000000001,
+              "primitive_calls": 58,
+              "self_profile_seconds": 0.005202768
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/supervisor.py",
+                17,
+                "__init__"
+              ],
+              "calls": 2,
+              "cumulative_profile_seconds": 6.384400000000001e-05,
+              "primitive_calls": 2,
+              "self_profile_seconds": 5.4951e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/supervisor.py",
+                37,
+                "run_once"
+              ],
+              "calls": 113,
+              "cumulative_profile_seconds": 0.004148712000000001,
+              "primitive_calls": 113,
+              "self_profile_seconds": 0.0020665550000000003
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                94,
+                "_verify_control_schema"
+              ],
+              "calls": 1912,
+              "cumulative_profile_seconds": 0.017937006000000002,
+              "primitive_calls": 1912,
+              "self_profile_seconds": 0.016506751
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                147,
+                "_load"
+              ],
+              "calls": 10736,
+              "cumulative_profile_seconds": 0.13065632900000002,
+              "primitive_calls": 10736,
+              "self_profile_seconds": 0.117956295
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                222,
+                "_data_tables"
+              ],
+              "calls": 2647,
+              "cumulative_profile_seconds": 0.017897608000000002,
+              "primitive_calls": 2647,
+              "self_profile_seconds": 0.017526561
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                241,
+                "_verify_data_guards"
+              ],
+              "calls": 5294,
+              "cumulative_profile_seconds": 0.077920267,
+              "primitive_calls": 5294,
+              "self_profile_seconds": 0.076160608
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                260,
+                "_install_table_guards"
+              ],
+              "calls": 28,
+              "cumulative_profile_seconds": 0.0008002790000000001,
+              "primitive_calls": 28,
+              "self_profile_seconds": 0.0007941090000000001
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                341,
+                "_event"
+              ],
+              "calls": 9,
+              "cumulative_profile_seconds": 0.000122621,
+              "primitive_calls": 9,
+              "self_profile_seconds": 0.000116513
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                345,
+                "acquire"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 5.9758000000000006e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 5.4241000000000005e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                365,
+                "renew"
+              ],
+              "calls": 7,
+              "cumulative_profile_seconds": 0.00017478600000000002,
+              "primitive_calls": 7,
+              "self_profile_seconds": 0.00015279600000000002
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                377,
+                "release"
+              ],
+              "calls": 1,
+              "cumulative_profile_seconds": 2.5227e-05,
+              "primitive_calls": 1,
+              "self_profile_seconds": 2.1441e-05
+            },
+            {
+              "caller": [
+                "/workspace/uta-durable-final-7200097/uta/writer_fence.py",
+                523,
+                "before_commit"
+              ],
+              "calls": 735,
+              "cumulative_profile_seconds": 0.020353025,
+              "primitive_calls": 735,
+              "self_profile_seconds": 0.019864722
+            }
+          ],
+          "calls": 50942,
+          "cumulative_profile_seconds": 2.126849952,
+          "function": [
+            "~",
+            0,
+            "<method 'execute' of 'sqlite3.Connection' objects>"
+          ],
+          "primitive_calls": 50942,
+          "self_profile_seconds": 1.943641975
+        },
+        "supervision": {
+          "calls": 586,
+          "cumulative_profile_seconds": 5.031560533,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/service.py",
+            1042,
+            "supervise_account"
+          ],
+          "primitive_calls": 586,
+          "self_profile_seconds": 0.017244019000000003
+        },
+        "transaction_scope": {
+          "calls": 1918,
+          "cumulative_profile_seconds": 5.756021074,
+          "function": [
+            "/workspace/uta-durable-final-7200097/uta/storage.py",
+            180,
+            "_role_transaction"
+          ],
+          "primitive_calls": 1918,
+          "self_profile_seconds": 0.019888942
+        }
+      },
+      "path": "benchmarks/results/20261117-managed-corrected-7200097/raw/P1/profiles/worker-1-pid-57002.prof",
+      "per_role_connect_close_seconds": null,
+      "per_role_timing_gap": "All role opens/closes have the same _role_transaction caller; cProfile does not preserve the role argument or individual invocations. No financial-only timing allocation is established.",
+      "role_context_count_estimates": {
+        "control": {
+          "estimated_completed_contexts": 9,
+          "generator_resumes": 18
+        },
+        "financial": {
+          "estimated_completed_contexts": 943,
+          "generator_resumes": 1886
+        },
+        "inbox": {
+          "estimated_completed_contexts": 0,
+          "generator_resumes": 0
+        },
+        "read": {
+          "estimated_completed_contexts": 7,
+          "generator_resumes": 14
+        }
+      },
+      "role_estimate_assumption": "720 storage wrappers each yield once; two generator resumes estimate a completed scope. Counts are checked against observed connects; they are not per-role timing traces.",
+      "role_estimate_reconciles_to_connect_count": true,
+      "self_exceeds_cumulative": [],
+      "sha256": "45cd4cf3591f955f9c6b5b3451b3e517ffcbf320f103520f87bbf2d13124187f",
+      "total_profile_self_seconds": 10.486243990999997
+    },
+    {
+      "function_count": 317,
+      "path": "benchmarks/results/20261117-managed-corrected-7200097/raw/P1/profiles/dispatcher-0.prof",
+      "self_exceeds_cumulative": [
+        {
+          "cumulative_profile_seconds": 0.958090183,
+          "function": [
+            "~",
+            0,
+            "<method 'execute' of 'sqlite3.Connection' objects>"
+          ],
+          "self_profile_seconds": 1.8639430860000001
+        },
+        {
+          "cumulative_profile_seconds": 0.25742553900000004,
+          "function": [
+            "~",
+            0,
+            "<method 'fetchall' of 'sqlite3.Cursor' objects>"
+          ],
+          "self_profile_seconds": 0.267401518
+        },
+        {
+          "cumulative_profile_seconds": 0.041847878000000005,
+          "function": [
+            "~",
+            0,
+            "<method 'acquire' of '_thread.lock' objects>"
+          ],
+          "self_profile_seconds": 0.9983002630000001
+        },
+        {
+          "cumulative_profile_seconds": 0.056661688,
+          "function": [
+            "~",
+            0,
+            "<built-in method time.sleep>"
+          ],
+          "self_profile_seconds": 4.182021955000001
+        },
+        {
+          "cumulative_profile_seconds": 2.8011000000000003e-05,
+          "function": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py",
+            637,
+            "wait"
+          ],
+          "self_profile_seconds": 0.00720782
+        }
+      ],
+      "sha256": "fda00cdd9f705cdd540d1e1f99a42a40535cbeace1c6f3f49988b71263a00db8",
+      "total_profile_self_seconds": 9.948201085,
+      "use": "parent timing attribution excluded: mixed-thread clock anomalies"
+    }
+  ],
+  "runtime_changed": false,
+  "timing_policy": "self/cumulative include native waiting; nested cumulative values are never added as savings"
+}
