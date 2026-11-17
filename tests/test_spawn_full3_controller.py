@@ -28,6 +28,7 @@ class Full3ControllerPureTests(unittest.TestCase):
                   "unittest_passed": True}
         report.update({key: 0 for key in ("failures", "errors", "skipped", "expected_failures", "unexpected_successes")})
         report.update({key: True for key in ("source_unchanged", "tracked_source_clean_before", "tracked_source_clean_after")})
+        report.update(control.EXPECTED_RUNTIME["python310"])
         return report, dict(report), {"standard_runner_source_sha256": source}
 
     def test_exact_identity_allows_only_the_owned_group_signal(self):
@@ -82,6 +83,42 @@ class Full3ControllerPureTests(unittest.TestCase):
         self.assertFalse(control.validate_report({**report, "errors": False}, worker, pin, 0))
         self.assertFalse(control.validate_report(report, worker, pin, False))
 
+    def test_actual_python_or_sqlite_build_mismatch_is_rejected(self):
+        report, worker, pin = self.report()
+        self.assertFalse(control.validate_report({**report, "python": "3.10.22 changed build"}, worker, pin, 0))
+        self.assertFalse(control.validate_report({**report, "sqlite": "3.46.1"}, worker, pin, 0))
+
+    def test_loader_overrides_are_rejected_without_printing_values(self):
+        for key in control.LOADER_OVERRIDES:
+            with self.assertRaises(RuntimeError) as caught:
+                control.reject_loader_overrides({key: "synthetic-sensitive-path"})
+            self.assertNotIn("synthetic-sensitive-path", str(caught.exception))
+        control.reject_loader_overrides({"PYTHONPATH": "removed by child environment"})
+
+    def test_new_live_adopted_other_session_is_identified_before_reaper(self):
+        base = {"pid": 800001, "birth_ticks": 1, "boot_id": "test", "state": "S", "session": 800001}
+        live = {**base, "pid": 800002, "session": 800002}
+        zombie = {**base, "pid": 800003, "state": "Z"}
+        adopted = control.newly_adopted([base], [base, live, zombie])
+        self.assertEqual(adopted, [live, zombie])
+        self.assertEqual([row for row in adopted if row["state"] not in ("Z", "X")], [live])
+
+    def test_final_matrix_commit_and_end_close_count_toward_whole_budget(self):
+        clock, writes = SimpleNamespace(now=5.0), []
+        def save(path, value):
+            writes.append((path.name, value))
+            clock.now += 2
+        def sync():
+            clock.now += 1
+        with patch.object(control, "MATRIX_SECONDS", 10), patch.object(control.time, "monotonic", side_effect=lambda: clock.now), \
+                patch.object(control, "save", side_effect=save), patch.object(control, "sync_directory", side_effect=sync), \
+                patch.object(control, "digest", return_value="a" * 64):
+            result = control.finish_matrix([{"passed": True}] * 3, None, 0)
+        self.assertEqual(result, 1)
+        self.assertEqual(writes[0][1]["finalization"], "PROVISIONAL_REQUIRES_MATRIX_END")
+        self.assertEqual(writes[1][1]["matrix_commit_elapsed_seconds"], 8)
+        self.assertEqual(writes[-1][0], "matrix-deadline-unknown.json")
+
     def test_cleanup_group_failure_still_reaps_direct_child_and_closes_pidfd(self):
         original, process, helpers = self.identities()
         process.returncode = None
@@ -129,6 +166,32 @@ class Full3ControllerPureTests(unittest.TestCase):
         go.assert_not_called()
         kill.assert_called_once_with(203, control.signal.SIGKILL)
         process.wait.assert_called_once_with(timeout=2)
+
+    def test_delivered_go_then_write_error_keeps_original_supervisor_for_query(self):
+        original, process, _ = self.identities()
+        process.args, process.returncode = ["synthetic-controller"], None
+        process.wait = unittest.mock.Mock(return_value=-9)
+        delivered = []
+        def delivery_then_reply_loss(descriptor, payload):
+            delivered.append((descriptor, payload))
+            raise OSError("modeled reply loss after delivery")
+        with TemporaryDirectory() as directory:
+            output = Path(directory)
+            with patch.object(control, "OUTPUT", output), patch.object(control.os, "pipe", return_value=(201, 202)), \
+                    patch.object(control.os, "close"), \
+                    patch.object(control.os, "write", side_effect=delivery_then_reply_loss), \
+                    patch.object(control.os, "pidfd_open", return_value=203), \
+                    patch.object(control, "identity", return_value=original), \
+                    patch.object(control.subprocess, "Popen", return_value=process), \
+                    patch.object(control.signal, "pidfd_send_signal") as kill:
+                with self.assertRaises(OSError):
+                    control.launch_detached({})
+            value = __import__("json").loads((output / "launch-unknown.json").read_text())
+        self.assertTrue(value["go_may_have_been_delivered"])
+        self.assertFalse(value["go_released"])
+        self.assertEqual(delivered, [(202, b"G")])
+        kill.assert_not_called()
+        process.wait.assert_not_called()
 
     def test_commands_keep_standard_runner_and_runtime_order(self):
         self.assertEqual([label for label, _, _ in control.RUNTIMES], ["python310", "python312", "python313-sqlite346"])

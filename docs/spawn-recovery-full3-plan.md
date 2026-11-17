@@ -58,6 +58,11 @@ Inherited UTA_* overrides must be absent; PYTHONPATH is removed for each QA
 child; PYTHONDONTWRITEBYTECODE=1 is set. The remaining host environment is
 inherited, without printing secret-bearing values. No H0 private-case or legacy
 source override is added to this different candidate.
+PYTHONHOME, LD_LIBRARY_PATH, LD_PRELOAD, PYTHONUSERBASE and PYTHONSTARTUP must
+also be absent/nonempty overrides are rejected before admission and execution.
+The actual full Python build string and SQLite version in each summary must
+match the three real historical summary values retained in runtime-build
+provenance, rather than accepting a label or binary digest alone.
 
 Each invocation uses the candidate's unchanged standard run_validation.py,
 including its existing full unittest discovery, real OS raw-descriptor capture,
@@ -86,6 +91,12 @@ and the supervisor performs no QA. Pre-GO failures pin/kill/reap only the new
 supervisor and preserve UNKNOWN. The supervisor verifies the pipe handshake
 and its own source before writing supervisor-ready.json and starting QA. A later
 PID1 zombie after its normal exit remains an explicit host-reaper boundary.
+Immediately before attempting the pipe write the launcher records internally
+that GO may have been delivered. A write with an unknown outcome preserves that
+exact supervisor and its saved PID/birth for status lookup; it never treats the
+unknown as pre-GO, kills a possibly running supervisor, resends GO or starts a
+second matrix. If no byte arrived, EOF rejects execution; if it arrived, the
+persistent supervisor retains its complete budget and cleanup responsibility.
 
 The original H0 admission actually recorded 900s per full suite, so this plan
 retains 900s per runtime. It does not substitute the observed ~425s duration
@@ -104,6 +115,11 @@ absence of protected PIDs. The source-pinned original helper's group probes
 and orphan-reaper code are reused. TERM/KILL allowance is two seconds each;
 orphan-reaper allowance is five seconds. Exceptions preserve UNKNOWN and do
 not start another runtime. No source DB or pre-existing process is adopted.
+Before the unchanged reaper exits, new adopted direct children are observed
+against a baseline taken after helper entry. Any still-live adopted process,
+including one in another session, makes the runtime UNKNOWN before the helper
+can kill it. Zombie-only adopted children are recorded for reaping; forced
+live-child cleanup can never silently become a successful QA result.
 
 Protected PIDs include 4471, 8784, 310035, 310039, 310266 and 310269 plus the
 original helper's protected list. The new source and all tests remain frozen.
@@ -119,6 +135,14 @@ resource error, incomplete cleanup or source change, the matrix starts no
 following runtime and performs no retry. Later labels remain NOT STARTED;
 missing reports are not reconstructed as passes. An unexpected supervision
 exception writes a first UNKNOWN outcome and an incomplete matrix result.
+The 900s active clock starts before reaper/Popen setup and includes the parent
+test-runner wait. Registry/input preflight, cleanup and finalization also count
+toward the whole 2730s supervisor clock. Matrix-summary is provisional: after
+its file and directory fsync/close, a required matrix-end record binds its hash
+and the measured commit time. The END file/directory close is followed by a
+second whole-budget check; crossing during finalization appends a deadline-
+UNKNOWN veto and returns failure. Acceptance requires the completed END, no
+deadline veto, and normal supervisor completion, not a provisional summary.
 
 All three actual summary.json, worker-result.json, unittest.txt and outer
 first-outcome files are required for complete acceptance. Their exact byte
@@ -129,9 +153,11 @@ matching worker/summary results, source maps and raw-log digest, clean source,
 normal reaped leader, no watchdog and successful matrix completion within its
 budget. A unit-level pass never repairs a missing outer completion record.
 
-Prepare-only execution and eleven pure ownership/report-policy cases have
+Prepare-only execution and sixteen pure ownership/report-policy cases have
 passed. These include visible-ACK/fsync failure withholding GO with direct-child
 reaping, and a group-signal error still attempting direct-child reap/pidfd close.
+Additional cases cover GO delivery followed by lost reply, new live adopted
+sessions, loader/build mismatch and a deadline crossed during END persistence.
 The original eight-case result is retained separately. No full QA, financial SQL, process-fault probe, package build or capacity
 test has been performed by this plan. Capacity 10k/s, HA, multi-node durability,
 custody and real-funds approval remain outside its acceptance scope.

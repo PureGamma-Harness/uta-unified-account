@@ -34,6 +34,12 @@ RUNTIMES = (
     ("python313-sqlite346", "/usr/bin/python3.13", "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9"),
 )
 DIRECTORIES = ("uta", "tests", "formal", "tools", "benchmarks", "scripts")
+LOADER_OVERRIDES = ("PYTHONHOME", "LD_LIBRARY_PATH", "LD_PRELOAD", "PYTHONUSERBASE", "PYTHONSTARTUP")
+EXPECTED_RUNTIME = {
+    "python310": {"python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]", "sqlite": "3.53.1"},
+    "python312": {"python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]", "sqlite": "3.53.1"},
+    "python313-sqlite346": {"python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]", "sqlite": "3.46.1"},
+}
 
 
 def git(*arguments):
@@ -61,6 +67,37 @@ def identity(pid):
 
 def same_birth(left, right):
     return all(left[key] == right[key] for key in ("pid", "birth_ticks", "boot_id"))
+
+
+def direct_children():
+    rows = []
+    for entry in Path("/proc").iterdir():
+        if entry.name.isdigit():
+            try:
+                row = identity(int(entry.name))
+                if row["parent"] == os.getpid():
+                    rows.append(row)
+            except (FileNotFoundError, ProcessLookupError):
+                pass
+    return rows
+
+
+def newly_adopted(baseline, after):
+    keys = {(row["pid"], row["birth_ticks"], row["boot_id"]) for row in baseline}
+    return [row for row in after if (row["pid"], row["birth_ticks"], row["boot_id"]) not in keys]
+
+
+def reject_loader_overrides(environment):
+    if any(environment.get(key) for key in LOADER_OVERRIDES):
+        raise RuntimeError("interpreter or loader override must be absent")
+
+
+def sync_directory():
+    descriptor = os.open(OUTPUT, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
 
 
 def binary_pins():
@@ -116,6 +153,7 @@ def plan():
     variables = sorted(key for key in os.environ if key.startswith("UTA_"))
     if variables:
         raise RuntimeError("inherited UTA test overrides must be absent")
+    reject_loader_overrides(os.environ)
     free = shutil.disk_usage("/workspace").free
     if free < FLOOR + RESERVE:
         raise RuntimeError("resource admission denied")
@@ -125,7 +163,8 @@ def plan():
             "cpu": CPU, "per_runtime_seconds": RUNTIME_SECONDS, "matrix_seconds": MATRIX_SECONDS,
             "free_bytes": free, "floor_bytes": FLOOR, "reserve_bytes": RESERVE,
             "expected_tests_per_runtime": EXPECTED_TESTS,
-            "environment": {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": "removed", "UTA_overrides": "must be absent"},
+            "environment": {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONPATH": "removed", "UTA_overrides": "must be absent", "rejected_loader_overrides": list(LOADER_OVERRIDES)},
+            "expected_runtime_builds": EXPECTED_RUNTIME,
             "supervisor_sha256": digest(__file__), "execution_permitted_by_prepare": False,
             "production_approved": False, "original_ci_cause_proven": False}
 
@@ -140,11 +179,12 @@ def group_signal(process, original, pidfd, sig, helpers):
     os.killpg(process.pid, sig)
 
 
-def validate_report(report, worker, pin, code):
+def validate_report(report, worker, pin, code, label="python310"):
     counters = ("tests_run", "failures", "errors", "skipped", "expected_failures", "unexpected_successes")
     typed = (type(code) is int and type(report.get("worker_exit_code")) is int
              and all(type(row.get(key)) is int for row in (report, worker) for key in counters))
     return (typed and code == 0 and report.get("passed") is True and report.get("code_commit") == COMMIT
+            and all(report.get(key) == value for key, value in EXPECTED_RUNTIME[label].items())
             and report.get("tests_run") == EXPECTED_TESTS
             and all(report.get(key) == 0 for key in ("failures", "errors", "skipped", "expected_failures", "unexpected_successes"))
             and all(report.get(key) is True for key in ("source_unchanged", "tracked_source_clean_before", "tracked_source_clean_after"))
@@ -196,10 +236,12 @@ def run_one(index, admission, matrix_deadline, helpers, orphan_reaper):
         raise RuntimeError("insufficient unchanged runtime budget")
     env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     env.pop("PYTHONPATH", None)
+    reject_loader_overrides(env)
     started = time.monotonic()
     reason, code, original, process, pidfd = None, None, None, None, None
     raw_path = OUTPUT / (label + "-launcher.txt")
     with orphan_reaper(), raw_path.open("x", encoding="utf-8") as raw:
+        baseline = direct_children()  # Includes the helper's pre-existing tracker.
         process = subprocess.Popen(command, cwd=SOURCE, env=env, stdin=subprocess.DEVNULL,
                                    stdout=raw, stderr=subprocess.STDOUT, start_new_session=True)
         try:
@@ -246,17 +288,26 @@ def run_one(index, admission, matrix_deadline, helpers, orphan_reaper):
             cleanup = finalize_child(process, original, pidfd, helpers)
         if not cleanup["leader_reaped"] or cleanup["cleanup_error_types"]:
             raise RuntimeError("QA child cleanup was incomplete or required an error fallback")
+        # Inspect BEFORE the unchanged helper exits and can silently kill an
+        # adopted process in a different session. Such required intervention is
+        # UNKNOWN, even if that helper subsequently succeeds in killing it.
+        adopted = newly_adopted(baseline, direct_children())
+        if any(row["state"] not in ("Z", "X") for row in adopted):
+            reason = reason or "LIVE_ADOPTED_OTHER_SESSION_UNKNOWN"
     report_path, worker_path = OUTPUT / label / "summary.json", OUTPUT / label / "worker-result.json"
     report = json.loads(report_path.read_text()) if report_path.exists() else {}
     worker = json.loads(worker_path.read_text()) if worker_path.exists() else {}
     files = [p for p in (report_path, worker_path, OUTPUT / label / "unittest.txt", raw_path) if p.exists()]
     stable = source_pin() == original_pin and binary_pins() == admission["runtimes"]
-    passed = reason is None and stable and validate_report(report, worker, original_pin, code)
+    passed = reason is None and stable and validate_report(report, worker, original_pin, code, label)
     if report and digest(OUTPUT / label / "unittest.txt") != report.get("test_log_sha256"):
         passed = False
     outcome = {"label": label, "command": command, "identity": original,
                "exit_code": code, "watchdog_reason": reason, "leader_reaped": True,
                "pidfd_used": True, "source_and_binary_unchanged": stable,
+               "adopted_before_reaper_exit": adopted,
+               "actual_runtime_build": {key: report.get(key) for key in ("python", "sqlite")},
+               "expected_runtime_build": EXPECTED_RUNTIME[label],
                "elapsed_seconds": time.monotonic() - started,
                "passed": passed, "outcome": "PASS" if passed else "UNKNOWN" if reason or not report else "FAIL",
                "originals": {str(p.relative_to(OUTPUT)): {"bytes": p.stat().st_size, "sha256": digest(p)} for p in files},
@@ -284,6 +335,7 @@ def supervise(go_fd):
     if not same_birth(ack["identity"], identity(pid)) or identity(pid)["group"] != pid or identity(pid)["session"] != pid:
         raise RuntimeError("detached supervision launch proof failed")
     admission = json.loads((OUTPUT / "admission.json").read_text())
+    reject_loader_overrides(os.environ)
     if source_pin() != admission["source"] or digest(__file__) != admission["supervisor_sha256"]:
         raise RuntimeError("supervisor inputs changed after admission")
     sys.path.insert(0, str(SOURCE))
@@ -308,12 +360,33 @@ def supervise(go_fd):
                 break
     except BaseException as failure:
         error = type(failure).__name__
+    return finish_matrix(records, error, started)
+
+
+def finish_matrix(records, error, started):
     elapsed = time.monotonic() - started
     complete = len(records) == 3 and all(row["passed"] for row in records) and elapsed <= MATRIX_SECONDS
     save(OUTPUT / "matrix-summary.json", {"source_commit": COMMIT, "records": records,
          "all_three_first_full_runs_passed": complete, "error_type": error,
          "elapsed_seconds": elapsed, "matrix_budget_seconds": MATRIX_SECONDS,
+         "finalization": "PROVISIONAL_REQUIRES_MATRIX_END",
          "production_approved": False, "original_ci_cause_proven": False})
+    sync_directory()
+    # The budget now includes matrix-summary file flush/fsync/close and its
+    # directory persistence. END is mandatory; the provisional summary alone
+    # cannot establish matrix completion.
+    committed_elapsed = time.monotonic() - started
+    complete = complete and committed_elapsed <= MATRIX_SECONDS
+    save(OUTPUT / "matrix-end.json", {"matrix_summary_sha256": digest(OUTPUT / "matrix-summary.json"),
+         "matrix_commit_elapsed_seconds": committed_elapsed,
+         "all_three_first_full_runs_passed": complete, "outcome": "PASS" if complete else "UNKNOWN",
+         "production_approved": False, "original_ci_cause_proven": False})
+    sync_directory()
+    # Include END's own durable close too. Never leave an apparent accepted END
+    # as the only result after a deadline crossed during that final write.
+    if time.monotonic() - started > MATRIX_SECONDS:
+        save(OUTPUT / "matrix-deadline-unknown.json", {"outcome": "UNKNOWN", "reason": "FINALIZATION_EXCEEDED_MATRIX_BUDGET"})
+        return 1
     return 0 if complete else 1
 
 
@@ -321,7 +394,7 @@ def launch_detached(admission):
     read_fd, write_fd = os.pipe()
     process = original = pidfd = None
     out = err = None
-    released = False
+    released = may_have_delivered = False
     try:
         out = (OUTPUT / "supervisor.stdout").open("xb")
         err = (OUTPUT / "supervisor.stderr").open("xb")
@@ -340,6 +413,7 @@ def launch_detached(admission):
         err = None
         save(OUTPUT / "supervisor-launch.json", {"identity": original, "argv": process.args,
              "detached": True, "expected_cpu_ids": [CPU], "go_requires_pipe_byte": True})
+        may_have_delivered = True  # Unknown write result is never pre-GO.
         if os.write(write_fd, b"G") != 1:
             raise RuntimeError("detached supervisor GO was not written")
         released = True
@@ -348,7 +422,7 @@ def launch_detached(admission):
         return original
     except BaseException as error:
         cleanup = {"leader_reaped": False, "cleanup_error_types": []}
-        if process is not None and not released:
+        if process is not None and not may_have_delivered:
             try:
                 if pidfd is not None:
                     signal.pidfd_send_signal(pidfd, signal.SIGKILL)
@@ -363,6 +437,7 @@ def launch_detached(admission):
                 cleanup["cleanup_error_types"].append(type(failure).__name__)
         try:
             save(OUTPUT / "launch-unknown.json", {"outcome": "UNKNOWN", "go_released": released,
+                 "go_may_have_been_delivered": may_have_delivered,
                  "error_type": type(error).__name__, "identity": original, "cleanup": cleanup})
         except BaseException:
             pass  # A storage failure cannot release the still-closed GO gate.
