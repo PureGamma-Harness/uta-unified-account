@@ -1,0 +1,24 @@
+{
+  "scope": "actual own temporary queue catalog and default-closed constructor, plus rejection cause chains; no native V2 owner or loan",
+  "source_sha256": {
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "tests/test_credit_fifo_v2_components.py": "ce3a7079aa5226587eda69cc2d4b428e325e14a0ace8cdb573e51a3223a9e68f"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_fifo_v2_components",
+    "-v"
+  ],
+  "begin": "2026-11-17T14:23:00.473245+00:00",
+  "end": "2026-11-17T14:23:00.885326+00:00",
+  "elapsed_seconds": 0.4120861280025565,
+  "exit_code": 0,
+  "raw_sha256": "e9e4caeeb12d2973a92578b0aadaf1fdbf260e9009749e1e1c2ca2b49a07d098"
+}
