@@ -1,0 +1,232 @@
+ERROR: test_capacity_review_data_reference (unittest.loader._FailedTest)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_capacity_review_data_reference
+Traceback (most recent call last):
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/unittest/loader.py", line 436, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/unittest/loader.py", line 377, in _get_module_from_name
+    __import__(name)
+  File "/workspace/uta-stopped-owner-gate/tests/test_capacity_review_data_reference.py", line 15, in <module>
+    spec.loader.exec_module(reference)
+  File "<frozen importlib._bootstrap_external>", line 879, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1016, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1073, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/runs/capacity-independent-review/recompute.py'
+
+
+
+ERROR: test_bool_sequence_and_declared_count_are_not_native_integers (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 46, in test_bool_sequence_and_declared_count_are_not_native_integers
+    case = self.cases()[0]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_frozen_cash_blocks_payment_despite_debt_and_complete_rehash (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 60, in test_frozen_cash_blocks_payment_despite_debt_and_complete_rehash
+    case = self.cases()[1]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_market_quote_limits_and_borrow_decision_cannot_enter_repayment (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 32, in test_market_quote_limits_and_borrow_decision_cannot_enter_repayment
+    case = self.cases()[0]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_materialized_pool_tamper_cannot_replace_original_postings (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 69, in test_materialized_pool_tamper_cannot_replace_original_postings
+    case = self.cases()[0]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_original_receipt_pays_interest_before_principal (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 52, in test_original_receipt_pays_interest_before_principal
+    case = self.cases()[1]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_rehashed_balanced_principal_first_financial_forgery_still_refuses (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 77, in test_rehashed_balanced_principal_first_financial_forgery_still_refuses
+    case = self.cases()[1]
+  File "/workspace/uta-stopped-owner-gate/tests/test_credit_v2_repayment_reference.py", line 19, in cases
+    return json.loads(ORIGINAL.read_bytes())["observations"]
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'
+
+
+ERROR: test_complete_original_ast_is_preserved_except_exact_failure_hook (test_expired_gate_failure_evidence.FailureDiagnosticTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_expired_gate_failure_evidence.py", line 81, in test_complete_original_ast_is_preserved_except_exact_failure_hook
+    reference = json.loads((ROOT / 'evidence/reviews/expired-gate-failure-5a/original-ast.json').read_text())
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/expired-gate-failure-5a/original-ast.json'
+
+
+ERROR: test_full_published_computation_and_admission_scales_are_preserved (test_main_baseline_evidence.PublishedMainEvidenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 45, in test_full_published_computation_and_admission_scales_are_preserved
+    compute = read("compute-eight-workers.stdout.json")
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 16, in read
+    return json.loads((ROOT / name).read_text())
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/compute-eight-workers.stdout.json'
+
+
+ERROR: test_original_outputs_and_invocations_have_integrity_and_no_technical_errors (test_main_baseline_evidence.PublishedMainEvidenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 21, in test_original_outputs_and_invocations_have_integrity_and_no_technical_errors
+    manifest = read("manifest.json")
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 16, in read
+    return json.loads((ROOT / name).read_text())
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/manifest.json'
+
+
+ERROR: test_simulated_liquidations_and_paced_overload_are_never_conflated (test_main_baseline_evidence.PublishedMainEvidenceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 63, in test_simulated_liquidations_and_paced_overload_are_never_conflated
+    output = read(name + ".stdout.json")
+  File "/workspace/uta-stopped-owner-gate/tests/test_main_baseline_evidence.py", line 16, in read
+    return json.loads((ROOT / name).read_text())
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1134, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/wal-four-shards.stdout.json'
+
+
+ERROR: test_constructor_failure_never_opens_holders_before_initialization (test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_read_holder_lifecycle.py", line 148, in test_constructor_failure_never_opens_holders_before_initialization
+    ManagedSoak(Path(directory) / 'job', Configuration(duration=4), strict_source=False)
+  File "/workspace/uta-stopped-owner-gate/benchmarks/run_managed_soak.py", line 222, in __init__
+    self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'
+
+
+ERROR: test_financial_commit_checkpoint_gap_queries_original_id_and_does_not_skip_partial_history (test_managed_soak.ManagedSoakTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_soak.py", line 107, in test_financial_commit_checkpoint_gap_queries_original_id_and_does_not_skip_partial_history
+    job = self.make(directory)
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_soak.py", line 20, in make
+    return ManagedSoak(Path(directory) / "job", configuration, strict_source=False)
+  File "/workspace/uta-stopped-owner-gate/benchmarks/run_managed_soak.py", line 222, in __init__
+    self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'
+
+
+ERROR: test_real_tls_cli_matching_debt_and_both_process_faults (test_managed_soak.ManagedSoakTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_soak.py", line 62, in test_real_tls_cli_matching_debt_and_both_process_faults
+    job = self.make(directory, worker_every=1, parent_every=1)
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_soak.py", line 20, in make
+    return ManagedSoak(Path(directory) / "job", configuration, strict_source=False)
+  File "/workspace/uta-stopped-owner-gate/benchmarks/run_managed_soak.py", line 222, in __init__
+    self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'
+
+
+ERROR: test_initialization_failure_is_preserved_before_required_databases_exist (test_managed_soak_resources.ManagedSoakResourceTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_soak_resources.py", line 144, in test_initialization_failure_is_preserved_before_required_databases_exist
+    ManagedSoak(target, Configuration(duration=4), strict_source=False)
+  File "/workspace/uta-stopped-owner-gate/benchmarks/run_managed_soak.py", line 222, in __init__
+    self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1126, in read_bytes
+    with self.open(mode='rb') as f:
+  File "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1119, in open
+    return self._accessor.open(self, mode, buffering, encoding, errors,
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'
+
+
+ERROR: test_old_raw_has_no_new_timing_footer_and_is_never_upgraded (test_managed_variant_runner.RunnerPureTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_managed_variant_runner.py", line 282, in test_old_raw_has_no_new_timing_footer_and_is_never_upgraded
+    runner.recompute(path, runner.schedule()[0], {}, COMMIT)
+  File "/workspace/uta-stopped-owner-gate/tools/run_managed_variants.py", line 756, in recompute
+    manifest = read_json(directory / "manifest.json")
+  File "/workspace/uta-stopped-owner-gate/tools/run_managed_variants.py", line 80, in read_json
+    return strict_json(read_blob(path, limit))
+  File "/workspace/uta-stopped-owner-gate/tools/run_managed_variants.py", line 71, in read_blob
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/evidence/managed-variant-wiring-20261117/raw/py312/default/manifest.json'
+
+----------------------------------------------------------------------
+Ran 1804 tests in 408.835s
+
+FAILED (errors=16)
