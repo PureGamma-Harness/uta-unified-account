@@ -28,7 +28,7 @@
 
 ## 验证、部署与回滚
 
-新增测试仅以临时合成 JSON、字典和哈希验证合法链与缺失、失败退出、未知身份、短时钟、错误 boot/source、冷水位/SHA/runtime/scope、重复故障、运行中 worker、drain、coverage、封存 pin 等负控。保留阶段一原首 FNF、5RED 和修复结果，不将其覆写。此文撰写时阶段二纯测试尚未运行。
+新增测试仅以临时合成 JSON、字典和哈希验证合法链与缺失、失败退出、未知身份、短时钟、错误 boot/source、冷水位/SHA/runtime/scope、重复故障、运行中 worker、drain、coverage、封存 pin 等负控。固定代码 `2a9d9a8a35bd9676494cb4b9af164a6ee6611861` 的首次阶段二纯验证在 CPU3、10s 上限内得到 **12/12 PASS**，unittest 0.078s、完整子进程 214,661,282ns；原 stdout/stderr 与输入哈希保留在 `evidence/managed-terminal-binder-20261117`。没有读取实际长测目录、SQL、observer 或冷审计。保留阶段一原首 FNF、5RED 和修复结果，不将其覆写；阶段二仍待独立审查。
 
 不部署到运行源；不实际对正在运行的目录调用。审查通过且原任务终态封存后，root 再给予准确 bundle、manifest SHA 和一次实际提取的具体 GO。激活候选资格亦需经审查的代码版本，不接受未审命令开关绕过。
 
