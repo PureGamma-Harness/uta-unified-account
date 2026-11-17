@@ -1,0 +1,1651 @@
+{
+  "classification": "16/16 original testcase PASS; diagnostic NO_REPRO only",
+  "source91_qualified": false,
+  "production_approved": false,
+  "historical_failure_root_cause": "UNPROVEN",
+  "rows": [
+    {
+      "id": "s01-A",
+      "runtime": "A",
+      "outer_seconds": 8.048410729010357,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.704020297009265,
+      "capture_to_publication_complete_seconds": 5.517802009009756,
+      "publication_to_old_exit_seconds": 0.25284655300492886,
+      "publication_to_EX_seconds": 0.2593823930073995,
+      "publication_to_new_generation_seconds": 0.8258926330017857,
+      "publication_to_complete_seconds": 1.06662826500542,
+      "native_status_calls": 319,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:1bc4f58004ce5d30",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:1bc4f58004ce5d30",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s02-B",
+      "runtime": "B",
+      "outer_seconds": 8.580588519995217,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.207443063991377,
+      "capture_to_publication_complete_seconds": 4.961727441987023,
+      "publication_to_old_exit_seconds": 0.31059660800383426,
+      "publication_to_EX_seconds": 0.31628514200565405,
+      "publication_to_new_generation_seconds": 0.8218581120017916,
+      "publication_to_complete_seconds": 1.06488098599948,
+      "native_status_calls": 330,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:407d283955d3df04",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:407d283955d3df04",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s03-B",
+      "runtime": "B",
+      "outer_seconds": 8.037486497996724,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.790822376991855,
+      "capture_to_publication_complete_seconds": 5.530461845992249,
+      "publication_to_old_exit_seconds": 0.28708955299225636,
+      "publication_to_EX_seconds": 0.3515870879928116,
+      "publication_to_new_generation_seconds": 0.7611591869936092,
+      "publication_to_complete_seconds": 1.0267290219926508,
+      "native_status_calls": 326,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:e64f211d0d6b938c",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:e64f211d0d6b938c",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s04-A",
+      "runtime": "A",
+      "outer_seconds": 7.267726234000293,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.693564539004001,
+      "capture_to_publication_complete_seconds": 5.363715176994447,
+      "publication_to_old_exit_seconds": 0.25021128900698386,
+      "publication_to_EX_seconds": 0.2592615489993477,
+      "publication_to_new_generation_seconds": 0.6677954629994929,
+      "publication_to_complete_seconds": 0.9203619269974297,
+      "native_status_calls": 320,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:60f4c56b0fcb7939",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:60f4c56b0fcb7939",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s05-A",
+      "runtime": "A",
+      "outer_seconds": 7.309733949994552,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.810537874000147,
+      "capture_to_publication_complete_seconds": 5.427851527012535,
+      "publication_to_old_exit_seconds": 0.2734676359978039,
+      "publication_to_EX_seconds": 0.27382151600613724,
+      "publication_to_new_generation_seconds": 0.6574469309998676,
+      "publication_to_complete_seconds": 0.8907812890101923,
+      "native_status_calls": 317,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:db4f97a0f9c44f60",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:db4f97a0f9c44f60",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s06-B",
+      "runtime": "B",
+      "outer_seconds": 8.2641183789965,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.550751246002619,
+      "capture_to_publication_complete_seconds": 5.466851859004237,
+      "publication_to_old_exit_seconds": 0.26860639100777917,
+      "publication_to_EX_seconds": 0.2833687490056036,
+      "publication_to_new_generation_seconds": 0.8684643750020768,
+      "publication_to_complete_seconds": 1.1847070040093968,
+      "native_status_calls": 340,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:8b1883ad3ddcfbb1",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:8b1883ad3ddcfbb1",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s07-B",
+      "runtime": "B",
+      "outer_seconds": 8.238758334002341,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.776289749992429,
+      "capture_to_publication_complete_seconds": 5.546130293994793,
+      "publication_to_old_exit_seconds": 0.2897587030020077,
+      "publication_to_EX_seconds": 0.29784323200874496,
+      "publication_to_new_generation_seconds": 0.790638910009875,
+      "publication_to_complete_seconds": 1.0595992470043711,
+      "native_status_calls": 322,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:2da9cdfe42637753",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:2da9cdfe42637753",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s08-A",
+      "runtime": "A",
+      "outer_seconds": 7.343444875004934,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.700820907004527,
+      "capture_to_publication_complete_seconds": 5.3236448879906675,
+      "publication_to_old_exit_seconds": 0.30199026501213666,
+      "publication_to_EX_seconds": 0.3769126520055579,
+      "publication_to_new_generation_seconds": 0.6906816999980947,
+      "publication_to_complete_seconds": 0.9248142459982773,
+      "native_status_calls": 323,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:e1af08d2df7323bd",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:e1af08d2df7323bd",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s09-A",
+      "runtime": "A",
+      "outer_seconds": 7.503348461992573,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.815680909989169,
+      "capture_to_publication_complete_seconds": 5.489385638997192,
+      "publication_to_old_exit_seconds": 0.2798157299985178,
+      "publication_to_EX_seconds": 0.28232413200021256,
+      "publication_to_new_generation_seconds": 0.6907758500019554,
+      "publication_to_complete_seconds": 0.9535204590065405,
+      "native_status_calls": 317,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:b1b95e2b34e9087c",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:b1b95e2b34e9087c",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s10-B",
+      "runtime": "B",
+      "outer_seconds": 8.140981559001375,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.705286290991353,
+      "capture_to_publication_complete_seconds": 5.5698689709970495,
+      "publication_to_old_exit_seconds": 0.2647745739959646,
+      "publication_to_EX_seconds": 0.3549121929972898,
+      "publication_to_new_generation_seconds": 0.8407548690011026,
+      "publication_to_complete_seconds": 1.1293572540016612,
+      "native_status_calls": 328,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:459fe251c2d752a6",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:459fe251c2d752a6",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s11-B",
+      "runtime": "B",
+      "outer_seconds": 8.092520766003872,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.562547609995818,
+      "capture_to_publication_complete_seconds": 5.434310455995728,
+      "publication_to_old_exit_seconds": 0.27453955299279187,
+      "publication_to_EX_seconds": 0.27542869199533015,
+      "publication_to_new_generation_seconds": 0.8464830769953551,
+      "publication_to_complete_seconds": 1.1463023989927024,
+      "native_status_calls": 330,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:f84368a16dc06723",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:f84368a16dc06723",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s12-A",
+      "runtime": "A",
+      "outer_seconds": 7.4821627359924605,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.6221544690051815,
+      "capture_to_publication_complete_seconds": 5.304800607002107,
+      "publication_to_old_exit_seconds": 0.2816324900049949,
+      "publication_to_EX_seconds": 0.36208305800391827,
+      "publication_to_new_generation_seconds": 0.7301348200126085,
+      "publication_to_complete_seconds": 0.9642786280019209,
+      "native_status_calls": 324,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:860be8f546a08750",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:860be8f546a08750",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s13-A",
+      "runtime": "A",
+      "outer_seconds": 7.234105354000349,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.4988851380039705,
+      "capture_to_publication_complete_seconds": 5.0822750740044285,
+      "publication_to_old_exit_seconds": 0.29017938001197763,
+      "publication_to_EX_seconds": 0.3297900970064802,
+      "publication_to_new_generation_seconds": 0.6633491310058162,
+      "publication_to_complete_seconds": 0.8735693160124356,
+      "native_status_calls": 313,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:33348ee2f98b97db",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:33348ee2f98b97db",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s14-B",
+      "runtime": "B",
+      "outer_seconds": 8.142796275002183,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.684879174994421,
+      "capture_to_publication_complete_seconds": 5.654073031008011,
+      "publication_to_old_exit_seconds": 0.28736331399704795,
+      "publication_to_EX_seconds": 0.29670997300127055,
+      "publication_to_new_generation_seconds": 0.9177387920062756,
+      "publication_to_complete_seconds": 1.2565571700106375,
+      "native_status_calls": 337,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:8fc5cd280fbfcd13",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:8fc5cd280fbfcd13",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s15-B",
+      "runtime": "B",
+      "outer_seconds": 8.376132290009991,
+      "worker_runtime": {
+        "python": "3.13.18 (main, Oct 26 2026, 14:20:56) [GCC 13.3.0]",
+        "version_info": [
+          3,
+          13,
+          18
+        ],
+        "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+        ],
+        "mapped_libpython_sha256": {
+          "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        }
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.672133341009612,
+      "capture_to_publication_complete_seconds": 5.448810561007122,
+      "publication_to_old_exit_seconds": 0.2714289150026161,
+      "publication_to_EX_seconds": 0.34672601700003725,
+      "publication_to_new_generation_seconds": 0.7703202489938121,
+      "publication_to_complete_seconds": 1.0481061350001255,
+      "native_status_calls": 321,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:75b48876d75e7cbb",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:75b48876d75e7cbb",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    },
+    {
+      "id": "s16-A",
+      "runtime": "A",
+      "outer_seconds": 7.732102854992263,
+      "worker_runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "version_info": [
+          3,
+          13,
+          5
+        ],
+        "executable": "/usr/bin/python3.13",
+        "sqlite": "3.46.1",
+        "flags": "sys.flags(debug=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, verbose=0, bytes_warning=0, quiet=0, hash_randomization=1, isolated=0, dev_mode=False, utf8_mode=0, warn_default_encoding=0, safe_path=False, int_max_str_digits=4300)",
+        "optimize": 0,
+        "dont_write_bytecode": true,
+        "affinity": [
+          2
+        ],
+        "environment": {
+          "PYTHONPATH": null,
+          "PYTHONHOME": null,
+          "PYTHONSTARTUP": null,
+          "PYTHONINSPECT": null,
+          "PYTHONOPTIMIZE": null,
+          "PYTHONSAFEPATH": null,
+          "PYTHONHASHSEED": null,
+          "LD_LIBRARY_PATH": null,
+          "LD_PRELOAD": null,
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "mapped_libpython": [],
+        "mapped_libpython_sha256": {}
+      },
+      "sample_passed": true,
+      "finance": {
+        "accepted_events": 0,
+        "cache_configuration": {
+          "market_cache_size": 0,
+          "normal_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "ledger_and_debt_unchanged": true,
+        "orders": 0,
+        "schema_versions": {
+          "ledger_schema": [
+            [
+              1,
+              1
+            ]
+          ],
+          "uta_schema": [
+            [
+              3
+            ]
+          ]
+        }
+      },
+      "capture_to_old_exit_seconds": 4.5500817669963,
+      "capture_to_publication_complete_seconds": 5.458135035994928,
+      "publication_to_old_exit_seconds": 0.2994744460011134,
+      "publication_to_EX_seconds": 0.30963994799822103,
+      "publication_to_new_generation_seconds": 0.9067363649955951,
+      "publication_to_complete_seconds": 1.2075277149997419,
+      "native_status_calls": 323,
+      "native_status_errors": 0,
+      "observer_post_join": {
+        "pidfd": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        },
+        "code_stack": {
+          "is_alive": false,
+          "lifecycle": {
+            "started": true,
+            "ended": true,
+            "error": null
+          }
+        }
+      },
+      "worker_spawn_returns": 3,
+      "monitor_expiry_kills": 1,
+      "publication_receipts": {
+        "0": {
+          "command_id": "market:3:0:c966d6c470164a00",
+          "sequence": 4,
+          "state": "SUCCEEDED"
+        },
+        "1": {
+          "command_id": "market:3:1:c966d6c470164a00",
+          "sequence": 3,
+          "state": "SUCCEEDED"
+        }
+      }
+    }
+  ],
+  "original_status_errors": [],
+  "runtime_counts": {
+    "A": 8,
+    "B": 8
+  },
+  "sample_outer_min_seconds": 7.234105354000349,
+  "sample_outer_max_seconds": 8.580588519995217,
+  "capture_to_old_exit_range_seconds": [
+    4.207443063991377,
+    4.815680909989169
+  ],
+  "capture_to_publication_range_seconds": [
+    4.961727441987023,
+    5.654073031008011
+  ],
+  "native_status_calls": 5190,
+  "native_status_error_count": 0,
+  "spawn_returns": 48,
+  "supervisor_expiry_kills": 16,
+  "all_sample_passed": true,
+  "no_residual_fresh_session": true,
+  "source266_exact91": true,
+  "all_runtime52_exact91": true,
+  "original_ledger_assertions_reached_and_preserved": true,
+  "orders_accepted_counts": {
+    "(0, 0)": 16
+  }
+}
