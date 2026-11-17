@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "status": "INDEPENDENT_MANUAL_EXPECTATIONS_BEFORE_PRODUCTION_IMPORT",
+  "policy": "OWN_ACT_365_FIXED_NS_SIMPLE_INTEREST_V1",
+  "annual_rate_scale": 1000000000,
+  "year_nanoseconds": 31536000000000000,
+  "day_nanoseconds": 86400000000000,
+  "carry_semantics": "unbooked fractional minimum-asset-unit; never compound or silently discard",
+  "booked_semantics": "cumulative historical accrual in this pure book, not outstanding unpaid interest",
+  "risk_semantics": "extra reserve1 iff fractional carry is positive; not a full debt valuation",
+  "cases": [
+    {"id":"IR-01-exact-day","initial_carry":"0/1","segments":[[365,1000000000,86400000000000]],"expected_total":"1/1","expected_booked":1,"expected_remaining":"0/1","expected_risk_reserve":0},
+    {"id":"IR-02-subunit-day","initial_carry":"0/1","segments":[[1,1000000000,86400000000000]],"expected_total":"1/365","expected_booked":0,"expected_remaining":"1/365","expected_risk_reserve":1},
+    {"id":"IR-03-halfyear-fivepercent","initial_carry":"0/1","segments":[[100,50000000,15768000000000000]],"expected_total":"5/2","expected_booked":2,"expected_remaining":"1/2","expected_risk_reserve":1},
+    {"id":"IR-04-quarterday-split","initial_carry":"0/1","segments":[[365,1000000000,21600000000000],[365,1000000000,21600000000000],[365,1000000000,21600000000000],[365,1000000000,21600000000000]],"expected_total":"1/1","expected_booked":1,"expected_remaining":"0/1","expected_risk_reserve":0},
+    {"id":"IR-05-principal-change","initial_carry":"0/1","segments":[[365,1000000000,15768000000000000],[182,1000000000,15768000000000000]],"expected_total":"547/2","expected_booked":273,"expected_remaining":"1/2","expected_risk_reserve":1},
+    {"id":"IR-06-rate-change","initial_carry":"0/1","segments":[[365,100000000,15768000000000000],[365,200000000,15768000000000000]],"expected_total":"219/4","expected_booked":54,"expected_remaining":"3/4","expected_risk_reserve":1},
+    {"id":"IR-07-carry-and-small-period","initial_carry":"3/4","segments":[[1,1000000000,86400000000000]],"expected_total":"1099/1460","expected_booked":0,"expected_remaining":"1099/1460","expected_risk_reserve":1},
+    {"id":"IR-08-carry-matures","initial_carry":"364/365","segments":[[1,1000000000,86400000000000]],"expected_total":"1/1","expected_booked":1,"expected_remaining":"0/1","expected_risk_reserve":0},
+    {"id":"IR-09-zero-principal-carry-retained","initial_carry":"3/5","segments":[[0,1000000000,86400000000000]],"expected_total":"3/5","expected_booked":0,"expected_remaining":"3/5","expected_risk_reserve":1},
+    {"id":"IR-10-leapyear-fixed-basis","initial_carry":"0/1","segments":[[365,1000000000,31622400000000000]],"expected_total":"366/1","expected_booked":366,"expected_remaining":"0/1","expected_risk_reserve":0},
+    {"id":"IR-11-zero-rate-carry-retained","initial_carry":"1/2","segments":[[365,0,31536000000000000]],"expected_total":"1/2","expected_booked":0,"expected_remaining":"1/2","expected_risk_reserve":1},
+    {"id":"IR-12-existing-carry-completes-year","initial_carry":"1/2","segments":[[365,100000000,31536000000000000]],"expected_total":"37/1","expected_booked":37,"expected_remaining":"0/1","expected_risk_reserve":0}
+  ],
+  "production_module_imported": false,
+  "financial_or_scheduler_activation": false,
+  "production_approved": false
+}
