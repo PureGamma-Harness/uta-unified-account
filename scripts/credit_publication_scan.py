@@ -24,6 +24,7 @@ PATTERNS = {
     "aws_access_identifier": re.compile(rb"(?:AKIA|ASIA)[A-Z0-9]{16}"),
     "signed_or_token_url": re.compile(rb"https?://[^\s\"<>]+[?&](?:X-Amz-Signature|X-Goog-Signature|access_token|client_secret|signature|token|sig)=[^\s\"<>]+", re.I),
 }
+RAW_FIELD = re.compile(rb'''["'](owner_nonce|nonce|api_key|api_secret|secret|private_key|signing_key|access_token|refresh_token|x-uta-nonce|x-api-key)["']\s*:\s*["']([^"'\r\n]+)["']''', re.I)
 
 
 def git(*arguments, input=None):
@@ -43,6 +44,9 @@ def inspect_bytes(path, data, *, blob=None):
     for category, pattern in PATTERNS.items():
         for match in pattern.finditer(data):
             note(category, location={"line": data[:match.start()].count(b"\n")+1})
+    for match in RAW_FIELD.finditer(data):
+        note("nonnull_sensitive_raw_field", location={"line": data[:match.start()].count(b"\n")+1,
+            "field": match.group(1).decode().lower()}, value=match.group(2).decode("utf-8", errors="replace"))
     if path.endswith(".json"):
         try: document = json.loads(data)
         except (ValueError, UnicodeError): return found
@@ -75,7 +79,8 @@ def inspect_archive(path, data, *, blob=None):
         for member in archive:
             if member.isdir(): continue
             if (not member.isfile() or member.name.startswith("/") or ".." in Path(member.name).parts
-                    or not (member.name == "LICENSE" or member.name.startswith("uta/") and member.name.endswith(".py"))
+                    or not (member.name in {"LICENSE", "uta/dashboard.html"}
+                            or member.name.startswith("uta/") and member.name.endswith(".py"))
                     or member.size > 32*1024*1024):
                 found.append({"path": path, "category": "nonpublic_source_archive_member", "member": member.name})
                 continue
@@ -118,6 +123,8 @@ def main():
         historical_blobs += 1
         path = objects[identity]
         data = git("cat-file", "blob", identity)
+        if not path.endswith(ALLOWED_SUFFIXES) and path not in SOURCE_ARCHIVES:
+            findings.append({"path": path, "blob": identity, "category": "historical_file_type_not_allowed"})
         if path in SOURCE_ARCHIVES:
             result, _ = inspect_archive(path, data, blob=identity)
         else: result = inspect_bytes(path, data, blob=identity)
