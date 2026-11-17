@@ -8,11 +8,18 @@ import unittest
 
 from tests.credit_v2_runtime_fixture import SyntheticCreditAuthority
 from uta.credit_native_v2 import _actual_guard, operation_scope
+from uta.storage import StorageError
 from uta.writer_fence import WriterFenceError
 
 
 class NativeLateBoundaryTests(unittest.TestCase):
     def test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure(self):
+        self._exercise(("lost_context_after_closing", "stale_before_closing", "stale_before_commit", "unrelated_account"))
+
+    def test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back(self):
+        self._exercise(("lost_operation_before_closing",))
+
+    def _exercise(self, scenarios):
         self.assertNotIn("UTA_CREDIT_V2_PRIVATE_DB_DIRECTORY", os.environ)
         fixture = SyntheticCreditAuthority(additional_accounts=("bob",))
         self.addCleanup(fixture.close)
@@ -29,12 +36,11 @@ class NativeLateBoundaryTests(unittest.TestCase):
         before = snapshot()
         original_now = fixture.now
         observations = []
-        for scenario in ("lost_operation_before_closing", "lost_context_after_closing", "stale_before_closing",
-                         "stale_before_commit", "unrelated_account"):
+        for scenario in scenarios:
             with self.subTest(scenario=scenario):
                 fixture.now = original_now
                 staged = False
-                with self.assertRaises(WriterFenceError) as refused:
+                with self.assertRaises(StorageError) as refused:
                     with exchange._transaction() as connection:
                         connection.execute("SAVEPOINT real_outer")
                         guard = _actual_guard(credit.database, connection, "financial")
@@ -65,6 +71,9 @@ class NativeLateBoundaryTests(unittest.TestCase):
                             fixture.now += timedelta(days=1)
                         connection.execute("RELEASE real_outer")
                 fixture.now = original_now
+                expected_code = {"lost_operation_before_closing": "credit_v2_context_invalid",
+                    "unrelated_account": "credit_v2_sql_guard_failed"}.get(scenario, "credit_v2_guard_failed")
+                self.assertEqual(refused.exception.code, expected_code)
                 self.assertTrue(staged, "each fault must follow actual full audited financial staging")
                 self.assertEqual(snapshot(), before)
                 self.assertEqual(fifo.status("late-loan")["state"], "PENDING")
