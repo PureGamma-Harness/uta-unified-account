@@ -31,6 +31,8 @@ class CandidateCreditObligationTests(unittest.TestCase):
         self.assertEqual(result["after_reopen"]["liabilities"], [("alice", "BTC", "0.4", "0")])
         self.assertEqual(result["core_ledger_verified_events"], 3)
         self.assertEqual(result["core_credit_nonzero_liabilities"], 1)
+        self.assertEqual(result["base_decision_reader"]["kind"], "CREDIT_BORROWED")
+        self.assertEqual(result["base_decision_reader"]["account_id"], "alice")
 
     def test_missing_parent_tuples_fail_real_deferred_commit(self):
         for missing in ("decision", "terminal", "credit", "journal", "source", "allocation", "policy"):

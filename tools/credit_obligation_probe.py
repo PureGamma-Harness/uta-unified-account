@@ -38,7 +38,7 @@ from uta.writer_fence import WriterFence
 CID, ACCOUNT, AUTHORITY = "probe:loan:1", "alice", "probe:credit:authority"
 AMOUNT, UNITS = "0.4", "40000000"
 JOURNAL = _key("credit", "account:alice", CID)
-DECISION = "decision:component-credit:1"
+DECISION = "decision:" + sha256(_json(["CREDIT_BORROWED", ACCOUNT, CID]).encode()).hexdigest()
 PAYLOAD = _json({"account_id": ACCOUNT, "asset": "BTC", "amount": AMOUNT})
 PAYLOAD_HASH = sha256(PAYLOAD.encode()).hexdigest()
 LEGS = sorted([("system:credit-pool", "BTC", "-40000000"),
@@ -301,6 +301,10 @@ def observe_case(*, candidate=True, missing=None, overrides=None, wrong_decision
             except sqlite3.ProgrammingError:
                 result["connection_closed_after_error"] = True
         result["after_reopen"] = component.snapshot()
+        if candidate and result["committed"] and result["after_reopen"]["decisions"]:
+            record = component.exchange.audit.decision(DECISION)
+            result["base_decision_reader"] = {key: record[key] for key in
+                ("decision_id", "kind", "account_id", "business_id", "pre_version", "post_version")}
         result["native_commit_attempted"] = "COMMIT" in component.transaction_trace
         result["native_rollback_observed"] = "ROLLBACK" in component.transaction_trace
         financial = lambda value: {key: item for key, item in value.items() if key not in ("inbox", "intents")}
