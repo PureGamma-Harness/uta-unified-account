@@ -90,3 +90,8 @@ python -m unittest discover -s tests -p test_supervision_cache_guard_validation.
 
 本组不修改任何实际24小时producer/observer源码、DB、PID或历史开始/截止时间。
 启用回滚仍是停止入口、按原ID查询/排空、正常关闭后新owner cache0重开，不改账或恢复LRU。
+
+后续独立静态审查发现两处测试SQLite事务context未显式关闭，旧版3.13强制GC负控确有
+ResourceWarning；仅测试fixture已补closing并以同8case三runtime重新验收。
+原659记录和此历史报告中的旧SHA不改写，详细红绿证据见
+[fixture closing记录](supervision-cache-fixture-closing.md)，不外推为720性能故障根因。

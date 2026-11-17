@@ -4,7 +4,7 @@ The spawned owner uses real leases, persistent SQL guards, required audit and
 ExchangeWorker. A command pipe controls fault ordering, not financial decisions.
 This is a single-authority fault harness, not a process-router throughput test.
 """
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 from hashlib import sha256
@@ -99,7 +99,7 @@ def cache_owner(path, channel):
                     result = {"renewed": True}
                 elif operation == "raw_update":
                     # No UDF, authorizer bypass or fabricated token is installed.
-                    with sqlite3.connect(path) as raw:
+                    with closing(sqlite3.connect(path)) as raw, raw:
                         raw.execute("UPDATE ledger_balances SET units='9999999999' WHERE account='customer:alice'")
                     result = {"unexpected_raw_write": True}
                 elif operation == "risk_revision":
@@ -290,7 +290,7 @@ class WarmCacheGuardValidationTests(unittest.TestCase):
         self.assertEqual(self.fence.status()["expires_ns"], expired["expires_ns"])
 
     def corrupt_trigger(self, kind):
-        with sqlite3.connect(self.path) as connection:
+        with closing(sqlite3.connect(self.path)) as connection, connection:
             if kind == "audit":
                 name = "audit_order_requires_decision"
                 sql = connection.execute("SELECT sql FROM sqlite_master WHERE type='trigger' AND name=?", (name,)).fetchone()[0]
