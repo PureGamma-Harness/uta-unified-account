@@ -242,7 +242,17 @@ class DurableGatewayTests(HTTPMixin, unittest.TestCase):
         self.execute.set()
         receipt = self.terminal("alice", "fault", token=TRADER)
         self.assertEqual((receipt["state"], receipt["result"], receipt["error"]["code"]), ("QUARANTINED", None, "command_quarantined"))
-        self.assertEqual(self.financial(), before)
+        after = self.financial()
+        diagnostics = [row for row in after["uta_events"] if row[1] == "COMMAND_EXECUTION_FAILED"]
+        self.assertEqual(len(diagnostics), 1)
+        self.assertIsNone(diagnostics[0][2])
+        diagnostic = json.loads(diagnostics[0][3])
+        self.assertEqual((diagnostic["event_version"], diagnostic["command_id"], diagnostic["attempt"], diagnostic["receipt_state"]),
+                         (1, "fault", 1, "QUARANTINED"))
+        self.assertEqual(diagnostic["failure_class"], "technical_execution_failure")
+        self.assertEqual(diagnostic["diagnostic"]["status"], "cause_not_supplied")
+        after["uta_events"] = [row for row in after["uta_events"] if row[1] != "COMMAND_EXECUTION_FAILED"]
+        self.assertEqual(after, before)
 
     def test_unknown_enqueue_outcome_returns_no_fake_result_and_original_id_recovers(self):
         backend = self.server.service._producer.queue

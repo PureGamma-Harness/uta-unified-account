@@ -9,6 +9,7 @@ from decimal import Decimal
 from hashlib import sha256
 import json
 import math
+import struct
 from typing import Mapping
 
 from .admission import _business_rejection
@@ -61,11 +62,38 @@ def _stamp(value):
     return value.astimezone(timezone.utc).isoformat(timespec="microseconds")
 
 
-def _payload_digest(text):
+def _stored_type(value):
+    for cls, name in ((str, "text"), (bytes, "blob"), (int, "integer"), (float, "real"), (type(None), "null")):
+        if type(value) is cls:
+            return name
+    return "unsupported"
+
+
+def _stored_digest(value):
+    """Typed digest of SQLite primitives, without coercion or object hooks.
+
+    TEXT keeps the original UTF-8 hash. BLOB is hashed as stored bytes, never
+    decoded or labelled canonical JSON. Other native SQLite classes use explicit
+    fixed binary encodings; unsupported objects produce a missing digest.
+    """
+    storage_type = _stored_type(value)
     digest = sha256()
-    for start in range(0, len(text), 8192):
-        digest.update(text[start:start + 8192].encode("utf-8"))
-    return digest.hexdigest()
+    if storage_type in ("text", "blob"):
+        for start in range(0, len(value), 8192):
+            chunk = value[start:start + 8192]
+            digest.update(chunk.encode("utf-8") if storage_type == "text" else chunk)
+        encoding = "utf8" if storage_type == "text" else "raw_bytes"
+    elif storage_type == "integer" and -(2**63) <= value < 2**63:
+        digest.update(struct.pack(">q", value))
+        encoding = "signed_be64"
+    elif storage_type == "real":
+        digest.update(struct.pack(">d", value))
+        encoding = "ieee754_be64"
+    elif storage_type == "null":
+        encoding = "empty"
+    else:
+        return None, storage_type, None
+    return digest.hexdigest(), storage_type, encoding
 
 
 def _canonical(kind, payload):
@@ -216,13 +244,16 @@ class QueueStore:
     def _record(row):
         if row is None:
             return None
-        return {"command_id": row["command_id"], "sequence": row["sequence"],
-                "account_id": row["account_id"], "kind": row["kind"], "state": row["state"],
+        record = {"command_id": row["command_id"], "sequence": row["sequence"],
+                "account_id": row["account_id"], "kind": row["kind"] if type(row["kind"]) is str else None, "state": row["state"],
                 "ack": "durably_queued", "result": json.loads(row["result"]) if row["result"] else None,
                 "error": json.loads(row["error"]) if row["error"] else None,
                 "attempts": row["attempts"], "last_error": row["last_error"],
                 "enqueued_at": row["enqueued_at"], "completed_at": row["completed_at"],
                 "next_attempt_at": row["next_attempt_at"]}
+        if type(row["kind"]) is not str:
+            record.update(kind_status="typed_corrupt", kind_storage_type=_stored_type(row["kind"]))
+        return record
 
     def enqueue_submit(self, account_id, command_id, order_id, symbol, quantity, limit_price, *, reduce_only=False):
         return self.enqueue(SUBMIT_ORDER, command_id, dict(account_id=account_id, order_id=order_id,
@@ -414,6 +445,8 @@ class QueueStore:
                     raise ValueError("attempt must identify the next observed execution")
             attempts = row["attempts"] + 1
             quarantined = attempts >= max_attempts
+            kind_digest, kind_storage, kind_encoding = _stored_digest(row["kind"])
+            payload_digest, payload_storage, payload_encoding = _stored_digest(row["payload"])
             error = {"code": "command_quarantined", "message": "technical execution failure requires investigation; no risk acceptance receipt", "status": 503}
             connection.execute("UPDATE uta_command_inbox SET state=?,attempts=?,last_error=?,error=?,completed_at=?,next_attempt_at=? WHERE command_id=? AND state='PENDING'",
                 ("QUARANTINED" if quarantined else "PENDING", attempts, "technical_execution_failure",
@@ -421,9 +454,12 @@ class QueueStore:
                  None if quarantined else _stamp(self.clock() + timedelta(seconds=backoff_seconds)), command_id))
             exchange._event(connection, "COMMAND_EXECUTION_FAILED", None, {
                 "event_version": 1, "command_id": command_id, "command_sequence": row["sequence"],
-                "command_kind": row["kind"] if len(row["kind"]) <= 32 and row["kind"] in _FIELDS else None,
-                "command_kind_sha256": _payload_digest(row["kind"]), "attempt": attempts,
-                "canonical_payload_sha256": _payload_digest(row["payload"]),
+                "command_kind": row["kind"] if type(row["kind"]) is str and len(row["kind"]) <= 32 and row["kind"] in _FIELDS else None,
+                "command_kind_sha256": kind_digest, "command_kind_storage_type": kind_storage,
+                "command_kind_digest_encoding": kind_encoding, "attempt": attempts,
+                "canonical_payload_sha256": payload_digest if payload_storage == "text" else None,
+                "stored_payload_sha256": payload_digest, "payload_storage_type": payload_storage,
+                "payload_digest_encoding": payload_encoding,
                 "failure_class": "technical_execution_failure",
                 "receipt_state": "QUARANTINED" if quarantined else "PENDING",
                 "diagnostic": capture_failure(cause),
