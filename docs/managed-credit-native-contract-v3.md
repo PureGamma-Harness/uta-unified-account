@@ -24,8 +24,11 @@ canonical hash。禁止嵌套/跨连接/跨线程，关闭或异常后 finally �
 | TERMINAL | 同原 CID 的 inbox SUCCEEDED 已写，FK 仍在同外层事务待检查 |
 | COMMIT | before_commit 重核下述终末门槛、原 final fence，再由真实 SQLite 提交 |
 
-BORROW canonical legs 按原 `CreditService`/ledger 顺序为：pool −q、customer +q、该
-账户 principal liability −q、principal receivable +q，币种及 event/ordinal 全匹配。
+BORROW 四个角色为：pool −q、customer +q、该账户 principal liability −q、principal
+receivable +q，币种及 event/ordinal 全匹配。实际 ordinal 由 `DurableLedger._normalize`
+的 `sorted(normalized)` 决定，不能把这里列举角色的顺序当作 journal 顺序；当前 alice/BTC
+例为 customer:alice=0、liability:principal:alice=1、system:credit-pool=2、
+system:credit-principal-receivable=3。
 仅总和为零不够；重复腿、额外平衡 dummy 腿、错 customer/asset、缺应收、错 ordinal 均
 须拒绝。REPAY按实际 interest-first 列表核验，pool只收本金，interest cash只收利息。
 
