@@ -1,0 +1,15 @@
+Baseline source: 5d0f34acba48e59f59650013b190edf8a72faa8e
+All Git commands explicitly used the stated working directory.
+
+At /workspace/uta-next-integration, after the parent confirmed the performance quiet window had ended:
+git worktree add -b test/ledger-guard-review /workspace/uta-ledger-guard-review 5d0f34acba48e59f59650013b190edf8a72faa8e
+
+At /workspace/uta-ledger-guard-review, after adding only the independent test:
+mkdir -p evidence/runs/ledger-guard-integrity-review
+python -c 'import os,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); suite=unittest.defaultTestLoader.loadTestsFromName("tests.test_ledger_guard_integrity_review"); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())' > evidence/runs/ledger-guard-integrity-review/original-red.stdout.txt 2> evidence/runs/ledger-guard-integrity-review/original-red.stderr.txt
+
+Observed exit: 1. Exactly one test failed, in 0.133s. The failing assertion requires public verification to reject the semantically disabled native ledger guard. The test records reopening and managed take-over results before asserting, so both additional false accepts remain in the same raw stdout.
+
+No root/frozen/old soak/engine-owned source tree was modified. No subprocess worker, benchmark, full suite or additional test was started. One actual temporary source is used and destroyed by TemporaryDirectory cleanup.
+
+To reproduce the red result, apply this review's test to a clean checkout of the stated baseline and run the same Python command there. Choose separate output filenames/directories to preserve these original red records. The public APIs and fault injection are entirely contained in the added test; no existing financial function is patched.
