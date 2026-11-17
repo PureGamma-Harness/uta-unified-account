@@ -117,3 +117,20 @@ wall-clock TTL or production behavior is approved by the fixed synthetic clock.
 All author original REDs remain unchanged. No initial independent actual red
 or rerun occurred. Raw commands, source hashes, output and timings are retained
 under `evidence/reviews/credit-repayment-independent/`.
+
+
+## Independent adversarial controls and mapper compatibility
+
+Seven additional pure controls were first committed at `63389a4`, then run
+once together with the ten existing mapper tests after the scoped SQL result.
+CPU3/Python3.12 at 15:12:47.837033–47.968651 UTC,17 tests passed, wall0.131643s,
+no SQL/native execution or CPU4 use. The new vectors reject borrowed SID/quote
+inputs, boolean native integers, wrong receipt interest/principal allocation,
+frozen-cash repayment and materialized-pool tampering. A stronger principal-
+first forgery updates all affected postings, self hashes, terminal amounts and
+balances so it remains balanced and self-consistent; the independent interest-
+first financial expectation still refuses it. No producer calculation or
+expected-posting table provides the expected legs. The ten prior mapper tests
+also pass with the new explicit null-limit REPAY mapping branch; BORROW's
+default strict limit behavior remains tested. Original first actual/file/SQL
+records and author REDs remain unchanged.
