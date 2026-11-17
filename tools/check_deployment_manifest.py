@@ -82,6 +82,7 @@ def validate_manifest(value):
     need(value['purpose'] == 'review_synthetic', 'review_synthetic_only')
     need(type(value['operator_uid']) is int and 0 < value['operator_uid'] < 2**32, 'operator_uid')
     bounded_text(value['source_commit'], r'[0-9a-f]{40}', 'source_commit')
+    need(value['source_commit'] != '0' * 40, 'source_reference_uninitialized')
     exact(value['approval'], ('real_funds_requested', 'external_approval_reference'), 'approval_fields')
     need(value['approval']['real_funds_requested'] is False, 'real_funds_require_external_release_process')
     # A string or boolean in this untrusted declaration cannot authenticate approval.
@@ -91,6 +92,7 @@ def validate_manifest(value):
     exact(artifact, ('kind', 'path', 'source_commit', 'sha256', 'version'), 'artifact_fields')
     need(artifact['kind'] == 'wheel', 'artifact_kind')
     bounded_text(artifact['sha256'], r'[0-9a-f]{64}', 'artifact_sha256')
+    need(artifact['sha256'] != '0' * 64, 'artifact_digest_uninitialized')
     bounded_text(artifact['version'], r'[0-9]+\.[0-9]+\.[0-9]+(?:[a-z0-9.+-]{0,32})', 'artifact_version')
     exact(rules, ('source_commit', 'version'), 'rules_fields')
     need(artifact['source_commit'] == rules['source_commit'] == value['source_commit'], 'source_reference_mismatch')
@@ -145,6 +147,7 @@ def validate_manifest(value):
             'deployment_id': value['deployment_id'], 'source_commit': value['source_commit'],
             'checked_path_roles': sorted(paths), 'private_contents_read': False,
             'sqlite_opened': False, 'artifact_digest_verified': False, 'rules_contents_verified': False,
+            'secret_contents_verified': False,
             'actual_storage_settings_verified': False, 'external_approval_verified': False,
             'snapshot_atomic': False, 'activation_authorized': False, 'production_approved': False}
 

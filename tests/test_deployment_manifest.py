@@ -82,6 +82,14 @@ class DeploymentManifestTests(unittest.TestCase):
             value[section]['source_commit'] = '8' * 40
             self.refused(value, 'source_reference_mismatch')
 
+    def test_uninitialized_commit_or_digest_placeholder_is_refused(self):
+        value = deepcopy(self.value)
+        value['source_commit'] = value['artifact']['source_commit'] = value['rules']['source_commit'] = '0' * 40
+        self.refused(value, 'source_reference_uninitialized')
+        value = deepcopy(self.value)
+        value['artifact']['sha256'] = '0' * 64
+        self.refused(value, 'artifact_digest_uninitialized')
+
     def test_bool_is_not_format_or_os_uid(self):
         for field in ('format', 'operator_uid'):
             value = deepcopy(self.value)
