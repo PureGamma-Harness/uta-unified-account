@@ -352,6 +352,14 @@ def _sql_gate(guard, phase, *args):
                 valid = args == context.intent_row
             else:
                 cid, digest, *values = args
+                # EXISTS may evaluate this scalar before its other predicates.
+                # Historical intent rows are candidates, not attempted effects
+                # belonging to this operation. They grant no permission. Only
+                # the final trigger may reject an effect when no current actual
+                # staged obligation matches. A wrong digest for the current CID
+                # is still a fatal violation below.
+                if cid != context.view.command_id:
+                    return 0
                 valid = (cid, digest) == (context.view.command_id, context.view.intent_digest)
                 after = json.loads(context.after_payload)
                 before = json.loads(context.view.pre_state_payload)["credit"]

@@ -22,7 +22,7 @@ from uta.writer_fence import WriterFence
 
 
 class SyntheticCreditAuthority:
-    def __init__(self, *, opening_principal=False, opening_interest=False):
+    def __init__(self, *, opening_principal=False, opening_interest=False, additional_accounts=()):
         retained = os.environ.get("UTA_CREDIT_V2_PRIVATE_DB_DIRECTORY")
         if retained:
             root = Path(retained)
@@ -46,11 +46,16 @@ class SyntheticCreditAuthority:
             reserve_cache_size=0, market_cache_size=0)
         self.bootstrap.create_account("alice")
         self.bootstrap.deposit("alice", "opening-cash", "USD", D(100))
+        for account in additional_accounts:
+            self.bootstrap.create_account(account)
+            self.bootstrap.deposit(account, "opening-cash:" + account, "USD", D(100))
         self.bootstrap.publish_market(self.market)
         self.bootstrap.set_kill_switch(False)
         self.bootstrap_credit = CreditService(self.bootstrap)
         self.bootstrap_credit.configure_asset_limit("BTC", D(".5"))
         self.bootstrap_credit.configure_limit("alice", "BTC", D(".5"))
+        for account in additional_accounts:
+            self.bootstrap_credit.configure_limit(account, "BTC", D(".5"))
         self.bootstrap_credit.fund_pool("pool:0", "BTC", D(1), source_reference="synthetic:credit-pool:0")
         if opening_principal or opening_interest:
             self.bootstrap_credit.borrow("alice", "opening-loan", "BTC", D(".4"))
