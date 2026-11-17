@@ -87,3 +87,52 @@ This microcomponent exercises BUSY5 and cleanup semantics only. It does not
 manufacture native15, rerun the complete publication test, demonstrate HA,
 prove financial replay, or qualify the source for production. Original8b
 1472-test failures and the earlier scoped3af PASS remain unchanged.
+
+## Subsequent one-shot native evidence: independent review
+
+The author then executed the authorized component **once**, 2026-11-17
+14:28:13.434799–14:28:14.151294 UTC. This reviewer did not rerun it or open
+SQLite. Read-only evidence verification at14:30:29 UTC passed25 independent
+conjunctive checks in `actual-once-independent.json`.
+
+Observed whole wall was **0.716488729 seconds**, worker wall0.441730368 seconds,
+CPU2/Python3.13.5/SQLite3.46.1. Launch exited0 without watchdog, forced cleanup
+or remaining session. Actual native trace records `OperationalError`, code5,
+`SQLITE_BUSY`. The real owner PID214273, generation1, had unchanged expiry
+62825414160711 across fresh observations. The exact three parent status phases
+were fresh-before-exclusive, expected-real-BUSY, and once-fresh-after-release.
+The two actual child barriers report zero changes. Its native SH kernel record
+was retained before undo. The child exited0 and was absent; read-only reviewer
+`/proc` observations and `ps --sid 214271` also found no remaining owned process.
+
+All eleven named worker assertions are true. That includes preserving the same
+real BUSY exception object through zero-status-read undo, no inferred authority,
+unchanged financial rows, and the actual integer-cash assertion
+`customer:scratch=1000`, `system:custody=-1000`. The unchanged driver performs
+those SQL reads/assertions. The trace exports the resulting boolean rather than
+full cash/journal rows: this review therefore does **not** claim an independent
+SQLite reopen or per-entry financial reconciliation.
+
+Trace SHA256:
+`06938a2e8dd41a55c15526594a5d2140c98826b394c19cd9ac8a5d2b99cea706`.
+Raw original input digests are retained in the independent JSON. Launch stdout
+is byte-identical to the worker result. The raw files were only read, never
+rewritten; the author archives them separately. All production flags stay false.
+
+All265 before/after input hashes equal actual source bytes and exact2dda Git
+blobs. Those265 inputs include **51** `uta/` files; all51 equal8b. The full tracked
+`uta/` inventory has52 files, including `uta/dashboard.html`, which is outside
+that265-input map. Its current bytes and both2dda/8b Git blobs also agree, as do
+all52 tracked runtime files. That current comparison is not retroactively
+claimed as before/after manifest coverage of the dashboard.
+
+The reviewer's first checker incorrectly assumed the265-input map contained52
+`uta/` files. It reported one false predicate despite all hashes matching. The
+initial script and initial red JSON are retained unchanged. The corrected
+checker uses51 manifest-covered files and a separate dynamic52-file current/Git
+comparison. This was a read-only checker correction, with no native rerun and
+no changes to author evidence or code.
+
+**Component evidence accepted within its stated scope.** Historical PROTOCOL15
+causality, the complete publication test, a new full matrix, throughput and
+production qualification remain unproved by this component.
