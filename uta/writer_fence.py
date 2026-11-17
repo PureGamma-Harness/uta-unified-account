@@ -722,6 +722,26 @@ def _assert_financial_joinable(database, connection):
     raise WriterFenceError("unguarded_connection", "borrowing requires the existing authority's financial transaction")
 
 
+def _assert_existing_read_joinable(database, connection):
+    """Existing-only constructors may join a real read/control snapshot.
+
+    This grants no role or writer authority. A supplied token is checked in
+    that actual snapshot; every later financial transaction still fences it.
+    """
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is None or guard.connection is not connection or guard.database is not database
+            or guard.role not in ("read", "control") or guard.credit_owner_thread != get_ident()
+            or not connection.in_transaction):
+        raise WriterFenceError("unguarded_connection", "existing-only construction requires its exact guarded read snapshot")
+    if guard.denied is not None:
+        raise guard.denied
+    if database.writer_token is not None:
+        state = _load(connection)
+        _require_guard_format(state)
+        _assert_token(database, state, database.writer_token)
+
+
 def _assert_joinable(database, connection):
     with _REGISTRY_LOCK:
         guard = _REGISTRY.get(id(connection))
