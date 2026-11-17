@@ -6,10 +6,11 @@ intent, first-source, market, code and durable terminal evidence. No result of
 this module authorizes a loan or activates a NATIVE_PREPARED authority.
 """
 from dataclasses import dataclass
+import json
 import re
 from types import MappingProxyType
 
-from .credit_policy import NativeCreditDescriptor, UNIT_LIMIT
+from .credit_policy import NativeCreditDescriptor, UNIT_LIMIT, validate_native_descriptor
 from .storage import StorageError
 
 
@@ -47,11 +48,12 @@ def _bounded(value):
     return value
 
 
-def _snapshot(raw):
+def _snapshot(raw, *, require_increment=True):
     if type(raw) is not dict or set(raw) != SNAPSHOT_FIELDS:
         _invalid("credit transition snapshot is incomplete or has unknown fields")
     version = raw["version"]
-    if type(version) is not int or not 0 <= version < 2**63 - 1:
+    if (type(version) is not int or not 0 <= version <= 2**63 - 1
+            or require_increment and version == 2**63 - 1):
         _invalid("credit transition account version cannot be advanced")
     state = {field: _units(value, signed=field in SIGNED_FIELDS)
              for field, value in raw.items() if field != "version"}
@@ -81,6 +83,7 @@ class BorrowTransition:
     before: object
     after: object
     postings: tuple
+    inputs_payload: str
 
     def wire(self):
         return {"account_id": self.account_id, "asset": self.asset, "scale": self.scale,
@@ -102,12 +105,26 @@ def calculate_borrow_transition(*, descriptor, account_id, asset, amount_units,
     """
     if type(descriptor) is not NativeCreditDescriptor:
         _invalid("credit transition requires a validated native descriptor")
+    # A public frozen dataclass can still be constructed or replaced. Consume
+    # the canonical declaration through the real strict validator again; its
+    # Python fields never become an allowance or native capability.
+    try:
+        descriptor = validate_native_descriptor(descriptor.canonical_payload,
+            expected_authority_id=descriptor.authority_id, expected_shard=descriptor.shard,
+            expected_certificate_id=descriptor.certificate_id,
+            expected_policy_id=descriptor.credit_policy_id,
+            expected_layout_hash=descriptor.layout_hash)
+    except (StorageError, ValueError, TypeError, AttributeError) as error:
+        raise CreditTransitionError("credit_transition_invalid", "credit transition canonical descriptor is invalid") from error
     if type(account_id) is not str or _IDENTIFIER.fullmatch(account_id) is None:
         _invalid("credit transition account identity is invalid")
     if type(asset) is not str:
         _invalid("credit transition asset identity is invalid")
-    allocation = descriptor.allocation_for(asset, descriptor.shard)
-    budget = next(item for item in descriptor.assets if item.asset == asset)
+    try:
+        allocation = descriptor.allocation_for(asset, descriptor.shard)
+        budget = next(item for item in descriptor.assets if item.asset == asset)
+    except (StorageError, ValueError, StopIteration) as error:
+        raise CreditTransitionError("credit_transition_invalid", "credit transition asset has no declared allocation") from error
     state = _snapshot(before)
     if type(limits) is not dict or set(limits) != LIMIT_FIELDS:
         _invalid("credit transition needs explicit account and local asset limits")
@@ -138,8 +155,64 @@ def calculate_borrow_transition(*, descriptor, account_id, asset, amount_units,
         ("system:credit-pool", -amount), ("system:credit-principal-receivable", amount))))
     if sum(units for _, units in postings) != 0:
         _invalid("credit transition generated an unbalanced journal")
+    inputs = {"descriptor": descriptor.canonical_payload, "authority_id": descriptor.authority_id,
+        "account_id": account_id, "asset": asset,
+        "amount_units": amount_units, "before": before, "limits": limits, "quote_units": quote_units,
+        "quantity_step_units": quantity_step_units}
+    payload = json.dumps(inputs, sort_keys=True, separators=(",", ":"), allow_nan=False)
     return BorrowTransition(account_id, asset, budget.scale, amount, descriptor.descriptor_id,
-        allocation.allocation_id, MappingProxyType(state), MappingProxyType(after), postings)
+        allocation.allocation_id, MappingProxyType(state), MappingProxyType(after), postings, payload)
+
+
+def _recalculate(expected):
+    """Public result dataclasses are data, never a trusted verification seal."""
+    raw = expected.inputs_payload
+    if type(raw) is not str:
+        _invalid("credit transition retained arithmetic inputs exceed bounds")
+    def integer(value):
+        if len(value) > 20:
+            _invalid("credit transition retained integer exceeds bounds")
+        return int(value)
+    def no_number(value):
+        _invalid("credit transition retained metadata must be integers")
+    try:
+        if len(raw.encode("utf-8")) > 4 * 1024 * 1024:
+            _invalid("credit transition retained arithmetic inputs exceed bounds")
+        inputs = json.loads(raw, parse_int=integer, parse_float=no_number, parse_constant=no_number)
+        if (type(inputs) is not dict or set(inputs) != {"descriptor", "authority_id", "account_id", "asset", "amount_units",
+                "before", "limits", "quote_units", "quantity_step_units"}
+                or json.dumps(inputs, sort_keys=True, separators=(",", ":"), allow_nan=False) != raw):
+            _invalid("credit transition retained arithmetic inputs are not canonical")
+        authority_id = inputs.pop("authority_id")
+        inputs["descriptor"] = validate_native_descriptor(inputs["descriptor"],
+            expected_authority_id=authority_id)
+        recomputed = calculate_borrow_transition(**inputs)
+    except CreditTransitionError:
+        raise
+    except (StorageError, ValueError, TypeError, KeyError, UnicodeError, RecursionError) as error:
+        raise CreditTransitionError("credit_transition_invalid", "credit transition retained arithmetic inputs are invalid") from error
+    # Validate primitive result values before wire conversion; in particular a
+    # forged result cannot substitute bool or a custom str hook for integers.
+    if (any(type(getattr(expected, field)) is not str for field in
+            ("account_id", "asset", "descriptor_id", "allocation_id"))
+            or type(expected.scale) is not int or type(expected.amount_units) is not int
+            or not 0 <= expected.scale <= 18 or not 0 < expected.amount_units < UNIT_LIMIT
+            or type(expected.before) is not MappingProxyType or type(expected.after) is not MappingProxyType
+            or type(expected.postings) is not tuple or len(expected.postings) != 4):
+        _invalid("credit transition result has invalid field types")
+    for snapshot in (expected.before, expected.after):
+        if set(snapshot) != SNAPSHOT_FIELDS or any(type(value) is not int for value in snapshot.values()):
+            _invalid("credit transition result snapshot is not a primitive integer map")
+        if any(abs(value) >= UNIT_LIMIT for key, value in snapshot.items() if key != "version"):
+            _invalid("credit transition result snapshot exceeds amount bounds")
+    for posting in expected.postings:
+        if (type(posting) is not tuple or len(posting) != 2
+                or type(posting[0]) is not str or type(posting[1]) is not int):
+            _invalid("credit transition result postings have invalid primitive types")
+        _bounded(posting[1])
+    if expected.wire() != recomputed.wire() or raw != recomputed.inputs_payload:
+        raise CreditTransitionError("credit_transition_mismatch", "expected transition differs from independently recomputed arithmetic inputs")
+    return recomputed
 
 
 def compare_borrow_transition(expected, *, after, postings):
@@ -150,7 +223,8 @@ def compare_borrow_transition(expected, *, after, postings):
     """
     if type(expected) is not BorrowTransition:
         _invalid("credit transition comparison requires its exact expected type")
-    _snapshot(after)
+    expected = _recalculate(expected)
+    _snapshot(after, require_increment=False)
     if type(postings) is not list or len(postings) != 4:
         _invalid("credit transition comparison requires all four ordered journal legs")
     for posting in postings:

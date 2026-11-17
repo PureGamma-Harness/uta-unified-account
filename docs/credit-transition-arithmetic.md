@@ -77,3 +77,44 @@ the isolated module/tests/docs restores the previous unwired state. Future audit
 consumers must retain matching immutable source and must add its loaded-code
 identity before relying on it. No production, real-funds, interest-scheduler,
 USDT/USDC, auto-borrow or throughput acceptance is claimed.
+
+## Independent contract counterexamples and correction
+
+The independent author froze an integer/Fraction oracle and safety assertions
+in `7ece8c483571a9ff859f4c71aa1d64402351d90d` before observing the correction.
+Against actual `23efd5f`, its 51 ordinary arithmetic cases matched, but four
+safety assertions failed: a legal final version could not roundtrip; a public
+descriptor dataclass could enlarge its allocation fields while retaining old
+canonical bytes/IDs; a public result dataclass could double its four expected
+legs and be compared to itself; unknown assets leaked a different error class
+without the module's promised status. These are offline arithmetic/caller
+contracts. They did not grant native permission, and `operation_authorized`
+remained false. The original red outcome is retained separately.
+
+The correction reparses the canonical descriptor using the real strict
+certificate validator before using any allocation. Constructing or replacing
+Python fields cannot enlarge that canonical budget. Its declaration still must
+be pinned to the actual native authority by a future caller; no newly fabricated
+but structurally valid certificate becomes a live budget here.
+
+The calculator retains canonical primitive arithmetic inputs. Comparison
+recalculates the expected transition from those inputs, validates primitive
+result fields and checks its complete result before comparing recorded state
+and postings. A result dataclass is data, not a verification seal. The retained
+input reader bounds text at 4 MiB (including an escaped descriptor), rejects
+noncanonical JSON, huge metadata integers and non-integer numbers, and never
+imports or executes any retained symbol. Neither internally consistent inputs
+nor the reconstructed result establish the provenance of a supplied quote,
+limits or snapshot.
+
+The final signed-64-bit account version can be a valid recorded post-state; it
+cannot be a new operation's starting version. Missing allocations now return
+`credit_transition_invalid`/503 with the original cause retained. Financial
+formulas, interest, native SQL, managed paths and A2 behavior are unchanged.
+
+Fifteen targeted tests, including real temporary preseal COMMIT/reopen, passed
+on Python3.12 (0.072s), 3.10 (0.105s), and 3.13 (0.078s). All runs promote
+ResourceWarning to an error. Full source hashes, commands, process times and raw
+output are retained in `evidence/runs/credit-transition-contract-fix/`. Independent
+rerun of the original safety assertions is required to close the four specific
+blocks; these own tests do not substitute for that review or full operation audit.

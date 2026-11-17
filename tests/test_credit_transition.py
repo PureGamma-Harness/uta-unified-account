@@ -1,10 +1,12 @@
 """Offline accounting arithmetic plus a real preseal borrow positive control."""
 from copy import deepcopy
+from dataclasses import replace
 from datetime import datetime, timezone
 from decimal import Decimal as D, Inexact, localcontext
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import MappingProxyType
 import unittest
 
 from tests.credit_policy_cases import descriptor, reseal
@@ -81,6 +83,49 @@ class CreditTransitionTests(unittest.TestCase):
         with self.assertRaises(CreditTransitionError) as refused:
             self.calculate(descriptor=parsed, amount_units="1000000")
         self.assertEqual(refused.exception.code, "credit_limit")
+
+    def test_constructed_descriptor_fields_cannot_enlarge_canonical_budget(self):
+        parsed = validate_native_descriptor(descriptor(), expected_authority_id="credit:shard0")
+        budget = parsed.assets[0]
+        raised = replace(budget.allocations[0], limit_units=100000000)
+        forged = replace(parsed, assets=(replace(budget, allocations=(raised, budget.allocations[1])),))
+        with self.assertRaises(CreditTransitionError) as refused:
+            self.calculate(descriptor=forged, amount_units="60000000", quote_units="100000000",
+                limits={"account_limit_units": "100000000", "local_asset_limit_units": "100000000"})
+        self.assertEqual(refused.exception.code, "credit_limit")
+
+    def test_final_integer_version_roundtrip_requires_no_further_advance(self):
+        expected = self.calculate(before=state(version=2**63-2))
+        self.assertEqual(expected.after["version"], 2**63-1)
+        wire = expected.wire()
+        self.assertTrue(compare_borrow_transition(expected, after=wire["after"],
+            postings=wire["postings"])["accounting_matches"])
+        self.assertRaises(CreditTransitionError, self.calculate, before=state(version=2**63-1))
+
+    def test_public_result_is_recomputed_instead_of_being_a_verification_seal(self):
+        expected = self.calculate()
+        after = dict(expected.after)
+        after["cash_units"] += 1
+        forged = replace(expected, after=MappingProxyType(after))
+        wire = forged.wire()
+        with self.assertRaises(CreditTransitionError) as refused:
+            compare_borrow_transition(forged, after=wire["after"], postings=wire["postings"])
+        self.assertEqual(refused.exception.code, "credit_transition_mismatch")
+        forged = replace(expected, postings=tuple((account, units*2) for account, units in expected.postings))
+        wire = forged.wire()
+        with self.assertRaises(CreditTransitionError) as refused:
+            compare_borrow_transition(forged, after=wire["after"], postings=wire["postings"])
+        self.assertEqual(refused.exception.code, "credit_transition_mismatch")
+        for raw in ("{}", expected.inputs_payload+" ", "\ud800",
+                    expected.inputs_payload[:-1]+',"account_id":"alice"}'):
+            with self.subTest(raw=raw[:8]), self.assertRaises(CreditTransitionError):
+                compare_borrow_transition(replace(expected, inputs_payload=raw),
+                    after=expected.wire()["after"], postings=expected.wire()["postings"])
+
+    def test_missing_allocation_is_internal_invalid_evidence_with_status(self):
+        with self.assertRaises(CreditTransitionError) as refused:
+            self.calculate(asset="UNKNOWN")
+        self.assertEqual((refused.exception.code, refused.exception.status), ("credit_transition_invalid", 503))
 
     def test_pool_quote_step_and_explicit_limits_each_block_the_transition(self):
         for changes, code in (({"before": state(pool_units="39999999")}, "credit_pool_empty"),
