@@ -207,6 +207,10 @@ def _receipt(record, *, status_url: str):
 
 
 def _view_options(query, *, pageable):
+    # Python 3.10 treats an empty strict parse_qsl input as an invalid field.
+    # An absent query uses the documented view defaults on every interpreter.
+    if query == "":
+        return {}
     try:
         pairs = parse_qsl(query, keep_blank_values=True, strict_parsing=True, max_num_fields=5)
         fields = dict(pairs)

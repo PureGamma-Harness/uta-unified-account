@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 from uta.credit import CreditService
 from uta.durable_commands import QueueStore
-from uta.durable_gateway import make_server, producer_binding
+from uta.durable_gateway import _view_options, make_server, producer_binding
 from uta.durable_process import DurableProcessRouter
 from uta.durable_views import ManagedAccountViews
 from uta.gateway import Credential
@@ -121,6 +121,15 @@ class DurableViewTests(unittest.TestCase):
         self.assertEqual((position["quantity"], position["cost_basis"], position["cost_basis_unit"]), ("0.5", "50", "USD"))
         self.assertIsNone(self.views.read("alice", "orders")["orders"][0]["reserved_margin"])
         self.expect(501, "/v2/accounts/alice/risk")
+
+    def test_absent_query_defaults_and_nonempty_malformed_queries_remain_strict(self):
+        for pageable in (False, True):
+            self.assertEqual(_view_options("", pageable=pageable), {})
+        for suffix in ("", "?"):
+            self.expect(200, "/v2/accounts/alice" + suffix)
+            self.expect(200, "/v2/accounts/alice/events" + suffix)
+        for query in ("&", "limit", "limit=", "limit=1&", "limit=1&limit=2", "unknown=1"):
+            self.expect(400, "/v2/accounts/alice/events?" + query)
 
     def test_writer_commit_between_metadata_and_rows_cannot_split_a_view_snapshot(self):
         old = self.views.read("alice")
