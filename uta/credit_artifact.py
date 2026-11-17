@@ -36,11 +36,16 @@ _MODULES = ("service", "credit", "credit_policy", "credit_native", "credit_artif
             "market_cache", "risk", "scenario_margin", "admission", "failure_diagnostics", "matching",
             "supervisor", "durable_views", "spot", "liquidation", "reservations", "configuration",
             "store", "ops", "reconciliation", "migration", "cutover", "durable_liquidation",
-            "bridge", "shadow_adapter", "shard_admission", "worker", "acceptance")
+            "bridge", "shadow_adapter", "shard_admission", "worker", "acceptance",
+            "credit_native_v2", "credit_audit_v2", "credit_audit_v2_replay", "credit_fifo_v2",
+            "credit_transition", "credit_v2_payload_contract", "existing_services")
 _REQUIRED_FUNCTIONS = frozenset({"uta.credit.CreditService._borrow", "uta.credit.CreditService._repay",
     "uta.credit_policy.validate_native_descriptor", "uta.credit_native.prepare_credit_native",
     "uta.writer_fence._TransactionGuard.before_commit", "uta.durable_commands.QueueStore._execute",
-    "uta.market_cache.MarketDecodeCache.parse", "uta.ledger.Ledger._units"})
+    "uta.market_cache.MarketDecodeCache.parse", "uta.ledger.Ledger._units",
+    "uta.credit_audit_v2.CreditAuditV2.begin_borrow", "uta.credit_audit_v2.CreditAuditV2.complete_borrow",
+    "uta.credit_audit_v2.CreditAuditV2.verify_staged_borrow", "uta.credit_audit_v2_replay.replay_bundle",
+    "uta.credit_fifo_v2.InternalCreditFIFO.process_one", "uta.existing_services.open_existing_services"})
 # These are live process/connection registries and ContextVars, not financial
 # constants. Their account, connection or nonce contents must never be archived.
 _LIVE_GLOBALS = frozenset({"_REGISTRY", "_REGISTRY_LOCK", "_CONTROL_DDL_OVERRIDE",

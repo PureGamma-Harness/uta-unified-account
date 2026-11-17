@@ -281,8 +281,9 @@ class CreditService:
     def _borrow(self, connection, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:
         """Join an existing financial transaction; never commit or open one.
 
-        This internal interface adds no managed borrowing or ingress capability.
-        Its caller owns rollback if a later receipt or another action fails.
+        Managed execution additionally requires the actual complete native
+        source/FIFO operation scope. Its caller owns rollback if a later receipt
+        or another action fails; the dispatcher uses a real SQL SAVEPOINT.
         """
         if connection is None:
             raise StorageError("borrowing requires an existing financial transaction")
@@ -295,9 +296,24 @@ class CreditService:
             if previous is not None:
                 return previous
             from .writer_fence import _load
-            if _load(connection) is not None:
-                raise ServiceError("unsupported_credit_operation",
-                    "managed new borrowing requires a supported credit decision capability", 501)
+            state = _load(connection)
+            audit = capture = None
+            if state is not None:
+                if state.get("credit_format") != 2:
+                    raise ServiceError("unsupported_credit_operation",
+                        "managed new borrowing requires a supported credit decision capability", 501)
+                from .credit_native_v2 import CreditV2Error, assert_operation_context
+                try:
+                    assert_operation_context(self, connection, command_id=command_id,
+                        account_id=account_id, asset=asset, amount=amount, operation_kind="BORROW")
+                except CreditV2Error as error:
+                    if error.code != "credit_v2_scope_missing":
+                        raise
+                    raise ServiceError("unsupported_credit_operation",
+                        "managed new borrowing requires its durable credit dispatcher", 501) from error
+                from .credit_audit_v2 import CreditAuditV2
+                audit = CreditAuditV2(self.exchange, self)
+                capture = audit.begin_borrow(connection, account_id, command_id, asset, amount)
             # The shared exposure guard includes the global halt and any
             # durable liquidation/supervisor account freeze.
             self.exchange._require_exposure_allowed(connection, account_id)
@@ -353,6 +369,8 @@ class CreditService:
                                                   "open_order_margin", "available_margin", "rule_id",
                                                   "rule_version", "catalog_version") if key in projected},
             }
+            if audit is not None:
+                audit.complete_borrow(connection, capture, result)
             return self._record(connection, scope, command_id, "borrowed", asset, amount_text, result)
 
     def accrue_interest(self, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:

@@ -112,6 +112,12 @@ def _auxiliary_objects(connection):
             for statement in OBJECT_SQL.values():
                 name, definition = _fixed_definition(statement)
                 result[name] = definition
+        if state.get("credit_format") == 2:
+            from .credit_native_v2 import OBJECT_SQL as native_objects
+            from .credit_audit_v2 import OBJECT_SQL as audit_objects
+            for statement in (*native_objects.values(), *audit_objects.values()):
+                name, definition = _fixed_definition(statement)
+                result[name] = definition
     from .decision_audit import _guard_definitions
     for name, (table, sql) in _guard_definitions().items():
         result[name] = ("trigger", table, sql)
