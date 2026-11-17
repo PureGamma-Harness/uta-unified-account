@@ -1,0 +1,56 @@
+Frozen source: 28493d4f1ca78b8452a1e337e2cd5277a81d95a5
+Frozen checkout: /workspace/uta-durable-final-28493d4 (read-only)
+Report worktree: /workspace/uta-package-final
+External work: /tmp/uta-release-final-20261117-0ibLCN
+Every command below selected the stated working directory explicitly.
+
+At the report worktree, before the final SHA was supplied:
+mktemp -d /tmp/uta-release-final-20261117-XXXXXX
+python -m venv /tmp/uta-release-final-20261117-0ibLCN/venv
+No release artifacts were built at that preparation step.
+
+At the frozen checkout, after the final SHA was supplied:
+git rev-parse HEAD
+git status --short
+git log -1 --oneline
+mkdir /tmp/uta-release-final-20261117-0ibLCN/artifacts /tmp/uta-release-final-20261117-0ibLCN/build-source /tmp/uta-release-final-20261117-0ibLCN/external /tmp/uta-release-final-20261117-0ibLCN/sdist-unpacked
+git archive --format=tar --output=/tmp/uta-release-final-20261117-0ibLCN/frozen-source.tar HEAD
+
+At the report worktree:
+tar -xf /tmp/uta-release-final-20261117-0ibLCN/frozen-source.tar -C /tmp/uta-release-final-20261117-0ibLCN/build-source
+
+At the external build-source directory (without .git):
+python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-final-20261117-0ibLCN/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-final-20261117-0ibLCN/artifacts"))'
+Exit 0; separate stdout/stderr are retained in build.*.txt.
+
+At the report worktree, before strengthening the verifier:
+python tools/verify_release_archives.py --source /workspace/uta-durable-final-28493d4 --commit 28493d4f1ca78b8452a1e337e2cd5277a81d95a5 --wheel /tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-final-20261117-0ibLCN/artifact-manifest.json
+Exit 0 under the incomplete original required-file set; files retained with initial- prefix.
+
+At the external directory:
+/tmp/uta-release-final-20261117-0ibLCN/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+env -u PYTHONPATH /tmp/uta-release-final-20261117-0ibLCN/venv/bin/python -I /workspace/uta-package-final/tools/validate_installed_release.py --source /workspace/uta-durable-final-28493d4 --artifact-manifest /tmp/uta-release-final-20261117-0ibLCN/artifact-manifest.json --output /tmp/uta-release-final-20261117-0ibLCN/external/installed
+Both exit 0; 8/8 actual tests, zero skips. The verifier hashes used at that time are in environment.json. This run predates the closing-only follow-up.
+
+At the report worktree, after the complete ls-tree inventory exposed four missing paths and the archive verifier was strengthened:
+python -m unittest discover -s tests -p test_release_archives.py -v
+Exit 0, four automated tests (15 verifier subprocess invocations including subtests).
+python tools/verify_release_archives.py --source /workspace/uta-durable-final-28493d4 --commit 28493d4f1ca78b8452a1e337e2cd5277a81d95a5 --wheel /tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-final-20261117-0ibLCN/artifact-manifest-complete.json
+Exit 1, exactly the four tracked omissions. Actual stdout/stderr retained in verify-archives-complete.*.txt.
+
+The actual missing-probe control is reproducible by copying each member of the original sdist with tarfile.open, retaining its original root prefix, then appending the exact frozen bytes for these three files only:
+.github/workflows/ci.yml
+.gitignore
+benchmarks/results/20261114-wal-lifetime/regression.txt.gz
+Do not append the missing allocation-probe.py. Write the independent archive as /tmp/uta-release-final-20261117-0ibLCN/negative-only-missing-probe.tar.gz.
+The actual control argv/cwd and observed exit 1 are in missing-probe-negative-control.json. Its full artifact report is negative-only-missing-probe-report.json; the only missing member is evidence/runs/sqlite-fixture-resourcewarning/allocation-probe.py.
+
+At the report worktree, create a separate source-list check copy:
+mkdir /tmp/uta-release-final-20261117-0ibLCN/manifest-check-source
+tar -xf /tmp/uta-release-final-20261117-0ibLCN/frozen-source.tar -C /tmp/uta-release-final-20261117-0ibLCN/manifest-check-source
+cp /workspace/uta-package-final/MANIFEST.in /tmp/uta-release-final-20261117-0ibLCN/manifest-check-source/MANIFEST.in
+At that separate source-list check directory:
+python -c 'from setuptools import setup; setup(script_args=["egg_info"])'
+Exit 0. Compare its uta_reference_exchange.egg-info/SOURCES.txt with git ls-tree -r --name-only at the frozen checkout. All 796 tracked paths are selected; revised-source-selection.json records the result. No wheel/sdist is built by egg_info.
+
+The failed bare-FileList helper check is retained separately and is not used as release evidence. No revised artifact has been built. The 28493d4 artifacts remain incomplete and the aggregate package verdict remains false.

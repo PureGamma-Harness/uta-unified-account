@@ -8,6 +8,7 @@ No service, risk, accounting, matching or authentication function is patched.
 from __future__ import annotations
 
 import argparse
+from contextlib import closing
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 from hashlib import sha256
@@ -135,7 +136,7 @@ def main():
                 return record if record["state"] == "SUCCEEDED" else None
             completed_order = self.eventually(success)
             self.assertEqual(D(completed_order["result"]["reserved_margin"]), D("10.04"))
-            with sqlite3.connect(f"file:{router._database(0).path}?mode=ro", uri=True) as connection:
+            with closing(sqlite3.connect(f"file:{router._database(0).path}?mode=ro", uri=True)) as connection, connection:
                 rows = connection.execute("SELECT quantity,filled_quantity,status FROM uta_orders WHERE account_id='alice'").fetchall()
             self.assertEqual(rows, [("1", "0", "OPEN")])  # One reserve: 100*.1 + ceil_cents(100*.0004)
             first.send_signal(signal.SIGTERM)
@@ -155,7 +156,7 @@ def main():
             self.assertEqual(self.eventually(canceled)["state"], "SUCCEEDED")
             health, _ = self.eventually(lambda: helper.health_after(self, second_port))
             self.assertGreater(health["workers"][0]["generation"], first_health["workers"][0]["generation"])
-            with sqlite3.connect(f"file:{router._database(0).path}?mode=ro", uri=True) as connection:
+            with closing(sqlite3.connect(f"file:{router._database(0).path}?mode=ro", uri=True)) as connection, connection:
                 rows = connection.execute("SELECT quantity,filled_quantity,status FROM uta_orders WHERE account_id='alice'").fetchall()
                 decisions = connection.execute("SELECT COUNT(*) FROM uta_risk_decisions").fetchone()[0]
                 balances = connection.execute("SELECT units FROM ledger_balances WHERE account='customer:alice' AND asset='USD'").fetchall()
