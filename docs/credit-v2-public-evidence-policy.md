@@ -35,3 +35,13 @@ They remain for root review and are never attached to the PR. The final report
 and this policy are attestation-only additions after the scanned source commit;
 the exact latest draft is scanned again before its push. No original financial
 evidence or failed-run bytes are modified to make a material scan pass.
+
+After whole stable91 and independently accepted root5a catalogue integration,
+the M3-only scan is explicitly based on exact
+5a2961134aedaef9914d4cdd0247bb8795fb9b90. Its report for source1f10a68 checks
+379 changed current files and448 newly reachable history blobs, with zero
+unresolved findings. This separates already accepted baseline material from
+the draft's changes while retaining every original credit result/source
+identity. The report is under `stable91-and-catalog/`; no prior report is
+rewritten. The narrow verifier-view compatibility edit and its real first red
+remain part of the scanned history.
