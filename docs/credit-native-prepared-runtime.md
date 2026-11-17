@@ -53,3 +53,9 @@ prepared库没有后继事件。旧base/batch的guard/event查询逻辑保留，
 
 该证明依赖实际安装器对fresh历史的严格限制；它不是恶意OS/control历史任意改写后的
 外部反回滚证明。缺少已声明marker或schema仍失败关闭，不通过删event降低保护。
+
+修订源码`20af9cc413fd431f502ba1f467e5efd7040fb336`的122项专项在CPU4全部通过，
+UTC2026-11-17 11:33:57.656508–11:34:14.844764，unittest16.830秒、进程17.188264秒。
+范围含native16、原writer fence/旧binary、credit/join/gross/A2边界、durable batch及
+policy；零skip/timeout。[原始结果](../evidence/runs/credit-native-20af9cc/manifest-python312.json)
+不替代后续金融源核验修订、三运行时完整验收或性能结果。
