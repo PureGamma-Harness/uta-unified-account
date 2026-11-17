@@ -112,6 +112,27 @@ class ManagedSoakResourceTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'required managed database'):
             ManagedSoak._resources(job)
 
+    def test_required_main_direct_or_dangling_symlink_is_fatal(self):
+        for dangling in (False, True):
+            with self.subTest(dangling=dangling):
+                job = self.make()
+                target = job.directory / 'managed/shard-0000.sqlite3'
+                replacement = job.directory / 'replacement.dat'
+                if not dangling:
+                    replacement.write_bytes(b'not the required main')
+                target.unlink()
+                target.symlink_to(replacement)
+                with self.assertRaisesRegex(RuntimeError, 'required managed database'):
+                    ManagedSoak._resources(job)
+
+    def test_dangling_auxiliary_and_atomic_temporary_symlinks_are_not_followed(self):
+        job = self.make()
+        for name in ('managed/shard-0000.sqlite3-wal', 'progress.json.tmp'):
+            (job.directory / name).symlink_to(job.directory / 'absent-target')
+        report = ManagedSoak._resources(job)
+        self.assertEqual(report['directory_bytes'], 16)
+        self.assertFalse(report['budget_exceeded'])
+
     def test_initialization_failure_is_preserved_before_required_databases_exist(self):
         with TemporaryDirectory() as directory:
             target = Path(directory) / 'job'

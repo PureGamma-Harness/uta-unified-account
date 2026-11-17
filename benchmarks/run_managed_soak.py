@@ -823,7 +823,7 @@ class ManagedSoak:
         total = 0
         for path in paths:
             try:
-                details = path.stat()
+                details = path.stat(follow_symlinks=False)
             except FileNotFoundError:
                 relative = path.relative_to(self.directory).as_posix()
                 if (relative in _RESOURCE_TRANSIENTS or re.fullmatch(
