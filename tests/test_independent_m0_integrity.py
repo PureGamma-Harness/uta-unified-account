@@ -33,6 +33,8 @@ class IntegrityClosure(unittest.TestCase):
                 observed_completion_ns=planned+1_000_000,latency_ns=1_000_000,deadline_exceeded=False,
                 intended_product_rejection=n%10==0,receipt=dict(command_id=f'bench:{n}',attempts=0,
                 state='SUCCEEDED' if outcome=='financial_succeeded' else 'REJECTED',last_error=None)))
+            self.rows[-1]['receipt']['error']=None if outcome=='financial_succeeded' else {
+                'status':400 if outcome=='business_rejected' else 503,'code':'synthetic_only','message':'synthetic receipt'}
     def parsed(self):
         self.path.write_bytes(gzip.compress(b''.join((json.dumps(r)+'\n').encode() for r in self.rows),mtime=0))
         return m.project_arrivals(self.path)
@@ -66,7 +68,34 @@ class IntegrityClosure(unittest.TestCase):
         with self.assertRaises(m.GateError):self.parsed()
     def test_original_8_cross_file_population(self):
         self.rows[199]['outcome']='business_rejected';self.rows[199]['receipt']['state']='REJECTED'
+        self.rows[199]['receipt']['error']={'status':400,'code':'synthetic_only','message':'synthetic receipt'}
         with self.assertRaises(m.GateError):self.checked()
+    def test_business_label_cannot_carry_control_error(self):
+        self.rows[0]['receipt']['error']['status']=503
+        with self.assertRaisesRegex(m.GateError,'receipt_rejection_classification'):self.parsed()
+    def test_control_label_cannot_carry_business_error(self):
+        self.rows[1]['receipt']['error']['status']=400
+        with self.assertRaisesRegex(m.GateError,'receipt_rejection_classification'):self.parsed()
+    def test_rejected_error_invalid_json(self):
+        self.rows[0]['receipt']['error']='SYNTHETIC-NOT-JSON'
+        with self.assertRaisesRegex(m.GateError,'rejection_error_json'):self.parsed()
+    def test_rejected_error_missing_status(self):
+        del self.rows[0]['receipt']['error']['status']
+        with self.assertRaisesRegex(m.GateError,'rejection_error_shape'):self.parsed()
+    def test_rejected_error_wrong_status_type(self):
+        for value in (True,400.0,'400',float('nan'),float('inf'),99,600):
+            with self.subTest(value=value):
+                self.rows[0]['receipt']['error']['status']=value
+                with self.assertRaises(m.GateError):self.parsed()
+    def test_rejected_error_duplicate_json_keys(self):
+        self.rows[0]['receipt']['error']='{"status":400,"status":503,"code":"synthetic","message":"stub"}'
+        with self.assertRaises(m.GateError):self.parsed()
+    def test_valid_rejected_error_json_string(self):
+        self.rows[0]['receipt']['error']=json.dumps(self.rows[0]['receipt']['error'])
+        self.assertEqual(self.parsed()[0]['receipt_error_status'],400)
+    def test_success_cannot_have_error(self):
+        self.rows[2]['receipt']['error']={'status':400,'code':'synthetic','message':'stub'}
+        with self.assertRaisesRegex(m.GateError,'success_receipt_error'):self.parsed()
     def test_bool_counts_are_not_ints(self):
         for name in ('offered','duration_including_terminal_observation_drain'):
             with self.subTest(name=name):

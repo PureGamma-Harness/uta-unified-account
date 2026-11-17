@@ -388,6 +388,18 @@ def project_arrivals(path):
             need(receipt is not None and ack is not None,'terminal_receipt_missing')
             need(receipt['state']==('SUCCEEDED' if outcome=='financial_succeeded' else 'REJECTED'),'receipt_outcome_identity')
             need(safe['receipt_attempts']==0 and receipt['last_error'] is None,'receipt_technical_diagnostic')
+            if outcome=='financial_succeeded':
+                need('error' in receipt and receipt['error'] is None,'success_receipt_error')
+            else:
+                error=receipt.get('error')
+                if type(error) is str:
+                    try:error=strict_json(error)
+                    except (ValueError,TypeError):raise GateError('rejection_error_json') from None
+                need(type(error) is dict and set(error)=={'status','code','message'},'rejection_error_shape')
+                status=integer(error['status'],100,599)
+                need(type(error['code']) is str and 0<len(error['code'])<=256 and type(error['message']) is str and len(error['message'])<=65536,'rejection_error_fields')
+                need((status<500) is (outcome=='business_rejected'),'receipt_rejection_classification')
+                safe['receipt_error_status']=status
         rows.append(safe)
     need(len(rows)==200 and {r['sequence'] for r in rows}==set(range(200)),'missing_arrivals')
     return rows
