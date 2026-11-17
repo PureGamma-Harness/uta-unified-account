@@ -28,6 +28,8 @@ EXPECTED_EVENT_HASHES = ["f0201ec2d6f7eaa23b3872bb381810108b5e4a4ef0ac1eae07d757
 def source_guard(label):
     spec = SOURCES[label]
     source, reference = spec["path"], spec["financial_ref"]
+    assert subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=all"],
+                                   cwd=source, text=True) == ""
     paths = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", reference, "uta"],
                                     cwd=source, text=True).splitlines()
     assert len(paths) == 52
@@ -68,6 +70,7 @@ def observe_case(output, kind, Database, DurableLedger, Posting):
     shadow = sqlite3.connect(path.as_uri() + "?mode=rw", uri=True, isolation_level=None)
     try:
         shadow.execute("PRAGMA foreign_keys=ON")
+        shadow.execute("BEGIN")
         good = snapshot(shadow, "main")
         assert good["tables"]["ledger_balances"] == EXPECTED_BALANCES
         assert [row[4] for row in good["tables"]["ledger_events"]] == EXPECTED_EVENT_HASHES
@@ -75,6 +78,7 @@ def observe_case(output, kind, Database, DurableLedger, Posting):
             shadow.execute('CREATE TEMP TABLE "' + name + '" AS SELECT * FROM main."' + name + '"')
         good_temp = snapshot(shadow, "temp")
         assert good_temp["tables"] == good["tables"]
+        shadow.commit()
         assert not shadow.in_transaction
         offline = sqlite3.connect(path.as_uri() + "?mode=rw", uri=True, isolation_level=None)
         try:
@@ -191,9 +195,10 @@ def launch(output):
         result_path = output / record["label"] / "source-result.json"
         if result_path.exists():
             results.append(json.loads(result_path.read_bytes()))
+    checkout = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     report = {"started_at": started, "finished_at": datetime.now(timezone.utc).isoformat(),
         "whole_seconds": monotonic() - beginning, "whole_budget_met": monotonic() - beginning <= 15,
-        "source_checkout": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "source_checkout": checkout,
         "driver_sha256": sha256(Path(__file__).read_bytes()).hexdigest(), "records": records,
         "observations_complete": len(results) == 2 and all(r["cases_complete"] == 2 and r["source_unchanged"] for r in results),
         "all_four_reproduced": len(results) == 2 and all(len(r["reproduced_cases"]) == 2 for r in results),

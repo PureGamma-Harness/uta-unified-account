@@ -39,7 +39,9 @@ Before either corruption, open a separate raw unmanaged connection to the same
 MAIN path and create five TEMP tables by `CREATE TEMP TABLE name AS SELECT *
 FROM main.name`. Thus TEMP rows originate from the actual good MAIN state,
 not invented source rows. The script records complete genuine MAIN/TEMP
-snapshots, then closes the offline corruption connection after its COMMIT.
+snapshots. Creation and filling of all five TEMP copies share the original
+raw BEGIN/COMMIT snapshot, which ends before corruption. The script then closes
+the separate offline corruption connection after its COMMIT.
 The raw connection has no active MAIN transaction during this mutation.
 
 First call the unmodified public object's standalone `verify()` and retain its
