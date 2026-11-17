@@ -57,7 +57,7 @@
     "unittest-python312.txt": "a758d84583eb815fd1342da66b4fc50c29811d155ddad34e31e58f6f4786252e",
     "unittest-python310.txt": "6366ff321be87c730e21369366bae90f066697e97b04275e81e64a4f368acef7",
     "host.json": "93b1704199b9cabf41039e5848d74500ea2f8254e50256582ae16aad977ea116",
-    "README.md": "25bf4a11acfd30ad896d6924b9a104a07d7692c215c6c5c107502d82387c41d3"
+    "README.md": "9c2afa2c1fe9fb135a79d9c9f5d75f410567cfe8b70305cb560a4c31af6d5292"
   },
   "unit_test_execution": {
     "python312": {
@@ -70,5 +70,17 @@
       "seconds": 9.838,
       "exit_code": 0
     }
-  }
+  },
+  "scope_notes": [
+    {
+      "date": "2026-11-17",
+      "reason": "Known SQLite POSIX-close lock ownership issue is not release-wide validated; historical short observations do not unblock long runs.",
+      "file": "README.md",
+      "previous_sha256": "25bf4a11acfd30ad896d6924b9a104a07d7692c215c6c5c107502d82387c41d3",
+      "current_sha256": "9c2afa2c1fe9fb135a79d9c9f5d75f410567cfe8b70305cb560a4c31af6d5292",
+      "case_payloads_changed": false,
+      "smokes_rerun": false,
+      "posix_close_release_validated": false
+    }
+  ]
 }

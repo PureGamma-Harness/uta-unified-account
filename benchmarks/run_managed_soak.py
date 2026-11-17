@@ -43,6 +43,14 @@ from uta.storage import Database
 
 ACCOUNTS = ("managed-soak-alice", "managed-soak-bob", "managed-soak-credit")
 SCALE = 100_000_000
+# Deliberately no CLI/environment override. Short historical observations do
+# not validate the release-wide SQLite connection ownership/close contract.
+LONG_RUN_BLOCKERS = ("sqlite_posix_close_regression_not_release_validated",)
+
+
+def require_long_run_ready(duration):
+    if duration > 60 and LONG_RUN_BLOCKERS:
+        raise RuntimeError("managed long run blocked: validate the complete release against SQLite POSIX-close locking regressions first")
 
 
 def canonical(value):
@@ -128,6 +136,15 @@ class ManagedSoak:
         self.directory = Path(directory).absolute()
         if self.directory.is_symlink():
             raise ValueError("job directory must not be a symlink")
+        if resume:
+            original_configuration = json.loads((self.directory / "job.json").read_text())["configuration"]
+            if configuration is not None and asdict(configuration) != original_configuration:
+                raise RuntimeError("resume cannot change workload or duration")
+            requested = Configuration(**original_configuration)
+        else:
+            requested = configuration or Configuration()
+        requested.validate()
+        require_long_run_ready(requested.duration)
         self.directory.mkdir(mode=0o700, parents=True, exist_ok=True)
         if self.directory.stat().st_uid != os.geteuid() or self.directory.stat().st_mode & 0o077:
             raise ValueError("job directory must be private")
@@ -143,7 +160,7 @@ class ManagedSoak:
         self.listener = None
         self.stderr = None
         self.strict_source = strict_source
-        self.configuration = configuration or Configuration()
+        self.configuration = requested
         self.configuration.validate()
         self.authority = self.directory / "managed"
         self.financial = self.authority / "shard-0000.sqlite3"
@@ -151,6 +168,7 @@ class ManagedSoak:
         self.checkpoint = Database(self.directory / "checkpoint.sqlite3", timeout=2)
         self.env = environment()
         self.env["source_sha256"]["benchmarks/run_managed_soak.py"] = sha256(Path(__file__).read_bytes()).hexdigest()
+        self.env["source_sha256"]["benchmarks/run_benchmark.py"] = sha256((ROOT / "benchmarks/run_benchmark.py").read_bytes()).hexdigest()
         self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
         try:
             if strict_source and self.env["tracked_changes"]:
@@ -161,6 +179,7 @@ class ManagedSoak:
                 if configuration is not None and asdict(configuration) != self.meta["configuration"]:
                     raise RuntimeError("resume cannot change workload or duration")
                 self.configuration = Configuration(**self.meta["configuration"])
+                require_long_run_ready(self.configuration.duration)
                 if strict_source and any(self.env[key] != self.meta["environment"][key] for key in ("commit", "source_sha256", "workload_spec_sha256")):
                     raise RuntimeError("resume source differs from the frozen candidate")
                 for path, original in self.meta["file_identities"].items():
@@ -731,7 +750,7 @@ class ManagedSoak:
         qualified = (status == "completed" and final is not None and final.get("golden_passed")
             and rounds.get("DONE", 0) == self.configuration.rounds and not unresolved and not unresolved_faults
             and self.strict_source and self._state("controller_sessions") == 1
-            and all(faults.values()) and self._state("logs_verified") is True)
+            and all(faults.values()) and self._state("logs_verified") is True and not LONG_RUN_BLOCKERS)
         report = {"status": status, "mode": "managed-process-required-audit-native-tls-hmac",
             "synthetic": True, "planned_rounds": self.configuration.rounds, "rounds": rounds,
             "unresolved_steps": unresolved, "unresolved_faults": unresolved_faults, "elapsed_seconds": elapsed, "fault_signals": faults,
@@ -740,6 +759,7 @@ class ManagedSoak:
             "controller_sessions": self._state("controller_sessions") or 0,
             "verified_tls": self.tls.verify_mode == ssl.CERT_REQUIRED and self.tls.check_hostname,
             "logs_verified": self._state("logs_verified") is True, "final_audit": final, "error": error,
+            "long_run_blockers": list(LONG_RUN_BLOCKERS),
             "continuous_6h_stability_passed": bool(qualified and elapsed >= 21600 and self.configuration.duration >= 21600),
             "continuous_24h_stability_passed": bool(qualified and elapsed >= 86400 and self.configuration.duration >= 86400),
             "capacity_10000_per_s_passed": False, "production_approved": False,
@@ -907,7 +927,7 @@ def main(argv=None):
     parser.add_argument("--source-reference")
     parser.add_argument("--min-free-bytes", type=int, default=1024**3)
     parser.add_argument("--allow-dirty-development", action="store_true")
-    parser.add_argument("--allow-long-run", action="store_true", help="explicitly allow a frozen run longer than 60s; does not approve production")
+    parser.add_argument("--allow-long-run", action="store_true", help="request long-run opt-in; release lock validation must also pass")
     args = parser.parse_args(argv)
     if args.operation in ("status", "audit"):
         print(canonical((inspect_job if args.operation == "status" else audit_job)(args.directory)))
@@ -916,6 +936,10 @@ def main(argv=None):
                 if args.operation == "resume" else args.duration)
     if duration > 60 and (not args.allow_long_run or args.allow_dirty_development):
         parser.error("runs longer than 60s require --allow-long-run and frozen clean source")
+    try:
+        require_long_run_ready(duration)
+    except RuntimeError as error:
+        parser.error(str(error))
     if args.operation == "bootstrap":
         if type(args.rounds) is not int or not 1 <= args.rounds <= 21600 or not args.source_reference:
             parser.error("bootstrap requires bounded rounds and a synthetic source reference")

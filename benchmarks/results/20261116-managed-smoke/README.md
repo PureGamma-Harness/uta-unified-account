@@ -1,5 +1,10 @@
 # Frozen managed TLS/HMAC smoke evidence
 
+Historical scope note, added 2026-11-17: the reported short observations predate
+release-wide SQLite POSIX-close locking verification. Raw reports are unchanged.
+They are not a lock-ownership verdict, do not qualify a repaired release, and do
+not unblock a long managed run.
+
 These are separate synthetic managed-process smoke jobs on candidate
 `81c7e5b7e9965723854b7bcc2b8966b9d3d0b8ae`, based on `4c68f01`.
 They do not qualify the earlier 887/observer run, 6/24-hour stability, capacity,

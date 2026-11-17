@@ -35,6 +35,25 @@ class ManagedSoakTests(unittest.TestCase):
                 main(["run", "--directory", str(target), "--duration", "21600"])
             self.assertFalse(target.exists())
 
+    def test_long_job_release_lock_gate_has_no_cli_or_direct_api_bypass(self):
+        with TemporaryDirectory() as directory:
+            target = Path(directory) / "blocked-unverified-release"
+            with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                main(["run", "--directory", str(target), "--duration", "21600", "--allow-long-run"])
+            self.assertFalse(target.exists())
+            with self.assertRaisesRegex(RuntimeError, "POSIX-close"):
+                ManagedSoak(target, Configuration(duration=86400), strict_source=False)
+            self.assertFalse(target.exists())
+            # Resume must inspect its persisted duration before touching a
+            # listener, checkpoint, lock file, or financial authority.
+            target.mkdir(mode=0o700)
+            original = json.dumps({"configuration": Configuration(duration=21600).__dict__})
+            (target / "job.json").write_text(original)
+            with self.assertRaisesRegex(RuntimeError, "POSIX-close"):
+                ManagedSoak(target, resume=True, strict_source=False)
+            self.assertEqual([entry.name for entry in target.iterdir()], ["job.json"])
+            self.assertEqual((target / "job.json").read_text(), original)
+
     def test_real_tls_cli_matching_debt_and_both_process_faults(self):
         with TemporaryDirectory() as directory:
             job = self.make(directory, worker_every=1, parent_every=1)

@@ -1,5 +1,13 @@
 # Final frozen managed smoke evidence
 
+Historical scope note, added 2026-11-17: these are the final short observations
+of the recorded `d73f4ed` workload, not validation of a repaired storage release.
+They predate release-wide POSIX-close lock-ownership verification. Their original
+reports and hashes are retained unchanged; no job was rerun for this note.
+Long runs remain blocked until the complete release and every database override
+passes independent locking regressions. Neither this short green nor the
+original 887 job can satisfy that gate.
+
 Candidate: `d73f4eddb1deef440afe5f50c9c9752b4a72f6d7`, based on `4c68f01`.
 Runtime source, golden workload bytes and configuration were frozen throughout
 each run. Every local step/round/fault checkpoint fact and its corresponding

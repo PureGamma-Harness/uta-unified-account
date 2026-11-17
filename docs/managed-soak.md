@@ -6,6 +6,27 @@ Read [the golden workload](managed-soak-golden.md) for independently calculated
 fees, gross debt, account balances, matching and audit expectations. Earlier
 887 results cannot qualify this different code, transport or authority.
 
+## Current storage-lock release blocker
+
+Long runs are currently hard-blocked, including with `--allow-long-run` or the
+direct Python API. The underlying SQLite POSIX-close issue is documented at
+https://www.sqlite.org/howtocorrupt.html#posix_close_bug. Closing an unrelated
+descriptor for a database inode can release that process's POSIX advisory locks;
+an apparently passing short workload does not establish writer exclusion.
+
+The historical 10/60-second results remain unchanged as observations of their
+recorded candidate. They predate release-wide verification of this issue and
+cannot unblock a 6/24-hour run, prove lock ownership, or qualify a repaired
+release. This recovery session does not rerun those jobs or alter the live
+887/observer source or processes.
+
+The gate has no CLI/environment override. Removing it requires a separately
+reviewed complete release/source manifest and independent lock-ownership
+regressions across base, bound-shard, authentication, diagnostics, read-view and
+every other database override. A single storage patch SHA, capability attribute,
+clean Git status, or another passing smoke is insufficient. After that review,
+freeze a new candidate with its evidence; do not relabel these historical cases.
+
 The default is a 60-second smoke, at exactly 0.25 scheduled rounds/s with one
 active round. A 10-second window schedules arrivals at 0, 4 and 8 seconds. There
 is no catch-up burst; a delayed round delays the next actual start. This is a
@@ -133,14 +154,17 @@ continuous 6/24-hour run. `production_approved` and
 
 ## Preparing a future long job
 
-No 6-hour or 24-hour job is started by this delivery. Runs longer than 60 seconds
-require `--allow-long-run` and clean frozen source; dirty development cannot opt
-into them. After reviewing the two smoke results and final source manifest,
+No 6-hour or 24-hour job is started by this delivery. The current storage-lock
+release blocker denies every run or resume longer than 60 seconds before state
+creation, even with explicit opt-in. After the complete release blocker has been
+resolved, long runs would additionally require `--allow-long-run` and clean
+frozen source; dirty development cannot opt into them. After reviewing the new
+release's validation and final source manifest,
 reserve a separately reviewed resource window and a new directory. Defaults are
 one worker kill each 30 rounds and one parent kill each 300 rounds. There are disk
 budgets and one active round, not an unbounded in-memory workload queue.
 
 A future approved command would specify the duration explicitly, for example
 `--duration 21600 --allow-long-run`; 24 hours uses `86400`. This syntax is not a
-launch approval. Do not reuse an earlier directory, alter a live source checkout,
+launch approval and is rejected while the blocker remains. Do not reuse an earlier directory, alter a live source checkout,
 reset debt/funding, or present the earlier 887 result as evidence for this tool.
