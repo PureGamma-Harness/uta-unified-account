@@ -1,0 +1,59 @@
+{
+  "actual_footer": {
+    "planned_duration_ns": 50000000,
+    "setup_and_close_excluded": true,
+    "started_monotonic_ns": 53454521764733,
+    "terminal_observation_finished_monotonic_ns": 53454723341844,
+    "timing_contract_version": 1
+  },
+  "actual_footer_arrival_window_seconds": 0.05,
+  "actual_footer_arrivals": 8,
+  "actual_footer_functional_calls": 1,
+  "actual_footer_test_seconds": 1.194,
+  "capacity_approved": false,
+  "cohosted_not_dedicated": true,
+  "cpu_ids_for_all_new_tests": [
+    3
+  ],
+  "dummy_and_tiny_total_reported_test_seconds": 2.953,
+  "final_inputs_sha256": {
+    "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b",
+    "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+    "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+    "tests/test_managed_variant_runner.py": "461e2db7c838865d42b9448d27495cce347f03c15997b191f32d0bb2e6aceb02",
+    "tools/run_managed_variants.py": "654a94b65e57d4a6fc5ee26112cfcae8d043c6fc46ae4c6a6d40d45d893ea088"
+  },
+  "final_target_tests": {
+    "py310": {
+      "pure_only": 11,
+      "seconds": 0.049
+    },
+    "py312": {
+      "pure_and_dummy": 14,
+      "seconds": 0.601
+    },
+    "py313": {
+      "pure_only": 11,
+      "seconds": 0.041
+    }
+  },
+  "financial_receipt_and_reopen_successes": 8,
+  "financial_uta_runtime_unchanged_from_parent": true,
+  "footer_benchmark_source_unchanged_since_functional_call": true,
+  "future_integration_dependencies": [
+    "new exact source includes runner plus timing footer",
+    "new full local3 and actual CI8 allgreen",
+    "fresh same-source package/actual omission proofs",
+    "reviewed cohost JSON alerts/work-age/source/PID and remaining reservation proofs",
+    "explicit immutable execution registration and coordinated GO"
+  ],
+  "later_changes_after_footer_call": "runner/pure tests only; those functional source hashes remain verbatim in original footer-tiny-py312.log",
+  "original_baseplan_sha256": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+  "pressure_or_variant_cases_executed": false,
+  "private_financial_authority": "/tmp/uta-managed-variants-runner-first/functional/tiny-footer/authority",
+  "production_approved": false,
+  "read_only_cohost_JSON_contract_not_exercised_against_live_jobs": true,
+  "real_qualification_proof_acceptance_executed": false,
+  "source_parent_commit": "fdb2f59b3342743e9a28eda68bb310747a1bdc63",
+  "tested_development_tree_dirty": true
+}
