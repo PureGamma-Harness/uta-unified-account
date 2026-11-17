@@ -1120,7 +1120,14 @@ class ManagedProcessFaultTests(unittest.TestCase):
         self.assertFalse(result["publishing"])
         result = self.router.set_kill_switch(False, timeout=10)
         self.assertFalse(result["halted"])
-        self.assertTrue(self.router.diagnostics()["ready"])
+        # Control receipts can commit before the monitor collects the child's
+        # ready handshake. Observe the real predicate instead of racing its poll.
+        deadline = monotonic() + 10
+        report = self.router.diagnostics()
+        while not report["ready"] and monotonic() < deadline:
+            sleep(.01)
+            report = self.router.diagnostics()
+        self.assertTrue(report["ready"], report)
 
     def submit(self, command, order=None, shard=0):
         return self.router.submit_order(self.accounts[shard], command, order or command,
