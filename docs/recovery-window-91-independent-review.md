@@ -160,3 +160,44 @@ positive observation and the independent result preserves it. No value is
 backfilled, no observation is repeated to wash it out, and no runtime fix or
 release qualification follows from this non-reproduction. The historical CI
 failure and its root cause remain unresolved.
+
+## Static review of the proposed sixteen-sample lifecycle recorder
+
+The next candidate is `8f25e9edcf2bcece056165ed911302a919893cac`, new helper
+`trace_original91_lifecycle.py`, SHA
+`48446ef1f9f0fbc1a70d4bbcd1b2c50ce844ad7aae2a5ae14249a9c3d4aa8e21`.
+Its preregistration SHA is
+`41cf484f9c0058e32bd9ec73a138ee6f146928600ec70fecde715d8ac0501e74`.
+Neither the original81b9 helper nor its actual raw is modified. The new recorder
+adds actual observer start/end/error events and post-join `is_alive` reads, private
+umask/modes, current new-session metadata scan and explicit source/sampling/logger
+flags. Status calls and original test assertions remain unchanged; no new SQL or
+risk authority is introduced by these additions.
+
+The final controller is not yet available, so this review cannot authorize the
+batch. A concrete pure counterexample must be closed by that controller or a new
+helper version: the helper's strict gate uses serialized worker completion flags
+by truthiness and compares an error count with `==0`. Extracting only that AST
+expression, a hypothetical worker report with completion string `"false"`,
+errors `false`, zero tests, negative failures and nonboolean case status still
+produces strict=true when the other synthetic technical fields are true.
+Boolean or floating zero error counts are also accepted. This is a gate-shape
+counterexample, not an observed native failure or forged actual result. Its
+original pure red script/output are retained here.
+
+Before execution, require exact boolean technical flags, exact nonboolean integer
+counts, exactly one original case, valid failure/error counts and consistent case
+outcome. Missing or inconsistent result fields are technical unknown and stop,
+not an ordinary assertion failure. The external controller must independently
+bind runtime/helper/source hashes, original result counts and actual environment.
+B's executable path alone is insufficient: the prepared official build must use
+its bound library directory and clear PYTHONPATH/PYTHONHOME. Matching Python3.13.18
+still does not recreate CI's compiler, libc, image or scheduler.
+
+For an immutable ABBA repeated four times, preserving ordinary assertion failures
+and continuing the predetermined remaining slots is acceptable only after all
+technical evidence/cleanup/runtime gates pass. Any error, unknown, corruption,
+watchdog, observer failure or residual state stops; remaining slots must be
+NOT_RUN, never replaced or added. Sixteen successes would remain NO_REPRO under
+that design, not qualification. No native batch, SQL or original testcase was
+executed while preparing this independent static review.
