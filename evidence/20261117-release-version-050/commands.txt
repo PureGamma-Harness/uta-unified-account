@@ -1,0 +1,55 @@
+# Run from /workspace/uta-version-050 (or the integrated source checkout).
+# All archive files below are temporary synthetic protocol fixtures created
+# and removed by unittest. These commands do not build/install the project.
+
+taskset -c 0 /tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10 -m unittest discover -s tests -p test_release_archives.py -v
+taskset -c 0 python -m unittest discover -s tests -p test_release_archives.py -v
+# Preserve the expected-red unittest log byte-for-byte, including its four
+# original trailing spaces. Check the rest of the patch without rewriting raw.
+git diff --check a407d3c2a639cdf41b55e33eca4765866faec915 -- . ':(exclude)evidence/20261117-release-version-050/original-counterexamples-python310.txt'
+
+# Reproduce the old-tool counterexamples in a temporary directory.
+# The selected suite is expected to exit 1 (3 tests / 7 failed assertions).
+taskset -c 0 /tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10 - <<'PY'
+from pathlib import Path
+import subprocess
+import sys
+from tempfile import TemporaryDirectory
+import unittest
+sys.path.insert(0, 'tests')
+import test_release_archives as cases
+with TemporaryDirectory() as temporary:
+    old = Path(temporary) / 'original-verify-release-archives.py'
+    old.write_bytes(subprocess.check_output([
+        'git', 'show', 'a407d3c2a639cdf41b55e33eca4765866faec915:tools/verify_release_archives.py'
+    ], cwd=Path.cwd()))
+    cases.VERIFIER = old
+    suite = unittest.TestSuite([
+        cases.ReleaseArchiveTests('test_duplicate_version_headers_are_rejected_even_when_identical'),
+        cases.ReleaseArchiveVersionTests('test_new_declared_version_accepts_real_archives'),
+        cases.ReleaseArchiveVersionTests('test_wrong_missing_or_duplicate_metadata_version_is_rejected'),
+    ])
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    raise SystemExit(not result.wasSuccessful())
+PY
+
+# Working patch declaration/syntax precheck only, without importing uta.
+taskset -c 0 /tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10 - <<'PY'
+from hashlib import sha256
+import json
+from pathlib import Path
+import platform
+import runpy
+files = ['pyproject.toml', 'uta/__init__.py', 'tools/verify_release_archives.py', 'tools/validate_installed_release.py', 'tests/test_release_archives.py']
+for name in files[1:]:
+    compile(Path(name).read_bytes(), name, 'exec')
+namespace = runpy.run_path('tools/verify_release_archives.py')
+version = namespace['declared_version'](Path('pyproject.toml').read_text(), Path('uta/__init__.py').read_text())
+assert version == '0.5.0a1'
+print(json.dumps({'python': platform.python_version(), 'patch_declaration_precheck': version, 'compiled_without_execution': files[1:], 'file_sha256': {name: sha256(Path(name).read_bytes()).hexdigest() for name in files}, 'project_release_built': False, 'project_installed': False, 'services_started': 0, 'production_approved': False}, indent=2, sort_keys=True))
+PY
+
+# Actual raw files were redirected separately beneath
+# /tmp/uta-version-050-checks-pCCOWF and copied byte-for-byte into this evidence
+# directory. Earlier 18-test logs precede the final untracked-source control;
+# final-targeted-*.txt correspond to the submitted implementation.

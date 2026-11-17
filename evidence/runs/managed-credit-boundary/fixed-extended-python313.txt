@@ -1,0 +1,165 @@
+test_halt_and_stale_quote_reject_joined_new_risk_without_effects (tests.test_borrow_joined.JoinedBorrowTests.test_halt_and_stale_quote_reject_joined_new_risk_without_effects) ... ok
+test_late_business_rejection_requires_real_caller_savepoint_rollback (tests.test_borrow_joined.JoinedBorrowTests.test_late_business_rejection_requires_real_caller_savepoint_rollback) ... ok
+test_missing_or_inactive_connection_cannot_start_a_private_transaction (tests.test_borrow_joined.JoinedBorrowTests.test_missing_or_inactive_connection_cannot_start_a_private_transaction) ... ok
+test_other_database_or_raw_connection_cannot_join_borrowing (tests.test_borrow_joined.JoinedBorrowTests.test_other_database_or_raw_connection_cannot_join_borrowing) ... ok
+test_public_invalid_input_does_not_open_storage (tests.test_borrow_joined.JoinedBorrowTests.test_public_invalid_input_does_not_open_storage) ... ok
+test_read_inbox_and_control_roles_cannot_be_elevated (tests.test_borrow_joined.JoinedBorrowTests.test_read_inbox_and_control_roles_cannot_be_elevated) ... ok
+test_real_commit_then_same_id_reopen_replays_exactly_once (tests.test_borrow_joined.JoinedBorrowTests.test_real_commit_then_same_id_reopen_replays_exactly_once) ... ok
+test_receipt_failure_rolls_back_cash_pool_debt_journal_and_id (tests.test_borrow_joined.JoinedBorrowTests.test_receipt_failure_rolls_back_cash_pool_debt_journal_and_id) ... ok
+test_same_connection_order_cannot_reuse_new_loan_margin (tests.test_borrow_joined.JoinedBorrowTests.test_same_connection_order_cannot_reuse_new_loan_margin) ... ok
+test_two_accounts_share_actual_pool_cash_in_one_transaction (tests.test_borrow_joined.JoinedBorrowTests.test_two_accounts_share_actual_pool_cash_in_one_transaction) ... ok
+test_two_accounts_share_database_asset_limit_in_one_transaction (tests.test_borrow_joined.JoinedBorrowTests.test_two_accounts_share_database_asset_limit_in_one_transaction) ... ok
+test_existing_debt_same_asset_repayment_remains_supported (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_existing_debt_same_asset_repayment_remains_supported) ... ok
+test_old_command_replay_precedes_unsupported_halt_and_stale_checks (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_old_command_replay_precedes_unsupported_halt_and_stale_checks) ... ok
+test_private_joined_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_private_joined_owner_cannot_create_unaudited_credit) ... ok
+test_public_trusted_managed_owner_cannot_create_unaudited_credit (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_public_trusted_managed_owner_cannot_create_unaudited_credit) ... ok
+test_real_schema3_capability_still_declares_new_credit_not_captured (tests.test_managed_borrow_boundary.ManagedBorrowBoundaryTests.test_real_schema3_capability_still_declares_new_credit_not_captured) ... ok
+test_asset_limit_and_pool_liquidity_cannot_be_oversubscribed (tests.test_credit.CreditTests.test_asset_limit_and_pool_liquidity_cannot_be_oversubscribed) ... ok
+test_configured_rules_ltv_and_quantity_step_gate_actual_borrow (tests.test_credit.CreditTests.test_configured_rules_ltv_and_quantity_step_gate_actual_borrow) ... ok
+test_configured_total_debt_and_rule_principal_limits_cannot_be_bypassed (tests.test_credit.CreditTests.test_configured_total_debt_and_rule_principal_limits_cannot_be_bypassed) ... ok
+test_corrupt_debt_projection_is_rejected_before_new_credit_or_startup (tests.test_credit.CreditTests.test_corrupt_debt_projection_is_rejected_before_new_credit_or_startup) ... ok
+test_failure_after_mutation_rolls_back_every_projection_and_command (tests.test_credit.CreditTests.test_failure_after_mutation_rolls_back_every_projection_and_command) ... ok
+test_funded_borrow_preserves_gross_assets_and_debt_haircut (tests.test_credit.CreditTests.test_funded_borrow_preserves_gross_assets_and_debt_haircut) ... ok
+test_funding_proof_cannot_be_reused_with_another_command_or_asset (tests.test_credit.CreditTests.test_funding_proof_cannot_be_reused_with_another_command_or_asset) ... ok
+test_idempotency_survives_restart_and_commands_cannot_change_kind (tests.test_credit.CreditTests.test_idempotency_survives_restart_and_commands_cannot_change_kind) ... ok
+test_interest_has_no_invented_rate_clock_or_implicit_compounding (tests.test_credit.CreditTests.test_interest_has_no_invented_rate_clock_or_implicit_compounding) ... ok
+test_limits_are_required_immutable_and_enforced_against_gross_debt (tests.test_credit.CreditTests.test_limits_are_required_immutable_and_enforced_against_gross_debt) ... ok
+test_monetary_amounts_use_exact_asset_scale_independent_of_decimal_context (tests.test_credit.CreditTests.test_monetary_amounts_use_exact_asset_scale_independent_of_decimal_context) ... ok
+test_price_updates_include_full_gross_liability_and_cannot_drop_its_asset (tests.test_credit.CreditTests.test_price_updates_include_full_gross_liability_and_cannot_drop_its_asset) ... ok
+test_rejected_post_borrow_risk_rolls_back_cash_debt_journal_and_id (tests.test_credit.CreditTests.test_rejected_post_borrow_risk_rolls_back_cash_debt_journal_and_id) ... ok
+test_repay_during_halt_or_stale_prices_never_fabricates_a_borrow (tests.test_credit.CreditTests.test_repay_during_halt_or_stale_prices_never_fabricates_a_borrow) ... ok
+test_repay_honors_the_shared_available_asset_gate (tests.test_credit.CreditTests.test_repay_honors_the_shared_available_asset_gate) ... ok
+test_same_command_concurrent_retry_posts_once (tests.test_credit.CreditTests.test_same_command_concurrent_retry_posts_once) ... ok
+test_schema_one_upgrade_adds_unique_funding_sources_without_changing_money (tests.test_credit.CreditTests.test_schema_one_upgrade_adds_unique_funding_sources_without_changing_money) ... ok
+test_separate_interest_and_repayment_order_have_reconcilable_cashflows (tests.test_credit.CreditTests.test_separate_interest_and_repayment_order_have_reconcilable_cashflows) ... ok
+test_unknown_schema_version_blocks_existing_instances_too (tests.test_credit.CreditTests.test_unknown_schema_version_blocks_existing_instances_too) ... ok
+test_unpriced_stale_halted_or_frozen_account_cannot_borrow (tests.test_credit.CreditTests.test_unpriced_stale_halted_or_frozen_account_cannot_borrow) ... ok
+test_upgrade_rejects_duplicate_historical_funding_proofs_without_rewriting_journal (tests.test_credit.CreditTests.test_upgrade_rejects_duplicate_historical_funding_proofs_without_rewriting_journal) ... ok
+test_joined_repayment_remains_available_during_halt_and_stale_market (tests.test_credit_joined.JoinedRepaymentTests.test_joined_repayment_remains_available_during_halt_and_stale_market) ... ok
+test_receipt_failure_rolls_back_cash_debt_interest_and_idempotent_effect (tests.test_credit_joined.JoinedRepaymentTests.test_receipt_failure_rolls_back_cash_debt_interest_and_idempotent_effect) ... ok
+test_asset_and_borrow_haircut_separately (tests.test_gross_liabilities.GrossLiabilityTests.test_asset_and_borrow_haircut_separately) ... ok
+test_legacy_negative_balance_and_new_liabilities (tests.test_gross_liabilities.GrossLiabilityTests.test_legacy_negative_balance_and_new_liabilities) ... ok
+test_assets_and_liabilities_are_never_netted_before_haircut (tests.test_cross_margin.PortfolioTests.test_assets_and_liabilities_are_never_netted_before_haircut) ... ok
+test_borrow_capacity_uses_full_liability_loss_and_incremental_im (tests.test_cross_margin.PortfolioTests.test_borrow_capacity_uses_full_liability_loss_and_incremental_im) ... ok
+test_hand_computed_tiers_gross_loans_interest_freeze_and_multiplier (tests.test_cross_margin.PortfolioTests.test_hand_computed_tiers_gross_loans_interest_freeze_and_multiplier) ... ok
+test_immutable_models_round_trip_and_low_precision (tests.test_cross_margin.PortfolioTests.test_immutable_models_round_trip_and_low_precision) ... ok
+test_maintenance_equality_is_unsafe_even_with_zero_mm (tests.test_cross_margin.PortfolioTests.test_maintenance_equality_is_unsafe_even_with_zero_mm) ... ok
+test_stress_reference_has_no_spot_perpetual_offsets_and_cannot_activate_pm (tests.test_cross_margin.PortfolioTests.test_stress_reference_has_no_spot_perpetual_offsets_and_cannot_activate_pm) ... ok
+test_unsupported_modes_products_prices_and_bad_rules_fail_closed (tests.test_cross_margin.PortfolioTests.test_unsupported_modes_products_prices_and_bad_rules_fail_closed) ... ok
+test_loan_recovery_obeys_maintenance_hysteresis (tests.test_service_credit_supervisor.CreditSupervisorTests.test_loan_recovery_obeys_maintenance_hysteresis) ... ok
+test_negative_equity_is_bankrupt_and_real_repayment_can_resolve_it (tests.test_service_credit_supervisor.CreditSupervisorTests.test_negative_equity_is_bankrupt_and_real_repayment_can_resolve_it) ... ok
+test_positive_equity_loan_distress_blocks_and_cancels_without_fake_settlement (tests.test_service_credit_supervisor.CreditSupervisorTests.test_positive_equity_loan_distress_blocks_and_cancels_without_fake_settlement) ... ok
+test_release_spot_locks_before_deciding_on_existing_perpetual_position (tests.test_service_credit_supervisor.CreditSupervisorTests.test_release_spot_locks_before_deciding_on_existing_perpetual_position) ... ok
+test_release_spot_locks_then_revalue_prevents_false_loan_liquidation (tests.test_service_credit_supervisor.CreditSupervisorTests.test_release_spot_locks_then_revalue_prevents_false_loan_liquidation) ... ok
+test_single_order_requery_preserves_original_id_during_market_outage (tests.test_service_credit_supervisor.CreditSupervisorTests.test_single_order_requery_preserves_original_id_during_market_outage) ... ok
+test_spot_cancel_and_supervisor_state_share_one_rollback_boundary (tests.test_service_credit_supervisor.CreditSupervisorTests.test_spot_cancel_and_supervisor_state_share_one_rollback_boundary) ... ok
+test_true_loan_distress_remains_blocked_after_spot_cancellation (tests.test_service_credit_supervisor.CreditSupervisorTests.test_true_loan_distress_remains_blocked_after_spot_cancellation) ... ok
+test_zero_equity_with_debt_is_blocked_but_empty_account_remains_normal (tests.test_service_credit_supervisor.CreditSupervisorTests.test_zero_equity_with_debt_is_blocked_but_empty_account_remains_normal) ... ok
+test_boot_change_and_clock_regression_are_fail_closed (tests.test_writer_fence.WriterFenceTests.test_boot_change_and_clock_regression_are_fail_closed) ... ok
+test_bound_token_cannot_fall_back_to_legacy_when_managed_marker_is_missing (tests.test_writer_fence.WriterFenceTests.test_bound_token_cannot_fall_back_to_legacy_when_managed_marker_is_missing) ... ok
+test_caught_control_ddl_denial_still_rolls_back_lease_writes (tests.test_writer_fence.WriterFenceTests.test_caught_control_ddl_denial_still_rolls_back_lease_writes) ... ok
+test_changed_control_trigger_definition_is_corruption (tests.test_writer_fence.WriterFenceTests.test_changed_control_trigger_definition_is_corruption) ... ok
+test_control_and_read_roles_cannot_write_finance_and_financial_token_cannot_edit_lease (tests.test_writer_fence.WriterFenceTests.test_control_and_read_roles_cannot_write_finance_and_financial_token_cannot_edit_lease) ... ok
+test_control_cannot_add_lease_triggers_and_legal_lease_operations_conserve_finance (tests.test_writer_fence.WriterFenceTests.test_control_cannot_add_lease_triggers_and_legal_lease_operations_conserve_finance) ... ok
+test_copy_to_another_path_cannot_reuse_managed_authority (tests.test_writer_fence.WriterFenceTests.test_copy_to_another_path_cannot_reuse_managed_authority) ... ok
+test_enable_irreversible_and_old_exchange_credit_matcher_ledger_writers_are_denied (tests.test_writer_fence.WriterFenceTests.test_enable_irreversible_and_old_exchange_credit_matcher_ledger_writers_are_denied) ... ok
+test_expiring_lease_at_commit_rolls_back_financial_rows_and_version (tests.test_writer_fence.WriterFenceTests.test_expiring_lease_at_commit_rolls_back_financial_rows_and_version) ... ok
+test_expiry_equal_now_prevents_renew_and_reacquire_increments_generation (tests.test_writer_fence.WriterFenceTests.test_expiry_equal_now_prevents_renew_and_reacquire_increments_generation) ... ok
+test_inbox_bootstrap_allows_only_required_implicit_sqlite_schema (tests.test_writer_fence.WriterFenceTests.test_inbox_bootstrap_allows_only_required_implicit_sqlite_schema) ... ok
+test_invalid_settings_and_no_managed_worker_assertion (tests.test_writer_fence.WriterFenceTests.test_invalid_settings_and_no_managed_worker_assertion) ... ok
+test_live_token_writes_and_release_then_monotonic_acquire_fences_old_token (tests.test_writer_fence.WriterFenceTests.test_live_token_writes_and_release_then_monotonic_acquire_fences_old_token) ... ok
+test_managed_ledger_refuses_bare_sqlite_supplied_connection (tests.test_writer_fence.WriterFenceTests.test_managed_ledger_refuses_bare_sqlite_supplied_connection) ... ok
+test_old_unbound_ddl_and_swallowed_denial_cannot_commit (tests.test_writer_fence.WriterFenceTests.test_old_unbound_ddl_and_swallowed_denial_cannot_commit) ... ok
+test_process_identity_cannot_be_transferred_by_serializing_a_token (tests.test_writer_fence.WriterFenceTests.test_process_identity_cannot_be_transferred_by_serializing_a_token) ... ok
+test_real_expired_process_resumes_but_cannot_write_after_takeover (tests.test_writer_fence.WriterFenceTests.test_real_expired_process_resumes_but_cannot_write_after_takeover) ... ok
+test_real_processes_compete_and_only_one_acquires_a_live_lease (tests.test_writer_fence.WriterFenceTests.test_real_processes_compete_and_only_one_acquires_a_live_lease) ... ok
+test_unknown_control_trigger_is_corruption_without_automatic_repair (tests.test_writer_fence.WriterFenceTests.test_unknown_control_trigger_is_corruption_without_automatic_repair) ... ok
+test_backoff_and_technical_quarantine_release_account_head (tests.test_durable_commands.DurableCommandTests.test_backoff_and_technical_quarantine_release_account_head) ... ok
+test_bounded_financial_cancel_and_separate_control_capacity (tests.test_durable_commands.DurableCommandTests.test_bounded_financial_cancel_and_separate_control_capacity) ... ok
+test_canonical_identity_conflicts_and_stable_terminal_retries (tests.test_durable_commands.DurableCommandTests.test_canonical_identity_conflicts_and_stable_terminal_retries) ... ok
+test_control_lane_publishes_fresh_market_and_halt_atomically (tests.test_durable_commands.DurableCommandTests.test_control_lane_publishes_fresh_market_and_halt_atomically) ... ok
+test_guard_and_precommit_market_age_share_financial_receipt_transaction (tests.test_durable_commands.DurableCommandTests.test_guard_and_precommit_market_age_share_financial_receipt_transaction) ... ok
+test_late_business_rejection_rolls_back_order_event_and_reserve (tests.test_durable_commands.DurableCommandTests.test_late_business_rejection_rolls_back_order_event_and_reserve) ... ok
+test_lost_commit_reply_is_queried_before_failure_recording (tests.test_durable_commands.DurableCommandTests.test_lost_commit_reply_is_queried_before_failure_recording) ... ok
+test_old_writer_and_unmanaged_worker_cannot_change_financial_state (tests.test_durable_commands.DurableCommandTests.test_old_writer_and_unmanaged_worker_cannot_change_financial_state) ... ok
+test_per_account_fifo_rejection_cancel_and_exact_capacity (tests.test_durable_commands.DurableCommandTests.test_per_account_fifo_rejection_cancel_and_exact_capacity) ... ok
+test_producer_cannot_forge_replace_or_update_terminal_receipt (tests.test_durable_commands.DurableCommandTests.test_producer_cannot_forge_replace_or_update_terminal_receipt) ... ok
+test_queued_ack_has_no_reserve_and_survives_queue_restart (tests.test_durable_commands.DurableCommandTests.test_queued_ack_has_no_reserve_and_survives_queue_restart) ... ok
+test_technical_failure_rolls_back_business_and_receipt_then_retries (tests.test_durable_commands.DurableCommandTests.test_technical_failure_rolls_back_business_and_receipt_then_retries) ... ok
+test_unknown_operations_and_liquidation_ids_never_enter_queue (tests.test_durable_commands.DurableCommandTests.test_unknown_operations_and_liquidation_ids_never_enter_queue) ... ok
+test_repayment_business_rejections_and_missing_worker_credit (tests.test_durable_commands.DurableRepaymentTests.test_repayment_business_rejections_and_missing_worker_credit) ... ok
+test_repayment_ledger_and_receipt_rollback_together_on_technical_failure (tests.test_durable_commands.DurableRepaymentTests.test_repayment_ledger_and_receipt_rollback_together_on_technical_failure) ... ok
+test_repayment_pays_interest_then_principal_during_halt_and_price_outage (tests.test_durable_commands.DurableRepaymentTests.test_repayment_pays_interest_then_principal_during_halt_and_price_outage) ... ok
+test_repayment_uses_the_same_reserved_pending_budget_as_cancel (tests.test_durable_commands.DurableRepaymentTests.test_repayment_uses_the_same_reserved_pending_budget_as_cancel) ... ok
+test_120_seeded_commands_match_independent_per_account_cash_book_and_fifo (tests.test_durable_reference.IndependentDurableCommandTests.test_120_seeded_commands_match_independent_per_account_cash_book_and_fifo) ... ok
+test_backoff_holds_only_its_account_head_until_equal_deadline (tests.test_durable_reference.IndependentDurableCommandTests.test_backoff_holds_only_its_account_head_until_equal_deadline) ... ok
+test_business_rejection_after_attempted_financial_writes_rolls_back_only_finance (tests.test_durable_reference.IndependentDurableCommandTests.test_business_rejection_after_attempted_financial_writes_rolls_back_only_finance) ... ok
+test_durable_queue_ack_has_no_order_or_reserve_and_survives_service_restart (tests.test_durable_reference.IndependentDurableCommandTests.test_durable_queue_ack_has_no_order_or_reserve_and_survives_service_restart) ... ok
+test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice (tests.test_durable_reference.IndependentDurableCommandTests.test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice) ... ok
+test_equivalent_retry_and_conflicting_command_never_add_financial_effect (tests.test_durable_reference.IndependentDurableCommandTests.test_equivalent_retry_and_conflicting_command_never_add_financial_effect) ... ok
+test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection (tests.test_durable_reference.IndependentDurableCommandTests.test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection) ... ok
+test_queued_order_uses_execution_time_market_and_old_rejection_does_not_revive (tests.test_durable_reference.IndependentDurableCommandTests.test_queued_order_uses_execution_time_market_and_old_rejection_does_not_revive) ... ok
+test_same_command_rejection_stays_terminal_after_capacity_recovers (tests.test_durable_reference.IndependentDurableCommandTests.test_same_command_rejection_stays_terminal_after_capacity_recovers) ... ok
+test_unknown_after_real_commit_preserves_terminal_during_failure_recording_and_retry (tests.test_durable_reference.IndependentDurableCommandTests.test_unknown_after_real_commit_preserves_terminal_during_failure_recording_and_retry) ... ok
+test_safe_bounded_protocol_and_five_negative_controls (tests.test_durable_reference.IndependentDurableProtocolModelTests.test_safe_bounded_protocol_and_five_negative_controls) ... ok
+test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity (tests.test_durable_reference.IndependentProcessReceiptTests.test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity) ... Process uta-shard-0:
+Traceback (most recent call last):
+  File "/usr/lib/python3.13/multiprocessing/process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/usr/lib/python3.13/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-managed-credit/uta/durable_process.py", line 463, in _run_worker
+    view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+                           account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"],
+                           _startup=initialization)
+  File "/workspace/uta-managed-credit/uta/sharding.py", line 770, in __init__
+    self._exchange = ExchangeService(self.database, self._control.layout["scales"], _startup=_startup, **options)
+                     ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-managed-credit/uta/service.py", line 158, in __init__
+    with database.transaction() as connection:
+         ~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/workspace/uta-managed-credit/uta/sharding.py", line 64, in transaction
+    with super().transaction() as connection:
+         ~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/workspace/uta-managed-credit/uta/storage.py", line 159, in transaction
+    with self._role_transaction("financial") as connection:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/workspace/uta-managed-credit/uta/storage.py", line 185, in _role_transaction
+    with _initialization_write_gate(self, role):
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/usr/lib/python3.13/contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "/workspace/uta-managed-credit/uta/startup.py", line 63, in _initialization_write_gate
+    check()
+    ~~~~~^^
+  File "/workspace/uta-managed-credit/uta/startup.py", line 57, in check
+    scope._require(database)
+    ~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/workspace/uta-managed-credit/uta/startup.py", line 152, in _require
+    self.check()
+    ~~~~~~~~~~^^
+  File "/workspace/uta-managed-credit/uta/startup.py", line 143, in check
+    raise StartupError("startup_cancelled", "initializer was stopped or lost its parent")
+uta.startup.StartupError: initializer was stopped or lost its parent
+ok
+test_original_precision_replays_exactly_and_keeps_future_balance_limit (tests.test_durable_reference.IndependentReplayPrecisionTests.test_original_precision_replays_exactly_and_keeps_future_balance_limit) ... ok
+test_replay_rejects_invalid_precision_instead_of_inferencing_history (tests.test_durable_reference.IndependentReplayPrecisionTests.test_replay_rejects_invalid_precision_instead_of_inferencing_history) ... ok
+test_wide_history_cannot_implicitly_expand_default_precision (tests.test_durable_reference.IndependentReplayPrecisionTests.test_wide_history_cannot_implicitly_expand_default_precision) ... ok
+test_boot_change_requires_new_generation_and_minimum_ttl_expires_at_equality (tests.test_durable_reference.IndependentWriterLeaseTests.test_boot_change_requires_new_generation_and_minimum_ttl_expires_at_equality) ... ok
+test_clock_high_water_regression_and_invalid_ttl_fail_closed (tests.test_durable_reference.IndependentWriterLeaseTests.test_clock_high_water_regression_and_invalid_ttl_fail_closed) ... ok
+test_competing_lease_and_read_transaction_never_grant_financial_authority (tests.test_durable_reference.IndependentWriterLeaseTests.test_competing_lease_and_read_transaction_never_grant_financial_authority) ... ok
+test_lease_equality_expires_and_financial_changes_roll_back_before_commit (tests.test_durable_reference.IndependentWriterLeaseTests.test_lease_equality_expires_and_financial_changes_roll_back_before_commit) ... ok
+test_preexisting_unfenced_service_cannot_write_after_enable_but_still_reads (tests.test_durable_reference.IndependentWriterLeaseTests.test_preexisting_unfenced_service_cannot_write_after_enable_but_still_reads) ... ok
+
+----------------------------------------------------------------------
+Ran 113 tests in 9.790s
+
+OK

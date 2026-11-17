@@ -1,0 +1,113 @@
+"""Independent wire arithmetic only: no UTA import, socket, SQL or runtime test."""
+from pathlib import Path
+from hashlib import sha1,sha256
+import base64,hmac,json,struct
+
+ROOT=Path(__file__).resolve().parents[3]
+FIXTURE=ROOT/'tests/fixtures/managed_private_stream_v1_contract.json'
+GUID='258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+
+
+def reference_frame(hex_value):
+    """Classify only the literal finite review vectors; never read a socket."""
+    raw=bytes.fromhex(hex_value)
+    first,second=raw[:2]; fin=bool(first&128);opcode=first&15;masked=bool(second&128)
+    width=second&127; index=2
+    if first&112 or opcode not in (0,1,2,8,9,10) or not masked:
+        return {'close':1002,'payload_allocated':False}
+    if width==126:
+        size=int.from_bytes(raw[index:index+2],'big');index+=2
+        if size<126:return {'close':1002,'payload_allocated':False}
+    elif width==127:
+        extended=raw[index:index+8];index+=8
+        if extended[0]&128:return {'close':1002,'payload_allocated':False}
+        size=int.from_bytes(extended,'big')
+        if size<65536:return {'close':1002,'payload_allocated':False}
+    else:size=width
+    if opcode>=8 and (not fin or size>125):return {'close':1002,'payload_allocated':False}
+    if opcode==0:return {'close':1002,'payload_allocated':False}
+    if opcode in (1,2):return {'close':1008 if opcode==1 else 1003,'payload_allocated':False}
+    key=raw[index:index+4];index+=4
+    assert len(key)==4 and len(raw)==index+size
+    body=bytes(value^key[i%4] for i,value in enumerate(raw[index:]))
+    if opcode==9:return {'close':None,'reply_hex':(bytes([138,len(body)])+body).hex(),'payload_hex':body.hex()}
+    if opcode==10:return {'close':None,'pong_payload_hex':body.hex()}
+    if len(body)==1:return {'close':1002,'payload_allocated':True}
+    if not body:return {'close':None,'incoming_close':None,'reply_hex':'8800'}
+    code=int.from_bytes(body[:2],'big')
+    # Explicit review profile for known codes and application ranges. The
+    # design must select its own complete registry policy before runtime GO.
+    valid=code in (1000,1001,1002,1003,1007,1008,1009,1010,1011,1012,1013,1014) or 3000<=code<5000
+    if not valid:return {'close':1002,'incoming_close':code,'payload_allocated':True}
+    try:body[2:].decode('utf-8')
+    except UnicodeDecodeError:return {'close':1007,'incoming_close':code,'payload_allocated':True}
+    reply=1000 if code==1010 else code
+    return {'close':None,'incoming_close':code,'reply_hex':(b'\x88\x02'+reply.to_bytes(2,'big')).hex()}
+
+
+def main(output):
+    data=json.loads(FIXTURE.read_text());cases={c['id']:c for c in data['cases']}
+    assert len(cases)==len(data['cases'])==30
+    assert data['runtime_tests_executed']==data['websocket_or_sql_operations_executed']==0
+    assert all(c['execution_status']=='NOT_RUN_REQUIREMENT' for c in cases.values())
+    raw=cases['WS-C001']['input']['raw_http']
+    lines=raw.split('\r\n');method,target,http=lines[0].split(' ')
+    headers={}
+    for line in lines[1:]:
+        if not line:continue
+        name,value=line.split(': ',1);assert name.lower() not in headers;headers[name.lower()]=value
+    assert method=='GET' and http=='HTTP/1.1' and raw.endswith('\r\n\r\n')
+    key=headers['sec-websocket-key'];decoded=base64.b64decode(key,validate=True)
+    assert len(decoded)==16 and target.rsplit('challenge=',1)[1]==decoded.hex()
+    accept=base64.b64encode(sha1((key+GUID).encode('ascii')).digest()).decode('ascii')
+    assert accept=='s3pPLMBiTxaQ9kYGzzhZRbK+xOo='==cases['WS-C001']['expected']['headers']['Sec-WebSocket-Accept']
+    canonical=json.dumps(['UTA-HMAC-SHA256','1',headers['x-uta-tenant'],headers['x-uta-audience'],headers['x-uta-key-id'],headers['x-uta-timestamp-ms'],headers['x-uta-nonce'],method,target,sha256(b'').hexdigest()],separators=(',',':'),ensure_ascii=True).encode('ascii')
+    assert canonical.decode()==cases['WS-C001']['input']['canonical_hmac_bytes_ascii']
+    assert hmac.new(cases['WS-C001']['input']['synthetic_key_ascii'].encode('ascii'),canonical,sha256).hexdigest()==headers['x-uta-signature']
+    alternative=key[:-3]+'R=='
+    assert alternative!=key and base64.b64decode(alternative,validate=True)==decoded
+    alternate_accept=base64.b64encode(sha1((alternative+GUID).encode('ascii')).digest()).decode('ascii')
+    assert alternate_accept!=accept and base64.b64encode(decoded).decode('ascii')!=alternative
+    identity=data['source_stream_identity_example']
+    identity_values=[identity[k] for k in ('authority','path','device','inode','account')]
+    assert 'account-stream:'+sha256(json.dumps(identity_values,sort_keys=True,separators=(',',':')).encode()).hexdigest()==identity['stream_id']
+    frame_results=[]
+    for number in range(14,24):
+        case=cases[f'WS-C{number:03}'];hex_value=next(v for k,v in case['input'].items() if k.endswith('_hex') and k.startswith('client_'))
+        result=reference_frame(hex_value)
+        if 'close_code' in case['expected']:assert result['close']==case['expected']['close_code']
+        if 'server_pong_hex' in case['expected']:assert result['reply_hex']==case['expected']['server_pong_hex']
+        if 'server_close_hex' in case['expected']:assert result.get('reply_hex', '8802'+struct.pack('>H',result['close']).hex())==case['expected']['server_close_hex']
+        if number==23:assert result['pong_payload_hex']!=case['input']['outstanding_ping_payload_hex']
+        frame_results.append({'id':case['id'],'calculated':result,'runtime_verified':False})
+    gap=cases['WS-C003']['input']['frame'];events=gap['events'];assert [e['sequence'] for e in events]==[407,413]
+    assert all(e['account_id']=='alice' and e['cursor']==e['sequence'] for e in events)
+    assert all(gap['page']['after']<e['sequence']<=gap['page']['until'] for e in events)
+    assert gap['page']['next_after']==gap['page']['until']==420 and not gap['page']['has_more']
+    empty=cases['WS-C004']['input']['frame'];assert empty['events']==[] and empty['page']['next_after']==empty['page']['until']==425
+    start=cases['WS-C002'];assert start['expected']['frame']['cursor_after']==400<start['input']['commit_sequence_between_read_and_101']==407
+    pages=cases['WS-C005']['input']['delivered_pages'];keys={};cursor=cases['WS-C005']['input']['last_local_committed_cursor']
+    for page in pages:
+        for event in page['events']:
+            k=page['stream_id'],event['sequence'];value=json.dumps(event,sort_keys=True,separators=(',',':'))
+            if k in keys:assert keys[k]==value
+            keys[k]=value
+        cursor=max(cursor,page['page']['next_after'])
+    assert sorted(keys)==[tuple(k) for k in cases['WS-C005']['expected']['unique_local_event_keys']]
+    assert cursor==420
+    exact=cases['WS-C028']['input']['event_sequence'];assert exact==2**53+1 and int(float(exact))==exact-1
+    extra={name:reference_frame(raw) for name,raw in {'reserved_1004':'88820102030402ee','client_1010':'88820102030402f0','control_length126':'89fe007e01020304','high_bit_length64':'89ff800000000000000001020304','one_byte_close':'88810102030400'}.items()}
+    assert extra['reserved_1004']['close']==extra['control_length126']['close']==extra['high_bit_length64']['close']==extra['one_byte_close']['close']==1002
+    assert extra['client_1010']['incoming_close']==1010 and extra['client_1010']['reply_hex']=='880203e8'
+    case24=cases['WS-C024'];assert case24['input']['pending_frames']==2 and case24['input']['pending_bytes']==512*1024 and case24['input']['oldest_pending_age_ms']>5000
+    report={'reviewed_design_commit':'c68aabe82ce78ab10a3c886894ce8dc9952302d1','fixture_sha256':sha256(FIXTURE.read_bytes()).hexdigest(),'fixture_requirements':30,'rfc_example_accept':accept,'synthetic_hmac_and_raw_target_mathematics_match':True,'original_control_vector_results':frame_results,'additional_literal_counterexamples':extra,
+    'base64_alias':{'canonical':key,'noncanonical_same_decoded_bytes':alternative,'canonical_accept':accept,'alternate_accept':alternate_accept,'requires_policy_choice':'require canonical base64 re-encoding equality before nonce consumption'},
+    'cursor_arithmetic':{'initial_H':400,'first_later_commit':407,'legal_event_gaps':[407,413],'page_end':420,'empty_page_end':425,'deduplicated_replay_event_keys':len(keys),'max_exact_64bit':2**63-1,'float_alias_example':exact},
+    'budget_arithmetic':{'old_REST_limit_is_Python_characters':4*1024*1024,'old_max_UTF8_bytes_per_payload_upper_bound':4*4*1024*1024,'old_200_rows_UTF8_upper_bound':200*4*4*1024*1024,'new_event_raw_UTF8_cap':65536,'new_page_raw_cap':131072,'encoded_wire_frame_cap_proposed':262144,'large_frame_header_bytes':10,'max_JSON_payload_if_wire_header_included':262134,'two_encoded_frame_bytes':524288,'one_additional_frame_bytes':262144,'three_wire_buffers_bytes':786432,'does_not_bound_RSS':True},
+    'snapshot_or_nonce_or_revocation_runtime_verified':False,'socket_or_sql_operations':0,'provider_or_network_fetches':0,'production_approved':False}
+    Path(output).write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps({'fixture_requirements':30,'original_literal_frame_vectors_checked':len(frame_results),'extra_literal_counterexamples':len(extra),'rfc_accept':accept,'socket_or_sql_operations':0,'runtime_permission_or_nonce_proof':False}))
+
+if __name__=='__main__':
+    import sys
+    main(sys.argv[1])

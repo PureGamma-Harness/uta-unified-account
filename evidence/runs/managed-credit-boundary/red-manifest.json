@@ -1,0 +1,24 @@
+{
+  "tested_runtime_commit": "1c144419a4780bca7b23a21d21538a1f1632cbc8",
+  "new_test_sha256": "4ece3d3370f89bbcbe37a1faff52cee4bb77c3570266dd2c386be1e6a0b0ffb3",
+  "runtime_sha256": {
+    "uta/credit.py": "3c5efe852b5090ff5437cd9939adbd0fbe945dc2783671f0a8ca2746ef1b6abf",
+    "uta/writer_fence.py": "a01afa77eae00d3ee2c5206b7e21b3a9dfe741dde3ccbc5b780157c71e261777"
+  },
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "tests.test_managed_borrow_boundary",
+    "-v"
+  ],
+  "tests_run": 5,
+  "failures": 2,
+  "errors": 0,
+  "reproduction": "trusted local owner with real persistent fence/token and schema3 actually commits a new loan; not ordinary HTTP access",
+  "new_credit_risk_decisions": 0,
+  "raw_sha256": {
+    "original-managed-owner-red-python312.txt": "5ff843518c3f21263eca51e5f0d3af0f3aa59e6fa0bf3d132be4ce528d72a5b9"
+  },
+  "production_approved": false
+}

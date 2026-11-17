@@ -1,0 +1,71 @@
+{
+  "archived_targeted_runs": {
+    "run-A-original-python313": {
+      "actual_source_commit": "3772aa8fc3f7251dc9c6014260f2a53114a16f9c",
+      "elapsed_seconds": 2.73510590299702,
+      "errors": 0,
+      "failures": 0,
+      "log_sha256": "c01d5657a96d2b22ca30e4dfe0fcf8389999492edac12d37a9fc8456830281ef",
+      "passed": true,
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sqlite": "3.46.1",
+      "tests_run": 2,
+      "timed_out": false
+    },
+    "run-B-red-controls-python313": {
+      "actual_source_commit": "f164ed010bf4c441af4b31b00cdf73ec62c76e1c",
+      "elapsed_seconds": 6.147003357000358,
+      "errors": 1,
+      "failures": 2,
+      "log_sha256": "5eef9302eb4b112975c4cd21f4f7b344f12f26476b21820bfd0e15f01c49f1fd",
+      "passed": false,
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sqlite": "3.46.1",
+      "tests_run": 5,
+      "timed_out": false
+    },
+    "run-C-fixed-python312": {
+      "actual_source_commit": "1a9d6f4ff4ae7fb653a953dcf0ef52ee85533349",
+      "elapsed_seconds": 7.779682663996937,
+      "errors": 0,
+      "failures": 0,
+      "log_sha256": "dde30032877a47b02ed52337ae99d83a8737260c530fee1136ec8d2c26b4e6ae",
+      "passed": true,
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "sqlite": "3.53.1",
+      "tests_run": 7,
+      "timed_out": false
+    },
+    "run-C-fixed-python313": {
+      "actual_source_commit": "1a9d6f4ff4ae7fb653a953dcf0ef52ee85533349",
+      "elapsed_seconds": 7.4099502230019425,
+      "errors": 0,
+      "failures": 0,
+      "log_sha256": "919fcf207041a35c48611ef4ef581c139fcca5f7f9e2c83dd1430f2f63dfe425",
+      "passed": true,
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sqlite": "3.46.1",
+      "tests_run": 7,
+      "timed_out": false
+    }
+  },
+  "base_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "changed_tests": [
+    "tests/test_gateway_grouped.py",
+    "tests/test_readiness_sampling.py"
+  ],
+  "delivery_manifest_entries_verified": 27,
+  "original_ci": {
+    "errors": 0,
+    "failures": 2,
+    "no_go_retained": true,
+    "tests": 1243,
+    "zip_members_exact": true
+  },
+  "production_approved": false,
+  "reviewed_commit": "f6d3d541a5762325113c61c07f55bcd033aa94ad",
+  "reviewer_live_samples_executed": 0,
+  "reviewer_runtime_tests_executed": 0,
+  "reviewer_sql_reads_executed": 0,
+  "runtime_changed_paths": []
+}

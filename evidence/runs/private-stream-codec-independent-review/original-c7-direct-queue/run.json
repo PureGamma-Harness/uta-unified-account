@@ -1,0 +1,26 @@
+{
+  "runtime_source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+  "runtime_sha256": "c553b483d3155a5778cedc0448c4b58c135fb877642a9055dc24dfea398e5ac9",
+  "peer_test_sha256": "35100ecf6b94c49580919843553e4e1d3768c2d71a8eac4cc1f024fd1b638dfc",
+  "new_peer_test_not_yet_committed": true,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_private_stream_codec_reference.py",
+    "-v"
+  ],
+  "started_utc": "2026-11-17T11:49:11.741814+00:00",
+  "finished_utc": "2026-11-17T11:49:11.857137+00:00",
+  "wall_seconds": 0.11532844600151293,
+  "exit_code": 1,
+  "scope": "direct queued wire path; original public to_bytes(memoryview-header) TypeError retained in first original run",
+  "no_socket_SQL_service": true,
+  "production_approved": false
+}

@@ -1,4 +1,4 @@
-"""Independent small-fixture owned-startup interleavings at immutable d9afd46.
+"""Independent owned-startup interleavings originally introduced at d9afd46.
 
 Every context/token/service is real. Pauses wrap and eventually call the original
 complete verifier; no private verification flags or attestation objects are made.
@@ -122,8 +122,10 @@ class OwnedStartupReferenceTests(unittest.TestCase):
         self.assertEqual(before, self.financial())
 
     def test_old_inflight_writer_is_drained_before_complete_ro_replay(self):
-        scope = self.bind(ttl=.8)
-        entered, release = Event(), Event()
+        # This positive case proves ordering, rather than racing the keeper's
+        # deliberately short native BUSY deadline against a released thread.
+        scope = self.bind(ttl=5)
+        entered, release, completed = Event(), Event(), Event()
         failures, observed = [], []
         def old_writer():
             try:
@@ -134,12 +136,15 @@ class OwnedStartupReferenceTests(unittest.TestCase):
                     self.assertTrue(release.wait(1))
             except Exception as error:
                 failures.append(error)
+            finally:
+                completed.set()
         thread = Thread(target=old_writer)
         thread.start()
         self.assertTrue(entered.wait(1))
         original_renew, original_verify = WriterFence.renew, DurableLedger.verify
         def renewal(fence, token, ttl):
             release.set()  # Let the already-open real writer COMMIT; do not fake its result.
+            self.assertTrue(completed.wait(1), "original writer did not actually return")
             return original_renew(fence, token, ttl)
         def replay(ledger, *, connection=None):
             observed.append(connection.execute("SELECT COUNT(*) FROM ledger_events WHERE event_id='old-inflight'").fetchone()[0])
@@ -152,6 +157,7 @@ class OwnedStartupReferenceTests(unittest.TestCase):
         finally:
             release.set()
             thread.join(1)
+        self.assertFalse(thread.is_alive())
         self.assertFalse(failures)
         self.assertEqual(observed, [1])
 

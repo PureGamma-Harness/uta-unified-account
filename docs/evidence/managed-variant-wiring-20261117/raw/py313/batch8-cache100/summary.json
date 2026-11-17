@@ -1,0 +1,437 @@
+{
+  "configuration": {
+    "duration": 0.05,
+    "rate": 160,
+    "accounts": 3,
+    "shards": 1,
+    "dispatchers": 2,
+    "outstanding": 16,
+    "inbox_capacity": 16,
+    "reject_every": 0,
+    "feed_interval": 2,
+    "control_timeout": 3,
+    "drain_seconds": 5,
+    "timeout_ms": 1000,
+    "poll_interval": 0.02,
+    "background_interval": 0.1,
+    "profile": false,
+    "normal_cache_size": 100,
+    "financial_batch_size": 8,
+    "durable_batches": true
+  },
+  "offered": 8,
+  "counts": {
+    "financial_succeeded": 8,
+    "durably_enqueued": 8,
+    "enqueue_technical_errors": 0,
+    "financial_success_late": 0
+  },
+  "actual_runtime": {
+    "router_settings": {
+      "lease_seconds": 5.0,
+      "poll_interval": 0.02,
+      "background_interval": 0.1,
+      "account_batch": 25,
+      "matches_per_symbol": 10,
+      "max_attempts": 3,
+      "financial_batch_size": 8,
+      "normal_cache_size": 100
+    },
+    "durable_batches_capability": true,
+    "decision_audit_required": true,
+    "financial_batch_soft_budget_seconds": 0.005,
+    "soft_budget_is_not_a_latency_or_commit_deadline": true,
+    "transport": "local Python SDK -> durable inbox -> independent spawned owner; no REST/TLS",
+    "physical_commit_counts_measured": false,
+    "record_counts_are_not_physical_commit_counts": true
+  },
+  "actual_spawned_worker_inputs": [
+    {
+      "pid": 147379,
+      "received_settings": {
+        "lease_seconds": 5.0,
+        "poll_interval": 0.02,
+        "background_interval": 0.1,
+        "account_batch": 25,
+        "matches_per_symbol": 10,
+        "max_attempts": 3,
+        "financial_batch_size": 8,
+        "normal_cache_size": 100
+      },
+      "observed_utc": "2026-11-17T10:32:17.035897+00:00",
+      "financial_owner_ready": false,
+      "settings_are_not_admission_receipts": true
+    }
+  ],
+  "evidence_kind": "functional wiring only; not performance evidence",
+  "outcome_counts": {
+    "financial_succeeded": 8
+  },
+  "duration_including_terminal_observation_drain": 0.388332121,
+  "drain_seconds": 0.338332121,
+  "close_seconds_excluded": 0.034471398,
+  "startup_seconds_excluded": 0.695634732,
+  "unique_observed_financial_success_per_s": 20.600922682880515,
+  "enqueue_ack_per_s_not_financial_success": 20.600922682880515,
+  "latency_ms": {
+    "all": {
+      "p50": 195.575267,
+      "p95": 374.885265,
+      "p99": 374.885265,
+      "p99_9": 374.885265
+    },
+    "financial_succeeded": {
+      "p50": 195.575267,
+      "p95": 374.885265,
+      "p99": 374.885265,
+      "p99_9": 374.885265
+    },
+    "enqueue_ack": {
+      "p50": 10.863302,
+      "p95": 95.04078,
+      "p99": 95.04078,
+      "p99_9": 95.04078
+    }
+  },
+  "initial_real_pid_and_fence": {
+    "state": {
+      "halted": false,
+      "publishing": false,
+      "epoch": 1,
+      "market_version": 1,
+      "market_digest": "70f8e89016e027ac0d2eda54ba0a457ecb134ca7f408a6ffa7703c022f0637cf",
+      "watermarks": {
+        "0": 1
+      },
+      "error": null
+    },
+    "state_observed": true,
+    "workers": [
+      {
+        "shard": 0,
+        "pid": 147379,
+        "alive": true,
+        "lease_active": true,
+        "owner_pid": 147379,
+        "generation": 1,
+        "report": {
+          "shard": 0,
+          "pid": 147379,
+          "generation": 1,
+          "state": "ready"
+        },
+        "market_ready": true,
+        "owner_ready": true,
+        "locally_active": true,
+        "funding_registry_ready": true,
+        "reason": "ready",
+        "market_version": 1,
+        "market_digest": "70f8e89016e027ac0d2eda54ba0a457ecb134ca7f408a6ffa7703c022f0637cf",
+        "market_observed_at": "2026-11-17T10:32:16.865902+00:00"
+      }
+    ],
+    "managed": true,
+    "decision_audit_required": true,
+    "profile": "managed_audit_required",
+    "recovered_orphans": [],
+    "workers_alive": true,
+    "financial_ready": true,
+    "ready": true,
+    "reason": "ready"
+  },
+  "startup_readiness_observation": {
+    "budget_seconds": 5.0,
+    "interval_seconds": 0.02,
+    "started_monotonic_ns": 48664000639879,
+    "started_utc": "2026-11-17T10:32:17.523332+00:00",
+    "observations_file": "startup-readiness.jsonl",
+    "observation_count": 1,
+    "finished_monotonic_ns": 48664015105215,
+    "elapsed_seconds": 0.014465336
+  },
+  "final_diagnostics": {
+    "state": {
+      "halted": false,
+      "publishing": false,
+      "epoch": 1,
+      "market_version": 1,
+      "market_digest": "70f8e89016e027ac0d2eda54ba0a457ecb134ca7f408a6ffa7703c022f0637cf",
+      "watermarks": {
+        "0": 1
+      },
+      "error": null
+    },
+    "state_observed": true,
+    "workers": [
+      {
+        "shard": 0,
+        "pid": 147379,
+        "alive": true,
+        "lease_active": true,
+        "owner_pid": 147379,
+        "generation": 1,
+        "report": {
+          "shard": 0,
+          "pid": 147379,
+          "generation": 1,
+          "state": "ready"
+        },
+        "market_ready": true,
+        "owner_ready": true,
+        "locally_active": true,
+        "funding_registry_ready": true,
+        "reason": "ready",
+        "market_version": 1,
+        "market_digest": "70f8e89016e027ac0d2eda54ba0a457ecb134ca7f408a6ffa7703c022f0637cf",
+        "market_observed_at": "2026-11-17T10:32:16.865902+00:00"
+      }
+    ],
+    "managed": true,
+    "decision_audit_required": true,
+    "profile": "managed_audit_required",
+    "recovered_orphans": [],
+    "workers_alive": true,
+    "financial_ready": true,
+    "ready": true,
+    "reason": "ready"
+  },
+  "poll_errors": [],
+  "feed_publications": [],
+  "readonly_reconciliation": {
+    "shards": [
+      {
+        "shard": 0,
+        "commands": 8,
+        "unique_orders": 8,
+        "durable_batches_capability": true,
+        "confirmed_matches": 0,
+        "ledger_events": 3,
+        "audit_required": true,
+        "independent_reserve_account_version_ledger_verified": true
+      }
+    ],
+    "observed_financial_successes": 8,
+    "persistent_successes": 8,
+    "unobserved_successes_found_on_reopen": 0,
+    "pending_original_ids": [],
+    "pending_count": 0,
+    "durable_enqueue_acknowledgements_verified": 8,
+    "reopened_readonly": true,
+    "command_technical_diagnostics": {
+      "stored_commands": 10,
+      "commands_by_kind": {
+        "PUBLISH_MARKET": 1,
+        "SET_HALT": 1,
+        "SUBMIT_ORDER": 8
+      },
+      "internal_execution_attempts": 0,
+      "commands_with_internal_attempts": 0,
+      "commands_with_last_error": 0,
+      "quarantined_commands": 0,
+      "nonterminal_commands": 0,
+      "control_commands_not_succeeded": 0,
+      "affected_commands": [],
+      "diagnostics_overlap_outcomes": true,
+      "original_internal_exception_available": false
+    },
+    "batch_dispatch_diagnostics": {
+      "prepared_batches": 4,
+      "committed_batches": 4,
+      "recovered_batches": 0,
+      "unresolved_batches": 0,
+      "selected_commands": 18,
+      "executed_commands": 5,
+      "unique_selected_commands": 7,
+      "unique_executed_commands": 5,
+      "zero_executed_batches": 0,
+      "partial_prefix_batches": 4,
+      "failure_events": 0,
+      "record_counts_are_not_commit_counts": true,
+      "prepare_failure_events": 0,
+      "membership_failure_events": 0,
+      "execute_failure_events": 0,
+      "between_commands_failure_events": 0,
+      "freshness_failure_events": 0,
+      "disposition_failure_events": 0,
+      "commit_failure_events": 0
+    }
+  },
+  "command_technical_diagnostics": {
+    "stored_commands": 10,
+    "commands_by_kind": {
+      "PUBLISH_MARKET": 1,
+      "SET_HALT": 1,
+      "SUBMIT_ORDER": 8
+    },
+    "internal_execution_attempts": 0,
+    "commands_with_internal_attempts": 0,
+    "commands_with_last_error": 0,
+    "quarantined_commands": 0,
+    "nonterminal_commands": 0,
+    "control_commands_not_succeeded": 0,
+    "affected_commands": [],
+    "diagnostics_overlap_outcomes": true,
+    "original_internal_exception_available": false
+  },
+  "batch_dispatch_diagnostics": {
+    "prepared_batches": 4,
+    "committed_batches": 4,
+    "recovered_batches": 0,
+    "unresolved_batches": 0,
+    "selected_commands": 18,
+    "executed_commands": 5,
+    "unique_selected_commands": 7,
+    "unique_executed_commands": 5,
+    "zero_executed_batches": 0,
+    "partial_prefix_batches": 4,
+    "failure_events": 0,
+    "record_counts_are_not_commit_counts": true,
+    "prepare_failure_events": 0,
+    "membership_failure_events": 0,
+    "execute_failure_events": 0,
+    "between_commands_failure_events": 0,
+    "freshness_failure_events": 0,
+    "disposition_failure_events": 0,
+    "commit_failure_events": 0
+  },
+  "profile": {
+    "scope": "per-real-PID lifecycle and dispatcher0 cProfile; CPython3.12 permits one cProfile owner/interpreter. All dispatchers retain raw enqueue timing. Profiles include startup, waiting, shutdown; cumulative times overlap and are not CPU percentages",
+    "profiles": []
+  },
+  "environment": {
+    "code_commit": "e9ec23bf0a54f732b51b91df1bad571dd186dba3",
+    "working_tree_dirty": true,
+    "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "sqlite": "3.46.1",
+    "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+    "cpu_affinity_count": 1,
+    "cgroup_limits": {
+      "cpu.max": "400000 100000",
+      "memory.max": "17179869184"
+    },
+    "source_root": "/workspace/uta-managed-variant-wiring",
+    "generator_sha256": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+    "source_sha256": {
+      "__init__.py": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43",
+      "__main__.py": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131",
+      "acceptance.py": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7",
+      "admission.py": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47",
+      "api.py": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2",
+      "bridge.py": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432",
+      "configuration.py": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68",
+      "credit.py": "9e18d3257a4437d03582ae999d6690bf093f77535906880f499f4eab8a6b4c03",
+      "cutover.py": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b",
+      "decision_audit.py": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6",
+      "durable_batches.py": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32",
+      "durable_cli.py": "69334c3d1c209ed2a721d594ed53882f98fedb6d0010de70c185b8687b5c6bde",
+      "durable_commands.py": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8",
+      "durable_gateway.py": "d6fa69661436a0ee9a168bdefe05aabf3a1f354fc02a0a3ab4455f12a2cb03c7",
+      "durable_liquidation.py": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826",
+      "durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70",
+      "durable_views.py": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352",
+      "examples.py": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90",
+      "failure_diagnostics.py": "953ec1dd75ffadcb44f560e4042c92162f7302ac753034bb7f7c5a91a46f0f32",
+      "gateway.py": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7",
+      "ledger.py": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66",
+      "liquidation.py": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f",
+      "market.py": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+      "market_cache.py": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211",
+      "matching.py": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d",
+      "migration.py": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5",
+      "models.py": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+      "ops.py": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da",
+      "portfolio.py": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+      "products.py": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+      "reconciliation.py": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8",
+      "request_signing.py": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd",
+      "reservations.py": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b",
+      "reserve_kernel.py": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95",
+      "risk.py": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264",
+      "scenario_margin.py": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4",
+      "server.py": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c",
+      "service.py": "76e666497bd37c4955d0ac67bc7fd751387fa585047c3ed28c24565add13e0bd",
+      "shadow_adapter.py": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064",
+      "shard_admission.py": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c",
+      "sharding.py": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "simulator.py": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae",
+      "spot.py": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26",
+      "startup.py": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+      "storage.py": "9eee296159d0b0347feac3fd2f2b99b3216e8247e579e159e5adda8cbcb08a08",
+      "store.py": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c",
+      "supervisor.py": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e",
+      "vertical.py": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0",
+      "worker.py": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b",
+      "writer_fence.py": "a56766a6b63e04102337966d7a172459c94ec2cef6a8f9bd69036934f2e44a9c"
+    },
+    "filesystem": "Filesystem     Type    1K-blocks    Used Available Use% Mounted on\noverlay        overlay  32978704 6773712  24510888  22% /",
+    "storage": "local SQLite WAL/FULL; each batch COMMIT retains FULL synchronous; no replication",
+    "sqlite_busy_timeout_seconds": 10,
+    "market_max_age_seconds": 5,
+    "timing": "planned monotonic arrival to post-COMMIT observation; p99 histogram upper bound width <=0.1%",
+    "queue_model": "one shared outstanding budget across dispatcher queue, database calls, batch queues and result collection",
+    "scope": "local independent spawned managed PID owners, WAL/FULL, audit required, no replication; cohosted",
+    "profile": false,
+    "requested_runtime": {
+      "normal_cache_size": 100,
+      "financial_batch_size": 8,
+      "durable_batches": true
+    },
+    "evidence_kind": "functional wiring only; not performance evidence",
+    "actual_runtime": {
+      "router_settings": {
+        "lease_seconds": 5.0,
+        "poll_interval": 0.02,
+        "background_interval": 0.1,
+        "account_batch": 25,
+        "matches_per_symbol": 10,
+        "max_attempts": 3,
+        "financial_batch_size": 8,
+        "normal_cache_size": 100
+      },
+      "durable_batches_capability": true,
+      "decision_audit_required": true,
+      "financial_batch_soft_budget_seconds": 0.005,
+      "soft_budget_is_not_a_latency_or_commit_deadline": true,
+      "transport": "local Python SDK -> durable inbox -> independent spawned owner; no REST/TLS",
+      "physical_commit_counts_measured": false,
+      "record_counts_are_not_physical_commit_counts": true
+    }
+  },
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "scope": "<=10s managed local process inbox admission diagnostic; all successful orders OPEN, no simulated or real fills, no replication; profiling includes instrumentation overhead",
+  "execution_classification": {
+    "durable_metadata_enqueue_acknowledgements": 8,
+    "observed_financial_admission_committed_receipts": 8,
+    "business_rejected": 0,
+    "control_or_market_rejected": 0,
+    "control_cids": {
+      "PUBLISH_MARKET": 1,
+      "SET_HALT": 1
+    },
+    "batch_selected_memberships": 18,
+    "batch_executed_memberships_including_rejections": 5,
+    "internal_command_execution_attempts": 0,
+    "batch_failure_events_by_phase": {
+      "prepare": 0,
+      "membership": 0,
+      "execute": 0,
+      "between_commands": 0,
+      "freshness": 0,
+      "disposition": 0,
+      "commit": 0
+    },
+    "physical_metadata_and_financial_commit_counts_measured": false
+  },
+  "probe_qualification": {
+    "passed": true,
+    "stop_remaining_cases": false,
+    "reasons": [],
+    "financial_soft_deadline_passed": true,
+    "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+    "production_approved": false,
+    "capacity_10000_per_s_passed": false,
+    "stability_passed": false
+  }
+}

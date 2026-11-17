@@ -19,12 +19,14 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import secrets
 import select
 import shutil
 import signal
 import sqlite3
 import ssl
+import stat
 import subprocess
 import sys
 from threading import Event
@@ -35,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 from benchmarks.run_soak import _atomic, _pid_identity, environment, readonly
 from benchmarks.run_benchmark import LatencyHistogram
 from benchmarks.managed_qualification import qualify
+from benchmarks.managed_read_holders import IdleReadHolders
 from uta.durable_process import DurableProcessRouter
 from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
@@ -43,6 +46,11 @@ from uta.request_signing import load_profile, sign_headers
 from uta.storage import Database
 
 ACCOUNTS = ("managed-soak-alice", "managed-soak-bob", "managed-soak-credit")
+_RESOURCE_DATABASES = ("checkpoint.sqlite3", "managed/router.sqlite3",
+                       "managed/shard-0000.sqlite3", "private/auth.sqlite3")
+_RESOURCE_TRANSIENTS = {name + suffix for name in _RESOURCE_DATABASES for suffix in ("-wal", "-shm")} | {
+    "bootstrap-plan.json.tmp", "job.json.tmp", "progress.json.tmp", "pending-market.json.tmp",
+    "log-segments.json.tmp", "private/signing.json.tmp"}
 SCALE = 100_000_000
 def require_long_run_ready(duration, *, allow_long_run=False, strict_source=True, validation_report=None):
     if duration > 60:
@@ -198,6 +206,7 @@ class ManagedSoak:
         self.process = None
         self.listener = None
         self.stderr = None
+        self.read_holders = None
         self.strict_source = strict_source
         self.configuration = requested
         self.configuration.validate()
@@ -208,7 +217,7 @@ class ManagedSoak:
         self.env = environment()
         self.env["source_sha256"]["benchmarks/run_managed_soak.py"] = sha256(Path(__file__).read_bytes()).hexdigest()
         self.env["source_sha256"]["benchmarks/run_benchmark.py"] = sha256((ROOT / "benchmarks/run_benchmark.py").read_bytes()).hexdigest()
-        for relative in ("benchmarks/managed_qualification.py", "tools/run_validation.py"):
+        for relative in ("benchmarks/managed_qualification.py", "benchmarks/managed_read_holders.py", "tools/run_validation.py"):
             self.env["source_sha256"][relative] = sha256((ROOT / relative).read_bytes()).hexdigest()
         self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
         try:
@@ -802,8 +811,31 @@ class ManagedSoak:
         return {"events": sequence, "last_hash": previous, "segments": len(manifest["segments"])}
 
     def _resources(self):
-        files = [path for path in self.directory.rglob("*") if path.is_file()]
-        total = sum(path.stat().st_size for path in files)
+        # Sizes are observations, not one atomic directory snapshot. A last
+        # SQLite close or atomic rename can remove an auxiliary after discovery.
+        # Stat once, count every surviving regular file, and never hide main
+        # database loss or permission/I/O errors behind an is_file() predicate.
+        required = {self.directory / name for name in _RESOURCE_DATABASES}
+        def enumeration_error(error):
+            raise error  # pathlib's recursive glob can suppress scan errors.
+        discovered = (Path(root) / name
+            for root, directories, files in os.walk(self.directory, onerror=enumeration_error)
+            for name in directories + files)
+        paths = dict.fromkeys([*required, *discovered])
+        total = 0
+        for path in paths:
+            try:
+                details = path.stat(follow_symlinks=False)
+            except FileNotFoundError:
+                relative = path.relative_to(self.directory).as_posix()
+                if (relative in _RESOURCE_TRANSIENTS or re.fullmatch(
+                        r"logs/events-[0-9]{9,}-[0-9]{9,}\.jsonl\.tmp", relative)):
+                    continue
+                raise
+            if stat.S_ISREG(details.st_mode):
+                total += details.st_size
+            elif path in required:
+                raise RuntimeError("required managed database is not a regular file")
         free = shutil.disk_usage(self.directory).free
         return {"directory_bytes": total, "free_bytes": free,
                 "budget_exceeded": total > self.configuration.max_directory_bytes or free < self.configuration.min_free_bytes}
@@ -856,6 +888,10 @@ class ManagedSoak:
         self._state("controller_sessions", sessions)
         self._state("logs_verified", False)
         try:
+            # The driver owns these idle readers across child generations.
+            # Open after initialization and before the original active clock.
+            self.read_holders = IdleReadHolders(self.directory,
+                expected_identities=self.meta["file_identities"])
             self._start_server()
             with self.checkpoint.read_transaction() as connection:
                 pending_faults = [tuple(row) for row in connection.execute("SELECT round,kind FROM faults WHERE state!='DONE' ORDER BY round,kind")]
@@ -955,9 +991,14 @@ class ManagedSoak:
             if getattr(self, "process", None) is not None or getattr(self, "listener", None) is not None:
                 self._stop_server()
         finally:
-            if getattr(self, "lock", None) is not None:
-                os.close(self.lock)
-                self.lock = None
+            try:
+                if getattr(self, "read_holders", None) is not None:
+                    self.read_holders.close()
+                    self.read_holders = None
+            finally:
+                if getattr(self, "lock", None) is not None:
+                    os.close(self.lock)
+                    self.lock = None
 
 
 def inspect_job(directory):

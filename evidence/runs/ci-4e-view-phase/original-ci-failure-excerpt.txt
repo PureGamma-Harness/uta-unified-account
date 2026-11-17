@@ -1,0 +1,14 @@
+FAIL: test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http (test_managed_views_reference.ManagedRouterReadReferenceTests.test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_managed_views_reference.py", line 508, in test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http
+    self.assertEqual(observed["snapshot"]["market"]["freshness"], "fresh_as_of_read")
+AssertionError: 'missing' != 'fresh_as_of_read'
+- missing
++ fresh_as_of_read
+
+
+----------------------------------------------------------------------
+Ran 1168 tests in 240.305s
+
+FAILED (failures=1)

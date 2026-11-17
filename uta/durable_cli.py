@@ -111,7 +111,7 @@ def _tls(cert, key):
 
 def _runtime(args):
     return {key: getattr(args, key) for key in ("lease_seconds", "poll_interval", "background_interval",
-                                              "account_batch", "matches_per_symbol", "max_attempts")}
+                                              "account_batch", "matches_per_symbol", "max_attempts", "financial_batch_size", "normal_cache_size")}
 
 
 def _existing(args):
@@ -218,6 +218,7 @@ def _parser():
             command.add_argument("--future-skew-ms", type=_integer(0, 30000), default=5000)
             command.add_argument("--max-nonces", type=_integer(1, 1000000), default=100000)
         if name == "init":
+            command.add_argument("--durable-batches", action="store_true", help="irreversible fresh-layout batch capability")
             command.add_argument("--shards", type=_integer(1, 256), default=1)
             command.add_argument("--asset-scale", action="append")
             command.add_argument("--catalog", type=Path)
@@ -248,6 +249,9 @@ def _parser():
             command.add_argument("--account-batch", type=_integer(1, 1000), default=25)
             command.add_argument("--matches-per-symbol", type=_integer(1, 1000), default=10)
             command.add_argument("--max-attempts", type=_integer(1, 100), default=3)
+            command.add_argument("--financial-batch-size", type=int, choices=(0,3,4,5,6,7,8), default=0)
+            command.add_argument("--normal-cache-size", type=_integer(0, 65536), default=0)
+
     return parser
 
 
@@ -264,7 +268,7 @@ def main(argv=None):
             if not args.fee_rate.is_finite() or not 0 <= args.fee_rate <= Decimal(".01"):
                 raise ValueError("fee rate requires a finite Decimal in 0..0.01")
             router = DurableProcessRouter.initialize(args.directory, args.shards, _scales(args.asset_scale),
-                managed=True, bootstrap=None, decision_audit=True, fee_rate=args.fee_rate,
+                managed=True, bootstrap=None, decision_audit=True, durable_batches=args.durable_batches, fee_rate=args.fee_rate,
                 max_price_age=timedelta(seconds=args.max_price_age), **load_policy(args.catalog, args.risk_rules),
                 reserve_cache_size=args.reserve_cache_size, market_cache_size=args.market_cache_size,
                 queue_capacity=args.queue_capacity, cancel_reserve=args.cancel_reserve, market_capacity=args.market_capacity)

@@ -16,7 +16,8 @@ class ManagedRetryGateTests(unittest.TestCase):
     @staticmethod
     def summary(technical):
         return {"counts": {"financial_succeeded": 1, "enqueue_technical_errors": 0},
-                "command_technical_diagnostics": technical, "poll_errors": [], "feed_publications": [],
+                "command_technical_diagnostics": technical,
+                "batch_dispatch_diagnostics": {"failure_events": 0, "unresolved_batches": 0, "recovered_batches": 0}, "poll_errors": [], "feed_publications": [],
                 "readonly_reconciliation": {"reopened_readonly": True, "pending_count": 0,
                                             "unobserved_successes_found_on_reopen": 0}}
 
@@ -135,6 +136,24 @@ class ManagedRetryGateTests(unittest.TestCase):
         for value in (-1, True, "1"):
             with self.subTest(value=value), self.assertRaisesRegex(ValueError, "attempt count"):
                 command_technical_diagnostics([self.command(attempts=value)])
+
+    def test_batch_failure_with_zero_individual_attempts_cannot_pass(self):
+        summary = self.summary(command_technical_diagnostics([self.command()]))
+        self.assertEqual(summary["command_technical_diagnostics"]["internal_execution_attempts"], 0)
+        for key, reason in (("failure_events", "batch_internal_failure"),
+                            ("unresolved_batches", "unresolved_batch"),
+                            ("recovered_batches", "recovered_unknown_batch")):
+            changed = deepcopy(summary)
+            changed["batch_dispatch_diagnostics"][key] = 1
+            gate = probe_qualification(changed)
+            self.assertFalse(gate["passed"])
+            self.assertIn(reason, gate["reasons"])
+        changed = deepcopy(summary)
+        changed.pop("batch_dispatch_diagnostics")
+        self.assertIn("missing_batch_dispatch_diagnostics", probe_qualification(changed)["reasons"])
+        changed = deepcopy(summary)
+        changed["batch_dispatch_diagnostics"]["failure_events"] = True
+        self.assertIn("invalid_batch_dispatch_diagnostics", probe_qualification(changed)["reasons"])
 
     def test_cli_exits_nonzero_after_a_failed_probe_qualification(self):
         summary = self.summary(command_technical_diagnostics([self.command(attempts=1)]))

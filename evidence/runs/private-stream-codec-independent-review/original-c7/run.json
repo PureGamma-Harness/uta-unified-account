@@ -1,0 +1,27 @@
+{
+  "runtime_source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+  "checkout_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+  "new_peer_test_not_yet_committed": true,
+  "runtime_sha256": "c553b483d3155a5778cedc0448c4b58c135fb877642a9055dc24dfea398e5ac9",
+  "peer_test_sha256": "193fa74d76553042ee5aac31910e4f7c107b2fb39c56e9b2eb495827919796e7",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_private_stream_codec_reference.py",
+    "-v"
+  ],
+  "started_utc": "2026-11-17T11:48:36.273967+00:00",
+  "finished_utc": "2026-11-17T11:48:36.390598+00:00",
+  "wall_seconds": 0.11663251199934166,
+  "exit_code": 1,
+  "scope": "three independent pure public-header alias regression cases; expected property actually fails",
+  "no_socket_SQL_service": true,
+  "production_approved": false
+}

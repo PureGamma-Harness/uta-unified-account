@@ -1,0 +1,26 @@
+test_actual_shared_commit_and_no_precommit_visibility (test_durable_batches.DurableBatchTests.test_actual_shared_commit_and_no_precommit_visibility) ... ok
+test_control_and_backoff_prevent_financial_head_bypass (test_durable_batches.DurableBatchTests.test_control_and_backoff_prevent_financial_head_bypass) ... ok
+test_expired_metadata_owner_does_not_prepare_manifest (test_durable_batches.DurableBatchTests.test_expired_metadata_owner_does_not_prepare_manifest) ... ERROR
+test_full_current_risk_and_mixed_business_rejection (test_durable_batches.DurableBatchTests.test_full_current_risk_and_mixed_business_rejection) ... ok
+test_lost_actual_commit_reply_resolves_all_without_repeating_effects (test_durable_batches.DurableBatchTests.test_lost_actual_commit_reply_resolves_all_without_repeating_effects) ... ok
+test_manifest_cannot_be_replaced_updated_deleted_or_used_as_terminal_ack (test_durable_batches.DurableBatchTests.test_manifest_cannot_be_replaced_updated_deleted_or_used_as_terminal_ack) ... ok
+test_metadata_role_cannot_touch_finance_terminal_lease_or_schema (test_durable_batches.DurableBatchTests.test_metadata_role_cannot_touch_finance_terminal_lease_or_schema) ... ok
+test_missing_capability_is_not_silently_installed (test_durable_batches.DurableBatchTests.test_missing_capability_is_not_silently_installed) ... ok
+test_one_and_two_commands_do_not_create_manifest (test_durable_batches.DurableBatchTests.test_one_and_two_commands_do_not_create_manifest) ... ok
+test_read_failure_cannot_resolve_or_dispatch_next_manifest (test_durable_batches.DurableBatchTests.test_read_failure_cannot_resolve_or_dispatch_next_manifest) ... ok
+test_true_rollback_keeps_every_original_pending_and_no_attempt_charge (test_durable_batches.DurableBatchTests.test_true_rollback_keeps_every_original_pending_and_no_attempt_charge) ... ok
+
+======================================================================
+ERROR: test_expired_metadata_owner_does_not_prepare_manifest (test_durable_batches.DurableBatchTests.test_expired_metadata_owner_does_not_prepare_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-durable-batch-runtime/tests/test_durable_batches.py", line 192, in test_expired_metadata_owner_does_not_prepare_manifest
+    self.batch.prepare()
+  File "/workspace/uta-durable-batch-runtime/uta/durable_batches.py", line 229, in prepare
+    raise BatchRecoveryUnknown("resolve the earlier durable attempt before selecting new membership")
+uta.durable_batches.BatchRecoveryUnknown: resolve the earlier durable attempt before selecting new membership
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.206s
+
+FAILED (errors=1)

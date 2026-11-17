@@ -1,0 +1,3 @@
+# PR14 初版CI失败原件
+
+4e59084关联PR merge1702398，Python3.11实际1168项/1FAIL。partial publication后的读视图返回missing而原测试立即要求fresh。原CI未存该时点的publication/HTTP/DB，因此不声称唯一根因。所有输入hash已逐项对head Git blobs核对，原提交字段保留。原ZIP保留在外部目录，官方摘要写入provenance；三个成员原样复制。此失败不得被另七份CI通过覆盖；后续phase修复和新缓存集成需重新冻结验证。

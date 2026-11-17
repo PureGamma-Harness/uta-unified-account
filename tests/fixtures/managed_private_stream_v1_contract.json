@@ -1,0 +1,955 @@
+{
+  "format": "managed-private-events-proposed-contract-v1",
+  "status": "DESIGN_NOT_IMPLEMENTED",
+  "base_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "synthetic": true,
+  "secrets_are_public_synthetic_examples_only": true,
+  "runtime_tests_executed": 0,
+  "production_approved": false,
+  "protocol": "uta.private.events.v1",
+  "source_stream_identity_example": {
+    "authority": "synthetic-authority",
+    "path": "/synthetic/private-stream.sqlite3",
+    "device": 1,
+    "inode": 7,
+    "account": "alice",
+    "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13"
+  },
+  "cases": [
+    {
+      "id": "WS-C001",
+      "kind": "handshake",
+      "input": {
+        "raw_http": "GET /v2/accounts/alice/events/ws?challenge=7468652073616d706c65206e6f6e6365 HTTP/1.1\r\nHost: 127.0.0.1:8082\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Protocol: uta.private.events.v1\r\nAuthorization: UTA-HMAC-SHA256\r\nX-UTA-Version: 1\r\nX-UTA-Tenant: tenant-synthetic\r\nX-UTA-Audience: uta-private-synthetic\r\nX-UTA-Key-Id: alice-reader-v1\r\nX-UTA-Timestamp-Ms: 1794912300000\r\nX-UTA-Nonce: synthetic_nonce_000000000001\r\nX-UTA-Signature: 5e739e9f3afc3285073a66ccb0b30ba52871d23eef1bc149ece88940ddc1cc96\r\n\r\n",
+        "synthetic_key_ascii": "00000000000000000000000000000000",
+        "canonical_hmac_bytes_ascii": "[\"UTA-HMAC-SHA256\",\"1\",\"tenant-synthetic\",\"uta-private-synthetic\",\"alice-reader-v1\",\"1794912300000\",\"synthetic_nonce_000000000001\",\"GET\",\"/v2/accounts/alice/events/ws?challenge=7468652073616d706c65206e6f6e6365\",\"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"]"
+      },
+      "expected": {
+        "http_status": 101,
+        "headers": {
+          "Upgrade": "websocket",
+          "Connection": "Upgrade",
+          "Sec-WebSocket-Accept": "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
+          "Sec-WebSocket-Protocol": "uta.private.events.v1"
+        },
+        "nonce_consumed_once": true,
+        "role": "reader",
+        "account_id": "alice"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C002",
+      "kind": "initial_snapshot",
+      "input": {
+        "single_ro_account_projection": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 1,
+          "type": "snapshot",
+          "coverage": "account_base_only",
+          "cursor_after": 400,
+          "snapshot": {
+            "account_id": "alice",
+            "account_version": 12,
+            "authority_id": "synthetic-authority",
+            "shard": 0,
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "trading_schema": 3,
+            "market_snapshot_id": null,
+            "market": {
+              "freshness": "missing",
+              "version": null,
+              "observed_at": null,
+              "payload_digest": null,
+              "evidence": "unavailable"
+            },
+            "policy_ref": {
+              "kind": "persisted_financial_config",
+              "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+              "risk_mode": "phase1_cross",
+              "archived_policy_id": null
+            },
+            "events_watermark": 400,
+            "account_events_watermark": 397,
+            "ledger_watermark": 80,
+            "checked_at": "2026-11-17T10:45:00+00:00",
+            "reporting_currency": "USD",
+            "local_halt_observed": false,
+            "risk": {
+              "status": "unsupported",
+              "reason": "live_risk_recomputation_not_enabled"
+            }
+          },
+          "account": {
+            "balances": {
+              "USD": {
+                "balance": "100.00",
+                "scale": 2,
+                "unit": "asset_units"
+              }
+            },
+            "liabilities": [
+              {
+                "asset": "USD",
+                "principal": "5.00",
+                "interest": "0.50",
+                "scale": 2,
+                "unit": "asset_units"
+              }
+            ],
+            "position_count": 0,
+            "order_count": 0,
+            "encumbrances": {
+              "status": "not_recomputed"
+            }
+          }
+        },
+        "commit_sequence_between_read_and_101": 407
+      },
+      "expected": {
+        "frame": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 1,
+          "type": "snapshot",
+          "coverage": "account_base_only",
+          "cursor_after": 400,
+          "snapshot": {
+            "account_id": "alice",
+            "account_version": 12,
+            "authority_id": "synthetic-authority",
+            "shard": 0,
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "trading_schema": 3,
+            "market_snapshot_id": null,
+            "market": {
+              "freshness": "missing",
+              "version": null,
+              "observed_at": null,
+              "payload_digest": null,
+              "evidence": "unavailable"
+            },
+            "policy_ref": {
+              "kind": "persisted_financial_config",
+              "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+              "risk_mode": "phase1_cross",
+              "archived_policy_id": null
+            },
+            "events_watermark": 400,
+            "account_events_watermark": 397,
+            "ledger_watermark": 80,
+            "checked_at": "2026-11-17T10:45:00+00:00",
+            "reporting_currency": "USD",
+            "local_halt_observed": false,
+            "risk": {
+              "status": "unsupported",
+              "reason": "live_risk_recomputation_not_enabled"
+            }
+          },
+          "account": {
+            "balances": {
+              "USD": {
+                "balance": "100.00",
+                "scale": 2,
+                "unit": "asset_units"
+              }
+            },
+            "liabilities": [
+              {
+                "asset": "USD",
+                "principal": "5.00",
+                "interest": "0.50",
+                "scale": 2,
+                "unit": "asset_units"
+              }
+            ],
+            "position_count": 0,
+            "order_count": 0,
+            "encumbrances": {
+              "status": "not_recomputed"
+            }
+          }
+        },
+        "next_poll_after": 400,
+        "event407_must_not_be_lost": true,
+        "complete_orders_or_positions_snapshot": false,
+        "live_risk_recomputed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C003",
+      "kind": "normal_private_sequence_gaps",
+      "input": {
+        "frame": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 2,
+          "type": "events",
+          "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+          "observed_snapshot": {
+            "account_id": "alice",
+            "account_version": 14,
+            "authority_id": "synthetic-authority",
+            "shard": 0,
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "trading_schema": 3,
+            "market_snapshot_id": null,
+            "market": {
+              "freshness": "missing",
+              "version": null,
+              "observed_at": null,
+              "payload_digest": null,
+              "evidence": "unavailable"
+            },
+            "policy_ref": {
+              "kind": "persisted_financial_config",
+              "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+              "risk_mode": "phase1_cross",
+              "archived_policy_id": null
+            },
+            "events_watermark": 420,
+            "account_events_watermark": 413,
+            "ledger_watermark": 83,
+            "checked_at": "2026-11-17T10:45:01+00:00",
+            "reporting_currency": "USD",
+            "local_halt_observed": false,
+            "risk": {
+              "status": "unsupported",
+              "reason": "live_risk_recomputation_not_enabled"
+            }
+          },
+          "page": {
+            "after": 400,
+            "until": 420,
+            "limit": 32,
+            "has_more": false,
+            "next_after": 420
+          },
+          "events": [
+            {
+              "cursor": 407,
+              "sequence": 407,
+              "event_type": "DEPOSIT_POSTED",
+              "account_id": "alice",
+              "payload": {
+                "event_id": "synthetic-deposit-1",
+                "asset": "USD",
+                "amount": "1",
+                "version": 13
+              },
+              "created_at": "2026-11-17T10:45:00.100000+00:00"
+            },
+            {
+              "cursor": 413,
+              "sequence": 413,
+              "event_type": "DEPOSIT_POSTED",
+              "account_id": "alice",
+              "payload": {
+                "event_id": "synthetic-deposit-2",
+                "asset": "USD",
+                "amount": "2",
+                "version": 14
+              },
+              "created_at": "2026-11-17T10:45:00.200000+00:00"
+            }
+          ]
+        },
+        "other_account_sequences": [
+          401,
+          402,
+          408,
+          410
+        ]
+      },
+      "expected": {
+        "apply_event_sequences": [
+          407,
+          413
+        ],
+        "durable_next_after_after_page_commit": 420,
+        "missing_event_alarm": false,
+        "other_account_payloads_sent": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C004",
+      "kind": "empty_page_checkpoint",
+      "input": {
+        "frame": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 3,
+          "type": "events",
+          "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+          "observed_snapshot": {
+            "account_id": "alice",
+            "account_version": 14,
+            "authority_id": "synthetic-authority",
+            "shard": 0,
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "trading_schema": 3,
+            "market_snapshot_id": null,
+            "market": {
+              "freshness": "missing",
+              "version": null,
+              "observed_at": null,
+              "payload_digest": null,
+              "evidence": "unavailable"
+            },
+            "policy_ref": {
+              "kind": "persisted_financial_config",
+              "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+              "risk_mode": "phase1_cross",
+              "archived_policy_id": null
+            },
+            "events_watermark": 425,
+            "account_events_watermark": 413,
+            "ledger_watermark": 83,
+            "checked_at": "2026-11-17T10:45:01+00:00",
+            "reporting_currency": "USD",
+            "local_halt_observed": false,
+            "risk": {
+              "status": "unsupported",
+              "reason": "live_risk_recomputation_not_enabled"
+            }
+          },
+          "page": {
+            "after": 420,
+            "until": 425,
+            "limit": 32,
+            "has_more": false,
+            "next_after": 425
+          },
+          "events": []
+        }
+      },
+      "expected": {
+        "apply_event_sequences": [],
+        "durable_next_after_after_page_commit": 425,
+        "empty_gap_is_not_loss": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C005",
+      "kind": "resume_and_duplicate",
+      "input": {
+        "raw_target": "/v2/accounts/alice/events/ws?challenge=7468652073616d706c65206e6f6e6365&stream_id=account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13&after=400",
+        "last_local_committed_cursor": 400,
+        "delivered_pages": [
+          {
+            "wire_version": 1,
+            "connection_id": "synthetic-connection-1",
+            "frame_id": 2,
+            "type": "events",
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "observed_snapshot": {
+              "account_id": "alice",
+              "account_version": 14,
+              "authority_id": "synthetic-authority",
+              "shard": 0,
+              "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+              "trading_schema": 3,
+              "market_snapshot_id": null,
+              "market": {
+                "freshness": "missing",
+                "version": null,
+                "observed_at": null,
+                "payload_digest": null,
+                "evidence": "unavailable"
+              },
+              "policy_ref": {
+                "kind": "persisted_financial_config",
+                "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+                "risk_mode": "phase1_cross",
+                "archived_policy_id": null
+              },
+              "events_watermark": 420,
+              "account_events_watermark": 413,
+              "ledger_watermark": 83,
+              "checked_at": "2026-11-17T10:45:01+00:00",
+              "reporting_currency": "USD",
+              "local_halt_observed": false,
+              "risk": {
+                "status": "unsupported",
+                "reason": "live_risk_recomputation_not_enabled"
+              }
+            },
+            "page": {
+              "after": 400,
+              "until": 420,
+              "limit": 32,
+              "has_more": false,
+              "next_after": 420
+            },
+            "events": [
+              {
+                "cursor": 407,
+                "sequence": 407,
+                "event_type": "DEPOSIT_POSTED",
+                "account_id": "alice",
+                "payload": {
+                  "event_id": "synthetic-deposit-1",
+                  "asset": "USD",
+                  "amount": "1",
+                  "version": 13
+                },
+                "created_at": "2026-11-17T10:45:00.100000+00:00"
+              },
+              {
+                "cursor": 413,
+                "sequence": 413,
+                "event_type": "DEPOSIT_POSTED",
+                "account_id": "alice",
+                "payload": {
+                  "event_id": "synthetic-deposit-2",
+                  "asset": "USD",
+                  "amount": "2",
+                  "version": 14
+                },
+                "created_at": "2026-11-17T10:45:00.200000+00:00"
+              }
+            ]
+          },
+          {
+            "wire_version": 1,
+            "connection_id": "synthetic-connection-1",
+            "frame_id": 2,
+            "type": "events",
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "observed_snapshot": {
+              "account_id": "alice",
+              "account_version": 14,
+              "authority_id": "synthetic-authority",
+              "shard": 0,
+              "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+              "trading_schema": 3,
+              "market_snapshot_id": null,
+              "market": {
+                "freshness": "missing",
+                "version": null,
+                "observed_at": null,
+                "payload_digest": null,
+                "evidence": "unavailable"
+              },
+              "policy_ref": {
+                "kind": "persisted_financial_config",
+                "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+                "risk_mode": "phase1_cross",
+                "archived_policy_id": null
+              },
+              "events_watermark": 420,
+              "account_events_watermark": 413,
+              "ledger_watermark": 83,
+              "checked_at": "2026-11-17T10:45:01+00:00",
+              "reporting_currency": "USD",
+              "local_halt_observed": false,
+              "risk": {
+                "status": "unsupported",
+                "reason": "live_risk_recomputation_not_enabled"
+              }
+            },
+            "page": {
+              "after": 400,
+              "until": 420,
+              "limit": 32,
+              "has_more": false,
+              "next_after": 420
+            },
+            "events": [
+              {
+                "cursor": 407,
+                "sequence": 407,
+                "event_type": "DEPOSIT_POSTED",
+                "account_id": "alice",
+                "payload": {
+                  "event_id": "synthetic-deposit-1",
+                  "asset": "USD",
+                  "amount": "1",
+                  "version": 13
+                },
+                "created_at": "2026-11-17T10:45:00.100000+00:00"
+              },
+              {
+                "cursor": 413,
+                "sequence": 413,
+                "event_type": "DEPOSIT_POSTED",
+                "account_id": "alice",
+                "payload": {
+                  "event_id": "synthetic-deposit-2",
+                  "asset": "USD",
+                  "amount": "2",
+                  "version": 14
+                },
+                "created_at": "2026-11-17T10:45:00.200000+00:00"
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "resume_requires_fresh_challenge_and_auth_nonce": true,
+        "new_account_projection_overwrites_old_baseline": false,
+        "unique_local_event_keys": [
+          [
+            "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            407
+          ],
+          [
+            "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            413
+          ]
+        ],
+        "final_durable_cursor": 420,
+        "page_reducer_must_be_idempotent": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C006",
+      "kind": "stream_identity_change",
+      "input": {
+        "old_stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+        "new_stream_id": "account-stream:b9e56aa5821305352cbd396252a7154b1ec4c648cd33d9e448ec875ee2d1e82e",
+        "old_cursor": 420,
+        "file_inode_before": 7,
+        "file_inode_after": 8
+      },
+      "expected": {
+        "before_101_http_status": 409,
+        "after_101_error": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 4,
+          "type": "error",
+          "error": {
+            "code": "view_stream_changed",
+            "retry": false,
+            "rebuild": true
+          }
+        },
+        "after_101_close_code": 4000,
+        "auto_reset_to_zero": false,
+        "rebuild_required": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C007",
+      "kind": "cursor_ahead",
+      "input": {
+        "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+        "after": 426,
+        "source_watermark": 425
+      },
+      "expected": {
+        "http_status": 409,
+        "error_code": "view_cursor_ahead",
+        "auto_reset": false,
+        "snapshot_returned": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C008",
+      "kind": "known_revocation",
+      "input": {
+        "session_key_id": "alice-reader-v1",
+        "binding_identity": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "auth_key_revoked_now": true,
+        "previously_queued_application_frame": {
+          "wire_version": 1,
+          "connection_id": "synthetic-connection-1",
+          "frame_id": 2,
+          "type": "events",
+          "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+          "observed_snapshot": {
+            "account_id": "alice",
+            "account_version": 14,
+            "authority_id": "synthetic-authority",
+            "shard": 0,
+            "stream_id": "account-stream:829596fd4f3f89848fb07d64a3c931781a1ec692af2a50312b92afc7d7945e13",
+            "trading_schema": 3,
+            "market_snapshot_id": null,
+            "market": {
+              "freshness": "missing",
+              "version": null,
+              "observed_at": null,
+              "payload_digest": null,
+              "evidence": "unavailable"
+            },
+            "policy_ref": {
+              "kind": "persisted_financial_config",
+              "id": "config:1111111111111111111111111111111111111111111111111111111111111111",
+              "risk_mode": "phase1_cross",
+              "archived_policy_id": null
+            },
+            "events_watermark": 420,
+            "account_events_watermark": 413,
+            "ledger_watermark": 83,
+            "checked_at": "2026-11-17T10:45:01+00:00",
+            "reporting_currency": "USD",
+            "local_halt_observed": false,
+            "risk": {
+              "status": "unsupported",
+              "reason": "live_risk_recomputation_not_enabled"
+            }
+          },
+          "page": {
+            "after": 400,
+            "until": 420,
+            "limit": 32,
+            "has_more": false,
+            "next_after": 420
+          },
+          "events": [
+            {
+              "cursor": 407,
+              "sequence": 407,
+              "event_type": "DEPOSIT_POSTED",
+              "account_id": "alice",
+              "payload": {
+                "event_id": "synthetic-deposit-1",
+                "asset": "USD",
+                "amount": "1",
+                "version": 13
+              },
+              "created_at": "2026-11-17T10:45:00.100000+00:00"
+            },
+            {
+              "cursor": 413,
+              "sequence": 413,
+              "event_type": "DEPOSIT_POSTED",
+              "account_id": "alice",
+              "payload": {
+                "event_id": "synthetic-deposit-2",
+                "asset": "USD",
+                "amount": "2",
+                "version": 14
+              },
+              "created_at": "2026-11-17T10:45:00.200000+00:00"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "new_application_frame_started": false,
+        "close_code": 1008,
+        "error_code": "signing_key_inactive",
+        "auth_nonce_table_deleted": false,
+        "already_sent_bytes_retractable": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C009",
+      "kind": "auth_read_unavailable",
+      "input": {
+        "auth_store_read": "unavailable",
+        "previous_success_age_ms": 1
+      },
+      "expected": {
+        "application_frame_sent": false,
+        "close_code": 1011,
+        "cached_principal_sufficient": false,
+        "auth_schema_recreated": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C010",
+      "kind": "permission",
+      "input": {
+        "hmac_valid": true,
+        "nonce_committed": true,
+        "role": "reader",
+        "bound_account": "alice",
+        "path_account": "bob"
+      },
+      "expected": {
+        "http_status": 403,
+        "financial_view_queried": false,
+        "account_existence_revealed": false,
+        "nonce_rolled_back": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C011",
+      "kind": "permission",
+      "input": {
+        "hmac_valid": true,
+        "roles": [
+          "funding",
+          "risk",
+          "admin"
+        ]
+      },
+      "expected": {
+        "each_http_status": 403,
+        "admin_bypass_inherited": false,
+        "financial_view_queried": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C012",
+      "kind": "challenge_binding",
+      "input": {
+        "signed_challenge_hex": "7468652073616d706c65206e6f6e6365",
+        "header_key_base64": "AAAAAAAAAAAAAAAAAAAAAA=="
+      },
+      "expected": {
+        "http_status": 400,
+        "error_code": "invalid_ws_challenge",
+        "upgraded": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C013",
+      "kind": "nonce_replay",
+      "input": {
+        "same_auth_nonce_used_on_two_handshakes": true
+      },
+      "expected": {
+        "at_most_one_101": true,
+        "other_http_status": 409,
+        "other_error_code": "request_replayed",
+        "persistent_nonce_survives_restart": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C014",
+      "kind": "rfc_control_bytes",
+      "input": {
+        "client_ping_hex": "898201020304696b",
+        "unmasked_payload_utf8": "hi"
+      },
+      "expected": {
+        "server_pong_hex": "8a026869",
+        "financial_ack": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C015",
+      "kind": "rfc_control_bytes",
+      "input": {
+        "client_close_hex": "88820102030402ea"
+      },
+      "expected": {
+        "server_close_hex": "880203e8",
+        "server_application_data_after_close": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C016",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_unmasked_ping_hex": "8900"
+      },
+      "expected": {
+        "close_code": 1002,
+        "server_close_hex": "880203ea"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C017",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_fragmented_control_hex": "098001020304"
+      },
+      "expected": {
+        "close_code": 1002,
+        "payload_allocation_before_reject": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C018",
+      "kind": "application_reject_bytes",
+      "input": {
+        "client_valid_fragmented_text_start_hex": "018001020304"
+      },
+      "expected": {
+        "close_code": 1008,
+        "meaning": "application does not accept client data messages; valid RFC fragmentation is not itself claimed malformed"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C019",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_unexpected_continuation_hex": "808001020304"
+      },
+      "expected": {
+        "close_code": 1002
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C020",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_nonminimal_empty_text_length_hex": "81fe000001020304"
+      },
+      "expected": {
+        "close_code": 1002,
+        "payload_allocation_before_reject": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C021",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_close_invalid_utf8_hex": "88830102030402eafc"
+      },
+      "expected": {
+        "close_code": 1007
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C022",
+      "kind": "rfc_reject_bytes",
+      "input": {
+        "client_close_reserved1005_hex": "88820102030402ef"
+      },
+      "expected": {
+        "close_code": 1002
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C023",
+      "kind": "valid_unsolicited_control",
+      "input": {
+        "client_unsolicited_empty_pong_hex": "8a8001020304",
+        "outstanding_ping_payload_hex": "6869"
+      },
+      "expected": {
+        "close_code": null,
+        "clear_outstanding_ping": false,
+        "financial_ack": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C024",
+      "kind": "slow_consumer",
+      "input": {
+        "pending_frames": 2,
+        "pending_bytes": 524288,
+        "oldest_pending_age_ms": 5001,
+        "last_client_committed_cursor": 400
+      },
+      "expected": {
+        "new_financial_read": false,
+        "close_code": 4008,
+        "error_code": "slow_consumer",
+        "server_marks_client_applied_420": false,
+        "reconnect_after": 400
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C025",
+      "kind": "oversize_event",
+      "input": {
+        "after": 400,
+        "next_eligible_sequence": 407,
+        "payload_utf8_bytes": 65537
+      },
+      "expected": {
+        "close_code": 1009,
+        "error_code": "event_too_large",
+        "next_after_advances_to_407": false,
+        "skip_event": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C026",
+      "kind": "snapshot_capacity",
+      "input": {
+        "assets": 257,
+        "liabilities": 0
+      },
+      "expected": {
+        "http_status": 503,
+        "error_code": "stream_snapshot_capacity_exceeded",
+        "partial_snapshot_sent": false,
+        "rest_asset_limit_changed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C027",
+      "kind": "mixed_snapshot_rejected",
+      "input": {
+        "account_read_version": 12,
+        "orders_read_version": 13,
+        "separate_ro_transactions": true
+      },
+      "expected": {
+        "claim_one_financial_snapshot": false,
+        "action": "restart REST reconstruction; first WS slice does not combine these resources"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C028",
+      "kind": "lossless_cursor_boundary",
+      "input": {
+        "event_sequence": 9007199254740993,
+        "client_native_float_value": 9007199254740992
+      },
+      "expected": {
+        "required_exact_event_sequence": 9007199254740993,
+        "float_cursor_accepted": false,
+        "lossless_json_integer_codec_required": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C029",
+      "kind": "auth_clock_regression",
+      "input": {
+        "last_session_check_ms": 2000,
+        "durable_auth_highwater_ms": 1999,
+        "current_wall_ms": 1998
+      },
+      "expected": {
+        "application_frame_sent": false,
+        "close_code": 1011,
+        "error_code": "auth_clock_regressed"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-C030",
+      "kind": "scope_gap",
+      "input": {
+        "stream_id_unchanged": true,
+        "trusted_os_restores_bytes_in_place": true,
+        "no_external_rollback_seal": true
+      },
+      "expected": {
+        "external_anti_rollback_proven": false,
+        "classification": "EXPLICIT_EVIDENCE_GAP_NOT_RUNTIME_VALIDATION"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    }
+  ],
+  "websocket_or_sql_operations_executed": 0,
+  "documentation_http_source_fetches": 1
+}
