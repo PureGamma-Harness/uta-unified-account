@@ -1,0 +1,58 @@
+{
+  "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+  "source_path": "/workspace/uta-observer-freeze-8b7f544",
+  "started_at": "2026-11-17T13:41:50.439390+00:00",
+  "finished_at": "2026-11-17T13:56:02.559311+00:00",
+  "cpu_affinity": [
+    1
+  ],
+  "cohosted": true,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "launcher_sha256": "8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8",
+  "source_clean_after": true,
+  "records": [
+    {
+      "label": "python312",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-8b7f544/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-8b7f544/python312"
+      ],
+      "started_at": "2026-11-17T13:41:50.465981+00:00",
+      "finished_at": "2026-11-17T13:46:34.236978+00:00",
+      "exit_code": 1,
+      "wall_seconds": 283.77100025200343
+    },
+    {
+      "label": "python310",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "/workspace/uta-observer-freeze-8b7f544/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-8b7f544/python310"
+      ],
+      "started_at": "2026-11-17T13:46:34.255315+00:00",
+      "finished_at": "2026-11-17T13:51:17.971190+00:00",
+      "exit_code": 1,
+      "wall_seconds": 283.7158992850018
+    },
+    {
+      "label": "python313-sqlite346",
+      "command": [
+        "/usr/bin/python3.13",
+        "/workspace/uta-observer-freeze-8b7f544/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-8b7f544/python313-sqlite346"
+      ],
+      "started_at": "2026-11-17T13:51:17.993703+00:00",
+      "finished_at": "2026-11-17T13:56:02.544561+00:00",
+      "exit_code": 1,
+      "wall_seconds": 284.5508639449981
+    }
+  ],
+  "all_exit_zero": false,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "ha_approved": false
+}
