@@ -120,8 +120,11 @@ class RestoredClockContention(process.ProcessReadinessTests):
 
 def main():
     os.sched_setaffinity(0, {2})
-    signal.alarm(29)
     stage = sys.argv[1]
+    def watchdog(signum, frame):
+        raise TimeoutError("owned component observation watchdog expired")
+    signal.signal(signal.SIGALRM, watchdog)
+    signal.alarm(8 if stage == "sampling-native-frame" else 29)
     output = Path(__file__).parent/stage
     output.mkdir()
     paths = ["tests/test_readiness_sampling.py", "tests/test_process_readiness.py", "uta/durable_process.py"]
