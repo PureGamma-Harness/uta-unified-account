@@ -243,9 +243,13 @@ class LedgerMainSchemaTests(unittest.TestCase):
         connection = sqlite3.connect(path.as_uri() + "?mode=rw", uri=True, isolation_level=None)
         try:
             connection.execute("BEGIN")
-            with self.assertRaisesRegex(StorageError, "another database"):
+            with self.assertRaisesRegex(StorageError, "another database") as caught:
                 self.ledger.verify(connection=connection)
             self.assertTrue(connection.in_transaction)
+            (self.directory / "foreign-main.json").write_text(json.dumps(
+                {"error_type": type(caught.exception).__name__, "error_message": str(caught.exception),
+                 "caller_transaction_remained_active": True,
+                 "actual_database_list": [list(row) for row in connection.execute("PRAGMA database_list")]}, indent=2) + "\n")
             connection.rollback()
         finally:
             connection.close()
