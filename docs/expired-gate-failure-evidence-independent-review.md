@@ -35,3 +35,37 @@ privacy tightening inafe275e is separately reviewed and tested; its new twelfth
 case is not backfilled into this original result. Diagnostic evidence can aid a
 future original failure without fixing runtime liveness. Source91's old CI failure,
 its unknown cause and all incomplete/NO_REPRO historical observations stay unchanged.
+
+## Final safe scalar boundary afe275e
+
+Final safe source is `afe275e95d832e238e033faa84b3ee5cae1b8431`, with helper
+SHA872b38c73c10faa360ddebfb85328b23b847b08311174c0abcbcf95700f53e56
+and unique suite SHA12d3c2bb29a3c86d26a36cd5e9ae01f7305025d9a5156f54809319d1d9022e1a.
+Its additional patch also validates stdlib Thread/Event/clock returned scalars:
+nonliteral booleans and nonbounded/noninteger clocks become null with drop counts,
+so a malformed stdlib return cannot bypass the same privacy projection. It adds
+one explicit synthetic-secret negative vector; the old11-case proof is untouched.
+
+One newly authorized Python3.10/CPU3 invocation ran these final12 pure cases at
+16:02:42 UTC, all passed without errors/failures/skips. Actual process duration
+was0.214462748 seconds, unittest0.128 seconds, below3 seconds with no timeout.
+The exact final author HEAD, four relevant file hashes and tracked cleanliness
+were verified before/after; no original native case or SQL ran. All three raw
+records and an exact hash manifest are separately retained under python310-afe-once.
+
+The independent source-contract checker was reapplied to finalafe Git blobs with
+only its candidate constant changed. All172 prior test files, whole original
+module AST, corrected ancestry, production-runtime identity and the six-line hook
+conditions still hold. Neither the bad9ba preparation commit nor a replacement of
+its old test file is part of this safe chain. A success still imports/collects
+nothing; on failure, collection remains a nonauthoritative before-cleanup snapshot,
+with bounded output and a single best-effort write preserving the primary error.
+
+**No concrete blocker remains to integrating safe315a71d→b58e587→afe275e as a
+diagnostic-only test change.** Integrate this safe chain and these independent
+proofs; exclude bad9ba. A fresh exact candidate still needs its complete local QA,
+CI, package and separately planned short/long synthetic observation gates. The
+patch does not repair or prove five-second runtime recovery, clear source91's
+original failure, authorize customer traffic, or sign production/real funds.
+Stopping this optional test collection or reverting its exact hook/helper in a
+new commit is rollback; preserve all original raw and failure history.
