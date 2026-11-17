@@ -13,6 +13,7 @@ import sqlite3
 
 from .ledger import Ledger, LedgerError, Posting
 from .service import ExchangeService, ServiceError, _json, _key, _name, _text
+from .storage import StorageError
 
 
 _POOL = "system:credit-pool"
@@ -264,8 +265,22 @@ class CreditService:
 
     def borrow(self, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:
         """Explicitly borrow funded cash after fresh, atomic gross-debt risk checks."""
-        units, amount_text, scope = self._prepare(account_id, command_id, asset, amount)
+        self._prepare(account_id, command_id, asset, amount)
         with self.exchange._transaction() as connection:
+            return self._borrow(connection, account_id, command_id, asset, amount)
+
+    def _borrow(self, connection, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:
+        """Join an existing financial transaction; never commit or open one.
+
+        This internal interface adds no managed borrowing or ingress capability.
+        Its caller owns rollback if a later receipt or another action fails.
+        """
+        if connection is None:
+            raise StorageError("borrowing requires an existing financial transaction")
+        with self.database._using(connection):
+            from .writer_fence import _assert_financial_joinable
+            _assert_financial_joinable(self.database, connection)
+            units, amount_text, scope = self._prepare(account_id, command_id, asset, amount)
             self.exchange._require_account(connection, account_id)
             previous = self._replay(connection, scope, command_id, "borrowed", asset, amount_text)
             if previous is not None:

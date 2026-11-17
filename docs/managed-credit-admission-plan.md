@@ -39,6 +39,10 @@ limit、pool 所有权、freshness、幂等键及错误契约保留。
 的拒绝用例。原信用、gross、Cross 和共享监督测试需重新执行，保留原始结果。
 
 这一步提供可组合的原子接口，不证明 online lending 资格或新的风险政策已经启用。
+新增 strict financial join 检查是显式 opt-in；原一般 ledger join 契约不变。它要求当前
+registry 中的确切连接、同 authority path、同 writer binding 和 financial role，不能
+将 raw/read/inbox/control connection 升格为金融写入者。前后 fence/COMMIT 检查仍由原
+Database 事务承担。针对性三运行时结果见[原始证据](../evidence/runs/managed-credit-joined/README.md)。
 
 ## B：后续设计，当前不实现
 
