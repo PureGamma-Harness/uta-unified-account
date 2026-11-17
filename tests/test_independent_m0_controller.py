@@ -67,12 +67,13 @@ class PureM0Controls(unittest.TestCase):
         with self.assertRaises(m.GateError):m.project_summary(row,False)
     def once(self):
         a=self.approval()
-        return {'format':1,'kind':'ROOT_REVIEWED_ONCE_M0_V1','execution_authorized':True,
+        return {'format':2,'kind':'ROOT_REVIEWED_ONCE_M0_V2_ESCROW','execution_authorized':True,
             'registration_id':'independent-m0-20261117-once','branch':m.APPROVED_BRANCH,
             'control_commit':a['control_commit'],'controller_sha256':a['controller_sha256'],'workflow_sha256':'e'*64,
             'source_commit':m.SOURCE,'source_tree':m.SOURCE_TREE,'command_spec':m.command_spec(),'budgets':m.budget_spec(),
             'workspace_boot_id':a['workspace_boot_id'],'workspace_hostname_sha256':a['workspace_hostname_sha256'],
-            'workspace_recorded_at':a['workspace_recorded_at'],'retention_mode':'safe_projection_private_ephemeral_R&D_only'}
+            'workspace_recorded_at':a['workspace_recorded_at'],'retention_mode':'four_closed_streams_CMS_AES256GCM_RSA_OAEP_SHA256',
+            'escrow_tool_sha256':'d'*64,'recipient_certificate_sha256':m.RECIPIENT_PEM,'recipient_spki_sha256':m.RECIPIENT_SPKI}
     def once_context(self):
         e=self.env();e.update(GITHUB_EVENT_NAME='push',GITHUB_REF=m.APPROVED_BRANCH,GITHUB_SHA='f'*40)
         event={'ref':m.APPROVED_BRANCH,'created':True,'deleted':False,'forced':False,'before':'0'*40,'after':'f'*40}
@@ -157,7 +158,8 @@ class PureM0Controls(unittest.TestCase):
             with self.subTest(kind=kind):
                 a=self.actual();a['filesystem_type']=kind;self.reject(actual=a)
     def test_fresh_free_equality_and_lower_boundary(self):
-        self.assertEqual(m.MIN_FREE,2214592512)
+        self.assertEqual(m.MIN_FREE,2348810240)
+        self.assertEqual(m.LEGACY_MIN_FREE,2214592512)
         a=self.actual();a['free_bytes']-=1;self.reject(actual=a)
     def test_external_exchange_rejected(self):
         a=self.actual();a['network_external_exchange_configured']=True;self.reject(actual=a)
@@ -228,7 +230,8 @@ class PureM0Controls(unittest.TestCase):
         text=(PATH.parents[1]/'.github/workflows/independent-m0.yml').read_text()
         self.assertIn('  workflow_dispatch:',text);self.assertNotIn('\n  push:',text);self.assertNotIn('\n  pull_request:',text)
         self.assertIn("steps.public_check.outcome == 'success'",text)
-        self.assertIn('*.json',text);self.assertNotIn('/uta-m0-private-',text.split('path: ${{ runner.temp }}')[-1])
+        upload=text.split('          path: |')[-1]
+        self.assertIn('*.json',upload);self.assertIn('*.cms',upload);self.assertNotIn('/uta-m0-private-',upload)
         self.assertIn(m.SOURCE,text);self.assertIn('persist-credentials: false',text)
 
 if __name__=='__main__':unittest.main()

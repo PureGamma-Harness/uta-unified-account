@@ -32,8 +32,12 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /tools/independent_m0_controller.py
+            /tools/m0_stream_escrow.py
+            /config/m0-stream-recipient-public.pem
+            /config/m0-stream-recipient-public-metadata.json
             /tests/test_independent_m0_controller.py
             /tests/test_independent_m0_integrity.py
+            /tests/test_independent_m0_escrow.py
             /.github/workflows/independent-m0.yml
       - name: Checkout exact qualified workload
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -64,6 +68,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: independent-m0-safe-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
+          path: |
+            ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
+            ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.cms
           if-no-files-found: warn
           retention-days: 30

@@ -35,7 +35,12 @@ TRACKED = 5518
 CASE_CAP = 32 * 1024**2
 AGGREGATE_CAP = 64 * 1024**2
 CLEANUP_RESERVE = 32 * 1024**2
-MIN_FREE = 2 * 1024**3 + CASE_CAP + CLEANUP_RESERVE
+ESCROW_CAP = 96 * 1024**2
+TOTAL_CAP = AGGREGATE_CAP + ESCROW_CAP + CLEANUP_RESERVE
+LEGACY_MIN_FREE = 2 * 1024**3 + CASE_CAP + CLEANUP_RESERVE
+MIN_FREE = 2 * 1024**3 + TOTAL_CAP
+RECIPIENT_SPKI = 'de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1'
+RECIPIENT_PEM = '3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed'
 OUTCOMES = {'financial_succeeded', 'business_rejected', 'control_or_market_rejected',
     'local_outstanding_full', 'durable_queue_full', 'enqueue_business_rejected',
     'submission_failed', 'technical_quarantined', 'unknown', 'timeout'}
@@ -115,6 +120,31 @@ def case_bytes(private, public, name):
             total+=info.st_size
     return total
 
+def resource_usage(private, public):
+    """Disjoint logical accounting. Escrow namespace accepts fixed files only."""
+    counts={'normal':0,'escrow':0,'cleanup':0};entries=0
+    streams=r'(driver|case-owner)\.(stdout|stderr)'
+    for root in (private,public):
+      for path in root.rglob('*'):
+        entries+=1;need(entries<=20000,'resource_entries_cap')
+        info=path.lstat();need(not stat.S_ISLNK(info.st_mode),'resource_symlink')
+        need(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode),'resource_special')
+        rel=path.relative_to(root).as_posix()
+        if stat.S_ISDIR(info.st_mode):
+            if rel.startswith('escrow-'):need(re.fullmatch(r'escrow-[BP](-eligible|-safe)?',rel) is not None,'escrow_directory_scope')
+            continue
+        bucket='normal'
+        if rel.startswith('escrow-'):
+            if re.fullmatch(r'escrow-[BP](-eligible|-safe)?/'+streams+r'\.cms',rel):bucket='escrow'
+            elif re.fullmatch(r'escrow-[BP]/'+streams+r'\.openssl-private-stderr',rel):bucket='cleanup'
+            elif re.fullmatch(r'escrow-(context|completed)-[BP]\.json(\.part)?',rel) or re.fullmatch(r'escrow-owner-[BP]\.(stdout|stderr|owner\.json)',rel):bucket='cleanup'
+            elif re.fullmatch(r'escrow-[BP]\.json',rel):bucket='escrow'
+            else:raise GateError('escrow_file_scope')
+        counts[bucket]+=info.st_size
+    counts['total']=sum(counts.values())
+    need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and counts['total']<=TOTAL_CAP,'resource_compartment_cap')
+    return counts
+
 def validate_environment(approval, environment, actual, controller_sha, *, event='workflow_dispatch', event_commit=None):
     need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')
     need(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}',approval['operator_approval_id']) is not None,'approval_id')
@@ -150,19 +180,22 @@ def command_spec():
         'placeholder_resolution':'PYTHON=current recorded executable;WORKLOAD=exact909 checkout;PRIVATE=new exclusive RUNNER_TEMP root; no variable workload flags'}
 
 def budget_spec():
-    return {'case_bytes':CASE_CAP,'aggregate_bytes':AGGREGATE_CAP,'cleanup_bytes':CLEANUP_RESERVE,
+    return {'format':2,'case_bytes':CASE_CAP,'normal_aggregate_bytes':AGGREGATE_CAP,'escrow_bytes':ESCROW_CAP,
+        'cleanup_bytes':CLEANUP_RESERVE,'total_logical_bytes':TOTAL_CAP,
         'extra_free_bytes':2*1024**3,'minimum_fresh_free_bytes':MIN_FREE,'case_inner_wall_seconds':50,
         'case_pipeline_watchdog_seconds':56,'grace_seconds':2,'kill_wait_seconds':2,
         'case_complete_outer_max_seconds':60,
+        'escrow_separate_postcase_wall_seconds':20,
         'watchdog_scope':'new owned session: source checks, driver, parser, hashes, fsync and staged safe output',
         'physical_os_disk_quota':False}
 
 def validate_once_manifest(value, environment, event, relation):
     expected={'format','kind','execution_authorized','registration_id','branch','control_commit',
         'controller_sha256','workflow_sha256','source_commit','source_tree','command_spec','budgets',
-        'workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','retention_mode'}
+        'workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','retention_mode',
+        'escrow_tool_sha256','recipient_certificate_sha256','recipient_spki_sha256'}
     need(set(value)==expected,'once_manifest_fields')
-    need(type(value['format']) is int and value['format']==1 and value['kind']=='ROOT_REVIEWED_ONCE_M0_V1','once_manifest_format')
+    need(type(value['format']) is int and value['format']==2 and value['kind']=='ROOT_REVIEWED_ONCE_M0_V2_ESCROW','once_manifest_format')
     need(value['execution_authorized'] is True,'once_not_authorized')
     need(value['registration_id']=='independent-m0-20261117-once','registration_id')
     need(value['branch']==environment.get('GITHUB_REF')==event.get('ref')==APPROVED_BRANCH,'exact_once_branch')
@@ -176,8 +209,9 @@ def validate_once_manifest(value, environment, event, relation):
     need(value['source_commit']==SOURCE and value['source_tree']==SOURCE_TREE,'once_source')
     canonical=lambda v:json.dumps(v,sort_keys=True,separators=(',',':'),allow_nan=False)
     need(canonical(value['command_spec'])==canonical(command_spec()) and canonical(value['budgets'])==canonical(budget_spec()),'once_command_or_budget')
-    need(value['retention_mode']=='safe_projection_private_ephemeral_R&D_only','unimplemented_retention_mode')
-    for key in ('controller_sha256','workflow_sha256'):
+    need(value['retention_mode']=='four_closed_streams_CMS_AES256GCM_RSA_OAEP_SHA256','unimplemented_retention_mode')
+    need(value['recipient_certificate_sha256']==RECIPIENT_PEM and value['recipient_spki_sha256']==RECIPIENT_SPKI,'recipient_changed')
+    for key in ('controller_sha256','workflow_sha256','escrow_tool_sha256'):
         need(re.fullmatch(r'[0-9a-f]{64}',value[key]) is not None,'once_hash')
     return True
 
@@ -198,6 +232,8 @@ def registration_proof(root, environment):
     workflow=git('show',parent+':'+ONCE_WORKFLOW)
     need(sha256(controller).hexdigest()==value['controller_sha256'],'approved_control_blob')
     need(sha256(workflow).hexdigest()==value['workflow_sha256'],'approved_workflow_blob')
+    need(sha256(git('show',parent+':tools/m0_stream_escrow.py')).hexdigest()==value['escrow_tool_sha256'],'approved_escrow_blob')
+    need(sha256(git('show',parent+':config/m0-stream-recipient-public.pem')).hexdigest()==RECIPIENT_PEM,'approved_recipient_blob')
     approval={'operator_approval_id':value['registration_id'],'control_commit':parent,
         'controller_sha256':value['controller_sha256'],'workspace_boot_id':value['workspace_boot_id'],
         'workspace_hostname_sha256':value['workspace_hostname_sha256'],'workspace_recorded_at':value['workspace_recorded_at'],
@@ -483,7 +519,10 @@ def verify_public(root):
     names=[]
     for item in records:
         need(set(item)=={'name','bytes','sha256'},'public_manifest_fields')
-        name=item['name'];need(re.fullmatch(r'(case-[BP]-safe/)?[a-zA-Z0-9][a-zA-Z0-9_.-]{0,145}\.json',name) is not None,'public_filename')
+        name=item['name']
+        safe_json=re.fullmatch(r'(case-[BP]-safe/)?[a-zA-Z0-9][a-zA-Z0-9_.-]{0,145}\.json',name)
+        safe_cipher=re.fullmatch(r'escrow-[BP]-safe/(driver|case-owner)\.(stdout|stderr)\.cms',name)
+        need(safe_json is not None or safe_cipher is not None,'public_filename')
         path=root/name;info=path.lstat()
         need(not path.parent.is_symlink(),'public_parent_symlink')
         need(stat.S_ISREG(info.st_mode) and info.st_size==item['bytes'] and digest(path)==item['sha256'],'public_manifest_mismatch')
@@ -492,7 +531,7 @@ def verify_public(root):
     for path in root.rglob('*'):
         info=path.lstat()
         need(not stat.S_ISLNK(info.st_mode) and (stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode)),'public_special_entry')
-        if path.is_dir():need(path.parent==root and path.name in {'case-B-safe','case-P-safe'},'public_directory_shape')
+        if path.is_dir():need(path.parent==root and path.name in {'case-B-safe','case-P-safe','escrow-B-safe','escrow-P-safe'},'public_directory_shape')
         else:actual.add(path.relative_to(root).as_posix())
     need(len(names)==len(set(names)) and actual==set(names)|{'manifest.json'},'unlisted_public_file')
     return True
@@ -640,6 +679,49 @@ def supervised_case(owned, source, private, public, name, profile, snapshot, app
         entry.pop('files',None)
     return entry
 
+def escrow_closed_case(owned,source,private,public,name,entry,approval,cpu_ids,health):
+    result={'case':name,'status':'UNKNOWN','files':[],'four_closed_streams_retained':False,
+        'recipient_spki_sha256':RECIPIENT_SPKI,'all_transitive_native_streams_claimed':False,
+        'origin_authenticated_by_recipient_encryption':False}
+    try:
+        proof=entry.get('owner_cleanup',{})
+        need(proof.get('leader_reaped') is True,'closed_case_producers_unproven')
+        usage=resource_usage(private,public)
+        capture={name:True for name in ('driver.stdout','driver.stderr')}
+        capture.update({name:proof.get('stdout_stderr_complete') is True for name in ('case-owner.stdout','case-owner.stderr')})
+        value={'format':1,'case':name,'private':str(private),'public':str(public),'control_commit':approval['control_commit'],
+            'controller_sha256':digest(Path(__file__).resolve()),'run_id':os.environ['GITHUB_RUN_ID'],'run_attempt':os.environ['GITHUB_RUN_ATTEMPT'],
+            'parent_pid':os.getpid(),'parent_birth_ticks':owned.process_identity(os.getpid())['birth_ticks'],
+            'closed_producers':True,'capture_complete':capture,'aggregate_existing_bytes':usage['escrow'],'aggregate_cap':ESCROW_CAP,'cleanup_cap':CLEANUP_RESERVE}
+        descriptor=private/f'escrow-context-{name}.json';public_write(private,descriptor.name,value)
+        runner_temp=os.environ['RUNNER_TEMP'];tool=Path(__file__).resolve().parent/'m0_stream_escrow.py'
+        with child_environment(private):
+            os.environ['RUNNER_TEMP']=runner_temp
+            observed=owned.owned_run([sys.executable,str(tool),'--encrypt-case',str(descriptor)],source,
+                private/f'escrow-owner-{name}',cpu_ids=cpu_ids,wall_seconds=20,grace_seconds=2,kill_wait_seconds=2,
+                output_cap=65536,protected={os.getpid(),os.getppid()},health_check=health)
+        result['owner_cleanup']={key:observed[key] for key in ('outcome','returncode','watchdog_reason','leader_reaped','stdout_stderr_complete')}
+        # UNKNOWN/timeout may still have completed earlier exact streams. Collect
+        # only journaled+atomically published ciphertext, preserving first error.
+        completed=read_json(private/f'escrow-completed-{name}.json',65536)
+        need(completed['case']==name and type(completed['files']) is list and len(completed['files'])<=4,'escrow_completion_shape')
+        names=set()
+        for item in completed['files']:
+            need(set(item)=={'name','bytes','sha256','recipient_spki_sha256','algorithm','origin_authenticated_by_recipient_encryption'},'escrow_cipher_record')
+            need(re.fullmatch(r'(driver|case-owner)\.(stdout|stderr)\.cms',item['name']) is not None and item['name'] not in names,'escrow_stream_name')
+            names.add(item['name']);integer(item['bytes'],1,CASE_CAP+65536)
+            need(re.fullmatch(r'[0-9a-f]{64}',item['sha256']) is not None and item['recipient_spki_sha256']==RECIPIENT_SPKI,'escrow_cipher_identity')
+            if (public/f'escrow-{name}-safe'/item['name']).is_file():
+                result['files'].append({'name':f'escrow-{name}-safe/'+item['name'],'bytes':item['bytes'],'sha256':item['sha256']})
+        result['failures']=completed['failures']
+        resource_usage(private,public)
+        need(observed['outcome']=='EXITED' and observed['returncode']==0 and observed['stdout_stderr_complete'] is True and observed['leader_reaped'] is True,'escrow_owner_unknown')
+        need(completed['status']=='PASS' and completed['failures']==[] and len(result['files'])==4,'escrow_incomplete')
+        result.update(status='PASS',four_closed_streams_retained=True)
+    except BaseException as error:
+        result.update(error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_escrow_failure')
+    return result
+
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
@@ -685,15 +767,30 @@ def main(argv=None):
             validate_environment(approval,dict(os.environ),actual,control_sha,event='push',event_commit=registration['registration_commit'])
         records.append(public_write(args.public,'host.json',actual))
         records.append(public_write(args.public,'source-manifest.json',{'source_commit':SOURCE,'source_tree':SOURCE_TREE,'files':snapshot}))
-        records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'single hosted job, sequential driver, two spawned owners, one allowed CPU','registration':registration}))
+        records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'one supervisor -> owned case-worker -> one driver -> two spawn owners/native; one allowed CPU; separate sequential postcase escrow owner','registration':registration,'budget_spec':budget_spec(),'escrow_tool_sha256':digest(Path(__file__).resolve().with_name('m0_stream_escrow.py'))}))
         owned=load_owned_runner(args.source);cpus=[min(actual['cpu_affinity'])]
         def health(case_root=None):
             need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==actual['boot_id'],'runner_boot_changed')
             need(sha256(socket.gethostname().encode()).hexdigest()==actual['hostname_sha256'],'runner_host_changed')
             need(set(cpus)<=os.sched_getaffinity(0),'runner_cpu_unavailable')
             free=os.statvfs(args.private);need(free.f_bavail*free.f_frsize>=MIN_FREE,'fresh_space')
-            need(tree_bytes(args.private)+tree_bytes(args.public)<=AGGREGATE_CAP,'aggregate_output_cap')
+            resource_usage(args.private,args.public)
             if case_root:need(case_bytes(args.private,args.public,case_root.name)<=CASE_CAP,'case_output_cap')
+        # Before any financial driver, prove this runner's actual OpenSSL and
+        # fixed public recipient support the exact authenticated protocol.
+        stage='crypto_capability_probe';crypto_logs=args.private/'crypto-capability'
+        runner_temp=os.environ['RUNNER_TEMP']
+        with child_environment(args.private):
+            os.environ['RUNNER_TEMP']=runner_temp
+            capability=owned.owned_run([sys.executable,str(Path(__file__).resolve().with_name('m0_stream_escrow.py')),
+                '--check-public-recipient',str(args.private/'synthetic-crypto-probe')],args.source,crypto_logs,
+                cpu_ids=cpus,wall_seconds=10,grace_seconds=2,kill_wait_seconds=2,output_cap=65536,
+                protected={os.getpid(),os.getppid()},health_check=health)
+        need(capability['outcome']=='EXITED' and capability['returncode']==0 and capability['stdout_stderr_complete'] is True,'crypto_capability_unknown')
+        need((args.private/'crypto-capability.stderr').stat().st_size==0,'crypto_capability_stderr')
+        crypto=read_json(args.private/'crypto-capability.stdout',65536)
+        need(crypto['status']=='PUBLIC_RECIPIENT_CAPABILITY_VERIFIED' and crypto['public_spki_der_sha256']==RECIPIENT_SPKI,'crypto_capability_identity')
+        records.append(public_write(args.public,'crypto-capability.json',crypto))
         # Actual WAL/FULL and SQLite compile metadata are collected in an owned
         # isolated child only after execute approval; no product module is used.
         stage='runtime_probe';probe=args.private/'runtime-probe';probe.mkdir(mode=0o700)
@@ -707,6 +804,11 @@ def main(argv=None):
         def run_case(name,profile):
             entry=supervised_case(owned,args.source,args.private,args.public,name,profile,snapshot,approval,actual,cpus,health)
             records.extend(entry.pop('files',[]))
+            escrow=escrow_closed_case(owned,args.source,args.private,args.public,name,entry,approval,cpus,health)
+            records.extend(escrow.pop('files',[]))
+            records.append(public_write(args.public,f'escrow-{name}.json',escrow))
+            entry['stream_escrow']=escrow
+            if escrow['status']!='PASS':entry.update(case_execution_status=entry['status'],status='UNKNOWN',stop_reason='stream_escrow_not_complete')
             return entry
         stage='cases';result['cases']=cases_sequence(run_case)
         result['status']='PASS_COMPONENT_DIAGNOSTIC_ONLY' if len(result['cases'])==2 and all(c['status']=='PASS' for c in result['cases']) else 'UNKNOWN_OR_NO_GO'
@@ -718,7 +820,7 @@ def main(argv=None):
     except BaseException as error:
         result.update(status='UNKNOWN_OR_NO_GO',stage=stage,error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure')
     result.update(no_external_exchange=True,no_network_sandbox_claim=True,private_originals_uploaded=False,
-        profile_binary_uploaded=False,private_raw_retention='private runner lifetime only; no durable private raw retention claim',
+        profile_binary_uploaded=False,private_raw_retention='four closed driver/case-owner streams as authenticated CMS ciphertext; subject to explicit per-case escrow result and provider artifact retention',
         speedup_claim=False,ha_approved=False)
     records.append(public_write(args.public,'result.json',result))
     public_write(args.public,'manifest.json',{'files':records,'private_authorities_requests_keys_nonces_signatures_streams_not_uploaded':True,'source_commit':SOURCE})

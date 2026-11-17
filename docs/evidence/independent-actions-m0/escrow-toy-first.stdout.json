@@ -1,0 +1,48 @@
+{
+  "started_at_utc": "2026-11-17T19:33:40.702737+00:00",
+  "module_sha256": "085eb7d2885a88341bd7c750e14130c2661395a000fa63dd4a90f6e41156d239",
+  "synthetic_only": true,
+  "actual_recipient_private_key_read": false,
+  "actual_financial_SQL_native_profile_Actions": false,
+  "production_approved": false,
+  "checks": [
+    {
+      "case": "authenticated_roundtrip_exact_binary",
+      "passed": true
+    },
+    {
+      "case": "actual_AuthEnvelopedData_AES256GCM_RSAOAEP_SHA256",
+      "passed": true
+    },
+    {
+      "case": "tampered-tag",
+      "passed": true,
+      "private_unaccepted_output_bytes": 799,
+      "plaintext_parsed_or_published": false
+    },
+    {
+      "case": "truncated",
+      "passed": true,
+      "private_unaccepted_output_bytes": 0,
+      "plaintext_parsed_or_published": false
+    },
+    {
+      "case": "authenticated_bytes_wrong_run_binding",
+      "passed": true
+    },
+    {
+      "case": "actual_public_cert_encrypt_only",
+      "passed": true,
+      "private_key_read": false,
+      "ciphertext_sha256": "65fa7e68fe8807ca9729c9472c1fcf4482bee92953fab18c74e7c98b5adb514a",
+      "ciphertext_bytes": 1432,
+      "public_spki_sha256": "de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1"
+    }
+  ],
+  "openssl_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "status": "PASS",
+  "synthetic_original_bytes": 279,
+  "toy_key_not_published": true,
+  "finished_at_utc": "2026-11-17T19:33:40.888221+00:00",
+  "elapsed_monotonic_ns": 185496627
+}
