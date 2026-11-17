@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from fractions import Fraction
 import gzip
 from hashlib import sha256
+import io
 import json
 import math
 import os
@@ -318,6 +319,30 @@ def resources(registration, root):
     return {"free_bytes": free, "required_free_bytes": needed, "retained_cohost_reservations_bytes": reserved, "aggregate_used_bytes": used}
 
 
+def launcher_affinity_ack(fd, pid, cpu_ids, deadline):
+    """Wait for the owned launcher to bind itself, without guessing scheduling."""
+    os.set_blocking(fd, False)
+    content = bytearray()
+    with selectors.DefaultSelector() as ready:
+        ready.register(fd, selectors.EVENT_READ)
+        while time.monotonic() < deadline:
+            if not ready.select(min(.02, max(0, deadline - time.monotonic()))):
+                continue
+            chunk = os.read(fd, 1025 - len(content))
+            require(chunk, "launcher exited without affinity acknowledgement")
+            content.extend(chunk)
+            require(len(content) <= 1024, "launcher acknowledgement exceeds bound")
+            if b"\n" in content:
+                require(content.count(b"\n") == 1 and content.endswith(b"\n"), "invalid launcher acknowledgement frame")
+                value = strict_json(content)
+                require(set(value) == {"pid", "cpu_ids"} and type(value["pid"]) is int
+                    and value["pid"] == pid and value["cpu_ids"] == sorted(cpu_ids), "launcher affinity acknowledgement mismatch")
+                actual = sorted(os.sched_getaffinity(pid))
+                require(actual == sorted(cpu_ids), "kernel affinity differs after launcher acknowledgement")
+                return actual
+    raise GateError("launcher affinity acknowledgement timed out")
+
+
 def owned_run(argv, cwd, logs, *, cpu_ids, wall_seconds, grace_seconds,
               kill_wait_seconds, output_cap, protected, health_check=lambda: None):
     """Own a new session; retain an unreaped leader/pidfd through group cleanup.
@@ -334,20 +359,30 @@ def owned_run(argv, cwd, logs, *, cpu_ids, wall_seconds, grace_seconds,
         require(type(value) in (int, float) and math.isfinite(value) and 0 < value <= 120, "watchdog duration")
     paths = [Path(str(logs) + suffix) for suffix in (".stdout", ".stderr")]
     require(all(path.parent.is_dir() and not path.exists() and not path.is_symlink() for path in paths), "new stream paths required before launch")
-    launcher = [sys.executable, "-c", "import os,sys; os.sched_setaffinity(0," + repr(set(cpu_ids)) + "); os.execv(sys.argv[1],sys.argv[1:])", *argv]
+    ready_read, ready_write = os.pipe()
+    launcher = [sys.executable, "-c", "import json,os,sys; os.sched_setaffinity(0," + repr(set(cpu_ids))
+        + "); os.write(" + str(ready_write) + ",(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close("
+        + str(ready_write) + "); os.execv(sys.argv[1],sys.argv[1:])", *argv]
     environment = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
     environment.pop("PYTHONPATH", None)
     started = time.monotonic()
-    process = subprocess.Popen(launcher, cwd=cwd, env=environment, start_new_session=True,
-                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        process = subprocess.Popen(launcher, cwd=cwd, env=environment, start_new_session=True,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, pass_fds=(ready_write,))
+    except BaseException:
+        os.close(ready_read)
+        os.close(ready_write)
+        raise
+    os.close(ready_write)
     # Popen.poll/wait are intentionally not used before owned group cleanup.
     files, pidfd, selection = [], None, None
     try:
         identity = process_identity(process.pid)
         require(identity["pid"] not in set(protected) | PROTECTED and identity["session"] == identity["group"] == process.pid, "launched session ownership")
-        actual_cpus = sorted(os.sched_getaffinity(process.pid))
-        require(actual_cpus == sorted(cpu_ids), "child did not inherit the registered CPU set")
         pidfd = os.pidfd_open(process.pid)
+        actual_cpus = launcher_affinity_ack(ready_read, process.pid, cpu_ids, started + min(5, wall_seconds))
+        os.close(ready_read)
+        ready_read = None
         selection = selectors.DefaultSelector()
         selection.register(pidfd, selectors.EVENT_READ, "exit")
         for path in paths:
@@ -370,6 +405,8 @@ def owned_run(argv, cwd, logs, *, cpu_ids, wall_seconds, grace_seconds,
             selection.close()
         if pidfd is not None:
             os.close(pidfd)
+        if ready_read is not None:
+            os.close(ready_read)
         raise
     hashes, written, seen, truncated = [sha256(), sha256()], [0, 0], [0, 0], False
     reason, exited = None, False
@@ -384,7 +421,7 @@ def owned_run(argv, cwd, logs, *, cpu_ids, wall_seconds, grace_seconds,
             selection.register(stream, selectors.EVENT_READ, index)
         write_json(Path(str(logs) + ".owner.json"), {"identity": identity, "pidfd_used": True,
             "owned_session": True, "protected_pids": sorted(set(protected) | PROTECTED),
-            "launcher_argv": launcher, "cpu_ids": list(cpu_ids), "observed_child_cpu_ids": actual_cpus,
+            "launcher_argv": launcher, "cpu_ids": list(cpu_ids), "observed_child_cpu_ids": actual_cpus, "launcher_affinity_acknowledged": True,
             "observed_utc": datetime.now(timezone.utc).isoformat()})
         while not exited and reason is None:
             try:
@@ -427,7 +464,7 @@ def owned_run(argv, cwd, logs, *, cpu_ids, wall_seconds, grace_seconds,
         truncated |= sum(seen) > output_cap
         require(not _group_members(process.pid, exclude=process.pid), "owned session still has live descendants")
         return {"argv": argv, "launcher_argv": launcher, "identity": identity, "pidfd_used": True,
-            "cpu_ids": list(cpu_ids), "observed_child_cpu_ids": actual_cpus, "wall_seconds": time.monotonic() - started,
+            "cpu_ids": list(cpu_ids), "observed_child_cpu_ids": actual_cpus, "launcher_affinity_acknowledged": True, "wall_seconds": time.monotonic() - started,
             "returncode": returncode, "watchdog_reason": reason, "outcome": "UNKNOWN" if reason or truncated else "EXITED",
             "stdout_stderr_complete": not truncated, "leader_reaped": True,
             "streams": [{"path": str(path), "bytes": written[index], "observed_bytes": seen[index],
@@ -498,19 +535,55 @@ def composite_gate(summary):
     return gate.get("passed") is True and gate.get("financial_soft_deadline_passed") is True
 
 
+def bounded_arrivals(path, *, maximum_rows=200, maximum_line_bytes=65536, maximum_total_bytes=8 * MiB, compressed=True, partial_tail=False):
+    """Bound decompressed bytes before decode/JSON and detect one excess row.
+
+    At most maximum_rows+1 bounded reads occur, including the EOF/excess probe.
+    An excess row is rejected before it is parsed or appended.
+    """
+    integer(maximum_rows, 1, 200, "arrival row bound")
+    integer(maximum_line_bytes, 1, 65536, "arrival line bound")
+    integer(maximum_total_bytes, 1, 8 * MiB, "arrival total bound")
+    rows, total, ignored = [], 0, False
+    opener = gzip.open if compressed else open
+    with opener(path, "rb") as stream:
+        for index in range(maximum_rows + 1):
+            content = stream.readline(min(maximum_line_bytes + 1, maximum_total_bytes - total + 1))
+            if not content:
+                return rows, ignored
+            require(type(content) is bytes, "arrival stream must be binary")
+            total += len(content)
+            require(len(content) <= maximum_line_bytes and total <= maximum_total_bytes, "decompressed arrival byte bound exceeded")
+            require(index < maximum_rows, "arrival count exceeds plan")
+            try:
+                rows.append(strict_json(content))
+            except ValueError:
+                if partial_tail and not content.endswith(b"\n"):
+                    ignored = True
+                    break
+                raise
+    return rows, ignored
+
+
 def recompute(directory, case, source_hashes, commit):
     """Independent JSON-only oracle; no SQL/financial imports or recalculation."""
     directory = Path(directory)
-    summary, window, footer = (read_json(directory / name) for name in
-        ("summary.json", "arrival-window.json", "measurement-footer.json"))
     manifest = read_json(directory / "manifest.json")
-    require("measurement-footer.json" in manifest["files"], "unmanifested timing footer")
+    required = {"summary.json", "arrival-window.json", "measurement-footer.json", "arrivals.jsonl.gz"}
+    require(required <= set(manifest["files"]), "consumed originals missing from manifest")
+    originals = {}
     for name, item in manifest["files"].items():
         require(not Path(name).is_absolute() and ".." not in Path(name).parts, "manifest path escapes")
         path = directory / name
-        require(not path.is_symlink() and path.stat().st_size == item["bytes"] and digest(path) == item["sha256"], "raw artifact hash mismatch")
-    with gzip.open(directory / "arrivals.jsonl.gz", "rt") as stream:
-        rows = [strict_json(line) for line in stream]
+        if name in required:
+            content = read_blob(path, 64 * MiB if name == "arrivals.jsonl.gz" else 4 * MiB)
+            require(len(content) == item["bytes"] and sha256(content).hexdigest() == item["sha256"], "consumed original hash mismatch")
+            originals[name] = content
+        else:
+            require(not path.is_symlink() and path.stat().st_size == item["bytes"] and digest(path) == item["sha256"], "raw artifact hash mismatch")
+    summary, window, footer = (strict_json(originals[name]) for name in
+        ("summary.json", "arrival-window.json", "measurement-footer.json"))
+    rows, _ = bounded_arrivals(io.BytesIO(originals["arrivals.jsonl.gz"]))
     config = summary["configuration"]
     expected_config = {"duration": 10, "rate": 20, "accounts": 100, "shards": 2,
         "dispatchers": 2, "outstanding": 256, "inbox_capacity": 128, "reject_every": 10,
@@ -598,6 +671,10 @@ def recompute(directory, case, source_hashes, commit):
     require(len(ro["shards"]) == 2 and all(item["confirmed_matches"] == 0 and item["durable_batches_capability"] is True
         and item["audit_required"] is True and item["independent_reserve_account_version_ledger_verified"] is True for item in ro["shards"]), "RO capability/audit/ledger markers")
     reasons = []
+    if late:
+        reasons.append("raw_financial_success_late")
+    if summary["probe_qualification"].get("financial_soft_deadline_passed") is not (late == 0):
+        reasons.append("summary_deadline_flag_contradicts_raw")
     if not composite_gate(summary):
         reasons.append("technical_or_financial_soft_deadline_gate_failed")
     technical = summary["command_technical_diagnostics"]
@@ -613,7 +690,7 @@ def recompute(directory, case, source_hashes, commit):
         "denominator_ns": denominator_ns, "financial_per_second": counts["financial_succeeded"] / elapsed,
         "technical_and_deadline_passed": not reasons, "stop_reasons": reasons, "physical_commit_counts_measured": False,
         "cache_hits_measured": False, "financial_database_reopened_by_this_JSON_checker": False,
-        "summary_sha256": digest(directory / "summary.json"), "raw_sha256": digest(directory / "arrivals.jsonl.gz")}
+        "summary_sha256": sha256(originals["summary.json"]).hexdigest(), "raw_sha256": sha256(originals["arrivals.jsonl.gz"]).hexdigest()}
 
 
 def case_argv(source, directory, case):
@@ -637,22 +714,7 @@ def forensic_counts(directory):
         path = directory / "arrivals.jsonl"
     if not path.exists():
         return {"available": False, "financial_verified": False}
-    rows, partial_tail = [], False
-    opener = gzip.open if compressed else open
-    with opener(path, "rt") as stream:
-        for _ in range(201):
-            line = stream.readline(65537)
-            if not line:
-                break
-            require(len(line) <= 65536, "forensic arrival exceeds bound")
-            try:
-                rows.append(strict_json(line))
-            except ValueError:
-                if not compressed and not line.endswith("\n"):
-                    partial_tail = True
-                    break
-                raise
-    require(len(rows) <= 200, "forensic arrival count exceeds plan")
+    rows, partial_tail = bounded_arrivals(path, compressed=compressed, partial_tail=not compressed)
     groups = {name: [] for name in ("all", "financial_succeeded", "enqueue_ack")}
     for row in rows:
         ns = integer(row["observed_completion_ns"] - row["planned_ns"], 0, 1 << 63, "forensic latency")

@@ -293,7 +293,7 @@ class RunnerPureTests(unittest.TestCase):
     def test_old_raw_has_no_new_timing_footer_and_is_never_upgraded(self):
         path = ROOT/'docs/evidence/managed-variant-wiring-20261117/raw/py312/default'
         self.assertFalse((path/'measurement-footer.json').exists())
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaisesRegex(runner.GateError, 'missing from manifest'):
             runner.recompute(path, runner.schedule()[0], {}, COMMIT)
 
 
