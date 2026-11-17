@@ -90,3 +90,55 @@ retain all manifests, original CID watermarks, financial effects and capability
 markers. Rollback disables batch scheduling only in a binary that recognizes
 and recovers the capability. It does not drop the marker, delete attempts,
 recreate the authority, or downgrade to an older unsupported writer.
+
+## First executable integration checkpoint
+
+The runtime now has a fresh-layout `durable_batches=True` capability and
+`financial_batch_size=0` (default) or 3..8. CLI `init --durable-batches` is
+irreversible; `serve --financial-batch-size 3` selects dispatch only after that
+recorded capability exists. A normal layout creates neither batch tables nor
+the marker. A capable layout with size zero still recovers old attempts before
+worker READY. Existing-layout promotion remains unsupported.
+
+Full batch history is checked read-only while the original owned startup keeper
+is live. Metadata recovery runs only after owned startup finishes and exits its
+registry; an actual renewal of the same still-live original-TTL token precedes
+READY. No metadata role is added to startup write scheduling or upgraded to a
+financial role. The background matching/supervision path remains unchanged.
+
+Every selected batch gives the oldest due normal head one opportunity before
+prioritizing cancellation/repayment heads. This is deliberately stronger normal
+scheduling than the design's one aged opportunity per four productive batches;
+it changes cross-account execution order. It does not provide a hard wall-clock
+fairness bound. The 5ms soft budget can execute only one of three selected
+commands; the remaining commands stay PENDING and may use single dispatch.
+Selected membership, executed prefix and actual financial completion are
+separate counts. A 3-member manifest is not proof of three effects or fewer
+commits than single dispatch.
+
+`COMMAND_BATCH_EXECUTION_FAILED` is a global internal null-account event after
+query-all recovery, bound to manifest hash, original membership, phase and
+actual recording generation/PID. It uses the existing bounded exception
+metadata capture without messages, SQL, paths, locals or raw owner nonce.
+Repeated recording in the same generation/phase is idempotent. This is an extra
+financial diagnostic commit on a fault path, not part of the two normal dispatch
+commits. Lease/database failure can prevent recording; the event count is a
+lower bound. Existing account-scoped managed feeds do not expose global events.
+A future benchmark/observer must reject these events as internal technical
+failures even when all individual CID attempts stay zero. Existing tools do not
+yet select batch layouts, and no performance qualification is performed here.
+
+A batch executing_id identifies where failure was observed, not its cause.
+After full recovery, single-command isolation is required; in this first slice
+only the original stored noncanonical/invalid-payload failures are eligible for
+individual poison-attempt accounting. Database/lease/clock/integrity and unknown
+runtime failures stop the worker rather than charge batch neighbors.
+
+Actual Python 3.12 checkpoint evidence includes 21 tiny cases in 8.532s, real
+spawned partial dispatch and kill-after-manifest recovery, and independent
+processes importing exact archived `4608ffe` and `ad3f5b8` source. The former
+refuses the new fence inventory and the latter cannot use the native guarded
+financial authority. Original test harness failures are retained. This is not
+final release qualification. The independently reported extra attached-trigger
+schema-inventory gap is still a blocker at this checkpoint and must be fixed
+and reviewed before any integration or load GO.

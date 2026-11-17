@@ -470,6 +470,13 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
             # A long read sees the original lease row, while the keeper renews
             # the current one. Validate current lifecycle after closing it; the
             # final fresh fenced COMMIT below checks actual ownership/expiry.
+            batches = None
+            if parent.durable_batches:
+                from .durable_batches import BatchStore
+                # Full immutable batch history is verified read-only while the
+                # original owned keeper is still active; this performs no DML.
+                batches = BatchStore(view._exchange.database, store, shard=shard,
+                                     layout_hash=sha256(parent._control._descriptor.encode()).hexdigest())
             initialization.check()
             initialization.finish()
             # Keep same-PID actor exclusion through READY publication. Transfer
@@ -477,7 +484,18 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
             renew_at = initialization.last_renew_started + settings["lease_seconds"] / 3
             if stop.is_set() or os.getppid() != parent_pid:
                 return
+            if not parent.durable_batches:
+                ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
+        if parent.durable_batches:
+            # The owned initialization has finished, its keeper stopped, and its
+            # registry scope exited before any batch-metadata transaction.
+            for attempt_id in batches.startup_unresolved:
+                view.recover_batch(batches, attempt_id)
+            renewed_at = monotonic()
+            fence.renew(token, settings["lease_seconds"])
+            renew_at = renewed_at + settings["lease_seconds"] / 3
             ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
+        isolate_id = None
         background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:
             now = monotonic()
@@ -488,8 +506,14 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                 fence.renew(token, settings["lease_seconds"])
             worked = False
             try:
-                receipt = view.process_one(store)
-                worked = receipt is not None
+                if batches is not None and settings["financial_batch_size"] and isolate_id is None:
+                    receipts = view.process_batch(store, batches, size=settings["financial_batch_size"])
+                    worked = bool(receipts)
+                else:
+                    receipt = view.process_one(store)
+                    worked = receipt is not None
+                    if receipt is not None and receipt["command_id"] == isolate_id:
+                        isolate_id = None
             except CommandExecutionError as exc:
                 cause = exc.cause
                 if isinstance(cause, WriterFenceError):
@@ -502,11 +526,44 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                 if existing is None:
                     raise
                 if existing["state"] not in _TERMINAL:
+                    if batches is not None and isolate_id is not None:
+                        # Only invalid stored command identity is attributable
+                        # in this first batch slice. IO, guards, clock, lease,
+                        # unknown runtime failures never charge a poison budget.
+                        attributable = type(cause) is StorageError and str(cause) in {
+                            "persisted command payload is invalid",
+                            "persisted command content is not canonical or has inconsistent ownership"}
+                        if not attributable:
+                            raise cause
                     with view._control._lock():
-                        store.record_failure(view._exchange, exc.command_id,
+                        recorded = store.record_failure(view._exchange, exc.command_id,
                                              max_attempts=settings["max_attempts"],
                                              backoff_seconds=settings["poll_interval"],
                                              cause=exc.cause, attempt=exc.attempt)
+                    if recorded["state"] in _TERMINAL and exc.command_id == isolate_id:
+                        isolate_id = None
+                elif exc.command_id == isolate_id:
+                    isolate_id = None
+            except Exception as batch_error:
+                from .durable_batches import BatchExecutionError
+                if not isinstance(batch_error, BatchExecutionError):
+                    raise
+                # No member attempt is charged from this observation. Read all
+                # original identities before considering single-command isolation.
+                if batch_error.phase == "prepare":
+                    # No financial executor was entered. A confirmed absent
+                    # original attempt has no effect; failed reads remain fatal.
+                    batches.resolve_preparation(batch_error.attempt_id)
+                else:
+                    view.recover_batch(batches, batch_error.attempt_id)
+                if isinstance(batch_error.cause, WriterFenceError):
+                    raise batch_error.cause
+                with view._control._lock():
+                    batches.record_failure(view._exchange, batch_error)
+                if batch_error.executing_id is None:
+                    raise batch_error.cause
+                isolate_id = batch_error.executing_id
+                continue
             if monotonic() >= background_at:
                 view.run_background_once()  # Real risk plans and paired trades.
                 background_at = monotonic() + settings["background_interval"]
@@ -542,7 +599,9 @@ class DurableProcessRouter:
                    product_catalog=None, portfolio_rules=None,
                    reserve_cache_size=0, market_cache_size=0,
                    queue_capacity=1024, cancel_reserve=16, market_capacity=4,
-                   decision_audit=True, **runtime):
+                   decision_audit=True, durable_batches=False, **runtime):
+        if type(durable_batches) is not bool:
+            raise ValueError("durable_batches must be a boolean")
         if type(decision_audit) is not bool:
             raise ValueError("decision_audit must be a boolean")
         if managed is not True:
@@ -567,6 +626,8 @@ class DurableProcessRouter:
                               "decision_audit": decision_audit},
                   "queue": {"queue_capacity": queue_capacity, "cancel_reserve": cancel_reserve,
                             "market_capacity": market_capacity}}
+        if durable_batches:
+            config["durable_batches"] = 1
         router.set_kill_switch(True)
         with router._lock(exclusive=True):
             leases = []
@@ -578,8 +639,13 @@ class DurableProcessRouter:
                     _prepare_config(connection, config)
                 for index, service in enumerate(router._services):
                     QueueStore(service.database, initialize=True, **config["queue"])
+                    if durable_batches:
+                        from .durable_batches import BatchStore
+                        BatchStore.initialize(service.database)
                     fence = WriterFence(service.database)
                     fence.enable(_authority(router._descriptor, index))
+                    if durable_batches:
+                        fence.enable_batches()
                     # Preserve the fresh no-spot generation-zero contract. Once
                     # fenced, an old standalone writer cannot add a new schema.
                     # Any spot footprint still needs token-owned final checking.
@@ -858,7 +924,7 @@ class DurableProcessRouter:
 
     def __init__(self, directory, *, lease_seconds=5.0, poll_interval=.02,
                  background_interval=.1, account_batch=25, matches_per_symbol=10,
-                 max_attempts=3, _only_shard=None):
+                 max_attempts=3, financial_batch_size=0, _only_shard=None):
         for name, value, lower, upper in (("lease_seconds", lease_seconds, .05, 3600),
                                           ("poll_interval", poll_interval, .001, 60),
                                           ("background_interval", background_interval, .01, 60)):
@@ -867,6 +933,8 @@ class DurableProcessRouter:
         for name, value, upper in (("account_batch", account_batch, 1000), ("matches_per_symbol", matches_per_symbol, 1000), ("max_attempts", max_attempts, 100)):
             if type(value) is not int or not 1 <= value <= upper:
                 raise ValueError(f"{name} requires an integer in 1..{upper}")
+        if type(financial_batch_size) is not int or financial_batch_size not in (0, 3, 4, 5, 6, 7, 8):
+            raise ValueError("financial_batch_size requires zero or an integer in 3..8")
         self._control = _open_router_control(directory)
         with self._control.control.read_transaction() as connection:
             try:
@@ -884,6 +952,12 @@ class DurableProcessRouter:
         audit_setting = self._config["service"].get("decision_audit", False)
         if type(audit_setting) is not bool:
             raise ServiceError("configuration_corrupt", "managed audit requirement must be a boolean", 503)
+        batch_capability = self._config.get("durable_batches", 0)
+        if type(batch_capability) is not int or batch_capability not in (0, 1):
+            raise ServiceError("configuration_corrupt", "unsupported durable batch capability", 503)
+        self.durable_batches = batch_capability == 1
+        if financial_batch_size and not self.durable_batches:
+            raise ServiceError("batch_capability_required", "explicit offline batch capability is required before selecting batch dispatch", 409)
         self.decision_audit_required = audit_setting
         self._explicit_development_profile = "decision_audit" in self._config["service"] and not audit_setting
         capability = _read_audit_capability(self._control, self._config)
@@ -894,7 +968,8 @@ class DurableProcessRouter:
         self.directory, self.layout = self._control.directory, self._control.layout
         self._settings = dict(lease_seconds=lease_seconds, poll_interval=poll_interval,
                               background_interval=background_interval, account_batch=account_batch,
-                              matches_per_symbol=matches_per_symbol, max_attempts=max_attempts)
+                              matches_per_symbol=matches_per_symbol, max_attempts=max_attempts,
+                              financial_batch_size=financial_batch_size)
         self._queues, self._workers, self._reports = {}, {}, {}
         self._start_gates = {}
         self._recovered_orphans = []
@@ -909,6 +984,8 @@ class DurableProcessRouter:
                 status = WriterFence(self._database(index)).status()
                 if not status["managed"] or status["authority_id"] != _authority(self._control._descriptor, index):
                     raise ServiceError("managed_authority_conflict", "shard is not bound to its expected managed authority", 503)
+                if status.get("batch_format", 0) != batch_capability:
+                    raise ServiceError("batch_capability_mismatch", "shard and router batch capabilities differ", 503)
                 if status.get("guard_format") != 1:
                     raise WriterFenceError("fence_upgrade_required", "stop existing writers and explicitly upgrade persistent SQL guards before starting processes")
                 with self._database(index).read_transaction() as connection:
@@ -923,6 +1000,10 @@ class DurableProcessRouter:
                     elif version is not None and version[0] == 3:
                         raise ServiceError("decision_audit_configuration_conflict", "schema 3 requires an explicit recorded audit capability", 503)
                 self._queue(index)  # Existing queue metadata only; never bootstrap.
+                if self.durable_batches:
+                    from .durable_batches import BatchStore
+                    with self._database(index).read_transaction() as connection:
+                        BatchStore._verify_schema(connection)
         except BaseException as exc:
             with self._control._lock(exclusive=True):
                 state = self._control._state()

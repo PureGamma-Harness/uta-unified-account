@@ -6,6 +6,12 @@ from hashlib import sha256
 from pathlib import Path
 import sqlite3
 import tempfile
+import json
+import os
+import subprocess
+import sys
+import tarfile
+import shutil
 import unittest
 from unittest.mock import patch
 
@@ -186,10 +192,12 @@ class DurableBatchTests(unittest.TestCase):
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_command_batch_manifests").fetchone()[0], 0)
 
     def test_expired_metadata_owner_does_not_prepare_manifest(self):
-        self.three()
+        attempt = self.three()
+        self.batch.recover(attempt)
         self.fence.release(self.token)
-        with self.assertRaises(WriterFenceError):
+        with self.assertRaises(BatchExecutionError) as caught:
             self.batch.prepare()
+        self.assertIsInstance(caught.exception.cause, WriterFenceError)
 
     def test_missing_capability_is_not_silently_installed(self):
         self.fence.release(self.token)
@@ -197,3 +205,125 @@ class DurableBatchTests(unittest.TestCase):
             with self.database._fence_transaction() as connection:
                 connection.execute("DROP TABLE writer_fence_batch_capability")
         self.assertEqual(self.fence.status()["batch_format"], 1)
+
+    def test_actual_archived_4608_and_ad3_processes_cannot_become_writers(self):
+        fixture = Path(__file__).parent / "fixtures"
+        for prefix in ("legacy_4608ffe", "legacy_ad3f5b8"):
+            with self.subTest(prefix=prefix), tempfile.TemporaryDirectory() as temp:
+                archive = fixture / (prefix + "_uta.tar.gz")
+                provenance = json.loads((fixture / (prefix + "_provenance.json")).read_text())
+                self.assertEqual(sha256(archive.read_bytes()).hexdigest(), provenance["archive_sha256"])
+                root = Path(temp)
+                with tarfile.open(archive) as source:
+                    for member in source.getmembers():
+                        parts = Path(member.name).parts
+                        self.assertFalse(Path(member.name).is_absolute())
+                        self.assertNotIn("..", parts)
+                        self.assertTrue(member.isfile() or member.isdir())
+                        target = root.joinpath(*parts)
+                        if member.isdir():
+                            target.mkdir(parents=True, exist_ok=True)
+                        else:
+                            target.parent.mkdir(parents=True, exist_ok=True)
+                            with source.extractfile(member) as original, target.open("wb") as output:
+                                shutil.copyfileobj(original, output)
+                script = r'''
+import json,os,sys
+from hashlib import sha256
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+import uta.storage
+from uta.storage import Database
+from uta.service import ExchangeService
+results=[]
+operations=[("financial",lambda:ExchangeService(Database(sys.argv[2]),{"USD":2}))]
+if sys.argv[3]=="legacy_4608ffe":
+ from uta.writer_fence import WriterFence
+ operations.extend([("status",lambda:WriterFence(Database(sys.argv[2])).status()),("acquire",lambda:WriterFence(Database(sys.argv[2])).acquire("old-try",30))])
+for name, operation in operations:
+ try: operation()
+ except BaseException as error: results.append({"operation":name,"blocked":True,"type":type(error).__name__,"code":getattr(error,"code",None)})
+ else: results.append({"operation":name,"blocked":False})
+print(json.dumps({"pid":os.getpid(),"storage_sha256":sha256(Path(uta.storage.__file__).read_bytes()).hexdigest(),"results":results}))
+'''
+                child = subprocess.run([sys.executable, "-I", "-c", script, str(root), self.database.path, prefix],
+                                       capture_output=True, text=True, timeout=10)
+                self.assertEqual(child.returncode, 0, child.stderr)
+                result = json.loads(child.stdout)
+                self.assertNotEqual(result["pid"], os.getpid())
+                self.assertEqual(result["storage_sha256"], sha256((root / "uta/storage.py").read_bytes()).hexdigest())
+                self.assertTrue(all(row["blocked"] for row in result["results"]), result)
+                if prefix == "legacy_4608ffe":
+                    self.assertEqual([row["code"] for row in result["results"]], ["fence_guard_corrupt"] * 3)
+        self.assertEqual(self.exchange.ledger.verify(), 3)
+        self.assertEqual(self.exchange.orders("alice"), [])
+
+    def test_existing_invalid_outcome_is_not_a_recovery_shortcut(self):
+        attempt = self.three()
+        with self.owned._batch_metadata_transaction() as connection:
+            connection.execute("INSERT INTO uta_command_batch_outcomes VALUES(?,?,?,?)",
+                               (attempt, "RECOVERED", "{}", self.now.isoformat()))
+        with self.assertRaises(BatchRecoveryUnknown):
+            self.batch.recover(attempt)
+        with self.assertRaises(BatchExecutionError) as caught:
+            self.batch.process(self.exchange, attempt)
+        self.assertIsInstance(caught.exception.cause, BatchRecoveryUnknown)
+        self.assertEqual(self.exchange.orders("alice"), [])
+
+    def test_new_generation_resolves_old_manifest_before_original_ids_execute(self):
+        attempt = self.three()
+        self.fence.release(self.token)
+        token = self.fence.acquire("replacement", 30)
+        database = self.database.for_writer(token)
+        replacement = ExchangeService(database, {"USD": 2}, clock=lambda: self.now)
+        batches = BatchStore(database, self.queue, shard=0, layout_hash="a" * 64)
+        with self.assertRaises(BatchExecutionError):
+            batches.process(replacement, attempt)
+        self.assertEqual(batches.unresolved(), [attempt])
+        self.assertEqual([r["state"] for r in batches.recover(attempt)], ["PENDING"] * 3)
+        new_attempt = batches.prepare()
+        self.assertNotEqual(new_attempt, attempt)
+        self.assertEqual([r["state"] for r in batches.process(replacement, new_attempt, soft_budget_seconds=.1)], ["SUCCEEDED"] * 3)
+        self.assertEqual(replacement.ledger.verify(), 3)
+
+    def test_same_order_replay_in_one_batch_keeps_one_reservation_and_event(self):
+        self.submit("alice", "a1", "same")
+        self.submit("alice", "a2", "same")
+        self.submit("bob", "b1")
+        result = self.batch.process(self.exchange, self.batch.prepare(), soft_budget_seconds=.1)
+        self.assertEqual([r["state"] for r in result], ["SUCCEEDED"] * 3)
+        self.assertEqual(len(self.exchange.orders("alice")), 1)
+        self.assertEqual(self.exchange.account("alice")["open_order_margin"], "10.04")
+        self.assertEqual(sum(e["event_type"] == "ORDER_ACCEPTED" and e["account_id"] == "alice" for e in self.exchange.events(limit=100)), 1)
+
+    def test_failure_evidence_is_bounded_idempotent_and_charges_no_neighbor(self):
+        attempt = self.three()
+        with patch.object(self.exchange, "_admit_order", side_effect=RuntimeError("private-message-with-nonce-and-key")):
+            with self.assertRaises(BatchExecutionError) as caught:
+                self.batch.process(self.exchange, attempt)
+        self.batch.recover(attempt)
+        payload = self.batch.record_failure(self.exchange, caught.exception)
+        self.assertEqual(self.batch.record_failure(self.exchange, caught.exception), payload)
+        events = [event for event in self.exchange.events(limit=100) if event["event_type"] == "COMMAND_BATCH_EXECUTION_FAILED"]
+        self.assertEqual(len(events), 1)
+        self.assertNotIn("private-message", json.dumps(payload))
+        self.assertEqual(payload["command_ids"], ["submit:alice", "submit:bob", "submit:carol"])
+        self.assertEqual([self.queue.status(cid)["attempts"] for cid in payload["command_ids"]], [0, 0, 0])
+        self.assertEqual(self.exchange.orders("alice"), [])
+
+    def test_unknown_metadata_commit_preserves_original_attempt_query(self):
+        for account in ("alice", "bob", "carol"):
+            self.submit(account)
+        original = self.owned._batch_metadata_transaction
+        @contextmanager
+        def lost():
+            with original() as connection:
+                yield connection
+            raise RuntimeError("metadata COMMIT reply lost")
+        with patch.object(self.owned, "_batch_metadata_transaction", lost), self.assertRaises(BatchExecutionError) as caught:
+            self.batch.prepare()
+        error = caught.exception
+        self.assertEqual(error.phase, "prepare")
+        self.assertEqual(self.batch.unresolved(), [error.attempt_id])
+        self.assertEqual([r["state"] for r in self.batch.resolve_preparation(error.attempt_id)], ["PENDING"] * 3)
+        self.assertEqual(self.exchange.orders("alice"), [])

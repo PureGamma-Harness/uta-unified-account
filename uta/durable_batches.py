@@ -9,12 +9,14 @@ from contextlib import nullcontext
 from datetime import datetime, timezone
 from hashlib import sha256
 import json
+import re
 from time import monotonic
 from uuid import uuid4
 
 from .durable_commands import (_CONTROL, _TERMINAL, CANCEL_ORDER, REPAY,
                                SUBMIT_ORDER, _stamp)
-from .service import ServiceError, _json
+from .service import ServiceError, _json, _name
+from .failure_diagnostics import capture_failure
 from .storage import Database, StorageError
 from .writer_fence import WriterFence, WriterFenceError
 
@@ -90,6 +92,7 @@ class BatchStore:
             state = WriterFence(database).assert_writer(connection)
             if state["batch_format"] != 1:
                 raise WriterFenceError("batch_capability_required", "authority has no durable batch capability")
+            self.startup_unresolved = tuple(self._verify_history(connection))
 
     @staticmethod
     def _member(row):
@@ -105,10 +108,17 @@ class BatchStore:
             content = json.loads(row["content"])
             if _json(content) != row["content"] or sha256(row["content"].encode()).hexdigest() != row["content_sha256"]:
                 raise ValueError("batch content differs")
-            if set(content) != {"format", "shard", "layout_hash", "owner", "members"} or content["format"] != 1:
+            if set(content) != {"format", "shard", "layout_hash", "owner", "members"} or type(content["format"]) is not int or content["format"] != 1:
                 raise ValueError("batch identity fields differ")
-            if content["shard"] != self.shard or content["layout_hash"] != self.layout_hash:
+            if type(content["shard"]) is not int or content["shard"] != self.shard or content["layout_hash"] != self.layout_hash:
                 raise ValueError("batch authority differs")
+            owner = content["owner"]
+            if (not isinstance(owner, dict) or set(owner) != {"authority_id", "generation", "process_id", "owner_nonce_sha256"}
+                    or owner["authority_id"] != self.database.writer_token.authority_id
+                    or type(owner["generation"]) is not int or not 1 <= owner["generation"] < 2**63
+                    or type(owner["process_id"]) is not int or owner["process_id"] <= 0
+                    or type(owner["owner_nonce_sha256"]) is not str or re.fullmatch("[0-9a-f]{64}", owner["owner_nonce_sha256"]) is None):
+                raise ValueError("batch owner identity differs")
             members = content["members"]
             if not isinstance(members, list) or not 3 <= len(members) <= 8:
                 raise ValueError("batch membership size differs")
@@ -118,8 +128,14 @@ class BatchStore:
             for member in members:
                 if set(member) != {"command_id", "sequence", "account_id", "kind", "payload_sha256"}:
                     raise ValueError("batch membership fields differ")
+                _name(member["command_id"], "command_id")
+                _name(member["account_id"], "account_id")
+                if (type(member["sequence"]) is not int or not 1 <= member["sequence"] < 2**63
+                        or member["kind"] not in (SUBMIT_ORDER, CANCEL_ORDER, REPAY)
+                        or type(member["payload_sha256"]) is not str or re.fullmatch("[0-9a-f]{64}", member["payload_sha256"]) is None):
+                    raise ValueError("batch member types differ")
             return content
-        except (ValueError, TypeError, KeyError) as exc:
+        except (ValueError, TypeError, KeyError, ServiceError) as exc:
             raise BatchRecoveryUnknown("batch membership cannot be established") from exc
 
     def _members(self, connection, content):
@@ -134,12 +150,51 @@ class BatchStore:
     def unresolved(self):
         with self.database.read_transaction() as connection:
             self._verify_schema(connection)
-            return [row[0] for row in connection.execute("SELECT m.attempt_id FROM uta_command_batch_manifests m LEFT JOIN uta_command_batch_outcomes o USING(attempt_id) WHERE o.attempt_id IS NULL ORDER BY m.created_at,m.attempt_id")]
+            return self._verify_history(connection)
+
+    def _verify_history(self, connection):
+        unresolved = []
+        for manifest in connection.execute("SELECT * FROM uta_command_batch_manifests ORDER BY created_at,attempt_id"):
+            content = self._content(manifest)
+            rows = self._members(connection, content)
+            outcome = connection.execute("SELECT * FROM uta_command_batch_outcomes WHERE attempt_id=?", (manifest["attempt_id"],)).fetchone()
+            if outcome is None:
+                unresolved.append(manifest["attempt_id"])
+            else:
+                self._verify_outcome(outcome, content, rows)
+        if connection.execute("SELECT 1 FROM uta_command_batch_outcomes o LEFT JOIN uta_command_batch_manifests m USING(attempt_id) WHERE m.attempt_id IS NULL LIMIT 1").fetchone():
+            raise BatchRecoveryUnknown("batch outcome has no immutable manifest")
+        return unresolved
 
     def _outcome(self, connection, attempt_id, disposition, rows, executed=()):
         content = {"executed": list(executed), "commands": [{"command_id": row["command_id"], "state": row["state"]} for row in rows]}
         connection.execute("INSERT INTO uta_command_batch_outcomes VALUES(?,?,?,?)",
                            (attempt_id, disposition, _json(content), _stamp(self.queue.clock())))
+
+    def _verify_outcome(self, row, content, current):
+        try:
+            if row["disposition"] not in ("COMMITTED", "RECOVERED"):
+                raise ValueError("unknown disposition")
+            value = json.loads(row["content"])
+            if _json(value) != row["content"] or set(value) != {"executed", "commands"}:
+                raise ValueError("noncanonical disposition")
+            ids = [member["command_id"] for member in content["members"]]
+            executed, commands = value["executed"], value["commands"]
+            if (not isinstance(executed, list) or any(type(cid) is not str for cid in executed)
+                    or len(set(executed)) != len(executed) or not set(executed) <= set(ids)
+                    or row["disposition"] == "RECOVERED" and executed
+                    or not isinstance(commands, list) or len(commands) != len(ids)):
+                raise ValueError("invalid disposition membership")
+            for expected, recorded, actual in zip(ids, commands, current):
+                if (not isinstance(recorded, dict) or set(recorded) != {"command_id", "state"}
+                        or recorded["command_id"] != expected
+                        or recorded["state"] not in (*_TERMINAL, "PENDING")
+                        or recorded["state"] in _TERMINAL and recorded["state"] != actual["state"]
+                        or expected in executed and recorded["state"] not in _TERMINAL):
+                    raise ValueError("disposition contradicts original command state")
+            return value
+        except (ValueError, TypeError, KeyError) as exc:
+            raise BatchRecoveryUnknown("batch disposition cannot be established") from exc
 
     def recover(self, attempt_id):
         """Query all in one RO snapshot, then recheck all in a fenced metadata txn.
@@ -164,53 +219,74 @@ class BatchStore:
                 rows = self._members(connection, content)
                 if existing is None:
                     self._outcome(connection, attempt_id, "RECOVERED", rows)
+                else:
+                    self._verify_outcome(existing, content, rows)
                 return [self.queue._record(row) for row in rows]
         except BatchRecoveryUnknown:
             raise
         except Exception as exc:
             raise BatchRecoveryUnknown("every original command outcome could not be established") from exc
 
+    def _select(self, connection, size):
+        now = _stamp(self.queue.clock())
+        rows = connection.execute("SELECT * FROM uta_command_inbox WHERE state='PENDING' ORDER BY sequence").fetchall()
+        by_account = {}
+        for row in rows:
+            by_account.setdefault(row["account_id"], []).append(row)
+        controls = by_account.get(None, ())
+        if controls and (controls[0]["next_attempt_at"] is None or controls[0]["next_attempt_at"] <= now):
+            return None
+        heads, successors = [], {}
+        for account, pending in by_account.items():
+            if account is None:
+                continue
+            eligible = []
+            for row in pending[:2]:
+                if row["kind"] not in (SUBMIT_ORDER, CANCEL_ORDER, REPAY) or row["next_attempt_at"] is not None and row["next_attempt_at"] > now:
+                    break
+                eligible.append(row)
+            if eligible:
+                heads.append(eligible[0])
+                if len(eligible) > 1:
+                    successors[account] = eligible[1]
+        normal = sorted((r for r in heads if r["kind"] == SUBMIT_ORDER), key=lambda r: r["sequence"])
+        selected = [normal[0]] if normal else []
+        remaining = sorted((r for r in heads if not selected or r["command_id"] != selected[0]["command_id"]),
+                           key=lambda r: (r["kind"] == SUBMIT_ORDER, r["sequence"]))
+        selected.extend(remaining[:size - len(selected)])
+        if len(selected) < size:
+            for head in tuple(selected):
+                if head["account_id"] in successors:
+                    selected.append(successors[head["account_id"]])
+                    if len(selected) == size:
+                        break
+        return selected
+
     def prepare(self, *, size=8):
         if type(size) is not int or not 3 <= size <= 8:
             raise ValueError("financial batch size must be an integer in 3..8")
+        # Low occupancy creates no attempt and no metadata write transaction.
+        with self.database.read_transaction() as connection:
+            self._verify_schema(connection)
+            if connection.execute("SELECT 1 FROM uta_command_batch_manifests m LEFT JOIN uta_command_batch_outcomes o USING(attempt_id) WHERE o.attempt_id IS NULL LIMIT 1").fetchone():
+                raise BatchRecoveryUnknown("resolve the earlier durable attempt before selecting new membership")
+            selected = self._select(connection, size)
+            if selected is None or len(selected) < 3:
+                return None
+        attempt_id, progress = "batch:" + uuid4().hex, {"command_ids": ()}
+        try:
+            return self._prepare_locked(size, attempt_id, progress)
+        except Exception as exc:
+            raise BatchExecutionError(attempt_id, progress["command_ids"], exc, phase="prepare") from exc
+
+    def _prepare_locked(self, size, attempt_id, progress):
         with self.database._batch_metadata_transaction() as connection:
             self._verify_schema(connection)
             state = WriterFence(self.database).assert_writer(connection)
             if connection.execute("SELECT 1 FROM uta_command_batch_manifests m LEFT JOIN uta_command_batch_outcomes o USING(attempt_id) WHERE o.attempt_id IS NULL LIMIT 1").fetchone():
                 raise BatchRecoveryUnknown("resolve the earlier durable attempt before selecting new membership")
-            now = _stamp(self.queue.clock())
-            rows = connection.execute("SELECT * FROM uta_command_inbox WHERE state='PENDING' ORDER BY sequence").fetchall()
-            by_account = {}
-            for row in rows:
-                by_account.setdefault(row["account_id"], []).append(row)
-            controls = by_account.get(None, ())
-            if controls and (controls[0]["next_attempt_at"] is None or controls[0]["next_attempt_at"] <= now):
-                return None
-            heads, successors = [], {}
-            for account, pending in by_account.items():
-                if account is None:
-                    continue
-                eligible = []
-                for row in pending[:2]:
-                    if row["kind"] not in (SUBMIT_ORDER, CANCEL_ORDER, REPAY) or row["next_attempt_at"] is not None and row["next_attempt_at"] > now:
-                        break
-                    eligible.append(row)
-                if eligible:
-                    heads.append(eligible[0])
-                    if len(eligible) > 1:
-                        successors[account] = eligible[1]
-            normal = sorted((r for r in heads if r["kind"] == SUBMIT_ORDER), key=lambda r: r["sequence"])
-            selected = [normal[0]] if normal else []
-            remaining = sorted((r for r in heads if not selected or r["command_id"] != selected[0]["command_id"]),
-                               key=lambda r: (r["kind"] == SUBMIT_ORDER, r["sequence"]))
-            selected.extend(remaining[:size - len(selected)])
-            if len(selected) < size:
-                for head in tuple(selected):
-                    if head["account_id"] in successors:
-                        selected.append(successors[head["account_id"]])
-                        if len(selected) == size:
-                            break
-            if len(selected) < 3:
+            selected = self._select(connection, size)
+            if selected is None or len(selected) < 3:
                 return None
             members = [self._member(row) for row in selected]
             token = self.database.writer_token
@@ -218,10 +294,65 @@ class BatchStore:
                        "owner": {"authority_id": token.authority_id, "generation": token.generation,
                                  "process_id": token.process_id, "owner_nonce_sha256": sha256(token.owner_nonce.encode()).hexdigest()},
                        "members": members}
-            encoded, attempt_id = _json(content), "batch:" + uuid4().hex
+            encoded = _json(content)
+            progress["command_ids"] = tuple(member["command_id"] for member in members)
             connection.execute("INSERT INTO uta_command_batch_manifests VALUES(?,?,?,?)",
-                               (attempt_id, encoded, sha256(encoded.encode()).hexdigest(), now))
+                               (attempt_id, encoded, sha256(encoded.encode()).hexdigest(), _stamp(self.queue.clock())))
         return attempt_id
+
+    def resolve_preparation(self, attempt_id):
+        with self.database.read_transaction() as connection:
+            self._verify_schema(connection)
+            present = connection.execute("SELECT 1 FROM uta_command_batch_manifests WHERE attempt_id=?", (attempt_id,)).fetchone()
+        return None if present is None else self.recover(attempt_id)
+
+    def record_failure(self, exchange, error):
+        """Append bounded internal evidence after query-all; never charge CIDs.
+
+        This is an extra financial diagnostic transaction on a fault path. A
+        failed/expired/unavailable write saves nothing; observations are a lower
+        bound, never a claim that every process failure was persisted.
+        """
+        if not isinstance(error, BatchExecutionError):
+            raise ValueError("batch failure evidence requires its original typed error")
+        self.queue._check_exchange(exchange)
+        _name(error.attempt_id, "attempt_id")
+        phases = {"prepare", "membership", "execute", "between_commands", "freshness", "disposition", "commit"}
+        if type(error.phase) is not str or error.phase not in phases:
+            raise ValueError("batch failure phase must be a documented literal")
+        token = self.database.writer_token
+        with exchange._transaction() as connection:
+            self._verify_schema(connection)
+            WriterFence(self.database).assert_writer(connection)
+            # The unique writer serializes this check and append. Repeat after
+            # a lost diagnostic COMMIT reply keeps the original immutable event.
+            for row in connection.execute("SELECT payload FROM uta_events WHERE event_type='COMMAND_BATCH_EXECUTION_FAILED' AND account_id IS NULL"):
+                existing = json.loads(row[0])
+                if existing.get("attempt_id") == error.attempt_id and existing.get("phase") == error.phase and existing.get("recording_generation") == token.generation:
+                    return existing
+            manifest = connection.execute("SELECT * FROM uta_command_batch_manifests WHERE attempt_id=?", (error.attempt_id,)).fetchone()
+            if manifest is not None:
+                content = self._content(manifest)
+                rows = self._members(connection, content)
+                ids = [row["command_id"] for row in rows]
+            elif error.phase == "prepare":
+                ids = list(error.command_ids)
+                if len(ids) > 8:
+                    raise ValueError("batch preparation hint exceeds membership budget")
+                for cid in ids:
+                    _name(cid, "command_id")
+            else:
+                raise BatchRecoveryUnknown("failure has no durable original attempt")
+            payload = {"event_version": 1, "attempt_id": error.attempt_id,
+                       "phase": error.phase, "recording_generation": token.generation,
+                       "recording_process_id": token.process_id, "authority_id": token.authority_id,
+                       "manifest_sha256": manifest["content_sha256"] if manifest is not None else None,
+                       "execution_owner": content["owner"] if manifest is not None else None,
+                       "membership_source": "durable_manifest" if manifest is not None else "uncommitted_prepare_hint",
+                       "command_ids": ids, "executing_id": error.executing_id if error.executing_id in ids else None,
+                       "failure": capture_failure(error.cause)}
+            exchange._event(connection, "COMMAND_BATCH_EXECUTION_FAILED", None, payload)
+        return payload
 
     def process(self, exchange, attempt_id, *, guard=None, credit=None, soft_budget_seconds=.005):
         """Execute an immutable attempt in one financial transaction, under SH."""
@@ -245,7 +376,9 @@ class BatchStore:
                 if content["owner"] != owner:
                     raise BatchRecoveryUnknown("new owners must resolve previous attempts before selecting new work")
                 rows = self._members(connection, content)
-                if connection.execute("SELECT 1 FROM uta_command_batch_outcomes WHERE attempt_id=?", (attempt_id,)).fetchone():
+                existing = connection.execute("SELECT * FROM uta_command_batch_outcomes WHERE attempt_id=?", (attempt_id,)).fetchone()
+                if existing is not None:
+                    self._verify_outcome(existing, content, rows)
                     return [self.queue._record(row) for row in rows]
                 executed, receipts, changed_market = [], [], False
                 started = monotonic()

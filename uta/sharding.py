@@ -850,6 +850,29 @@ class ShardWorkerView:
                 self._freeze(cause.code)
             raise
 
+    def process_batch(self, store, batches, *, size):
+        """Prepare outside the router gate; execute one financial txn under SH."""
+        try:
+            attempt_id = batches.prepare(size=size)
+            if attempt_id is None:
+                receipt = self.process_one(store)
+                return [] if receipt is None else [receipt]
+            with self._control._lock():
+                state = self._control._state()
+                claims = self._control._batch_funding_claims()
+                return batches.process(self._exchange, attempt_id,
+                    guard=lambda connection, record: self._command_guard(connection, record, state, claims),
+                    credit=self._exchange.credit)
+        except BaseException as exc:
+            cause = getattr(exc, "cause", exc)
+            if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:
+                self._freeze(cause.code)
+            raise
+
+    def recover_batch(self, batches, attempt_id):
+        with self._control._lock():
+            return batches.recover(attempt_id)
+
     def run_background_once(self):
         try:
             with self._control._lock():
