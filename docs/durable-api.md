@@ -29,9 +29,9 @@ with make_server(producer, port=8081,
     server.serve_forever()
 ```
 
-这个 factory 只构造服务器。调用方负责 worker 的独立启动/监管、信号处理、HTTP drain 和 producer 生命周期；它没有自动安装 SIGTERM handler 或宣称提供新 CLI 命令。多 shard 可把已有 `DurableProcessRouter` 直接作为 producer 传入同一 factory。parent HTTP 重启不需要重放 financial schema DML。
+这个 factory 只构造服务器。直接调用它时，调用方负责 worker 的独立启动/监管、信号处理、HTTP drain 和 producer 生命周期。现有 [持久 CLI](durable-cli.md) 的 `uta-durable serve` 则在认证及 listener 检查通过后启动 `DurableProcessRouter`，安装 SIGTERM/SIGINT 处理，并在退出时先 drain HTTP handler、再停止 writer。多 shard 可把已有 `DurableProcessRouter` 直接作为 producer 传入同一 factory。parent HTTP 重启不需要重放 financial schema DML。源码见 [factory](../uta/durable_gateway.py) 与 [CLI 生命周期](../uta/durable_cli.py)。
 
-默认只监听 `127.0.0.1:8081`，只允许 IPv4 loopback。远程使用须经 TLS 反向代理，并配置代理的连接、总请求时限和请求速率。内置 worker cap 是并发上限，不是每账户/API key 的速率配额。原 Bearer 路径是开发 profile；新增的 [显式 HMAC profile](signed-api.md) 提供持久 nonce 防重放并默认要求 TLS。Bearer 开发模式不满足生产接入门槛，也没有 WebSocket 或互联网边缘服务器能力。
+默认只监听 `127.0.0.1:8081`，只允许 IPv4 loopback。上面的库示例使用 factory 默认的 `bearer_dev` 开发 profile；`uta-durable serve` 默认选择 `hmac-tls`，使用内置 TLS（最低 1.2），并要求已有认证库、签名配置及证书/私钥。远程代理拓扑另需审查，配置连接、总请求时限和请求速率，不能把 loopback listener 当作互联网边缘服务器。内置 worker cap 是并发上限，不是每账户/API key 的速率配额。Bearer 开发模式不满足生产接入门槛；[显式 HMAC profile](signed-api.md) 提供持久 nonce 防重放。两种 profile 都没有 WebSocket。
 
 | 角色 | v2 能力 |
 | --- | --- |
@@ -41,7 +41,14 @@ with make_server(producer, port=8081,
 | risk | 查询任意账户命令、worker-health/metrics；单 authority 的 market/halt 控制命令 |
 | admin | 上述全部操作；不因此获得绕过 durable writer 的同步金融路径 |
 
-除公开 `GET /healthz` 外均要求 `Authorization: Bearer <token>`。跨账户路径先做 scope 检查，未授权返回 403；已授权账户内不存在的命令返回 404。查询不会搜索所有 shard：URL 中的账户决定 shard，避免同一个 command ID 在不同 shard 的歧义与信息泄漏。
+除公开 `GET /healthz` 外，请求必须按服务器选定的 profile 认证；上表的角色与账户权限对两种 profile 均适用。
+
+| profile | 认证要求 |
+| --- | --- |
+| factory `bearer_dev` / CLI `bearer-development` | `Authorization: Bearer <token>`，来自已有私有凭据文件 |
+| factory `hmac` / CLI `hmac-tls` | `Authorization: UTA-HMAC-SHA256` 及全部签名头；签名覆盖原始 method、request-target 和正文，详见 [签名契约](signed-api.md) |
+
+HMAC 认证先在独立认证库提交 nonce 消费，随后才解析业务 JSON、执行路由和入队；后续业务错误不会撤销该 nonce。它与金融 inbox 不是同一事务。实现见 [RequestAuthenticator](../uta/request_signing.py) 与 [signed handler](../uta/durable_gateway.py)。跨账户路径先做 scope 检查，未授权返回 403；已授权账户内不存在的命令返回 404。查询不会搜索所有 shard：URL 中的账户决定 shard，避免同一个 command ID 在不同 shard 的歧义与信息泄漏。
 
 ## 请求与路由
 
@@ -105,6 +112,8 @@ inbox 的 `queue_capacity`、`cancel_reserve`、`market_capacity` 限制的是 P
 同一个 inbox 内 command ID 唯一，跨 kind、账户或不同规范内容复用返回 `409 idempotency_conflict`。不同 shard 可存在相同 ID，所以查询与客户端重试必须保留账户定位；推荐使用高熵 ID 避免同一 inbox 意外冲突。`order_id` 与 `command_id` 是不同身份，不应相互替代。
 
 连接断开、HTTP 客户端超时、503 `command_outcome_unknown` 或通用服务器故障之后，客户端可能不知道入队 COMMIT 是否完成。**保留原账户/command ID，先查询或用原内容重试，不能换新 ID 再提交。** 服务器不会根据异常猜测“未排队”或伪造一个拒绝结果。`command_outcome_unknown` 的响应没有业务结果；真实已提交的 pending/terminal 事实仍通过同一查询 URL 找回。
+
+HMAC 查询和重试每次都要使用新 nonce、当前有效时间戳并重新签名，同时保留原业务账户、command ID、order ID 与规范内容。重发旧签名会被防重放检查拒绝；更换认证 nonce 不会创建新的业务身份。Bearer 开发 profile 无此 nonce 协议。
 
 worker 执行发生异常时，金融修改与终态回执可能一起回滚而保持 PENDING；若异常发生在已成功 COMMIT 之后，worker 应先查询已有终态，再决定是否记录重试，不能覆盖已提交事实。QUARANTINED 是技术终态，重复原 ID 不自动重开；调查结果与后续处理应有独立审计记录。
 
