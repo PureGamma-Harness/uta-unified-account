@@ -110,7 +110,7 @@ receipt, journal and decision/market/policy/artifact rows directly through
 standard sqlite3. They matched the original 220089-byte export byte-for-byte
 as JSON structures. Original file SHA256 is
 `c3cfc2238d40225a0fd0c9408abcdf0005a298c50fa8876b6af92d309b03b2c7`;
-its canonical content without the final newline has digest
+the same original bytes without the final newline have digest
 `3c97bea652c42d57706a4fb260c56553a1b51dc9f0d4499d49a7e54989866a1e`.
 The exact copy and original raw checker stdout/stderr/command/source hashes
 are retained in the independent evidence directory.
