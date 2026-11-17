@@ -215,8 +215,14 @@ class CreditNonceStoreV2:
         currently loaded profile.
         """
         expected_sequences = set()
-        profiles = tuple(connection.execute(
-            "SELECT sequence,revision FROM main.auth_audit WHERE event='profile_configured' AND outcome='CONTROL' AND request_kind='CONTROL'"))
+        def profile_before(sequence):
+            # Historical binding is the last successful profile at this event,
+            # not any older matching revision or today's current profile.
+            row = connection.execute("""SELECT revision FROM main.auth_audit
+                WHERE event='profile_configured' AND outcome='CONTROL'
+                AND request_kind='CONTROL' AND sequence<?
+                ORDER BY sequence DESC LIMIT 1""", (sequence,)).fetchone()
+            return row[0] if row is not None else None
         previous_epoch = previous_sequence = 0
         for row in connection.execute("SELECT * FROM main.auth_credit_grants ORDER BY grant_epoch"):
             expected = {name: row[name] for name in row.keys() if name != "payload"}
@@ -243,7 +249,7 @@ class CreditNonceStoreV2:
                     or audit["key_id"] != row["key_id"] or audit["key_identity"] != key["identity"]
                     or audit["grant_revision"] != row["grant_epoch"]
                     or not 1 <= audit["revision"] <= config["revision"]
-                    or not any(p[0] < audit["sequence"] and p[1] == audit["revision"] for p in profiles)
+                    or profile_before(audit["sequence"]) != audit["revision"]
                     or type(audit["server_ms"]) is not int
                     or not key["not_before_ms"] <= audit["server_ms"] < key["expires_at_ms"]
                     or audit["server_ms"] > config["highwater"]
@@ -278,7 +284,7 @@ class CreditNonceStoreV2:
                     or audit["request_kind"] != "CONTROL" or audit["grant_id"] != row["grant_id"]
                     or audit["grant_revision"] != row["revocation_revision"]
                     or not 1 <= audit["revision"] <= config["revision"]
-                    or not any(p[0] < audit["sequence"] and p[1] == audit["revision"] for p in profiles)
+                    or profile_before(audit["sequence"]) != audit["revision"]
                     or original is None or type(audit["server_ms"]) is not int
                     or not original[0] <= audit["server_ms"] <= config["highwater"]
                     or any(audit[name] is not None for name in
