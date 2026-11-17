@@ -200,15 +200,18 @@ def _load(connection):
                 or owner is not None and (not isinstance(owner, str) or not _NAME.fullmatch(owner))
                 or owner is None and pid is not None or owner is not None and (type(pid) is not int or pid <= 0)):
             raise ValueError("invalid lease")
-        events = {row[0] for row in connection.execute(
-            "SELECT kind FROM writer_fence_events WHERE kind IN ('enabled_guard_v1','guards_upgraded','batches_enabled','credit_native_prepared_v1')")}
+        # Preparation has an exact two/three-event history, so checking this
+        # fixed prefix does not scan a normal authority's renewal history.
+        credit_prefix = tuple(tuple(row) for row in connection.execute(
+            "SELECT sequence,kind,authority_id,generation,owner_nonce,owner_pid FROM writer_fence_events WHERE sequence<=3 ORDER BY sequence"))
+        credit_event = any(row[1] == "credit_native_prepared_v1" for row in credit_prefix)
         guard_format = 0
         if _STANDARD_NAMES <= found:
             guard = connection.execute("SELECT singleton,format FROM writer_fence_guard_config").fetchall()
             if [tuple(row) for row in guard] != [(1, 1)]:
                 raise ValueError("invalid persistent guard format")
             guard_format = 1
-        elif events & {"enabled_guard_v1", "guards_upgraded"}:
+        elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind IN ('enabled_guard_v1','guards_upgraded') LIMIT 1").fetchone() is not None:
             raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata disappeared after activation")
         batch_format = 0
         if _BATCH_NAMES <= found:
@@ -216,18 +219,24 @@ def _load(connection):
             if [tuple(row) for row in rows] != [(1, 1)] or guard_format != 1:
                 raise ValueError("invalid batch capability")
             batch_format = 1
-        elif "batches_enabled" in events:
+        elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind='batches_enabled' LIMIT 1").fetchone() is not None:
             raise WriterFenceError("fence_guard_corrupt", "persistent batch capability disappeared")
         credit = {}
         if _CREDIT_NAMES <= found:
             from .credit_native import load_marker
             rows = connection.execute("SELECT singleton,format,state,descriptor_id,payload FROM writer_fence_credit_capability").fetchall()
-            if (len(rows) != 1 or guard_format != 1 or "credit_native_prepared_v1" not in events
+            expected_prefix = [(1, "enabled_guard_v1", authority[0][2], 0, None, None)]
+            if batch_format:
+                expected_prefix.append((2, "batches_enabled", authority[0][2], 0, None, None))
+            prepared_sequence = len(expected_prefix) + 1
+            expected_prefix.append((prepared_sequence, "credit_native_prepared_v1", authority[0][2], 0, None, None))
+            last_event = connection.execute("SELECT COALESCE(MAX(sequence),0) FROM writer_fence_events").fetchone()[0]
+            if (len(rows) != 1 or guard_format != 1 or credit_prefix != tuple(expected_prefix) or last_event != prepared_sequence
                     or generation != 0 or owner is not None or pid is not None):
                 raise WriterFenceError("credit_native_corrupt", "native credit preparation record/event differs")
             record = load_marker(connection, rows[0], authority_id=authority[0][2])
             credit = {"credit_format": 1, "credit_state": "NATIVE_PREPARED", "credit_descriptor_id": record.descriptor_id}
-        elif "credit_native_prepared_v1" in events:
+        elif credit_event:
             raise WriterFenceError("credit_native_corrupt", "irreversible native credit capability disappeared")
         elif native_objects:
             raise WriterFenceError("credit_native_partial_schema", "native credit objects have no prepared capability")

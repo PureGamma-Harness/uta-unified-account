@@ -244,8 +244,9 @@ def prepare_credit_native(database, raw_descriptor):
             if state["credit_descriptor_id"] != record.descriptor_id:
                 raise CreditNativeError("credit_descriptor_conflict", "native credit preparation is immutable")
             return {"stage": STAGE, "descriptor_id": record.descriptor_id, "trading_enabled": False}
-        if state["generation"] != 0 or state["owner_nonce"] is not None or connection.execute(
-                "SELECT 1 FROM writer_fence_events WHERE kind IN ('acquired','renewed','released','guards_upgraded') LIMIT 1").fetchone():
+        history = tuple(tuple(row) for row in connection.execute("SELECT sequence,kind FROM writer_fence_events ORDER BY sequence LIMIT 3"))
+        expected_history = ((1, "enabled_guard_v1"),) + (((2, "batches_enabled"),) if state["batch_format"] else ())
+        if state["generation"] != 0 or state["owner_nonce"] is not None or history != expected_history:
             raise CreditNativeError("credit_fresh_authority_required", "a previously owned authority cannot be promoted by this fresh installer")
         if connection.execute("SELECT 1 FROM sqlite_master WHERE name LIKE 'credit_native_%' LIMIT 1").fetchone():
             raise CreditNativeError("credit_native_partial_schema", "partial native credit schema cannot be repaired")

@@ -42,3 +42,14 @@ credit.py、CLI、订单路由、长稳源码或已有authority。
 普通base/batch语义的更广回归、新增cap事件检查的开销审查及独立peer review尚待完成。
 后续源码需另行记录，不把这一14项通过迁移到新SHA。生产、真实资金、持续容量和复制
 RPO/RTO均为未验。
+
+## Fresh事件前缀与默认路径
+
+后续独立修订将fresh history明确固定为`[(1,enabled_guard_v1)]`，或先启用batch后的
+`[(1,enabled_guard_v1),(2,batches_enabled)]`，任意额外control事件也拒绝prepare。因此
+本format的prepared事件只能位于seq2或3；load在固定前三条中检查信用事件，并要求
+prepared库没有后继事件。旧base/batch的guard/event查询逻辑保留，避免为缺省未启用信用
+的batch库增加整个renewal历史扫描。这是静态路径/正确性修订，不是性能验收。
+
+该证明依赖实际安装器对fresh历史的严格限制；它不是恶意OS/control历史任意改写后的
+外部反回滚证明。缺少已声明marker或schema仍失败关闭，不通过删event降低保护。

@@ -142,6 +142,20 @@ class PreparedNativeCreditTests(unittest.TestCase):
             with db.read_transaction() as con:
                 self.assertEqual(con.execute("SELECT COUNT(*) FROM sqlite_master WHERE name LIKE 'credit_native_%'").fetchone()[0], 0)
 
+    def test_any_extra_control_event_is_not_the_declared_fresh_prefix(self):
+        from uta.writer_fence import _load, _observed
+        for batch in (False, True):
+            with self.subTest(batch=batch), authority(batch=batch) as (db, service, credit, fence, doc):
+                with db._fence_transaction() as con:
+                    state = _load(con)
+                    now, _ = _observed(db, state)
+                    fence._event(con, "extra-synthetic-control-event", state, now)
+                with self.assertRaises(CreditNativeError) as blocked:
+                    prepare_credit_native(db, doc)
+                self.assertEqual(blocked.exception.code, "credit_fresh_authority_required")
+                with db.read_transaction() as con:
+                    self.assertIsNone(con.execute("SELECT 1 FROM sqlite_master WHERE name='writer_fence_credit_capability'").fetchone())
+
     def test_actual_opening_principal_and_interest_are_preserved(self):
         with authority(opening_loan=True) as (db, service, credit, fence, doc):
             before = financial(db)
@@ -225,6 +239,20 @@ class PreparedNativeCreditTests(unittest.TestCase):
                     self.assertIsNone(con.execute("SELECT 1 FROM sqlite_master WHERE name=?", (name,)).fetchone())
                 finally:
                     con.close()
+
+    def test_real_savepoint_rollback_does_not_clear_a_native_fatal_denial(self):
+        with authority(opening_loan=True) as (db, service, credit, fence, doc):
+            prepare_credit_native(db, doc)
+            before = financial(db)
+            with self.assertRaises(WriterFenceError) as blocked:
+                with db.transaction() as con:
+                    con.execute("SAVEPOINT rejected_native_write")
+                    with self.assertRaises(sqlite3.DatabaseError):
+                        con.execute("DELETE FROM uta_liabilities WHERE account_id='alice'")
+                    con.execute("ROLLBACK TO rejected_native_write")
+                    con.execute("RELEASE rejected_native_write")
+            self.assertEqual(blocked.exception.code, "credit_not_active")
+            self.assertEqual(financial(db), before)
 
     def test_real_install_failure_rolls_back_all_ddl_before_retry(self):
         import uta.writer_fence as module
