@@ -174,3 +174,19 @@ single-command/fence/startup behavior, diagnostic stop gates and original native
 TLS CLI checks. [Commands, source manifests and actual raw outputs](../evidence/20261117-durable-batches-runtime/targeted-ebf8459/manifest.json)
 are retained. This is a focused matrix, not a complete release run, packaging,
 capacity test, independent approval or permission to enable real funds.
+
+Additional financial cases use manual amounts and real SQLite effects: under
+halted/stale pricing, cancel and USD repay succeed while new risk is rejected;
+USD cash is exactly 20.08 + 2 - .5 = 21.58 and principal debt is 1.5, retained
+separately. Replaying the original batch does not repay again. A real paired
+opening trade creates a 1.5 position; two staged reduce-only orders of -1 cause
+the second to reject rather than reserve a reversal. Conflicting order IDs
+produce one effect. A deliberately slow first command produces a real 1/3
+executed prefix, with the remaining two original CIDs still pending.
+
+The first credit-case fixture had four incorrect assumptions, all retained as
+failed raw evidence: missing asset-wide credit limit, expected halt rejection
+before the actual stale-market check, wrong liability table name, and treating
+the debt's decimal string as minor units. Corrected exact assertions check the
+existing documented schema/validation order; runtime was unchanged. This does
+not reclassify those earlier runs as passing.

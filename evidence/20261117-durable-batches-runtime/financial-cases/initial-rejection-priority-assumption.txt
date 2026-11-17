@@ -1,0 +1,20 @@
+test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote (test_durable_batches.DurableBatchTests.test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote) ... FAIL
+test_reduce_only_limits_include_the_earlier_staged_order (test_durable_batches.DurableBatchTests.test_reduce_only_limits_include_the_earlier_staged_order) ... ok
+test_conflicting_order_id_in_same_batch_has_no_second_effect (test_durable_batches.DurableBatchTests.test_conflicting_order_id_in_same_batch_has_no_second_effect) ... ok
+test_slow_first_command_seals_actual_prefix_without_claiming_remaining_effects (test_durable_batches.DurableBatchTests.test_slow_first_command_seals_actual_prefix_without_claiming_remaining_effects) ... ok
+
+======================================================================
+FAIL: test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote (test_durable_batches.DurableBatchTests.test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-durable-batch-runtime/tests/test_durable_batches.py", line 377, in test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote
+    self.assertEqual(result["new-risk"]["error"]["code"], "trading_halted")
+AssertionError: 'market_unavailable' != 'trading_halted'
+- market_unavailable
++ trading_halted
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.555s
+
+FAILED (failures=1)
