@@ -142,6 +142,47 @@ class GroupedGatewayTests(unittest.TestCase):
         self.assertTrue(any(status == 201 for status, _ in replies))
         self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D(1000))
 
+    def test_original_id_retry_accepts_actual_overload_without_duplicate_effect(self):
+        entered, release, hold = self.block_admission("holding")
+        original = self.request
+        replies, submitted = [], []
+        command = self.order("original-overload")
+        def observe_reply(method, path, payload=None, *, token=ALICE):
+            submitted.append((method, path, payload))
+            response = original(method, path, payload, token=token)
+            replies.append(response)
+            if response[0] == 503 and response[1].get("error", {}).get("code") == "admission_overloaded":
+                release.set()  # Release only after observing the actual HTTP rejection.
+            return response
+        with hold:
+            first = self.admission.submit_order("alice", "holding", "X", D(1), D(100))
+            self.assertTrue(entered.wait(2))
+            second = self.admission.submit_order("alice", "waiting", "X", D(1), D(100))
+            with patch.object(self, "request", side_effect=observe_reply):
+                status, admitted = self.request_until_known("POST", "/v1/accounts/alice/orders", command)
+            self.assertEqual(status, 201, admitted)
+            first.result(timeout=3)
+            second.result(timeout=3)
+        self.assertEqual((replies[0][0], replies[0][1]["error"]["code"]), (503, "admission_overloaded"))
+        self.assertTrue(all(item == ("POST", "/v1/accounts/alice/orders", command) for item in submitted))
+        self.assertEqual(admitted["order_id"], command["order_id"])
+        self.assertEqual(len([event for event in self.exchange.events(limit=1000)
+                              if event["event_type"] == "ORDER_ACCEPTED"
+                              and event["payload"]["order_id"] == command["order_id"]]), 1)
+        self.assertEqual({row["order_id"] for row in self.exchange.orders("alice")},
+                         {"holding", "waiting", command["order_id"]})
+        self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D(1000))
+
+    def test_original_id_retry_never_hides_actual_closed_admission(self):
+        self.admission.close()
+        original = self.request
+        with patch.object(self, "request", wraps=original) as requests:
+            with self.assertRaisesRegex(AssertionError, "admission_closed"):
+                self.request_until_known("POST", "/v1/accounts/alice/orders", self.order("closed"))
+        self.assertEqual(requests.call_count, 1)
+        self.assertEqual(self.exchange.orders("alice"), [])
+        self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D(1000))
+
     def test_scope_and_input_rejections_never_enter_the_admission_queue(self):
         with patch.object(self.admission, "submit_order", wraps=self.admission.submit_order) as submit:
             cases = [("/v1/accounts/bob/orders", self.order(), ALICE, 403),
