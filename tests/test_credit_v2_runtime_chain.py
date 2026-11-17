@@ -22,6 +22,42 @@ class CreditV2RuntimeChainTests(unittest.TestCase):
         self.addCleanup(fixture.close)
         return fixture.install_and_open()
 
+    def test_actual_borrow_only_preserves_original_db_for_independent_observation(self):
+        fixture = self.authority()
+        exchange, credit, fifo = fixture.services.exchange, fixture.services.credit, fixture.fifo
+        self.assertFalse(exchange.readiness()["ready"])
+        self.assertEqual(fifo.enqueue_borrow("alice", "loan-1", "BTC", D(".4"),
+            actor_id="synthetic:integration-borrower", source_reference="synthetic:integration:loan-1")["state"], "PENDING")
+        receipt = fifo.process_one()
+        self.assertEqual((receipt["state"], receipt["result"]["principal"]), ("SUCCEEDED", "0.4"))
+        with exchange.database.read_transaction() as connection:
+            observed = actual_credit_observation(connection, "loan-1")
+            self.assertEqual(connection.execute("PRAGMA foreign_key_check").fetchall(), [])
+        bundle = observed["decision_bundle"]
+        self.assertTrue(replay_bundle(bundle)["matches"])
+        reopened = open_existing_services(exchange.database, clock=lambda: fixture.now)
+        self.assertEqual(reopened.ledger.verify(), observed["journal"]["sequence"])
+        self.assertEqual(fifo.status("loan-1"), receipt)
+        self.assertEqual(fifo.enqueue_borrow("alice", "loan-1", "BTC", D(".4"),
+            actor_id="synthetic:integration-borrower", source_reference="synthetic:integration:loan-1"), receipt)
+        self.assertIsNone(fifo.process_one())
+        with self.assertRaises(ServiceError) as refused:
+            credit.borrow("alice", "no-public-scope", "BTC", D(".01"))
+        self.assertEqual((refused.exception.code, refused.exception.status), ("unsupported_credit_operation", 501))
+        with exchange.database.read_transaction() as connection:
+            self.assertEqual(actual_credit_observation(connection, "loan-1"), observed)
+            self.assertEqual([connection.execute("SELECT COUNT(*) FROM "+table).fetchone()[0]
+                for table in ("credit_v2_sources", "credit_v2_intents", "uta_credit_decisions")], [1, 1, 1])
+        output = os.environ.get("UTA_CREDIT_V2_CAPTURE_DIRECTORY")
+        if output:
+            directory = Path(output)
+            directory.mkdir(parents=True, exist_ok=True)
+            raw = canonical(observed)
+            (directory/"actual-borrow-observation.json").write_text(raw+"\n")
+            print(json.dumps({"actual_capture_sha256": sha256(raw.encode()).hexdigest(),
+                "scope": "actual synthetic native loan/COMMIT/reopen; private original DB stops after borrow for independent SQL",
+                "decision_id": bundle["decision"]["decision_id"]}, sort_keys=True))
+
     def test_actual_borrow_commit_and_reopen_have_complete_original_evidence(self):
         fixture = self.authority()
         fifo, exchange, credit = fixture.fifo, fixture.services.exchange, fixture.services.credit
