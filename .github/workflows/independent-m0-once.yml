@@ -1,0 +1,108 @@
+name: Root-approved once-only hosted M0 diagnostic
+
+on:
+  push:
+    branches:
+      - perf/approved-m0-20261117-once
+
+permissions:
+  contents: read
+
+concurrency:
+  group: independent-m0-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  diagnostic:
+    if: >-
+      github.repository == 'PureGamma-Harness/uta-unified-account' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/perf/approved-m0-20261117-once' &&
+      github.event.created == true &&
+      github.event.before == '0000000000000000000000000000000000000000' &&
+      github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout manifest-only execution commit M
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          path: registration
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /config/independent-m0-approved.json
+      - name: Resolve reviewed parent C without executing workload
+        id: registration
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, re, stat, subprocess
+          root = pathlib.Path(os.environ['GITHUB_WORKSPACE'])/'registration'
+          path = root/'config/independent-m0-approved.json'
+          info = path.lstat()
+          assert stat.S_ISREG(info.st_mode) and info.st_size <= 16384
+          def pairs(items):
+              out = {}
+              for key,value in items:
+                  assert key not in out
+                  out[key] = value
+              return out
+          value = json.loads(path.read_bytes(), object_pairs_hook=pairs)
+          control = value['control_commit']
+          assert re.fullmatch('[0-9a-f]{40}', control)
+          fields = subprocess.check_output(['git','rev-list','--parents','-n','1','HEAD'],cwd=root,text=True).split()
+          assert fields == [os.environ['GITHUB_SHA'], control]
+          changes = subprocess.check_output(['git','diff','--name-status',control,fields[0]],cwd=root,text=True).splitlines()
+          assert changes == ['A\tconfig/independent-m0-approved.json']
+          assert value['execution_authorized'] is True
+          assert value['source_commit'] == '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
+          with open(os.environ['GITHUB_OUTPUT'],'a') as stream:
+              stream.write('control_commit='+control+'\n')
+          PY
+      - name: Checkout exact reviewed controller C
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ steps.registration.outputs.control_commit }}
+          path: control
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/independent_m0_controller.py
+            /tests/test_independent_m0_controller.py
+            /.github/workflows/independent-m0.yml
+            /.github/workflows/independent-m0-once.yml
+      - name: Checkout exact qualified workload source separately
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 909acecd153e2e89dfe2238e3ed3a3d3c9f0
+          path: workload
+          persist-credentials: false
+      - name: Set runtime, then record actual Python and SQLite
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - name: Pure control tests, no workload
+        run: python -m unittest discover -s control/tests -p test_independent_m0_controller.py -v
+      - name: Check immutable manifest and run B then P on this independent runner
+        run: |
+          python control/tools/independent_m0_controller.py --execute \
+            --registration-root "$GITHUB_WORKSPACE/registration" \
+            --source "$GITHUB_WORKSPACE/workload" \
+            --private "$RUNNER_TEMP/uta-m0-private-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --public "$RUNNER_TEMP/uta-m0-public-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Verify exact public file allowlist
+        id: public_check
+        if: always()
+        run: python control/tools/independent_m0_controller.py --verify-public "$RUNNER_TEMP/uta-m0-public-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Preserve only verified safe evidence
+        if: always() && steps.public_check.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: independent-m0-safe-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/*.json
+          if-no-files-found: warn
+          retention-days: 30
