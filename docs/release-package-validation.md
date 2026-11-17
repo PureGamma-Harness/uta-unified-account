@@ -1,5 +1,14 @@
 # Independent release package validation
 
+The later intermediate candidate
+`28493d4f1ca78b8452a1e337e2cd5277a81d95a5` also passed a fresh installed 8/8
+exercise, but a complete tracked-source inventory found four omitted sdist
+members. Its aggregate package verdict remains failed. The
+[intermediate evidence](../evidence/20261117-package-28493d4/README.md) preserves
+the original narrower green check, the strengthened red check, and an actual
+missing-probe negative control. A revised manifest and complete-source verifier
+are statically checked; they require a new frozen build before qualification.
+
 The frozen `0.4.0a1` candidate at
 `89bd349429db3207b61caf1bf2212f6a96c4b76c` passed installation and functional
 checks, but **its source distribution is incomplete**: it omits

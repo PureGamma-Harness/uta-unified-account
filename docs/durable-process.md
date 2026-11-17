@@ -93,6 +93,8 @@ sequenceDiagram
 
 收齐成功回执后，父进程以只读方式核对实际各分片 payload，完成 watermarks，保持 HALTED。只有显式 `set_kill_switch(False)` 才经独立 SET_HALT 控制命令及完整、当前、新鲜行情检查打开全局 gate。停机先持久全局 HALTED，再尝试本地 fanout；未完成不会假报开放。发布新行情会使旧激活命令失效，不能在市场切换期间靠旧回执重新开放。
 
+部分发布测试中的短 timeout 只限制一次调用等待，不保证其他分片已启动或提交。测试持续持有并续租分片 1 的受控阻塞租约，按同一 snapshot/命令 ID 有界重试，等待分片 0 的真实 watermark；每次仍检查 HALTED/PUBLISHING、原 ID 不变及分片 1 未完成，再释放阻塞并验证同一代次恢复。
+
 业务写入和后台匹配都不能裸用底层服务绕过 router：`ShardWorkerView` 在整个交易及 receipt COMMIT 期间持有 shared gate，并检查 account 的固定 SHA-256 分片、控制状态、当前行情摘要、本分片身份和全局资金证明。缺分片、错误身份及证明不一致会保留全局 stop。
 
 当前运行期支持下单、撤单、还款、行情和 halt 控制。还款使用 worker 启动时、同一个 token Database 初始化的 CreditService，与金融分录和 inbox receipt 同事务提交；先付利息再付本金。全局停机或行情中断仍允许按同账户 FIFO 处理还款，并与撤单共享预留容量。开户、存款、新借款、资金池注资及其他未接线行政操作必须拒绝或保持离线，不能偷偷改成父进程无 token 写入。本版也不提供跨分片对手成交或转账。
@@ -104,6 +106,8 @@ sequenceDiagram
 `tests/test_durable_process.py` 使用真实独立 PID 验证两个分片、两对手账户下单和真实双腿成交，强杀 owner 后由新 PID/代次恢复，再真实成交平仓，核对仓位、FILL_APPLIED、实际匹配记录及逐资产账本平衡。它还验证父进程重启时不初始化金融服务、PENDING/terminal 保留、部分 publication 恢复、旧无 token writer 拒绝、错误分片 inbox 触发全局 stop，以及单 worker 不打开其他 managed 分片。
 
 这些用例是故障/恢复与金融事实验证，不是吞吐压测或生产迁移验收。
+
+控制命令的成功回执可能早于父监督器收取子进程 ready 握手。`tests/test_durable_faults.py` 的激活前置步骤因此有界等待真实 `diagnostics()["ready"]`，超时输出最后诊断；不会把收齐控制回执直接当作 ready，也不会替换实际 PID/租约/握手检查。
 
 新增过程用例还验证实际 SIGSTOP 持 shared gate 的 owner 在租约到期后被监督器清理、发布继续，以及新 PID 下的真实本金/利息还款。手算初始现金 1000、借本金 10、应计利息 1，先还 4 再还 2：现金 1004、本金 5、利息 0；资金池本金现金 45、利息现金 1，逐资产分录总和仍为零。
 
@@ -138,6 +142,8 @@ processes = DurableProcessRouter.take_over(
 回收后追加 ORPHAN_KILLED 证据，新 PID 仍需自行取得更高 token generation，不能继承旧 token。缺 Linux pidfd 或无法验证身份时拒绝自动回收；旧版本没有登记出生身份的孤儿也不在自动终止范围。`start(recovery_timeout=10)` 对仍有效的旧 lease 等待有界，超时要求重试或调查，不能缩短旧 lease 来强行接管。
 
 新增真实过程测试使用一个独立 coordinator，保留已成功接纳的原挂单；把两个子进程 SIGSTOP，其中一个确认持有 router SH，再 SIGKILL coordinator。新父进程不发人工 SIGCONT，以持久出生事实回收两个旧进程，启动新 PID、重新发布/激活，再由新对手单与原挂单真实成交，原 command 回执保持不变。生命周期信号改用 FD 管道，避免该破坏性测试依赖父进程清理命名 semaphore。它不把这些 IPC 当作持久命令来源。
+
+该测试的旧 coordinator 在报告前持有自身 supervisor mutex，防止布置故障时旧监督器已正常回收过期 owner。当前整合夹具要求真实 worker 在指定安全点自行停止：一片保持真实 SH gate，另一片不持 gate/SQLite 写锁；核验停止状态、SPAWNED/OWNED 登记、当前租约及 PID 出生身份后才交付报告。测试以 pidfd 锚定身份、SIGKILL 父进程，并分别验证已到期及尚未到期孤儿，后者实际回收时刻不能早于持久到期时间。异常清理通过 pidfd 和有界 subreaper 回收自己的后代、保留预存子进程；不把删除目录成功当作进程已退出。并行作者原来的 mutex/pidfd/SQLite 锁布置方案保留在 `65fb755` 历史；本整合采用独立验证后的安全点握手及更完整的身份/到期断言，见[原始红绿记录](orphan-harness-validation.md)。
 
 ### 历史二进制及格式升级
 

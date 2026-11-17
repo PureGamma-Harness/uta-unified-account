@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-package-final/tools/verify_release_archives.py",
+    "--source",
+    "/workspace/uta-durable-final-28493d4",
+    "--commit",
+    "28493d4f1ca78b8452a1e337e2cd5277a81d95a5",
+    "--wheel",
+    "/tmp/uta-release-final-20261117-0ibLCN/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+    "--sdist",
+    "/tmp/uta-release-final-20261117-0ibLCN/negative-only-missing-probe.tar.gz",
+    "--output",
+    "/tmp/uta-release-final-20261117-0ibLCN/negative-only-missing-probe-report.json"
+  ],
+  "case": "actual_release_missing_allocation_probe_is_rejected",
+  "construction": "copy actual frozen sdist; add exactly its three other missing tracked files; retain missing allocation-probe.py",
+  "cwd": "/workspace/uta-package-final",
+  "passed": true,
+  "production_approved": false,
+  "returncode": 1,
+  "sdist_missing": [
+    "evidence/runs/sqlite-fixture-resourcewarning/allocation-probe.py"
+  ],
+  "source_commit": "28493d4f1ca78b8452a1e337e2cd5277a81d95a5"
+}
