@@ -17,8 +17,11 @@ acceptance remain blocked.
   delivered with independent tests. This changes neither the financial ledger
   format nor the public admission policy. New managed borrowing remains disabled.
 - The unused private WebSocket codec has no listener or financial consumer.
-  Native credit V2 and the experimental performance variant runner are outside
-  this candidate.
+  Native credit V2 remains outside this candidate. The reviewed performance
+  variant runner is now included with default prepare-only behavior; execution
+  requires complete exact-source qualification and a separate registration.
+  Its measurement footer records original integer start/end times. This is a
+  measurement contract, not a throughput or performance acceptance result.
 
 ## Historical failure and acceptance
 
@@ -82,3 +85,32 @@ unchanged. The repaired source still needs new complete QA/CI/package gates.
 The bb34 package independently passed its limited exact-artifact scope (2536
 tracked files, 52 runtime files and eight actual omission controls). This package
 result neither cancels bb34's QA failures nor qualifies the next source commit.
+
+## Second combined candidate and reviewed repairs
+
+`d421df3` also remains NO_GO. Its Python3.12/3.13 full suites passed 1413 tests;
+local Python3.10 retained a shared-lock fault-fixture FAIL. Six remote jobs
+passed, with one stale-activation ERROR and two readiness FAILs in the other
+two jobs. The new package independently passed 2753 source files, 52 runtime
+files and ten omission controls. All original results remain available.
+
+Readiness fixtures now retain each original SID and timestamp, establish actual
+native-owner readiness before starting the quote clock, and use only bounded,
+typed observation retries. Their controlled failures and incomplete historical
+stack evidence are retained alongside the scoped passing controls.
+
+The shared-lock fixture now binds its own PID with pidfd, verifies the kernel
+READ lock and zero-DML writer availability, and waits for genuine lease expiry.
+Only that fixture initializes with the normal five-second lease. Production
+code, persisted expiry and quote time are unchanged. One Python3.10 controlled
+case passed in 6.987 seconds, with no logger failure, watchdog, forced cleanup
+or residual owned process. Independent raw-trace review passed 25 checks.
+Publication start to old-owner exit/new generation/EX entry took respectively
+0.2724/0.6108/0.2781 seconds. Captured fault to complete publication took 5.4088
+seconds; publication start to completion took 0.8502 seconds. The five-second
+recovery checks and 15-second publication-thread lifecycle are distinct.
+
+These are component assertions and trace checks. They do not establish an
+independent financial reopen/replay, an admitted order or trade, a five-second
+end-to-end SLO, or qualification of the old d421 source. The repaired combined
+source must complete fresh local, CI, package, smoke and long-run gates.
