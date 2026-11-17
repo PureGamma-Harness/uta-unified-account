@@ -1,0 +1,61 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-stopped-owner-gate/tests/stopped_gate_recovery_probe.py",
+    "--inner",
+    "--case",
+    "all",
+    "--output",
+    "/workspace/uta-spawn-native-once-private-20261117"
+  ],
+  "cpu_ids": [
+    1
+  ],
+  "identity": {
+    "birth_ticks": 8571654,
+    "group": 423075,
+    "parent": 423040,
+    "pid": 423075,
+    "session": 423075,
+    "state": "R"
+  },
+  "launcher_affinity_acknowledged": true,
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import json,os,sys; os.sched_setaffinity(0,{1}); os.write(5,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(5); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-stopped-owner-gate/tests/stopped_gate_recovery_probe.py",
+    "--inner",
+    "--case",
+    "all",
+    "--output",
+    "/workspace/uta-spawn-native-once-private-20261117"
+  ],
+  "leader_reaped": true,
+  "observed_child_cpu_ids": [
+    1
+  ],
+  "outcome": "EXITED",
+  "pidfd_used": true,
+  "returncode": 0,
+  "stdout_stderr_complete": true,
+  "streams": [
+    {
+      "bytes": 0,
+      "observed_bytes": 0,
+      "path": "/workspace/uta-spawn-native-once-private-20261117/native.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 857,
+      "observed_bytes": 857,
+      "path": "/workspace/uta-spawn-native-once-private-20261117/native.stderr",
+      "sha256": "455917f38801b9f84ad8b68e250234327fc57c6b14db057d7086955b2c446b1d"
+    }
+  ],
+  "wall_seconds": 4.58532578300219,
+  "watchdog_reason": null
+}

@@ -1,0 +1,75 @@
+test_handle_close_failure_keeps_its_reference_until_later_cleanup (__main__.SpawnRegistrationUnitTests.test_handle_close_failure_keeps_its_reference_until_later_cleanup) ... FAIL
+test_http_diagnostic_projection_exposes_only_typed_recovery_fields (__main__.SpawnRegistrationUnitTests.test_http_diagnostic_projection_exposes_only_typed_recovery_fields) ... FAIL
+test_modeled_append_then_lost_reply_is_retained_and_not_replayed (__main__.SpawnRegistrationUnitTests.test_modeled_append_then_lost_reply_is_retained_and_not_replayed) ... FAIL
+test_monitor_does_not_retry_if_close_sets_stop_while_it_waits_for_mutex (__main__.SpawnRegistrationUnitTests.test_monitor_does_not_retry_if_close_sets_stop_while_it_waits_for_mutex) ... ok
+test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity (__main__.SpawnRegistrationUnitTests.test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity) ... ERROR
+test_registration_failure_never_releases_gate_and_reaps_its_model_child (__main__.SpawnRegistrationUnitTests.test_registration_failure_never_releases_gate_and_reaps_its_model_child) ... FAIL
+test_unconfirmed_model_cleanup_blocks_new_children (__main__.SpawnRegistrationUnitTests.test_unconfirmed_model_cleanup_blocks_new_children) ... FAIL
+test_unknown_error_is_not_retried_or_exposed (__main__.SpawnRegistrationUnitTests.test_unknown_error_is_not_retried_or_exposed) ... FAIL
+
+======================================================================
+ERROR: test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity (__main__.SpawnRegistrationUnitTests.test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 223, in test_monitor_survives_one_modeled_registry_failure_and_creates_new_identity
+    router._supervise()
+  File "/tmp/uta-spawn-registration-base-e439-20261117/uta/durable_process.py", line 1227, in _supervise
+    self._spawn(shard)
+  File "/tmp/uta-spawn-registration-base-e439-20261117/uta/durable_process.py", line 1095, in _spawn
+    _record_process(self._control, "SPAWNED", shard, nonce, 0,
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 204, in record
+    raise sqlite3.OperationalError("locking protocol")
+sqlite3.OperationalError: locking protocol
+
+======================================================================
+FAIL: test_handle_close_failure_keeps_its_reference_until_later_cleanup (__main__.SpawnRegistrationUnitTests.test_handle_close_failure_keeps_its_reference_until_later_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 179, in test_handle_close_failure_keeps_its_reference_until_later_cleanup
+    self.assertFalse(process.alive)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_http_diagnostic_projection_exposes_only_typed_recovery_fields (__main__.SpawnRegistrationUnitTests.test_http_diagnostic_projection_exposes_only_typed_recovery_fields)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 262, in test_http_diagnostic_projection_exposes_only_typed_recovery_fields
+    self.assertFalse(result["ready"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_modeled_append_then_lost_reply_is_retained_and_not_replayed (__main__.SpawnRegistrationUnitTests.test_modeled_append_then_lost_reply_is_retained_and_not_replayed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 142, in test_modeled_append_then_lost_reply_is_retained_and_not_replayed
+    self.assertFalse(context.processes[0].alive)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_registration_failure_never_releases_gate_and_reaps_its_model_child (__main__.SpawnRegistrationUnitTests.test_registration_failure_never_releases_gate_and_reaps_its_model_child)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 130, in test_registration_failure_never_releases_gate_and_reaps_its_model_child
+    self.assertFalse(process.alive)
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_unconfirmed_model_cleanup_blocks_new_children (__main__.SpawnRegistrationUnitTests.test_unconfirmed_model_cleanup_blocks_new_children)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 157, in test_unconfirmed_model_cleanup_blocks_new_children
+    self.assertIn(0, router._spawn_blocked)
+AssertionError: 0 not found in set()
+
+======================================================================
+FAIL: test_unknown_error_is_not_retried_or_exposed (__main__.SpawnRegistrationUnitTests.test_unknown_error_is_not_retried_or_exposed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-stopped-owner-gate/tests/test_spawn_registration_recovery.py", line 193, in test_unknown_error_is_not_retried_or_exposed
+    self.assertIn(0, router._spawn_blocked)
+AssertionError: 0 not found in set()
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.035s
+
+FAILED (failures=6, errors=1)
