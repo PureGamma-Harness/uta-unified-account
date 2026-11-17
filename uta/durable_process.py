@@ -457,11 +457,13 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
             return
         from .startup import _OwnedStartup
         with _OwnedStartup(database.for_writer(token), lease_seconds=settings["lease_seconds"],
-                           stop=stop, parent_pid=parent_pid) as initialization:
+                           stop=stop, parent_pid=parent_pid,
+                           normal_cache_size=settings["normal_cache_size"]) as initialization:
             _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
                             _process_identity(os.getpid()), coordinator)
             view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
                                    account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"],
+                                   normal_cache_size=settings["normal_cache_size"],
                                    _startup=initialization)
             store = parent._queue(shard)
             with initialization.database.read_transaction() as connection:
@@ -858,7 +860,7 @@ class DurableProcessRouter:
 
     def __init__(self, directory, *, lease_seconds=5.0, poll_interval=.02,
                  background_interval=.1, account_batch=25, matches_per_symbol=10,
-                 max_attempts=3, _only_shard=None):
+                 max_attempts=3, normal_cache_size=0, _only_shard=None):
         for name, value, lower, upper in (("lease_seconds", lease_seconds, .05, 3600),
                                           ("poll_interval", poll_interval, .001, 60),
                                           ("background_interval", background_interval, .01, 60)):
@@ -867,6 +869,8 @@ class DurableProcessRouter:
         for name, value, upper in (("account_batch", account_batch, 1000), ("matches_per_symbol", matches_per_symbol, 1000), ("max_attempts", max_attempts, 100)):
             if type(value) is not int or not 1 <= value <= upper:
                 raise ValueError(f"{name} requires an integer in 1..{upper}")
+        if type(normal_cache_size) is not int or not 0 <= normal_cache_size <= 65536:
+            raise ValueError("normal_cache_size requires an integer in 0..65536")
         self._control = _open_router_control(directory)
         with self._control.control.read_transaction() as connection:
             try:
@@ -894,7 +898,8 @@ class DurableProcessRouter:
         self.directory, self.layout = self._control.directory, self._control.layout
         self._settings = dict(lease_seconds=lease_seconds, poll_interval=poll_interval,
                               background_interval=background_interval, account_batch=account_batch,
-                              matches_per_symbol=matches_per_symbol, max_attempts=max_attempts)
+                              matches_per_symbol=matches_per_symbol, max_attempts=max_attempts,
+                              normal_cache_size=normal_cache_size)
         self._queues, self._workers, self._reports = {}, {}, {}
         self._start_gates = {}
         self._recovered_orphans = []

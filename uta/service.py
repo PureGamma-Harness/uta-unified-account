@@ -1057,15 +1057,17 @@ class ExchangeService:
                         {"state": state, "previous_state": previous, "cycle": cycle,
                          "version": version, "reason": reason})
 
-    def supervise_account(self, account_id: str) -> dict:
+    def supervise_account(self, account_id: str, *, connection=None) -> dict:
         """Atomically freeze distress, cancel locally and queue strict reductions.
 
         This method never fabricates an execution. A separate local matcher must
         find a counterparty and authorize settlement. A stale cycle preserves
         the pending plan and reports BLOCKED without cancelling its orders.
+        A supplied connection joins an active transaction of this database;
+        its caller owns COMMIT and must not publish a result before it succeeds.
         """
         _name(account_id, "account_id")
-        with self._transaction() as connection:
+        with self._transaction() if connection is None else self.database._using(connection) as connection:
             self._require_account(connection, account_id)
             previous = connection.execute("SELECT * FROM uta_liquidation_accounts WHERE account_id=?", (account_id,)).fetchone()
             previous_state = previous["state"] if previous else "NORMAL"
