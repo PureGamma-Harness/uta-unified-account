@@ -129,3 +129,11 @@ contingency for its continuing output, not evidence of a second independent
 6 GiB cap or proof that its current bytes were outside the old producer total.
 An undeclared future byte ceiling remains unknown; a floor cannot turn that
 unknown into zero or automatically authorize execution.
+
+The six pure prep unit cases copy declared plan/amendment fixtures into their
+own TemporaryDirectory before parsing profiles. They do not require this
+machine's `/workspace/...` plan files when run in an isolated package or CI
+checkout. This test-only portability follow-up preserves the original f2ededd
+manifest/results as historical evidence at that commit and adds fresh three-
+runtime raw logs; operational profiles, immutable plans and the driver itself
+are unchanged by the follow-up. These checks import no SQLite or business CLI.

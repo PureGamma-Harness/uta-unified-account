@@ -16,8 +16,26 @@ PROFILE = ROOT / 'benchmarks/profiles/managed-d421df3-pending.json'
 
 
 class ManagedStabilityPrepareTests(unittest.TestCase):
+    def setUp(self):
+        temporary = TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        self.profiles = {}
+        for source in (ROOT / 'benchmarks/profiles').glob('*.json'):
+            value = json.loads(source.read_text())
+            for field in ('plan', 'amendment'):
+                original = ROOT / 'benchmarks/plans' / Path(value[field]).name
+                target = root / original.name
+                if not target.exists():
+                    target.write_bytes(original.read_bytes())
+                value[field] = str(target)
+            target = root / source.name
+            target.write_text(json.dumps(value))
+            self.profiles[source.name] = target
+        self.profile = self.profiles[PROFILE.name]
+
     def test_commands_bind_explicit_new_source_report_and_no_default_763(self):
-        value = prepare.profile(PROFILE)
+        value = prepare.profile(self.profile)
         commands = prepare.commands(value, record='startup.json')
         for phase, command in commands.items():
             self.assertNotIn('763202d', ' '.join(command))
@@ -33,7 +51,7 @@ class ManagedStabilityPrepareTests(unittest.TestCase):
 
     def test_blocked_and_pending_profiles_cannot_import_transport_or_start_child(self):
         for name in ('managed-bb34b5f-blocked.json', 'managed-d421df3-pending.json', 'managed-d421df3-blocked.json'):
-            path = ROOT / 'benchmarks/profiles' / name
+            path = self.profiles[name]
             with self.subTest(name=name), patch.object(prepare.importlib, 'import_module') as module, \
                     patch.object(prepare.subprocess, 'Popen') as child:
                 with self.assertRaisesRegex(ValueError, 'qualification_not_complete'):
@@ -42,31 +60,31 @@ class ManagedStabilityPrepareTests(unittest.TestCase):
                 child.assert_not_called()
 
     def test_root_go_must_match_exact_profile_and_true_literal_gates(self):
-        value = prepare.profile(PROFILE)
+        value = prepare.profile(self.profile)
         value['qualification'] = dict(status='COMPLETE_ALL_GATES_PASSED', blocked_reason=None,
             all_three_local_passed=True, all_eight_ci_passed=True, independent_new_package_passed=True)
         with self.assertRaisesRegex(ValueError, 'root_GO'):
-            prepare.authorized(value, PROFILE, 'wrong hash')
+            prepare.authorized(value, self.profile, 'wrong hash')
         value['qualification']['all_eight_ci_passed'] = 1
         with self.assertRaisesRegex(ValueError, 'qualification_not_complete'):
-            prepare.authorized(value, PROFILE, prepare.fingerprint(PROFILE))
+            prepare.authorized(value, self.profile, prepare.fingerprint(self.profile))
 
     def test_modified_plan_or_target_mismatch_is_rejected(self):
         with TemporaryDirectory() as directory:
             path = Path(directory) / 'profile.json'
-            value = prepare.profile(PROFILE)
+            value = prepare.profile(self.profile)
             value['source_commit'] = 'f' * 40
             path.write_text(json.dumps(value))
             with self.assertRaisesRegex(ValueError, 'disagree'):
                 prepare.profile(path)
-            value = prepare.profile(PROFILE)
+            value = prepare.profile(self.profile)
             value['plan_sha256'] = '0' * 64
             path.write_text(json.dumps(value))
             with self.assertRaisesRegex(ValueError, 'hash_changed'):
                 prepare.profile(path)
 
     def test_existing_frozen_supervisor_worker_and_interval_contract_is_not_relaxed(self):
-        value = prepare.profile(PROFILE)
+        value = prepare.profile(self.profile)
         with TemporaryDirectory() as directory:
             root = Path(directory)
             plan, amendment = prepare.load(value['plan']), prepare.load(value['amendment'])
@@ -82,7 +100,7 @@ class ManagedStabilityPrepareTests(unittest.TestCase):
 
     def test_record_path_cannot_escape_observer_output(self):
         with self.assertRaises(ValueError):
-            prepare.commands(prepare.profile(PROFILE), record='../job/bad.json')
+            prepare.commands(prepare.profile(self.profile), record='../job/bad.json')
 
 
 if __name__ == '__main__':
