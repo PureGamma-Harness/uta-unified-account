@@ -142,3 +142,25 @@ financial authority. Original test harness failures are retained. This is not
 final release qualification. The independently reported extra attached-trigger
 schema-inventory gap is still a blocker at this checkpoint and must be fixed
 and reviewed before any integration or load GO.
+
+## Exact format and diagnostic-gate follow-up
+
+The next patch closes the independently reported inventory gap by comparing
+all SQLite objects in the batch namespace **or attached to either batch table**.
+The six legitimate managed native guard triggers are required with their exact
+shared `writer_fence._guard_sql` definitions, alongside exact batch SQL and
+implicit indexes. Fresh pre-fence schema has no native triggers; managed schema
+requires both registered IUD policies. No trigger demonstration is executed by
+this follow-up. Normal format tests cover fresh/managed official schema and an
+extra index or reserved view being rejected, then restored to the legal format.
+Independent review of the final patch remains required.
+
+Reopen benchmark diagnostics now count batch preparations, selected members,
+COMMITTED executed prefixes, zero/partial prefixes, RECOVERED/unresolved
+attempts and internal batch failure events separately. Counts are explicitly
+records, **not observed COMMIT counts or financial throughput**. Any internal
+failure, unresolved attempt, recovered unknown attempt, missing diagnostics or
+noninteger diagnostic counter blocks technical qualification, even with all
+individual CID attempts equal to zero. The existing benchmark still does not
+select batch capability, so no batch performance run is implied. Its tiny
+existing .1/.2-second real-spawn unit cases verify this reporting contract only.

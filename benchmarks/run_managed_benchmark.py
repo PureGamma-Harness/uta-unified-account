@@ -161,6 +161,62 @@ def command_technical_diagnostics(commands):
         "original_internal_exception_available": False}
 
 
+def batch_dispatch_diagnostics(connection):
+    """Independent RO record counts; these are not observed COMMIT counts."""
+    result = {"prepared_batches": 0, "committed_batches": 0, "recovered_batches": 0,
+              "unresolved_batches": 0, "selected_commands": 0, "executed_commands": 0,
+              "zero_executed_batches": 0, "partial_prefix_batches": 0,
+              "failure_events": 0, "record_counts_are_not_commit_counts": True}
+    events = connection.execute("SELECT payload FROM uta_events WHERE event_type='COMMAND_BATCH_EXECUTION_FAILED' AND account_id IS NULL").fetchall()
+    for row in events:
+        value = json.loads(row[0])
+        if (type(value.get("event_version")) is not int or value["event_version"] != 1
+                or type(value.get("recording_generation")) is not int or value["recording_generation"] < 1
+                or value.get("phase") not in {"prepare", "membership", "execute", "between_commands", "freshness", "disposition", "commit"}):
+            raise RuntimeError("invalid stored batch failure diagnostic")
+    result["failure_events"] = len(events)
+    names = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('uta_command_batch_manifests','uta_command_batch_outcomes','writer_fence_batch_capability')")}
+    if not names:
+        if events:
+            raise RuntimeError("batch failure event appeared without a batch authority")
+        return result
+    if names != {"uta_command_batch_manifests", "uta_command_batch_outcomes", "writer_fence_batch_capability"}:
+        raise RuntimeError("incomplete batch authority in reopened probe")
+    manifests = {}
+    for row in connection.execute("SELECT attempt_id,content FROM uta_command_batch_manifests"):
+        value = json.loads(row[1])
+        members = value["members"]
+        if not isinstance(members, list) or not 3 <= len(members) <= 8:
+            raise RuntimeError("invalid batch membership in reopened probe")
+        ids = [member["command_id"] for member in members]
+        if len(set(ids)) != len(ids):
+            raise RuntimeError("duplicate batch membership in reopened probe")
+        manifests[row[0]] = ids
+        result["selected_commands"] += len(ids)
+    result["prepared_batches"] = len(manifests)
+    resolved = set()
+    for row in connection.execute("SELECT attempt_id,disposition,content FROM uta_command_batch_outcomes"):
+        if row[0] not in manifests or row[0] in resolved:
+            raise RuntimeError("batch disposition lacks unique immutable membership")
+        resolved.add(row[0])
+        value = json.loads(row[2])
+        executed = value["executed"]
+        if (not isinstance(executed, list) or len(set(executed)) != len(executed)
+                or not set(executed) <= set(manifests[row[0]])):
+            raise RuntimeError("invalid batch executed prefix in reopened probe")
+        if row[1] == "COMMITTED":
+            result["committed_batches"] += 1
+            result["executed_commands"] += len(executed)
+            result["zero_executed_batches"] += not executed
+            result["partial_prefix_batches"] += 0 < len(executed) < len(manifests[row[0]])
+        elif row[1] == "RECOVERED" and not executed:
+            result["recovered_batches"] += 1
+        else:
+            raise RuntimeError("invalid batch disposition in reopened probe")
+    result["unresolved_batches"] = len(set(manifests) - resolved)
+    return result
+
+
 def probe_qualification(summary):
     """Fail closed after preserving evidence; this gate is not production approval."""
     reasons = []
@@ -178,6 +234,19 @@ def probe_qualification(summary):
             reasons.append("persisted_nonterminal_command")
         if technical["control_commands_not_succeeded"]:
             reasons.append("control_command_not_succeeded")
+    batches = summary.get("batch_dispatch_diagnostics")
+    if batches is None:
+        reasons.append("missing_batch_dispatch_diagnostics")
+    else:
+        for key, reason in (("failure_events", "batch_internal_failure"),
+                            ("unresolved_batches", "unresolved_batch"),
+                            ("recovered_batches", "recovered_unknown_batch")):
+            value = batches.get(key)
+            if type(value) is not int or value < 0:
+                reasons.append("invalid_batch_dispatch_diagnostics")
+                break
+            if value:
+                reasons.append(reason)
     if summary.get("poll_errors"):
         reasons.append("receipt_poll_error")
     counts = summary["counts"]
@@ -320,6 +389,7 @@ def verify(paths, rows, account_shards):
     """Reopen every store RO after workers stop; verify all original IDs."""
     by_id = {row["command_id"]: row for row in rows}
     committed, pending, stored_commands, reports, all_cid_facts = set(), set(), set(), [], []
+    batch_facts = []
     for shard, path in enumerate(paths):
         with readonly(path) as connection:
             if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok" or connection.execute("PRAGMA foreign_key_check").fetchone() is not None:
@@ -329,6 +399,7 @@ def verify(paths, rows, account_shards):
             DecisionAudit.validate(connection)
             if connection.execute("SELECT version FROM uta_schema").fetchone()[0] != 3:
                 raise RuntimeError("required decision audit is not enabled")
+            batch_facts.append(batch_dispatch_diagnostics(connection))
             persisted = [dict(row) for row in connection.execute("SELECT * FROM uta_command_inbox")]
             all_cid_facts.extend({"shard": shard, **row} for row in persisted)
             commands = {row["command_id"]: row for row in persisted if row["kind"] == "SUBMIT_ORDER"}
@@ -398,7 +469,8 @@ def verify(paths, rows, account_shards):
     return {"shards": reports, "observed_financial_successes": len(observed), "persistent_successes": len(committed),
         "unobserved_successes_found_on_reopen": len(committed - observed), "pending_original_ids": sorted(pending),
         "pending_count": len(pending), "durable_enqueue_acknowledgements_verified": len(acknowledged), "reopened_readonly": True,
-        "command_technical_diagnostics": command_technical_diagnostics(all_cid_facts)}
+        "command_technical_diagnostics": command_technical_diagnostics(all_cid_facts),
+        "batch_dispatch_diagnostics": {key: (True if key == "record_counts_are_not_commit_counts" else sum(report[key] for report in batch_facts)) for key in batch_facts[0]}}
 
 
 def profile_report(directory):
@@ -631,6 +703,7 @@ def run(configuration, directory):
         "final_diagnostics": final_diagnostics,
         "poll_errors": poll_errors, "feed_publications": feed_rows, "readonly_reconciliation": checks,
         "command_technical_diagnostics": checks["command_technical_diagnostics"],
+        "batch_dispatch_diagnostics": checks["batch_dispatch_diagnostics"],
         "profile": profile_report(profiles), "environment": environment,
         "production_approved": False, "capacity_10000_per_s_passed": False,
         "scope": "<=10s managed local process inbox admission diagnostic; all successful orders OPEN, no simulated or real fills, no replication; profiling includes instrumentation overhead"}

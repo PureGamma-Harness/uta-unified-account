@@ -327,3 +327,31 @@ print(json.dumps({"pid":os.getpid(),"storage_sha256":sha256(Path(uta.storage.__f
         self.assertEqual(self.batch.unresolved(), [error.attempt_id])
         self.assertEqual([r["state"] for r in self.batch.resolve_preparation(error.attempt_id)], ["PENDING"] * 3)
         self.assertEqual(self.exchange.orders("alice"), [])
+
+    def test_normal_extra_index_and_reserved_view_are_not_official_batch_format(self):
+        for sql in ("CREATE INDEX another_batch_index ON uta_command_batch_manifests(created_at)",
+                    "CREATE VIEW uta_command_batch_extra AS SELECT attempt_id FROM uta_command_batch_manifests"):
+            with self.subTest(sql=sql):
+                with self.owned.transaction() as connection:
+                    connection.execute(sql)
+                with self.database.read_transaction() as connection:
+                    with self.assertRaises(StorageError):
+                        BatchStore._verify_schema(connection)
+                with self.owned.transaction() as connection:
+                    connection.execute("DROP " + ("INDEX another_batch_index" if "INDEX" in sql else "VIEW uta_command_batch_extra"))
+                with self.database.read_transaction() as connection:
+                    BatchStore._verify_schema(connection)
+
+    def test_real_batch_failure_is_separate_from_preparation_execution_record_counts(self):
+        from benchmarks.run_managed_benchmark import batch_dispatch_diagnostics
+        attempt = self.three()
+        with patch.object(self.exchange, "_admit_order", side_effect=RuntimeError("fault")):
+            with self.assertRaises(BatchExecutionError) as caught:
+                self.batch.process(self.exchange, attempt)
+        self.batch.recover(attempt)
+        self.batch.record_failure(self.exchange, caught.exception)
+        with self.database.read_transaction() as connection:
+            counts = batch_dispatch_diagnostics(connection)
+        self.assertEqual((counts["prepared_batches"], counts["selected_commands"], counts["executed_commands"]), (1, 3, 0))
+        self.assertEqual((counts["failure_events"], counts["recovered_batches"], counts["unresolved_batches"]), (1, 1, 0))
+        self.assertTrue(counts["record_counts_are_not_commit_counts"])

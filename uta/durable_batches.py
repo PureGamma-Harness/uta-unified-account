@@ -56,14 +56,25 @@ class BatchStore:
             name = fields[2].split("(", 1)[0]
             table = name if fields[1] == "TABLE" else sql.split(" ON ", 1)[1].split()[0]
             expected[name] = (fields[1].lower(), table, sql)
+        # The owning table matters as well as the reserved object name. Native
+        # writer guards are legitimate attached triggers, with the same shared
+        # compiled definitions used by normal fence installation/verification.
+        if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='writer_fence_guard_tables'").fetchone():
+            from .writer_fence import _guard_sql
+            registered = {row[0]: row[1] for row in connection.execute(
+                "SELECT name,actions FROM writer_fence_guard_tables WHERE name IN (?,?)", _TABLES)}
+            if registered != {table: "IUD" for table in _TABLES}:
+                raise StorageError("batch native protection inventory differs")
+            for table in _TABLES:
+                for action in "IUD":
+                    name, sql = _guard_sql(table, action)
+                    expected[name] = ("trigger", table, sql)
+        for table in _TABLES:
+            expected[f"sqlite_autoindex_{table}_1"] = ("index", table, None)
         actual = {row[0]: tuple(row)[1:] for row in connection.execute(
-            "SELECT name,type,tbl_name,sql FROM sqlite_master WHERE name LIKE 'uta_command_batch_%' AND type IN ('table','trigger')")}
+            "SELECT name,type,tbl_name,sql FROM sqlite_master WHERE name LIKE 'uta_command_batch_%' OR tbl_name IN (?,?)", _TABLES)}
         if actual != expected:
             raise StorageError("batch schema inventory or exact definitions differ; automatic repair is forbidden")
-        indexes = {tuple(row) for row in connection.execute(
-            "SELECT name,tbl_name,sql FROM sqlite_master WHERE type='index' AND tbl_name IN (?,?)", _TABLES)}
-        if indexes != {(f"sqlite_autoindex_{table}_1", table, None) for table in _TABLES}:
-            raise StorageError("batch index inventory differs")
 
     @classmethod
     def initialize(cls, database):
@@ -125,6 +136,7 @@ class BatchStore:
             ids = [member["command_id"] for member in members]
             if len(set(ids)) != len(ids):
                 raise ValueError("duplicate member")
+            account_sequences = {}
             for member in members:
                 if set(member) != {"command_id", "sequence", "account_id", "kind", "payload_sha256"}:
                     raise ValueError("batch membership fields differ")
@@ -134,6 +146,10 @@ class BatchStore:
                         or member["kind"] not in (SUBMIT_ORDER, CANCEL_ORDER, REPAY)
                         or type(member["payload_sha256"]) is not str or re.fullmatch("[0-9a-f]{64}", member["payload_sha256"]) is None):
                     raise ValueError("batch member types differ")
+                sequences = account_sequences.setdefault(member["account_id"], [])
+                if len(sequences) >= 2 or sequences and member["sequence"] <= sequences[-1]:
+                    raise ValueError("batch per-account membership order or bound differs")
+                sequences.append(member["sequence"])
             return content
         except (ValueError, TypeError, KeyError, ServiceError) as exc:
             raise BatchRecoveryUnknown("batch membership cannot be established") from exc
