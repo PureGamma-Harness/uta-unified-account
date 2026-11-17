@@ -155,4 +155,60 @@ class ResourceRaceContract(unittest.TestCase):
         with patch.object(m.os,'walk',self.ordered_walk(m.os.walk)),patch.object(Path,'lstat',racing):
             with self.assertRaisesRegex(m.GateError,'resource_stable_type_changed'):m.resource_usage(self.private,self.public)
 
+class RouterAuxContract(ResourceRaceContract):
+    """Apply every existing strict resource boundary to the exact router name."""
+    def setUp(self):
+        super().setUp();self.main.unlink();self.aux.unlink()
+        self.main=self.authority/'router.sqlite3';self.main.write_bytes(b'm')
+        self.aux=self.authority/'router.sqlite3-shm';self.aux.write_bytes(b'aux')
+    def test_router_exact_B_P_WAL_SHM_root_and_case_matrix(self):
+        for case in ('B','P'):
+          for suffix in ('wal','shm'):
+           for role in ('private_root','private_case'):
+            with self.subTest(case=case,suffix=suffix,role=role),TemporaryDirectory(prefix='new-router-exact-matrix-') as directory:
+                private=Path(directory)/'private';public=Path(directory)/'public';private.mkdir();public.mkdir()
+                authority=private/case/'workload/authority';authority.mkdir(parents=True)
+                (authority/'router.sqlite3').write_bytes(b'm');aux=authority/('router.sqlite3-'+suffix);aux.write_bytes(b'x')
+                real=Path.lstat;gone=False
+                def missing(path,*a,**k):
+                    nonlocal gone
+                    if path==aux and not gone:
+                        gone=True;path.unlink();raise FileNotFoundError(errno.ENOENT,'synthetic last-close',str(path))
+                    return real(path,*a,**k)
+                with patch.object(Path,'lstat',missing):
+                    observed=m.resource_usage(private,public)['normal'] if role=='private_root' else m.case_bytes(private,public,case)
+                self.assertEqual(observed,1);self.assertTrue(gone)
+    def test_router_public_and_nested_wrong_case_do_not_borrow_role(self):
+        for root,api in ((self.public/'case-B-safe/B',lambda:m.case_bytes(self.private,self.public,'B')),
+                         (self.case/'P',lambda:m.case_bytes(self.private,self.public,'B')),
+                         (self.private/'C',lambda:m.resource_usage(self.private,self.public))):
+            with self.subTest(scope=root.relative_to(self.tmp.name)):
+                authority=root/'workload/authority';authority.mkdir(parents=True)
+                (authority/'router.sqlite3').write_bytes(b'm');self.aux=authority/'router.sqlite3-shm';self.aux.write_bytes(b'x');self.removed=False
+                with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)):
+                    with self.assertRaises(m.GateError):api()
+    def test_router_unrecognized_names_are_not_granted(self):
+        anchors=(('private_root',self.private),)
+        for relative in ('B/workload/authority/router0.sqlite3-shm','B/workload/authority/router.sqlite-shm',
+                         'B/workload/authority/router.sqlite3.tmp-shm','B/workload/authority/router.sqlite3',
+                         'B/workload/authority/router.sqlite3-journal','B/other/authority/router.sqlite3-shm'):
+            with self.subTest(relative=relative):self.assertIsNone(m._sqlite_aux_location(self.private/relative,anchors))
+    def test_router_EIO_is_not_retried(self):
+        original=OSError(errno.EIO,'synthetic IO',str(self.aux));calls=[]
+        def failed(path,*a,**k):
+            if path==self.aux:calls.append(1);raise original
+            return self.real(path,*a,**k)
+        with patch.object(Path,'lstat',failed):
+            with self.assertRaises(OSError) as caught:m.resource_usage(self.private,self.public)
+        self.assertIs(caught.exception,original);self.assertEqual(len(calls),1)
+    def test_router_aux_symlink_is_rejected(self):
+        self.aux.unlink();self.aux.symlink_to(self.main)
+        with self.assertRaises(m.GateError):m.resource_usage(self.private,self.public)
+    def test_router_parent_symlink_is_rejected(self):
+        moved=self.case/'workload/moved';self.authority.rename(moved);self.authority.symlink_to(moved,target_is_directory=True)
+        with self.assertRaises(m.GateError):m.resource_usage(self.private,self.public)
+    def test_router_retry_50ms_equality_is_not_admitted(self):
+        with patch.object(Path,'lstat',lambda path,*a,**k:self.disappearing(path,*a,**k)),patch.object(m.time,'monotonic_ns',side_effect=[0,50_000_000]):
+            with self.assertRaisesRegex(m.GateError,'resource_aux_retry_deadline'):m.resource_usage(self.private,self.public)
+
 if __name__=='__main__':unittest.main()

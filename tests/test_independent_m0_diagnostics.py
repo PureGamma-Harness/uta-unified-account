@@ -38,20 +38,20 @@ class D1Contract(unittest.TestCase):
         self.assertEqual(v['errno'],2);self.assertEqual(v['scope'],'PRIVATE_ROOT');self.assertEqual(v['operation'],'ENTRY_LSTAT')
         self.assertEqual(v['unknown_relative_path_sha256'],sha256(b'PRIVATE_ROOT\0B/SECRET_KEY_NONCE_HEADER.tmp').hexdigest())
         self.assertEqual(path.stat().st_mode&0o777,0o600);self.assertLessEqual(len(raw),4096)
-    def test_router_label_does_not_relax_the_resource_gate(self):
+    def test_known_router_label_does_not_relax_permission_failure(self):
         authority=self.private/'B/workload/authority';authority.mkdir(parents=True)
         main=authority/'router.sqlite3';main.write_bytes(b'synthetic');aux=authority/'router.sqlite3-shm';aux.write_bytes(b'synthetic')
         real=Path.lstat;removed=False
         def lstat(path,*a,**k):
             nonlocal removed
             if path==aux and not removed:
-                removed=True;path.unlink();raise FileNotFoundError(errno.ENOENT,'SECRET',str(path))
+                removed=True;raise PermissionError(errno.EACCES,'SECRET',str(path))
             return real(path,*a,**k)
         with patch.object(Path,'lstat',lstat):
             with self.assertRaises(m.ResourceHealthFailure):m.resource_health_check(self.private,self.public,'CASE_B',lambda:m.resource_usage(self.private,self.public))
         v=json.loads((self.public/'resource-diagnostic-CASE_B.json').read_text())
         self.assertEqual(v['catalogue_label'],'AUTH_ROUTER_SHM');self.assertIsNone(v['unknown_relative_path_sha256'])
-        self.assertEqual(v['primary_code'],'resource_missing_non_aux')
+        self.assertEqual(v['primary_code'],'RESOURCE_PERMISSION_ERROR');self.assertEqual(v['errno'],13)
     def test_allowed_recovered_shard_sidecar_does_not_write_a_failure(self):
         authority=self.private/'B/workload/authority';authority.mkdir(parents=True)
         (authority/'shard-0000.sqlite3').write_bytes(b'm');aux=authority/'shard-0000.sqlite3-shm';aux.write_bytes(b'x')

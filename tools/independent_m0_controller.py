@@ -293,8 +293,8 @@ def _sqlite_aux_location(path, anchors):
         try:relative=path.relative_to(anchor).as_posix()
         except ValueError:continue
         if role=='private_root':
-            patterns=[r'[BP]/workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)',r'runtime-probe/private\.sqlite3-(wal|shm)']
-        elif role=='private_case':patterns=[r'workload/authority/shard-[0-9]{4}\.sqlite3-(wal|shm)']
+            patterns=[r'[BP]/workload/authority/(?:router|shard-[0-9]{4})\.sqlite3-(wal|shm)',r'runtime-probe/private\.sqlite3-(wal|shm)']
+        elif role=='private_case':patterns=[r'workload/authority/(?:router|shard-[0-9]{4})\.sqlite3-(wal|shm)']
         else:raise GateError('resource_scan_role')
         if not any(re.fullmatch(pattern,relative) for pattern in patterns):continue
         return anchor,relative
