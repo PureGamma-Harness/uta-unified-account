@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "taskset",
+    "-c",
+    "1",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python3",
+    "-B",
+    "evidence/reviews/reserve-integer-independent/verify_once.py"
+  ],
+  "verifier_commit": "336eda6bc00b29be4663f9e64185bb7dc79786eb",
+  "started_utc": "2026-11-17T23:26:41.532007+00:00",
+  "finished_utc": "2026-11-17T23:26:41.917913+00:00",
+  "duration_ns": 385890758,
+  "returncode": 1,
+  "source_sha256_before": {
+    "uta/__init__.py": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43",
+    "uta/reserve_integer.py": "e6aeee830eb74df9ab01b442b0e04f33a93266cade7700ad41c59f3cbdafe09f",
+    "uta/reserve_kernel.py": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+  },
+  "source_sha256_after": {
+    "uta/__init__.py": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43",
+    "uta/reserve_integer.py": "e6aeee830eb74df9ab01b442b0e04f33a93266cade7700ad41c59f3cbdafe09f",
+    "uta/reserve_kernel.py": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+  },
+  "source_unchanged": true,
+  "stdout_bytes": 21728,
+  "stdout_sha256": "77923da70246d3606ea9284bac903b32aa367c658abb156f8f0c0f5c78685658",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "sql_service_financial_state_load": "NOT_RUN",
+  "production_approved": false,
+  "persistent_10k_pass": false
+}

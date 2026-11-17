@@ -1,0 +1,42 @@
+{
+  "kind": "read_only_adjudication_of_retained_first_red_not_a_kernel_rerun",
+  "original_stdout_sha256": "77923da70246d3606ea9284bac903b32aa367c658abb156f8f0c0f5c78685658",
+  "original_passed": false,
+  "failure_count": 72,
+  "failure_types": {
+    "oracle_or_wire_disagreement": 72
+  },
+  "failure_implementation_counts": {
+    "candidate": 36,
+    "unchanged_reference": 36
+  },
+  "failures_with_equal_actual_and_expected_decimal_tuples": 72,
+  "all_failures_have_equal_decimal_tuples": true,
+  "first_example": {
+    "actual": "2.2E-17",
+    "actual_tuple": [
+      0,
+      [
+        2,
+        2
+      ],
+      -18
+    ],
+    "case": "precision/1/boundary/quantity/1E-18/18/False",
+    "expected": "0.000000000000000022",
+    "expected_tuple": [
+      0,
+      [
+        2,
+        2
+      ],
+      -18
+    ],
+    "implementation": "candidate",
+    "problem": "oracle_or_wire_disagreement"
+  },
+  "interpretation": "Independent oracle fixed-format text was incorrectly treated as Decimal.__str__ wire. Candidate and unchanged reference have equal expected Decimal tuples in every recorded discrepancy. No candidate arithmetic defect established; complete wire gate not passed.",
+  "author_source_modified": false,
+  "additional_kernel_execution": false,
+  "production_approved": false
+}
