@@ -117,3 +117,35 @@ The next integrated source still needs its own complete local/CI/package
 qualification, scoped observer availability fix and separately preregistered
 new long run. No old freeze or original job may be modified to satisfy those
 gates. Production and real-funds approval remain absent.
+
+## Finding closure: 8c9238b
+
+Follow-up `8c9238bde2328c5d4ebaab64660ee6327417f55b` was independently
+inspected through committed Git blobs without moving this review worktree or
+executing a test. Relative to f5232c1, the producer source differs only by
+`path.stat(follow_symlinks=False)`. That is still one metadata lookup, with no
+raw inode descriptor or target read. Direct and dangling required-main
+symlinks are now nonregular and fail the existing required-main guard.
+Missing regular main files, exact transient ENOENT exceptions, directory scan
+errors, EACCES/EIO, budget thresholds and all other original functions remain
+unchanged. **The required-main symlink finding above is closed.** Its original
+open review and f5232c1 evidence remain historical and are not amended away.
+
+The follow-up archives the actual test-first direct/dangling case with one
+failure and one error against the previous lookup, then thirteen passing cases
+on each of the three runtimes. The added nonrequired dangling WAL/temp case
+checks that their targets are neither followed nor counted as regular content.
+Source/test hashes, five archive hashes and reported counters match the
+follow-up summary. This reviewer did not repeat those executions.
+
+The scope remains resource measurement: a symlink in a parent directory is
+outside this direct-entry closure, and no original authority/inode ownership
+proof follows from a byte count. The inherited final-status secondary-error
+limitation is explicitly documented and remains unchanged. The extra parent
+commit's producer-owned read-connection document is a proposal only; it
+introduces no runtime connection or eligibility behavior here.
+
+There is no remaining blocker in this scoped resource-sampler review. The
+original 2072.722-second/513-round paused attempt stays NO_GO. Combined-source
+full validation, CI, actual packages, observer availability and any new
+separately authorized six-hour attempt retain their independent gates.
