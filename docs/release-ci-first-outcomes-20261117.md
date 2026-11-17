@@ -72,4 +72,3 @@ No SQL, worker process, trading command, liquidation, performance load, deployme
 ## Deployment and rollback
 
 This is a documentation/evidence-only commit and changes no schema, package configuration, service or runtime behavior. Reviewers can reproduce metadata inspection with the six run IDs and compare the recorded SHA-256 values to the retained originals. Revert this evidence commit to withdraw the report; retain all private originals and earlier failed outcomes. This report does not authorize deployment or replacement of an active writer.
-
