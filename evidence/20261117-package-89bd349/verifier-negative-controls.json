@@ -1,0 +1,118 @@
+{
+  "cases": [
+    {
+      "case": "unexpected_sdist_runtime_rejected",
+      "argv": [
+        "python",
+        "/workspace/uta-release-packaging-89bd349/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-release-frozen-89bd349",
+        "--commit",
+        "89bd349",
+        "--wheel",
+        "/tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-89bd349/sdist-extra-runtime.tar.gz",
+        "--output",
+        "/tmp/uta-release-89bd349/negative-extra-runtime.json"
+      ],
+      "returncode": 1,
+      "sdist_runtime_exact": false,
+      "passed": true
+    },
+    {
+      "case": "same_version_runtime_digest_mismatch_rejected",
+      "argv": [
+        "/tmp/uta-release-89bd349/venv/bin/python",
+        "-I",
+        "/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py",
+        "--source",
+        "/workspace/uta-release-frozen-89bd349",
+        "--artifact-manifest",
+        "/tmp/uta-release-89bd349/negative-identity-manifest.json",
+        "--output",
+        "/tmp/uta-release-89bd349/external/identity-mismatch",
+        "--identity-only"
+      ],
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 205, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 71, in main\n    raise AssertionError(\"installed runtime differs from frozen artifact manifest\")\nAssertionError: installed runtime differs from frozen artifact manifest\n",
+      "passed": true
+    },
+    {
+      "case": "tracked_formal_dirty_source_rejected",
+      "argv": [
+        "python",
+        "/workspace/uta-release-packaging-89bd349/tools/verify_release_archives.py",
+        "--source",
+        "/tmp/uta-release-89bd349/negative-source",
+        "--commit",
+        "89bd349",
+        "--wheel",
+        "/tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-89bd349/negative-dirty-source.json"
+      ],
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-release-packaging-89bd349/tools/verify_release_archives.py\", line 77, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/uta-release-packaging-89bd349/tools/verify_release_archives.py\", line 31, in main\n    raise AssertionError(\"release checkout HEAD/runtime/manifest differs from the frozen commit\")\nAssertionError: release checkout HEAD/runtime/manifest differs from the frozen commit\n",
+      "passed": true
+    },
+    {
+      "case": "incorrect_console_script_target_rejected",
+      "argv": [
+        "python",
+        "/workspace/uta-release-packaging-89bd349/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-release-frozen-89bd349",
+        "--commit",
+        "89bd349",
+        "--wheel",
+        "/tmp/uta-release-89bd349/wheel-wrong-entrypoints.whl",
+        "--sdist",
+        "/tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-89bd349/negative-entrypoints.json"
+      ],
+      "returncode": 1,
+      "entry_points": false,
+      "passed": true
+    },
+    {
+      "case": "modified_cli_helper_rejected_before_execution",
+      "argv": [
+        "/tmp/uta-release-89bd349/venv/bin/python",
+        "-I",
+        "/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py",
+        "--source",
+        "/tmp/uta-release-89bd349/negative-source",
+        "--artifact-manifest",
+        "/tmp/uta-release-89bd349/artifact-manifest-bound.json",
+        "--output",
+        "/tmp/uta-release-89bd349/external/helper-mismatch"
+      ],
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 215, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 89, in main\n    raise AssertionError(\"CLI acceptance helper differs from frozen artifact manifest\")\nAssertionError: CLI acceptance helper differs from frozen artifact manifest\n",
+      "passed": true
+    },
+    {
+      "case": "nonisolated_invocation_rejected",
+      "argv": [
+        "/tmp/uta-release-89bd349/venv/bin/python",
+        "/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py",
+        "--source",
+        "/workspace/uta-release-frozen-89bd349",
+        "--artifact-manifest",
+        "/tmp/uta-release-89bd349/artifact-manifest-bound.json",
+        "--output",
+        "/tmp/uta-release-89bd349/external/nonisolated",
+        "--identity-only"
+      ],
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 215, in <module>\n    raise SystemExit(main())\n                     ^^^^^^\n  File \"/workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py\", line 60, in main\n    raise AssertionError(\"invoke the installed verifier with python -I\")\nAssertionError: invoke the installed verifier with python -I\n",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "production_approved": false
+}

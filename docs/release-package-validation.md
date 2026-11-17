@@ -72,7 +72,7 @@ receipt and raw order rows against the same financial expectations. The second
 run passed 8/8 in 7.966 seconds. No runtime change was made to obtain the pass.
 
 Actual installed console commands also passed: `uta-durable --help`, `init`,
-`inspect`, `status`, and `uta demo`, `uta acceptance`, `uta scenario`. Functional
+`inspect`, `status`, `uta-ops --help`, and `uta demo`, `uta acceptance`, `uta scenario`. Functional
 acceptance included classic import, borrowing and repayment, two real spot
 matches, three linear matches, partial liquidation, restart, and read-only
 four-side reconciliation. Terminal balances were **93.152 USD and 0.999 BTC**;
@@ -87,6 +87,25 @@ including the raw `.prof` files. Its historical results remain 200 queue ACKs,
 171 financial successes, 18 business rejections, 11 control/market rejections,
 and a preserved `SQLITE_IOERR_SHORT_READ`; this packaging check does not
 reinterpret that run as a successful capacity gate.
+
+An additional read-only review identified limits in the first verifier scripts,
+without finding incorrect runtime bytes or source imports in the recorded run.
+The follow-up binds installed files to the complete artifact manifest and Git
+commit, pins the copied CLI helper SHA before executing it, requires isolated
+Python plus exactly eight tests with zero skips, checks all three console-script
+targets, and rejects extra sdist runtime files or dirty tracked verification
+sources. The repeated financial response must equal the original complete
+terminal result. The strengthened run passed **8/8 in 7.608 seconds**. Its
+separate bound manifest and report are retained alongside the unchanged earlier
+raw records.
+
+Six actual negative controls failed as required: an additional sdist runtime
+file, wrong installed-runtime digest, dirty tracked formal source, incorrect
+console-script target, modified CLI test helper and nonisolated invocation.
+These validate the verifier's rejection paths; they do not represent failures
+of the unmodified wheel. `--identity-only` checks installed byte identity and
+explicitly reports zero functional tests, for a later artifact whose runtime
+bytes have already passed the full installed exercise.
 
 ## Reproduce
 
@@ -107,6 +126,7 @@ python -m venv "$WORK/venv"
 "$WORK/venv/bin/python" -m pip install --no-deps --no-index "$WHEEL"
 env -u PYTHONPATH "$WORK/venv/bin/python" -I \
   "$VERIFIERS/validate_installed_release.py" --source "$FROZEN_CHECKOUT" \
+  --artifact-manifest "$WORK/manifest.json" \
   --output "$WORK/installed"
 ```
 

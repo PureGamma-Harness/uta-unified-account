@@ -47,19 +47,46 @@ def installed_modules(site):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--artifact-manifest", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--identity-only", action="store_true",
+                        help="verify installed bytes only; never claim functional tests were executed")
     args = parser.parse_args()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     source = args.source.resolve()
     site = Path(uta.__file__).resolve().parent.parent
+    if not sys.flags.isolated:
+        raise AssertionError("invoke the installed verifier with python -I")
     if site.is_relative_to(source) or source in map(Path, sys.path):
         raise AssertionError("source checkout must not be an import location")
     if os.environ.get("PYTHONPATH"):
         raise AssertionError("unset PYTHONPATH before installed acceptance")
     if importlib.metadata.version("uta-reference-exchange") != "0.4.0a1":
         raise AssertionError("unexpected installed distribution version")
+    entries = {entry.name: entry.value for entry in importlib.metadata.distribution("uta-reference-exchange").entry_points
+               if entry.group == "console_scripts"}
+    if entries != {"uta": "uta.__main__:main", "uta-ops": "uta.ops:main", "uta-durable": "uta.durable_cli:main"}:
+        raise AssertionError("installed console-script targets differ from frozen contract")
+    manifest = json.loads(args.artifact_manifest.read_text())
+    installed_runtime = {str(path.relative_to(site)): sha256(path.read_bytes()).hexdigest()
+                         for path in (site / "uta").rglob("*")
+                         if path.is_file() and path.suffix in (".py", ".html")}
+    runtime_digest = sha256(json.dumps(installed_runtime, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    if installed_runtime != manifest["runtime_files"] or runtime_digest != manifest["runtime_tree_sha256"]:
+        raise AssertionError("installed runtime differs from frozen artifact manifest")
+    identity = {"source_commit": manifest["source_commit"], "runtime_tree_sha256": runtime_digest,
+                "artifacts": manifest["artifacts"], "version": uta.__version__,
+                "installed_site": str(site), "isolated": bool(sys.flags.isolated),
+                "sys_path": sys.path, "modules": installed_modules(site), "production_approved": False}
+    if args.identity_only:
+        identity.update(scope="installed runtime identity only", functional_tests_executed=0, passed=True)
+        (output / "installed-identity.json").write_text(json.dumps(identity, indent=2, sort_keys=True) + "\n")
+        print(json.dumps({key: identity[key] for key in ("source_commit", "runtime_tree_sha256", "functional_tests_executed", "passed")}))
+        return 0
     original = source / "tests/test_durable_cli.py"
+    if sha256(original.read_bytes()).hexdigest() != manifest["cli_helper_sha256"]:
+        raise AssertionError("CLI acceptance helper differs from frozen artifact manifest")
     copied = output / "frozen_test_durable_cli.py"
     shutil.copyfile(original, copied)
     spec = importlib.util.spec_from_file_location("frozen_test_durable_cli", copied)
@@ -121,6 +148,7 @@ def main():
             self.eventually(lambda: helper.health_after(self, second_port))
             code, repeated, _ = self.request(second_port, "POST", "/v2/accounts/alice/orders", payload, key="trader")
             self.assertEqual((code, repeated["state"]), (200, "SUCCEEDED"))
+            self.assertEqual(repeated["result"], completed_order["result"])
             def canceled():
                 code, record, _ = self.request(second_port, "GET", "/v2/accounts/alice/commands/offline-cancel", key="trader")
                 return record if code == 200 else None
@@ -146,7 +174,7 @@ def main():
     commands = []
     environment = dict(os.environ)
     environment.pop("PYTHONPATH", None)
-    for command in (("uta-durable", "--help"), ("uta", "demo"), ("uta", "acceptance"), ("uta", "scenario")):
+    for command in (("uta-durable", "--help"), ("uta-ops", "--help"), ("uta", "demo"), ("uta", "acceptance"), ("uta", "scenario")):
         executable = Path(sys.executable).parent / command[0]
         completed = subprocess.run([str(executable), *command[1:]], cwd=output, env=environment,
             capture_output=True, text=True, timeout=45)
@@ -169,16 +197,18 @@ def main():
         commands.append({"argv": argv, "returncode": completed.returncode})
         if completed.returncode:
             raise AssertionError(f"installed entrypoint failed: {operation}: {completed.stderr}")
-    report = {"version": uta.__version__, "interpreter": sys.version, "sqlite": sqlite3.sqlite_version,
+    qualified = result.wasSuccessful() and result.testsRun == 8 and not result.skipped
+    report = {**identity, "version": uta.__version__, "interpreter": sys.version, "sqlite": sqlite3.sqlite_version,
         "installed_site": str(site), "sys_path": sys.path, "isolated": bool(sys.flags.isolated),
         "pythonpath": os.environ.get("PYTHONPATH"), "helper_sha256": sha256(original.read_bytes()).hexdigest(),
         "copied_helper_sha256": sha256(copied.read_bytes()).hexdigest(), "helper_root_override": str(helper.ROOT),
         "modules": installed_modules(site), "tests": {"run": result.testsRun,
         "failures": len(result.failures), "errors": len(result.errors), "skipped": len(result.skipped)},
-        "commands": commands, "passed": result.wasSuccessful(), "production_approved": False}
+        "commands": commands, "console_script_targets": entries, "expected_tests": 8,
+        "passed": qualified, "production_approved": False}
     (output / "installed-report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({k: report[k] for k in ("version", "tests", "passed", "production_approved")}))
-    return 0 if result.wasSuccessful() else 1
+    return 0 if qualified else 1
 
 
 if __name__ == "__main__":

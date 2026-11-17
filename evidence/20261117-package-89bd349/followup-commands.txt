@@ -1,0 +1,17 @@
+All original artifact, run and manifest files from commit711d6df remain unchanged.
+
+Independent read-only review prompted stricter verifier guards, not runtime changes.
+The original frozen source was reopened in a second dedicated detached worktree:
+git worktree add --detach /workspace/uta-release-frozen-89bd349 89bd349
+
+At /workspace/uta-release-packaging-89bd349:
+python tools/verify_release_archives.py --source /workspace/uta-release-frozen-89bd349 --commit 89bd349 --wheel /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-89bd349/artifact-manifest-bound.json
+Exit1, expected original missing formal JSON; every other check true. This bound manifest additionally pins the frozen CLI helper SHA. An intermediate hardened manifest and installed run3 are also retained.
+
+At /tmp/uta-release-89bd349/external:
+env -u PYTHONPATH /tmp/uta-release-89bd349/venv/bin/python -I /workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py --source /workspace/uta-release-frozen-89bd349 --artifact-manifest /tmp/uta-release-89bd349/artifact-manifest-bound.json --output /tmp/uta-release-89bd349/external/run-4-bound
+Exit0, 8/8 tests in7.608s; actual installed47 runtime file hashes and complete result replay match. uta-ops --help additionally executes successfully. Full sourcecommit/wheel+sdist digests/runtime digest are recorded in installed-report-bound.json.
+
+Six real negative verifier invocations and their actual argv/observed rejection are in verifier-negative-controls.json. They operate only on independent copies or temporary bad manifests: extra_runtime sdist member; deliberately wrong runtime digest; independent shared clone with tracked formal source changed; cloned wheel with wrong uta-ops target; changed helper in the independent clone; missing -I. No frozen checkout, installed runtime or original artifact was edited by these controls. No financial test was executed for rejected helper/identity/nonisolated invocations.
+
+The report verifier scripts are later than the frozen source. Execute these scripts from the report commit against a fresh exact frozen checkout. Do not substitute the report commit for the artifact's stated Git source commit.

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import configparser
 from hashlib import sha256
 import io
 import json
@@ -27,7 +28,7 @@ def main():
     def git(*command):
         return subprocess.check_output(["git", *command], cwd=root, text=True).strip()
     commit = git("rev-parse", args.commit)
-    if git("rev-parse", "HEAD") != commit or git("diff", "--name-only", commit, "--", "uta", "pyproject.toml", "MANIFEST.in"):
+    if git("rev-parse", "HEAD") != commit or git("diff", "--name-only", commit, "--", "uta", "formal", "tools", "tests", "benchmarks", "pyproject.toml", "MANIFEST.in"):
         raise AssertionError("release checkout HEAD/runtime/manifest differs from the frozen commit")
     paths = git("ls-tree", "-r", "--name-only", commit).splitlines()
     runtime = {name: digest((root / name).read_bytes()) for name in paths
@@ -40,6 +41,9 @@ def main():
         metadata_name = next(name for name in wheel.namelist() if name.endswith(".dist-info/METADATA"))
         metadata = wheel.read(metadata_name).decode()
         entry_points = wheel.read(metadata_name.removesuffix("METADATA") + "entry_points.txt").decode()
+    parsed_entries = configparser.ConfigParser(interpolation=None)
+    parsed_entries.read_string(entry_points)
+    expected_entries = {"uta": "uta.__main__:main", "uta-ops": "uta.ops:main", "uta-durable": "uta.durable_cli:main"}
     with tarfile.open(args.sdist) as source:
         prefix = source.getmembers()[0].name.split("/")[0] + "/"
         members = {item.name.removeprefix(prefix): item for item in source.getmembers() if item.isfile()}
@@ -48,7 +52,8 @@ def main():
                 raise AssertionError("unsafe source distribution member")
         missing = sorted(set(required) - members.keys())
         mismatched = [name for name in required if name in members and source.extractfile(members[name]).read() != (root / name).read_bytes()]
-        source_runtime = {name: digest(source.extractfile(members[name]).read()) for name in runtime if name in members}
+        source_runtime = {name: digest(source.extractfile(item).read()) for name, item in members.items()
+                          if name.startswith("uta/") and name.endswith((".py", ".html"))}
         fixture = source.extractfile(members["tests/fixtures/legacy_ad3f5b8_uta.tar.gz"]).read()
         provenance = json.loads(source.extractfile(members["tests/fixtures/legacy_ad3f5b8_provenance.json"]).read())
         with tarfile.open(fileobj=io.BytesIO(fixture), mode="r:gz") as original:
@@ -58,11 +63,12 @@ def main():
         "sdist_required_files_exact": not missing and not mismatched,
         "legacy_fixture_pinned": digest(fixture) == provenance["archive_sha256"],
         "legacy_fixture_licensed": licensed,
-        "entry_points": all(name in entry_points for name in ("uta =", "uta-ops =", "uta-durable ="))}
+        "entry_points": dict(parsed_entries["console_scripts"]) == expected_entries}
     report = {"source_commit": commit, "version": "0.4.0a1", "runtime_files": runtime,
         "runtime_tree_sha256": digest(json.dumps(runtime, sort_keys=True, separators=(",", ":")).encode()),
         "sdist_required_files": required, "sdist_missing": missing, "sdist_mismatched": mismatched,
         "sdist_member_count": len(members), "legacy_fixture_provenance": provenance, "entry_points": entry_points,
+        "cli_helper_sha256": digest((root / "tests/test_durable_cli.py").read_bytes()),
         "checks": checks, "passed": all(checks.values()), "production_approved": False,
         "artifacts": {path.name: {"sha256": digest(path.read_bytes()), "bytes": path.stat().st_size}
                       for path in (args.wheel, args.sdist)}}
