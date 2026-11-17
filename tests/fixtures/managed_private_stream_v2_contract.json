@@ -1,0 +1,557 @@
+{
+  "format": "managed-private-events-proposed-contract-v2",
+  "status": "DESIGN_NOT_IMPLEMENTED",
+  "base_runtime_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "amends_design_commit": "c68aabe82ce78ab10a3c886894ce8dc9952302d1",
+  "review_commit": "f7a86b5a7a53476fb277272b0d5cb7c679d73540",
+  "original_thirty_cases_unchanged": true,
+  "synthetic": true,
+  "runtime_tests_executed": 0,
+  "websocket_or_sql_operations_executed": 0,
+  "documentation_http_source_fetches_this_amendment": 1,
+  "production_approved": false,
+  "cases": [
+    {
+      "id": "WS-V2-C031",
+      "kind": "character_byte_distinction",
+      "input": {
+        "ascii_json_wrapper_bytes": 8,
+        "unicode_codepoint": "汉",
+        "codepoint_count": 2000000,
+        "old_python_character_limit": 4194304
+      },
+      "expected": {
+        "python_character_count": 2000008,
+        "utf8_byte_count": 6000008,
+        "old_len_str_check_would_allow_size": true,
+        "is_proof_of_current_SQL_exploit": false,
+        "new_byte_precheck_before_materialization": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C032",
+      "kind": "context_current_market",
+      "input": {
+        "selected_column": "uta_market.payload",
+        "sqlite_typeof": "text",
+        "expected_BLOB_length_NOT_RUN": 262145,
+        "cap_bytes": 262144
+      },
+      "expected": {
+        "raw_column_selected_into_python": false,
+        "decoder_called": false,
+        "http_status": 503,
+        "account_frame_sent": false,
+        "cursor_advanced": false,
+        "same_RO_transaction_required": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C033",
+      "kind": "context_policy",
+      "input": {
+        "selected_column": "uta_config.value[policy]",
+        "sqlite_typeof": "text",
+        "expected_BLOB_length_NOT_RUN": 32769,
+        "cap_bytes": 32768
+      },
+      "expected": {
+        "raw_column_selected_into_python": false,
+        "decoder_called": false,
+        "http_status": 503,
+        "account_frame_sent": false,
+        "cursor_advanced": false,
+        "same_RO_transaction_required": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C034",
+      "kind": "context_archive_market",
+      "input": {
+        "selected_column": "uta_market_history.payload[current SID]",
+        "sqlite_typeof": "text",
+        "expected_BLOB_length_NOT_RUN": 262145,
+        "cap_bytes": 262144
+      },
+      "expected": {
+        "raw_column_selected_into_python": false,
+        "decoder_called": false,
+        "http_status": 503,
+        "account_frame_sent": false,
+        "cursor_advanced": false,
+        "same_RO_transaction_required": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C035",
+      "kind": "context_type",
+      "input": {
+        "selected_column": "uta_config.value[risk_policy]",
+        "sqlite_typeof": "blob",
+        "expected_BLOB_length_NOT_RUN": 16
+      },
+      "expected": {
+        "http_status": 503,
+        "raw_column_selected_into_python": false,
+        "coerce_to_str_or_repair": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C036",
+      "kind": "canonical_base64",
+      "input": {
+        "canonical_key": "dGhlIHNhbXBsZSBub25jZQ==",
+        "alias_key": "dGhlIHNhbXBsZSBub25jZR==",
+        "signed_challenge_hex": "7468652073616d706c65206e6f6e6365"
+      },
+      "expected": {
+        "same_decoded_16_bytes": true,
+        "canonical_accept": "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
+        "alias_accept": "Zgw8jYXtqX5qJr7MJ1Q/MqzeSRI=",
+        "alias_reencoded_equals_original_header": false,
+        "alias_http_status": 400,
+        "alias_error_code": "invalid_ws_key",
+        "alias_nonce_consumed": false,
+        "canonical_key_text_uniquely_bound_after_strict_equality": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C037",
+      "kind": "close_reserved",
+      "input": {
+        "client_frame_hex": "88820102030402ee",
+        "decoded_close_code": 1004
+      },
+      "expected": {
+        "close_code": 1002,
+        "server_frame_hex": "880203ea"
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C038",
+      "kind": "close_direction",
+      "input": {
+        "client_frame_hex": "88820102030402f0",
+        "decoded_close_code": 1010
+      },
+      "expected": {
+        "incoming_close_valid": true,
+        "server_close_code": 1000,
+        "server_frame_hex": "880203e8",
+        "echo_1010": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C039",
+      "kind": "close_direction",
+      "input": {
+        "server_encoder_requested_code": 1010
+      },
+      "expected": {
+        "encoded": false,
+        "error": "invalid_close_code_direction",
+        "wire_bytes_emitted": 0
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C040",
+      "kind": "close_payload_length",
+      "input": {
+        "client_frame_hex": "88810102030402",
+        "unmasked_payload_hex": "03"
+      },
+      "expected": {
+        "close_code": 1002,
+        "one_byte_status_valid": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C041",
+      "kind": "control_length",
+      "input": {
+        "client_header_hex": "88fe007e01020304",
+        "declared_payload_length": 126
+      },
+      "expected": {
+        "close_code": 1002,
+        "payload_allocated": false,
+        "wait_for_declared_payload": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C042",
+      "kind": "length_high_bit",
+      "input": {
+        "client_header_hex": "81ff800000000000000001020304",
+        "declared_payload_length": 9223372036854775808
+      },
+      "expected": {
+        "close_code": 1002,
+        "payload_allocated": false,
+        "application_policy_does_not_override_protocol_error": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C043",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 125,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 2,
+        "whole_wire_frame_bytes": 127,
+        "may_enqueue": true,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C044",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 126,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 4,
+        "whole_wire_frame_bytes": 130,
+        "may_enqueue": true,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C045",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 65535,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 4,
+        "whole_wire_frame_bytes": 65539,
+        "may_enqueue": true,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C046",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 65536,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 10,
+        "whole_wire_frame_bytes": 65546,
+        "may_enqueue": true,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C047",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 262134,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 10,
+        "whole_wire_frame_bytes": 262144,
+        "may_enqueue": true,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C048",
+      "kind": "whole_wire_frame_budget",
+      "input": {
+        "server_masked": false,
+        "json_utf8_payload_bytes": 262135,
+        "whole_wire_cap_bytes": 262144
+      },
+      "expected": {
+        "RFC_header_bytes": 10,
+        "whole_wire_frame_bytes": 262145,
+        "may_enqueue": false,
+        "oversized_complete_JSON_allocation_allowed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C049",
+      "kind": "whole_wire_queue_budget",
+      "input": {
+        "application_frames_wire_bytes": [
+          262144,
+          262144
+        ],
+        "additional_being_encoded_wire_bytes": 262144,
+        "control_reserve_frames_wire_bytes": [
+          127,
+          127
+        ]
+      },
+      "expected": {
+        "application_pending_wire_bytes": 524288,
+        "application_pending_within_cap": true,
+        "three_application_buffers_bytes": 786432,
+        "wire_buffers_with_control_reserve_bytes": 786686,
+        "bounds_total_RSS_or_TLS_kernel_bytes": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C050",
+      "kind": "queue_overflow",
+      "input": {
+        "current_application_wire_bytes": 524288,
+        "current_application_frames": 2,
+        "next_application_wire_bytes": 127
+      },
+      "expected": {
+        "next_enqueued": false,
+        "current_application_wire_bytes_after": 524288,
+        "evict_middle_page_and_continue": false,
+        "control_close_slot_starved": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C051",
+      "kind": "absolute_partial_header",
+      "input": {
+        "first_frame_byte_monotonic_ms": 0,
+        "partial_header_byte_arrivals_ms": [
+          0,
+          490
+        ],
+        "configured_header_budget_ms": 500,
+        "auth_checks_due_ms": [
+          250,
+          500
+        ]
+      },
+      "expected": {
+        "header_absolute_deadline_ms": 500,
+        "progress_at_490_extends_deadline": false,
+        "auth_timer_can_run_at_250_and_500": true,
+        "header_incomplete_timeout_close_code": 1008,
+        "this_is_real_scheduling_evidence": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C052",
+      "kind": "absolute_partial_payload",
+      "input": {
+        "first_frame_byte_monotonic_ms": 0,
+        "header_complete_ms": 10,
+        "partial_control_payload_arrivals_ms": [
+          400,
+          900,
+          1200
+        ],
+        "configured_frame_budget_ms": 1000,
+        "auth_checks_due_ms": [
+          250,
+          500,
+          750,
+          1000
+        ]
+      },
+      "expected": {
+        "frame_absolute_deadline_ms": 1000,
+        "arrival_at_900_extends_deadline": false,
+        "must_not_wait_until_ms": 1200,
+        "timeout_close_code": 1008,
+        "this_is_real_scheduling_evidence": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C053",
+      "kind": "absolute_handshake",
+      "input": {
+        "accepted_monotonic_ms": 0,
+        "header_byte_arrivals_ms": [
+          0,
+          1000,
+          2000,
+          2999,
+          3001
+        ],
+        "configured_total_budget_ms": 3000
+      },
+      "expected": {
+        "handshake_absolute_deadline_ms": 3000,
+        "latest_progress_extends_deadline": false,
+        "http_status_if_reply_possible": 408,
+        "upgraded": false,
+        "nonce_consumed": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C054",
+      "kind": "auth_lane_stall",
+      "input": {
+        "auth_check_requested_ms": 250,
+        "auth_result_budget_ms": 100,
+        "old_auth_success_ms": 0,
+        "late_result_arrives_ms": 5000,
+        "data_result_already_available": true
+      },
+      "expected": {
+        "auth_result_deadline_ms": 350,
+        "new_application_frame_sent": false,
+        "close_code": 1011,
+        "error_code": "auth_check_timeout",
+        "late_result_can_reauthorize_closed_session": false,
+        "replacement_threads_spawned": 0,
+        "actual_OS_RTO_proven": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C055",
+      "kind": "pong_deadline_not_progress",
+      "input": {
+        "pending_ping_payload_hex": "6869",
+        "original_pong_deadline_ms": 800,
+        "unsolicited_pong_completed_ms": 500,
+        "partial_other_frame_byte_ms": 790
+      },
+      "expected": {
+        "pong_deadline_after_other_progress_ms": 800,
+        "close_code_at_unmatched_deadline": 1001,
+        "unsolicited_pong_is_protocol_error": false,
+        "can_ignore_auth_timer_due_to_partial_frame": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C056",
+      "kind": "partial_write_and_revoke",
+      "input": {
+        "application_frame_first_byte_ms": 100,
+        "original_frame_write_budget_ms": 500,
+        "revocation_observed_ms": 250,
+        "unsent_queued_application_pages": 1
+      },
+      "expected": {
+        "original_frame_write_deadline_ms": 600,
+        "next_application_frame_may_start": false,
+        "inject_close_mid_application_payload": false,
+        "allowed_actions": [
+          "finish_started_frame_within_original_deadline_then_close",
+          "abort_transport"
+        ],
+        "clear_unsent_queue_without_claiming_client_apply": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C057",
+      "kind": "close_empty_and_private",
+      "input": {
+        "client_empty_close_hex": "888001020304",
+        "private_close_code_examples": [
+          4000,
+          4008,
+          4999
+        ]
+      },
+      "expected": {
+        "empty_payload_close_valid": true,
+        "server_reply_close_code": 1000,
+        "server_reply_hex": "880203e8",
+        "all_private_examples_wire_valid": true,
+        "unknown_private_code_becomes_financial_instruction": false
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    },
+    {
+      "id": "WS-V2-C058",
+      "kind": "close_set_matrix",
+      "input": {
+        "tested_codes": [
+          999,
+          1000,
+          1004,
+          1005,
+          1006,
+          1007,
+          1010,
+          1011,
+          1012,
+          1013,
+          1014,
+          1015,
+          1016,
+          2999,
+          3000,
+          3001,
+          3003,
+          3008,
+          3999,
+          4000,
+          4999,
+          5000
+        ]
+      },
+      "expected": {
+        "client_accepted_codes": [
+          1000,
+          1007,
+          1010,
+          1011,
+          1012,
+          1013,
+          1014,
+          3000,
+          3003,
+          3008,
+          4000,
+          4999
+        ],
+        "server_encoder_accepted_codes": [
+          1000,
+          1007,
+          1011,
+          1012,
+          1013,
+          1014,
+          3000,
+          3003,
+          3008,
+          4000,
+          4999
+        ],
+        "registry_policy_fixed_for_this_protocol": true
+      },
+      "execution_status": "NOT_RUN_REQUIREMENT"
+    }
+  ]
+}
