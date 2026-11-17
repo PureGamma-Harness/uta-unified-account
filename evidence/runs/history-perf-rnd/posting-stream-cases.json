@@ -24,7 +24,7 @@
     {"id": "HPS-010", "mutation": "corrupt event hash only", "expect": "LedgerError: journal event hash changed"},
     {"id": "HPS-011", "mutation": "units text is +1250 or 01250 or -0", "expect": "LedgerError: corrupt or out-of-range ledger integer"},
     {"id": "HPS-012", "mutation": "units text is noninteger", "expect": "LedgerError: corrupt ledger integer"},
-    {"id": "HPS-013", "mutation": "one stored unit equals either sign of 10**38", "expect": "LedgerError: corrupt or out-of-range ledger integer"},
+    {"id": "HPS-013", "mutation": "one stored unit equals either sign of 10**38", "expect": "positive: LedgerError corrupt or out-of-range ledger integer; negative 40-character text: earlier LedgerError corrupt ledger integer"},
     {"id": "HPS-014", "mutation": "two independently valid balanced events reach either sign of 10**38 cumulatively, with literal rebuilt fingerprints/hashes", "expect": "LedgerError: replayed balance exceeds supported range"},
     {"id": "HPS-015", "mutation": "one materialized balance differs", "expect": "LedgerError: materialized balances differ from journal replay"},
     {"id": "HPS-016", "mutation": "event-one hash chain broken and later malformed units", "expect": "first original chain error, no early later-group decode"},

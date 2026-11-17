@@ -165,7 +165,10 @@ class HistoryPostingsStreamTests(unittest.TestCase):
         for value in ("+300", "0300", "-0", str(10**38), str(-(10**38))):
             with self.subTest(value=value):
                 self.corrupt(lambda c: c.execute("UPDATE ledger_postings SET units=? WHERE sequence=2 AND ordinal=1", (value,)))
-                self.rejected("corrupt or out-of-range ledger integer")
+                # The negative boundary is 40 characters and hits the existing
+                # length check before the positive boundary's numeric check.
+                self.rejected("corrupt ledger integer" if len(value) > 39 else
+                              "corrupt or out-of-range ledger integer")
 
     def test_noninteger_units(self):
         self.corrupt(lambda c: c.execute("UPDATE ledger_postings SET units='x' WHERE sequence=2 AND ordinal=1"))
