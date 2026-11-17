@@ -3,7 +3,7 @@ from copy import deepcopy
 import unittest
 from unittest.mock import patch
 
-from uta import credit_audit_v2, credit_audit_v2_replay, credit_fifo_v2, existing_services
+from uta import credit_audit_v2, credit_audit_v2_replay, credit_fifo_v2, credit_native, existing_services
 from uta.credit_artifact import _loaded_modules, credit_artifact_id, credit_code_artifact
 
 
@@ -37,6 +37,19 @@ class CreditV2CodeBindingTests(unittest.TestCase):
         changed["uta_command_config"] += " synthetic alteration"
         with patch.object(credit_fifo_v2, "_TABLE_SQL", changed):
             self.assertNotEqual(_loaded_modules(("credit_fifo_v2",)), before)
+
+    def test_native_catalog_alias_cannot_change_while_parent_checker_stays_equal(self):
+        before = _loaded_modules(("credit_native", "storage"))
+        alias = "uta.credit_native._LedgerVerificationView._verify_postings_definition"
+        original = "uta.storage.DurableLedger._verify_postings_definition"
+        self.assertIn(alias, before[0])
+        self.assertIn(original, before[0])
+        def skipped_checker(connection):
+            return None
+        with patch.object(credit_native._LedgerVerificationView, "_verify_postings_definition", staticmethod(skipped_checker)):
+            after = _loaded_modules(("credit_native", "storage"))
+        self.assertNotEqual(before[0][alias], after[0][alias])
+        self.assertEqual(before[0][original], after[0][original])
 
 
 if __name__ == "__main__":

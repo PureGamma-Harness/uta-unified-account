@@ -1,0 +1,26 @@
+{
+  "scope": "new pure loaded-code negative from independent narrow review: actual view alias mutation changes its artifact key even when original storage checker unchanged; no SQL/product construction",
+  "source_commit": "dbb3f13330233f5223ba38f91df4611f44575702",
+  "test_sha256": "f5f68c60c82ff95666a3e5642b4ed55f1ff06a328093f44e0fdd04492e337968",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_code_binding.CreditV2CodeBindingTests.test_native_catalog_alias_cannot_change_while_parent_checker_stays_equal",
+    "-v"
+  ],
+  "timeout_seconds": 10,
+  "begin": "2026-11-17T15:53:09.788565+00:00",
+  "end": "2026-11-17T15:53:09.991638+00:00",
+  "elapsed_seconds": 0.20307634299388155,
+  "exit_code": 0,
+  "raw_sha256": "d1af7878ffc109e02052da0c50bd1eb657fa299c148f4883bd0dbfb30272a7f0",
+  "test_was_uncommitted_at_run": true,
+  "runtime_source_was_unchanged": true,
+  "provenance_note": "Production source is pinned to source_commit; the newly authored test is separately pinned by test_sha256 and committed with this evidence. No clean-tree or full-suite claim."
+}

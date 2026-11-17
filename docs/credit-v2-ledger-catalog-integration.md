@@ -54,3 +54,13 @@ second effect and checks public501/readinessfalse. This is new-source evidence;
 no old code-bound database or previous PASS is inherited. Raw is in `attempt-02`,
 while `attempt-01` remains the unchanged original integration red. Independent
 review of the narrow alias and final full-matrix/package gates remain required.
+
+A subsequent pure loaded-code test covers the non-blocking review suggestion:
+the view's real alias key and the parent storage checker key both exist, and
+replacing only the alias changes its fingerprint while the parent checker
+fingerprint stays equal. The replacement is never executed as a verifier or
+used with SQL, a financial context or a successful callback. This new single
+test passed once in0.009s; its separate test hash and unchanged production-source
+commit are recorded in `alias-code-binding/`. The test was not yet committed at
+that run, which is explicit in the manifest; no clean-tree/full-suite result is
+claimed. Final integrated validation must execute its committed version.
