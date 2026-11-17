@@ -1,0 +1,478 @@
+{
+  "reviewed_utc": "2026-11-17T06:01:31.155782+00:00",
+  "source_sha": "7200097ce9f92fa678907bee9a99933f60d65bc3",
+  "source_and_manifest_files_match": true,
+  "affinity": [
+    0
+  ],
+  "runs": [
+    {
+      "run_id": "B1",
+      "offered": 200,
+      "outcomes": {
+        "financial_succeeded": 163,
+        "business_rejected": 18,
+        "control_or_market_rejected": 19
+      },
+      "ack": 200,
+      "duration_including_drain_s": 10.0,
+      "drain_s": 0,
+      "financial_rate_including_drain": 16.3,
+      "latency": {
+        "all": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 123.271419,
+            "p95": 299.964714,
+            "p99": 471.612421,
+            "p99_9": 914.952058
+          },
+          "published_histogram_upper_ms": {
+            "p50": 123.36848,
+            "p95": 299.984692,
+            "p99": 471.776377,
+            "p99_9": 915.228552
+          },
+          "max_ms": 914.952058
+        },
+        "financial_succeeded": {
+          "samples": 163,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 130.853669,
+            "p95": 305.418233,
+            "p99": 518.911531,
+            "p99_9": 914.952058
+          },
+          "published_histogram_upper_ms": {
+            "p50": 130.862371,
+            "p95": 305.430559,
+            "p99": 519.287214,
+            "p99_9": 915.228552
+          },
+          "max_ms": 914.952058
+        },
+        "enqueue_ack": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 15.439918,
+            "p95": 202.322588,
+            "p99": 439.962852,
+            "p99_9": 735.011953
+          },
+          "published_histogram_upper_ms": {
+            "p50": 15.443905,
+            "p95": 202.335723,
+            "p99": 440.336661,
+            "p99_9": 735.303431
+          },
+          "max_ms": 735.011953
+        }
+      },
+      "readonly_sql_full_check": [
+        {
+          "shard": 0,
+          "accounts": 49,
+          "orders": 76,
+          "commands": 98,
+          "decisions": 76,
+          "ledger_events": 49,
+          "positions_fills_matches": 0
+        },
+        {
+          "shard": 1,
+          "accounts": 51,
+          "orders": 87,
+          "commands": 102,
+          "decisions": 87,
+          "ledger_events": 51,
+          "positions_fills_matches": 0
+        }
+      ]
+    },
+    {
+      "run_id": "B2",
+      "offered": 200,
+      "outcomes": {
+        "financial_succeeded": 166,
+        "business_rejected": 18,
+        "control_or_market_rejected": 16
+      },
+      "ack": 200,
+      "duration_including_drain_s": 10.273482657,
+      "drain_s": 0.27348265700000063,
+      "financial_rate_including_drain": 16.15810388183147,
+      "latency": {
+        "all": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 90.745942,
+            "p95": 264.757277,
+            "p99": 364.912058,
+            "p99_9": 373.074513
+          },
+          "published_histogram_upper_ms": {
+            "p50": 90.770019,
+            "p95": 265.016849,
+            "p99": 365.268614,
+            "p99_9": 373.389466
+          },
+          "max_ms": 373.074513
+        },
+        "financial_succeeded": {
+          "samples": 166,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 93.524322,
+            "p95": 264.757277,
+            "p99": 371.792373,
+            "p99_9": 373.074513
+          },
+          "published_histogram_upper_ms": {
+            "p50": 93.532975,
+            "p95": 265.016849,
+            "p99": 371.899634,
+            "p99_9": 373.389466
+          },
+          "max_ms": 373.074513
+        },
+        "enqueue_ack": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 12.334151,
+            "p95": 140.868451,
+            "p99": 235.796718,
+            "p99_9": 342.246464
+          },
+          "published_histogram_upper_ms": {
+            "p50": 12.345929,
+            "p95": 140.908281,
+            "p99": 236.004616,
+            "p99_9": 342.29245
+          },
+          "max_ms": 342.246464
+        }
+      },
+      "readonly_sql_full_check": [
+        {
+          "shard": 0,
+          "accounts": 49,
+          "orders": 76,
+          "commands": 98,
+          "decisions": 76,
+          "ledger_events": 49,
+          "positions_fills_matches": 0
+        },
+        {
+          "shard": 1,
+          "accounts": 51,
+          "orders": 90,
+          "commands": 102,
+          "decisions": 90,
+          "ledger_events": 51,
+          "positions_fills_matches": 0
+        }
+      ]
+    },
+    {
+      "run_id": "B3",
+      "offered": 200,
+      "outcomes": {
+        "financial_succeeded": 171,
+        "business_rejected": 20,
+        "control_or_market_rejected": 9
+      },
+      "ack": 200,
+      "duration_including_drain_s": 10.006021377,
+      "drain_s": 0.006021376999999717,
+      "financial_rate_including_drain": 17.089709641542775,
+      "latency": {
+        "all": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 106.891523,
+            "p95": 303.990788,
+            "p99": 504.632188,
+            "p99_9": 661.651202
+          },
+          "published_histogram_upper_ms": {
+            "p50": 106.937772,
+            "p95": 304.211885,
+            "p99": 504.95591,
+            "p99_9": 662.046444
+          },
+          "max_ms": 661.651202
+        },
+        "financial_succeeded": {
+          "samples": 171,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 116.578652,
+            "p95": 309.263423,
+            "p99": 609.218928,
+            "p99_9": 661.651202
+          },
+          "published_histogram_upper_ms": {
+            "p50": 116.65299,
+            "p95": 309.425068,
+            "p99": 609.340474,
+            "p99_9": 662.046444
+          },
+          "max_ms": 661.651202
+        },
+        "enqueue_ack": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 12.291169,
+            "p95": 141.554302,
+            "p99": 215.054758,
+            "p99_9": 643.10933
+          },
+          "published_histogram_upper_ms": {
+            "p50": 12.296668,
+            "p95": 141.614233,
+            "p99": 215.055865,
+            "p99_9": 643.132135
+          },
+          "max_ms": 643.10933
+        }
+      },
+      "readonly_sql_full_check": [
+        {
+          "shard": 0,
+          "accounts": 49,
+          "orders": 78,
+          "commands": 98,
+          "decisions": 78,
+          "ledger_events": 49,
+          "positions_fills_matches": 0
+        },
+        {
+          "shard": 1,
+          "accounts": 51,
+          "orders": 93,
+          "commands": 102,
+          "decisions": 93,
+          "ledger_events": 51,
+          "positions_fills_matches": 0
+        }
+      ]
+    },
+    {
+      "run_id": "P1",
+      "offered": 200,
+      "outcomes": {
+        "financial_succeeded": 161,
+        "business_rejected": 18,
+        "control_or_market_rejected": 21
+      },
+      "ack": 200,
+      "duration_including_drain_s": 10.254165482,
+      "drain_s": 0.25416548199999944,
+      "financial_rate_including_drain": 15.700936393372709,
+      "latency": {
+        "all": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 135.169958,
+            "p95": 344.525189,
+            "p99": 470.807628,
+            "p99_9": 620.709043
+          },
+          "published_histogram_upper_ms": {
+            "p50": 135.250644,
+            "p95": 344.695698,
+            "p99": 470.834238,
+            "p99_9": 621.022733
+          },
+          "max_ms": 620.709043
+        },
+        "financial_succeeded": {
+          "samples": 161,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 143.017006,
+            "p95": 345.734443,
+            "p99": 576.913022,
+            "p99_9": 620.709043
+          },
+          "published_histogram_upper_ms": {
+            "p50": 143.036765,
+            "p95": 346.07655,
+            "p99": 577.324306,
+            "p99_9": 621.022733
+          },
+          "max_ms": 620.709043
+        },
+        "enqueue_ack": {
+          "samples": 200,
+          "late": 0,
+          "exact_nearest_rank_ms": {
+            "p50": 18.322071,
+            "p95": 209.525842,
+            "p99": 310.556503,
+            "p99_9": 454.383935
+          },
+          "published_histogram_upper_ms": {
+            "p50": 18.322485,
+            "p95": 209.539198,
+            "p99": 310.664626,
+            "p99_9": 454.648041
+          },
+          "max_ms": 454.383935
+        }
+      },
+      "readonly_sql_full_check": [
+        {
+          "shard": 0,
+          "accounts": 49,
+          "orders": 75,
+          "commands": 98,
+          "decisions": 75,
+          "ledger_events": 49,
+          "positions_fills_matches": 0
+        },
+        {
+          "shard": 1,
+          "accounts": 51,
+          "orders": 86,
+          "commands": 102,
+          "decisions": 86,
+          "ledger_events": 51,
+          "positions_fills_matches": 0
+        }
+      ]
+    },
+    {
+      "run_id": "S1",
+      "offered": 1000,
+      "outcomes": {
+        "financial_succeeded": 508,
+        "business_rejected": 58,
+        "control_or_market_rejected": 321,
+        "local_outstanding_full": 113
+      },
+      "ack": 887,
+      "duration_including_drain_s": 13.647478386,
+      "drain_s": 3.6474783859999995,
+      "financial_rate_including_drain": 37.22299355470106,
+      "latency": {
+        "all": {
+          "samples": 1000,
+          "late": 788,
+          "exact_nearest_rank_ms": {
+            "p50": 2637.191486,
+            "p95": 3771.415094,
+            "p99": 3971.768563,
+            "p99_9": 4025.987064
+          },
+          "published_histogram_upper_ms": {
+            "p50": 2637.652698,
+            "p95": 3772.396634,
+            "p99": 3973.647858,
+            "p99_9": 4029.64198
+          },
+          "max_ms": 4029.891355
+        },
+        "financial_succeeded": {
+          "samples": 508,
+          "late": 418,
+          "exact_nearest_rank_ms": {
+            "p50": 2579.596664,
+            "p95": 3862.569223,
+            "p99": 4006.11417,
+            "p99_9": 4025.987064
+          },
+          "published_histogram_upper_ms": {
+            "p50": 2580.286359,
+            "p95": 3863.98301,
+            "p99": 4009.554074,
+            "p99_9": 4029.64198
+          },
+          "max_ms": 4025.987064
+        },
+        "enqueue_ack": {
+          "samples": 887,
+          "late": 770,
+          "exact_nearest_rank_ms": {
+            "p50": 2618.201751,
+            "p95": 3415.360895,
+            "p99": 3638.669696,
+            "p99_9": 3755.741268
+          },
+          "published_histogram_upper_ms": {
+            "p50": 2619.262762,
+            "p95": 3416.989767,
+            "p99": 3639.071255,
+            "p99_9": 3757.344696
+          },
+          "max_ms": 3755.741268
+        }
+      },
+      "readonly_sql_full_check": [
+        {
+          "shard": 0,
+          "accounts": 49,
+          "orders": 239,
+          "commands": 441,
+          "decisions": 239,
+          "ledger_events": 49,
+          "positions_fills_matches": 0
+        },
+        {
+          "shard": 1,
+          "accounts": 51,
+          "orders": 269,
+          "commands": 446,
+          "decisions": 269,
+          "ledger_events": 51,
+          "positions_fills_matches": 0
+        }
+      ]
+    }
+  ],
+  "issues": [
+    "S1 bench:684 had one internal technical_execution_failure retry, then REJECTED market_unavailable; not an enqueue/poll error, and no financial effect. Preserve as overlapping diagnostic; exact original internal cause unavailable."
+  ],
+  "scope": "read-only raw and SQLite independent reconciliation; no UTA imports, apps, tests or baseline execution; original producer DB not opened",
+  "total_outcomes": {
+    "financial_succeeded": 1169,
+    "business_rejected": 132,
+    "control_or_market_rejected": 386,
+    "local_outstanding_full": 113
+  },
+  "total_planned": 1800,
+  "total_ack": 1687,
+  "total_financial_success_late": 418,
+  "internal_technical_retries": [
+    {
+      "run_id": "S1",
+      "command_id": "bench:684",
+      "shard": 0,
+      "attempts": 1,
+      "last_error": "technical_execution_failure",
+      "terminal_state": "REJECTED",
+      "terminal_error": {
+        "code": "market_unavailable",
+        "message": "trusted market snapshot is invalid or stale",
+        "status": 503
+      },
+      "latency_ms": 3928.396842
+    }
+  ],
+  "cohost_pid_births": {
+    "4471": "210004",
+    "8784": "412799"
+  },
+  "cohost_heartbeat_age_range_s": [
+    1.17755498,
+    5.018266248
+  ]
+}
