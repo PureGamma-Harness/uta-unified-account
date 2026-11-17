@@ -77,6 +77,17 @@ class IntegerReserveTests(unittest.TestCase):
             else:
                 self.assertEqual(calculate_integer_reserve(values).as_tuple(), expected.as_tuple())
 
+    def test_subclasses_delegate_without_reading_unused_margin(self):
+        class ConditionalMargin(ReserveInputs):
+            def __getattribute__(self, name):
+                if name == 'initial_margin_rate':
+                    raise RuntimeError('synthetic margin must not be read in reduce-only')
+                return super().__getattribute__(name)
+        values = ConditionalMargin(Decimal('1'), Decimal('0'), Decimal('100'), Decimal('100'),
+                                    True, Decimal('.1'), Decimal('0'), Decimal('0'), Decimal('.001'), 8)
+        self.assertEqual(calculate_integer_reserve(values).as_tuple(), calculate_reserve(values).as_tuple())
+        self.assertEqual(calculate_integer_reserve(values), Decimal('.1'))
+
 
 if __name__ == '__main__':
     unittest.main()

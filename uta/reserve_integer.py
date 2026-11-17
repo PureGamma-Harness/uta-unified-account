@@ -55,8 +55,9 @@ def calculate_integer_reserve(inputs: ReserveInputs) -> Decimal:
     arithmetic remains exact: signed adverse loss, non-reduce-only IM and the
     unpaid cumulative fee ceiling are aggregated before decimal conversion.
     """
-    if not isinstance(inputs, ReserveInputs):
-        # Preserve duck-typed callers of the original standalone expression.
+    if type(inputs) is not ReserveInputs:
+        # Dynamic subclasses may make otherwise-unused fields observable.
+        # Preserve their lazy reference reads, as well as duck-typed callers.
         return calculate_reserve(inputs)
     if type(inputs.usd_scale) is not int or not 0 <= inputs.usd_scale <= 18:
         return calculate_reserve(inputs)
