@@ -1,6 +1,8 @@
 """Observer tests use only tiny private SQLite fixtures, never a running job."""
 import copy
+import errno
 from datetime import datetime, timezone
+import gzip
 import json
 import os
 from pathlib import Path
@@ -22,16 +24,18 @@ COMMIT = "4" * 40
 def metadata():
     return {"job_id": "synthetic", "configuration": {"duration": 21600, "rate": .25, "heartbeat_interval": 5},
         "planned_rounds": 5400, "accounts": observer.ACCOUNTS,
-        "environment": {"commit": COMMIT, "synthetic": True, "source_sha256": {}, "workload_spec_sha256": "a" * 64},
+        "environment": {"commit": COMMIT, "synthetic": True, "source_sha256": {}, "workload_spec_sha256": "a" * 64,
+            "python": sys.version, "sqlite": sqlite3.sqlite_version},
         "bootstrap": {"synthetic_only": True, "initial_principal_satoshi": 10800},
         "validation_evidence": {"code_commit": COMMIT, "engineering_test_qualified": True,
+            "python": sys.version, "sqlite": sqlite3.sqlite_version,
             "artifact_sha256": {name: "0" * 64 for name in ("summary.json", "worker-result.json", "unittest.txt")}},
         "file_identities": {}}
 
 
 def cp_snapshot(active=False):
     return {"states": {"started_boottime_ns": 1_000_000_000, "boot_id": "synthetic-boot", "controller_sessions": 1,
-        "logs_verified": True, "listener": {"pid": 1234, "birth": "9"}},
+        "logs_verified": True, "listener": {"pid": os.getpid(), "birth": "0"}},
         "rounds": [{"sequence": 1, "planned_ns": 1_000_000_000, "state": "ACTIVE" if active else "DONE",
                     "completed_ns": None if active else 2_000_000_000}],
         "steps": [], "faults": [], "completed": 0 if active else 1,
@@ -167,6 +171,21 @@ class ProcessAndClockTests(unittest.TestCase):
             target.unlink()
             self.assertEqual(observer.process_identity(123, "77", proc=proc)["state"], "missing")
 
+    def test_proc_permission_and_malformed_data_are_unknown_never_stopped(self):
+        with patch.object(Path, "read_text", side_effect=PermissionError(errno.EACCES, "synthetic-denied")):
+            result = observer.process_identity(123, "77")
+            self.assertEqual(result["visibility"], "unknown")
+            self.assertFalse(result["known_stopped"])
+        for raw in ("malformed", "123 (name) Z 0", "123 (name) " + " ".join(["S"] + ["0"] * 18 + ["bad-birth"])):
+            with patch.object(Path, "read_text", return_value=raw):
+                result = observer.process_identity(123, "77")
+                self.assertEqual(result["visibility"], "unknown")
+                self.assertFalse(result["known_stopped"])
+        with patch.object(Path, "read_text", side_effect=FileNotFoundError(errno.ENOENT, "synthetic-absent")):
+            result = observer.process_identity(123, "77")
+            self.assertEqual(result["visibility"], "absent")
+            self.assertTrue(result["known_stopped"])
+
     def test_market_future_stale_and_lease_future(self):
         connection = sqlite3.connect(":memory:")
         connection.row_factory = sqlite3.Row
@@ -218,6 +237,96 @@ class ProcessAndClockTests(unittest.TestCase):
             with patch.object(observer.subprocess, "check_output", side_effect=[COMMIT, ""]):
                 with self.assertRaisesRegex(ValueError, "frozen_workload_spec_changed"):
                     observer.check_source(source, meta, COMMIT)
+
+
+class QualificationTests(unittest.TestCase):
+    """Fabricated reports here are isolated unit fixtures, never service inputs."""
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        self.source, self.job = root / "source", root / "job"
+        for relative in ("uta/example.py", "tests/example.py", "formal/example.py", "scripts/example.py",
+                "tools/run_validation.py", "benchmarks/run_managed_soak.py", "benchmarks/managed_qualification.py",
+                "benchmarks/run_soak.py", "benchmarks/run_benchmark.py", "tests/fixtures/example.bin", "LICENSE"):
+            path = self.source / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"synthetic unit fixture only\n")
+        (self.job / "validation").mkdir(parents=True)
+        self.meta = metadata()
+        self.meta["environment"].update(python="synthetic-test-python", sqlite="synthetic-test-sqlite")
+        paths = [path for path in self.source.rglob("*") if path.is_file()]
+        manifest = {path.relative_to(self.source).as_posix(): observer.sha256(path.read_bytes()).hexdigest() for path in paths}
+        for command in (["git", "init", "-q"], ["git", "add", "."]):
+            subprocess.run(command, cwd=self.source, stdin=subprocess.DEVNULL, capture_output=True,
+                           close_fds=True, check=True)
+        self.report = {"code_commit": COMMIT, "tests_run": 1, "worker_exit_code": 0,
+            "production_approved": False, "python": "synthetic-test-python", "sqlite": "synthetic-test-sqlite",
+            "command_argv": ["synthetic-python", "tools/run_validation.py", "--output", "unit-fixture-only"],
+            "source_sha256": manifest, "source_sha256_after": manifest,
+            **{key: True for key in observer.VALIDATION_FLAGS}, **{key: 0 for key in observer.VALIDATION_COUNTS}}
+        self.worker = {key: self.report[key] for key in ("tests_run", *observer.VALIDATION_COUNTS, "unittest_passed")}
+        self.log = b"Ran 1 test in 0.001s\n\nOK\n"
+        self.write()
+
+    def write(self):
+        self.report["test_log_sha256"] = observer.sha256(self.log).hexdigest()
+        artifacts = {"summary.json": observer.canonical(self.report).encode(),
+                     "worker-result.json": observer.canonical(self.worker).encode(), "unittest.txt": self.log}
+        self.meta["validation_evidence"].update(tests_run=self.report["tests_run"], python="synthetic-test-python",
+            sqlite="synthetic-test-sqlite", artifact_sha256={name: observer.sha256(raw).hexdigest() for name, raw in artifacts.items()})
+        for name, raw in artifacts.items():
+            (self.job / "validation" / name).write_bytes(raw)
+
+    def test_complete_literal_report_and_inventory_pass(self):
+        observer.validation_manifest(self.job, self.source, self.meta)
+
+    def test_semantically_invalid_but_rehashed_reports_fail_closed(self):
+        base_report, base_worker = copy.deepcopy(self.report), copy.deepcopy(self.worker)
+        for key, bad in (("passed", 1), ("tests_run", 0), ("failures", False), ("skipped", 1),
+                         ("expected_failures", 1), ("worker_exit_code", 1), ("production_approved", True)):
+            with self.subTest(key=key):
+                self.report, self.worker = copy.deepcopy(base_report), copy.deepcopy(base_worker)
+                self.report[key] = bad
+                if key in self.worker:
+                    self.worker[key] = bad
+                self.write()
+                with self.assertRaises(ValueError):
+                    observer.validation_manifest(self.job, self.source, self.meta)
+
+    def test_omitted_or_extra_source_inventory_is_not_an_exact_manifest(self):
+        for change in ("omitted", "extra"):
+            report = copy.deepcopy(self.report)
+            changed = dict(report["source_sha256"])
+            if change == "omitted":
+                changed.pop("tests/fixtures/example.bin")
+            else:
+                changed["not-a-validator-input.py"] = "0" * 64
+            self.report["source_sha256"] = self.report["source_sha256_after"] = changed
+            self.write()
+            with self.assertRaisesRegex(ValueError, "validation_complete_source_inventory_required"):
+                observer.validation_manifest(self.job, self.source, self.meta)
+            self.report = report
+
+    def test_worker_runtime_log_and_command_consistency_are_required(self):
+        original_report, original_worker = copy.deepcopy(self.report), copy.deepcopy(self.worker)
+        mutations = (lambda: self.worker.update(tests_run=2),
+                     lambda: self.report.update(python="wrong-runtime"),
+                     lambda: self.report.update(command_argv=["synthetic-python", "partial-validation.py"]),
+                     lambda: setattr(self, "log", b"Ran 1 test in 0.001s\n\nFAILED\n"))
+        for mutation in mutations:
+            self.report, self.worker = copy.deepcopy(original_report), copy.deepcopy(original_worker)
+            self.log = b"Ran 1 test in 0.001s\n\nOK\n"
+            mutation()
+            self.write()
+            with self.assertRaises(ValueError):
+                observer.validation_manifest(self.job, self.source, self.meta)
+
+    def test_manifest_input_must_also_be_tracked(self):
+        subprocess.run(["git", "rm", "--cached", "scripts/example.py"], cwd=self.source,
+            stdin=subprocess.DEVNULL, capture_output=True, close_fds=True, check=True)
+        with self.assertRaisesRegex(ValueError, "validation_input_not_in_frozen_commit"):
+            observer.validation_manifest(self.job, self.source, self.meta)
 
 
 class ObservationTests(unittest.TestCase):
@@ -322,6 +431,27 @@ class ObservationTests(unittest.TestCase):
             self.assertEqual({path.name for path in output.iterdir()}, {"latest.json", "timeline.jsonl"})
             self.assertFalse(any(report[key] for key in observer.FLAGS))
 
+    def test_regular_stdout_is_rejected_without_overwriting_inherited_inode(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "synthetic-existing.log"
+            target.write_bytes(b"original-synthetic-bytes")
+            with target.open("ab") as stream:
+                run = subprocess.run([sys.executable, "-B", str(Path(observer.__file__).resolve()), "--help"],
+                    stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.PIPE, close_fds=True)
+            self.assertEqual(run.returncode, 1)
+            self.assertEqual(run.stderr, b"")
+            self.assertEqual(target.read_bytes(), b"original-synthetic-bytes")
+
+    def test_existing_output_must_be_owned_private_0700(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            job, output = root / "job", root / "observer"
+            job.mkdir()
+            output.mkdir(mode=0o755)
+            output.chmod(0o755)
+            with self.assertRaisesRegex(ValueError, "observer_output_must_be_private_owned_0700"):
+                observer.output_directory(job, output)
+
     def test_final_missing_logs_midround_short_job_and_retries_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             instance = self.make_observer(directory)
@@ -335,6 +465,7 @@ class ObservationTests(unittest.TestCase):
             facts["retry_alerts"] = [{"cause": "unknown"}]
             with patch.object(observer, "verify_logs", return_value={"verified": True}), \
                  patch.object(observer, "checkpoint", return_value=cp), \
+                 patch.object(instance, "recheck_final_contract", return_value=True), \
                  patch.object(observer, "read_financial", return_value=finance(True)):
                 result = instance.final_check(metadata(), progress, cp, contract, facts, False, 10,
                                               {"alive": True}, {"process": None, "lease_active": True})
@@ -363,27 +494,80 @@ class ObservationTests(unittest.TestCase):
             current = observer.watermark(cp, facts, contract)
             receipt = {"format": 1, "frozen_commit": COMMIT, "audit_sha256": "a" * 64,
                 "producer_cold_audit_passed": True, "watermark_before": current, "watermark_after": current,
-                "producer_audit_scope": "exact_sqlite_backup_of_stopped_public_job"}
+                "producer_audit_scope": observer.PRODUCER_AUDIT_SCOPE,
+                "producer_audit_runtime": {"python": sys.version, "sqlite": sqlite3.sqlite_version}}
             target = instance.output / "producer-cold-audit-receipt.json"
             instance.producer_receipt = target
             observer.atomic_json(target, receipt)
             with patch.object(observer, "verify_logs", return_value={"verified": True}), \
                  patch.object(observer, "checkpoint", return_value=cp), \
+                 patch.object(instance, "recheck_final_contract", return_value=True), \
+                 patch.object(observer, "process_identity", return_value={"known_stopped": True}), \
                  patch.object(observer, "read_financial", return_value=facts):
                 result = instance.final_check(metadata(), progress, cp, contract, facts, True, 21600,
-                                              {"alive": False}, {"process": None, "lease_active": False})
+                                              {"alive": False, "known_stopped": True},
+                                              {"process": {"known_stopped": True}, "lease_active": False})
                 self.assertTrue(result["eligible"])
                 self.assertFalse(any(result[key] for key in observer.FLAGS))
                 receipt["watermark_before"] = {}
                 observer.atomic_json(target, receipt)
                 result = instance.final_check(metadata(), progress, cp, contract, facts, True, 21600,
-                                              {"alive": False}, {"process": None, "lease_active": False})
+                                              {"alive": False, "known_stopped": True},
+                                              {"process": {"known_stopped": True}, "lease_active": False})
                 self.assertFalse(result["eligible"])
                 self.assertIn("producer_cold_audit_watermark_mismatch", result["errors"])
                 progress["elapsed_seconds"] = 10
                 result = instance.final_check(metadata(), progress, cp, contract, facts, True, 50000,
-                                              {"alive": False}, {"process": None, "lease_active": False})
+                                              {"alive": False, "known_stopped": True},
+                                              {"process": {"known_stopped": True}, "lease_active": False})
                 self.assertIn("producer_actual_active_duration_incomplete", result["errors"])
+
+    def test_equal_reopen_watermark_cannot_hide_failed_integrity_or_unknown_process(self):
+        with tempfile.TemporaryDirectory() as directory:
+            instance = self.make_observer(directory)
+            cp = cp_snapshot()
+            cp.update(completed=5400, controller_ended={"status": "completed"})
+            cp["faults"] = [{"kind": kind, "state": "DONE", "signal_sent": True, "old_generation": 1,
+                             "new_generation": 2} for kind in ("worker", "parent")]
+            contract, facts = observer.validate_metadata(metadata(), cp, COMMIT), finance(True)
+            progress = {"logs_verified": True, "controller_sessions": 1, "verified_tls": True,
+                "final_audit": {"golden_passed": True}, "error": None, "elapsed_seconds": 21600,
+                "unresolved_steps": 0, "unresolved_faults": 0}
+            reopened = finance(True)
+            reopened["golden"]["passed"] = False
+            with patch.object(observer, "verify_logs", return_value={"verified": True}), \
+                 patch.object(observer, "checkpoint", return_value=cp), \
+                 patch.object(instance, "recheck_final_contract", return_value=True), \
+                 patch.object(observer, "process_identity", return_value={"known_stopped": False, "visibility": "unknown"}), \
+                 patch.object(observer, "read_financial", return_value=reopened):
+                result = instance.final_check(metadata(), progress, cp, contract, facts, True, 21600,
+                    {"alive": False, "known_stopped": False, "visibility": "unknown"},
+                    {"process": {"known_stopped": True}, "lease_active": False})
+            self.assertFalse(result["eligible"])
+            self.assertTrue(result["independent_reopen_same_watermark"])
+            self.assertFalse(result["independent_reopen_reconciliation_passed"])
+            self.assertIn("independent_reopen_golden_failed", result["errors"])
+            self.assertIn("final_authority_not_cold", result["errors"])
+            self.assertIn("final_driver_not_stopped_or_unknown", result["errors"])
+
+    def test_final_recheck_detects_source_and_original_contract_changes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            instance = self.make_observer(directory)
+            cp, progress = cp_snapshot(), {"status": "running", "error": None}
+            contract = instance.contract(metadata(), cp)
+            with patch.object(observer, "check_source") as source, patch.object(observer, "validation_manifest") as validation, \
+                 patch.object(observer, "identity_files") as identities:
+                self.assertTrue(instance.recheck_final_contract(contract, progress, cp))
+                source.assert_called_once()
+                validation.assert_called_once()
+                identities.assert_called_once()
+                changed = metadata()
+                changed["job_id"] = "changed"
+                (instance.job / "job.json").write_text(json.dumps(changed))
+                self.assertFalse(instance.recheck_final_contract(contract, progress, cp))
+            with patch.object(observer, "check_source", side_effect=ValueError("source_changed")):
+                with self.assertRaisesRegex(ValueError, "source_changed"):
+                    instance.recheck_final_contract(contract, progress, cp)
 
     def test_raw_unknown_error_redacted_and_duplicate_json_rejected(self):
         raw = "secret = internal-host token"
@@ -411,35 +595,74 @@ class ObservationTests(unittest.TestCase):
             database = sqlite3.connect(job / "checkpoint.sqlite3")
             database.executescript("CREATE TABLE state(key,value); CREATE TABLE rounds(sequence,planned_ns,state,completed_ns);"
                 "CREATE TABLE steps(round,name,state,plan); CREATE TABLE faults(round,kind,state,evidence);"
-                "CREATE TABLE events(sequence,kind,payload,event_hash);")
+                "CREATE TABLE events(sequence,kind,payload,event_hash,previous_hash);")
             states = cp_snapshot()["states"]
+            states["listener"] = {"pid": os.getpid(), "birth": "0"}
             database.executemany("INSERT INTO state VALUES(?,?)", [(key, json.dumps(value)) for key, value in states.items()])
-            database.execute("INSERT INTO events VALUES(1,'CONTROLLER_STARTED',? ,?)", (json.dumps({"pid": os.getpid()}), "0" * 64))
+            payload = observer.canonical({"pid": os.getpid()})
+            event_hash = observer.digest([1, "CONTROLLER_STARTED", payload, "0" * 64])
+            database.execute("INSERT INTO events VALUES(1,'CONTROLLER_STARTED',?,?,?)", (payload, event_hash, "0" * 64))
             database.commit()
             database.close()
-            for name, value in (("job.json", metadata()), ("progress.json", {"status": "completed"}),
-                                ("log-segments.json", {"segments": []})):
+            (job / "logs").mkdir()
+            log = job / "logs/events.jsonl.gz"
+            with gzip.open(log, "wt") as stream:
+                stream.write(observer.canonical({"sequence": 1, "kind": "CONTROLLER_STARTED", "payload": payload,
+                    "previous_hash": "0" * 64, "event_hash": event_hash}) + "\n")
+            meta = metadata()
+            meta["configuration"]["duration"] = 4
+            meta["planned_rounds"] = 1
+            meta["bootstrap"]["initial_principal_satoshi"] = 2
+            manifest = {"segments": [{"file": "logs/events.jsonl.gz", "first": 1, "last": 1,
+                "sha256": observer.sha256(log.read_bytes()).hexdigest()}]}
+            for name, value in (("job.json", meta), ("progress.json", {"status": "completed"}),
+                                ("log-segments.json", manifest)):
                 (job / name).write_text(json.dumps(value))
+            (job / "validation").mkdir()
+            meta = observer.load_json(job / "job.json")
+            for name in observer.VALIDATION_ARTIFACTS:
+                raw = b"synthetic-unit-fixture-validation-sidecar"
+                (job / "validation" / name).write_bytes(raw)
+                meta["validation_evidence"]["artifact_sha256"][name] = observer.sha256(raw).hexdigest()
+            (job / "job.json").write_text(json.dumps(meta))
             (job / "private").mkdir()
             (job / "private/key.pem").write_text("synthetic-sensitive-sentinel")
-            instance = observer.Observer(job, output, root / "source", COMMIT, os.getpid(), "1")
+            instance = observer.Observer(job, output, Path(observer.__file__).resolve().parents[1], COMMIT, os.getpid(), "1")
             instance.cold = True
             with observer.readonly(job / "managed/shard-0000.sqlite3", cold=True) as connection:
                 facts = observer.read_financial(connection, 1, 1, compare_golden=True)
-            watermark = {"financial": facts["watermark"], "checkpoint": {"sequence": 1, "hash": "0" * 64}, "contract_sha256": "a" * 64}
+            watermark = {"financial": facts["watermark"], "checkpoint": {"sequence": 1, "hash": event_hash}, "contract_sha256": "a" * 64}
             final = {"errors": ["producer_cold_audit_same_watermark_missing"], "watermark": watermark}
             sample = {"planned_rounds": 1, "completed_rounds": 1, "final_reconciliation": final}
             audit = {"status": "audit_passed", "cold_read_only": True, "financial": {"golden_passed": True},
-                     "logs": {"last_hash": "0" * 64}}
+                     "logs": {"last_hash": event_hash}}
             before = {p.relative_to(job): (p.stat().st_mtime_ns, p.read_bytes())
                       for p in job.rglob("*") if p.is_file() and "private" not in p.parts}
             result = subprocess.CompletedProcess([], 0, json.dumps(audit), "")
-            with patch.object(instance, "sample", return_value=sample), patch.object(observer.subprocess, "run", return_value=result) as run:
-                receipt = observer.producer_audit(instance, "synthetic-python")
+            instance.max_private_clone_bytes = 1
+            with patch.object(instance, "sample", return_value=sample), patch.object(observer.subprocess, "run") as blocked:
+                with self.assertRaisesRegex(ValueError, "private_complete_clone_disk_budget_unavailable"):
+                    observer.producer_audit(instance, sys.executable)
+                blocked.assert_not_called()
+            self.assertFalse((output / "private-audit").exists())
+            instance.max_private_clone_bytes = 6 * 1024**3
+            wrong_runtime = subprocess.CompletedProcess([], 0,
+                json.dumps({"python": "wrong-runtime", "sqlite": sqlite3.sqlite_version}), "")
+            with patch.object(instance, "sample", return_value=sample), \
+                 patch.object(observer.subprocess, "run", return_value=wrong_runtime):
+                with self.assertRaisesRegex(ValueError, "producer_audit_exact_runtime_mismatch"):
+                    observer.producer_audit(instance, "wrong-python")
+            self.assertFalse((output / "private-audit").exists())
+            actual_run = subprocess.run
+            with patch.object(instance, "sample", return_value=sample), patch.object(observer.subprocess, "run", wraps=actual_run) as run:
+                receipt = observer.producer_audit(instance, sys.executable)
                 self.assertTrue(receipt["producer_cold_audit_passed"])
                 self.assertEqual(receipt["watermark_before"], receipt["watermark_after"])
                 self.assertTrue(Path(run.call_args.args[0][-1]).is_relative_to(output))
                 self.assertFalse(Path(run.call_args.args[0][-1]).exists())
+                self.assertEqual(receipt["producer_audit_scope"], observer.PRODUCER_AUDIT_SCOPE)
+                self.assertEqual((output / "private-audit").stat().st_mode & 0o777, 0o700)
+                self.assertNotIn("synthetic-sensitive-sentinel", observer.canonical(receipt))
             after = {p.relative_to(job): (p.stat().st_mtime_ns, p.read_bytes())
                      for p in job.rglob("*") if p.is_file() and "private" not in p.parts}
             self.assertEqual(before, after)
@@ -447,7 +670,10 @@ class ObservationTests(unittest.TestCase):
             (output / "producer-cold-audit-receipt.json").unlink()
             later = copy.deepcopy(sample)
             later["final_reconciliation"]["errors"].append("final_authority_not_cold")
-            with patch.object(instance, "sample", side_effect=[sample, later]), patch.object(observer.subprocess, "run", return_value=result):
+            runtime_result = subprocess.CompletedProcess([], 0,
+                json.dumps({"python": sys.version, "sqlite": sqlite3.sqlite_version}), "")
+            with patch.object(instance, "sample", side_effect=[sample, later]), \
+                 patch.object(observer.subprocess, "run", side_effect=[runtime_result, result]):
                 with self.assertRaisesRegex(ValueError, "producer_cold_audit_crossed_watermark"):
                     observer.producer_audit(instance, "synthetic-python")
             self.assertFalse((output / "producer-cold-audit-receipt.json").exists())

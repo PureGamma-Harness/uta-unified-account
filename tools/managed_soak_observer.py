@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import errno
 from hashlib import sha256
 import gzip
 import json
@@ -17,6 +18,7 @@ import math
 import os
 from pathlib import Path
 import re
+import resource
 import signal
 import shutil
 import sqlite3
@@ -37,6 +39,10 @@ ACCOUNTS = ["managed-soak-alice", "managed-soak-bob", "managed-soak-credit"]
 FLAGS = {"continuous_6h_stability_passed": False, "continuous_24h_stability_passed": False,
          "production_approved": False, "capacity_10000_per_s_passed": False}
 COMMAND_STEPS = {"open-buy", "open-sell", "cancel-partial", "close-sell", "close-buy", "repay"}
+VALIDATION_COUNTS = ("failures", "errors", "skipped", "expected_failures", "unexpected_successes")
+VALIDATION_FLAGS = ("passed", "unittest_passed", "source_unchanged", "tracked_source_clean_before", "tracked_source_clean_after")
+VALIDATION_ARTIFACTS = ("summary.json", "worker-result.json", "unittest.txt")
+PRODUCER_AUDIT_SCOPE = "private_complete_sqlite_clone_of_stopped_authority"
 
 
 def canonical(value):
@@ -91,11 +97,37 @@ def process_identity(pid, expected_birth=None, *, proc=Path("/proc")):
     try:
         fields = (proc / str(pid) / "stat").read_text().rsplit(")", 1)[1].split()
         state, birth = fields[0], fields[19]
-    except (OSError, IndexError):
-        return {"pid": pid, "birth": None, "state": "missing", "identity_matches": False, "alive": False}
+    except OSError as error:
+        absent = error.errno in {errno.ENOENT, errno.ESRCH}
+        return {"pid": pid, "birth": None, "state": "missing" if absent else "unavailable",
+            "visibility": "absent" if absent else "unknown", "identity_matches": False,
+            "alive": False, "known_stopped": absent}
+    except IndexError:
+        return {"pid": pid, "birth": None, "state": "malformed", "visibility": "unknown",
+            "identity_matches": False, "alive": False, "known_stopped": False}
+    if not birth.isdecimal() or state not in {"R", "S", "D", "Z", "T", "t", "X", "x", "K", "W", "P", "I"}:
+        return {"pid": pid, "birth": None, "state": "malformed", "visibility": "unknown",
+            "identity_matches": False, "alive": False, "known_stopped": False}
     matches = expected_birth is not None and str(expected_birth) == birth
-    return {"pid": pid, "birth": birth, "state": state, "identity_matches": matches,
-            "alive": matches and state not in {"Z", "X", "x"}}
+    stopped = state in {"Z", "X", "x"} or expected_birth is not None and not matches
+    return {"pid": pid, "birth": birth, "state": state, "visibility": "observed", "identity_matches": matches,
+            "alive": matches and not stopped, "known_stopped": stopped}
+
+
+def safe_standard_descriptors():
+    """Do not emit even an error through a pre-opened regular-file writer.
+
+    Mount read-only flags do not constrain an inherited writable descriptor.
+    Trusted launchers must use pipes/TTYs and save output only in their explicit
+    observer directory. subprocess close_fds removes every nonstandard FD.
+    """
+    for descriptor in (0, 1, 2):
+        try:
+            if stat.S_ISREG(os.fstat(descriptor).st_mode):
+                return False
+        except OSError:
+            return False
+    return True
 
 
 @contextmanager
@@ -250,9 +282,11 @@ def read_health(connection, owners, now_ns, boot, wall_ns):
     if row is None:
         raise ValueError("writer_lease_missing")
     lease = dict(row)
-    registration = next((item for item in reversed(owners) if item["pid"] == lease["owner_pid"]
+    registration = next((item for item in reversed(owners)
+                         if (lease["owner_pid"] is None or item["pid"] == lease["owner_pid"])
                          and item["generation"] == lease["generation"] and item["kind"] == "OWNED"), None)
-    process = None if lease["owner_pid"] is None else process_identity(lease["owner_pid"],
+    observed_pid = lease["owner_pid"] if lease["owner_pid"] is not None else (None if registration is None else registration["pid"])
+    process = None if observed_pid is None else process_identity(observed_pid,
         None if registration is None else registration["start_ticks"])
     local = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
     market = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
@@ -304,7 +338,8 @@ def validate_metadata(meta, cp, frozen_commit):
 def check_source(source, meta, frozen_commit):
     source = Path(source).resolve()
     def git(*args):
-        return subprocess.check_output(["git", "--no-optional-locks", *args], cwd=source, text=True, stderr=subprocess.DEVNULL).strip()
+        return subprocess.check_output(["git", "--no-optional-locks", *args], cwd=source, text=True,
+            stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, close_fds=True).strip()
     if git("rev-parse", "HEAD") != frozen_commit or git("status", "--porcelain", "--untracked-files=all"):
         raise ValueError("frozen_source_changed_or_dirty")
     manifests = [meta["environment"]["source_sha256"]]
@@ -326,13 +361,54 @@ def validation_manifest(job, source, meta):
     evidence = meta["validation_evidence"]
     if evidence is None:
         raise ValueError("exact_release_validation_missing")
-    for name in ("summary.json", "worker-result.json", "unittest.txt"):
-        if sha256((job / "validation" / name).read_bytes()).hexdigest() != evidence["artifact_sha256"][name]:
+    artifacts = {name: (job / "validation" / name).read_bytes() for name in VALIDATION_ARTIFACTS}
+    for name, raw in artifacts.items():
+        if sha256(raw).hexdigest() != evidence["artifact_sha256"][name]:
             raise ValueError("validation_artifact_changed")
-    report = load_json(job / "validation/summary.json")
-    if report["code_commit"] != meta["environment"]["commit"] or report["source_sha256"] != report["source_sha256_after"]:
+    report, worker = parse(artifacts["summary.json"]), parse(artifacts["worker-result.json"])
+    if (report["code_commit"] != meta["environment"]["commit"] or report["source_sha256"] != report["source_sha256_after"]
+            or evidence["code_commit"] != report["code_commit"] or evidence["engineering_test_qualified"] is not True):
         raise ValueError("validation_source_manifest_changed")
+    if any(report.get(key) is not True for key in VALIDATION_FLAGS) or worker.get("unittest_passed") is not True:
+        raise ValueError("validation_literal_success_required")
+    if report.get("production_approved") is not False:
+        raise ValueError("validation_cannot_grant_production_approval")
+    integer(report["tests_run"], 1)
+    if evidence["tests_run"] != report["tests_run"] or type(evidence["tests_run"]) is not int:
+        raise ValueError("validation_executed_count_changed")
+    for key in ("tests_run", *VALIDATION_COUNTS, "unittest_passed"):
+        if worker.get(key) != report.get(key) or type(worker.get(key)) is not type(report.get(key)):
+            raise ValueError("validation_worker_summary_disagree")
+    for key in (*VALIDATION_COUNTS, "worker_exit_code"):
+        if type(report.get(key)) is not int or report[key] != 0:
+            raise ValueError("validation_nonzero_or_unexecuted_outcome")
+    for key in ("python", "sqlite"):
+        if report[key] != meta["environment"][key] or report[key] != evidence[key]:
+            raise ValueError("validation_exact_producer_runtime_changed")
+    argv = report["command_argv"]
+    if (not isinstance(argv, list) or len(argv) != 4 or not all(isinstance(value, str) for value in argv)
+            or Path(argv[1]).parts[-2:] != ("tools", "run_validation.py") or argv[2] != "--output"):
+        raise ValueError("validation_complete_runner_command_required")
+    if report["test_log_sha256"] != sha256(artifacts["unittest.txt"]).hexdigest():
+        raise ValueError("validation_raw_log_digest_changed")
+    if not re.search(r"^Ran " + str(report["tests_run"]) + r" tests? in .+\n\nOK\s*\Z",
+                     artifacts["unittest.txt"].decode(), re.MULTILINE):
+        raise ValueError("validation_raw_log_not_successful")
     root = source.resolve()
+    paths = {path for folder in ("uta", "tests", "formal", "tools", "benchmarks", "scripts")
+             for path in (root / folder).rglob("*.py")}
+    paths.update(path for path in (root / "tests/fixtures").rglob("*") if path.is_file())
+    paths.update(root / name for name in ("pyproject.toml", "MANIFEST.in", "LICENSE") if (root / name).exists())
+    expected_paths = {path.relative_to(root).as_posix() for path in paths}
+    required = {"tools/run_validation.py", "benchmarks/run_managed_soak.py", "benchmarks/managed_qualification.py",
+                "benchmarks/run_soak.py", "benchmarks/run_benchmark.py"}
+    if (set(report["source_sha256"]) != expected_paths or not required <= expected_paths
+            or not any(name.startswith("uta/") for name in expected_paths)):
+        raise ValueError("validation_complete_source_inventory_required")
+    tracked = set(subprocess.check_output(["git", "--no-optional-locks", "ls-files", "-z"], cwd=root,
+        text=True, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, close_fds=True).split("\0"))
+    if not expected_paths <= tracked:
+        raise ValueError("validation_input_not_in_frozen_commit")
     for relative, expected in report["source_sha256"].items():
         path = root / relative
         if not path.resolve().is_relative_to(root) or sha256(path.read_bytes()).hexdigest() != expected:
@@ -343,9 +419,7 @@ def verify_logs(job, head):
     manifest = load_json(job / "log-segments.json")
     sequence, previous = 0, "0" * 64
     for segment in manifest["segments"]:
-        relative = Path(segment["file"])
-        if relative.is_absolute() or len(relative.parts) != 2 or relative.parts[0] != "logs" or relative.suffix != ".gz":
-            raise ValueError("log_segment_path_invalid")
+        relative = log_relative(segment["file"])
         target = job / relative
         if target.is_symlink() or segment["first"] != sequence + 1 or sha256(target.read_bytes()).hexdigest() != segment["sha256"]:
             raise ValueError("log_segment_continuity_or_digest_failed")
@@ -362,6 +436,13 @@ def verify_logs(job, head):
     if head != {"sequence": sequence, "hash": previous}:
         raise ValueError("final_logs_do_not_cover_checkpoint")
     return {"events": sequence, "last_hash": previous, "verified": True}
+
+
+def log_relative(value):
+    relative = Path(value)
+    if relative.is_absolute() or len(relative.parts) != 2 or relative.parts[0] != "logs" or relative.suffix != ".gz":
+        raise ValueError("log_segment_path_invalid")
+    return relative
 
 
 def identity_files(job, meta):
@@ -396,16 +477,26 @@ def atomic_json(path, value):
         Path(temporary).unlink(missing_ok=True)
 
 
+def private_write(path, raw):
+    descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "wb") as stream:
+        stream.write(raw)
+
+
 def output_directory(job, output):
     job, output = Path(job).resolve(), Path(output).resolve()
     if output == job or output.is_relative_to(job) or job.is_relative_to(output):
         raise ValueError("observer_output_must_be_separate_from_job")
     output.mkdir(mode=0o700, parents=True, exist_ok=True)
+    details = output.stat()
+    if details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) != 0o700:
+        raise ValueError("observer_output_must_be_private_owned_0700")
     return job, output
 
 
 class Observer:
-    def __init__(self, job, output, source, frozen_commit, driver_pid, driver_birth, *, producer_receipt=None):
+    def __init__(self, job, output, source, frozen_commit, driver_pid, driver_birth, *, producer_receipt=None,
+                 max_private_clone_bytes=6 * 1024**3, min_private_free_bytes=1024**3):
         self.job, self.output = output_directory(job, output)
         self.source, self.frozen_commit = Path(source), frozen_commit
         if self.output.is_relative_to(self.source.resolve()):
@@ -415,6 +506,22 @@ class Observer:
             raise ValueError("explicit_driver_birth_required")
         self.producer_receipt = None if producer_receipt is None else Path(producer_receipt)
         self.cold = False
+        self.max_private_clone_bytes = integer(max_private_clone_bytes, 1)
+        self.min_private_free_bytes = integer(min_private_free_bytes)
+
+    def contract(self, meta, cp):
+        result = validate_metadata(meta, cp, self.frozen_commit)
+        result.update(driver_pid=self.driver_pid, driver_birth=self.driver_birth)
+        result["observer_code_sha256"] = {path.name: sha256(path.read_bytes()).hexdigest()
+            for path in (Path(__file__), Path(__file__).with_name("managed_observer_finance.py"))}
+        return result
+
+    def recheck_final_contract(self, contract, progress, cp):
+        latest_meta, latest_progress = load_json(self.job / "job.json"), load_json(self.job / "progress.json")
+        check_source(self.source, latest_meta, self.frozen_commit)
+        validation_manifest(self.job, self.source, latest_meta)
+        identity_files(self.job, latest_meta)
+        return self.contract(latest_meta, cp) == contract and latest_progress == progress
 
     def sample(self):
         wall_ns, now_ns = time.time_ns(), time.clock_gettime_ns(time.CLOCK_BOOTTIME)
@@ -423,13 +530,10 @@ class Observer:
         # Only an already observed driver can transition to cold immutable
         # reads. A new observer cannot invent a baseline after the driver exits.
         initial_driver = process_identity(self.driver_pid, self.driver_birth)
-        self.cold = (progress["status"] == "completed" and not initial_driver["alive"]
+        self.cold = (progress["status"] == "completed" and initial_driver["known_stopped"]
                      and (self.output / "baseline.json").exists())
         before = checkpoint(self.job / "checkpoint.sqlite3", cold=self.cold)
-        contract = validate_metadata(meta, before, self.frozen_commit)
-        contract.update(driver_pid=self.driver_pid, driver_birth=self.driver_birth)
-        contract["observer_code_sha256"] = {path.name: sha256(path.read_bytes()).hexdigest()
-            for path in (Path(__file__), Path(__file__).with_name("managed_observer_finance.py"))}
+        contract = self.contract(meta, before)
         baseline_path = self.output / "baseline.json"
         if baseline_path.exists():
             if load_json(baseline_path) != contract:
@@ -486,6 +590,10 @@ class Observer:
             alerts.append("round_completion_clock_future")
         if not driver["alive"] and progress["status"] != "completed":
             alerts.append("driver_missing_zombie_or_birth_changed")
+        if driver["visibility"] == "unknown" or listener_state["visibility"] == "unknown":
+            alerts.append("process_visibility_unknown")
+        if health.get("process") is not None and health["process"]["visibility"] == "unknown":
+            alerts.append("worker_process_visibility_unknown")
         if finance["retry_alerts"]:
             alerts.append("internal_execution_retry_cause_unknown")
         if any(item["state"] in {"REJECTED", "QUARANTINED"} for item in finance.get("command_inbox", [])):
@@ -519,7 +627,11 @@ class Observer:
             raise ValueError("final_progress_required_field_missing")
         if not boundary or cp["completed"] != contract["planned_rounds"] or cp["active_rounds"]:
             errors.append("final_round_boundary_incomplete")
-        if listener["alive"] or health["process"] and health["process"]["alive"] or health["lease_active"]:
+        if not process_identity(self.driver_pid, self.driver_birth)["known_stopped"]:
+            errors.append("final_driver_not_stopped_or_unknown")
+        worker = health.get("process")
+        if (not listener.get("known_stopped", False) or worker is None or not worker.get("known_stopped", False)
+                or health["lease_active"]):
             errors.append("final_authority_not_cold")
         if cp["states"]["logs_verified"] is not True or progress["logs_verified"] is not True:
             errors.append("final_logs_verified_missing")
@@ -553,6 +665,9 @@ class Observer:
         later = checkpoint(self.job / "checkpoint.sqlite3", cold=self.cold)
         if watermark(later, reopened, contract) != current:
             errors.append("independent_reopen_watermark_changed")
+        if (reopened["golden"].get("compared") is not True or reopened["golden"].get("passed") is not True
+                or reopened["retry_alerts"]):
+            errors.append("independent_reopen_golden_failed")
         producer = None
         if self.producer_receipt is None or not self.producer_receipt.exists():
             errors.append("producer_cold_audit_same_watermark_missing")
@@ -562,11 +677,15 @@ class Observer:
             if (receipt.get("format") != 1 or receipt.get("watermark_before") != current
                     or receipt.get("watermark_after") != current or receipt.get("producer_cold_audit_passed") is not True
                     or receipt.get("frozen_commit") != self.frozen_commit
-                    or receipt.get("producer_audit_scope") != "exact_sqlite_backup_of_stopped_public_job"
+                    or receipt.get("producer_audit_scope") != PRODUCER_AUDIT_SCOPE
+                    or receipt.get("producer_audit_runtime") != {key: meta["environment"][key] for key in ("python", "sqlite")}
                     or not isinstance(producer, str) or re.fullmatch(r"[0-9a-f]{64}", producer) is None):
                 errors.append("producer_cold_audit_watermark_mismatch")
+        if not self.recheck_final_contract(contract, progress, later):
+            errors.append("final_original_contract_or_progress_changed")
         return {"eligible": not errors, "errors": errors, "watermark": current,
             "independent_reopen_same_watermark": "independent_reopen_watermark_changed" not in errors,
+            "independent_reopen_reconciliation_passed": "independent_reopen_golden_failed" not in errors,
             "logs": logs, "producer_audit_sha256": producer, "observer_is_formal_signoff": False, **FLAGS}
 
     def publish(self, result):
@@ -584,10 +703,42 @@ def producer_audit(observer, python):
     if final is None or any(error != "producer_cold_audit_same_watermark_missing" for error in final["errors"]):
         raise ValueError("producer_audit_requires_other_final_checks_passed")
     # The producer's legacy mode=ro helper may create WAL sidecars on a cold
-    # WAL database. Run it against exact SQLite backups in our writable output
-    # directory; the original job stays mounted read-only throughout. No auth,
-    # TLS, signing profile, nonce store or private stderr is copied.
-    with tempfile.TemporaryDirectory(prefix="producer-public-snapshot-", dir=observer.output) as temporary:
+    # WAL database. Root explicitly authorized complete private SQLite backups,
+    # including historical writer/control nonce columns, rather than rebuilding
+    # a projected authority. Never publish/archive these opaque full DB clones.
+    # No auth/TLS/signing/HTTP nonce-store/private stderr files are copied.
+    meta = load_json(observer.job / "job.json")
+    manifest = load_json(observer.job / "log-segments.json")
+    relatives = [Path(name) for name in ("checkpoint.sqlite3", "managed/router.sqlite3", "managed/shard-0000.sqlite3",
+        "job.json", "progress.json", "log-segments.json")]
+    relatives.extend(Path("validation") / name for name in VALIDATION_ARTIFACTS)
+    relatives.extend(log_relative(segment["file"]) for segment in manifest["segments"])
+    estimate = 0
+    for relative in relatives:
+        estimate += (observer.job / relative).stat().st_size
+        if relative.suffix == ".sqlite3":
+            try:
+                estimate += Path(str(observer.job / relative) + "-wal").stat().st_size
+            except FileNotFoundError:
+                pass
+    if (estimate > observer.max_private_clone_bytes
+            or shutil.disk_usage(observer.output).free < estimate + observer.min_private_free_bytes):
+        raise ValueError("private_complete_clone_disk_budget_unavailable")
+    probe = subprocess.run([python, "-B", "-c",
+        "import json,sqlite3,sys; print(json.dumps({'python':sys.version,'sqlite':sqlite3.sqlite_version}))"],
+        cwd=observer.source, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        close_fds=True, text=True, timeout=15)
+    audit_runtime = parse(probe.stdout) if probe.returncode == 0 else None
+    expected_runtime = {key: meta["environment"][key] for key in ("python", "sqlite")}
+    if (audit_runtime != expected_runtime
+            or audit_runtime != {key: meta["validation_evidence"][key] for key in ("python", "sqlite")}):
+        raise ValueError("producer_audit_exact_runtime_mismatch")
+    private = observer.output / "private-audit"
+    private.mkdir(mode=0o700, exist_ok=True)
+    details = private.stat()
+    if private.is_symlink() or details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) != 0o700:
+        raise ValueError("private_complete_clone_directory_not_private")
+    with tempfile.TemporaryDirectory(prefix="private-full-clone-", dir=private) as temporary:
         clone = Path(temporary)
         for relative in ("checkpoint.sqlite3", "managed/router.sqlite3", "managed/shard-0000.sqlite3"):
             destination = clone / relative
@@ -595,26 +746,35 @@ def producer_audit(observer, python):
             with readonly(observer.job / relative, cold=observer.cold) as source:
                 target = sqlite3.connect(destination)
                 try:
+                    destination.chmod(0o600)
                     source.backup(target)
                     target.execute("PRAGMA journal_mode=DELETE")
                 finally:
                     target.close()
         for relative in ("job.json", "progress.json", "log-segments.json"):
-            (clone / relative).write_bytes((observer.job / relative).read_bytes())
+            private_write(clone / relative, (observer.job / relative).read_bytes())
+        (clone / "validation").mkdir(mode=0o700)
+        for name in VALIDATION_ARTIFACTS:
+            raw = (observer.job / "validation" / name).read_bytes()
+            if sha256(raw).hexdigest() != meta["validation_evidence"]["artifact_sha256"][name]:
+                raise ValueError("private_complete_clone_validation_changed")
+            private_write(clone / "validation" / name, raw)
         (clone / "logs").mkdir(mode=0o700)
-        manifest = load_json(observer.job / "log-segments.json")
         for segment in manifest["segments"]:
-            relative = Path(segment["file"])
+            relative = log_relative(segment["file"])
             # verify_logs has already constrained these names and checksums.
-            (clone / relative).write_bytes((observer.job / relative).read_bytes())
+            private_write(clone / relative, (observer.job / relative).read_bytes())
         with readonly(clone / "managed/shard-0000.sqlite3", cold=True) as connection:
             copied = read_financial(connection, first["planned_rounds"], first["completed_rounds"], compare_golden=True)
         if copied["watermark"] != final["watermark"]["financial"] or not copied["golden"]["passed"]:
-            raise ValueError("producer_public_snapshot_watermark_mismatch")
+            raise ValueError("producer_private_clone_watermark_mismatch")
         if checkpoint(clone / "checkpoint.sqlite3", cold=True)["event_head"] != final["watermark"]["checkpoint"]:
-            raise ValueError("producer_public_checkpoint_watermark_mismatch")
+            raise ValueError("producer_private_checkpoint_watermark_mismatch")
+        if shutil.disk_usage(observer.output).free < observer.min_private_free_bytes:
+            raise ValueError("private_complete_clone_free_space_exhausted")
         run = subprocess.run([python, "-B", "benchmarks/run_managed_soak.py", "audit", "--directory", str(clone)],
-            cwd=observer.source, text=True, capture_output=True, timeout=120)
+            cwd=observer.source, text=True, capture_output=True, timeout=120,
+            stdin=subprocess.DEVNULL, close_fds=True)
     if run.returncode:
         raise ValueError("producer_cold_audit_failed")
     audit = parse(run.stdout)
@@ -627,7 +787,9 @@ def producer_audit(observer, python):
         raise ValueError("producer_cold_audit_crossed_watermark")
     receipt = {"format": 1, "synthetic": True, "redacted": True, "producer_cold_audit_passed": True,
         "audit_sha256": sha256(run.stdout.encode()).hexdigest(), "frozen_commit": observer.frozen_commit,
-        "producer_audit_scope": "exact_sqlite_backup_of_stopped_public_job",
+        "producer_audit_scope": PRODUCER_AUDIT_SCOPE,
+        "producer_audit_runtime": audit_runtime,
+        "private_clone_estimated_bytes": estimate, "private_clone_max_bytes": observer.max_private_clone_bytes,
         "watermark_before": final["watermark"], "watermark_after": second["watermark"], **FLAGS}
     atomic_json(observer.output / "producer-cold-audit-receipt.json", receipt)
     return receipt
@@ -653,13 +815,21 @@ def readonly_mount_or_reexec(job, output, source, argv):
         raise ValueError("kernel_readonly_mount_required_bwrap_unavailable")
     command = [executable, "--ro-bind", "/", "/", "--bind", str(output), str(output), "--",
                sys.executable, "-B", str(Path(__file__).resolve()), *argv]
-    run = subprocess.run(command, cwd=Path(__file__).resolve().parents[1], stderr=subprocess.PIPE, text=True)
+    run = subprocess.run(command, cwd=Path(__file__).resolve().parents[1], stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, close_fds=True, text=True)
     if run.returncode and run.stderr:
         raise ValueError("readonly_mount_or_child_failed")
+    if run.stdout:
+        # safe_standard_descriptors was checked before any CLI output. The
+        # launcher receives a pipe and decides where its own external logs go.
+        sys.stdout.write(run.stdout)
     return run.returncode
 
 
 def main(argv=None):
+    if not safe_standard_descriptors():
+        # A diagnostic printed here could itself overwrite the inherited file.
+        return 1
     argv = sys.argv[1:] if argv is None else argv
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("watch", "producer-audit"))
@@ -673,9 +843,18 @@ def main(argv=None):
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--once", action="store_true")
     parser.add_argument("--interval", type=float, default=60)
+    parser.add_argument("--max-private-clone-bytes", type=int, default=6 * 1024**3)
+    parser.add_argument("--min-private-free-bytes", type=int, default=1024**3)
+    parser.add_argument("--max-address-space-bytes", type=int, default=2 * 1024**3)
     args = parser.parse_args(argv)
     if number(args.interval) < 60:
         parser.error("observation interval must be at least 60 seconds")
+    integer(args.max_private_clone_bytes, 1)
+    integer(args.min_private_free_bytes)
+    integer(args.max_address_space_bytes, 256 * 1024**2)
+    _, hard = resource.getrlimit(resource.RLIMIT_AS)
+    limit = args.max_address_space_bytes if hard == resource.RLIM_INFINITY else min(hard, args.max_address_space_bytes)
+    resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
     try:
         reexecuted = readonly_mount_or_reexec(args.job, args.output, args.source, argv)
     except (OSError, ValueError, subprocess.SubprocessError) as error:
@@ -685,12 +864,14 @@ def main(argv=None):
     if reexecuted is not None:
         return reexecuted
     observer = Observer(args.job, args.output, args.source, args.frozen_commit, args.driver_pid,
-                        args.driver_birth, producer_receipt=args.producer_receipt)
+                        args.driver_birth, producer_receipt=args.producer_receipt,
+                        max_private_clone_bytes=args.max_private_clone_bytes,
+                        min_private_free_bytes=args.min_private_free_bytes)
     if args.command == "producer-audit":
         try:
             print(canonical(producer_audit(observer, args.python)))
             return 0
-        except (OSError, ValueError, KeyError, TypeError, ArithmeticError, RecursionError,
+        except (OSError, ValueError, KeyError, TypeError, ArithmeticError, RecursionError, MemoryError,
                 sqlite3.Error, subprocess.SubprocessError) as error:
             print(canonical({"synthetic": True, "redacted": True, "final_evidence_eligible": False,
                 "observer_is_formal_signoff": False, "alerts": ["producer_cold_audit_failed_closed"],
@@ -701,9 +882,10 @@ def main(argv=None):
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
         sample_started = time.monotonic()
+        result = None  # Release the preceding full-CID sample before reading another.
         try:
             result = observer.sample()
-        except (OSError, ValueError, KeyError, TypeError, ArithmeticError, RecursionError,
+        except (OSError, ValueError, KeyError, TypeError, ArithmeticError, RecursionError, MemoryError,
                 sqlite3.Error, subprocess.SubprocessError) as error:
             result = {"synthetic": True, "redacted": True, "observation_only": True,
                 "observer_is_formal_signoff": False, "sample_wall_ns": time.time_ns(),

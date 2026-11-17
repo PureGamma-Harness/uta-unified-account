@@ -1,5 +1,9 @@
 # Independent managed soak observer
 
+**2026-11-17 correction:** the review corrections at the end supersede the
+historical public-snapshot/no-nonce and absolute mount-isolation claims below.
+The original preparation text is retained as history, not current authority.
+
 This delivery prepares an observer for a future synthetic six-hour job on
 `4608ffeda0651f8dafd2cd151618a71ed99aa62e`. It starts no job, listener, worker,
 background observer, or load generator. The earlier 887/observer experiment,
@@ -116,3 +120,83 @@ Until the new job actually runs and finishes, there is no six-hour evidence.
 
 Prepared commands and the bounded verification record are in
 [managed-observer-commands.md](managed-observer-commands.md).
+
+## 2026-11-17 review corrections and current boundary
+
+The review explicitly chose a **private complete SQLite clone** for the actual
+producer audit. This is a conscious, narrowly scoped adjustment by root to the
+original no-nonce-copy constraint. Full `SQLite.backup()` preserves the original
+schema, triggers and control/identity records; it also copies historical
+`writer_fence_events.owner_nonce`, any lease nonce, router process owner nonces
+and internal authority paths. The earlier public-snapshot/no-nonce-copy claim
+above was incorrect. The tool does not select or print those nonce columns;
+the backup is opaque and private. A deleted-field business reconstruction is
+not presented as a complete original-authority audit.
+
+Only the three exact authority/checkpoint databases, nonsecret job/progress/log
+files and exact checked validation sidecars are copied. Authentication/HTTP
+nonce databases, signing profiles, TLS keys and private stderr remain excluded.
+The complete clone lives only beneath the owned `0700` output's `private-audit/`
+directory, itself `0700`, with `0600` files and a `private-full-clone-` prefix.
+Normal completion or exceptions clean it up; an uncatchable kill may leave a
+private residual. Never recursively publish or archive the output directory.
+Public evidence is only the explicit allowlist: `baseline.json`, `latest.json`,
+`timeline.jsonl` and `producer-cold-audit-receipt.json`, after normal redaction
+review. In particular, `private-audit/` is never public evidence.
+
+The clone includes `validation/summary.json`, `worker-result.json` and
+`unittest.txt`, byte-for-byte with their pinned digests. This fixes the original
+omission that would have made a qualified producer audit fail. The producer
+audit really executes against the complete private clone; original input files
+stay read-only. A successful receipt says
+`producer_audit_scope=private_complete_sqlite_clone_of_stopped_authority` and
+binds original before/after business/checkpoint watermarks. It does not claim
+that the producer audited the original path directly.
+Before creating the clone, a short, service-free probe of `--python` must match
+the original producer's exact Python and SQLite identities in both metadata and
+validation evidence. The receipt records that audit runtime, and final
+reconciliation verifies it again. A different interpreter cannot silently audit
+the clone under the validated runtime's identity.
+
+The CLI rejects regular-file standard descriptors before emitting any output,
+including errors: an already-open writable stdout can bypass a read-only bind
+mount. Launchers use PIPEs and save returned output only to their controlled
+external directory. Child processes use `stdin=DEVNULL`, PIPE output/error and
+`close_fds=True`; unknown stderr is never forwarded raw. Host PID namespace and
+`/proc/PID/stat` visibility are intentionally retained for actual birth checks.
+The mount protects this tool's controlled pathname/SQLite operations. It is not
+an adversarial sandbox against malicious code, a malicious launcher or arbitrary
+host proc magic links. The 887 processes remain outside all observation inputs.
+
+PID observations now distinguish observed, definitely absent and unknown.
+Permission failures or malformed/unavailable proc data cannot prove death. An
+unknown driver blocks the cold/immutable transition; unknown listener/worker
+visibility blocks final acceptance. The recorded worker birth is checked even
+after its lease owner is cleared. Final reopening must separately pass its own
+integer/relational golden, `quick_check`, foreign keys and retry checks **and**
+match the original watermark. Identical hashes cannot replace reconciliation.
+Source, original metadata/progress contract, file identities and validation are
+checked again at the end of final reconciliation.
+
+The observer independently checks literal qualification success, positive actual
+test count, zero failures/errors/skips/expected outcomes, worker/summary type and
+count agreement, raw log digest and terminal result, full runner command,
+producer Python/SQLite identity and the complete current validator input set.
+A listed subset manifest or one runtime's report cannot stand in for the
+operator's complete release QA decision. No qualification bypass is introduced
+for a one-minute smoke.
+
+Resource bounds are explicit. The default private-clone cap is 6 GiB; estimated
+database plus WAL, allowed logs and validation copies must fit it, with at least
+1 GiB free after the estimate and again before producer audit. These are
+configurable, fail-closed operator budgets. Each CLI process and its producer
+audit child have a default 2 GiB address-space ceiling (`RLIMIT_AS`); this bounds
+allocations, not measured resident memory. Large samples may fail closed rather
+than exceed that ceiling. Full financial rows are still proportional to current
+business history, so no six-hour RSS guarantee is made. Only one current CID
+sample is retained; the prior sample is released before the next read, and the
+JSONL history streams to disk instead of accumulating six hours in memory.
+
+The older 4608 command examples are historical preparation. A new real smoke or
+long run waits for the newly selected clean freeze, its complete exact QA and
+explicit root GO. See [the pending one-minute plan](managed-observer-smoke-plan.md).
