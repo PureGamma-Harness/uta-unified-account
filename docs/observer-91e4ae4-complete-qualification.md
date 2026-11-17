@@ -18,4 +18,22 @@ PR 实际测试合并提交为 `d7f23cac215ede34a4aa8e20014ecfc418912830`，父�
 
 独立证据分支只新增合成测试输出、provider 元数据与核验记录。无数据库迁移、API/运行时或部署变更，无需部署。撤销证据提交即可回滚工作树；原始失败、ZIP、源冻结目录及仍在运行的本地矩阵和长稳作业均须保留。后续工程修复应使用新 SHA 独立复测，不能改记本轮结果。
 
-完整八份 unit、七份 package 与 wheel 原件完整性、以及本地三次原始运行，将在相应原始文件完成后继续追加封存。当前未完成的证据不能当作通过。
+## 完整 CI 原件核验
+
+两个 run 的八个 jobs 均已自然结束：七个 success，一个上述 failure。八份 unit 的原始 summary、worker-result、完整 unittest 输出均已归档，全部实际执行 1512 项、零跳过，七份通过，一份失败。八份的 266 项源输入摘要逐项与同一冻结源核对，完全一致；所有原始记录均为源未改变且前后跟踪源干净。
+
+七份 package-validation artifact 各自恰有 19 份文本/JSON 原始 members，全部已归档，包含原 package manifest、fresh isolated installed-report、八项 console 测试与八个真实 CLI 命令输出。报告均为对应 job 实际产生，PR 包的 `source_commit=d7f23ca...` 保持原值，未改记为源提交。七份原报告各自七项 archive 检查通过、52 个 runtime 文件一致、3633 个 tracked 文件齐备；fresh isolated 安装各有八项测试零失败、零错误、零跳过，以及八个 CLI 命令退出 0。
+
+全部 22 份 provider ZIP 按 `artifact-<ID>.zip` 保存在 `/workspace/uta-ci-91e4-original-zips-unique`：每份原大小、SHA-256 与 provider 一致，CRC 全部通过。七份 wheel artifact 内各有实际 wheel 与 sdist，均与**同 run、同 Python job** 的 package manifest 及 installed-report 的字节数和 SHA-256 一致。另以只读文件计算独立核对七份 sdist 内各 3633 个 tracked 文件和七份 wheel 的 52 个 runtime 文件，均逐文件与冻结源一致。wheel/sdist 二进制不发布到本证据提交。
+
+运行时树摘要保留为 `e6e06e44c1f7bb6e36fc614a5f03a679ba3b21efd1ba9a712584c6730f14a792`。这些完整性检查和七份包通过不能弥补第八 job 的失败，也不能声明完整 CI 通过。
+
+只读核验命令不导入生产核心、不运行测试、服务或 SQL；`--original-zip-root` 省略时只核验已提交原 members、来源和结果，不声称重新核验未提交 ZIP。
+
+```sh
+python evidence/runs/observer-qa-91e4ae4-complete/verify_integrity.py \
+  --frozen-source /workspace/uta-observer-freeze-91e4ae4 \
+  --original-zip-root /workspace/uta-ci-91e4-original-zips-unique
+```
+
+实际核验输出记录 `integrity_passed=true`、22 份 ZIP 与七份完整 sdist 文件核验通过，同时保留 `qualification=NO_GO` 和 `production_approved=false`。本地三次原始运行还在按原顺序执行，将在原矩阵自然完成后追加封存；当前未完成的证据不能当作通过。
