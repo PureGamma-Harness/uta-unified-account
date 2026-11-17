@@ -1,0 +1,2516 @@
+{
+  "stage": "fixed-green",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "cpu_ids": [
+    2
+  ],
+  "wall_seconds": 11.808664040996518,
+  "tests_run": 5,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 0,
+  "passed": false,
+  "source_before": {
+    "tests/test_readiness_sampling.py": "8b7c2be285ade961ccc6a7b927cb1df6c53527c94c654eae33515794f8f015d3",
+    "tests/test_process_readiness.py": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "source_after": {
+    "tests/test_readiness_sampling.py": "8b7c2be285ade961ccc6a7b927cb1df6c53527c94c654eae33515794f8f015d3",
+    "tests/test_process_readiness.py": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "events": [
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.490327469,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.548226351,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.591964449,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.63401399,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.663680056,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.695482008,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.742331831,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.785443383,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.815592302,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.854360558,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.879316434,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.920120608,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.946087162,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57749.981551229,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.017451781,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.042491433,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.088085856,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.120727449,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.147179401,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.186842421,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.227761871,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.265863213,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.308972687,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.36829535,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.397984848,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.455767113,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": 0,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196239,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 57750.480614242,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196241,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "diagnostic_timeout",
+            "observation_error": {
+              "type": "sqlite_operational_error",
+              "sqlite_errorcode": 9
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196242,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "diagnostic_timeout",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57751.895759529,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196244,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196244,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196244,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196245,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196245,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196245,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_second_shard_read_crossed_original_deadline",
+      "monotonic": 57752.915248034,
+      "deadline": 57752.90004119,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:03:44.280016+00:00\",\"version\":1}"
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57752.916240886,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196244,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196244,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196244,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196245,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196245,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196245,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": false,
+            "reason": "diagnostic_timeout",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00",
+            "observation_error": {
+              "type": "sqlite_operational_error",
+              "sqlite_errorcode": 9
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_stale"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57752.959931481,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196244,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196244,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196244,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196245,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196245,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196245,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 1,
+            "market_digest": "59e1df2c12bac619f1d0a420ab5ea7eee51ef7c1377aa990aa9d1f92bfc197f2",
+            "market_observed_at": "2026-11-17T13:03:44.280016+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_stale"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57753.171861828,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196244,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196244,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196244,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+            "market_observed_at": "2026-11-17T13:03:46.495342+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196245,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196245,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196245,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+            "market_observed_at": "2026-11-17T13:03:46.495342+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57753.211818577,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196244,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196244,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196244,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+            "market_observed_at": "2026-11-17T13:03:46.495342+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196245,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196245,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196245,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "65f0a4dae2bd8dde24219dbbc3c3a25092dcc3e4fc734c95cb6d55ff51140ec2",
+            "market_observed_at": "2026-11-17T13:03:46.495342+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57755.141199437,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196249,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+            "market_observed_at": "2026-11-17T13:03:47.341410+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196250,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+            "market_observed_at": "2026-11-17T13:03:47.341410+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57755.169593345,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196249,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_future",
+            "market_version": 1,
+            "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+            "market_observed_at": "2026-11-17T13:03:47.341410+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196250,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_future",
+            "market_version": 1,
+            "market_digest": "682bded92b25a2653bb93c24c0bc9959196a3934005958292bc355f0f43db896",
+            "market_observed_at": "2026-11-17T13:03:47.341410+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_future"
+      }
+    },
+    {
+      "kind": "actual_restored_clock_control_gate_timeout",
+      "monotonic": 57755.795634445,
+      "report": {
+        "state": null,
+        "state_observed": false,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57755.795749014,
+      "report": {
+        "state": null,
+        "state_observed": false,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57755.987612219,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196249,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+            "market_observed_at": "2026-11-17T13:03:48.732370+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "diagnostic_timeout",
+            "observation_error": {
+              "type": "sqlite_operational_error",
+              "sqlite_errorcode": 9
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57756.0400792,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196249,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+            "market_observed_at": "2026-11-17T13:03:48.732370+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196250,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+            "market_observed_at": "2026-11-17T13:03:48.732370+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57756.079354604,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196249,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196249,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196249,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+            "market_observed_at": "2026-11-17T13:03:48.732370+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196250,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196250,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 196250,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "b6415f4d9da514766bd6ae48924a2ab4cba9b449a467d6fd56d7ca780e781b9e",
+            "market_observed_at": "2026-11-17T13:03:48.732370+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    }
+  ],
+  "no_existing_job_or_live_SQL": true,
+  "temporary_component_only": true,
+  "runtime_TTL_timeout_snapshot_content_not_relaxed": true,
+  "unique_historical_cause_proven": false,
+  "production_approved": false
+}

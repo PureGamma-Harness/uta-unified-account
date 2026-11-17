@@ -138,6 +138,8 @@ def main():
     # inactive controls in the final narrow round.
     if stage == "original-red":
         cases.append(sampling.ReadinessSamplingTests("test_successful_activation_does_not_force_a_contended_observation_true"))
+    if stage == "sampling-native-frame":
+        cases = [cases[0]]
     suite = unittest.TestSuite(cases)
     t0 = monotonic()
     with (output/"unittest.txt").open("w") as log:

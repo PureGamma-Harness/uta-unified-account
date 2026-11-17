@@ -313,6 +313,13 @@ class ReadinessSamplingTests(unittest.TestCase):
             # clock. Shard1 remains deliberately owned by the original test fence.
             deadline, initialized = monotonic() + 1, None
             while monotonic() < deadline:
+                # Do not repeatedly acquire the diagnostic SQL/router gate
+                # while the actual child is still importing and initializing.
+                with router._mutex:
+                    ready_frame = router._reports.get(0, {}).get("state") == "ready"
+                if not ready_frame:
+                    sleep(.01)
+                    continue
                 report = router.diagnostics(timeout=min(.1, max(.001, deadline-monotonic())))
                 self.assertIs(report["ready"], False, report)
                 self.assertIs(report["financial_ready"], False, report)
