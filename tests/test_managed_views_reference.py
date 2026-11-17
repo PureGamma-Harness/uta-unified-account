@@ -500,6 +500,18 @@ class ManagedRouterReadReferenceTests(unittest.TestCase):
             snapshot = self.market()
             publication = self.router.publish_market(snapshot, timeout=.25)
             self.assertTrue(publication["publishing"])
+            # A timed-out fanout does not prove shard 0 has committed. Observe
+            # its original command, without republishing or refreshing prices.
+            command = publication["durable_market_commands"]["0"]
+            receipt = self.router.wait(command, shard=0, timeout=1)
+            if receipt is None:
+                self.fail({"command": command, "publication": publication,
+                           "diagnostics": self.router.diagnostics()})
+            self.assertEqual(receipt["state"], "SUCCEEDED", receipt)
+            with self.router._database(0).read_transaction() as connection:
+                row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+            self.assertIsNotNone(row, receipt)
+            self.assertEqual(row[0], snapshot.to_json())
             health = self.get("/v2/worker-health")
             self.assertFalse(health["financial_ready"])
             self.assertFalse(health["dispatch_available"])
