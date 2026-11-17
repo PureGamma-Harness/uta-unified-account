@@ -29,8 +29,12 @@ charged fees, and an eight-decimal fee ceiling. Code
 02c2193599f403dfe489b95e21123fcd1686ffc2 first passed4 pure test methods: those
 manual cases,4,500 deterministic signed differential vectors under
 precisions2/9/28,48 decimal-domain field boundaries, and reference fallback/error
-cases. The reference core stays byte-identical. Independent financial
-verification remains pending.
+cases. The reference core stays byte-identical. A separate Fraction oracle froze16 manual standards and verified3,352
+value/tuple/string comparisons,96 manual components and90 fallback checks.
+Its first72 wire-format mismatches affected candidate and reference equally;
+the independent oracle format defect and original RED were retained before a
+separately versioned correction. These component checks do not grant financial
+model approval or trading permission.
 
 A separate one-shot CPU1 microprofile compared three alternating pairs of12,000
 pure calculations over the12 manual inputs. Reference53,349-68,598 calls/s;
@@ -48,3 +52,12 @@ meaningful mixed/persistent benchmarks. Rollback removes experimental
 imports/callers and retains the unchanged reference, results and manual
 examples. Production, model approval, real funds, capacity and HA flags remain
 false.
+
+The independent group also identified a dynamic-subclass compatibility boundary.
+Root preserved a real first counterexample at057fa65: a reduce-only subclass
+raises when its unused margin attribute is eagerly read. Codec6a7210 delegates
+all subclasses and duck-typed inputs immediately to the reference. The one new
+regression passed; independent CODE/AST review8878056 confirms that only this
+entry guard changed and the ordinary-input mathematics remained identical. The
+old broad differential evidence binds02c2193; it was not rerun or relabelled as
+a new complete-suite result for c6a7210. Integrated CI remains a separate gate.
