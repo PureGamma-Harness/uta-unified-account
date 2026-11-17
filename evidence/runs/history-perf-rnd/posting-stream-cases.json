@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "status": "CONTRACT_NOT_RUN",
+  "valid_manual": {
+    "scales": {"USD": 2},
+    "events": [
+      {"sequence": 1, "event_id": "manual:1", "postings": [[0, "a", "USD", "-1250"], [1, "b", "USD", "1250"]]},
+      {"sequence": 2, "event_id": "manual:2", "postings": [[0, "b", "USD", "-300"], [1, "c", "USD", "300"]]}
+    ],
+    "balances_units": {"a/USD": -1250, "b/USD": 950, "c/USD": 300},
+    "event_count": 2,
+    "posting_count": 4
+  },
+  "differential_cases": [
+    {"id": "HPS-001", "mutation": "none", "expect": "same count/head/balances and independent reference"},
+    {"id": "HPS-002", "mutation": "insert physical event/posting rows in reverse order preserving logical sequence/ordinal", "expect": "same valid result"},
+    {"id": "HPS-003", "mutation": "missing entire event-two posting group", "expect": "LedgerError: at least two postings are required"},
+    {"id": "HPS-004", "mutation": "delete final ordinal from event-two", "expect": "LedgerError: at least two postings are required"},
+    {"id": "HPS-005", "mutation": "change event-two ordinal one to two", "expect": "LedgerError: journal posting sequence is broken"},
+    {"id": "HPS-006", "mutation": "extra posting group references nonexistent event", "expect": "LedgerError: database foreign-key check failed before replay"},
+    {"id": "HPS-007", "mutation": "event sequence gap preserving posting foreign keys", "expect": "LedgerError: journal sequence or hash chain is broken"},
+    {"id": "HPS-008", "mutation": "swap the stored canonical account order within one event", "expect": "LedgerError: journal event fingerprint changed"},
+    {"id": "HPS-009", "mutation": "corrupt prior hash", "expect": "LedgerError: journal sequence or hash chain is broken"},
+    {"id": "HPS-010", "mutation": "corrupt event hash only", "expect": "LedgerError: journal event hash changed"},
+    {"id": "HPS-011", "mutation": "units text is +1250 or 01250 or -0", "expect": "LedgerError: corrupt or out-of-range ledger integer"},
+    {"id": "HPS-012", "mutation": "units text is noninteger", "expect": "LedgerError: corrupt ledger integer"},
+    {"id": "HPS-013", "mutation": "one stored unit equals either sign of 10**38", "expect": "LedgerError: corrupt or out-of-range ledger integer"},
+    {"id": "HPS-014", "mutation": "two independently valid balanced events reach either sign of 10**38 cumulatively, with literal rebuilt fingerprints/hashes", "expect": "LedgerError: replayed balance exceeds supported range"},
+    {"id": "HPS-015", "mutation": "one materialized balance differs", "expect": "LedgerError: materialized balances differ from journal replay"},
+    {"id": "HPS-016", "mutation": "event-one hash chain broken and later malformed units", "expect": "first original chain error, no early later-group decode"},
+    {"id": "HPS-017", "mutation": "missing or altered original trigger", "expect": "original protection error in both paths"},
+    {"id": "HPS-018", "mutation": "change configured asset scale or ledger schema version", "expect": "original scale/schema error in both paths"}
+  ],
+  "option_controls": ["omitted is false/default original path", "explicit false original path", "true opt-in only", "0/1/null/string/list rejected before storage"],
+  "runtime_and_profile_executed": false,
+  "independent_acceptance": "PENDING_OTHER_GROUP"
+}
