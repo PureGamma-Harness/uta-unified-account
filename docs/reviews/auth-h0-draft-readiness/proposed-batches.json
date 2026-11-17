@@ -1,0 +1,98 @@
+{
+  "status": "CODE_AND_PURE_ONLY_NOT_RUN",
+  "source_commit": "912f2a4e5ed74f7a3fbf892ff0172e4eacc9c45a",
+  "runtime_commit": "5750e12d60dbf7f8414b4e837e076a60c93a23bc",
+  "existing_ef60_fix_acceptance_unchanged": true,
+  "no_new_sql_product_import_thread_or_authority": true,
+  "P1": {
+    "status": "PREPARED_AWAIT_ROOT_GO_AFTER_FULL_QA",
+    "harness_sha256": "c8de834b0dcd96a1617ab5d32f593088de871923497052bde53104998b4eab90",
+    "command": [
+      "taskset",
+      "-c",
+      "4",
+      "timeout",
+      "--signal=KILL",
+      "30s",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-I",
+      "-B",
+      "/workspace/uta-auth-h0-draft-readiness/tests/auth_h0_readiness_independent/concurrent_profile_probe.py",
+      "--source",
+      "/workspace/uta-auth-h0-qa-912f2a4",
+      "--private",
+      "/workspace/uta-auth-h0-independent-private/concurrency-912-first-actual/cases",
+      "--result",
+      "/workspace/uta-auth-h0-independent-private/concurrency-912-first-actual/result.json"
+    ],
+    "cwd": "/workspace/uta-auth-h0-draft-readiness",
+    "fresh_outer_directory": "/workspace/uta-auth-h0-independent-private/concurrency-912-first-actual",
+    "outer_directory_setup": "root launcher exclusively creates0700 outer before invocation; child exclusively creates cases",
+    "cpu": [
+      4
+    ],
+    "hard_timeout_seconds": 30,
+    "cases": [
+      "profile revocation vs capture",
+      "unrelated profile update vs capture",
+      "borrow grant revoke vs same-CID retry",
+      "current credit.read revoke vs lookup"
+    ],
+    "thread_budget": {
+      "threads_per_case": 2,
+      "barrier_parties": 3,
+      "barrier_timeout_seconds": 2,
+      "combined_completion_seconds": 4,
+      "bounded_join_seconds_each": 0.1,
+      "blind_sleep": false
+    },
+    "reference": "same-AuthDB audit sequence and independently derived latest preceding profile; no UTC-order or production-verifier oracle",
+    "cleanup": "only self-owned daemon threads; if unjoined write UNKNOWN and current self process os._exit91. No other PID signalled. Outer GNUtimeoutKILL controls only its newly started command group.",
+    "unknown_policy": "503/technical failure stops remaining cases asUNKNOWN; known assertionsFAIL; no rerun-to-green",
+    "schedule_scope": "one actual schedule per race, not exhaustive interleavings",
+    "new_private_data_planning_bytes": 16777216,
+    "network_or_financial_objects": false
+  },
+  "P2": {
+    "status": "PLAN_ONLY_NOT_CODED_NOT_AUTHORIZED",
+    "goal": "actual default retained handle224/32 threshold characterization, not global-intake guarantee",
+    "cpu": [
+      4
+    ],
+    "hard_timeout_seconds": 30,
+    "fresh_private_directory": "/workspace/uta-auth-h0-independent-private/default-handles-912-first-actual",
+    "steps": [
+      "retain224 real ordinary auth observations",
+      "225th ordinary HANDLE_CAPACITY with no extra acceptance",
+      "valid-MAC ungranted query cannot occupy reserve",
+      "32 authorized current-read observations reach total256",
+      "33rd query fails at total256",
+      "release query observations and show normal admission only after total falls below224"
+    ],
+    "important_count_semantics": "_reserve compares total len(_slots), not independent per-class counters",
+    "planning_scale": "224 accepted rows plus32 query observations and limit refusals; below default nonce/audit budgets",
+    "planning_time": "prior0.529198140s/27 invoked inputs gives only a few-second order estimate, not an upper bound or throughput. First32 are actual prefix, never discarded warmup. If projected work exceeds25s stopNOT_COMPLETED; do not shrink target to pass. Hard watchdog30s.",
+    "new_private_data_planning_bytes": 33554432,
+    "code_and_driver_review_still_required": true
+  },
+  "P3": {
+    "status": "PLAN_ONLY_NOT_CODED_NOT_AUTHORIZED",
+    "goal": "real AuthDBCOMMIT return then process reply loss; originalCID auth recovery only",
+    "cpu": [
+      4
+    ],
+    "hard_timeout_seconds": 30,
+    "fresh_private_directory": "/workspace/uta-auth-h0-independent-private/process-replyloss-912-first-actual",
+    "owned_processes": "parent+one new Popenworker start_new_sessionTrue; no services/network",
+    "handshake": "worker bounded safeREADY then waitsGO; parent capturesPID/birth/boot/UID and openspidfd while worker waits. No key/header/nonce/signature in stdout.",
+    "real_path": "actual fresh constructor/grants and literalMACcapture; after realCOMMITreturn write/fsync private marker, then selfos._exit73 before applicationreceipt",
+    "recovery": "new actual issuer and currentcredit.read signednonce lookup originalCID; sameCID retryquery-only; firstacceptance count1",
+    "cleanup": "pidfd self-preflight before spawn; readiness3s; completion afterGO5s. Only matching ownedPID/birth/boot/UID boundpidfd may receiveTERM, wait1s, thenKILL on samepidfd andwait1s/reap. Forcedcleanup yieldsUNKNOWN regardless laterquery. No killall, oldPID or process-groupsearch; no identity-binding fallback.",
+    "not_covered": [
+      "midCOMMIT hardware/powerloss",
+      "storage-loss/HA",
+      "HMAC3 financial source or loans"
+    ],
+    "code_and_driver_review_still_required": true
+  }
+}
