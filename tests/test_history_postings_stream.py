@@ -202,6 +202,7 @@ class HistoryPostingsStreamTests(unittest.TestCase):
             with self.subTest(column=column):
                 def twice(c):
                     c.execute("UPDATE ledger_events SET previous_hash='broken' WHERE sequence=1")
+                    c.execute("UPDATE ledger_postings SET account='a',units='-1250' WHERE sequence=1 AND ordinal=0")
                     c.execute("UPDATE ledger_postings SET " + column + "=CAST(X'ff' AS TEXT) WHERE sequence=1 AND ordinal=0")
                 self.corrupt(twice)
                 self.rejected("journal sequence or hash chain is broken")
@@ -211,6 +212,7 @@ class HistoryPostingsStreamTests(unittest.TestCase):
             with self.subTest(column=column):
                 def twice(c):
                     c.execute("UPDATE ledger_events SET fingerprint='broken' WHERE sequence=1")
+                    c.execute("UPDATE ledger_postings SET account='b',units='-300' WHERE sequence=2 AND ordinal=0")
                     c.execute("UPDATE ledger_postings SET " + column + "=CAST(X'ff' AS TEXT) WHERE sequence=2 AND ordinal=0")
                 self.corrupt(twice)
                 self.rejected("journal event fingerprint changed")
