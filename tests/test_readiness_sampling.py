@@ -4,12 +4,15 @@ Only the parent monitor's scheduling is controlled. Real spawned owners acquire
 their own PID tokens, initialize, renew and execute market/activation commands.
 The production readiness predicates and timeouts are left unchanged.
 """
+from contextlib import closing
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
+import fcntl
 import json
 import os
 from pathlib import Path
 import signal
+import sqlite3
 from tempfile import TemporaryDirectory
 from threading import Event
 from time import monotonic, sleep
@@ -174,8 +177,35 @@ class ReadinessSamplingTests(unittest.TestCase):
         fixture.active()
         router = fixture.router
         self.wait_ready(router)
-        pid = fixture.suspend_outside_transaction(0)
+        pid = router.worker_pid(0)
+        protected = {4471, 8784, 122905, 122907, 123007, 123009}
+        self.assertNotIn(pid, protected)
+        self.assertTrue(router._workers[0][0].is_alive())
+        def birth():
+            return (Path("/proc") / str(pid) / "stat").read_text().rsplit(")", 1)[1].split()[19]
+        original_birth = birth()
+        pidfd = os.pidfd_open(pid)
+        paused = False
         try:
+            self.assertEqual(birth(), original_birth)
+            print("owned-lease-control " + json.dumps({"pid": pid, "birth": original_birth,
+                                                       "pidfd_bound": True, "fixture_only": True}), flush=True)
+            # As in the original fixture helper: stop only while our gate and
+            # SQLite writer are free. A pidfd binds both signals to this owner.
+            gate = os.open(fixture.path / "router.lock", os.O_RDWR)
+            try:
+                fcntl.flock(gate, fcntl.LOCK_EX)
+                with closing(sqlite3.connect(fixture.shard_path(0), timeout=5, isolation_level=None)) as connection:
+                    connection.execute("BEGIN IMMEDIATE")
+                    try:
+                        self.assertEqual(router.worker_pid(0), pid)
+                        self.assertEqual(birth(), original_birth)
+                        signal.pidfd_send_signal(pidfd, signal.SIGSTOP)
+                        paused = True
+                    finally:
+                        connection.rollback()
+            finally:
+                os.close(gate)
             deadline, expired = monotonic() + 2, None
             while monotonic() < deadline:
                 report = router.diagnostics(timeout=.1)
@@ -195,7 +225,12 @@ class ReadinessSamplingTests(unittest.TestCase):
             self.assertTrue(any(row["owner_pid"] == pid and not row["owner_ready"]
                                 and not row["lease_active"] for row in self.market_observations[0]["workers"]))
         finally:
-            os.kill(pid, signal.SIGCONT)  # Only this fixture's deliberately paused owner.
+            try:
+                if paused:
+                    self.assertEqual(birth(), original_birth)
+                    signal.pidfd_send_signal(pidfd, signal.SIGCONT)
+            finally:
+                os.close(pidfd)
 
     def test_successful_activation_does_not_force_a_contended_observation_true(self):
         fixture = self.original_fixture()
