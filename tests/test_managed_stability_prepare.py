@@ -53,11 +53,17 @@ class ManagedStabilityPrepareTests(unittest.TestCase):
         for name in ('managed-bb34b5f-blocked.json', 'managed-d421df3-pending.json', 'managed-d421df3-blocked.json'):
             path = self.profiles[name]
             with self.subTest(name=name), patch.object(prepare.importlib, 'import_module') as module, \
-                    patch.object(prepare.subprocess, 'Popen') as child:
+                    patch.object(prepare.subprocess, 'Popen') as child, \
+                    patch.object(prepare.os, 'pidfd_open') as pidfd, \
+                    patch.object(prepare.signal, 'pidfd_send_signal') as send, \
+                    patch.object(Path, 'mkdir') as mkdir:
                 with self.assertRaisesRegex(ValueError, 'qualification_not_complete'):
                     prepare.invoke(path, 'smoke-produce', prepare.fingerprint(path))
                 module.assert_not_called()
                 child.assert_not_called()
+                pidfd.assert_not_called()
+                send.assert_not_called()
+                mkdir.assert_not_called()
 
     def test_root_go_must_match_exact_profile_and_true_literal_gates(self):
         value = prepare.profile(self.profile)

@@ -8,10 +8,12 @@ from datetime import datetime, timezone
 from hashlib import sha256
 import importlib
 import json
+import math
 import os
 from pathlib import Path
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import time
@@ -20,6 +22,13 @@ FLAGS = dict(continuous_6h_stability_passed=False, continuous_24h_stability_pass
              capacity_10000_per_s_passed=False, production_approved=False)
 PHASES = ('smoke-produce', 'smoke-observe', 'smoke-cold', 'smoke-strict-negative',
           'long-preflight', 'long-start')
+COHOST_JOB = Path('/workspace/uta-soak-runs/formal-20261116T213613Z-88755a9')
+COHOST_SOURCE = '88755a9f2ba3bb672ca5d354b3037796f00c6611'
+COHOST_BOOT = '6339d4fc-a9e7-4c10-a591-1e70a14322ff'
+COHOST_PRODUCER = (4471, '210004')
+COHOST_OBSERVER = (8784, '412799')
+PROC_ROOT = Path('/proc')
+LIVE_STATES = {'R', 'S', 'D', 'T', 't', 'K', 'W', 'P', 'I'}
 
 
 def load(path):
@@ -92,33 +101,131 @@ def authorized(value, path, root_go):
         raise ValueError('separate_root_GO_must_bind_exact_reviewed_profile')
 
 
-def cohost_budget(new_reservation, *, observer_floor=256 * 1024**2):
+def _stable_metadata(path):
+    try:
+        before = path.stat(follow_symlinks=False)
+        if not stat.S_ISREG(before.st_mode) or before.st_uid != os.geteuid():
+            raise ValueError('cohost_metadata_not_owned_regular_file')
+        raw = path.read_bytes()
+        after = path.stat(follow_symlinks=False)
+        if ((before.st_dev, before.st_ino, before.st_mtime_ns, before.st_ctime_ns, before.st_size, before.st_uid, before.st_mode)
+                != (after.st_dev, after.st_ino, after.st_mtime_ns, after.st_ctime_ns, after.st_size, after.st_uid, after.st_mode)):
+            raise ValueError('cohost_metadata_changed_during_read')
+        def unique_pairs(items):
+            value = {}
+            for key, item in items:
+                if key in value:
+                    raise ValueError('cohost_duplicate_metadata_key')
+                value[key] = item
+            return value
+        value = json.loads(raw, object_pairs_hook=unique_pairs)
+        if type(value) is not dict or type(before.st_mtime_ns) is not int:
+            raise ValueError('cohost_metadata_type_unknown')
+        return value, before.st_mtime_ns, sha256(raw).hexdigest()
+    except (OSError, json.JSONDecodeError) as error:
+        raise ValueError('cohost_metadata_unavailable') from error
+
+
+def _parse_proc_stat(raw, pid):
+    try:
+        actual_pid = int(raw.split(' ', 1)[0])
+        fields = raw.rsplit(')', 1)[1].split()
+        state, birth = fields[0], fields[19]
+        if actual_pid != pid or not birth.isdecimal() or int(birth) <= 0:
+            raise ValueError()
+        return state, birth
+    except (ValueError, IndexError):
+        raise ValueError('process_identity_unknown') from None
+
+
+def _process_metadata(pid, *, proc=Path('/proc')):
+    try:
+        root = proc / str(pid)
+        before = _parse_proc_stat((root / 'stat').read_text(), pid)
+        status = (root / 'status').read_text()
+        uid_lines = [line.split()[1:] for line in status.splitlines() if line.startswith('Uid:')]
+        if len(uid_lines) != 1 or len(uid_lines[0]) != 4 or any(not value.isdecimal() for value in uid_lines[0]):
+            raise ValueError('process_uid_unknown')
+        uids = [int(value) for value in uid_lines[0]]
+        after = _parse_proc_stat((root / 'stat').read_text(), pid)
+        if before[1] != after[1] or before[0] not in LIVE_STATES or after[0] not in LIVE_STATES:
+            raise ValueError('process_stopped_or_changed')
+        return dict(pid=pid, birth=after[1], state=after[0], uids=uids)
+    except OSError as error:
+        raise ValueError('process_metadata_unavailable') from error
+
+
+def cohost_budget(new_reservation, *, observer_floor=256 * 1024**2,
+                  _job_root=None, _proc_root=None, _now_ns=None, _free_bytes=None):
     """Metadata only; capture time never substitutes for producer freshness."""
-    root = Path('/workspace/uta-soak-runs/formal-20261116T213613Z-88755a9')
+    root = COHOST_JOB if _job_root is None else _job_root
+    _proc_root = PROC_ROOT if _proc_root is None else _proc_root
+    if type(new_reservation) is not int or new_reservation <= 0 or type(observer_floor) is not int or observer_floor <= 0:
+        raise ValueError('cohost_reservation_type_unknown')
     meta_path, progress_path = root / 'job.json', root / 'progress.json'
-    meta = load(meta_path)
-    before = progress_path.stat()
-    progress = load(progress_path)
-    after = progress_path.stat()
-    stable = (before.st_dev, before.st_ino, before.st_mtime_ns, before.st_size) == (
-        after.st_dev, after.st_ino, after.st_mtime_ns, after.st_size)
-    maximum = meta['configuration']['max_directory_bytes']
+    meta, meta_mtime, meta_hash = _stable_metadata(meta_path)
+    progress, progress_mtime, _ = _stable_metadata(progress_path)
+    if (type(meta.get('environment')) is not dict or type(meta.get('configuration')) is not dict
+            or meta['environment'].get('commit') != COHOST_SOURCE
+            or progress.get('source_commit') != COHOST_SOURCE):
+        raise ValueError('cohost_original_source_changed_or_unknown')
+    configuration = meta.get('configuration', {})
+    maximum, interval = configuration.get('max_directory_bytes'), configuration.get('heartbeat_interval')
+    if (type(maximum) is not int or maximum != 6 * 1024**3
+            or type(interval) not in {int, float} or interval != 5):
+        raise ValueError('cohost_original_budget_or_cadence_changed')
+    if (progress.get('status') != 'running' or progress.get('stored_status') != 'running'
+            or progress.get('process_alive') is not True):
+        raise ValueError('cohost_terminal_or_nonrunning_requires_new_policy')
     current = progress.get('directory_bytes')
     if type(maximum) is not int or type(current) is not int or not 0 <= current <= maximum:
         raise ValueError('old_job_budget_metadata_unknown')
-    observed_ns = time.time_ns()
-    free = shutil.disk_usage(root).free
+    observed_ns = time.time_ns() if _now_ns is None else _now_ns
+    original_observed = progress.get('observed_ns')
+    heartbeat = progress.get('heartbeat_age_seconds')
+    if (type(observed_ns) is not int or type(original_observed) is not int
+            or not 0 < original_observed <= 2**63-1 or not 0 < observed_ns <= 2**63-1
+            or meta_mtime <= 0 or progress_mtime <= 0 or type(heartbeat) not in {int, float}
+            or not math.isfinite(heartbeat) or heartbeat < 0):
+        raise ValueError('cohost_clock_or_heartbeat_type_unknown')
+    try:
+        boot = (_proc_root / 'sys/kernel/random/boot_id').read_text().strip()
+    except OSError as error:
+        raise ValueError('cohost_boot_unknown') from error
+    if boot != COHOST_BOOT:
+        raise ValueError('cohost_original_boot_changed')
+    identities = []
+    for pid, birth in (COHOST_PRODUCER, COHOST_OBSERVER):
+        identity = _process_metadata(pid, proc=_proc_root)
+        if (identity['birth'] != birth or identity['state'] not in {'R', 'S', 'D', 'I'}
+                or any(uid != os.geteuid() for uid in identity['uids'])):
+            raise ValueError('cohost_process_birth_or_uid_changed')
+        identities.append(identity)
+    free = shutil.disk_usage(root).free if _free_bytes is None else _free_bytes
+    if type(free) is not int or free < 0:
+        raise ValueError('cohost_free_space_unknown')
+    observed_ns = time.time_ns() if _now_ns is None else _now_ns
+    report_age = (observed_ns-original_observed)/1e9
+    file_age = (observed_ns-progress_mtime)/1e9
+    maximum_age = 3 * interval
+    if report_age < 0 or file_age < 0 or meta_mtime > observed_ns:
+        raise ValueError('cohost_future_observed_or_file_clock')
+    if report_age > maximum_age or file_age > maximum_age or abs(progress_mtime-original_observed)/1e9 > maximum_age:
+        raise ValueError('cohost_producer_report_stale_or_clock_skewed')
+    effective_heartbeat = heartbeat + report_age
+    if effective_heartbeat > maximum_age:
+        raise ValueError('cohost_effective_heartbeat_stale')
     # Reserve the whole old limit, covering the reported remaining lower bound
     # even if ephemeral files disappear or the separately published report ages.
     required = new_reservation + maximum + observer_floor
-    return dict(capture_wall_ns=observed_ns, old_job_json_sha256=fingerprint(meta_path),
+    return dict(capture_wall_ns=observed_ns, old_job_json_sha256=meta_hash,
         old_max_directory_bytes=maximum, producer_reported_directory_bytes=current,
         old_reported_remaining_lower_bound_bytes=maximum-current,
-        old_future_reservation_bytes=maximum, producer_progress_mtime_ns=before.st_mtime_ns,
-        producer_progress_read_stable=stable,
-        producer_progress_age_seconds=(observed_ns-before.st_mtime_ns)/1e9 if stable else None,
-        producer_reported_observed_ns=progress.get('observed_ns'),
-        producer_reported_heartbeat_age_seconds=progress.get('heartbeat_age_seconds'),
+        old_future_reservation_bytes=maximum, producer_progress_mtime_ns=progress_mtime,
+        producer_progress_read_stable=True, producer_progress_age_seconds=file_age,
+        producer_reported_observed_ns=original_observed, producer_reported_heartbeat_age_seconds=heartbeat,
+        effective_heartbeat_age_seconds=effective_heartbeat, maximum_metadata_age_seconds=maximum_age,
+        metadata_process_gate_passed=True, cohost_processes=identities, original_boot_verified=True,
         producer_freshness_inferred_from_capture_timestamp=False,
         old_observer_declared_byte_cap=None, old_observer_additional_floor_bytes=observer_floor,
         observer_floor_is_hard_cap=False, observer_floor_operator_review_required=True,
@@ -160,22 +267,49 @@ def prepare(path):
         source_job_sql_executed=False, service_started=False, execution_authorized=False, **FLAGS)
 
 
-def _original_smoke_drain(value):
-    launch = Path(value['smoke_scratch']) / 'observer/launch.json'
-    if not launch.exists():
+def _pidfd_term(identity, *, proc=Path('/proc')):
+    """Bind kernel identity before proc validation; never fall back to PID kill."""
+    pid, birth, boot, uid = (identity.get(key) for key in ('pid', 'birth', 'boot', 'uid'))
+    if (type(pid) is not int or pid <= 0 or pid in {4471, 8784} or type(birth) is not str
+            or not birth.isdecimal() or int(birth) <= 0 or type(boot) is not str or not boot
+            or type(uid) is not int or uid < 0 or not hasattr(os, 'pidfd_open')
+            or not hasattr(signal, 'pidfd_send_signal')):
         return False
-    identity = load(launch)
-    pid, birth = identity['driver_pid'], identity['driver_birth']
-    if pid in {4471, 8784}:
-        raise ValueError('protected_old_process')
+    descriptor = None
     try:
-        fields = Path(f'/proc/{pid}/stat').read_text().rsplit(')', 1)[1].split()
-    except FileNotFoundError:
-        return False
-    if fields[19] == str(birth) and fields[0] not in {'Z', 'X', 'x'}:
-        os.kill(pid, signal.SIGTERM)
+        descriptor = os.pidfd_open(pid, 0)
+        if (proc / 'sys/kernel/random/boot_id').read_text().strip() != boot:
+            return False
+        current = _process_metadata(pid, proc=proc)
+        if current['birth'] != birth or any(value != uid for value in current['uids']):
+            return False
+        signal.pidfd_send_signal(descriptor, signal.SIGTERM, None, 0)
         return True
-    return False
+    except (OSError, ValueError):
+        return False
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+
+
+def _original_smoke_drain(value, *, approved_profile_sha256):
+    if (type(approved_profile_sha256) is not str or len(approved_profile_sha256) != 64
+            or any(character not in '0123456789abcdef' for character in approved_profile_sha256)):
+        return False
+    launch = Path(value['smoke_scratch']) / 'observer/launch.json'
+    control = Path(value['smoke_scratch']) / 'control/outer-budget.json'
+    if not launch.exists() or not control.exists():
+        return False
+    try:
+        identity, _, _ = _stable_metadata(launch)
+        expected, _, _ = _stable_metadata(control)
+        if (expected.get('profile_sha256') != approved_profile_sha256
+                or expected.get('source_commit') != value['source_commit']):
+            return False
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+    return _pidfd_term(dict(pid=identity.get('driver_pid'), birth=identity.get('driver_birth'),
+                            boot=expected.get('boot'), uid=expected.get('owner_uid')))
 
 
 def invoke(path, phase, root_go, *, record='observation-001.json'):
@@ -185,10 +319,6 @@ def invoke(path, phase, root_go, *, record='observation-001.json'):
     if phase not in PHASES:
         raise ValueError('unsupported_reviewed_phase')
     source = Path(value['source_root'])
-    if subprocess.check_output(['git', '--no-optional-locks', 'rev-parse', 'HEAD'], cwd=source, text=True).strip() != value['source_commit']:
-        raise ValueError('frozen_source_commit_changed')
-    if subprocess.check_output(['git', '--no-optional-locks', 'status', '--porcelain', '--untracked-files=all'], cwd=source):
-        raise ValueError('frozen_source_dirty')
     if phase in PHASES:
         plan = load(value['plan'])
         clone_limit = plan['observer']['max_private_clone_bytes'] if phase.startswith('long-') else 256 * 1024**2
@@ -198,6 +328,10 @@ def invoke(path, phase, root_go, *, record='observation-001.json'):
             raise ValueError('unbounded_old_observer_floor_not_independently_reviewed')
         if budget['additional_free_bytes_required']:
             raise ValueError('combined_new_and_old_reservation_unavailable')
+    if subprocess.check_output(['git', '--no-optional-locks', 'rev-parse', 'HEAD'], cwd=source, text=True).strip() != value['source_commit']:
+        raise ValueError('frozen_source_commit_changed')
+    if subprocess.check_output(['git', '--no-optional-locks', 'status', '--porcelain', '--untracked-files=all'], cwd=source):
+        raise ValueError('frozen_source_dirty')
     os.umask(0o077)
     os.sched_setaffinity(0, {0})  # Only this new wrapper and its future children.
     timeout = 120 if phase == 'smoke-produce' else 45 if phase.startswith('smoke-') else 60
@@ -207,6 +341,7 @@ def invoke(path, phase, root_go, *, record='observation-001.json'):
         for name in ('control', 'observer', 'audit'):
             (smoke / name).mkdir(mode=0o700)
         budget = dict(boot=Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
+                      owner_uid=os.geteuid(), source_commit=value['source_commit'], profile_sha256=fingerprint(path),
                       deadline_boottime_ns=time.clock_gettime_ns(time.CLOCK_BOOTTIME) + 150_000_000_000)
         (smoke / 'control/outer-budget.json').write_text(json.dumps(budget))
     if phase.startswith('smoke-'):
@@ -226,7 +361,7 @@ def invoke(path, phase, root_go, *, record='observation-001.json'):
         child.process.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         if phase.startswith('smoke-'):
-            _original_smoke_drain(value)
+            _original_smoke_drain(value, approved_profile_sha256=fingerprint(path))
         child.terminate_owned()
         try:
             child.process.wait(timeout=2)
