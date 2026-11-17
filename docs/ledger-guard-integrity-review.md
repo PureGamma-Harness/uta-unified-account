@@ -113,3 +113,28 @@ source file and business ID on rejection. Restoration of a damaged definition or
 history requires a separately reviewed offline recovery; this runtime refuses
 automatic repair. Code rollback must not be used to bypass rejection with an
 older permissive verifier or to downgrade managed guards.
+
+## Independent Python 3.13 / older SQLite check
+
+The exact correction source `74e3ec9b06b7cbd55fbb145c1984e76f9dbcaac4` was
+independently reviewed in a new detached worktree. On system Python 3.13.5 /
+SQLite 3.46.1, the unchanged original regression, three all-shard/read-only
+preflight cases and thirteen storage cases passed **17/17 in 1.094s**, pinned to
+one available CPU, without skips. The original damaged-guard case now records
+`LedgerError` from verify/reopen and `503 ledger_corrupt` from take-over, with
+no manifest or managed fence. Its damaged SQL and every original financial/source
+row remain unchanged; its financial-history digest matches the original red run.
+
+Independent static review found no blocking issue in the minimal correction.
+The seven official definitions and unsupported-version contract are retained;
+replay remains on the offline paths. A read-only AST comparison also found all
+seven licensed legacy fixture definitions identical to the expected stored
+definitions. Exact SQL matching conservatively rejects operator-rewritten
+equivalent SQL, and offline quiescence is still required. These checks do not
+prove arbitrary future legacy schemas or concurrent offline owner edits.
+
+The [independent raw records](../evidence/runs/ledger-guard-integrity-review/independent-74e3ec9/README.md)
+bind the 17-case result to source/test hashes and preserve the earlier red and
+fixture-error records. No runtime/test source was changed by this independent
+review. Full matrix, packaging and long-run qualification are separate gates;
+production remains **NO-GO**.

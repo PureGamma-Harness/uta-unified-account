@@ -1,0 +1,28 @@
+{
+  "cpu_limit": 1,
+  "interpreter": "/usr/bin/python3.13",
+  "observed_exit_code": 0,
+  "original_regression_byte_unchanged": true,
+  "passed": true,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_approved": false,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "runtime_changed_by_review": false,
+  "scope": "independent original guard regression 1 + all-shard preflight 3 + storage 13; not a full release or capacity gate",
+  "source_commit": "74e3ec9b06b7cbd55fbb145c1984e76f9dbcaac4",
+  "source_sha256": {
+    "tests/test_ledger_guard_integrity_review.py": "770ed9d6753ef4bec272d4849327de2176cec7031dc9b244a57ede700ecedd6e",
+    "tests/test_managed_ledger_preflight.py": "21413fd84298ffe996f88ebfac91ef4ae8cd6f34dc280ff1b6150d752891621a",
+    "tests/test_storage.py": "aad4e96c80d40a7576798a76e12cfad4e7f54fac805ef690c0a878a96c4a475f",
+    "uta/durable_process.py": "321b0fac65820d0c4592ab7f703601148678ea0ef948f29aee4c6ad817a97c6e",
+    "uta/storage.py": "e50bb0d2ad8f929d5206b19cbb7b337aa4445fa06f55298a44ade216260d3966"
+  },
+  "sqlite": "3.46.1",
+  "tests": {
+    "errors": 0,
+    "failures": 0,
+    "run": 17,
+    "seconds": 1.094,
+    "skipped": 0
+  }
+}

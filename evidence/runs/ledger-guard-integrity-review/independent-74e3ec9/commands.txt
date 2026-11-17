@@ -1,0 +1,35 @@
+Reviewed source: 74e3ec9b06b7cbd55fbb145c1984e76f9dbcaac4
+Each Git command selected the stated working directory explicitly.
+
+At /workspace/uta-next-integration:
+git worktree add --detach /workspace/uta-ledger-guard-review-74e3ec9 74e3ec9b06b7cbd55fbb145c1984e76f9dbcaac4
+
+At /workspace/uta-ledger-guard-review-74e3ec9:
+command -v python3.13
+python3.13 -c 'import sys,sqlite3; print(sys.executable); print(sys.version); print(sqlite3.sqlite_version)'
+git diff 6d5869209c8420392b0534cd1858be769da79b51 HEAD -- tests/test_ledger_guard_integrity_review.py
+The test diff was empty. result.json additionally compares its complete bytes to the original commit.
+
+mkdir -p /tmp/uta-ledger-74e3ec9-independent
+/usr/bin/python3.13 -c 'import os,unittest; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); suite=unittest.defaultTestLoader.loadTestsFromNames(["tests.test_ledger_guard_integrity_review","tests.test_managed_ledger_preflight","tests.test_storage"]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())' > /tmp/uta-ledger-74e3ec9-independent/focused-py313.stdout.txt 2> /tmp/uta-ledger-74e3ec9-independent/focused-py313.stderr.txt
+Observed exit 0; 17 tests in 1.094s; no skips. The redirected files are copied here unchanged. Use distinct output filenames when repeating; retain the original records.
+
+Read-only legacy-definition comparison, run at the same worktree:
+python - <<'PY'
+import ast, json, tarfile
+from pathlib import Path
+def schema(text):
+    node = next(node for node in ast.parse(text).body if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == '_SCHEMA' for target in node.targets))
+    return ast.literal_eval(node.value)
+current = schema(Path('uta/storage.py').read_text())
+with tarfile.open('tests/fixtures/legacy_ad3f5b8_uta.tar.gz') as archive:
+    old = schema(archive.extractfile('uta/storage.py').read().decode())
+def triggers(statements):
+    return {statement.split('EXISTS ', 1)[1].split()[0]: statement.replace('CREATE TRIGGER IF NOT EXISTS ', 'CREATE TRIGGER ', 1) for statement in statements if statement.startswith('CREATE TRIGGER')}
+left, right = triggers(old), triggers(current)
+print(json.dumps({'official_current_trigger_count': len(right), 'legacy_trigger_count': len(left), 'legacy_stored_definitions_match': left == right, 'different_names': sorted(name for name in left.keys() | right.keys() if left.get(name) != right.get(name))}, indent=2))
+assert len(left) == len(right) == 7 and left == right
+PY
+Observed 7/7 exact definitions, zero differing names. No fixture archive was extracted to disk and no additional runtime test was executed by this comparison.
+
+No benchmark, full suite or managed worker was started by the review. The requested storage tests retain their own short-lived synthetic process/concurrency checks. Root, frozen and engine-owned worktrees remain untouched.
