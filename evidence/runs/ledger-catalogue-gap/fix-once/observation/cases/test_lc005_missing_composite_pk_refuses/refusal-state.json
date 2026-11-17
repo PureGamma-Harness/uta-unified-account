@@ -1,0 +1,246 @@
+{
+  "expected_error": "journal postings table definition changed",
+  "logical_state_unchanged": true,
+  "state": {
+    "catalogue": [
+      [
+        "index",
+        "sqlite_autoindex_ledger_assets_1",
+        "ledger_assets",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_balances_1",
+        "ledger_balances",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_events_1",
+        "ledger_events",
+        null
+      ],
+      [
+        "table",
+        "ledger_assets",
+        "ledger_assets",
+        "CREATE TABLE ledger_assets (\n        asset TEXT PRIMARY KEY, scale INTEGER NOT NULL CHECK (scale BETWEEN 0 AND 18))"
+      ],
+      [
+        "table",
+        "ledger_balances",
+        "ledger_balances",
+        "CREATE TABLE ledger_balances (\n        account TEXT NOT NULL, asset TEXT NOT NULL REFERENCES ledger_assets(asset),\n        units TEXT NOT NULL, PRIMARY KEY (account, asset))"
+      ],
+      [
+        "table",
+        "ledger_events",
+        "ledger_events",
+        "CREATE TABLE ledger_events (\n        sequence INTEGER PRIMARY KEY, event_id TEXT NOT NULL UNIQUE,\n        fingerprint TEXT NOT NULL, previous_hash TEXT NOT NULL,\n        event_hash TEXT NOT NULL, sealed INTEGER NOT NULL CHECK (sealed IN (0, 1)))"
+      ],
+      [
+        "table",
+        "ledger_postings",
+        "ledger_postings",
+        "CREATE TABLE ledger_postings (\n        sequence INTEGER NOT NULL REFERENCES ledger_events(sequence),\n        ordinal INTEGER NOT NULL CHECK (ordinal >= 0), account TEXT NOT NULL,\n        asset TEXT NOT NULL REFERENCES ledger_assets(asset), units TEXT NOT NULL)"
+      ],
+      [
+        "table",
+        "ledger_schema",
+        "ledger_schema",
+        "CREATE TABLE ledger_schema (\n        singleton INTEGER PRIMARY KEY CHECK (singleton = 1),\n        version INTEGER NOT NULL)"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_delete",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_delete\n        BEFORE DELETE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_update",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_update\n        BEFORE UPDATE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_no_delete",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_no_delete\n        BEFORE DELETE ON ledger_events BEGIN SELECT RAISE(ABORT, 'journal is append-only'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_seal_only",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_seal_only\n        BEFORE UPDATE ON ledger_events\n        WHEN OLD.sealed != 0 OR NEW.sealed != 1 OR NEW.sequence != OLD.sequence\n          OR NEW.event_id != OLD.event_id OR NEW.fingerprint != OLD.fingerprint\n          OR NEW.previous_hash != OLD.previous_hash OR NEW.event_hash != OLD.event_hash\n        BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_delete",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_delete\n        BEFORE DELETE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_update",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_update\n        BEFORE UPDATE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_unsealed_only",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_unsealed_only\n        BEFORE INSERT ON ledger_postings\n        WHEN (SELECT sealed FROM ledger_events WHERE sequence = NEW.sequence) != 0\n        BEGIN SELECT RAISE(ABORT, 'journal is sealed'); END"
+      ]
+    ],
+    "tables": {
+      "ledger_schema": [
+        [
+          1,
+          1
+        ]
+      ],
+      "ledger_assets": [
+        [
+          "USD",
+          2
+        ]
+      ],
+      "ledger_events": [
+        [
+          1,
+          "manual:1",
+          "a6ebe431fb518103015a56d31cb0cfe3405f6ca8784597c3b661b25717cf72fc",
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "f0201ec2d6f7eaa23b3872bb381810108b5e4a4ef0ac1eae07d7573a534deab6",
+          1
+        ],
+        [
+          2,
+          "manual:2",
+          "e75194b2bc0e5d9f0f58065494f0662c93c0b6dd636b08a54496bc6dd9ea5f35",
+          "f0201ec2d6f7eaa23b3872bb381810108b5e4a4ef0ac1eae07d7573a534deab6",
+          "afe93ccca88c18e947e5bb4c62d8422da53bff3445986888a3a772ec82137d8c",
+          1
+        ]
+      ],
+      "ledger_postings": [
+        [
+          1,
+          0,
+          "a",
+          "USD",
+          "-1250"
+        ],
+        [
+          1,
+          1,
+          "b",
+          "USD",
+          "1250"
+        ],
+        [
+          2,
+          0,
+          "b",
+          "USD",
+          "-300"
+        ],
+        [
+          2,
+          1,
+          "c",
+          "USD",
+          "300"
+        ]
+      ],
+      "ledger_balances": [
+        [
+          "a",
+          "USD",
+          "-1250"
+        ],
+        [
+          "b",
+          "USD",
+          "950"
+        ],
+        [
+          "c",
+          "USD",
+          "300"
+        ]
+      ]
+    },
+    "columns": [
+      [
+        0,
+        "sequence",
+        "INTEGER",
+        1,
+        null,
+        0,
+        0
+      ],
+      [
+        1,
+        "ordinal",
+        "INTEGER",
+        1,
+        null,
+        0,
+        0
+      ],
+      [
+        2,
+        "account",
+        "TEXT",
+        1,
+        null,
+        0,
+        0
+      ],
+      [
+        3,
+        "asset",
+        "TEXT",
+        1,
+        null,
+        0,
+        0
+      ],
+      [
+        4,
+        "units",
+        "TEXT",
+        1,
+        null,
+        0,
+        0
+      ]
+    ],
+    "foreign_keys": [
+      [
+        0,
+        0,
+        "ledger_assets",
+        "asset",
+        "asset",
+        "NO ACTION",
+        "NO ACTION",
+        "NONE"
+      ],
+      [
+        1,
+        0,
+        "ledger_events",
+        "sequence",
+        "sequence",
+        "NO ACTION",
+        "NO ACTION",
+        "NONE"
+      ]
+    ]
+  }
+}
