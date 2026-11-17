@@ -26,6 +26,8 @@ from .storage import Database, StorageError
 _MAX_JSON = 4 * 1024 * 1024
 _MAX_PAGE = 200
 _MAX_INT = 2**63 - 1
+_DECIMAL = re.compile(r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", re.ASCII)
+_DEBT_DIGITS = 38  # Existing durable ledger/credit codec contract, not a display precision.
 _REQUIRED = {"uta_authority", "uta_schema", "uta_config", "uta_accounts", "uta_market",
              "uta_orders", "uta_positions", "uta_liabilities", "uta_events", "uta_liquidation_accounts",
              "ledger_schema", "ledger_assets", "ledger_balances", "ledger_events", "ledger_postings",
@@ -62,7 +64,7 @@ def _object(value):
 
 
 def _decimal_text(value):
-    if not isinstance(value, str) or len(value) > 512:
+    if not isinstance(value, str) or len(value) > 512 or _DECIMAL.fullmatch(value) is None:
         raise ServiceError("view_data_invalid", "stored monetary string is invalid", 503)
     try:
         parsed = Decimal(value)
@@ -71,6 +73,24 @@ def _decimal_text(value):
     if not parsed.is_finite() or abs(parsed.as_tuple().exponent) > 512:
         raise ServiceError("view_data_invalid", "stored monetary string is outside supported view bounds", 503)
     return value
+
+
+def _liability_text(value, scale):
+    text = _decimal_text(value)
+    parts = Decimal(text).as_tuple()
+    if len(text) > 80 or len(parts.digits) > _DEBT_DIGITS or not -38 <= parts.exponent <= 38:
+        raise ServiceError("view_data_invalid", "stored gross liability exceeds supported precision", 503)
+    # Tuple/integer conversion is exact even with hostile Decimal precision,
+    # exponent limits or rounding traps. Extra fractional zeros are harmless.
+    coefficient = int("".join(str(digit) for digit in parts.digits))
+    shift = parts.exponent + scale
+    if shift >= 0:
+        units, remainder = coefficient * 10 ** shift, 0
+    else:
+        units, remainder = divmod(coefficient, 10 ** -shift)
+    if remainder or units >= 10 ** _DEBT_DIGITS or (parts.sign and coefficient != 0):
+        raise ServiceError("view_data_invalid", "stored gross liability is outside its asset minor-unit range", 503)
+    return text
 
 
 def _amount(units, scale):
@@ -262,11 +282,12 @@ class ManagedAccountViews:
                         balances[row["asset"]]["balance"] = _amount(row["units"], balances[row["asset"]]["scale"])
                     debts = []
                     for row in connection.execute("SELECT asset,principal,interest FROM uta_liabilities WHERE account_id=? ORDER BY asset LIMIT 4097", (account_id,)):
-                        principal, interest = _decimal_text(row["principal"]), _decimal_text(row["interest"])
-                        if row["asset"] not in balances or Decimal(principal) < 0 or Decimal(interest) < 0:
+                        if row["asset"] not in balances:
                             raise ServiceError("view_data_invalid", "stored gross liability is invalid", 503)
+                        scale = balances[row["asset"]]["scale"]
+                        principal, interest = (_liability_text(row[field], scale) for field in ("principal", "interest"))
                         debts.append({"asset": row["asset"], "principal": principal, "interest": interest,
-                                      "scale": balances[row["asset"]]["scale"], "unit": "asset_units"})
+                                      "scale": scale, "unit": "asset_units"})
                     if len(debts) > 4096:
                         raise ServiceError("view_capacity_exceeded", "liability projection exceeds supported bounds", 503)
                     result["account"] = {"balances": balances, "liabilities": debts,

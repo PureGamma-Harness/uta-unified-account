@@ -318,6 +318,73 @@ class DurableViewTests(unittest.TestCase):
         self.assertEqual(result["snapshot"]["risk"]["status"], "unsupported")
         self.assertNotIn("equity", result["account"])
 
+    def test_nonstandard_monetary_strings_fail_closed_over_http_without_repair(self):
+        with self.writer.database.transaction() as connection:
+            connection.execute("INSERT INTO uta_liabilities VALUES ('alice','BTC','1','0')")
+        fields = (("uta_liabilities", "principal", "account", ""),
+                  ("uta_liabilities", "interest", "account", ""),
+                  ("uta_positions", "cost_basis", "positions", "/positions"),
+                  ("uta_orders", "limit_price", "orders", "/orders/one"))
+        for table, field, resource, suffix in fields:
+            with self.writer.database.read_transaction() as connection:
+                original = connection.execute(f"SELECT {field} FROM {table} WHERE account_id='alice'").fetchone()[0]
+            for malformed in ("1_0", " 1 ", "١", "NaN", "1E999999999999999999999999"):
+                with self.subTest(table=table, field=field, malformed=malformed):
+                    with self.writer.database.transaction() as connection:
+                        connection.execute(f"UPDATE {table} SET {field}=? WHERE account_id='alice'", (malformed,))
+                    before = self.financial()
+                    with self.assertRaises(ServiceError) as error:
+                        self.views.read("alice", resource)
+                    self.assertEqual((error.exception.status, error.exception.code), (503, "view_data_invalid"))
+                    result = self.expect(503, "/v2/accounts/alice" + suffix)
+                    self.assertEqual(result["error"]["code"], "view_data_invalid")
+                    self.assertNotIn(malformed, result["error"]["message"])
+                    self.assertNotIn(str(self.root), json.dumps(result))
+                    self.assertEqual(self.financial(), before)
+            with self.writer.database.transaction() as connection:
+                connection.execute(f"UPDATE {table} SET {field}=? WHERE account_id='alice'", (original,))
+
+    def test_liabilities_reject_fractional_minor_units_negatives_and_ledger_overflow(self):
+        with self.writer.database.transaction() as connection:
+            connection.execute("INSERT INTO uta_liabilities VALUES ('alice','BTC','0','0')")
+        invalid = ("0.000000001", "1E-9", "-0.00000001", "-1", "1E30",
+                   "1" + "0" * 38 + "E-38", "0E-39", "0E39")
+        for field in ("principal", "interest"):
+            for amount in invalid:
+                with self.subTest(field=field, amount=amount):
+                    with self.writer.database.transaction() as connection:
+                        connection.execute(f"UPDATE uta_liabilities SET {field}=? WHERE account_id='alice'", (amount,))
+                    with localcontext() as context:
+                        context.prec = 1
+                        for signal in context.traps:
+                            context.traps[signal] = True
+                        with self.assertRaises(ServiceError) as error:
+                            self.views.read("alice")
+                    self.assertEqual((error.exception.status, error.exception.code), (503, "view_data_invalid"))
+            with self.writer.database.transaction() as connection:
+                connection.execute(f"UPDATE uta_liabilities SET {field}='0' WHERE account_id='alice'")
+
+    def test_exact_scientific_liabilities_and_redundant_zeros_ignore_decimal_context(self):
+        with self.writer.database.transaction() as connection:
+            connection.execute("INSERT INTO uta_liabilities VALUES ('alice','BTC','0','0')")
+        valid = ("1E-8", "1.0E-8", "+0.000000010", "0E-38", "-0", "0E38", "1E29",
+                 "999999999999999999999999999999.99999999")
+        for field in ("principal", "interest"):
+            for amount in valid:
+                with self.subTest(field=field, amount=amount):
+                    with self.writer.database.transaction() as connection:
+                        connection.execute("UPDATE uta_liabilities SET principal='0',interest='0' WHERE account_id='alice'")
+                        connection.execute(f"UPDATE uta_liabilities SET {field}=? WHERE account_id='alice'", (amount,))
+                    with localcontext() as context:
+                        context.prec, context.Emax, context.Emin = 1, 1, -1
+                        for signal in context.traps:
+                            context.traps[signal] = True
+                        debt = self.views.read("alice")["account"]["liabilities"][0]
+                    self.assertEqual((debt[field], debt["scale"]), (amount, 8))
+        with self.writer.database.transaction() as connection:
+            connection.execute("UPDATE uta_liabilities SET principal='1.0E-8',interest='1E-8' WHERE account_id='alice'")
+        self.assertEqual(self.expect(200, "/v2/accounts/alice")["account"]["liabilities"][0]["principal"], "1.0E-8")
+
 
 class RouterReadTests(unittest.TestCase):
     def test_existing_router_reads_only_owning_shard_without_financial_constructors(self):
