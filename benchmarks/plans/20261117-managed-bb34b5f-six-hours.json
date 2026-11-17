@@ -1,0 +1,99 @@
+{
+  "status": "PREREGISTERED_NOT_STARTED_QUALIFICATION_PENDING",
+  "scope": "synthetic_low_rate_managed_financial_stability; not capacity or production acceptance",
+  "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "source_root": "/workspace/uta-observer-freeze-bb34b5f",
+  "observer_core_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "reviewed_observer_and_wrapper_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-observer-validation/final-bb34b5f/python312/summary.json",
+  "qualification": {
+    "local_full_runs": 3,
+    "tests_each": 1411,
+    "ci_runs": [
+      44082854090,
+      44082861767
+    ],
+    "ci_python_jobs": 8,
+    "package_tracked_files": 2536,
+    "runtime_files": 52,
+    "package_evidence": "PENDING: actual external package reports /workspace/uta-package-bb34b5f; independent review pending",
+    "status": "PENDING_ALL_THREE_LOCAL_EIGHT_CI_AND_INDEPENDENT_PACKAGE"
+  },
+  "producer": {
+    "duration_seconds": 21600,
+    "rate_rounds_per_second": 0.25,
+    "planned_rounds": 5400,
+    "worker_fault_every_rounds": 30,
+    "parent_fault_every_rounds": 300,
+    "one_original_driver_birth": true,
+    "allow_resume_for_continuous_target": false,
+    "use_original_configuration_defaults_except_explicit_duration": true,
+    "new_private_job_directory_required": true,
+    "source_budget_bytes": 6442450944,
+    "minimum_free_bytes": 1073741824
+  },
+  "observer": {
+    "interval_seconds": 59,
+    "cadence_reason": "avoid harmonic alias with four-second rounds; all actual timestamps retained",
+    "independent_finance_golden_required_each_1800_second_block": 1,
+    "blocks": 12,
+    "technical_read_unknown_budget": 3,
+    "maximum_consecutive_technical_read_unknown": 1,
+    "all_unknown_samples_and_attempts_reported": true,
+    "planned_fault_inflight_unknown_separate_from_technical_read_unknown": true,
+    "alerts_do_not_imply_finance_proof": true,
+    "final_golden_fk_same_watermark_reopen_and_actual_producer_cold_audit_required": true,
+    "max_private_clone_bytes": 6442450944,
+    "clone_headroom_bytes": 1073741824,
+    "max_address_space_bytes": 2147483648,
+    "private_full_clone_contains_control_nonces_never_publish": true
+  },
+  "financial_gates": {
+    "actual_active_seconds_minimum": 21600,
+    "completed_rounds": 5400,
+    "all_original_account_commands": 32400,
+    "unique_matching_receipts": 10800,
+    "paired_fill_legs": 21600,
+    "financial_unknown_or_quarantined": 0,
+    "internal_account_or_control_technical_retries": 0,
+    "extra_or_missing_financial_effects": 0,
+    "original_source_validation_and_log_hashes_unchanged": true,
+    "independent_exact_gross_budget_and_replay_required": true
+  },
+  "reporting": {
+    "financial_stability_and_live_coverage_separate": true,
+    "overall_engineering_target_requires_both": true,
+    "any_budget_miss_remains_no_go": true,
+    "unmeasured_counters": null,
+    "planned_time_not_actual_elapsed": true
+  },
+  "cohost": {
+    "old_producer_pid": 4471,
+    "old_producer_birth": "210004",
+    "old_observer_pid": 8784,
+    "old_observer_birth": "412799",
+    "do_not_signal_or_modify_old_jobs": true,
+    "shared_host_not_dedicated_hardware": true,
+    "cpu_affinity_change_for_old_jobs_allowed": false
+  },
+  "known_failed_gate": {
+    "large_history_250000": "NO_GO; budget exhausted before ownership/command; no final complete proof; does not qualify general large-history recovery",
+    "full_system_acceptance": "NO_GO: no production, real funds, HA, 10k/s or full risk reexecution acceptance"
+  },
+  "production_approved": false,
+  "capacity_10000_approved": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "previous_attempt": {
+    "source_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+    "status": "STOPPED_EARLY_NO_GO",
+    "completed_rounds": 513,
+    "planned_rounds": 5400,
+    "active_seconds": 2072.722098933,
+    "never_resume_or_reclassify": true
+  },
+  "preregistered_at_utc": "2026-11-17T12:30:00Z",
+  "execution_gate": "Separate root GO only after complete exact-source qualification, independently reviewed package, and new 60-second real matching/restart/cold-reopen smoke. This plan grants no execution.",
+  "selected_cpu": 0
+}
