@@ -33,13 +33,22 @@ class CreditService:
     paying interest before principal, and is available during halts/price outages.
     """
 
-    def __init__(self, exchange: ExchangeService, *, _startup=None):
+    def __init__(self, exchange: ExchangeService, *, _startup=None, _existing_connection=None):
         if not isinstance(exchange, ExchangeService):
             raise ServiceError("invalid_configuration", "exchange must be an ExchangeService")
         self.exchange = exchange
         self.database = exchange.database
         self.ledger = exchange.ledger
         self._codec = Ledger(exchange.scales)
+        if _existing_connection is not None:
+            if _startup is not None:
+                raise ServiceError("invalid_configuration", "existing construction cannot join owned startup")
+            from .writer_fence import _assert_existing_read_joinable
+            from .existing_services import _verify_fixed_schema
+            _assert_existing_read_joinable(self.database, _existing_connection)
+            _verify_fixed_schema(_existing_connection, self._schema_statements() + (self._pool_index(),))
+            self._verify(_existing_connection)
+            return
         if _startup is not None:
             from .startup import _OwnedStartup
             if type(_startup) is not _OwnedStartup:

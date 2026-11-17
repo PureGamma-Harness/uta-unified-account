@@ -1,0 +1,33 @@
+{
+  "begin_utc": "2026-11-17T14:08:57.491952+00:00",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_existing_services.ExistingServicesTests.test_base_control_snapshot_constructs_without_a_financial_actor",
+    "tests.test_existing_services.ExistingServicesTests.test_current_audit_artifact_and_archived_execution_options_are_read",
+    "tests.test_existing_services.ExistingServicesTests.test_unmanaged_existing_constructor_uses_one_real_read_snapshot",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-credit-existing-readonly",
+  "elapsed_seconds": 0.305506,
+  "end_utc": "2026-11-17T14:08:57.797454+00:00",
+  "exit_code": 0,
+  "source_sha256": {
+    "tests/test_existing_services.py": "79bbf85e75b25f1084c560861f7031b3771e81f1359fdb7f668c273a995a7eda",
+    "uta/credit.py": "f5af0035b16eb47a4b6b2abcbfc4cff7ee6a8ee30d19756e1a3771b50bf967c9",
+    "uta/existing_services.py": "3ab7b0675100de06acc8f287af0ec442a3755c2d95ed97dbec791820003e1f5b",
+    "uta/service.py": "3d22095afd2ae0a37eaab95a8c8d22f88908d73a5da595bcc5b4a89307079df4",
+    "uta/storage.py": "46fc32488cf6b9ffa3c15431b785aea22f4cccceaebd381130e5ef00be4427d5",
+    "uta/writer_fence.py": "9a1204f196e9db58c57f940d254b87cdb3e70fa42ef0761880f05a0336d6abf0"
+  },
+  "status": "AUTHOR_TARGETED_RETEST_AFTER_STANDARD_ALTER_REWRITE_FIX",
+  "stderr": "test_base_control_snapshot_constructs_without_a_financial_actor (tests.test_existing_services.ExistingServicesTests.test_base_control_snapshot_constructs_without_a_financial_actor) ... ok\ntest_current_audit_artifact_and_archived_execution_options_are_read (tests.test_existing_services.ExistingServicesTests.test_current_audit_artifact_and_archived_execution_options_are_read) ... ok\ntest_unmanaged_existing_constructor_uses_one_real_read_snapshot (tests.test_existing_services.ExistingServicesTests.test_unmanaged_existing_constructor_uses_one_real_read_snapshot) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.165s\n\nOK\n",
+  "stdout": "",
+  "timeout_seconds": 60
+}

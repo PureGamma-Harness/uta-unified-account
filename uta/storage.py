@@ -298,7 +298,7 @@ class DurableLedger:
     back its own savepoint without discarding the caller's other changes.
     """
 
-    def __init__(self, database: Database, scales: Mapping[str, int]):
+    def __init__(self, database: Database, scales: Mapping[str, int], *, _existing_connection=None):
         if not isinstance(database, Database):
             raise StorageError("database must be a Database")
         # The existing ledger is the common codec/range validator. Its private
@@ -306,6 +306,13 @@ class DurableLedger:
         self._codec = Ledger(scales)
         self.database = database
         self.scales = MappingProxyType(dict(scales))
+        if _existing_connection is not None:
+            from .writer_fence import _assert_existing_read_joinable
+            from .existing_services import _verify_fixed_schema
+            _assert_existing_read_joinable(database, _existing_connection)
+            _verify_fixed_schema(_existing_connection, _SCHEMA)
+            self.verify(connection=_existing_connection)
+            return
         with database.transaction() as connection:
             existing = {row[0] for row in connection.execute(
                 "SELECT name FROM sqlite_master WHERE name IN "
