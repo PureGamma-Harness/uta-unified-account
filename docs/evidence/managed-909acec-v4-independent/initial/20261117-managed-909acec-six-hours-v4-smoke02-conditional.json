@@ -1,0 +1,411 @@
+{
+  "capacity_10000_approved": false,
+  "cohost": {
+    "cpu_affinity_change_for_old_jobs_allowed": false,
+    "do_not_signal_or_modify_old_jobs": true,
+    "old_observer_birth": "412799",
+    "old_observer_pid": 8784,
+    "old_producer_birth": "210004",
+    "old_producer_pid": 4471,
+    "shared_host_not_dedicated_hardware": true
+  },
+  "continuous_24h_stability_passed": false,
+  "continuous_6h_stability_passed": false,
+  "copied_preregistration": {
+    "changed_fields": "V4 new actual preregistration UTC and actual smoke02 references; producer, finance, coverage, clock, output/source/clone/headroom budgets unchanged",
+    "cross_source_qualification_inherited": false,
+    "source_amendment_sha256": "9f2c66889ba0c1e563c8419b573854f3ba0af92b428d4e64482973ee3bd85aa9",
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "source_plan_sha256": "0d4f9808bea19fa5cf44e7e4313873c9d18c517c283100749718a2c170d4c8fa"
+  },
+  "current_execution_authorized": false,
+  "execution_authorized": false,
+  "execution_gate": "No long phase GO. Independent actual smoke02 acceptance and V4 review required; long-preflight and long-start each separately require a new immutable metadata snapshot, exact command/profile/snapshot hashes and root specific phase GO. No automatic phase progression.",
+  "explicit_scope_limits": {
+    "H0_real_financial_authorization_qualified": false,
+    "HA_approved": false,
+    "capacity_10000_approved": false,
+    "every_decision_full_risk_engine_reexecution": null,
+    "full_uta_events_business_state_reexecution": null,
+    "new_credit_v2_behavior_qualified_by_this_long": false,
+    "new_credit_v2_default_off": true,
+    "production_approved": false,
+    "public_new_borrow_501_qualified": false
+  },
+  "financial_6h_passed": false,
+  "financial_gates": {
+    "actual_active_seconds_minimum": 21600,
+    "all_original_account_commands": 32400,
+    "completed_rounds": 5400,
+    "extra_or_missing_financial_effects": 0,
+    "financial_unknown_or_quarantined": 0,
+    "independent_exact_gross_budget_and_replay_required": true,
+    "internal_account_or_control_technical_retries": 0,
+    "original_source_validation_and_log_hashes_unchanged": true,
+    "paired_fill_legs": 21600,
+    "unique_matching_receipts": 10800
+  },
+  "first_smoke01": {
+    "evidence_commit": "720f573d82254a8f657389f05940d7b974a9d947",
+    "never_resume_or_reclassify": true,
+    "not_used_as_qualified_smoke": true,
+    "status": "PERMANENT_FULL_SMOKE_NO_GO_MISSING_ACTIVE_OBSERVATIONS_AND_FINAL_COLD_STRICT"
+  },
+  "independent_new_clock": {
+    "deadline_basis": "this new job actual started_boottime_ns plus21600 seconds",
+    "old_24h_2136_deadline_applies_to_this_job": false,
+    "required_actual_active_seconds": 21600,
+    "resume_or_count_preparation_time_allowed": false,
+    "shorten_to_old_job_deadline_allowed": false
+  },
+  "known_failed_gate": {
+    "full_system_acceptance": "NO_GO: no production, real funds, HA, 10k/s or full risk reexecution acceptance",
+    "large_history_250000": "NO_GO; budget exhausted before ownership/command; no final complete proof; does not qualify general large-history recovery"
+  },
+  "live_coverage_passed": false,
+  "observer": {
+    "alerts_do_not_imply_finance_proof": true,
+    "all_unknown_samples_and_attempts_reported": true,
+    "blocks": 12,
+    "cadence_reason": "supported CLI interval61 is coprime with four-second rounds; every actual timestamp retained",
+    "clone_headroom_bytes": 1073741824,
+    "final_golden_fk_same_watermark_reopen_and_actual_producer_cold_audit_required": true,
+    "independent_finance_golden_required_each_1800_second_block": 1,
+    "interval_seconds": 61,
+    "max_address_space_bytes": 2147483648,
+    "max_private_clone_bytes": 1073741824,
+    "maximum_consecutive_technical_read_unknown": 1,
+    "output_budget_bytes": 2147483648,
+    "output_budget_check_period_seconds": 30,
+    "output_budget_overshoot_guaranteed_bound_bytes": null,
+    "output_budget_semantics": "explicit fullcontrol+observer logical file bytes except validated private clones; periodic threshold, not physical quota; unknown/exceedance requests official owned-driver resource drain and technical NO_GO",
+    "output_physical_hard_quota_enforced": false,
+    "planned_fault_inflight_unknown_separate_from_technical_read_unknown": true,
+    "private_clone_limit_semantics": "input-estimate admission only; not a physical peak quota; complete schema/log/audit required; exceedance is NO_GO",
+    "private_full_clone_contains_control_nonces_never_publish": true,
+    "technical_read_unknown_budget": 3
+  },
+  "observer_core_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "original_v1_plan_sha256": "8a9b04cc355a3f175122eb6de01be85d8455fd91c56dee0fcbaf2a0e1e0adbd9",
+  "original_v1_profile_sha256": "e0f6920149395d006b40cdf946a52f9ceb46e69b5ee88ce4f613c1f81db5f5be",
+  "plan_version_policy": "V1/V2/V3 and smoke01/02 original records remain immutable; this new V4 is append-only long-admission preparation.",
+  "preregistered_at_utc": "2026-11-17T19:01:06.252398+00:00",
+  "previous_attempt": {
+    "active_seconds": 2072.722098933,
+    "completed_rounds": 513,
+    "never_resume_or_reclassify": true,
+    "planned_rounds": 5400,
+    "source_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+    "status": "STOPPED_EARLY_NO_GO"
+  },
+  "previous_candidates": [
+    {
+      "never_reclassify": true,
+      "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+      "status": "NO_GO_LOCAL_CI_COMPATIBILITY_FAILURE"
+    },
+    {
+      "never_reclassify": true,
+      "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+      "status": "NO_GO_ACTUAL_READINESS_CI_FAILURES"
+    },
+    {
+      "immutable_blocked_profile": "benchmarks/profiles/managed-8b7f544-v2-blocked.json",
+      "never_reclassify": true,
+      "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+      "status": "NO_GO_ACTUAL_HISTORICAL_REFERENCE_GENERATOR_SOURCE_FOOTER_MISMATCH"
+    },
+    {
+      "immutable_blocked_profile": "benchmarks/profiles/managed-91e4ae4-v2-blocked.json",
+      "never_reclassify": true,
+      "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+      "status": "NO_GO_ACTUAL_PYTHON313_RECOVERY_CI_FAILURE"
+    },
+    {
+      "immutable_profile": "benchmarks/profiles/managed-dbc93e5-v1-pending.json",
+      "never_reclassify": true,
+      "source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+      "status": "NO_GO_ACTUAL_TWO_PYTHON310_UNIT_FAILURES"
+    }
+  ],
+  "producer": {
+    "allow_resume_for_continuous_target": false,
+    "duration_seconds": 21600,
+    "minimum_free_bytes": 1073741824,
+    "new_private_job_directory_required": true,
+    "one_original_driver_birth": true,
+    "parent_fault_every_rounds": 300,
+    "planned_rounds": 5400,
+    "rate_rounds_per_second": 0.25,
+    "source_budget_bytes": 6442450944,
+    "use_original_configuration_defaults_except_explicit_duration": true,
+    "worker_fault_every_rounds": 30
+  },
+  "production_approved": false,
+  "provider_context": {
+    "actual_merge_git_tree_oid": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+    "actual_merge_parents": [
+      "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+      "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+    ],
+    "actual_merge_sha": "b221fce79e7709d6f1a36d0aff5c24225a61c084",
+    "attempt": 1,
+    "initial_status_at_v1_preregistration": "IN_PROGRESS",
+    "metadata_record": "/tmp/uta-credit-909-provider-metadata/initial-source-and-runs.json",
+    "pull_request": 21,
+    "pull_request_run_id": 44132321549,
+    "pull_request_url": "https://github.com/PureGamma-Harness/uta-unified-account/pull/21",
+    "push_run_id": 44132222411,
+    "qualifies_source": false,
+    "status_at_preregistration": "ORIGINAL_ATTEMPT1_BOTH_SUCCESS_ALL_EIGHT_JOBS_COMPLETE"
+  },
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "qualification": {
+    "actual_local_reports": {
+      "python310": {
+        "finished_at": "2026-11-17T17:14:34.502078+00:00",
+        "original_files": {
+          "summary.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python310/summary.json",
+            "sha256": "44bb3bfaa24c5a18fcba5ee24ffa389a76edeb8151daad2b8261aa1ff3824ac4"
+          },
+          "unittest.txt": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python310/unittest.txt",
+            "sha256": "3ea36e21554d02438bc8f840eb5fc8bfe7e1fb2756181d31c374f410a2ff9332"
+          },
+          "worker-result.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python310/worker-result.json",
+            "sha256": "e82cbb6e2c7ec27c03e4230582529163902f007c49078e327fe4c7957db343f6"
+          }
+        },
+        "passed": true,
+        "source_inputs": 348,
+        "started_at": "2026-11-17T17:07:17.508739+00:00",
+        "tests_run": 1801
+      },
+      "python312": {
+        "finished_at": "2026-11-17T17:07:17.425523+00:00",
+        "original_files": {
+          "summary.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python312/summary.json",
+            "sha256": "08949519c8aa4731f244d06fa51345533e87af5262858cda92d36a4786c914eb"
+          },
+          "unittest.txt": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python312/unittest.txt",
+            "sha256": "40ab2936483901c9e37be2838a90b131a0ffb58c972e3a51be7921a0d4e1e7e9"
+          },
+          "worker-result.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python312/worker-result.json",
+            "sha256": "e82cbb6e2c7ec27c03e4230582529163902f007c49078e327fe4c7957db343f6"
+          }
+        },
+        "passed": true,
+        "source_inputs": 348,
+        "started_at": "2026-11-17T17:00:22.422962+00:00",
+        "tests_run": 1801
+      },
+      "python313-sqlite346": {
+        "finished_at": "2026-11-17T17:21:49.933092+00:00",
+        "original_files": {
+          "summary.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python313-sqlite346/summary.json",
+            "sha256": "ed13735db013754036757bc61b0093037dc4acaae4389f778b535d180a643f09"
+          },
+          "unittest.txt": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python313-sqlite346/unittest.txt",
+            "sha256": "7b0d7b1841ec4d63cebe551af9dc5d1b9be6b0de3b99c927041a044e16edd082"
+          },
+          "worker-result.json": {
+            "path": "/workspace/uta-combined-validation/final-909acec/python313-sqlite346/worker-result.json",
+            "sha256": "e82cbb6e2c7ec27c03e4230582529163902f007c49078e327fe4c7957db343f6"
+          }
+        },
+        "passed": true,
+        "source_inputs": 348,
+        "started_at": "2026-11-17T17:14:34.587421+00:00",
+        "tests_run": 1801
+      }
+    },
+    "ci_actual_attempt": 1,
+    "ci_artifact_count": 24,
+    "ci_evidence_commit": "85e96b63813e0b993e532f054ef97740e64176cd",
+    "ci_failed_python_jobs": 0,
+    "ci_python_jobs": 8,
+    "ci_runs": [
+      44132222411,
+      44132321549
+    ],
+    "ci_runs_status": "ORIGINAL_ATTEMPT1_BOTH_SUCCESS_ALL_EIGHT_JOBS_ALL24_ARTIFACTS_VERIFIED",
+    "ci_successful_python_jobs": 8,
+    "local_evidence_commit": "841b5cc908e7e15e9461c0ecc91a173e2162cada",
+    "local_full_runs": 3,
+    "no_qualification_inherited_from_any_prior_source": true,
+    "package_author_commit": "721e9d02308d900cd39db2a209d0130394f78338",
+    "package_evidence": "Actual fresh author721e9d0 plus independent5c98110; source5518/runtime62/13 omissions and installed V2 scope accepted",
+    "package_peer_commit": "5c98110359f293413ebe561b3cb2f5683ee26863",
+    "package_tracked_files": 5518,
+    "runtime_files": 62,
+    "source_tracked_files": 5518,
+    "status": "ACTUAL_EXACT_SOURCE_FULL3_CI8_FRESH_PACKAGE_PEER_COMPLETE",
+    "tests_each": 1801,
+    "tests_each_status": "ACTUAL_THREE_EXACT_REPORTS_ALL_1801_ZERO_FAILURE_ERROR_SKIP"
+  },
+  "reporting": {
+    "any_budget_miss_remains_no_go": true,
+    "financial_stability_and_live_coverage_separate": true,
+    "overall_engineering_target_requires_both": true,
+    "planned_time_not_actual_elapsed": true,
+    "unmeasured_counters": null
+  },
+  "resource_policy": {
+    "actual_original_cohost_pid_birth_required": true,
+    "clone_limit_is_input_estimate_not_peak_quota": true,
+    "combined_conservative_required_bytes": 17448304640,
+    "current_free_bytes": null,
+    "current_gap_bytes": null,
+    "floor_is_hard_cap": false,
+    "fresh_metadata_record_at_preregistration": null,
+    "historical_1656_free_observation_is_not_post_qualification_package_preflight": true,
+    "minimum_free_headroom_bytes": 1073741824,
+    "new_observer_output_budget_bytes": 2147483648,
+    "new_private_clone_admission_estimate_bytes": 1073741824,
+    "new_source_budget_bytes": 6442450944,
+    "new_total_bytes": 10737418240,
+    "observer_output_is_periodic_threshold_not_os_quota": true,
+    "old_full_future_reservation_bytes": 6442450944,
+    "old_observer_additional_floor_bytes": 268435456,
+    "old_observer_declared_byte_cap": null,
+    "old_observer_floor_approved": true,
+    "old_observer_floor_conditional": true,
+    "output_overshoot_bound_bytes": null,
+    "recheck_after_qualification_and_package_required": true,
+    "separate_operator_record": "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v2/conditional-floor-policy.json",
+    "separate_operator_record_sha256": "c8c3c81d1d5a5e203c97667f297fb056948b3ec61eb706ed130a91f807349fcf",
+    "source_declaration_bound_to_actual_original_configuration": true,
+    "source_metadata_maximum_age_seconds": 15,
+    "space_reserved": false,
+    "status": "CONDITIONAL_STATIC_FLOOR_POLICY_REQUIRES_NEW_PHASE_METADATA_NO_RESERVATION"
+  },
+  "reviewed_observer_and_wrapper_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "root_reported_runtime_sha256": "ec0fa09e2e2e50557300423ddf6983969c9727816288ed79e9de7a17438c5b2b",
+  "runtime_sha256_independently_verified": true,
+  "runtime_sha256_verification_evidence_commits": [
+    "85e96b63813e0b993e532f054ef97740e64176cd",
+    "5c98110359f293413ebe561b3cb2f5683ee26863"
+  ],
+  "scope": "standard_managed_low_rate_synthetic_TLS_matching_settlement_seeded_repayment_restarts_and_required_order_fill_finance_audit_only",
+  "selected_cpu": 0,
+  "service_started": false,
+  "smoke": {
+    "actual_predecessor_evidence": {
+      "actual_active_seconds": 60.145987524,
+      "actual_component_scope": "TLS/matching/settlement/seeded repayment/worker+parent restart/full journal+owner-asset projection+required order-fill-business joins/FK/same-watermark private cold/strict-long refusal",
+      "actual_first_Popen_to_recorded_outer_endpoint_seconds": 64.379813724,
+      "actual_parent_fault_signals": 1,
+      "actual_rounds_done": 15,
+      "actual_worker_fault_signals": 3,
+      "author_evidence_commit": "a97483d89fed2d440cc36bdf850be34e179d1cb1",
+      "full_business_event_or_every_decision_risk_reexecution_passed": null,
+      "independent_actual_result_acceptance_commit": null,
+      "long_authorized": false,
+      "references": {
+        "manifest.json": {
+          "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/manifest.json",
+          "sha256": "721cfd50782d914445b46b7cf4fbdc9d115d23d5f15fe20fae6ab914e314f90c"
+        },
+        "outcome.json": {
+          "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/outcome.json",
+          "sha256": "c4a11e0c9734a0fae87ad10833090c36fb3aa3fde0f7b1705ff994b719957905"
+        },
+        "root--final-outer-attestation.json": {
+          "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--final-outer-attestation.json",
+          "sha256": "f113d859fc0ebdd6748be951cd79a02efa767ae7213f80dccff0825aca2b6723"
+        },
+        "root--timing-boundary-erratum.json": {
+          "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--timing-boundary-erratum.json",
+          "sha256": "6aa14e1d585179e5e24b6f27c2c2cc0b8f415e676a16fb1ecc4703feda0df71e"
+        },
+        "timing-boundary-addendum-manifest.json": {
+          "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/timing-boundary-addendum-manifest.json",
+          "sha256": "581914b9af181f3cc0876701bb5f1b921f9a9af144b292f46ec3996ee3e9d955"
+        }
+      },
+      "root_auxiliary_hash_and_final_attestation_full_latency_seconds": null,
+      "seven_stage_states": {
+        "cold": "PASS",
+        "fault-live": "PASS",
+        "final": "PASS",
+        "normal-live": "PASS",
+        "produce": "PASS",
+        "startup": "PASS",
+        "strict-negative": "PASS"
+      },
+      "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "status": "AUTHOR_SEVEN_STAGE_ACTUAL_PASS_INDEPENDENT_RESULT_ACCEPTANCE_PENDING",
+      "timing_addendum_commit": "bf8492534d69a64ad2e859b9423c63473d16eb88"
+    },
+    "automatic_next_phase_allowed": false,
+    "duration_seconds": 60,
+    "missing_phase_is_incomplete": true,
+    "outer_deadline_seconds": 150,
+    "parent_fault_every_rounds": 10,
+    "planned_rounds": 15,
+    "real_tls_matching_settlement_restarts": true,
+    "same_watermark_final_and_private_cold_required": true,
+    "startup_normal_active_and_fault_unknown_coverage_required": true,
+    "strict_long_receipt_must_be_refused": true,
+    "worker_fault_every_rounds": 5
+  },
+  "smoke02_evidence": {
+    "actual_active_seconds": 60.145987524,
+    "actual_component_scope": "TLS/matching/settlement/seeded repayment/worker+parent restart/full journal+owner-asset projection+required order-fill-business joins/FK/same-watermark private cold/strict-long refusal",
+    "actual_first_Popen_to_recorded_outer_endpoint_seconds": 64.379813724,
+    "actual_parent_fault_signals": 1,
+    "actual_rounds_done": 15,
+    "actual_worker_fault_signals": 3,
+    "author_evidence_commit": "a97483d89fed2d440cc36bdf850be34e179d1cb1",
+    "full_business_event_or_every_decision_risk_reexecution_passed": null,
+    "independent_actual_result_acceptance_commit": null,
+    "long_authorized": false,
+    "references": {
+      "manifest.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/manifest.json",
+        "sha256": "721cfd50782d914445b46b7cf4fbdc9d115d23d5f15fe20fae6ab914e314f90c"
+      },
+      "outcome.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/outcome.json",
+        "sha256": "c4a11e0c9734a0fae87ad10833090c36fb3aa3fde0f7b1705ff994b719957905"
+      },
+      "root--final-outer-attestation.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--final-outer-attestation.json",
+        "sha256": "f113d859fc0ebdd6748be951cd79a02efa767ae7213f80dccff0825aca2b6723"
+      },
+      "root--timing-boundary-erratum.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--timing-boundary-erratum.json",
+        "sha256": "6aa14e1d585179e5e24b6f27c2c2cc0b8f415e676a16fb1ecc4703feda0df71e"
+      },
+      "timing-boundary-addendum-manifest.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/timing-boundary-addendum-manifest.json",
+        "sha256": "581914b9af181f3cc0876701bb5f1b921f9a9af144b292f46ec3996ee3e9d955"
+      }
+    },
+    "root_auxiliary_hash_and_final_attestation_full_latency_seconds": null,
+    "seven_stage_states": {
+      "cold": "PASS",
+      "fault-live": "PASS",
+      "final": "PASS",
+      "normal-live": "PASS",
+      "produce": "PASS",
+      "startup": "PASS",
+      "strict-negative": "PASS"
+    },
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "status": "AUTHOR_SEVEN_STAGE_ACTUAL_PASS_INDEPENDENT_RESULT_ACCEPTANCE_PENDING",
+    "timing_addendum_commit": "bf8492534d69a64ad2e859b9423c63473d16eb88"
+  },
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_git_tree_oid": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+  "source_root": "/workspace/uta-credit-v2-py310-candidate",
+  "status": "V4_SMOKE02_ACTUAL_PROOF_LONG_PHASES_NOT_AUTHORIZED",
+  "validation_report": "/workspace/uta-combined-validation/final-909acec/python312/summary.json"
+}

@@ -1,0 +1,33 @@
+test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers (test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers) ... ERROR
+Exception in thread uta-process-supervisor:
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+    self.run()
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 1227, in _supervise
+    self._spawn(shard)
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 1095, in _spawn
+    _record_process(self._control, "SPAWNED", shard, nonce, 0,
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 393, in _record_process
+    with control.control.transaction() as connection:
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 159, in transaction
+    with self._role_transaction("financial") as connection:
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 192, in _role_transaction
+    with self._role_transaction_body(role) as connection:
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 202, in _role_transaction_body
+    connection = self._connect()
+                 ^^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 147, in _connect
+    journal = connection.execute("PRAGMA journal_mode = WAL").fetchone()[0]
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: locking protocol

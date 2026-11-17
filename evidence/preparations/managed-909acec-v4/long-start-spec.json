@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+    "--profile",
+    "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json",
+    "--invoke",
+    "long-start",
+    "--root-go-profile-sha256",
+    "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d"
+  ],
+  "capture_file": "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v2/capture-r2b.py",
+  "command_sha256": "5f4b7d244c166556d56ea929a9f3ba5326328cad29421c6e3a00a97218bec875",
+  "guard_file": "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v2/consume_guard.py",
+  "owned_child_file": "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/smoke_controller_v3.py",
+  "phase": "long-start",
+  "phase_timeout_seconds": 75,
+  "private_output": "/workspace/uta-managed-observer-runs/909acec-v4-long-start-private",
+  "profile_file": "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json",
+  "profile_sha256": "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d",
+  "runner_sha256": "49c34950c38056be2fdef534a7d252a579fde20bd1d0f5195ec39df0ae527210",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "wait_fresh_window_seconds": 75
+}

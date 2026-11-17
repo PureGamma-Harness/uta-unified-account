@@ -1,0 +1,126 @@
+{
+  "SQL": false,
+  "checked_at_utc": "2026-11-17T19:20:59.654363+00:00",
+  "checks": [
+    "exact_final_runner",
+    "exact_final_profile",
+    "exact_909_no_cross_source",
+    "immutable_plan_binding",
+    "immutable_amendment_binding",
+    "commands_profile_binding",
+    "actual_smoke02_independent_commit",
+    "timing_gap_not_fabricated",
+    "reexecution_not_falsely_claimed",
+    "actual_smoke02_independent_commit",
+    "timing_gap_not_fabricated",
+    "reexecution_not_falsely_claimed",
+    "actual_smoke02_independent_commit",
+    "timing_gap_not_fabricated",
+    "reexecution_not_falsely_claimed",
+    "pending_profile:execution_authorized",
+    "pending_profile:current_execution_authorized",
+    "pending_profile:phase_execution_authorized",
+    "pending_profile:service_started",
+    "pending_profile:long_service_started",
+    "pending_profile:long_preflight_executed",
+    "pending_profile:long_start_executed",
+    "pending_profile:financial_6h_passed",
+    "pending_profile:continuous_6h_stability_passed",
+    "pending_profile:continuous_24h_stability_passed",
+    "pending_profile:production_approved",
+    "pending_profile:capacity_10000_approved",
+    "qualified_same_source_references",
+    "existing_qualification_refs_unchanged_not_rerun",
+    "full_original_workload",
+    "complete_coverage_budgets",
+    "no_truncation_at_old_deadline",
+    "unchanged_6_2_1_1_budget",
+    "exact_cohost_conditional_floor",
+    "no_quota_or_reservation_claim",
+    "first_smoke01_permanent_NO_GO",
+    "protected_cohost_identity_contract",
+    "actual_preflight_AST_shape",
+    "actual_start_flags_AST_shape",
+    "final_spec_binding:long-preflight",
+    "wrapper_exact:long-preflight",
+    "literal_wrapper:long-preflight",
+    "frozen_target_exact:long-preflight",
+    "no_actual_phase_authority:long-preflight",
+    "real_phase_schema_fixed:long-preflight",
+    "literal_bad_receipt_rejected:long-preflight:exit_code:True",
+    "literal_bad_receipt_rejected:long-preflight:exit_code:-15",
+    "literal_bad_receipt_rejected:long-preflight:stdout_complete:False",
+    "literal_bad_receipt_rejected:long-preflight:timed_out:True",
+    "final_spec_binding:long-start",
+    "wrapper_exact:long-start",
+    "literal_wrapper:long-start",
+    "frozen_target_exact:long-start",
+    "no_actual_phase_authority:long-start",
+    "real_phase_schema_fixed:long-start",
+    "literal_bad_receipt_rejected:long-start:exit_code:True",
+    "literal_bad_receipt_rejected:long-start:exit_code:-15",
+    "literal_bad_receipt_rejected:long-start:stdout_complete:False",
+    "literal_bad_receipt_rejected:long-start:timed_out:True",
+    "clock_accept:74",
+    "single_verified_endpoint_read:74",
+    "clock_reject:75",
+    "single_verified_endpoint_read:75",
+    "clock_reject:76",
+    "single_verified_endpoint_read:76",
+    "clock_reject:0",
+    "single_verified_endpoint_read:0",
+    "clock_reject:101",
+    "single_verified_endpoint_read:101",
+    "exact_root_launcher_fixed",
+    "post_Popen_metadata_inside_cleanup_try",
+    "only_unreaped_owned_group_cleanup",
+    "primary_and_cleanup_errors_cannot_pass"
+  ],
+  "checks_passed": 73,
+  "inputs": {
+    "/workspace/uta-credit-v2-py310-candidate/tools/managed_soak_observer.py": {
+      "bytes": 53490,
+      "sha256": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+    },
+    "/workspace/uta-credit-v2-py310-candidate/tools/run_managed_long.py": {
+      "bytes": 34491,
+      "sha256": "be5470dbecdbf39a8d61fad8d4caba45d96f9b6b9dba7725873dadf41f02fe61"
+    },
+    "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-observer-amendment.json": {
+      "bytes": 1395,
+      "sha256": "432c7c8dec731c154074bf47babcf1d35300cf1432439c76fd02eead29b1b3d6"
+    },
+    "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-smoke02-conditional.json": {
+      "bytes": 20491,
+      "sha256": "e0bff7603d5ff236a261a53533c3afede20c40580ba84161350c708a5860e284"
+    },
+    "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json": {
+      "bytes": 6343,
+      "sha256": "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d"
+    },
+    "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v4/exact-long-commands.json": {
+      "bytes": 3555,
+      "sha256": "866afbda1bc3ee4b447b4d47406c7ad090906e371be4a3c15c200f6cea6b7822"
+    },
+    "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v4/long-preflight-spec.json": {
+      "bytes": 1454,
+      "sha256": "154010e82fe48d8a63380de34e0df75557a04a6c3385aff10aa74174076c9c4c"
+    },
+    "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v4/long-start-spec.json": {
+      "bytes": 1442,
+      "sha256": "934dc15bcf1ec48f482335b0bf79ef9c6b53a65b48f60d1e9a947d770c1702ab"
+    },
+    "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v4/run_one_long_phase.py": {
+      "bytes": 14371,
+      "sha256": "49c34950c38056be2fdef534a7d252a579fde20bd1d0f5195ec39df0ae527210"
+    },
+    "/workspace/uta-root-run-one-long-phase.py": {
+      "bytes": 7145,
+      "sha256": "aab22dc68a389d1b4bc4f83c1a59eee1315191e1f4f522546f043e8c36ac6b44"
+    }
+  },
+  "new_job_created": false,
+  "new_long_authorized": false,
+  "real_Popen": false,
+  "status": "PURE_ADAPTIVE_CONTRACT_ACCEPT_NO_PHASE_AUTHORITY"
+}

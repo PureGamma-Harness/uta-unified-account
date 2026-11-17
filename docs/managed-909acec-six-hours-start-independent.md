@@ -1,0 +1,30 @@
+# Independent actual six-hour start handoff review
+
+**ACCEPT for the retained startup/handoff evidence only.** The job actually started once; this does not accept six-hour financial stability, final coverage, capacity, HA or production, and authorizes no repeat or resume.
+
+Author archive `a9af0622f13a6276bd787296ea0a8d749cab6ce8` is tied to immutable source `909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0`, profile `9ecd5476…`, runner `49c34950…` and start specification `934dc15b…`. Prior independent preflight acceptance is `43222eca2bc5c1948fb9ff2de7c07ce772e0838d`; the root's separate start approval explicitly references it. The original 763 and smoke01 NO_GO outcomes stay unchanged.
+
+[The independent checker](evidence/managed-909acec-v4-independent/actual-start/check_files.py) passed **252 original-file, hash and exact-arithmetic assertions**. [Its retained result](evidence/managed-909acec-v4-independent/actual-start/result.json) includes input hashes and derived bounds. No SQL, DB open, product import, new sample, observer/status CLI, signal, process start, or write to an active job was performed. This review does not claim to have independently re-executed the financial system.
+
+All entries in the public archive manifest match their retained bytes. All **28 JSON copies** match their recorded hashes; **16 immutable closed-phase metadata originals** were additionally compared byte for byte. The remaining **12 active-job metadata copies** were verified as retained snapshots, using their archive-time identities/hashes and the author's reviewed bounded nofollow/stable-read provenance. They were not compared with newly sampled current progress/latest/coverage files. All **eight private closed raw streams** match lengths and SHA-256 hashes; stage closed-stream manifests retain complete/no-error semantics. No private raw or authentication material is published by this independent commit.
+
+The start has its own snapshot `d0c10b43e31e81cc88968fa675827642d57ab43075237475ad7f8972d14217fe`, distinct from preflight's `f14d0203…`. Exact spec/profile/runner/command/root-record/snapshot/GO/Popen bindings agree. At the recorded identity time after actual Popen, both clocks still have **10.512244056 seconds** remaining. Original producer and old-observer effective heartbeat/mtime budgets satisfy 15/30 seconds; fixed f96 source, interval60/default software64MiB and protected old PID births match before/after. Start's recorded free bytes are **17,649,397,760**, exceeding the combined **17,448,304,640-byte** floor by **201,093,120 bytes**. This is historical conditional admission, not reserved space, a quota or a current resource guarantee.
+
+The actual prepare receipt is integer-zero, complete and without stderr; its direct target is `SUPERVISOR_STARTED_PENDING_ACTUAL_DRIVER`, supervisor **310035 / birth8086947**. The retained outer runner actually exited zero with no primary/cleanup/watchdog error. The runner's post-hash endpoint is **0.487381458 seconds** after phase Popen; root's closed/fsynced/read/hashed/parsed endpoint is **0.536843267 seconds** after it. Both are inside the unchanged 75-second phase and 180-second root approval. Final serialization follows the stated endpoint. Neither receipt alone claims actual driver startup; the subsequent retained handoff supplies that evidence.
+
+The archive-time process observations identify these four known live processes on boot `6339d4fc-a9e7-4c10-a591-1e70a14322ff`, each with matching birth and UID1000:
+
+| Role | PID / birth |
+| --- | --- |
+| Supervisor | 310035 / 8086947 |
+| Original driver | 310039 / 8086955 |
+| Observer Bubblewrap monitor | 310266 / 8087358 |
+| Actual observer watch CLI | 310269 / 8087359 |
+
+The actual watch CLI binds interval61, source909 and that original driver birth. Control identities and original observer baseline agree. Every archived source/observer-code hash in the baseline matches the frozen source files. These are **recorded archive-time observations**, not newly sampled present liveness or an enumeration of every descendant.
+
+The authoritative original active clock is BOOTTIME **80871129103044 → 102471129103044**, exactly **21,600 seconds**, with **5,400 planned rounds**. Driver launch precedes this clock; approval, wrapper start and preparation time are not counted as active duration. The same original clock appears throughout the retained sample prefix. Under the recorded handoff wall/boot anchor, the start maps to wall-ns interval `[1794943744651791379, 1794943744651793211]`, and deadline to `[1794965344651791379, 1794965344651793211]`, approximately **2026-11-18 01:29:04.651792 UTC** for the deadline. ISO strings are microsecond approximations of the handoff mapping; BOOTTIME remains authoritative. The clock is not shortened to the old job's 21:36 deadline.
+
+The archived timeline is the complete original **five-row / 471,537-byte prefix**, SHA `737d0aa3f64dea39f358e0a30a2464866e3ad25eee45dbe382614d7df5c902ab`. All original rows are retained in time order: completed rounds 1,16,31,46 have stable compared/passing golden records; the fifth has **60 completed / active61, `inflight_or_unknown`, alerts[]**, and no golden comparison. It is not a passing financial-golden observation. The earlier coverage copy has only four stable samples, zero technical unknown and PENDING status; the later prefix and earlier coverage are not one watermark. The archived producer progress has 52 DONE and worker/parent fault counts1/0 at yet another time. No cross-snapshot financial comparison is made and no future failure/unknown count is invented.
+
+All financial-final, live-coverage-final, six-hour, capacity and production flags remain false. Full completion must still satisfy actual duration/rounds, original-driver continuity, all golden/financial/FK/reopen/same-watermark/private-cold/strict-long gates, all 12 coverage blocks and the original unknown/error budgets. Existing supervisor/observer automation continues the authorized run; this review starts or restarts nothing. Reverting this documentation has no runtime/migration effect and cannot stop or resume the active job.

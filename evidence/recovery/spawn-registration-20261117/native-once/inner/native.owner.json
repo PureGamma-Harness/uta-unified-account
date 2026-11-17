@@ -1,0 +1,41 @@
+{
+  "cpu_ids": [
+    1
+  ],
+  "identity": {
+    "birth_ticks": 8571654,
+    "group": 423075,
+    "parent": 423040,
+    "pid": 423075,
+    "session": 423075,
+    "state": "R"
+  },
+  "launcher_affinity_acknowledged": true,
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import json,os,sys; os.sched_setaffinity(0,{1}); os.write(5,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(5); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-stopped-owner-gate/tests/stopped_gate_recovery_probe.py",
+    "--inner",
+    "--case",
+    "all",
+    "--output",
+    "/workspace/uta-spawn-native-once-private-20261117"
+  ],
+  "observed_child_cpu_ids": [
+    1
+  ],
+  "observed_utc": "2026-11-17T20:49:50.099037+00:00",
+  "owned_session": true,
+  "pidfd_used": true,
+  "protected_pids": [
+    4471,
+    8784,
+    310035,
+    310039,
+    310266,
+    310269
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "source_path": "evidence/reviews/pr22-first-ci311/audit_original.py",
+  "source_sha256": "c97254aaa5c5834b579e8ef4fc294637bd5bc6e1f0d3a9414acd22fdcbdce60b",
+  "first_history_check_retained": true,
+  "first_pattern_flag_count": 1,
+  "first_exit_code": 1,
+  "preliminary_worktree_read_error": "FileNotFoundError: sparse evidence path is not materialized; no source bytes were read by that attempt",
+  "triage_read_method": "immutable Git blob, AST only; no module import",
+  "AST_constant_observation": [
+    {
+      "line": 96,
+      "constant_type": "bytes",
+      "constant_bytes": 27,
+      "exact_header_marker_only": true
+    }
+  ],
+  "classification": "DETECTOR_HEADER_MARKER_LITERAL_WITHOUT_KEY_PAYLOAD",
+  "scope": "only this exact source marker and blob; no general credential pattern exemption",
+  "publication_block_from_this_single_marker": false,
+  "security_audit_or_arbitrary_secret_absence_claim": false
+}
