@@ -3,19 +3,24 @@ from copy import deepcopy
 from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
+from hashlib import sha256
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
 from uta.credit import CreditService
-from uta.credit_audit_v2 import (CreditAuditError, audit_policy, journal_record, read_credit_snapshot,
-    strict_json, utc_checkpoint, validate_checkpoints, verify_journal)
+from uta.credit_audit_v2 import (BorrowCapture, CreditAuditError, CreditAuditV2, OBJECT_SQL, audit_policy, canonical, journal_record,
+    read_credit_snapshot, replay_risk, strict_json, utc_checkpoint, validate_checkpoints,
+    verify_journal, verify_stored_policy)
+from uta.credit_audit_v2_replay import replay_bundle
+from uta.durable_commands import QueueStore
 from uta.market import MarketSnapshot
 from uta.portfolio import PortfolioRules
 from uta.products import ProductCatalog
 from uta.service import ExchangeService
 from uta.storage import Database
+from uta.storage import StorageError
 
 
 class CreditAuditV2HelperTests(unittest.TestCase):
@@ -28,7 +33,7 @@ class CreditAuditV2HelperTests(unittest.TestCase):
         self.service = ExchangeService(Database(Path(self.temp.name) / "synthetic.sqlite3"), {"USD": 8, "BTC": 8},
             product_catalog=ProductCatalog.from_json(fixture["catalog"]["canonical_payload"]),
             portfolio_rules=PortfolioRules.from_json(fixture["risk_rules"]["canonical_payload"]),
-            fee_rate=D(0), clock=lambda: self.now)
+            fee_rate=D(0), clock=lambda: self.now, decision_audit=True)
         self.service.create_account("alice")
         self.service.deposit("alice", "cash", "USD", D(100))
         self.service.publish_market(self.market)
@@ -107,6 +112,39 @@ class CreditAuditV2HelperTests(unittest.TestCase):
         finally:
             self.service._portfolio_rules = original
 
+    def test_load_requires_one_actual_pinned_dedicated_policy_archive(self):
+        QueueStore(self.service.database, initialize=True)
+        with self.service._transaction() as connection:
+            for definition in OBJECT_SQL.values():
+                connection.execute(definition)
+            policy = audit_policy(self.service, connection)
+            identity = "credit-risk-policy:"+sha256(canonical(policy).encode()).hexdigest()
+            with self.assertRaises(CreditAuditError):
+                verify_stored_policy(connection)
+            connection.execute("INSERT INTO uta_credit_risk_policies VALUES(?,?)", (identity, canonical(policy)))
+            self.assertEqual(verify_stored_policy(connection), {"policy_id": identity, "policy": policy})
+            connection.execute("SAVEPOINT unsupported_extra_policy")
+            try:
+                connection.execute("INSERT INTO uta_credit_risk_policies VALUES('unknown-extra-archive','{}')")
+                with self.assertRaises(CreditAuditError):
+                    verify_stored_policy(connection)
+            finally:
+                connection.execute("ROLLBACK TO unsupported_extra_policy")
+                connection.execute("RELEASE unsupported_extra_policy")
+            self.assertEqual(verify_stored_policy(connection)["policy_id"], identity)
+
+    def test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve(self):
+        self.credit.borrow("alice", "preseal-reference", "BTC", D(".4"))
+        self.service.submit_order("alice", "opening-order", "BTC-PERP", D(8), D(100))
+        with self.service._transaction() as connection:
+            policy = audit_policy(self.service, connection)
+            state = self.service._audit_state(connection, "alice")
+            actual = self.service._risk(connection, "alice", self.market)
+            reproduced = replay_risk(state, self.market, policy, now=self.now)
+            self.assertEqual(reproduced, actual)
+            self.assertEqual((actual["risk_equity"], actual["open_order_margin"], actual["available_margin"],
+                              actual["borrowable"]["BTC"]), ("92", "80", "4", "0.03"))
+
     def test_recorded_freshness_and_future_equalities_use_original_clock(self):
         with self.service._transaction() as connection:
             policy = audit_policy(self.service, connection)
@@ -135,3 +173,27 @@ class CreditAuditV2HelperTests(unittest.TestCase):
                       '{"version":'+'9'*1000+'}', ' {"value":"0.4"}'):
             with self.subTest(value=value[:20]), self.assertRaises(CreditAuditError):
                 strict_json(value)
+
+    def test_dedicated_replay_never_accepts_incomplete_placeholder_bundle(self):
+        with self.assertRaises(CreditAuditError) as rejected:
+            replay_bundle({"format": 2, "decision": {}, "market": {}, "artifact": {}, "policy": {}})
+        self.assertEqual(rejected.exception.code, "credit_audit_invalid")
+
+    def test_capture_requires_actual_native_context_and_creates_no_effect(self):
+        before = self.service.account("alice"), self.service.ledger.journal(), self.service.events()
+        audit = CreditAuditV2(self.service, self.credit)
+        with self.service._transaction() as connection:
+            with self.assertRaises(StorageError) as rejected:
+                audit.begin_borrow(connection, "alice", "unadmitted", "BTC", D(".4"))
+            self.assertEqual(rejected.exception.code, "credit_v2_not_active")
+        self.assertEqual((self.service.account("alice"), self.service.ledger.journal(), self.service.events()), before)
+
+    def test_reconstructed_capture_is_not_a_financial_grant(self):
+        capture = BorrowCapture("alice", "unadmitted", "BTC", "0.4", "{}")
+        audit = CreditAuditV2(self.service, self.credit)
+        before = self.service.account("alice"), self.service.ledger.journal()
+        with self.service._transaction() as connection:
+            with self.assertRaises(StorageError) as rejected:
+                audit.complete_borrow(connection, capture, {})
+            self.assertEqual(rejected.exception.code, "credit_v2_not_active")
+        self.assertEqual((self.service.account("alice"), self.service.ledger.journal()), before)

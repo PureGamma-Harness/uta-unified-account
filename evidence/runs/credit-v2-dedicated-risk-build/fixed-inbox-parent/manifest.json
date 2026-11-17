@@ -1,0 +1,67 @@
+{
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "cfc854218a4a1e4c0a8e03ac36fb4f8dc5abec14c65442b50db99d3c6e37659a",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "tests/test_credit_audit_v2_helpers.py": "8401f623c802aeb87da084996788499feeee8404550f3177964873ef5e5ebe98"
+  },
+  "scope": "first312 8passed/1missing-test-inbox failure retained; production unchanged, targeted312 fix plus new310/313 actual helpers",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "-v"
+      ],
+      "begin": "2026-11-17T13:31:16.929604+00:00",
+      "end": "2026-11-17T13:31:17.149943+00:00",
+      "elapsed_seconds": 0.22009358200011775,
+      "exit_code": 0,
+      "raw_sha256": "0a61a66fee80f471428a69fea388fee291a87fec8332a2f13bad9510a6c429ec"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "-v"
+      ],
+      "begin": "2026-11-17T13:31:17.150000+00:00",
+      "end": "2026-11-17T13:31:17.777248+00:00",
+      "elapsed_seconds": 0.6270535079966066,
+      "exit_code": 0,
+      "raw_sha256": "78242c87c832624ed02f31b35982af77406a069b7c04ccc112820b2939471b6d"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "-v"
+      ],
+      "begin": "2026-11-17T13:31:17.777290+00:00",
+      "end": "2026-11-17T13:31:18.407324+00:00",
+      "elapsed_seconds": 0.6292138720018556,
+      "exit_code": 0,
+      "raw_sha256": "744c1d091db938a2add25824cf8eaf30aab74caf061d76273a5456747e096511"
+    }
+  ]
+}
