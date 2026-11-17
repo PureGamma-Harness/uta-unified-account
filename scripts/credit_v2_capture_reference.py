@@ -81,12 +81,16 @@ def ratio_34_half_even(value):
     return sign * integer * step
 
 
-def retained_state(snapshot, *, account_id):
+def retained_state(snapshot, *, account_id, require_limits=True):
     """Map all retained borrow-relevant gross inputs; never net loans/cash."""
     account, credit = snapshot["account"], snapshot["credit"]
     REF.fields(account, ACCOUNT, "retained account")
     REF.fields(credit, CREDIT, "retained credit")
-    REF.fields(snapshot["limits"], ("account_limit_units", "local_asset_limit_units"), "limits")
+    need(type(require_limits) is bool, "limit mapping policy must be explicit")
+    if require_limits:
+        REF.fields(snapshot["limits"], ("account_limit_units", "local_asset_limit_units"), "limits")
+    else:
+        need(snapshot["limits"] is None, "market-NONE repayment must retain null limits")
     REF.fields(account["balances"], ("USD", "BTC"), "gross currency cash")
     result = REF.state(version=REF.integer(account["version"], "account version", nonnegative=True))
     result["balances"] = {asset: decimal_units(value, asset + " cash")
