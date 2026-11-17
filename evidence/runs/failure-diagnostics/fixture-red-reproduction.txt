@@ -1,0 +1,15 @@
+test_real_cause_digest_attempt_and_global_visibility_without_financial_effect (tests.test_failure_diagnostics.FailureDiagnosticTests.test_real_cause_digest_attempt_and_global_visibility_without_financial_effect) ... FAIL
+
+======================================================================
+FAIL: test_real_cause_digest_attempt_and_global_visibility_without_financial_effect (tests.test_failure_diagnostics.FailureDiagnosticTests.test_real_cause_digest_attempt_and_global_visibility_without_financial_effect)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-failure-diagnostics/tests/test_failure_diagnostics.py", line 81, in test_real_cause_digest_attempt_and_global_visibility_without_financial_effect
+    self.assertEqual(self.financial(), before)
+AssertionError: {'led[2285 chars]a9e7-4c10-a591-1e70a14322ff', 35573261059607, 35543280367153)]} != {'led[2285 chars]a9e7-4c10-a591-1e70a14322ff', 35573261059607, 35543269518159)]}
+Diff is 4104 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 1 test in 0.056s
+
+FAILED (failures=1)

@@ -1,0 +1,14 @@
+taskset -c "$(python -c 'import os; print(min(os.sched_getaffinity(0)))')" python - <<'PY' > evidence/runs/failure-diagnostics/fixture-red-reproduction.txt 2>&1
+import unittest
+from tests.test_failure_diagnostics import FailureDiagnosticTests
+
+def original_overbroad_financial(self):
+    with self.database.read_transaction() as connection:
+        names = [r[0] for r in connection.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]
+        return {name: [tuple(r) for r in connection.execute('SELECT * FROM "' + name + '" ORDER BY rowid')]
+                for name in names if name not in {'uta_command_inbox', 'uta_events', 'sqlite_sequence'}}
+FailureDiagnosticTests.financial = original_overbroad_financial
+suite = unittest.TestSuite([FailureDiagnosticTests('test_real_cause_digest_attempt_and_global_visibility_without_financial_effect')])
+result = unittest.TextTestRunner(verbosity=2).run(suite)
+raise SystemExit(not result.wasSuccessful())
+PY

@@ -473,7 +473,8 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                     with view._control._lock():
                         store.record_failure(view._exchange, exc.command_id,
                                              max_attempts=settings["max_attempts"],
-                                             backoff_seconds=settings["poll_interval"])
+                                             backoff_seconds=settings["poll_interval"],
+                                             cause=exc.cause, attempt=exc.attempt)
             if monotonic() >= background_at:
                 view.run_background_once()  # Real risk plans and paired trades.
                 background_at = monotonic() + settings["background_interval"]

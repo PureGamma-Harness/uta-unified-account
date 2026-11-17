@@ -18,6 +18,7 @@ from uta.durable_gateway import _view_options, make_server, producer_binding
 from uta.durable_process import DurableProcessRouter
 from uta.durable_views import ManagedAccountViews
 from uta.gateway import Credential
+from uta.gateway import make_server as make_legacy_server
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
 from uta.request_signing import NonceStore, RequestAuthenticator, SigningKey, SigningProfile, sign_headers
@@ -130,6 +131,26 @@ class DurableViewTests(unittest.TestCase):
             self.expect(200, "/v2/accounts/alice/events" + suffix)
         for query in ("&", "limit", "limit=", "limit=1&", "limit=1&limit=2", "unknown=1"):
             self.expect(400, "/v2/accounts/alice/events?" + query)
+
+    def test_global_failure_diagnostics_are_hidden_from_customers_and_legacy_feed_is_trusted(self):
+        self.queue.enqueue_cancel("alice", "failed-cancel", "missing")
+        self.queue.record_failure(self.writer, "failed-cancel", cause=RuntimeError("private"), attempt=1)
+        for token in (READER, TRADER, OTHER, ADMIN, RISK):
+            account = "bob" if token == OTHER else "alice"
+            view = self.expect(200, "/v2/accounts/" + account + "/events", token=token)
+            self.assertFalse(any(e["event_type"] == "COMMAND_EXECUTION_FAILED" for e in view["events"]))
+            self.expect(404, "/v1/events", token=token)
+        legacy = make_legacy_server(self.writer, port=0, credentials=(Credential(ADMIN, "admin"),
+            Credential(RISK, "risk"), Credential(READER, "reader", "alice"), Credential(TRADER, "trader", "alice")))
+        thread = Thread(target=legacy.serve_forever, kwargs={"poll_interval": .01})
+        thread.start()
+        try:
+            for token in (READER, TRADER, ADMIN, RISK):
+                events = self.expect(200, "/v1/events", token=token, server=legacy)
+                visible = any(e["event_type"] == "COMMAND_EXECUTION_FAILED" for e in events)
+                self.assertEqual(visible, token in (ADMIN, RISK))
+        finally:
+            legacy.shutdown(); legacy.server_close(); thread.join(3)
 
     def test_writer_commit_between_metadata_and_rows_cannot_split_a_view_snapshot(self):
         old = self.views.read("alice")

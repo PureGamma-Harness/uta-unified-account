@@ -6,12 +6,14 @@ writer can execute: business changes and the terminal receipt share one commit.
 from contextlib import nullcontext
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+from hashlib import sha256
 import json
 import math
 from typing import Mapping
 
 from .admission import _business_rejection
 from .credit import CreditService
+from .failure_diagnostics import capture_failure
 from .ledger import Ledger, LedgerError
 from .market import MarketSnapshot
 from .models import RiskInputError
@@ -47,15 +49,23 @@ _TABLE_COLUMNS = {
 class CommandExecutionError(RuntimeError):
     """No terminal receipt was observed; query the original command ID first."""
 
-    def __init__(self, command_id, sequence, cause):
+    def __init__(self, command_id, sequence, cause, *, attempt=None):
         super().__init__("command execution receipt unavailable; query the original command ID")
         self.command_id, self.sequence, self.cause = command_id, sequence, cause
+        self.attempt = attempt
 
 
 def _stamp(value):
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() is None:
         raise ServiceError("invalid_clock", "inbox clock must return an aware datetime", 503)
     return value.astimezone(timezone.utc).isoformat(timespec="microseconds")
+
+
+def _payload_digest(text):
+    digest = sha256()
+    for start in range(0, len(text), 8192):
+        digest.update(text[start:start + 8192].encode("utf-8"))
+    return digest.hexdigest()
 
 
 def _canonical(kind, payload):
@@ -311,7 +321,7 @@ class QueueStore:
         through this call. A technical exception leaves the command PENDING.
         """
         self._check_exchange(exchange)
-        command_id = sequence = None
+        command_id = sequence = attempt = None
         try:
             with exchange._transaction() as connection:
                 self._assert_writer(exchange, connection)
@@ -325,6 +335,7 @@ class QueueStore:
                 if row is None:
                     return None
                 command_id, sequence = row["command_id"], row["sequence"]
+                attempt = row["attempts"] + 1
                 try:
                     payload = _canonical(row["kind"], json.loads(row["payload"]))
                 except Exception as exc:
@@ -368,13 +379,18 @@ class QueueStore:
                 receipt = self._record(connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (command_id,)).fetchone())
             return receipt
         except Exception as exc:
-            raise CommandExecutionError(command_id, sequence, exc) from exc
+            raise CommandExecutionError(command_id, sequence, exc, attempt=attempt) from exc
 
-    def record_failure(self, exchange, command_id, *, max_attempts=3, backoff_seconds=0):
+    def record_failure(self, exchange, command_id, *, max_attempts=3, backoff_seconds=0,
+                       cause=None, attempt=None):
         """Query durable outcome before recording a bounded technical retry.
 
         This explicit worker policy never rewrites a committed terminal receipt.
         Quarantine is a technical terminal outcome with no accepted order result.
+        Optional attempt identifies the observed execution for idempotent recovery
+        after a lost failure-recording COMMIT reply. Legacy callers may omit it.
+        The internal global event and retry metadata share this financial COMMIT;
+        an exception here does not claim either was saved. Query the original ID.
         """
         self._check_exchange(exchange)
         _name(command_id, "command_id")
@@ -382,6 +398,8 @@ class QueueStore:
             raise ValueError("max_attempts must be an integer from 1 through 100")
         if isinstance(backoff_seconds, bool) or not isinstance(backoff_seconds, (int, float)) or not math.isfinite(backoff_seconds) or not 0 <= backoff_seconds <= 3600:
             raise ValueError("backoff_seconds must be finite from 0 through 3600")
+        if attempt is not None and (type(attempt) is not int or not 1 <= attempt <= 100):
+            raise ValueError("attempt must be an integer from 1 through 100 or None")
         with exchange._transaction() as connection:
             self._assert_writer(exchange, connection)
             row = connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (command_id,)).fetchone()
@@ -389,6 +407,11 @@ class QueueStore:
                 raise ServiceError("command_not_found", "unknown command", 404)
             if row["state"] in _TERMINAL:
                 return self._record(row)
+            if attempt is not None:
+                if attempt <= row["attempts"]:
+                    return self._record(row)
+                if attempt != row["attempts"] + 1:
+                    raise ValueError("attempt must identify the next observed execution")
             attempts = row["attempts"] + 1
             quarantined = attempts >= max_attempts
             error = {"code": "command_quarantined", "message": "technical execution failure requires investigation; no risk acceptance receipt", "status": 503}
@@ -396,5 +419,14 @@ class QueueStore:
                 ("QUARANTINED" if quarantined else "PENDING", attempts, "technical_execution_failure",
                  _json(error) if quarantined else None, _stamp(self.clock()) if quarantined else None,
                  None if quarantined else _stamp(self.clock() + timedelta(seconds=backoff_seconds)), command_id))
+            exchange._event(connection, "COMMAND_EXECUTION_FAILED", None, {
+                "event_version": 1, "command_id": command_id, "command_sequence": row["sequence"],
+                "command_kind": row["kind"] if len(row["kind"]) <= 32 and row["kind"] in _FIELDS else None,
+                "command_kind_sha256": _payload_digest(row["kind"]), "attempt": attempts,
+                "canonical_payload_sha256": _payload_digest(row["payload"]),
+                "failure_class": "technical_execution_failure",
+                "receipt_state": "QUARANTINED" if quarantined else "PENDING",
+                "diagnostic": capture_failure(cause),
+            })
             receipt = self._record(connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (command_id,)).fetchone())
         return receipt

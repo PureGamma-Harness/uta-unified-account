@@ -4,6 +4,7 @@ All fixtures are synthetic. Expected balances and capacity use integer minor
 units or Fraction, never production valuation/reserve/admission helpers.
 """
 from contextlib import contextmanager
+import json
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D, Inexact, Rounded, localcontext
 from fractions import Fraction as F
@@ -376,7 +377,15 @@ class IndependentDurableCommandTests(unittest.TestCase):
         self.assertEqual(terminal['error']['status'], 503)
         self.assertEqual(self.enqueue('technical', 'order'), terminal)
         self.assertIsNone(self.queue.process_one(self.service))
-        self.assertEqual(self.financial_rows(), before)
+        after = self.financial_rows()
+        diagnostics = [row for row in after['uta_events'] if row[1] == 'COMMAND_EXECUTION_FAILED']
+        self.assertEqual(len(diagnostics), 1)
+        self.assertIsNone(diagnostics[0][2])
+        diagnostic = json.loads(diagnostics[0][3])
+        self.assertEqual((diagnostic['event_version'], diagnostic['command_id'], diagnostic['attempt']), (1, 'technical', 1))
+        self.assertEqual(diagnostic['diagnostic']['status'], 'cause_not_supplied')
+        after['uta_events'] = [row for row in after['uta_events'] if row[1] != 'COMMAND_EXECUTION_FAILED']
+        self.assertEqual(after, before)
 
     def test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice(self):
         self.fund('alice', '1000')

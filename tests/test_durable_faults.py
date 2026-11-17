@@ -1306,6 +1306,14 @@ class ManagedProcessFaultTests(unittest.TestCase):
         snapshot = financial_snapshot(self.shard_path(0))
         self.assertEqual(len(snapshot["uta_orders"]), 1)
         self.assertEqual(len([row for row in snapshot["uta_events"] if row[1] == "ORDER_ACCEPTED"]), 1)
+        diagnostics = [row for row in snapshot["uta_events"] if row[1] == "COMMAND_EXECUTION_FAILED"]
+        self.assertEqual(len(diagnostics), 2)
+        payloads = [json.loads(row[3]) for row in diagnostics]
+        self.assertTrue(all(row[2] is None for row in diagnostics))
+        self.assertEqual([payload["attempt"] for payload in payloads], [1, 2])
+        self.assertTrue(all(payload["command_id"] == "persisted-poison" for payload in payloads))
+        self.assertTrue(all([node["type"] for node in payload["diagnostic"]["chain"]] ==
+                            ["uta.storage.StorageError", "uta.service.ServiceError"] for payload in payloads))
 
     def test_real_worker_quarantines_predecessor_then_repays_during_halt_without_quotes(self):
         self.active()
