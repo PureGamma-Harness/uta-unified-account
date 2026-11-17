@@ -168,8 +168,8 @@ def check_history(path, expected_events):
 
 
 def validate(events, observe_seconds):
-    if type(events) is not int or not 1 <= events <= 200000:
-        raise ValueError("events must be an integer in 1..200000")
+    if type(events) is not int or not 1 <= events <= 250000:
+        raise ValueError("events must be an integer in 1..250000")
     if isinstance(observe_seconds, bool) or not isinstance(observe_seconds, (int, float)) or not 1 <= observe_seconds <= 13:
         raise ValueError("observe_seconds must be in 1..13")
 

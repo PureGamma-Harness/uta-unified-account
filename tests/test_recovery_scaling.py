@@ -9,7 +9,7 @@ from benchmarks.run_recovery_scaling import check_history, run, validate
 
 class RecoveryScalingTests(unittest.TestCase):
     def test_bounds_require_finite_short_work(self):
-        for events, seconds in ((True, 1), (0, 1), (200001, 1), (1, True),
+        for events, seconds in ((True, 1), (0, 1), (250001, 1), (1, True),
                                 (1, 0), (1, 14), (1, float("nan")), (1, float("inf"))):
             with self.subTest(events=events, seconds=seconds), self.assertRaises(ValueError):
                 validate(events, seconds)
