@@ -21,6 +21,22 @@ reviewer在新0700私有目录自产一对2048位toy key/cert，私钥0600。CPU
 
 下一固定revision须保留这两个首RED，证明相同CBC/OAEP-SHA1输入拒绝、正常精确协议通过、badtag/错误recipient/错误binding仍拒绝，不得用此前已知GCM密文的单个bodyhash正例代替降级反例。review未修改作者实现。
 
-其余四流关闭/journal失败保留、public allowlist和新分项预算正在继续独立审阅；此首阻断提交不是这些路径的完整签字。financial case≤60秒与其后的escrow20+2+2是不同阶段，不能称所有发布≤60秒。没有root实际执行GO。
+## 四流与预算追加纯控制
+
+四流/预算helper首次在最终模块检查因reviewer漏import sys而失败，`flow-first.*` 原件保留。只补helper导入后，第二次CPU3于 `19:57:31.703969–19:57:31.784071 UTC` 完成，80,124,696ns，exit0，controller过程入口零调用。该次未运行OpenSSL、SQL、金融native/M0或Actions，也未读取任何私钥。
+
+本次从固定C抽取纯shape fixture，并用独立断言观察实际helper的journal和原子publish顺序：
+
+- 完整4流严格映射为driver/case-owner的stdout/stderr；每个cipher原子公开前，已fsync的journal包含同名/同SHA记录。
+- 分别令第一、中间和最后一流失败，其余3条完整cipher都保留，源流不删，整体UNKNOWN；不造4条完整结论。
+- case-owner捕获为prefix时4个已有cipher仍保留，但结果UNKNOWN，不能升格完整捕获。
+- normal64MiB、escrow96MiB、cleanup32MiB和192MiB总和等值允许；每个分量+1拒绝。大字节边界用lstat纯桩，不分配大磁盘文件。fresh门槛确为2,348,810,240字节，旧2,214,592,512原记录保留。
+- 无producer关闭证明时，在加密owner/crypto之前拒绝。
+
+公开路径按已固定controller限制在安全JSON和4种cipher文件名，拒symlink/special/unlisted及伪装DB文件名；这不等于对任意JSON payload已完成通用隐私证明。实际writer只输出已审投影/安全状态，原key/nonce/request/DB或整个private目录不进入upload。必须结合固定C/provider来源链，不能把checksum或recipient加密本身当sender认证。
+
+financial case≤60秒与其后的escrow20+2+2是不同阶段，不能称所有发布≤60秒；实际OS清理、远端文件系统、artifact持久获取和first-failure物理存续并未由这些纯桩证明。四流范围不扩大到所有转发native独立流、SQL/crypto probe或helper自身流。
+
+这些流控/预算纯控制通过没有关闭上文两项协议RED，5d4b仍NO_GO。后续strictDER新固定C须另行实际小合成复核，不承接这里未验证的密码协议或真实M0资格。没有root实际执行GO。
 
 本提交只增加独立review、合成probe及证据，无运行时/API/数据库部署或迁移。回滚为撤销review提交；旧C、所有首RED、私有toy原件、source909及原运行任务都须保留。
