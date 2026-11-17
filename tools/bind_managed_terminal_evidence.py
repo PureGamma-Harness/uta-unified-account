@@ -15,6 +15,8 @@ from pathlib import Path
 from extract_managed_terminal_evidence import SOURCE, read_record
 
 REVIEW_AUTHORIZED = False
+MAX_INTEGER = (1 << 63) - 1
+MAX_SECONDS = 86400
 BOOT = "6339d4fc-a9e7-4c10-a591-1e70a14322ff"
 START = 80871129103044
 DEADLINE = 102471129103044
@@ -49,12 +51,77 @@ def hex64(value):
     return isinstance(value, str) and re.fullmatch("[0-9a-f]{64}", value) is not None
 
 
-def integer(value, minimum=0):
-    return type(value) is int and value >= minimum
+def integer(value, minimum=0, maximum=MAX_INTEGER):
+    return type(value) is int and minimum <= value <= maximum
 
 
-def number(value):
-    return type(value) in (int, float) and math.isfinite(value)
+def number(value, minimum=0, maximum=MAX_SECONDS):
+    # Comparing an int to the bound happens before any float operation. An
+    # arbitrarily large JSON int must never reach math.isfinite's int cast.
+    if type(value) is int:
+        return minimum <= value <= maximum
+    return type(value) is float and minimum <= value <= maximum and math.isfinite(value)
+
+
+def exact_integer(value, expected):
+    return integer(value) and value == expected
+
+
+def count_map(value, expected):
+    return (isinstance(value, dict) and set(value) == set(expected)
+            and all(exact_integer(value[k], expected[k]) for k in expected))
+
+
+def birth_token(value):
+    return (isinstance(value, str) and 1 <= len(value) <= 19 and value.isascii()
+            and value.isdecimal() and 0 < int(value) <= MAX_INTEGER)
+
+
+def numeric_tree_bounded(value):
+    """Reject out-of-range metadata numbers before hashing or float operations.
+
+    The range is an evidence contract, not a change to trading arithmetic.
+    Booleans remain legal JSON flags; count/clock paths validate exact int types.
+    """
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is int and not -MAX_INTEGER <= item <= MAX_INTEGER:
+            return False
+        if type(item) is float and (not -MAX_INTEGER <= item <= MAX_INTEGER or not math.isfinite(item)):
+            return False
+        if isinstance(item, dict):
+            pending.extend(item.values())
+        elif isinstance(item, list):
+            pending.extend(item)
+    return True
+
+
+def coverage_counts_valid(value):
+    """The actual Coverage.report schema, with the registered 12-block budget."""
+    counters = ("counts", "logical_point_counts", "financial_golden_counts", "technical_error_types",
+                "technical_error_digests", "alert_counts", "fatal_financial_code_counts")
+    if not all(isinstance(value.get(k), dict) and all(integer(v) for v in value[k].values()) for k in counters):
+        return False
+    if not (value.get("measurement_status") == "OBSERVED" and integer(value.get("samples_observed"), 1)
+            and integer(value.get("last_sample_attempt_id"), 1)
+            and number(value.get("actual_completed_active_seconds")) and value["actual_completed_active_seconds"] >= 21600
+            and exact_integer(value.get("preregistered_duration_seconds"), 21600)
+            and exact_integer(value.get("preregistered_interval_seconds"), 61)
+            and exact_integer(value.get("technical_read_unknown_budget"), 3)
+            and integer(value.get("consecutive_technical_read_unknown"), 0, 1)
+            and integer(value.get("maximum_observed_consecutive_technical_read_unknown"), 0, 1)
+            and exact_integer(value.get("maximum_allowed_consecutive_technical_read_unknown"), 1)
+            and integer(value["counts"].get("technical_read_unknown_samples"), 0, 3)):
+        return False
+    blocks = value.get("blocks")
+    return (isinstance(blocks, list) and len(blocks) == 12
+            and all(isinstance(block, dict) and exact_integer(block.get("index"), i)
+                    and exact_integer(block.get("start_active_seconds"), i * 1800)
+                    and exact_integer(block.get("end_active_seconds"), (i + 1) * 1800)
+                    and exact_integer(block.get("required_stable_golden_samples"), 1)
+                    and integer(block.get("stable_golden_samples"), 1) and block.get("state") == "SATISFIED"
+                    for i, block in enumerate(blocks)))
 
 
 def object_at(value, key):
@@ -67,20 +134,21 @@ def successful_child(value):
     return (type(value.get("exit_code")) is int and value["exit_code"] == 0
             and value.get("stdout_complete") is True and hex64(value.get("stdout_sha256"))
             and hex64(value.get("stderr_sha256")) and type(value.get("stderr_present")) is bool
-            and integer(identity.get("pid"), 1) and isinstance(identity.get("birth"), str)
-            and identity["birth"].isdecimal() and integer(identity.get("started_wall_ns"), 1)
+            and integer(identity.get("pid"), 1, (1 << 31) - 1) and birth_token(identity.get("birth"))
+            and integer(identity.get("started_wall_ns"), 1)
             and integer(identity.get("started_boottime_ns"), 1)
             and integer(value.get("ended_wall_ns"), identity["started_wall_ns"])
             and isinstance(value.get("response"), dict))
 
 
 def stopped(value):
-    if not isinstance(value, dict) or value.get("alive") is not False or value.get("known_stopped") is not True:
+    if (not isinstance(value, dict) or not integer(value.get("pid"), 1, (1 << 31) - 1)
+            or value.get("alive") is not False or value.get("known_stopped") is not True):
         return False
     if value.get("visibility") == "absent":
         return value.get("state") == "missing" and value.get("birth") is None
-    return (value.get("visibility") == "observed" and isinstance(value.get("birth"), str)
-            and value["birth"].isdecimal() and (value.get("state") in ("Z", "X", "x")
+    return (value.get("visibility") == "observed" and birth_token(value.get("birth"))
+            and (value.get("state") in ("Z", "X", "x")
             or value.get("identity_matches") is False))
 
 
@@ -102,6 +170,8 @@ def fault_schedule(value):
 
 
 def bind_records(records, *, all_file_pins_verified=False):
+    if not isinstance(records, dict) or not numeric_tree_bounded(records):
+        return binding_result(["metadata_numeric_range_or_root_type_invalid"])
     errors = []
     def check(condition, code):
         if not condition:
@@ -119,16 +189,18 @@ def bind_records(records, *, all_file_pins_verified=False):
     check(env.get("commit") == SOURCE and env.get("synthetic") is True, "job_source_or_synthetic_mismatch")
     check(number(config.get("duration")) and config["duration"] == 21600
           and number(config.get("rate")) and config["rate"] == .25
-          and type(job.get("planned_rounds")) is int and job["planned_rounds"] == 5400,
+          and exact_integer(job.get("planned_rounds"), 5400),
           "original_workload_not_21600_5400")
     check(job.get("accounts") == ["managed-soak-alice", "managed-soak-bob", "managed-soak-credit"]
           and object_at(job, "bootstrap").get("synthetic_only") is True
-          and object_at(job, "bootstrap").get("initial_principal_satoshi") == 10800,
+          and exact_integer(object_at(job, "bootstrap").get("initial_principal_satoshi"), 10800),
           "original_synthetic_bootstrap_mismatch")
     check(baseline.get("frozen_commit") == SOURCE and baseline.get("boot_id") == BOOT
-          and baseline.get("started_boottime_ns") == START and baseline.get("deadline_boottime_ns") == DEADLINE
-          and baseline.get("duration_seconds") == 21600 and baseline.get("planned_rounds") == 5400
-          and (baseline.get("driver_pid"), baseline.get("driver_birth")) == DRIVER,
+          and exact_integer(baseline.get("started_boottime_ns"), START)
+          and exact_integer(baseline.get("deadline_boottime_ns"), DEADLINE)
+          and number(baseline.get("duration_seconds")) and baseline["duration_seconds"] == 21600
+          and exact_integer(baseline.get("planned_rounds"), 5400)
+          and exact_integer(baseline.get("driver_pid"), DRIVER[0]) and baseline.get("driver_birth") == DRIVER[1],
           "original_contract_identity_or_clock_mismatch")
     check(baseline.get("job_manifest_sha256") == digest(job)
           and baseline.get("job_id_sha256") == digest(job.get("job_id"))
@@ -136,6 +208,10 @@ def bind_records(records, *, all_file_pins_verified=False):
           and baseline.get("workload_spec_sha256") == env.get("workload_spec_sha256")
           and baseline.get("file_identities_sha256") == digest(job.get("file_identities")),
           "baseline_job_binding_mismatch")
+    identities = object_at(job, "file_identities")
+    check(bool(identities) and all(isinstance(pair, list) and len(pair) == 2
+          and integer(pair[0]) and integer(pair[1], 1) for pair in identities.values()),
+          "original_file_identity_numeric_contract_invalid")
     check(baseline.get("observer_code_sha256") == OBSERVER_CODE
           and isinstance(env.get("source_sha256"), dict) and bool(env["source_sha256"])
           and all(isinstance(k, str) and hex64(v) for k,v in env["source_sha256"].items())
@@ -151,23 +227,30 @@ def bind_records(records, *, all_file_pins_verified=False):
           and all(hex64(v) for v in object_at(qualification, "artifact_sha256").values()),
           "original_engineering_qualification_binding_incomplete")
     contract = digest(baseline)
-    check((launch.get("driver_pid"), launch.get("driver_birth")) == DRIVER,
+    check(exact_integer(launch.get("driver_pid"), DRIVER[0]) and launch.get("driver_birth") == DRIVER[1]
+          and integer(launch.get("launched_wall_ns"), 1) and integer(launch.get("launched_boottime_ns"), 1),
           "launch_driver_identity_mismatch")
     check(p.get("status") == "completed" and number(p.get("elapsed_seconds")) and p["elapsed_seconds"] >= 21600
-          and p.get("rounds") == {"DONE": 5400} and type(object_at(p, "rounds").get("DONE")) is int
-          and p.get("planned_rounds") == 5400, "producer_not_complete_original_duration_and_rounds")
-    check(type(p.get("controller_sessions")) is int and p["controller_sessions"] == 1
-          and type(p.get("unresolved_steps")) is int and p["unresolved_steps"] == 0
-          and type(p.get("unresolved_faults")) is int and p["unresolved_faults"] == 0
+          and count_map(p.get("rounds"), {"DONE": 5400})
+          and exact_integer(p.get("planned_rounds"), 5400), "producer_not_complete_original_duration_and_rounds")
+    check(exact_integer(p.get("controller_sessions"), 1)
+          and exact_integer(p.get("unresolved_steps"), 0) and exact_integer(p.get("unresolved_faults"), 0)
           and "error" in p and p["error"] is None and p.get("verified_tls") is True
           and p.get("logs_verified") is True and object_at(p, "final_audit").get("golden_passed") is True,
           "producer_session_transport_or_reconciliation_incomplete")
-    check(p.get("fault_signals") == FAULTS and all(type(x) is int for x in object_at(p, "fault_signals").values()),
+    check(count_map(p.get("fault_signals"), FAULTS),
           "producer_fault_count_mismatch")
     for label, child in (("producer", producer), ("before", before), ("cold", cold), ("after", after)):
         check(successful_child(child), label + "_child_receipt_unsuccessful_or_incomplete")
+    pairs = [(object_at(child, "identity").get("pid"), object_at(child, "identity").get("birth"))
+             for child in (producer, before, cold, after)]
+    # PID reuse with a different birth is valid; an identical lifetime cannot
+    # be both the original producer and a newly spawned final/audit child.
+    check(all(integer(pid, 1, (1 << 31) - 1) and birth_token(birth) for pid, birth in pairs)
+          and all(pairs[i] != pairs[j] for i in range(4) for j in range(i+1, 4)),
+          "terminal_child_lifetime_identity_reused_or_invalid")
     identity = object_at(producer, "identity")
-    check((identity.get("pid"), identity.get("birth")) == DRIVER
+    check(exact_integer(identity.get("pid"), DRIVER[0]) and identity.get("birth") == DRIVER[1]
           and identity.get("started_wall_ns") == launch.get("launched_wall_ns")
           and identity.get("started_boottime_ns") == launch.get("launched_boottime_ns"),
           "producer_launch_receipt_identity_mismatch")
@@ -186,15 +269,18 @@ def bind_records(records, *, all_file_pins_verified=False):
         rec, finance = object_at(response, "final_reconciliation"), object_at(response, "finance")
         wm = object_at(rec, "watermark");wmarks.append(wm)
         check(response.get("frozen_commit") == SOURCE and response.get("contract_sha256") == contract
-              and response.get("original_start_boottime_ns") == START
-              and response.get("original_deadline_boottime_ns") == DEADLINE
-              and response.get("planned_rounds") == 5400 and response.get("completed_rounds") == 5400
+              and exact_integer(response.get("original_start_boottime_ns"), START)
+              and exact_integer(response.get("original_deadline_boottime_ns"), DEADLINE)
+              and exact_integer(response.get("planned_rounds"), 5400)
+              and exact_integer(response.get("completed_rounds"), 5400)
               and response.get("active_rounds") == [] and response.get("logical_point") == "stable_boundary"
-              and response.get("unresolved_steps") == 0 and response.get("unresolved_faults") == 0
-              and number(response.get("active_elapsed_seconds")) and response["active_elapsed_seconds"] >= 21600,
+              and exact_integer(response.get("unresolved_steps"), 0)
+              and exact_integer(response.get("unresolved_faults"), 0)
+              and number(response.get("active_elapsed_seconds")) and response["active_elapsed_seconds"] >= 21600
+              and number(p.get("elapsed_seconds")) and response["active_elapsed_seconds"] <= p["elapsed_seconds"],
               label + "_original_terminal_snapshot_mismatch")
         driver = object_at(response, "driver");worker = object_at(response, "worker")
-        check(driver.get("pid") == DRIVER[0] and stopped(driver) and stopped(response.get("listener"))
+        check(exact_integer(driver.get("pid"), DRIVER[0]) and stopped(driver) and stopped(response.get("listener"))
               and stopped(worker.get("process")) and worker.get("lease_active") is False,
               label + "_stopped_authority_unproven")
         check(fault_schedule(response.get("planned_faults")), label + "_fault_schedule_incomplete")
@@ -205,19 +291,21 @@ def bind_records(records, *, all_file_pins_verified=False):
               and object_at(finance, "golden").get("compared") is True
               and object_at(finance, "golden").get("passed") is True
               and object_at(finance, "golden").get("errors") == []
-              and all(type(object_at(finance, "counts").get(k)) is int
-                      and object_at(finance, "counts")[k] == v for k, v in COUNTS.items())
-              and object_at(finance, "residuals") == {"live_orders": 0, "positions": []},
+              and all(exact_integer(object_at(finance, "counts").get(k), v) for k, v in COUNTS.items())
+              and all(integer(v) for v in object_at(finance, "counts").values())
+              and exact_integer(object_at(finance, "residuals").get("live_orders"), 0)
+              and object_at(finance, "residuals").get("positions") == [],
               label + "_financial_observations_incomplete")
         financial_head = object_at(wm, "financial")
         check(wm.get("contract_sha256") == contract and wm.get("financial") == finance.get("watermark")
-              and type(financial_head.get("format")) is int and financial_head["format"] == 2
+              and exact_integer(financial_head.get("format"), 2)
               and hex64(financial_head.get("sha256")) and hex64(financial_head.get("ledger_hash"))
               and integer(financial_head.get("ledger_sequence"), 1)
               and integer(financial_head.get("business_event_sequence"), 1)
               and hex64(object_at(wm, "checkpoint").get("hash"))
               and integer(object_at(wm, "checkpoint").get("sequence"), 1)
               and object_at(rec, "logs").get("verified") is True
+              and integer(object_at(rec, "logs").get("events"), 1)
               and object_at(rec, "logs").get("last_hash") == object_at(wm, "checkpoint").get("hash")
               and object_at(rec, "logs").get("events") == object_at(wm, "checkpoint").get("sequence")
               and rec.get("independent_reopen_same_watermark") is True
@@ -227,32 +315,37 @@ def bind_records(records, *, all_file_pins_verified=False):
         check(rec.get("errors") == expected_errors and rec.get("eligible") is (label == "after")
               and response.get("final_evidence_eligible") is (label == "after"),
               label + "_final_eligibility_invalid")
-    check(bool(wmarks[0]) and wmarks[0] == wmarks[1], "before_after_watermark_mismatch")
+    check(bool(wmarks[0]) and digest(wmarks[0]) == digest(wmarks[1]), "before_after_watermark_mismatch")
     cold_response = object_at(cold, "response")
-    check(type(receipt.get("format")) is int and receipt["format"] == 1 and receipt.get("producer_cold_audit_passed") is True
+    check(exact_integer(receipt.get("format"), 1) and receipt.get("producer_cold_audit_passed") is True
           and receipt.get("frozen_commit") == SOURCE and receipt.get("producer_audit_scope") == SCOPE
           and receipt.get("producer_audit_runtime") == {key:env.get(key) for key in ("python", "sqlite")}
-          and hex64(receipt.get("audit_sha256")) and receipt.get("watermark_before") == wmarks[0]
-          and receipt.get("watermark_after") == wmarks[0]
-          and all(cold_response.get(k) == receipt.get(k) for k in ("producer_cold_audit_passed", "frozen_commit",
+          and hex64(receipt.get("audit_sha256")) and digest(receipt.get("watermark_before")) == digest(wmarks[0])
+          and digest(receipt.get("watermark_after")) == digest(wmarks[0])
+          and all(digest(cold_response.get(k)) == digest(receipt.get(k)) for k in ("producer_cold_audit_passed", "frozen_commit",
                  "producer_audit_scope", "producer_audit_runtime", "audit_sha256", "watermark_before", "watermark_after"))
           and object_at(object_at(after, "response"), "final_reconciliation").get("producer_audit_sha256") == receipt.get("audit_sha256"),
           "cold_audit_receipt_binding_mismatch")
     check(integer(receipt.get("private_clone_estimated_bytes"), 1)
-          and type(receipt.get("private_clone_max_bytes")) is int
-          and receipt["private_clone_max_bytes"] == 1073741824
+          and exact_integer(receipt.get("private_clone_max_bytes"), 1073741824)
           and receipt["private_clone_estimated_bytes"] <= receipt["private_clone_max_bytes"],
           "original_private_clone_budget_receipt_incomplete")
     check(final.get("status") == "COLLECTION_FINISHED" and final.get("financial_final_evidence_eligible") is True
           and final.get("overall_engineering_evidence_within_gates") is True
           and final.get("collection_errors") == [] and final.get("historical_financial_alert_codes") == []
-          and final.get("official_driver_drain_requested") is False and final.get("expected_fault_signals") == FAULTS
-          and final.get("actual_fault_signals") == FAULTS and final.get("fault_schedule_complete") is True
+          and final.get("official_driver_drain_requested") is False
+          and count_map(final.get("expected_fault_signals"), FAULTS)
+          and count_map(final.get("actual_fault_signals"), FAULTS) and final.get("fault_schedule_complete") is True
           and final.get("no_automatic_resume_or_next_job") is True,
           "summary_facts_or_collection_errors_invalid")
-    check(final.get("live_coverage") == coverage and coverage.get("coverage_status") == "COMPLETE_WITHIN_COVERAGE_BUDGET"
+    check(digest(final.get("live_coverage")) == digest(coverage) and coverage.get("coverage_status") == "COMPLETE_WITHIN_COVERAGE_BUDGET"
           and coverage.get("coverage_no_go_reasons") == [] and coverage.get("fatal_financial_code_counts") == {},
           "coverage_binding_incomplete")
+    check(coverage_counts_valid(coverage), "coverage_numeric_or_registered_budget_contract_invalid")
+    return binding_result(errors)
+
+
+def binding_result(errors):
     errors = sorted(set(errors))
     return {"format": 1, "synthetic": True, "observation_only": True,
             "metadata_chain_bound": not errors,

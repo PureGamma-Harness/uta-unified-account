@@ -75,7 +75,17 @@ def synthetic_chain():
                 "started_boottime_ns":bootstart}, "ended_wall_ns":end, "stdout_complete":True,
                 "stdout_sha256":"7"*64,"stderr_sha256":"8"*64,"stderr_present":False,"response":response}
     coverage = {"coverage_status":"COMPLETE_WITHIN_COVERAGE_BUDGET", "coverage_no_go_reasons":[],
-                "fatal_financial_code_counts":{}}
+                "measurement_status":"OBSERVED", "samples_observed":300,"last_sample_attempt_id":300,
+                "actual_completed_active_seconds":21600.1,"preregistered_duration_seconds":21600,
+                "preregistered_interval_seconds":61,"technical_read_unknown_budget":3,
+                "consecutive_technical_read_unknown":0,"maximum_observed_consecutive_technical_read_unknown":0,
+                "maximum_allowed_consecutive_technical_read_unknown":1,
+                "counts":{"technical_read_unknown_samples":0},"logical_point_counts":{},
+                "financial_golden_counts":{},"technical_error_types":{},"technical_error_digests":{},
+                "alert_counts":{},"fatal_financial_code_counts":{},
+                "blocks":[{"index":i,"start_active_seconds":i*1800,"end_active_seconds":(i+1)*1800,
+                           "stable_golden_samples":1,"required_stable_golden_samples":1,"state":"SATISFIED"}
+                          for i in range(12)]}
     summary = {"status":"COLLECTION_FINISHED", "financial_final_evidence_eligible":True,
                "overall_engineering_evidence_within_gates":True, "collection_errors":[],
                "historical_financial_alert_codes":[], "official_driver_drain_requested":False,

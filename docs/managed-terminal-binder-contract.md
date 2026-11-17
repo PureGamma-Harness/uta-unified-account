@@ -30,6 +30,14 @@
 
 新增测试仅以临时合成 JSON、字典和哈希验证合法链与缺失、失败退出、未知身份、短时钟、错误 boot/source、冷水位/SHA/runtime/scope、重复故障、运行中 worker、drain、coverage、封存 pin 等负控。固定代码 `2a9d9a8a35bd9676494cb4b9af164a6ee6611861` 的首次阶段二纯验证在 CPU3、10s 上限内得到 **12/12 PASS**，unittest 0.078s、完整子进程 214,661,282ns；原 stdout/stderr 与输入哈希保留在 `evidence/managed-terminal-binder-20261117`。没有读取实际长测目录、SQL、observer 或冷审计。保留阶段一原首 FNF、5RED 和修复结果，不将其覆写；阶段二仍待独立审查。
 
+独立 `ae5e52c322780024d9669d8bf49377d17bc1e709` 后续首批 17 项 challenge 得到 11 PASS / 6 RED：布尔零值、浮点轮数和故障计数仍可被 Python 宽松相等接受；两份 child 回执可以复用完全相同的 PID/birth；1001 位 elapsed 整数会令 `math.isfinite` 抛 OverflowError。全部首原件与源固定保留。本次严格化修订尚待新的纯验证和独立复核，不覆盖原 12 PASS 或原 6 RED。
+
+修订按实际 schema 统一约束：所有元数据数值先检查有界范围；整数证据采用精确 int（排除 bool/float），默认范围为正负 signed 64-bit，count/clock 字段另外要求非负或正值，PID 至多 signed 32-bit、birth 为 ASCII 十进制有界 token。秒值支持源 schema 的 int/float，仅接受有限且位于 0 至 86400 的值；该范围是六小时任务元数据契约，不改变任何金融计算精度或原长测时限。字段值超界先返回固定结构化错误，不再经过隐式 int→float 转换。
+
+该次注册的 coverage 数值契约来自 v4 计划及实际 `Coverage.report`：12 个 1800s block、每块至少 1 次独立 golden、61s 采样、technical unknown 总预算 3、连续预算 1。对计数、block index/时钟、required/observed、轮数、零残余、故障、文件设备/inode 等按真实类型检查；跨记录用规范 JSON 的类型敏感比较，避免 True/1 或 5400.0/5400 的隐式相等。四个子进程的 `(pid,birth)` 必须两两不同；同 PID 配不同 birth 仍被允许，不能把正常 PID 重用当成错误。
+
+`Pipes.result.response` 已由原监督器过滤，无法从它重建原始 stdout 字节。因此 `stdout_sha256` 仅作为原回执中的已封存声明检查形状/文件 pin，**不声称已反算或独立核验原 stdout digest**。需要原始流时必须另有已授权、已保留原始资料；不得通过重新序列化过滤后 response 制造验证证明。
+
 不部署到运行源；不实际对正在运行的目录调用。审查通过且原任务终态封存后，root 再给予准确 bundle、manifest SHA 和一次实际提取的具体 GO。激活候选资格亦需经审查的代码版本，不接受未审命令开关绕过。
 
 回滚只移除本新增绑定器、测试与文档引用，保留全部旧失败与原始资料。阶段一 extractor 的 candidate=false 继续有效。无服务 schema、公共 API、账务、风险参数或原长测阈值迁移。
