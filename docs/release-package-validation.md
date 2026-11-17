@@ -1,6 +1,22 @@
 # Independent release package validation
 
-The later intermediate candidate
+The frozen candidate `7200097ce9f92fa678907bee9a99933f60d65bc3` passes complete
+source/archive and fresh installed-wheel acceptance. Its sdist contains all
+862 tracked source/evidence files with exact bytes; both artifacts contain the
+same 47 frozen runtime files. The isolated installed exercise passes 8/8 tests
+and all eight recorded console commands. The unpacked sdist also passes seven
+legacy-writer tests, one archived-profile test and four verifier tests without
+an enclosing `.git`. An actual final-sdist control with the allocation probe
+removed exits 1 for precisely that omission.
+
+The [current evidence and artifact hashes](../evidence/20261117-package-7200097/README.md)
+and [exact commands](../evidence/20261117-package-7200097/commands.txt) bind this
+result to that Git commit and the independently built wheel/sdist. This is a
+local Python 3.12 package gate; the integration gate owns the full Python matrix.
+Production and real-funds launch approval remain false. Historical incomplete
+packages below retain their original failed verdicts.
+
+The earlier intermediate candidate
 `28493d4f1ca78b8452a1e337e2cd5277a81d95a5` also passed a fresh installed 8/8
 exercise, but a complete tracked-source inventory found four omitted sdist
 members. Its aggregate package verdict remains failed. The
@@ -116,7 +132,7 @@ of the unmodified wheel. `--identity-only` checks installed byte identity and
 explicitly reports zero functional tests, for a later artifact whose runtime
 bytes have already passed the full installed exercise.
 
-## Reproduce
+## Reproduce historical 89bd349 check
 
 Keep the verifier scripts from this report commit outside the frozen checkout.
 Create a fresh checkout at the stated Git commit. Use separate build, venv,
