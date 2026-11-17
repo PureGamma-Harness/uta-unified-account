@@ -93,6 +93,8 @@ sequenceDiagram
 
 收齐成功回执后，父进程以只读方式核对实际各分片 payload，完成 watermarks，保持 HALTED。只有显式 `set_kill_switch(False)` 才经独立 SET_HALT 控制命令及完整、当前、新鲜行情检查打开全局 gate。停机先持久全局 HALTED，再尝试本地 fanout；未完成不会假报开放。发布新行情会使旧激活命令失效，不能在市场切换期间靠旧回执重新开放。
 
+部分发布测试中的短 timeout 只限制一次调用等待，不保证其他分片已启动或提交。测试持续持有并续租分片 1 的受控阻塞租约，按同一 snapshot/命令 ID 有界重试，等待分片 0 的真实 watermark；每次仍检查 HALTED/PUBLISHING、原 ID 不变及分片 1 未完成，再释放阻塞并验证同一代次恢复。
+
 业务写入和后台匹配都不能裸用底层服务绕过 router：`ShardWorkerView` 在整个交易及 receipt COMMIT 期间持有 shared gate，并检查 account 的固定 SHA-256 分片、控制状态、当前行情摘要、本分片身份和全局资金证明。缺分片、错误身份及证明不一致会保留全局 stop。
 
 当前运行期支持下单、撤单、还款、行情和 halt 控制。还款使用 worker 启动时、同一个 token Database 初始化的 CreditService，与金融分录和 inbox receipt 同事务提交；先付利息再付本金。全局停机或行情中断仍允许按同账户 FIFO 处理还款，并与撤单共享预留容量。开户、存款、新借款、资金池注资及其他未接线行政操作必须拒绝或保持离线，不能偷偷改成父进程无 token 写入。本版也不提供跨分片对手成交或转账。

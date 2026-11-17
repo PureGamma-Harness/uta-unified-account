@@ -148,11 +148,23 @@ class DurableProcessTests(unittest.TestCase):
         publication = self.router.publish_market(snapshot, timeout=.25)
         self.assertTrue(publication["publishing"])
         self.assertTrue(publication["halted"])
+        command_ids = publication["durable_market_commands"]
+        def partial_progress():
+            # Keep shard 1 fenced while observing actual shard 0 progress; a
+            # short response deadline does not guarantee worker startup speed.
+            lease.renew(held, 5)
+            observed = self.router.publish_market(snapshot, timeout=.25)
+            self.assertTrue(observed["publishing"], observed)
+            self.assertTrue(observed["halted"], observed)
+            self.assertNotIn("1", observed["watermarks"], observed)
+            self.assertEqual(observed["durable_market_commands"], command_ids)
+            return observed if observed["watermarks"] == {"0": 1} else None
+        if publication["watermarks"] != {"0": 1}:
+            publication = self.eventually(partial_progress)
         self.assertEqual(publication["watermarks"], {"0": 1})
         with self.assertRaises(ServiceError) as rejected:
             self.router.set_kill_switch(False, timeout=.1)
         self.assertEqual(rejected.exception.code, "publication_incomplete")
-        command_ids = publication["durable_market_commands"]
         lease.release(held)
         resumed = self.router.publish_market(snapshot, timeout=8)
         self.assertEqual(resumed["durable_market_commands"], command_ids)
