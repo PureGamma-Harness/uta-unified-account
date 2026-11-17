@@ -134,6 +134,8 @@ class WireFrame:
     def __post_init__(self):
         if type(self.opcode) is not int or self.opcode not in (1, 8, 9, 10):
             raise EncodeReject("invalid_opcode")
+        if type(self.header) is not bytes:
+            raise EncodeReject("invalid_frame_header")
         payload = _view(self._payload)
         # Direct construction cannot retain an externally mutable payload.
         if type(self._payload) is not bytes:

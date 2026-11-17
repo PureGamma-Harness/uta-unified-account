@@ -328,6 +328,12 @@ class EncodeAndBufferTests(unittest.TestCase):
         with self.assertRaises(HandshakeReject):
             validate_handshake_key(UntrustedText("dGhlIHNhbXBsZSBub25jZQ=="), "7468652073616d706c65206e6f6e6365")
 
+    def test_public_wire_constructor_does_not_retain_mutable_header_alias(self):
+        cls = type(encode_text(b"x"))
+        mutable_header = bytearray(b"\x81\x01")
+        with self.assertRaises(EncodeReject):
+            cls(1, mutable_header, b"x")
+
 
 if __name__ == "__main__":
     unittest.main()
