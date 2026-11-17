@@ -30,6 +30,8 @@ class _CommitFaultDatabase(Database):
 
 
 class OwnedStartupTests(unittest.TestCase):
+    _lease_seconds = .4  # Test-fixture parameter; production defaults are untouched.
+
     def setUp(self):
         self.tmp = TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
@@ -41,7 +43,7 @@ class OwnedStartupTests(unittest.TestCase):
             conn.execute("CREATE TABLE startup_fk_child (id INTEGER REFERENCES startup_fk_parent(id) DEFERRABLE INITIALLY DEFERRED)")
         self.fence = WriterFence(self.database)
         self.fence.enable("startup:test")
-        self.token = self.fence.acquire("startup:test-owner", .4)
+        self.token = self.fence.acquire("startup:test-owner", self._lease_seconds)
         self.bound = self.database.for_writer(self.token)
         self.addCleanup(self.release)
 
@@ -52,7 +54,7 @@ class OwnedStartupTests(unittest.TestCase):
             pass
 
     def context(self, **kwargs):
-        return _OwnedStartup(self.bound, lease_seconds=.4, stop=Event(),
+        return _OwnedStartup(self.bound, lease_seconds=self._lease_seconds, stop=Event(),
                              parent_pid=os.getppid(), **kwargs)
 
     def construct(self, initialization):

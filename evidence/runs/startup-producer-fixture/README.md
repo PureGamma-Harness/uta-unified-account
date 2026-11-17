@@ -44,3 +44,38 @@ This first commit preserves the red result and correction plan. It contains no
 runtime or fixture change, no CI rerun, and no whole-repository, capacity, HA or
 production qualification. Follow-up evidence must distinguish the changed test
 bytes from the unchanged runtime and retain this original failure.
+
+## Test-only correction and controlled green
+
+The correction adds a fixture parameter whose default remains .4 seconds. Only
+the external producer BUSY test sets that instance parameter to 5.0 **before**
+fixture setup, so both its very first `acquire` and its context use five seconds.
+The case asserts the original acquisition event has exactly a five-second TTL.
+All other tests retain the original .4-second parameter, including self-writer
+and actual-expiry coverage. No test claims .4-second setup availability here.
+
+Construction and lifecycle checks still sit outside the expected rejection
+assertion. Once healthy, the real producer transaction holds its writer while
+the actual keeper loop is observed within 2.5 seconds (its ordinary cycle is
+5/3 seconds). It retains the lock at least .2 seconds and until a call-through
+observer has recorded the **original** `_fail` error. It does not fabricate the
+error or modify failure flags. The exact rejection must retain the original
+SQLite `OperationalError` containing `locked`; any setup failure, different
+cause or unreached keeper attempt still fails. Observed renewal arguments must
+remain TTL 5.0 and SQLite busy timeout .1, confirming the production-default
+timeout behavior has not been changed.
+
+`controlled-pause-new/` uses the same archived driver and the same real pause
+with the corrected test bytes. It records a 553,992,498 ns pause, first-acquire
+TTL 5.0, construction entered **and returned**, producer entry, and the genuine
+`OperationalError: database is locked` with code 5 / `SQLITE_BUSY`. The negative
+case passes in 1.920 seconds. This is not an assertion that setup or a five-second
+lease tolerates arbitrary pauses.
+
+The green result's recorded commit is the preceding evidence-only `5690629`,
+while its two recorded test-file hashes identify the then-dirty correction bytes
+committed in this correction. It is not a clean-checkout run of `5690629`.
+All 49 recorded runtime hashes match the immutable 7ae base; the actual driver
+is unchanged between controlled red and green. The original manifests/results
+are retained without editing their commit or hash fields. Three-runtime
+targeted validation remains a separate follow-up; no full CI was rerun.

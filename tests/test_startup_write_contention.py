@@ -4,7 +4,7 @@ import sqlite3
 from decimal import Decimal
 from pathlib import Path
 from threading import Event, current_thread
-from time import sleep
+from time import monotonic, sleep
 import unittest
 from unittest.mock import patch
 
@@ -29,6 +29,10 @@ def describe_error(error):
 class StartupWriteContentionTests(unittest.TestCase):
     def setUp(self):
         self.fixture = fixture.OwnedStartupTests()
+        if self._testMethodName == "test_uncoordinated_producer_writer_busy_is_still_technical_poison":
+            # This negative tests external SQLite BUSY after healthy setup,
+            # using the real production-default lease from FIRST acquisition.
+            self.fixture._lease_seconds = 5.0
         self.fixture.setUp()
         self.addCleanup(self.fixture.doCleanups)
 
@@ -77,13 +81,23 @@ class StartupWriteContentionTests(unittest.TestCase):
 
     def test_uncoordinated_producer_writer_busy_is_still_technical_poison(self):
         initialization = self.fixture.context()
-        held, requested = Event(), Event()
+        held, requested, failed = Event(), Event(), Event()
         original = WriterFence.renew
+        original_failure = initialization._fail
+        attempts = []
         def observe(fence, token, ttl):
             if current_thread().name == "uta-startup-lease" and held.is_set():
+                attempts.append((ttl, fence.database.timeout))
                 requested.set()
             return original(fence, token, ttl)
-        with patch.object(WriterFence, "renew", observe):
+        def observe_failure(error):
+            original_failure(error)  # Store the genuine error before observation.
+            failed.set()
+        with self.fixture.database.read_transaction() as conn:
+            acquired = list(conn.execute("SELECT expires_ns-observed_ns FROM writer_fence_events WHERE kind='acquired'"))
+        self.assertEqual([row[0] for row in acquired], [5_000_000_000])
+        self.assertEqual(initialization.lease_seconds, 5.0)
+        with patch.object(WriterFence, "renew", observe), patch.object(initialization, "_fail", observe_failure):
             initialization.__enter__()
             try:
                 self.fixture.construct(initialization)
@@ -91,9 +105,14 @@ class StartupWriteContentionTests(unittest.TestCase):
                 # The separate producer role is not an owned financial actor.
                 # Do not retry or hide its genuine SQLite contention.
                 with self.fixture.database.inbox_transaction():
+                    held_since = monotonic()
                     held.set()
-                    self.assertTrue(requested.wait(.3))
-                    sleep(.08)
+                    # The real five-second keeper loop can wait up to TTL/3.
+                    # This is an observation budget, not a lease extension.
+                    self.assertTrue(requested.wait(2.5), "keeper did not request the actual producer contention")
+                    sleep(.2)  # Beyond the unchanged production .1s busy wait.
+                    self.assertTrue(failed.wait(1), "actual keeper failure was not observed while the writer remained held")
+                    self.assertGreaterEqual(monotonic() - held_since, .2)
                 held.clear()
                 with self.assertRaises(StartupError) as rejected:
                     initialization.finish()
@@ -102,6 +121,8 @@ class StartupWriteContentionTests(unittest.TestCase):
         self.assertEqual(rejected.exception.code, "startup_keeper_failed", describe_error(rejected.exception))
         self.assertIsInstance(rejected.exception.__cause__, sqlite3.OperationalError)
         self.assertIn("locked", str(rejected.exception.__cause__))
+        self.assertTrue(attempts)
+        self.assertTrue(all(ttl == 5.0 and busy == .1 for ttl, busy in attempts), attempts)
         self.assertFalse(initialization._finished)
 
     def test_owned_financial_writer_past_actual_expiry_still_rolls_back(self):
