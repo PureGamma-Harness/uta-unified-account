@@ -59,7 +59,7 @@ class RunnerPackageOmissionClosureTests(unittest.TestCase):
                 collector['cases'][index]['checks'][extra]=False
                 package['runtime_controls']=save(root/'controls-extra-false.json',collector)
                 report=runner.proof(package['runtime_reports'][direction]);report['checks'][extra]=False
-                package['runtime_reports'][direction]=save(root/'report-extra-false.json',report)
+                package['runtime_reports'][direction]=save(Path(package['runtime_reports'][direction]['path']),report)
                 self.assertTrue(collector['cases'][index]['passed'])
                 self.assertEqual(collector['cases'][index]['returncode'],1)
                 with self.assertRaisesRegex(runner.GateError,'full check matrix'):
@@ -71,7 +71,7 @@ class RunnerPackageOmissionClosureTests(unittest.TestCase):
             report=runner.proof(package['runtime_reports']['wheel'])
             sdist=Path(package['artifact_files']['sdist']['path']).name
             report['artifacts'][sdist]['sha256']='0'*64
-            package['runtime_reports']['wheel']=save(root/'report-wrong-other-input.json',report)
+            package['runtime_reports']['wheel']=save(Path(package['runtime_reports']['wheel']['path']),report)
             with self.assertRaisesRegex(runner.GateError,'actual two input artifacts'):
                 self.check(hashes,package,archives)
 
@@ -100,7 +100,7 @@ class RunnerPackageOmissionClosureTests(unittest.TestCase):
                 package['runtime_controls']=save(root/'controls-modified-member.json',collector)
                 report=runner.proof(package['runtime_reports'][kind])
                 report['artifacts'][negative.name]=facts(negative)
-                package['runtime_reports'][kind]=save(root/'report-modified-member.json',report)
+                package['runtime_reports'][kind]=save(Path(package['runtime_reports'][kind]['path']),report)
                 with self.assertRaisesRegex(runner.GateError,'beyond the single removed target'):
                     self.check(hashes,package,archives)
 
@@ -122,6 +122,20 @@ class RunnerPackageOmissionClosureTests(unittest.TestCase):
                 controls=runner.proof(package['runtime_controls']);controls['cases'][0][field]=True
                 package['runtime_controls']=save(root/'controls-boolean-count.json',controls)
                 with self.assertRaisesRegex(runner.GateError,'actual rejection'):
+                    self.check(hashes,package,archives)
+
+    def test_negative_output_must_equal_the_pinned_canonical_absolute_report(self):
+        for mutation in ('different','relative','output alias','reference alias'):
+            with TemporaryDirectory() as temporary,self.subTest(mutation=mutation):
+                root=Path(temporary);hashes,package,archives=self.fixture(root)
+                controls=runner.proof(package['runtime_controls'])
+                reference=package['runtime_reports']['wheel'];report=Path(reference['path'])
+                if mutation=='different':controls['cases'][0]['argv'][11]=str(root/'different-report.json')
+                elif mutation=='relative':controls['cases'][0]['argv'][11]=report.name
+                elif mutation=='output alias':controls['cases'][0]['argv'][11]=str(report.parent)+'/./'+report.name
+                else:reference['path']=str(report.parent)+'/./'+report.name
+                package['runtime_controls']=save(root/'controls-output-mismatch.json',controls)
+                with self.assertRaisesRegex(runner.GateError,'pinned canonical report path'):
                     self.check(hashes,package,archives)
 
 

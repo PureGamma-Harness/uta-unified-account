@@ -274,6 +274,10 @@ def omission_binding(package, archives, source_hashes, commit, *, source=None):
         require(len(argv) == 12 and argv[1] == str(verifier)
             and argv[2::2] == ["--source", "--commit", "--wheel", "--sdist", "--output"]
             and argv[3] == str(expected_source) and argv[5] == commit, "negative verifier argv/source binding")
+        output_path, report_path = Path(argv[11]), Path(reference["path"])
+        require(output_path.is_absolute() and report_path.is_absolute()
+            and argv[11] == str(output_path.resolve()) and reference["path"] == str(report_path.resolve())
+            and output_path == report_path, "negative verifier output is not the pinned canonical report path")
         require(type(item["returncode"]) is int and item["returncode"] == 1 and item["passed"] is True and item["removed_member"] == target
             and type(item["removed_count"]) is int and item["removed_count"] == 1, "negative case identity/actual rejection")
         require(item.get("source_commit", commit) == commit, "negative case source differs")
