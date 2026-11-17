@@ -5,6 +5,12 @@ It does not initialize accounts, import custody balances, generate private keys,
 publish quotes, activate trading, install a network proxy or grant production
 approval. Product/capacity/replication gates remain open.
 
+The optional [offline declaration check](../docs/offline-deployment-manifest.md)
+can reject mismatched version references or overlapping financial/authentication/
+configuration file roles before this procedure. Its zero exit status is only a
+declaration and metadata consistency result; it never authorizes this unit,
+verifies private contents or supplies production approval.
+
 The development container has no privileged system service manager. System-mode
 verification is unavailable (`/run/systemd` permission denied); user-mode
 `systemd-analyze verify` parses this template but reports the intentionally

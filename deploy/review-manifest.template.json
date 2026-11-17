@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "deployment_id": "review-synthetic-example",
+  "purpose": "review_synthetic",
+  "operator_uid": 1000,
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "artifact": {
+    "kind": "wheel",
+    "path": "/opt/uta/release/review.whl",
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "version": "0.5.0a1"
+  },
+  "rules": {
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "version": "UTA-CROSS-LOAN-v1"
+  },
+  "storage": {
+    "engine": "sqlite",
+    "journal_mode": "WAL",
+    "synchronous": "FULL",
+    "replication": "none",
+    "host_scope": "single_host"
+  },
+  "products": {
+    "data_classification": "synthetic",
+    "settlement_currency": "USD",
+    "account_modes": ["Cross"],
+    "instruments": ["spot", "linear_perpetual"]
+  },
+  "paths": {
+    "financial_directory": "/var/lib/uta-durable/managed",
+    "auth_directory": "/var/lib/uta-durable/auth",
+    "configuration_directory": "/etc/uta-durable",
+    "nonce_database": "/var/lib/uta-durable/auth/nonces.sqlite3",
+    "signing_profile": "/etc/uta-durable/signing-profile.json",
+    "tls_certificate": "/etc/uta-durable/server-chain.pem",
+    "tls_private_key": "/etc/uta-durable/server-key.pem"
+  },
+  "approval": {
+    "real_funds_requested": false,
+    "external_approval_reference": null
+  }
+}
