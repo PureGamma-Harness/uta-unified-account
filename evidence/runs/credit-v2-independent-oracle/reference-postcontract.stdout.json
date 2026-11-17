@@ -1,0 +1,1687 @@
+{
+  "reference_manual_self_check": "PASS",
+  "runtime_status": "PENDING_ACTUAL_CANONICAL_PAYLOAD_AND_CAPTURE",
+  "schema": "independent-credit-observation-v1",
+  "synthetic_only": true,
+  "vectors": [
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 10000000,
+      "after_portfolio_quote_units": 26000000,
+      "after_risk": {
+        "accounting_equity": "100",
+        "available_margin": "84",
+        "cash_deficit_value": "0",
+        "collateral_value": "132",
+        "debt_value": "40",
+        "frozen_value": "0",
+        "gross_asset_value": "140",
+        "initial_margin": "8",
+        "interest_value": "0",
+        "loan_value": "66",
+        "maintenance_margin": "4",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "92",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 40000000,
+      "before": {
+        "balances": {
+          "BTC": 0,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": 0,
+        "interest_receivable_units": 0,
+        "interest_units": 0,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 100000000,
+        "positions": {},
+        "principal_ledger_units": 0,
+        "principal_receivable_units": 0,
+        "principal_units": 0,
+        "shard_interest_units": 0,
+        "shard_principal_units": 0,
+        "version": 1
+      },
+      "before_authorized_quote_units": 50000000,
+      "before_portfolio_quote_units": 50000000,
+      "before_risk": {
+        "accounting_equity": "100",
+        "available_margin": "100",
+        "cash_deficit_value": "0",
+        "collateral_value": "100",
+        "debt_value": "0",
+        "frozen_value": "0",
+        "gross_asset_value": "100",
+        "initial_margin": "0",
+        "interest_value": "0",
+        "loan_value": "50",
+        "maintenance_margin": "0",
+        "order_margin": "0",
+        "principal_value": "0",
+        "risk_equity": "100",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 40000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": 0,
+          "interest_receivable_units": 0,
+          "interest_units": 0,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 60000000,
+          "positions": {},
+          "principal_ledger_units": -40000000,
+          "principal_receivable_units": 40000000,
+          "principal_units": 40000000,
+          "shard_interest_units": 0,
+          "shard_principal_units": 40000000,
+          "version": 2
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.4",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.4"
+            }
+          },
+          "before": {
+            "assets": {
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {}
+          }
+        },
+        "market_dependency": "SNAPSHOT",
+        "new_borrow_decision_count": 1,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": 40000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": -40000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": -40000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 40000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M1_BASE_BORROW",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "BORROW",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 2000000,
+      "after_portfolio_quote_units": 2000000,
+      "after_risk": {
+        "accounting_equity": "100",
+        "available_margin": "14/5",
+        "cash_deficit_value": "0",
+        "collateral_value": "672/5",
+        "debt_value": "43",
+        "frozen_value": "0",
+        "gross_asset_value": "143",
+        "initial_margin": "43/5",
+        "interest_value": "0",
+        "loan_value": "336/5",
+        "maintenance_margin": "43/10",
+        "order_margin": "80",
+        "principal_value": "43",
+        "risk_equity": "457/5",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 3000000,
+      "before": {
+        "balances": {
+          "BTC": 40000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": 0,
+        "interest_receivable_units": 0,
+        "interest_units": 0,
+        "liquidation_state": "NORMAL",
+        "orders": [
+          {
+            "filled_units": 0,
+            "limit_price": "100",
+            "order_id": "manual-eight",
+            "quantity_units": 800000000,
+            "reduce_only": false,
+            "status": "OPEN",
+            "symbol": "BTC-PERP"
+          }
+        ],
+        "pool_units": 60000000,
+        "positions": {},
+        "principal_ledger_units": -40000000,
+        "principal_receivable_units": 40000000,
+        "principal_units": 40000000,
+        "shard_interest_units": 0,
+        "shard_principal_units": 40000000,
+        "version": 3
+      },
+      "before_authorized_quote_units": 3000000,
+      "before_portfolio_quote_units": 3000000,
+      "before_risk": {
+        "accounting_equity": "100",
+        "available_margin": "4",
+        "cash_deficit_value": "0",
+        "collateral_value": "132",
+        "debt_value": "40",
+        "frozen_value": "0",
+        "gross_asset_value": "140",
+        "initial_margin": "8",
+        "interest_value": "0",
+        "loan_value": "66",
+        "maintenance_margin": "4",
+        "order_margin": "80",
+        "principal_value": "40",
+        "risk_equity": "92",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 43000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": 0,
+          "interest_receivable_units": 0,
+          "interest_units": 0,
+          "liquidation_state": "NORMAL",
+          "orders": [
+            {
+              "filled_units": 0,
+              "limit_price": "100",
+              "order_id": "manual-eight",
+              "quantity_units": 800000000,
+              "reduce_only": false,
+              "status": "OPEN",
+              "symbol": "BTC-PERP"
+            }
+          ],
+          "pool_units": 57000000,
+          "positions": {},
+          "principal_ledger_units": -43000000,
+          "principal_receivable_units": 43000000,
+          "principal_units": 43000000,
+          "shard_interest_units": 0,
+          "shard_principal_units": 43000000,
+          "version": 4
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.43",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.43"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "0.4",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.4"
+            }
+          }
+        },
+        "market_dependency": "SNAPSHOT",
+        "new_borrow_decision_count": 1,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": 3000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": -3000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": -3000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 3000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M2_OPEN_ORDER_BORROW",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "BORROW",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 22000000,
+      "after_portfolio_quote_units": 22000000,
+      "after_risk": {
+        "accounting_equity": "88",
+        "available_margin": "309/5",
+        "cash_deficit_value": "1",
+        "collateral_value": "88",
+        "debt_value": "22",
+        "frozen_value": "0",
+        "gross_asset_value": "110",
+        "initial_margin": "21/5",
+        "interest_value": "1",
+        "loan_value": "44",
+        "maintenance_margin": "21/10",
+        "order_margin": "0",
+        "principal_value": "20",
+        "risk_equity": "66",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 10000000,
+      "before": {
+        "balances": {
+          "BTC": 100000000,
+          "USD": -100000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": -1000000,
+        "interest_receivable_units": 1000000,
+        "interest_units": 1000000,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 90000000,
+        "positions": {},
+        "principal_ledger_units": -10000000,
+        "principal_receivable_units": 10000000,
+        "principal_units": 10000000,
+        "shard_interest_units": 1000000,
+        "shard_principal_units": 10000000,
+        "version": 7
+      },
+      "before_authorized_quote_units": 28000000,
+      "before_portfolio_quote_units": 28000000,
+      "before_risk": {
+        "accounting_equity": "88",
+        "available_margin": "329/5",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "12",
+        "frozen_value": "0",
+        "gross_asset_value": "100",
+        "initial_margin": "11/5",
+        "interest_value": "1",
+        "loan_value": "40",
+        "maintenance_margin": "11/10",
+        "order_margin": "0",
+        "principal_value": "10",
+        "risk_equity": "68",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 110000000,
+            "USD": -100000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": -1000000,
+          "interest_receivable_units": 1000000,
+          "interest_units": 1000000,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 80000000,
+          "positions": {},
+          "principal_ledger_units": -20000000,
+          "principal_receivable_units": 20000000,
+          "principal_units": 20000000,
+          "shard_interest_units": 1000000,
+          "shard_principal_units": 20000000,
+          "version": 8
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "1.1"
+            },
+            "cash_deficits": {
+              "USD": "1"
+            },
+            "interest": {
+              "BTC": "0.01"
+            },
+            "principal": {
+              "BTC": "0.2"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "1"
+            },
+            "cash_deficits": {
+              "USD": "1"
+            },
+            "interest": {
+              "BTC": "0.01"
+            },
+            "principal": {
+              "BTC": "0.1"
+            }
+          }
+        },
+        "market_dependency": "SNAPSHOT",
+        "new_borrow_decision_count": 1,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": 10000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": -10000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": -10000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 10000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M3_CASH_DEFICIT_BORROW",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "BORROW",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 0,
+      "after_portfolio_quote_units": 18000000,
+      "after_risk": {
+        "accounting_equity": "95",
+        "available_margin": "76",
+        "cash_deficit_value": "0",
+        "collateral_value": "136",
+        "debt_value": "50",
+        "frozen_value": "0",
+        "gross_asset_value": "145",
+        "initial_margin": "10",
+        "interest_value": "5",
+        "loan_value": "68",
+        "maintenance_margin": "5",
+        "order_margin": "0",
+        "principal_value": "45",
+        "risk_equity": "86",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 5000000,
+      "before": {
+        "balances": {
+          "BTC": 40000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": -5000000,
+        "interest_receivable_units": 5000000,
+        "interest_units": 5000000,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 60000000,
+        "positions": {},
+        "principal_ledger_units": -40000000,
+        "principal_receivable_units": 40000000,
+        "principal_units": 40000000,
+        "shard_interest_units": 5000000,
+        "shard_principal_units": 40000000,
+        "version": 3
+      },
+      "before_authorized_quote_units": 5000000,
+      "before_portfolio_quote_units": 21000000,
+      "before_risk": {
+        "accounting_equity": "95",
+        "available_margin": "78",
+        "cash_deficit_value": "0",
+        "collateral_value": "132",
+        "debt_value": "45",
+        "frozen_value": "0",
+        "gross_asset_value": "140",
+        "initial_margin": "9",
+        "interest_value": "5",
+        "loan_value": "66",
+        "maintenance_margin": "9/2",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "87",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 45000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": -5000000,
+          "interest_receivable_units": 5000000,
+          "interest_units": 5000000,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 55000000,
+          "positions": {},
+          "principal_ledger_units": -45000000,
+          "principal_receivable_units": 45000000,
+          "principal_units": 45000000,
+          "shard_interest_units": 5000000,
+          "shard_principal_units": 45000000,
+          "version": 4
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.45",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.05"
+            },
+            "principal": {
+              "BTC": "0.45"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "0.4",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.05"
+            },
+            "principal": {
+              "BTC": "0.4"
+            }
+          }
+        },
+        "market_dependency": "SNAPSHOT",
+        "new_borrow_decision_count": 1,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": 5000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": -5000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": -5000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 5000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M4_OPENING_INTEREST_BORROW",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "BORROW",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 15000000,
+      "after_portfolio_quote_units": 31000000,
+      "after_risk": {
+        "accounting_equity": "105",
+        "available_margin": "90",
+        "cash_deficit_value": "0",
+        "collateral_value": "132",
+        "debt_value": "35",
+        "frozen_value": "0",
+        "gross_asset_value": "140",
+        "initial_margin": "7",
+        "interest_value": "0",
+        "loan_value": "66",
+        "maintenance_margin": "7/2",
+        "order_margin": "0",
+        "principal_value": "35",
+        "risk_equity": "97",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 10000000,
+      "before": {
+        "balances": {
+          "BTC": 50000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": -5000000,
+        "interest_receivable_units": 5000000,
+        "interest_units": 5000000,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 60000000,
+        "positions": {},
+        "principal_ledger_units": -40000000,
+        "principal_receivable_units": 40000000,
+        "principal_units": 40000000,
+        "shard_interest_units": 5000000,
+        "shard_principal_units": 40000000,
+        "version": 4
+      },
+      "before_authorized_quote_units": 5000000,
+      "before_portfolio_quote_units": 25000000,
+      "before_risk": {
+        "accounting_equity": "105",
+        "available_margin": "86",
+        "cash_deficit_value": "0",
+        "collateral_value": "140",
+        "debt_value": "45",
+        "frozen_value": "0",
+        "gross_asset_value": "150",
+        "initial_margin": "9",
+        "interest_value": "5",
+        "loan_value": "70",
+        "maintenance_margin": "9/2",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "95",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 40000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 5000000,
+          "interest_ledger_units": 0,
+          "interest_receivable_units": 0,
+          "interest_units": 0,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 65000000,
+          "positions": {},
+          "principal_ledger_units": -35000000,
+          "principal_receivable_units": 35000000,
+          "principal_units": 35000000,
+          "shard_interest_units": 0,
+          "shard_principal_units": 35000000,
+          "version": 5
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.4",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.35"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "0.5",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.05"
+            },
+            "principal": {
+              "BTC": "0.4"
+            }
+          }
+        },
+        "market_dependency": "NONE",
+        "new_borrow_decision_count": 0,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": -10000000
+          },
+          {
+            "account": "liability:interest:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": 5000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": 5000000
+          },
+          {
+            "account": "system:credit-interest-cash",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 5000000
+          },
+          {
+            "account": "system:credit-interest-receivable",
+            "asset": "BTC",
+            "ordinal": 4,
+            "units": -5000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 5,
+            "units": 5000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 6,
+            "units": -5000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M5_MIXED_REPAY",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "REPAY",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 28000000,
+      "after_portfolio_quote_units": 60000000,
+      "after_risk": {
+        "accounting_equity": "202",
+        "available_margin": "2297/20",
+        "cash_deficit_value": "0",
+        "collateral_value": "331/2",
+        "debt_value": "22",
+        "frozen_value": "20",
+        "gross_asset_value": "221",
+        "initial_margin": "37/5",
+        "interest_value": "1",
+        "loan_value": "331/4",
+        "maintenance_margin": "37/10",
+        "order_margin": "97/4",
+        "principal_value": "21",
+        "risk_equity": "293/2",
+        "status": "HEALTHY",
+        "unrealized_pnl": "3"
+      },
+      "amount_units": 1000000,
+      "before": {
+        "balances": {
+          "BTC": 120000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {
+          "BTC": 20000000
+        },
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": -1000000,
+        "interest_receivable_units": 1000000,
+        "interest_units": 1000000,
+        "liquidation_state": "NORMAL",
+        "orders": [
+          {
+            "filled_units": 50000000,
+            "limit_price": "105",
+            "order_id": "partial",
+            "quantity_units": 200000000,
+            "reduce_only": false,
+            "status": "PARTIALLY_FILLED",
+            "symbol": "BTC-PERP"
+          },
+          {
+            "filled_units": 0,
+            "limit_price": "90",
+            "order_id": "reduce",
+            "quantity_units": -10000000,
+            "reduce_only": true,
+            "status": "OPEN",
+            "symbol": "BTC-PERP"
+          }
+        ],
+        "pool_units": 80000000,
+        "positions": {
+          "BTC-PERP": {
+            "cost_basis_usd_units": 2700000000,
+            "quantity_units": 30000000
+          }
+        },
+        "principal_ledger_units": -20000000,
+        "principal_receivable_units": 20000000,
+        "principal_units": 20000000,
+        "shard_interest_units": 1000000,
+        "shard_principal_units": 20000000,
+        "version": 9
+      },
+      "before_authorized_quote_units": 29000000,
+      "before_portfolio_quote_units": 61000000,
+      "before_risk": {
+        "accounting_equity": "202",
+        "available_margin": "2311/20",
+        "cash_deficit_value": "0",
+        "collateral_value": "165",
+        "debt_value": "21",
+        "frozen_value": "20",
+        "gross_asset_value": "220",
+        "initial_margin": "36/5",
+        "interest_value": "1",
+        "loan_value": "165/2",
+        "maintenance_margin": "18/5",
+        "order_margin": "97/4",
+        "principal_value": "20",
+        "risk_equity": "147",
+        "status": "HEALTHY",
+        "unrealized_pnl": "3"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 121000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {
+            "BTC": 20000000
+          },
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": -1000000,
+          "interest_receivable_units": 1000000,
+          "interest_units": 1000000,
+          "liquidation_state": "NORMAL",
+          "orders": [
+            {
+              "filled_units": 50000000,
+              "limit_price": "105",
+              "order_id": "partial",
+              "quantity_units": 200000000,
+              "reduce_only": false,
+              "status": "PARTIALLY_FILLED",
+              "symbol": "BTC-PERP"
+            },
+            {
+              "filled_units": 0,
+              "limit_price": "90",
+              "order_id": "reduce",
+              "quantity_units": -10000000,
+              "reduce_only": true,
+              "status": "OPEN",
+              "symbol": "BTC-PERP"
+            }
+          ],
+          "pool_units": 79000000,
+          "positions": {
+            "BTC-PERP": {
+              "cost_basis_usd_units": 2700000000,
+              "quantity_units": 30000000
+            }
+          },
+          "principal_ledger_units": -21000000,
+          "principal_receivable_units": 21000000,
+          "principal_units": 21000000,
+          "shard_interest_units": 1000000,
+          "shard_principal_units": 21000000,
+          "version": 10
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "1.21",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.01"
+            },
+            "principal": {
+              "BTC": "0.21"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "1.2",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.01"
+            },
+            "principal": {
+              "BTC": "0.2"
+            }
+          }
+        },
+        "market_dependency": "SNAPSHOT",
+        "new_borrow_decision_count": 1,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": 1000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": -1000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": -1000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": 1000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M6_TIER_FREEZE_POSITION_PARTIAL_ORDER",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "BORROW",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              "50",
+              "0.8"
+            ],
+            [
+              null,
+              "0.5"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 20000000,
+      "after_portfolio_quote_units": 32000000,
+      "after_risk": {
+        "accounting_equity": "100",
+        "available_margin": "88",
+        "cash_deficit_value": "0",
+        "collateral_value": "124",
+        "debt_value": "30",
+        "frozen_value": "0",
+        "gross_asset_value": "130",
+        "initial_margin": "6",
+        "interest_value": "0",
+        "loan_value": "62",
+        "maintenance_margin": "3",
+        "order_margin": "0",
+        "principal_value": "30",
+        "risk_equity": "94",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 10000000,
+      "before": {
+        "balances": {
+          "BTC": 40000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": 0,
+        "interest_receivable_units": 0,
+        "interest_units": 0,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 60000000,
+        "positions": {},
+        "principal_ledger_units": -40000000,
+        "principal_receivable_units": 40000000,
+        "principal_units": 40000000,
+        "shard_interest_units": 0,
+        "shard_principal_units": 40000000,
+        "version": 4
+      },
+      "before_authorized_quote_units": 10000000,
+      "before_portfolio_quote_units": 26000000,
+      "before_risk": {
+        "accounting_equity": "100",
+        "available_margin": "84",
+        "cash_deficit_value": "0",
+        "collateral_value": "132",
+        "debt_value": "40",
+        "frozen_value": "0",
+        "gross_asset_value": "140",
+        "initial_margin": "8",
+        "interest_value": "0",
+        "loan_value": "66",
+        "maintenance_margin": "4",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "92",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 30000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 0,
+          "interest_ledger_units": 0,
+          "interest_receivable_units": 0,
+          "interest_units": 0,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 70000000,
+          "positions": {},
+          "principal_ledger_units": -30000000,
+          "principal_receivable_units": 30000000,
+          "principal_units": 30000000,
+          "shard_interest_units": 0,
+          "shard_principal_units": 30000000,
+          "version": 5
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.3",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.3"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "0.4",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {},
+            "principal": {
+              "BTC": "0.4"
+            }
+          }
+        },
+        "market_dependency": "NONE",
+        "new_borrow_decision_count": 0,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": -10000000
+          },
+          {
+            "account": "liability:principal:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": 10000000
+          },
+          {
+            "account": "system:credit-pool",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": 10000000
+          },
+          {
+            "account": "system:credit-principal-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": -10000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M7_PRINCIPAL_ONLY_REPAY",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "REPAY",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    },
+    {
+      "actual_capture": null,
+      "after_authorized_quote_units": 7000000,
+      "after_portfolio_quote_units": 26000000,
+      "after_risk": {
+        "accounting_equity": "105",
+        "available_margin": "434/5",
+        "cash_deficit_value": "0",
+        "collateral_value": "692/5",
+        "debt_value": "43",
+        "frozen_value": "0",
+        "gross_asset_value": "148",
+        "initial_margin": "43/5",
+        "interest_value": "3",
+        "loan_value": "346/5",
+        "maintenance_margin": "43/10",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "477/5",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "amount_units": 2000000,
+      "before": {
+        "balances": {
+          "BTC": 50000000,
+          "USD": 10000000000
+        },
+        "frozen_assets": {},
+        "halted": false,
+        "interest_cash_units": 0,
+        "interest_ledger_units": -5000000,
+        "interest_receivable_units": 5000000,
+        "interest_units": 5000000,
+        "liquidation_state": "NORMAL",
+        "orders": [],
+        "pool_units": 60000000,
+        "positions": {},
+        "principal_ledger_units": -40000000,
+        "principal_receivable_units": 40000000,
+        "principal_units": 40000000,
+        "shard_interest_units": 5000000,
+        "shard_principal_units": 40000000,
+        "version": 4
+      },
+      "before_authorized_quote_units": 5000000,
+      "before_portfolio_quote_units": 25000000,
+      "before_risk": {
+        "accounting_equity": "105",
+        "available_margin": "86",
+        "cash_deficit_value": "0",
+        "collateral_value": "140",
+        "debt_value": "45",
+        "frozen_value": "0",
+        "gross_asset_value": "150",
+        "initial_margin": "9",
+        "interest_value": "5",
+        "loan_value": "70",
+        "maintenance_margin": "9/2",
+        "order_margin": "0",
+        "principal_value": "40",
+        "risk_equity": "95",
+        "status": "HEALTHY",
+        "unrealized_pnl": "0"
+      },
+      "expected_transition": {
+        "after": {
+          "balances": {
+            "BTC": 48000000,
+            "USD": 10000000000
+          },
+          "frozen_assets": {},
+          "halted": false,
+          "interest_cash_units": 2000000,
+          "interest_ledger_units": -3000000,
+          "interest_receivable_units": 3000000,
+          "interest_units": 3000000,
+          "liquidation_state": "NORMAL",
+          "orders": [],
+          "pool_units": 60000000,
+          "positions": {},
+          "principal_ledger_units": -40000000,
+          "principal_receivable_units": 40000000,
+          "principal_units": 40000000,
+          "shard_interest_units": 3000000,
+          "shard_principal_units": 40000000,
+          "version": 5
+        },
+        "gross_components": {
+          "after": {
+            "assets": {
+              "BTC": "0.48",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.03"
+            },
+            "principal": {
+              "BTC": "0.4"
+            }
+          },
+          "before": {
+            "assets": {
+              "BTC": "0.5",
+              "USD": "100"
+            },
+            "cash_deficits": {},
+            "interest": {
+              "BTC": "0.05"
+            },
+            "principal": {
+              "BTC": "0.4"
+            }
+          }
+        },
+        "market_dependency": "NONE",
+        "new_borrow_decision_count": 0,
+        "ordered_legs": [
+          {
+            "account": "customer:alice",
+            "asset": "BTC",
+            "ordinal": 0,
+            "units": -2000000
+          },
+          {
+            "account": "liability:interest:alice",
+            "asset": "BTC",
+            "ordinal": 1,
+            "units": 2000000
+          },
+          {
+            "account": "system:credit-interest-cash",
+            "asset": "BTC",
+            "ordinal": 2,
+            "units": 2000000
+          },
+          {
+            "account": "system:credit-interest-receivable",
+            "asset": "BTC",
+            "ordinal": 3,
+            "units": -2000000
+          }
+        ]
+      },
+      "financial_commit": null,
+      "id": "M8_INTEREST_ONLY_REPAY",
+      "journal_event_hash": null,
+      "last_checked_at": null,
+      "operation": "REPAY",
+      "original_CID": null,
+      "original_SID": null,
+      "policy": {
+        "account_gross_limit_units": 1000000000,
+        "account_principal_limit_units": 1000000000,
+        "allocations": {
+          "0": 50000000,
+          "1": 50000000
+        },
+        "borrow_im": "0.2",
+        "borrow_mm": "0.1",
+        "global_budget_units": 100000000,
+        "linear_im": "0.1",
+        "linear_mm": "0.05",
+        "local_asset_limit_units": 10000000000,
+        "local_shard": "0",
+        "ltv": {
+          "BTC": "0.5",
+          "USD": "0.5"
+        },
+        "mark": "100",
+        "max_total_debt": "10000",
+        "multiplier": "1",
+        "new_fee": "0",
+        "new_interest": "0",
+        "prices": {
+          "BTC": "100",
+          "USD": "1"
+        },
+        "risk_max_principal_units": 1000000000,
+        "step_units": 1000000,
+        "tiers": {
+          "BTC": [
+            [
+              null,
+              "0.8"
+            ]
+          ],
+          "USD": [
+            [
+              null,
+              "1"
+            ]
+          ]
+        }
+      },
+      "producer_commit": null,
+      "selected_at": null,
+      "source_id": null
+    }
+  ]
+}

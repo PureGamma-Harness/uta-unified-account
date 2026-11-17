@@ -17,7 +17,7 @@ actual journal、FIFO、COMMIT 或恢复。每个向量的这些 actual 字段�
 两币都用 10^8 整数单位，绝对 units<10^38，account version 不超过有符号64位范围。
 USD/BTC 价格 1/100，默认 BTC 抵押系数.8、USD1，两币 LTV=.5；BTC 借款 IM/MM=.2/.1，
 单 USD 结算线性名义金额 IM/MM=.1/.05，乘数1、mark100。借款 step=.01BTC。
-风险本金上限10BTC、account本金/总额上限10BTC、local asset上限100BTC、风险总债10000USD。
+风险本金上限10BTC、account本金+利息总额上限10BTC、local asset总额上限100BTC、风险总债10000USD。
 全局预算1BTC，固定 shard0=.5、shard1=.5；本地仅可用 shard0，没有动态借用邻片预算。
 预算计本金+利息，USD cash deficit 仍按全价计经济债务但不伪装为贷款本金。
 
@@ -62,3 +62,44 @@ producer/financial事务边界及重开状态。predicate计算通过不替代�
 范围仅纯 reference。未接任何 production capture，未执行真实 positive 写入、DB、服务、
 网络、压力或原jobs SQL；不修改 M3/runtime、冻结工作树或历史证据。回滚只需 revert本组
 新增代码/文档/证据；生产、10k、HA、HMAC和贷后处置均没有验收结论。
+
+## 后续合同对接与已运行范围
+
+先行 oracle、八个人工输入/常数及第一次运行已锁为
+`2b83a47`，首次执行 exit0、0.049194秒；其原字节没有覆盖。之后才阅读作者已提交的
+`52207b6075dce8662bf951c89015415e4fca495d` 两个 contract blobs，继而阅读补明确的
+`b510d18cb4ea6ab6213374884fa40a2f7754977e`，均不 import 生产模块。两个合同版本的
+原文件及 SHA256 保存在 [证据目录](../evidence/runs/credit-v2-independent-oracle)。
+没有读取未提交的 capture/audit 核心，也没有运行作者未来 positive pipeline。
+
+b510 明确 account_limit/local_asset_limit 均按 gross本金+利息核对。本组去掉原准备稿
+中与同数值 gross gate 重复的 account本金gate；风险规则的 max_principal 是另外的门槛，
+继续单独保留。八个人工结果不变。这是接口语义对接，不能称为生产缺陷或生产修复。
+新 reference 同时显式保留负的本金/利息 ledger余额，验证其与分开的正债务一致，验证
+本片 aggregate p/i 与两种 receivable 一致，并输出 before/after 四组 gross components。
+
+依照 b510 的独立 journal 算法：fingerprint 是 canonical
+`[[account,asset,整数units],...]` 的 SHA256；event hash 是 canonical
+`[sequence,event_id,previous_hash,fingerprint]` 的 SHA256；credit event ID 是
+`credit:sha256(canonical(['account:'+account_id,CID]))`。逐条 journal 比较从操作与原 before
+计算 expected legs，不读取输入中的 expected-postings。单测使用另一份手写四腿常数；
+把 pool 账户改成 interest cash、保持零和并重算全部 self hash 后仍会因金融腿不一致拒绝。
+函数返回 SQL/COMMIT provenance=PENDING，内容 hash 一致不升级为实际事务证明。
+
+另外核对 source canonical text/原 command hash/关系字段/content ID、canonical整数单位、
+重复字段/float/bool/未知字段/overflow、原CID的FIFO次序、两次UTC年龄等号/1微秒越界、
+SID变更、回拨、limits/pool/allocation独立约束以及 halt 且风险额度0时的 market-NONE还款。
+这些是 reference 的输入拒绝和 predicate 检查，**不是生产门禁拒绝验收**。完整 bundle/
+artifact/policy/catalog/receipt 的实际适配，以及 pool-funding 原账、intent/terminal、丢reply/
+restart/unknown/SAVEPOINT/双COMMIT 的独立观测仍待 actual capture，不能以本组通过补齐。
+
+最终18个 reference tests 在 CPU4、每条命令30秒限时下均实际通过：
+
+| Python | 测试 / 进程墙钟 |
+| --- | --- |
+| 3.10.22 | 18项，0.045 / 0.100秒 |
+| 3.12.14 | 18项，0.031 / 0.134秒 |
+| 3.13.5 | 18项，0.030 / 0.110秒 |
+
+此前14项的中间原始记录也保留，未覆写。所有阶段均无 red；没有伪造红态或生产 bug。
+仅本地 reference 自检 PASS；CV2-01..12 的 actual positive 总体状态仍是 PENDING。

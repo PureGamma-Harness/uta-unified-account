@@ -38,6 +38,14 @@ def integer(value, name, *, nonnegative=False):
     return value
 
 
+def unit_string(value, name, *, nonnegative=False):
+    """Published 52207b6 wire units; never Decimal, float, Unicode or bool."""
+    if (not isinstance(value, str) or len(value) > 39
+            or not re.fullmatch(r"(?:0|-[1-9][0-9]*|[1-9][0-9]*)", value)):
+        raise ReferenceInputError("noncanonical unit string: " + name)
+    return integer(int(value), name, nonnegative=nonnegative)
+
+
 def number(value, name, *, positive=False):
     if (not isinstance(value, str) or len(value) > 128
             or not re.fullmatch(r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?", value)):
@@ -52,11 +60,17 @@ def number(value, name, *, positive=False):
 
 
 def canonical(value):
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False)
 
 
 def strict_loads(text, *, canonical_required=False):
-    if not isinstance(text, str) or len(text.encode("utf-8")) > 1024 * 1024:
+    if not isinstance(text, str):
+        raise ReferenceInputError("oversized/nontext reference document")
+    try:
+        size = len(text.encode("utf-8"))
+    except UnicodeError as exc:
+        raise ReferenceInputError("invalid UTF-8 reference document") from exc
+    if size > 1024 * 1024:
         raise ReferenceInputError("oversized/nontext reference document")
 
     def pairs(items):
@@ -95,11 +109,12 @@ POLICY = {
     "borrow_im": "0.2", "borrow_mm": "0.1", "linear_im": "0.1", "linear_mm": "0.05",
     "mark": "100", "multiplier": "1", "new_fee": "0", "new_interest": "0",
     "step_units": units("0.01"), "risk_max_principal_units": units("10"), "max_total_debt": "10000",
-    "account_principal_limit_units": units("10"), "account_gross_limit_units": units("10"),
+    "account_limit_units": units("10"),
     "local_asset_limit_units": units("100"), "global_budget_units": units("1"),
     "allocations": {"0": units("0.5"), "1": units("0.5")}, "local_shard": "0",
 }
 STATE_FIELDS = ("version", "balances", "frozen_assets", "principal_units", "interest_units",
+                "principal_ledger_units", "interest_ledger_units",
                 "pool_units", "principal_receivable_units", "interest_receivable_units", "interest_cash_units",
                 "shard_principal_units", "shard_interest_units", "positions", "orders", "halted", "liquidation_state")
 ORDER_FIELDS = ("order_id", "symbol", "quantity_units", "filled_units", "limit_price", "reduce_only", "status")
@@ -109,6 +124,7 @@ def state(usd="100", btc="0", principal="0", interest="0", pool="1", *, version=
           frozen=None, positions=None, orders=None):
     return {"version": version, "balances": {"USD": units(usd), "BTC": units(btc)},
             "frozen_assets": frozen or {}, "principal_units": units(principal), "interest_units": units(interest),
+            "principal_ledger_units": -units(principal), "interest_ledger_units": -units(interest),
             "pool_units": units(pool), "principal_receivable_units": units(principal),
             "interest_receivable_units": units(interest), "interest_cash_units": 0,
             "shard_principal_units": units(principal), "shard_interest_units": units(interest),
@@ -123,6 +139,13 @@ def validate(policy, before):
         integer(before[key], key, nonnegative=True)
     if before["version"] >= 2 ** 63 - 1:
         raise ReferenceInputError("account version cannot advance")
+    for liability, ledger in (("principal_units", "principal_ledger_units"), ("interest_units", "interest_ledger_units")):
+        integer(before[ledger], ledger)
+        if before[ledger] != -before[liability]:
+            raise ReferenceInputError("liability ledger disagrees with gross debt")
+    if (before["principal_receivable_units"] != before["shard_principal_units"]
+            or before["interest_receivable_units"] != before["shard_interest_units"]):
+        raise ReferenceInputError("gross receivable disagrees with shard credit")
     if type(before["halted"]) is not bool or not isinstance(before["liquidation_state"], str):
         raise ReferenceInputError("invalid status fields")
     fields(before["balances"], ("USD", "BTC"), "balances")
@@ -134,7 +157,7 @@ def validate(policy, before):
         integer(value, asset + " frozen", nonnegative=True)
         if value > max(0, before["balances"][asset]):
             raise ReferenceInputError("freeze exceeds positive gross")
-    for key in ("step_units", "risk_max_principal_units", "account_principal_limit_units", "account_gross_limit_units",
+    for key in ("step_units", "risk_max_principal_units", "account_limit_units",
                 "local_asset_limit_units", "global_budget_units"):
         integer(policy[key], key, nonnegative=True)
     if policy["step_units"] <= 0:
@@ -163,6 +186,8 @@ def validate(policy, before):
         raise ReferenceInputError("MM exceeds IM")
     if F(policy["mark"]) <= 0 or F(policy["multiplier"]) != 1:
         raise ReferenceInputError("first profile requires mark>0 and multiplier1")
+    if F(policy["max_total_debt"]) < 0 or F(policy["linear_im"]) <= 0:
+        raise ReferenceInputError("invalid debt limit or linear IM")
     for asset, bands in policy["tiers"].items():
         if type(bands) is not list or not bands or len(bands) > 64:
             raise ReferenceInputError("invalid marginal tiers")
@@ -297,11 +322,24 @@ def authorized_quote(policy, before):
     gross = before["principal_units"] + before["interest_units"]
     shard_gross = before["shard_principal_units"] + before["shard_interest_units"]
     caps = (portfolio_quote(policy, before), before["pool_units"],
-            policy["account_principal_limit_units"] - before["principal_units"],
-            policy["account_gross_limit_units"] - gross,
+            policy["account_limit_units"] - gross,
             policy["local_asset_limit_units"] - shard_gross,
             policy["allocations"][policy["local_shard"]] - shard_gross)
     return max(0, min(caps)) // step * step
+
+
+def amount_text(value):
+    value = integer(value, "formatted amount")
+    whole, decimal = divmod(abs(value), SCALE)
+    result = str(whole) + (("." + str(decimal).rjust(8, "0").rstrip("0")) if decimal else "")
+    return "-" + result if value < 0 else result
+
+
+def gross_components(before):
+    return {"assets": {asset: amount_text(value) for asset, value in before["balances"].items() if value > 0},
+            "cash_deficits": {asset: amount_text(-value) for asset, value in before["balances"].items() if value < 0},
+            "principal": {"BTC": amount_text(before["principal_units"])} if before["principal_units"] else {},
+            "interest": {"BTC": amount_text(before["interest_units"])} if before["interest_units"] else {}}
 
 
 def transition(kind, policy, before, amount_units, account_id="alice"):
@@ -319,6 +357,7 @@ def transition(kind, policy, before, amount_units, account_id="alice"):
             raise ReferenceRefusal("quote_or_limit_or_pool_or_static_allocation")
         after["balances"]["BTC"] += amount
         after["principal_units"] += amount
+        after["principal_ledger_units"] -= amount
         after["shard_principal_units"] += amount
         after["principal_receivable_units"] += amount
         after["pool_units"] -= amount
@@ -336,6 +375,8 @@ def transition(kind, policy, before, amount_units, account_id="alice"):
             after[key] -= interest
         for key in ("principal_units", "shard_principal_units", "principal_receivable_units"):
             after[key] -= principal
+        after["principal_ledger_units"] += principal
+        after["interest_ledger_units"] += interest
         after["pool_units"] += principal
         after["interest_cash_units"] += interest
         if interest:
@@ -352,18 +393,26 @@ def transition(kind, policy, before, amount_units, account_id="alice"):
             for ordinal, (name, value) in enumerate(sorted(postings))]
     assert sum(leg["units"] for leg in legs) == 0
     return {"after": after, "ordered_legs": legs,
+            "gross_components": {"before": gross_components(before), "after": gross_components(after)},
             "market_dependency": "SNAPSHOT" if kind == "BORROW" else "NONE",
             "new_borrow_decision_count": 1 if kind == "BORROW" else 0}
 
 
-def checkpoint_contract(observed, selected, final, first_sid, final_sid, *, max_age_us=5_000_000, future_us=1_000_000):
+def checkpoint_contract(observed, selected, final, first_sid, final_sid, *, max_age_us=5_000_000, future_us=1_000_000, recorded=None):
+    integer(max_age_us, "max_age_us", nonnegative=True)
+    integer(future_us, "max_future_skew_us", nonnegative=True)
     def utc(text):
-        if not isinstance(text, str) or not (text.endswith("+00:00") or text.endswith("Z")):
+        if not isinstance(text, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{6})?\+00:00", text):
             raise ReferenceInputError("real UTC timestamp string required")
-        return datetime.fromisoformat(text.replace("Z", "+00:00"))
+        try:
+            return datetime.fromisoformat(text)
+        except ValueError as exc:
+            raise ReferenceInputError("invalid UTC date/time") from exc
     seen, first, last = map(utc, (observed, selected, final))
     if not isinstance(first_sid, str) or not first_sid or first_sid != final_sid or last < first:
         raise ReferenceRefusal("SID_changed_or_clock_backwards")
+    if recorded is not None and utc(recorded) < last:
+        raise ReferenceRefusal("recorded_before_final_check")
     for time in (first, last):
         delta = time - seen
         age = (delta.days * 86400 + delta.seconds) * 1_000_000 + delta.microseconds
@@ -372,13 +421,110 @@ def checkpoint_contract(observed, selected, final, first_sid, final_sid, *, max_
     return True  # Predicate only; this cannot prove the timestamps were captured.
 
 
+SOURCE_FIELDS = ("command_id", "source_id", "account_id", "kind", "payload_hash", "source_kind", "actor_id",
+                 "source_reference", "authority_id", "command_payload", "payload")
+SOURCE_RECEIPT_FIELDS = ("format", "source_kind", "actor_id", "source_reference", "authority_id", "account_id",
+                         "command_id", "kind", "payload_hash", "command_payload", "accepted_at")
+
+
+def source_contract(source):
+    """Only published content/identity checks; never authenticates a real source."""
+    fields(source, SOURCE_FIELDS, "published source row")
+    receipt = strict_loads(source["payload"], canonical_required=True)
+    fields(receipt, SOURCE_RECEIPT_FIELDS, "published source receipt")
+    if type(receipt["format"]) is not int or receipt["format"] != 2 or receipt["source_kind"] != "synthetic_local":
+        raise ReferenceInputError("unsupported source format/kind")
+    if receipt["kind"] not in ("BORROW", "REPAY"):
+        raise ReferenceInputError("unsupported source operation")
+    for field in SOURCE_FIELDS:
+        if field not in ("source_id", "payload") and source[field] != receipt[field]:
+            raise ReferenceInputError("source relational identity mismatch: " + field)
+    for field in ("account_id", "command_id", "actor_id", "source_reference", "authority_id"):
+        if not isinstance(receipt[field], str) or not receipt[field]:
+            raise ReferenceInputError("source identity must be text")
+    command = strict_loads(receipt["command_payload"], canonical_required=True)
+    if type(command) is not dict:
+        raise ReferenceInputError("canonical command object required")
+    expected = hashlib.sha256(receipt["command_payload"].encode()).hexdigest()
+    if expected != source["payload_hash"]:
+        raise ReferenceInputError("original command hash mismatch")
+    if source["source_id"] != "credit-source:" + hashlib.sha256(source["payload"].encode()).hexdigest():
+        raise ReferenceInputError("source content identity mismatch")
+    accepted = receipt["accepted_at"]
+    if not isinstance(accepted, str) or not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{6}\+00:00", accepted):
+        raise ReferenceInputError("producer UTC checkpoint needs six microsecond digits")
+    checkpoint_contract(accepted, accepted, accepted, "synthetic-content-only", "synthetic-content-only")
+    return {"content_identity_matches": True, "source_authenticity": "PENDING_ACTUAL_SOURCE_AND_INBOX_ROWS"}
+
+
+JOURNAL_FIELDS = ("sequence", "event_id", "fingerprint", "previous_hash", "event_hash", "sealed", "postings")
+POSTING_FIELDS = ("ordinal", "account", "asset", "units")
+
+
+def event_identity(account_id, command_id):
+    return "credit:" + digest(["account:" + account_id, command_id])
+
+
+def journal_hashes(sequence, event_id, previous_hash, legs):
+    """b510d18 published integer wire algorithm, independently implemented."""
+    fingerprint = digest([[leg["account"], leg["asset"], leg["units"]] for leg in legs])
+    return fingerprint, digest([sequence, event_id, previous_hash, fingerprint])
+
+
+def compare_journal(observed, prior_head, kind, policy, before, amount_units, account_id, command_id):
+    """Compare supplied original rows with operation-derived legs, not expected-legs data.
+
+    The caller must later supply the original receipt's actual SQL journal rows.
+    Content comparison cannot prove SQL/COMMIT/reopen provenance by itself.
+    """
+    fields(observed, JOURNAL_FIELDS, "published actual journal")
+    fields(prior_head, ("sequence", "event_hash"), "original journal head")
+    prior = integer(prior_head["sequence"], "prior sequence", nonnegative=True)
+    sequence = integer(observed["sequence"], "journal sequence", nonnegative=True)
+    if sequence >= 2 ** 63 or sequence != prior + 1:
+        raise ReferenceInputError("journal sequence is not original head plus one")
+    if type(observed["sealed"]) is not int or observed["sealed"] != 1:
+        raise ReferenceInputError("journal is not sealed integer1")
+    for text in (prior_head["event_hash"], observed["previous_hash"], observed["event_hash"], observed["fingerprint"]):
+        if not isinstance(text, str) or not re.fullmatch(r"[0-9a-f]{64}", text):
+            raise ReferenceInputError("canonical journal digest required")
+    if observed["previous_hash"] != prior_head["event_hash"] or observed["event_id"] != event_identity(account_id, command_id):
+        raise ReferenceInputError("original journal identity/head mismatch")
+    if type(observed["postings"]) is not list:
+        raise ReferenceInputError("actual ordinal postings must be a list")
+    legs = []
+    for ordinal, row in enumerate(observed["postings"]):
+        fields(row, POSTING_FIELDS, "posting")
+        if type(row["ordinal"]) is not int or row["ordinal"] != ordinal:
+            raise ReferenceInputError("posting ordinal must be contiguous integer")
+        if not isinstance(row["account"], str) or not row["account"] or row["asset"] != "BTC":
+            raise ReferenceInputError("unexpected journal account/asset")
+        value = unit_string(row["units"], "posting units")
+        if not value:
+            raise ReferenceInputError("zero journal leg forbidden")
+        legs.append({"ordinal": ordinal, "account": row["account"], "asset": "BTC", "units": value})
+    expected = transition(kind, policy, before, amount_units, account_id)["ordered_legs"]
+    if legs != expected:
+        raise ReferenceInputError("journal legs disagree with independent financial transition")
+    fingerprint, event_hash = journal_hashes(sequence, observed["event_id"], observed["previous_hash"], legs)
+    if observed["fingerprint"] != fingerprint or observed["event_hash"] != event_hash:
+        raise ReferenceInputError("original journal content hash mismatch")
+    return {"independent_legs_and_hashes_match": True, "actual_SQL_and_COMMIT_provenance": "PENDING"}
+
+
 def fifo_contract(rows, account_id, command_id):
     if type(rows) is not list:
         raise ReferenceInputError("actual FIFO rows required")
-    candidates, selected = [], None
+    candidates, selected, sequences, commands = [], None, set(), set()
     for row in rows:
         fields(row, ("sequence", "account", "CID", "state"), "FIFO row")
         integer(row["sequence"], "FIFO sequence", nonnegative=True)
+        if (not isinstance(row["account"], str) or not isinstance(row["CID"], str)
+                or row["sequence"] in sequences or row["CID"] in commands
+                or row["state"] not in ("PENDING", "SUCCEEDED", "REJECTED", "QUARANTINED")):
+            raise ReferenceInputError("invalid/duplicate FIFO identity or unknown state")
+        sequences.add(row["sequence"])
+        commands.add(row["CID"])
         if row["account"] == account_id and row["state"] == "PENDING":
             candidates.append(row["sequence"])
             if row["CID"] == command_id:
