@@ -1,0 +1,41 @@
+{
+  "actual_fixed_test_source": "1a9d6f4ff4ae7fb653a953dcf0ef52ee85533349",
+  "fixed_runtime_and_test_inputs_identical_between_interpreters": true,
+  "fixed_targeted_runs": {
+    "run-C-fixed-python312": {
+      "elapsed_seconds": 7.779682663996937,
+      "passed": true,
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "sha256": "708dae0d5fc9d978f0975ffc02f819c541346ced6d052359e76da6aef7b58587",
+      "sqlite": "3.53.1",
+      "tests": 7
+    },
+    "run-C-fixed-python313": {
+      "elapsed_seconds": 7.4099502230019425,
+      "passed": true,
+      "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+      "sha256": "ffcb23fddbf810eda1696cefc07dc7121dc4b8aba0c0140da329e9ccd8716d10",
+      "sqlite": "3.46.1",
+      "tests": 7
+    }
+  },
+  "fixed_targeted_total_wall_seconds": 15.18963288699888,
+  "frozen_base": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "local_original_case_reproduction": "NOT_REPRODUCED",
+  "new_full_ci_executed": false,
+  "original_227_source_input_changes": [
+    "tests/test_gateway_grouped.py",
+    "tests/test_readiness_sampling.py"
+  ],
+  "original_ci_no_go_preserved": true,
+  "original_ci_unique_readiness_cause": "UNPROVEN",
+  "production_approved": false,
+  "run_B": {
+    "errors": 1,
+    "failures": 2,
+    "passes": 2,
+    "relabelled_as_pass": false,
+    "tests": 5
+  },
+  "runtime_changed_files": []
+}

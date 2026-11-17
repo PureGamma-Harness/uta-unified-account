@@ -1,0 +1,155 @@
+{
+  "reviewed_design_commit": "c68aabe82ce78ab10a3c886894ce8dc9952302d1",
+  "fixture_sha256": "7a1414699352980b1d6eaa3bbddec4004f325a50a54eff9e3d37862a65e0b55a",
+  "fixture_requirements": 30,
+  "rfc_example_accept": "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
+  "synthetic_hmac_and_raw_target_mathematics_match": true,
+  "original_control_vector_results": [
+    {
+      "id": "WS-C014",
+      "calculated": {
+        "close": null,
+        "reply_hex": "8a026869",
+        "payload_hex": "6869"
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C015",
+      "calculated": {
+        "close": null,
+        "incoming_close": 1000,
+        "reply_hex": "880203e8"
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C016",
+      "calculated": {
+        "close": 1002,
+        "payload_allocated": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C017",
+      "calculated": {
+        "close": 1002,
+        "payload_allocated": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C018",
+      "calculated": {
+        "close": 1008,
+        "payload_allocated": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C019",
+      "calculated": {
+        "close": 1002,
+        "payload_allocated": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C020",
+      "calculated": {
+        "close": 1002,
+        "payload_allocated": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C021",
+      "calculated": {
+        "close": 1007,
+        "incoming_close": 1000,
+        "payload_allocated": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C022",
+      "calculated": {
+        "close": 1002,
+        "incoming_close": 1005,
+        "payload_allocated": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "id": "WS-C023",
+      "calculated": {
+        "close": null,
+        "pong_payload_hex": ""
+      },
+      "runtime_verified": false
+    }
+  ],
+  "additional_literal_counterexamples": {
+    "reserved_1004": {
+      "close": 1002,
+      "incoming_close": 1004,
+      "payload_allocated": true
+    },
+    "client_1010": {
+      "close": null,
+      "incoming_close": 1010,
+      "reply_hex": "880203e8"
+    },
+    "control_length126": {
+      "close": 1002,
+      "payload_allocated": false
+    },
+    "high_bit_length64": {
+      "close": 1002,
+      "payload_allocated": false
+    },
+    "one_byte_close": {
+      "close": 1002,
+      "payload_allocated": true
+    }
+  },
+  "base64_alias": {
+    "canonical": "dGhlIHNhbXBsZSBub25jZQ==",
+    "noncanonical_same_decoded_bytes": "dGhlIHNhbXBsZSBub25jZR==",
+    "canonical_accept": "s3pPLMBiTxaQ9kYGzzhZRbK+xOo=",
+    "alternate_accept": "Zgw8jYXtqX5qJr7MJ1Q/MqzeSRI=",
+    "requires_policy_choice": "require canonical base64 re-encoding equality before nonce consumption"
+  },
+  "cursor_arithmetic": {
+    "initial_H": 400,
+    "first_later_commit": 407,
+    "legal_event_gaps": [
+      407,
+      413
+    ],
+    "page_end": 420,
+    "empty_page_end": 425,
+    "deduplicated_replay_event_keys": 2,
+    "max_exact_64bit": 9223372036854775807,
+    "float_alias_example": 9007199254740993
+  },
+  "budget_arithmetic": {
+    "old_REST_limit_is_Python_characters": 4194304,
+    "old_max_UTF8_bytes_per_payload_upper_bound": 16777216,
+    "old_200_rows_UTF8_upper_bound": 3355443200,
+    "new_event_raw_UTF8_cap": 65536,
+    "new_page_raw_cap": 131072,
+    "encoded_wire_frame_cap_proposed": 262144,
+    "large_frame_header_bytes": 10,
+    "max_JSON_payload_if_wire_header_included": 262134,
+    "two_encoded_frame_bytes": 524288,
+    "one_additional_frame_bytes": 262144,
+    "three_wire_buffers_bytes": 786432,
+    "does_not_bound_RSS": true
+  },
+  "snapshot_or_nonce_or_revocation_runtime_verified": false,
+  "socket_or_sql_operations": 0,
+  "provider_or_network_fetches": 0,
+  "production_approved": false
+}

@@ -1,0 +1,10 @@
+Working directory: /workspace/uta-connection-lifecycle
+Base: adadffc3e71163967c02114f81a871a2ae75f674
+
+python tools/analyze_connection_profiles.py --output evidence/runs/connection-profile-attribution/attribution.json
+python tools/analyze_connection_profiles.py --output /tmp/uta-connection-attribution-repeat.json
+cmp /tmp/uta-connection-attribution-repeat.json evidence/runs/connection-profile-attribution/attribution.json
+
+Both analyst invocations returned exit 0; cmp returned exit 0.
+Original manifest/profile hashes and role/close caller count identities were then checked.
+No unittest, database, worker, SQL component probe or new workload was run.

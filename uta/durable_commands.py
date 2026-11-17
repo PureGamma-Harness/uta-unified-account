@@ -345,6 +345,53 @@ class QueueStore:
             return _business_rejection(mapped)
         return False
 
+    def _execute(self, exchange, connection, row, *, guard=None, credit=None):
+        """Execute one re-read eligible row on the caller-owned transaction."""
+        try:
+            payload = _canonical(row["kind"], json.loads(row["payload"]))
+        except Exception as exc:
+            raise StorageError("persisted command payload is invalid") from exc
+        if _json(payload) != row["payload"] or payload.get("account_id") != row["account_id"]:
+            raise StorageError("persisted command content is not canonical or has inconsistent ownership")
+        command = {**self._record(row), "payload": payload}
+        connection.execute("SAVEPOINT durable_command")
+        result, error, new_order = None, None, False
+        try:
+            with (guard(connection, command) if guard else nullcontext()):
+                changes = connection.total_changes
+                if row["kind"] == SUBMIT_ORDER:
+                    result = exchange._admit_order(connection, payload["account_id"], payload["order_id"], payload["symbol"],
+                        Decimal(payload["quantity"]), Decimal(payload["limit_price"]), reduce_only=payload["reduce_only"])
+                    new_order = connection.total_changes > changes
+                elif row["kind"] == CANCEL_ORDER:
+                    result = exchange._cancel_order(connection, payload["account_id"], payload["order_id"])
+                elif row["kind"] == PUBLISH_MARKET:
+                    result = exchange._publish_market(connection, MarketSnapshot.from_json(payload["snapshot"]))
+                elif row["kind"] == REPAY:
+                    if not isinstance(credit, CreditService) or credit.exchange is not exchange:
+                        raise StorageError("repayment requires the worker's initialized credit service")
+                    result = credit._repay(connection, payload["account_id"], row["command_id"],
+                                           payload["asset"], Decimal(payload["amount"]))
+                else:
+                    result = exchange._set_kill_switch(connection, payload["enabled"])
+        except ServiceError as exc:
+            if not connection.in_transaction or not self._business(row["kind"], exc):
+                raise
+            connection.execute("ROLLBACK TO durable_command")
+            error = {"code": exc.code, "message": str(exc), "status": exc.status}
+            result = None
+            new_order = False
+        connection.execute("RELEASE durable_command")
+        updated = connection.execute("UPDATE uta_command_inbox SET state=?,result=?,error=?,completed_at=?,next_attempt_at=NULL WHERE command_id=? AND state='PENDING'",
+            ("REJECTED" if error else "SUCCEEDED", _json(result) if result is not None else None,
+             _json(error) if error else None, _stamp(self.clock()), row["command_id"]))
+        if updated.rowcount != 1:
+            raise StorageError("pending command terminal transition did not update exactly one row")
+        if new_order:
+            exchange._market(connection)
+        receipt = self._record(connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (row["command_id"],)).fetchone())
+        return receipt, new_order
+
     def process_one(self, exchange, *, guard=None, credit=None):
         """Execute one eligible account head; return only after outer COMMIT.
 
@@ -367,47 +414,7 @@ class QueueStore:
                     return None
                 command_id, sequence = row["command_id"], row["sequence"]
                 attempt = row["attempts"] + 1
-                try:
-                    payload = _canonical(row["kind"], json.loads(row["payload"]))
-                except Exception as exc:
-                    raise StorageError("persisted command payload is invalid") from exc
-                if _json(payload) != row["payload"] or payload.get("account_id") != row["account_id"]:
-                    raise StorageError("persisted command content is not canonical or has inconsistent ownership")
-                command = {**self._record(row), "payload": payload}
-                connection.execute("SAVEPOINT durable_command")
-                result, error, new_order = None, None, False
-                try:
-                    with (guard(connection, command) if guard else nullcontext()):
-                        changes = connection.total_changes
-                        if row["kind"] == SUBMIT_ORDER:
-                            result = exchange._admit_order(connection, payload["account_id"], payload["order_id"], payload["symbol"],
-                                Decimal(payload["quantity"]), Decimal(payload["limit_price"]), reduce_only=payload["reduce_only"])
-                            new_order = connection.total_changes > changes
-                        elif row["kind"] == CANCEL_ORDER:
-                            result = exchange._cancel_order(connection, payload["account_id"], payload["order_id"])
-                        elif row["kind"] == PUBLISH_MARKET:
-                            result = exchange._publish_market(connection, MarketSnapshot.from_json(payload["snapshot"]))
-                        elif row["kind"] == REPAY:
-                            if not isinstance(credit, CreditService) or credit.exchange is not exchange:
-                                raise StorageError("repayment requires the worker's initialized credit service")
-                            result = credit._repay(connection, payload["account_id"], command_id,
-                                                   payload["asset"], Decimal(payload["amount"]))
-                        else:
-                            result = exchange._set_kill_switch(connection, payload["enabled"])
-                except ServiceError as exc:
-                    if not connection.in_transaction or not self._business(row["kind"], exc):
-                        raise
-                    connection.execute("ROLLBACK TO durable_command")
-                    error = {"code": exc.code, "message": str(exc), "status": exc.status}
-                    result = None
-                    new_order = False
-                connection.execute("RELEASE durable_command")
-                connection.execute("UPDATE uta_command_inbox SET state=?,result=?,error=?,completed_at=?,next_attempt_at=NULL WHERE command_id=? AND state='PENDING'",
-                    ("REJECTED" if error else "SUCCEEDED", _json(result) if result is not None else None,
-                     _json(error) if error else None, _stamp(self.clock()), command_id))
-                if new_order:
-                    exchange._market(connection)
-                receipt = self._record(connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (command_id,)).fetchone())
+                receipt, _ = self._execute(exchange, connection, row, guard=guard, credit=credit)
             return receipt
         except Exception as exc:
             raise CommandExecutionError(command_id, sequence, exc, attempt=attempt) from exc

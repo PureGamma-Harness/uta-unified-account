@@ -1,0 +1,26 @@
+test_directory_enumeration_permission_and_io_failures_are_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_directory_enumeration_permission_and_io_failures_are_fatal) ... 
+  test_directory_enumeration_permission_and_io_failures_are_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_directory_enumeration_permission_and_io_failures_are_fatal) (errno=13) ... FAIL
+  test_directory_enumeration_permission_and_io_failures_are_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_directory_enumeration_permission_and_io_failures_are_fatal) (errno=5) ... FAIL
+
+======================================================================
+FAIL: test_directory_enumeration_permission_and_io_failures_are_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_directory_enumeration_permission_and_io_failures_are_fatal) (errno=13)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 144, in test_directory_enumeration_permission_and_io_failures_are_fatal
+    with patch.object(os, 'scandir', failing), self.assertRaises(type(error)) as caught:
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: PermissionError not raised
+
+======================================================================
+FAIL: test_directory_enumeration_permission_and_io_failures_are_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_directory_enumeration_permission_and_io_failures_are_fatal) (errno=5)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 144, in test_directory_enumeration_permission_and_io_failures_are_fatal
+    with patch.object(os, 'scandir', failing), self.assertRaises(type(error)) as caught:
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=2)

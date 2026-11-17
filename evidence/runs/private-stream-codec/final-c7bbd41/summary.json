@@ -1,0 +1,114 @@
+{
+  "source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+  "records": [
+    {
+      "label": "python310",
+      "source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+      "argv": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:42:03.686497+00:00",
+      "finished_at": "2026-11-17T11:42:03.786442+00:00",
+      "wall_seconds": 0.09994856399862329,
+      "exit_code": 0,
+      "unittest_tests": 27,
+      "unittest_seconds": 0.005,
+      "runtime": {
+        "python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]",
+        "executable": "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "implementation": "CPython"
+      },
+      "log_sha256": "75fb12ee2e5738a4bcacdb4d28877b1afc2efaa40d1a13dac80714837ac7b83e",
+      "resourcewarning_observed": false
+    },
+    {
+      "label": "python312",
+      "source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:42:03.786684+00:00",
+      "finished_at": "2026-11-17T11:42:03.888642+00:00",
+      "wall_seconds": 0.10196778300451115,
+      "exit_code": 0,
+      "unittest_tests": 27,
+      "unittest_seconds": 0.004,
+      "runtime": {
+        "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+        "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "implementation": "CPython"
+      },
+      "log_sha256": "140578788500e4606c647b62f4412023fdbd06e7a08895715b6ec9112c3bf1a2",
+      "resourcewarning_observed": false
+    },
+    {
+      "label": "python313",
+      "source_commit": "c7bbd41f1e4ea48961a59921826f80c585c34e6d",
+      "argv": [
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:42:03.888764+00:00",
+      "finished_at": "2026-11-17T11:42:03.985180+00:00",
+      "wall_seconds": 0.09643269799562404,
+      "exit_code": 0,
+      "unittest_tests": 27,
+      "unittest_seconds": 0.007,
+      "runtime": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "executable": "/usr/bin/python3.13",
+        "implementation": "CPython"
+      },
+      "log_sha256": "29fc933f101a71dd8410e9c7408a445602281ba9125017f613f8d5481616b3b1",
+      "resourcewarning_observed": false
+    }
+  ],
+  "inputs_sha256": {
+    "uta/private_stream_codec.py": "c553b483d3155a5778cedc0448c4b58c135fb877642a9055dc24dfea398e5ac9",
+    "uta/__init__.py": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43",
+    "tests/test_private_stream_codec.py": "3fa412c961e8383fbe49e32129a037c0f26b5b255beb34b4c455c525568266aa",
+    "tests/fixtures/managed_private_stream_v1_contract.json": "7a1414699352980b1d6eaa3bbddec4004f325a50a54eff9e3d37862a65e0b55a",
+    "tests/fixtures/managed_private_stream_v2_contract.json": "4817e800e7d0b8abc934ee881a7c34424effc611b9a3cacf05090d0a72083360"
+  },
+  "source_unchanged": true,
+  "tracked_clean_before_and_after": true,
+  "cpu_affinity": [
+    3
+  ],
+  "cohosted": true,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "passed_component_tests": true,
+  "full_repository_validation": false,
+  "SQL_or_socket_operations": 0,
+  "real_network_or_scheduler_deadlines_verified": false,
+  "production_approved": false
+}

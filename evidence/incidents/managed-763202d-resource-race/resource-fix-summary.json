@@ -1,0 +1,134 @@
+{
+  "base_commit": "763202df9cb3ce089721e5281371aff3eab58089",
+  "original_source_sha256": "3bdba23ec656cf92bb9b4f2f9701863aa9793b6521bd8fe7e54ccd44cc9e1ba5",
+  "fixed_source_sha256": "31107563837edda36eb8c5cce5fd599217771a6328928511fa87cb533ec7d1e4",
+  "initial_test_fixture_sha256": "feb1d8a34e4ae95129d96cf625a344f3b6b38d85fad2fb9e5e357575985afdc0",
+  "final_test_fixture_sha256": "ecba745e0f95f065e60a77e33d85cd53fa9b03e70f7165610dc45e116cb381b5",
+  "intermediate_single_stat_rglob_candidate_sha256": "08e8f43c3eb16a8199fced6f81ce2bc76b9564eea1c432d13fe6f6d9bbb92604",
+  "initial_test_first": {
+    "tests_run": 8,
+    "failures": 13,
+    "errors": 1,
+    "exit_code": 1,
+    "raw_log": "resource-tests-before.txt",
+    "original_functions": "actual SQLite last-close removes WAL after first successful stat; original second stat raises ENOENT"
+  },
+  "directory_enumeration_test_first": {
+    "tests_run": 1,
+    "failures": 2,
+    "errors": 0,
+    "exit_code": 1,
+    "raw_log": "directory-enumeration-before.txt",
+    "candidate_reconstructable": "reverse directory-walk-change.patch against final source"
+  },
+  "final_runs": [
+    {
+      "name": "python310",
+      "metadata": {
+        "python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]",
+        "sqlite": "3.53.1",
+        "affinity": [
+          2
+        ]
+      },
+      "tests_run": 11,
+      "duration_seconds": 0.043,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "command_argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_managed_soak_resources"
+      ],
+      "raw_log": "resource-tests-python310-complete.txt",
+      "raw_log_sha256": "e6a40b244e3415fd56238096ec59d37f5f400515f6d9e30743594057b89de029"
+    },
+    {
+      "name": "python312",
+      "metadata": {
+        "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+        "sqlite": "3.53.1",
+        "affinity": [
+          2
+        ]
+      },
+      "tests_run": 11,
+      "duration_seconds": 0.05,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "command_argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_managed_soak_resources"
+      ],
+      "raw_log": "resource-tests-python312-complete.txt",
+      "raw_log_sha256": "f7f30a6ad8e4e1c4272df9d146838a27054e6ffdd4c77e9a4389c433daf82250"
+    },
+    {
+      "name": "python313",
+      "metadata": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "sqlite": "3.46.1",
+        "affinity": [
+          2
+        ]
+      },
+      "tests_run": 11,
+      "duration_seconds": 0.046,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "command_argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/usr/bin/python3.13",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "-v",
+        "tests.test_managed_soak_resources"
+      ],
+      "raw_log": "resource-tests-python313-complete.txt",
+      "raw_log_sha256": "b3a5fe7e91abdb36b3df1cfbd4bce25e424ebafc60cf0512220660ab1fa378b3"
+    }
+  ],
+  "no_service_started": true,
+  "no_original_job_sql": true,
+  "no_cold_clone": true,
+  "no_original_source_or_job_mutation": true,
+  "full_qualification": false,
+  "production_approved": false,
+  "continuous_6h_stability_passed": false,
+  "capacity_10000_per_s_passed": false,
+  "runtime_metadata_probes_separate_from_test_processes": true,
+  "changed_ManagedSoak_methods": [
+    "_resources"
+  ]
+}

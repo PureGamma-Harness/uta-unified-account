@@ -1,0 +1,43 @@
+test_capacity_is_checked_before_preparation_and_mismatch_cannot_transfer_worker (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_capacity_is_checked_before_preparation_and_mismatch_cannot_transfer_worker) ... ok
+test_enabling_cache_cannot_seal_live_spot_obligations (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_enabling_cache_cannot_seal_live_spot_obligations) ... ok
+test_ledger_guard_corruption_still_fails_complete_native_replay_with_cache_enabled (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_ledger_guard_corruption_still_fails_complete_native_replay_with_cache_enabled) ... ok
+test_native_prepared_worker_is_cold_and_reused_without_post_freeze_ddl_for_zero_and_enabled (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_native_prepared_worker_is_cold_and_reused_without_post_freeze_ddl_for_zero_and_enabled) ... ok
+test_preparation_cannot_transfer_a_worker_of_another_exchange (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_preparation_cannot_transfer_a_worker_of_another_exchange) ... ok
+test_real_managed_owner_uses_cold_native_enabled_worker_and_verifies_spot_on_restart (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_real_managed_owner_uses_cold_native_enabled_worker_and_verifies_spot_on_restart) ... Process uta-shard-0:
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspace/uta-normal-cache-current/tests/test_owned_supervision_cache.py", line 61, in capture_native_worker
+    return ORIGINAL_WORKER(*arguments)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-normal-cache-current/uta/durable_process.py", line 476, in _run_worker
+    initialization.finish()
+  File "/workspace/uta-normal-cache-current/uta/startup.py", line 349, in finish
+    self.check()
+  File "/workspace/uta-normal-cache-current/uta/startup.py", line 147, in check
+    raise StartupError("startup_cancelled", "initializer was stopped or lost its parent")
+uta.startup.StartupError: initializer was stopped or lost its parent
+FAIL
+test_schema_rows_spot_policy_and_relevant_trigger_changes_cannot_reuse_old_normal_proof (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_schema_rows_spot_policy_and_relevant_trigger_changes_cannot_reuse_old_normal_proof) ... ok
+
+======================================================================
+FAIL: test_real_managed_owner_uses_cold_native_enabled_worker_and_verifies_spot_on_restart (test_owned_supervision_cache.OwnedSupervisionCacheTests.test_real_managed_owner_uses_cold_native_enabled_worker_and_verifies_spot_on_restart)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-normal-cache-current/tests/test_owned_supervision_cache.py", line 280, in test_real_managed_owner_uses_cold_native_enabled_worker_and_verifies_spot_on_restart
+    self.assertEqual(sorted(row["generation"] for row in native), [1, 2])
+AssertionError: Lists differ: [2, 3] != [1, 2]
+
+First differing element 0:
+2
+1
+
+- [2, 3]
++ [1, 2]
+
+----------------------------------------------------------------------
+Ran 7 tests in 7.064s
+
+FAILED (failures=1)

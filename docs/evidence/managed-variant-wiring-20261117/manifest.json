@@ -1,0 +1,613 @@
+{
+  "created_utc": "2026-11-17T10:33:30.953858+00:00",
+  "scope": "tiny real wiring only; NOT performance evidence",
+  "parent_commit": "e9ec23bf0a54f732b51b91df1bad571dd186dba3",
+  "tested_worktree_dirty": true,
+  "generator_sha256": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+  "final_test_sha256": "ad232e3c1dc644487d80a4a707e81bca69d948fb25bfe8975d738ce87b94ef8a",
+  "preregistration_sha256": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+  "runtime_uta_unchanged_from_parent": true,
+  "financial_database_files_included": false,
+  "private_first_authorities": "/tmp/uta-managed-variant-functional-first",
+  "private_final_authorities": "/tmp/uta-managed-variant-functional-final",
+  "original_manifests_verified": true,
+  "all_original_arrivals_preserved": true,
+  "source_uta_hashes_and_generator_verified": true,
+  "performance_runs_executed": false,
+  "production_approved": false,
+  "files": {
+    "README.md": {
+      "bytes": 2405,
+      "sha256": "c4e7d5c6574c627e1cc9045e59e457842a988bf29fd08121c0176a720e7f7d8c"
+    },
+    "cli-execution.json": {
+      "bytes": 1659,
+      "sha256": "70b62ebdba7fbdff9bcda3a4490a1ea1831ccb7c342f0af388e73116cdcc92ca"
+    },
+    "cli-py312.log": {
+      "bytes": 16983,
+      "sha256": "cde1e518cfef9ec5e794475a3c6b00727e3ae0168f9052c91cfe979c352a49bc"
+    },
+    "execution.json": {
+      "bytes": 3781,
+      "sha256": "24e8f8b0da31a961352ae75f8b1eee30f175755df55b1d04dd8c66ab349e273b"
+    },
+    "first-py312.log": {
+      "bytes": 1228,
+      "sha256": "bf5728969d098df0e01cc339a0f10225b1ad76da3b5dc8753fbbe78ac740f553"
+    },
+    "functional-cases.json": {
+      "bytes": 20612,
+      "sha256": "ef8e8310820658af7429bb4861cfa99dd1796499a783cabadc3956d526d19184"
+    },
+    "functional-runner.py.txt": {
+      "bytes": 2290,
+      "sha256": "a1126c9303bc3bf629fa907ef5de4a7069cc46042b0e06a4af9c089d772a530c"
+    },
+    "py310.log": {
+      "bytes": 1041,
+      "sha256": "04f7b666372f615027708053cc1f4ecbee7a087466276973929242157d1cc248"
+    },
+    "py312.log": {
+      "bytes": 1434,
+      "sha256": "fd50db741c8e327e5522e57d6adbba40eeeabe80b67af1dc6d52a9c3b780a9fe"
+    },
+    "py313.log": {
+      "bytes": 1430,
+      "sha256": "07bf15d9ed15e4c1627521fd3a87b7275c71fa4c5ee842ed9f2420159d6419a4"
+    },
+    "raw/cli-py312/batch8-cache100/arrival-window.json": {
+      "bytes": 639,
+      "sha256": "71da359e8cfa22884ea7d7833f92444ab5d6e05995bf6fefd528ec1e888fe3e5"
+    },
+    "raw/cli-py312/batch8-cache100/arrivals.jsonl.gz": {
+      "bytes": 1716,
+      "sha256": "940bee7c14802aa45a20a9322fd01b259ffe4d7132cc956d09a16754f3668aaf"
+    },
+    "raw/cli-py312/batch8-cache100/environment.json": {
+      "bytes": 6571,
+      "sha256": "8ae17577c43b4a558f18b9690a6623ec122a8ad3edcdc2f793c6a8f861c47a9e"
+    },
+    "raw/cli-py312/batch8-cache100/manifest.json": {
+      "bytes": 1032,
+      "sha256": "81dcc9de26d22887adf6ee4393b287bdbf6d3fff1d554ed5ca3d0c7cab768e45"
+    },
+    "raw/cli-py312/batch8-cache100/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "c0847e5897a697ee6107346dd3071b8798a30f924d424d629657be53be51501f"
+    },
+    "raw/cli-py312/batch8-cache100/summary.json": {
+      "bytes": 16983,
+      "sha256": "cde1e518cfef9ec5e794475a3c6b00727e3ae0168f9052c91cfe979c352a49bc"
+    },
+    "raw/cli-py312/batch8-cache100/telemetry.jsonl.gz": {
+      "bytes": 294,
+      "sha256": "db23a50502d2e56c08501c50ceaa5940ca8e8651a7ad003a9757120b58c4896f"
+    },
+    "raw/cli-py312/batch8-cache100/workers/worker-148805.json": {
+      "bytes": 408,
+      "sha256": "8f7af2cc4f3972c32cffbf0f07bf40b841d51799decd105ef6a1221964fab53b"
+    },
+    "raw/first-py312/batch3-cache8/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "09631c0bba382c4bf72b40d2753b9d280ff52dff3e1529f84209cacedb9939d2"
+    },
+    "raw/first-py312/batch3-cache8/arrivals.jsonl.gz": {
+      "bytes": 1697,
+      "sha256": "426c838d102bf07ea87ce45e336ddb5953e24bbe657929b52eebafbbc9709afb"
+    },
+    "raw/first-py312/batch3-cache8/environment.json": {
+      "bytes": 6567,
+      "sha256": "c1f3d1e97849a07d25f42f96433074212882d9e27f874f8de7b88587a97b741d"
+    },
+    "raw/first-py312/batch3-cache8/manifest.json": {
+      "bytes": 1032,
+      "sha256": "0669a62084682c1be24f378558b85ac58f0e4ee74b13571ee92174593a6e8f1a"
+    },
+    "raw/first-py312/batch3-cache8/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "3bb51c6e74e0291a2b457fa3046f9cf3ede859b2db33768c789465ce5c4cdba3"
+    },
+    "raw/first-py312/batch3-cache8/summary.json": {
+      "bytes": 16960,
+      "sha256": "fbd339135900906a07ceb50376773d844cce8a2076a7b046fe758b5005ea0fee"
+    },
+    "raw/first-py312/batch3-cache8/telemetry.jsonl.gz": {
+      "bytes": 291,
+      "sha256": "962dd35452b386a2e31b27d3a12ead29d977dd8adacefdd31ef581d97711255a"
+    },
+    "raw/first-py312/batch3-cache8/workers/worker-141948.json": {
+      "bytes": 406,
+      "sha256": "29ac8b14458558ac74ff796b0eb900fe35c6f9057ea429d60000ddb9c3c440ac"
+    },
+    "raw/first-py312/batch8-cache100/arrival-window.json": {
+      "bytes": 633,
+      "sha256": "e254024219ac128c82aa087d0c03e8fbbdb19774455208bcbcd2954123fd8ed1"
+    },
+    "raw/first-py312/batch8-cache100/arrivals.jsonl.gz": {
+      "bytes": 1684,
+      "sha256": "9cca7d49f6028dc8580ec10cc97a7a12d154d80fa8f26a8510fc9c1e43d38527"
+    },
+    "raw/first-py312/batch8-cache100/environment.json": {
+      "bytes": 6571,
+      "sha256": "01014c581c45465793c1c04a527d25e244db13159fc17f14d2fde3995a9cb237"
+    },
+    "raw/first-py312/batch8-cache100/manifest.json": {
+      "bytes": 1032,
+      "sha256": "5838c71daf84eed2e0590a61d3d1a5ffbd2329fc255cdd3d413d20a138c2dbce"
+    },
+    "raw/first-py312/batch8-cache100/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "f21f2eb4ee80ad59a1d5bd4d4ff2504d22ac13d00a0506a0456ba3e37a8b6e90"
+    },
+    "raw/first-py312/batch8-cache100/summary.json": {
+      "bytes": 16964,
+      "sha256": "8b9fb9e0c702601ec6a9334f6d473c038b12cfdd3adae8b708307dc390a756e1"
+    },
+    "raw/first-py312/batch8-cache100/telemetry.jsonl.gz": {
+      "bytes": 275,
+      "sha256": "e72a6933bd398ce6fada66a3dba52e7c5ce63b9df1e891e44b3969ee460b44ea"
+    },
+    "raw/first-py312/batch8-cache100/workers/worker-141975.json": {
+      "bytes": 408,
+      "sha256": "032464c2b73bbb3d0949d5dd8631f42b76076846ec62be89857488b5deb3806f"
+    },
+    "raw/first-py312/default/arrival-window.json": {
+      "bytes": 632,
+      "sha256": "a6a5409239c6914f53c7ec20592f325d30cde83b1975b4fe005a14e94412945e"
+    },
+    "raw/first-py312/default/arrivals.jsonl.gz": {
+      "bytes": 1685,
+      "sha256": "8006206ed79d1d1eedb242f1ac2d8edb5ecbb1515adecb6a68a9815e820170ef"
+    },
+    "raw/first-py312/default/environment.json": {
+      "bytes": 6569,
+      "sha256": "f571963e9cce318fc0e7899fe082d469a547cb92d9620d9634aa6ad249a0f1c8"
+    },
+    "raw/first-py312/default/manifest.json": {
+      "bytes": 1032,
+      "sha256": "e445ea78071705a9c868fd118ab0f3fb5f8c0ed1904bf1b997b0aac1b7d10dbb"
+    },
+    "raw/first-py312/default/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "598418827dbc4091211b2de2abc1eadfc54eb1f73b0a6084f542c845fd2122b0"
+    },
+    "raw/first-py312/default/summary.json": {
+      "bytes": 16968,
+      "sha256": "16d580b70a1aa64eb436800534aaa7ebc20246722f18cb93b8512f1aa74d9d32"
+    },
+    "raw/first-py312/default/telemetry.jsonl.gz": {
+      "bytes": 274,
+      "sha256": "020a83ccf652b3e217490aa8ff90614f21ed3b74098a58e4f63252902131e3b3"
+    },
+    "raw/first-py312/default/workers/worker-141884.json": {
+      "bytes": 406,
+      "sha256": "730574fb8982ec20947462322389c8bc4f648b053ae4acaedc80bd0fe652f0c3"
+    },
+    "raw/first-py312/samecap-baseline/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "a9408ff0bfbf94f4c0aef973d09debb8913efbb82e0a7bd14b50165e06bf0d35"
+    },
+    "raw/first-py312/samecap-baseline/arrivals.jsonl.gz": {
+      "bytes": 1724,
+      "sha256": "d822b95113d9dbb87a9ca2a58ef344fee7b92a91daa791bff20d10e53e0fd235"
+    },
+    "raw/first-py312/samecap-baseline/environment.json": {
+      "bytes": 6567,
+      "sha256": "65748a57a8c228d165328b841c7e9097953699460e4736c560e76a7621460861"
+    },
+    "raw/first-py312/samecap-baseline/manifest.json": {
+      "bytes": 1032,
+      "sha256": "368279f54165af8cca5ee87ae80a139f8b7bded06bee12ae99c7a92aaee51568"
+    },
+    "raw/first-py312/samecap-baseline/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "069598eeb29bd8449e28e85921451ac94acd627eb43f0d3d73f8ae252b9444db"
+    },
+    "raw/first-py312/samecap-baseline/summary.json": {
+      "bytes": 16958,
+      "sha256": "387f73cd66355dbb1260f984c1c2ec4d7b8bd5f73338c459a78a9f741122a966"
+    },
+    "raw/first-py312/samecap-baseline/telemetry.jsonl.gz": {
+      "bytes": 293,
+      "sha256": "c33eefd3a51bc9b8ea8dc751e2fd53821a75113a05753e8959af657d15b7e0c7"
+    },
+    "raw/first-py312/samecap-baseline/workers/worker-141908.json": {
+      "bytes": 406,
+      "sha256": "99edc5c4f07cf80371c86afd1be54e7072dde537feca5e273c9b43e9663ffda4"
+    },
+    "raw/py310/batch3-cache8/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "259cc96408c7d6c99fcd486b597fa35e6bb0a5ea945355b688885e43e6fd1b74"
+    },
+    "raw/py310/batch3-cache8/arrivals.jsonl.gz": {
+      "bytes": 1710,
+      "sha256": "df24d9799cf0f2bc1e6d4e23bde35a36428f2499a9961391f2e000ac92e756ba"
+    },
+    "raw/py310/batch3-cache8/environment.json": {
+      "bytes": 6567,
+      "sha256": "41965128d433cb2f498eb0a1af3dd8d15ea3dfe609a328f3644ad245e70510b0"
+    },
+    "raw/py310/batch3-cache8/manifest.json": {
+      "bytes": 1032,
+      "sha256": "c6ed7f1e33fe49e5e8964fafcede1180de0dc9effecf1ce0ff4f023c4b0117da"
+    },
+    "raw/py310/batch3-cache8/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "60473adb38685219f971ef67ae641083655f59ac9007ac7ef3d0d493c7621196"
+    },
+    "raw/py310/batch3-cache8/summary.json": {
+      "bytes": 16955,
+      "sha256": "1b80604cf8eb3b64f9ca4c8d62f1b988a84b451ecc066e45ab7f2d412d8e3161"
+    },
+    "raw/py310/batch3-cache8/telemetry.jsonl.gz": {
+      "bytes": 291,
+      "sha256": "33f5d4d3eeca10397d2be041f556f2b42dbbde44deaa2aeed07d08df4018e2be"
+    },
+    "raw/py310/batch3-cache8/workers/worker-147078.json": {
+      "bytes": 406,
+      "sha256": "57d24b7101b80335811e0a51d1616df2df8f6a5b0012f799707a28d253f7b707"
+    },
+    "raw/py310/batch8-cache100/arrival-window.json": {
+      "bytes": 633,
+      "sha256": "5dc684d35f8393e69e57404651bbd1e6c38e3752e334e374636eafe50aba194a"
+    },
+    "raw/py310/batch8-cache100/arrivals.jsonl.gz": {
+      "bytes": 1714,
+      "sha256": "64b068a1d777d6828b47709c803907a93869d914fa4ce520476ebe16c812f679"
+    },
+    "raw/py310/batch8-cache100/environment.json": {
+      "bytes": 6571,
+      "sha256": "234345313dd00e8672d7baa7a65eda4532e3412cbb0a564d20135e8037c0f3fd"
+    },
+    "raw/py310/batch8-cache100/manifest.json": {
+      "bytes": 1032,
+      "sha256": "97bb11b0a8ad906a25139e91216ee6e24760864b0f6447df1ba4b3a5f1fbff22"
+    },
+    "raw/py310/batch8-cache100/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "6689cf81ac2cdc441d9ca9face5b9da1beb534ded2228070b47d1eb6920ea4c3"
+    },
+    "raw/py310/batch8-cache100/summary.json": {
+      "bytes": 16970,
+      "sha256": "85a9d8d54952c8f53d2f7c3f6198fa2423fe5429ae9385b8da5320981db30b08"
+    },
+    "raw/py310/batch8-cache100/telemetry.jsonl.gz": {
+      "bytes": 276,
+      "sha256": "60c58d4d6407eec3b86b30fd773c841208ddd6e0fcd88d810e4b89fbb4c47a8b"
+    },
+    "raw/py310/batch8-cache100/workers/worker-147099.json": {
+      "bytes": 408,
+      "sha256": "bdd8fdfa629d787e8713e9e497abe83359f7057347b8471294736f1ff45adabd"
+    },
+    "raw/py310/default/arrival-window.json": {
+      "bytes": 632,
+      "sha256": "81548956f4f8293e748e52dcc6425ac866e29b832a257e44c5a78b8181f3624b"
+    },
+    "raw/py310/default/arrivals.jsonl.gz": {
+      "bytes": 1700,
+      "sha256": "e62af96e4e02f49d3ec6f0ee47258b5b39203edbac2965e168b019ee4a01fdcf"
+    },
+    "raw/py310/default/environment.json": {
+      "bytes": 6569,
+      "sha256": "c1c011104230bc0c5721ba82f2e68d89868940c6fd2dac67a0c1fd09df7a1682"
+    },
+    "raw/py310/default/manifest.json": {
+      "bytes": 1032,
+      "sha256": "5d3a72502e638f857f2f063aac4916660115a13b1e5899e45971bd595058ec34"
+    },
+    "raw/py310/default/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "d18b21410975b730b6ad0ed9c76cf880e86d9158e036b2739db6ac48286bc268"
+    },
+    "raw/py310/default/summary.json": {
+      "bytes": 16964,
+      "sha256": "8ca2f4127338d6ca1c814048d5db260cbb63360d634d6cfaf09f74629512d922"
+    },
+    "raw/py310/default/telemetry.jsonl.gz": {
+      "bytes": 277,
+      "sha256": "c836afebb22e9f9dd06624f4368fe1a16db0109822f4de0900e57942bcd6b828"
+    },
+    "raw/py310/default/workers/worker-147014.json": {
+      "bytes": 406,
+      "sha256": "61f21695b56587b2e85e54057258555b81361f138425af2d5e8153f6d83f9768"
+    },
+    "raw/py310/samecap-baseline/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "3c2125ef2a908b053d74ce90827366aa1435c5651c45b58642466d6c8f3ec3fa"
+    },
+    "raw/py310/samecap-baseline/arrivals.jsonl.gz": {
+      "bytes": 1696,
+      "sha256": "7ee13c32da83010852fcd00acfd7322005d41d193499cef4b59ad104ec74ec8d"
+    },
+    "raw/py310/samecap-baseline/environment.json": {
+      "bytes": 6567,
+      "sha256": "8df0bce68d03902e772d776efb2c7dc39dfb6c3accbd409f757ac8c14d8267f5"
+    },
+    "raw/py310/samecap-baseline/manifest.json": {
+      "bytes": 1032,
+      "sha256": "4550aa0d03770b15104cb60cb8bbfdf9eb3f912c39924221ffb7e91b77aad82a"
+    },
+    "raw/py310/samecap-baseline/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "fd15c4c7d9275a8502f9212ec3d7806990ceaf379821b818bf465cacbc6c4e83"
+    },
+    "raw/py310/samecap-baseline/summary.json": {
+      "bytes": 16955,
+      "sha256": "e138616fc435e884d4a03bd8f8608228e60e77251659f6ac83476518354100e6"
+    },
+    "raw/py310/samecap-baseline/telemetry.jsonl.gz": {
+      "bytes": 292,
+      "sha256": "d5424367cbb345f9b478b52def0bd9b70a92962bf1b68a78e7908bb43ae5653e"
+    },
+    "raw/py310/samecap-baseline/workers/worker-147041.json": {
+      "bytes": 406,
+      "sha256": "ee52bce64c02d49c4ff1f18b67cfc7177a561e27462212641077a7bd00ea7a65"
+    },
+    "raw/py312/batch3-cache8/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "e7f69e3d524035c6af5de818a13b561fc50658f69edebab7db38a25c23a20eef"
+    },
+    "raw/py312/batch3-cache8/arrivals.jsonl.gz": {
+      "bytes": 1713,
+      "sha256": "d90fd7345b19d21d4d613f204897cb6da31d2a341694a0095bf50f4854b8c9e4"
+    },
+    "raw/py312/batch3-cache8/environment.json": {
+      "bytes": 6567,
+      "sha256": "0288942968032db3e9336f0c5994428db712f41e659ace426f32f062024ff7b4"
+    },
+    "raw/py312/batch3-cache8/manifest.json": {
+      "bytes": 1032,
+      "sha256": "b71923e5d73049beefeac26639ad055a39e3fdc7f96c0eacaca31b5d85835025"
+    },
+    "raw/py312/batch3-cache8/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "8a4c8aa6510954e29e2bcc7c3f2c695332e693595192c8b273b5a5a4ee2c6578"
+    },
+    "raw/py312/batch3-cache8/summary.json": {
+      "bytes": 16965,
+      "sha256": "20303fb2af2e5559b46e49fde2cfdb9ee7192013da5efdc498bd229c37d5d059"
+    },
+    "raw/py312/batch3-cache8/telemetry.jsonl.gz": {
+      "bytes": 290,
+      "sha256": "c14598dcbec1b33230543a5123eb1c751529cbbb07afc85fe0de93c6b0ef7124"
+    },
+    "raw/py312/batch3-cache8/workers/worker-147206.json": {
+      "bytes": 406,
+      "sha256": "31d73358a0a82e56427aa5476db758ab5d92ffc54034de59ad8b724aaa947ecb"
+    },
+    "raw/py312/batch8-cache100/arrival-window.json": {
+      "bytes": 633,
+      "sha256": "e96d50845efe72c3958b2cad3bf0348cf6b46a06464a3fedb5d76d64d6f1fa05"
+    },
+    "raw/py312/batch8-cache100/arrivals.jsonl.gz": {
+      "bytes": 1714,
+      "sha256": "e030bd08ec5b11139be1a54691b21db112d45409c33b82c60f7004ec460afca8"
+    },
+    "raw/py312/batch8-cache100/environment.json": {
+      "bytes": 6571,
+      "sha256": "2aca8cfbd651c625942726b58b2c9e0e976ba93878c1f5d46bec7cfad33cd4c6"
+    },
+    "raw/py312/batch8-cache100/manifest.json": {
+      "bytes": 1032,
+      "sha256": "37bbf429dff520623687df6b2df147f43fc18dc70d48c11494c14533ba43b307"
+    },
+    "raw/py312/batch8-cache100/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "d8b95b0975978bdccbdb37e1789a09b7155ba6ddf7479818cf66a47f7c93df9f"
+    },
+    "raw/py312/batch8-cache100/summary.json": {
+      "bytes": 16980,
+      "sha256": "45be7f7251d1a41692c61fae420977b115f2757cbc3173ef1d4dbe0c22408ba1"
+    },
+    "raw/py312/batch8-cache100/telemetry.jsonl.gz": {
+      "bytes": 311,
+      "sha256": "afc8e6ddc1f81833f77254aba5f49cd382cea03deca51a4792b5bbd2c0729d42"
+    },
+    "raw/py312/batch8-cache100/workers/worker-147230.json": {
+      "bytes": 408,
+      "sha256": "48368ce834c997ab8fbb76c6653786f7d7cd343651a27e38c3fe9a17bc083adc"
+    },
+    "raw/py312/default/arrival-window.json": {
+      "bytes": 632,
+      "sha256": "0912b0f9697dc21c1090849f0ee7aa3a440e39e4175d2174f8bca1cc31ea8cf2"
+    },
+    "raw/py312/default/arrivals.jsonl.gz": {
+      "bytes": 1701,
+      "sha256": "ec0a81224bd424c7c7a99d01a3fac18ea9d3407cf443909a278347e08c88a046"
+    },
+    "raw/py312/default/environment.json": {
+      "bytes": 6569,
+      "sha256": "5bffda42dbe616bd6dd0d61c0f8259248157a1102cef5c22c64f1571dd5d2cb2"
+    },
+    "raw/py312/default/manifest.json": {
+      "bytes": 1032,
+      "sha256": "7dd100bc4e9176fad757196eb096151703dc16c7fef940af6d0f75874fe7d25d"
+    },
+    "raw/py312/default/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "543ae28b7f328b1b12b181dd8cd4e2b0fd357d522246e35518ccc4cd5086e2f5"
+    },
+    "raw/py312/default/summary.json": {
+      "bytes": 16962,
+      "sha256": "e8c7cc8b0e96d81eceec3c7118761470a87ab3fcf8b4acf3225f89c58e2f850f"
+    },
+    "raw/py312/default/telemetry.jsonl.gz": {
+      "bytes": 276,
+      "sha256": "49967d62629a646e86f1426ca49637c979535ed1b090402c8bdb5a348f37faa4"
+    },
+    "raw/py312/default/workers/worker-147132.json": {
+      "bytes": 406,
+      "sha256": "6a0c859f238aea3baee4d6dfabce9497b4912015cb1acecf71df3b72c789457a"
+    },
+    "raw/py312/samecap-baseline/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "77af84b1f3b88070c8b0e40923a6ee8123f4673484a46e14ecb643528bb3ed43"
+    },
+    "raw/py312/samecap-baseline/arrivals.jsonl.gz": {
+      "bytes": 1700,
+      "sha256": "23be211ff24dd8eec634913c2a4444ae5d7e1dc534a1560b844a6088363767d2"
+    },
+    "raw/py312/samecap-baseline/environment.json": {
+      "bytes": 6567,
+      "sha256": "bc5348326fd5e40c169ec5015c371651c31ccda5e6b4a114bb4c1df683f99817"
+    },
+    "raw/py312/samecap-baseline/manifest.json": {
+      "bytes": 1032,
+      "sha256": "d0b57242595bb7d280b70600f46b8af1fc6cd5f1062ae91737157bba76792f08"
+    },
+    "raw/py312/samecap-baseline/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "8e5273ffcfa614b755d7570dfe884e7ec42d23196468549aafda3124fb5829df"
+    },
+    "raw/py312/samecap-baseline/summary.json": {
+      "bytes": 16960,
+      "sha256": "b0764fed689625178fb3d4b40d0ae7d583d3ee2999773b13d5043acd7604755b"
+    },
+    "raw/py312/samecap-baseline/telemetry.jsonl.gz": {
+      "bytes": 276,
+      "sha256": "890418095ac93c2de9d49faef8618e228eb32442ab350af2fd91eb53f4b46475"
+    },
+    "raw/py312/samecap-baseline/workers/worker-147179.json": {
+      "bytes": 406,
+      "sha256": "b3ef3b3a9abe4c1731b36c2462f5149eced0eb3dbd018386f126bab00b9f7321"
+    },
+    "raw/py313/batch3-cache8/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "ed90fda53bc4fd3c7de186c74fe2146229041882f444af6e38b35e3aef62e642"
+    },
+    "raw/py313/batch3-cache8/arrivals.jsonl.gz": {
+      "bytes": 1707,
+      "sha256": "4b5fadeb53a6cc98af1e09efd2d283b165050abcef87af0aff9d131bf1ad62f5"
+    },
+    "raw/py313/batch3-cache8/environment.json": {
+      "bytes": 6563,
+      "sha256": "b67645f6c73f8c0b0ae8ff0228bf8134be397698a5ebe57f78c40fc5b9e98790"
+    },
+    "raw/py313/batch3-cache8/manifest.json": {
+      "bytes": 1032,
+      "sha256": "ad025d00a34a22e652cba5e126eb249331de142b5f2dc46fa1053d1cb4453f23"
+    },
+    "raw/py313/batch3-cache8/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "bc715467b6d4bf47cfbc836b3f01305734c1f30f5bbddc071c3929238a8dc04a"
+    },
+    "raw/py313/batch3-cache8/summary.json": {
+      "bytes": 16959,
+      "sha256": "2aa9ffa43e3cadd5f5189d56134e19bb481835c0976d66bda873385f16c7ff32"
+    },
+    "raw/py313/batch3-cache8/telemetry.jsonl.gz": {
+      "bytes": 293,
+      "sha256": "bbd3d3bc9a8b4ac007b758373d19bfc5698f2823358bc0f04bd6936f13a8c394"
+    },
+    "raw/py313/batch3-cache8/workers/worker-147341.json": {
+      "bytes": 406,
+      "sha256": "30a342b6063723f417112c2c747a20928a2a30e9c5cea240efed6ad8335d9eea"
+    },
+    "raw/py313/batch8-cache100/arrival-window.json": {
+      "bytes": 633,
+      "sha256": "e99fb71754131b7479e375b5a4519c1c25d197349f38a20a1e13ee727da2fe16"
+    },
+    "raw/py313/batch8-cache100/arrivals.jsonl.gz": {
+      "bytes": 1702,
+      "sha256": "d0d9752fc984992d7c471856bccb6ecdd6d43e406333bebeacc4c3e71eb22f13"
+    },
+    "raw/py313/batch8-cache100/environment.json": {
+      "bytes": 6567,
+      "sha256": "35458d0c5fed0ce4bf8277a404c8bfe4b06dbbe375b93f1fb26b4e13bc54692a"
+    },
+    "raw/py313/batch8-cache100/manifest.json": {
+      "bytes": 1032,
+      "sha256": "97ad868c0f79d4dc630c510919988e0b3e24543857d1bc5a451cded7ddde793c"
+    },
+    "raw/py313/batch8-cache100/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "3f7617c2684faeaab2e92b094f6c88827bb9a66d12c19a0e0be6429861a961b1"
+    },
+    "raw/py313/batch8-cache100/summary.json": {
+      "bytes": 16963,
+      "sha256": "d2a79a1be6c9eed8b4cd12adb73f6fd083cf704234dd9d406418d4d93cbd1620"
+    },
+    "raw/py313/batch8-cache100/telemetry.jsonl.gz": {
+      "bytes": 276,
+      "sha256": "54a0aff20ba6e0ec84da30782f023b408f9effb15b6208a694caf599358d798e"
+    },
+    "raw/py313/batch8-cache100/workers/worker-147379.json": {
+      "bytes": 408,
+      "sha256": "38171c4c88e1b8257f31a6a2ac88f077583852c60ca5a46f55144ced0efacd37"
+    },
+    "raw/py313/default/arrival-window.json": {
+      "bytes": 632,
+      "sha256": "0e41ea28c809229a891d87ea717fbe00fb28001d1bb9c7ecf15a90f794064dc4"
+    },
+    "raw/py313/default/arrivals.jsonl.gz": {
+      "bytes": 1705,
+      "sha256": "65f771ecd6829c2591c6133929dec874a59a13b3ebacddc42736948d470500e0"
+    },
+    "raw/py313/default/environment.json": {
+      "bytes": 6565,
+      "sha256": "188edf0eac7677fbb02d44f4255b4b40fce69a384f6a088e4c62a33a9114fb38"
+    },
+    "raw/py313/default/manifest.json": {
+      "bytes": 1032,
+      "sha256": "38e66293917b47891fbe57fc2589ea7bd29e326d4c4ce70dd95baa94789873f3"
+    },
+    "raw/py313/default/startup-readiness.jsonl": {
+      "bytes": 1585,
+      "sha256": "6a5bff75b2916621fb6ad7db648e05cf02e57432ea167e11e44bf98cc8622d24"
+    },
+    "raw/py313/default/summary.json": {
+      "bytes": 16957,
+      "sha256": "a21577d139b880e483122c866773912bda212c508b493b4c0bc9c6ff1586630f"
+    },
+    "raw/py313/default/telemetry.jsonl.gz": {
+      "bytes": 265,
+      "sha256": "ce5af047025863fc7ec5156c6bc61a29d259b1250450013c6efbbdcb7e593eb7"
+    },
+    "raw/py313/default/workers/worker-147294.json": {
+      "bytes": 406,
+      "sha256": "6323d2dbfa7ccb7c39f611303d950e3f7ca8031f309501265a544be604719a1d"
+    },
+    "raw/py313/samecap-baseline/arrival-window.json": {
+      "bytes": 631,
+      "sha256": "4da330688e97d6ae0dd0bc0e7338e29d90913ca2f43d18ff233f663855e81884"
+    },
+    "raw/py313/samecap-baseline/arrivals.jsonl.gz": {
+      "bytes": 1704,
+      "sha256": "03fee848a37a721a8b5965f9651ab9f49c5743748175ded2ffbe0b7ace9dbcc1"
+    },
+    "raw/py313/samecap-baseline/environment.json": {
+      "bytes": 6563,
+      "sha256": "6840425abae5056e12a8a5ed2e6d342448085a1bdad00e0c288dc7798a486d1a"
+    },
+    "raw/py313/samecap-baseline/manifest.json": {
+      "bytes": 1032,
+      "sha256": "82ba1a61acc9f0b6cf9a7d454de0dd2c5880cd2c76f64899a19e9581932a2ac0"
+    },
+    "raw/py313/samecap-baseline/startup-readiness.jsonl": {
+      "bytes": 1587,
+      "sha256": "6b4de92c005280bb9b0375fb175c36c66f0ab5ed5b011544e3e9e4094d9de006"
+    },
+    "raw/py313/samecap-baseline/summary.json": {
+      "bytes": 16964,
+      "sha256": "5db14dbeb59b2bea8b452a0e2a634c5f5758b37c3ea59d50382e160873ce41a9"
+    },
+    "raw/py313/samecap-baseline/telemetry.jsonl.gz": {
+      "bytes": 291,
+      "sha256": "96bd28a0b3934246e324087c539226c734424665f10ad64c35cbe1307984c5c9"
+    },
+    "raw/py313/samecap-baseline/workers/worker-147310.json": {
+      "bytes": 406,
+      "sha256": "9fe49ec68e655037c7d99a17e5c2ed5811365397508a1ad9d780b586a042f1a1"
+    },
+    "retry-gate-py312.log": {
+      "bytes": 1722,
+      "sha256": "99e2a807933cb929e18c76d1de2b92f3a081fbd845efb65f49316d7cbd8ee16f"
+    },
+    "tool.patch": {
+      "bytes": 20324,
+      "sha256": "9f8ea3e3c45bbf4805f0c056f2bc157d9d97e004d76097b448b239d5f4df32f7"
+    }
+  },
+  "private_cli_authority": "/tmp/uta-managed-variant-cli-functional"
+}

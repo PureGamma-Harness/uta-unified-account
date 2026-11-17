@@ -1,0 +1,1422 @@
+{
+  "source_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "review_inputs_sha256": {
+    "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+    "benchmarks/run_managed_benchmark.py": "e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0",
+    "benchmarks/run_benchmark.py": "277c63ebf7bd210a609e5ae7465db4088726d031c8adf0a07c9fb36b61f2147a",
+    "benchmarks/run_group_benchmark.py": "977dd5d26e597ec908e4a266ff58c284434b5c428bcd0225195990e6eb7ff44d",
+    "tests/test_managed_variant_wiring.py": "ad232e3c1dc644487d80a4a707e81bca69d948fb25bfe8975d738ce87b94ef8a",
+    "tests/test_managed_retry_gate.py": "92db2692af816cfdd5c8a6502ae35ee721d341a4ba8baec995c6300b804be785",
+    "uta/durable_batches.py": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "outer_manifest_files_checked": 148,
+  "raw_cases_checked": 17,
+  "financial_receipt_rows_checked": 136,
+  "cases": [
+    {
+      "case": "raw/cli-py312/batch8-cache100",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "940bee7c14802aa45a20a9322fd01b259ffe4d7132cc956d09a16754f3668aaf",
+      "summary_sha256": "cde1e518cfef9ec5e794475a3c6b00727e3ae0168f9052c91cfe979c352a49bc",
+      "configured_rate_not_capacity": 160.0,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.567858848,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 14.088008011455692,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 379711927,
+            "reported_upper_bound_milliseconds": 379.788122
+          },
+          "p95": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          },
+          "p99": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          },
+          "p99_9": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 379711927,
+            "reported_upper_bound_milliseconds": 379.788122
+          },
+          "p95": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          },
+          "p99": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          },
+          "p99_9": {
+            "exact_nanoseconds": 561519486,
+            "reported_upper_bound_milliseconds": 561.952685
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 35435813,
+            "reported_upper_bound_milliseconds": 35.438515
+          },
+          "p95": {
+            "exact_nanoseconds": 352396011,
+            "reported_upper_bound_milliseconds": 352.71152
+          },
+          "p99": {
+            "exact_nanoseconds": 352396011,
+            "reported_upper_bound_milliseconds": 352.71152
+          },
+          "p99_9": {
+            "exact_nanoseconds": 352396011,
+            "reported_upper_bound_milliseconds": 352.71152
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 561519486,
+        "financial_succeeded": 561519486,
+        "enqueue_ack": 352396011
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/first-py312/batch3-cache8",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "426c838d102bf07ea87ce45e336ddb5953e24bbe657929b52eebafbbc9709afb",
+      "summary_sha256": "fbd339135900906a07ceb50376773d844cce8a2076a7b046fe758b5005ea0fee",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.446405401,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 17.920930127814472,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 246252272,
+            "reported_upper_bound_milliseconds": 246.368869
+          },
+          "p95": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          },
+          "p99": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          },
+          "p99_9": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 246252272,
+            "reported_upper_bound_milliseconds": 246.368869
+          },
+          "p95": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          },
+          "p99": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          },
+          "p99_9": {
+            "exact_nanoseconds": 440062443,
+            "reported_upper_bound_milliseconds": 440.336661
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 49638599,
+            "reported_upper_bound_milliseconds": 49.681386
+          },
+          "p95": {
+            "exact_nanoseconds": 105150158,
+            "reported_upper_bound_milliseconds": 105.241225
+          },
+          "p99": {
+            "exact_nanoseconds": 105150158,
+            "reported_upper_bound_milliseconds": 105.241225
+          },
+          "p99_9": {
+            "exact_nanoseconds": 105150158,
+            "reported_upper_bound_milliseconds": 105.241225
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 440062443,
+        "financial_succeeded": 440062443,
+        "enqueue_ack": 105150158
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/first-py312/batch8-cache100",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "9cca7d49f6028dc8580ec10cc97a7a12d154d80fa8f26a8510fc9c1e43d38527",
+      "summary_sha256": "8b9fb9e0c702601ec6a9334f6d473c038b12cfdd3adae8b708307dc390a756e1",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.294780634,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 27.138824865950998,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 148506085,
+            "reported_upper_bound_milliseconds": 148.573934
+          },
+          "p95": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          },
+          "p99": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          },
+          "p99_9": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 148506085,
+            "reported_upper_bound_milliseconds": 148.573934
+          },
+          "p95": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          },
+          "p99": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          },
+          "p99_9": {
+            "exact_nanoseconds": 280652300,
+            "reported_upper_bound_milliseconds": 280.83419
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 12749820,
+            "reported_upper_bound_milliseconds": 12.759931
+          },
+          "p95": {
+            "exact_nanoseconds": 94857360,
+            "reported_upper_bound_milliseconds": 94.945834
+          },
+          "p99": {
+            "exact_nanoseconds": 94857360,
+            "reported_upper_bound_milliseconds": 94.945834
+          },
+          "p99_9": {
+            "exact_nanoseconds": 94857360,
+            "reported_upper_bound_milliseconds": 94.945834
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 280652300,
+        "financial_succeeded": 280652300,
+        "enqueue_ack": 94857360
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/first-py312/default",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "8006206ed79d1d1eedb242f1ac2d8edb5ecbb1515adecb6a68a9815e820170ef",
+      "summary_sha256": "16d580b70a1aa64eb436800534aaa7ebc20246722f18cb93b8512f1aa74d9d32",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.228995789,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 34.93514022653054,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 118626412,
+            "reported_upper_bound_milliseconds": 118.652035
+          },
+          "p95": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          },
+          "p99": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          },
+          "p99_9": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 118626412,
+            "reported_upper_bound_milliseconds": 118.652035
+          },
+          "p95": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          },
+          "p99": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          },
+          "p99_9": {
+            "exact_nanoseconds": 228864926,
+            "reported_upper_bound_milliseconds": 229.033059
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 32075029,
+            "reported_upper_bound_milliseconds": 32.099764
+          },
+          "p95": {
+            "exact_nanoseconds": 82510211,
+            "reported_upper_bound_milliseconds": 82.547717
+          },
+          "p99": {
+            "exact_nanoseconds": 82510211,
+            "reported_upper_bound_milliseconds": 82.547717
+          },
+          "p99_9": {
+            "exact_nanoseconds": 82510211,
+            "reported_upper_bound_milliseconds": 82.547717
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 228864926,
+        "financial_succeeded": 228864926,
+        "enqueue_ack": 82510211
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/first-py312/samecap-baseline",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "d822b95113d9dbb87a9ca2a58ef344fee7b92a91daa791bff20d10e53e0fd235",
+      "summary_sha256": "387f73cd66355dbb1260f984c1c2ec4d7b8bd5f73338c459a78a9f741122a966",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.463084689,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 17.275457794286954,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 263480459,
+            "reported_upper_bound_milliseconds": 263.69573
+          },
+          "p95": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p99": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p99_9": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 263480459,
+            "reported_upper_bound_milliseconds": 263.69573
+          },
+          "p95": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p99": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p99_9": {
+            "exact_nanoseconds": 456625229,
+            "reported_upper_bound_milliseconds": 456.925833
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 70613197,
+            "reported_upper_bound_milliseconds": 70.629963
+          },
+          "p95": {
+            "exact_nanoseconds": 120065536,
+            "reported_upper_bound_milliseconds": 120.083717
+          },
+          "p99": {
+            "exact_nanoseconds": 120065536,
+            "reported_upper_bound_milliseconds": 120.083717
+          },
+          "p99_9": {
+            "exact_nanoseconds": 120065536,
+            "reported_upper_bound_milliseconds": 120.083717
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 456625229,
+        "financial_succeeded": 456625229,
+        "enqueue_ack": 120065536
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py310/batch3-cache8",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "df24d9799cf0f2bc1e6d4e23bde35a36428f2499a9961391f2e000ac92e756ba",
+      "summary_sha256": "1b80604cf8eb3b64f9ca4c8d62f1b988a84b451ecc066e45ab7f2d412d8e3161",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.418896294,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 19.09780562537037,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 165875391,
+            "reported_upper_bound_milliseconds": 166.00655
+          },
+          "p95": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          },
+          "p99": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          },
+          "p99_9": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 165875391,
+            "reported_upper_bound_milliseconds": 166.00655
+          },
+          "p95": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          },
+          "p99": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          },
+          "p99_9": {
+            "exact_nanoseconds": 406208307,
+            "reported_upper_bound_milliseconds": 406.498219
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 60512952,
+            "reported_upper_bound_milliseconds": 60.55375
+          },
+          "p95": {
+            "exact_nanoseconds": 352382467,
+            "reported_upper_bound_milliseconds": 352.71152
+          },
+          "p99": {
+            "exact_nanoseconds": 352382467,
+            "reported_upper_bound_milliseconds": 352.71152
+          },
+          "p99_9": {
+            "exact_nanoseconds": 352382467,
+            "reported_upper_bound_milliseconds": 352.71152
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 406208307,
+        "financial_succeeded": 406208307,
+        "enqueue_ack": 352382467
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py310/batch8-cache100",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "64b068a1d777d6828b47709c803907a93869d914fa4ce520476ebe16c812f679",
+      "summary_sha256": "85a9d8d54952c8f53d2f7c3f6198fa2423fe5429ae9385b8da5320981db30b08",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.391519476,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 20.433210837256027,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 244729235,
+            "reported_upper_bound_milliseconds": 244.895815
+          },
+          "p95": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          },
+          "p99": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          },
+          "p99_9": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 244729235,
+            "reported_upper_bound_milliseconds": 244.895815
+          },
+          "p95": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          },
+          "p99": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          },
+          "p99_9": {
+            "exact_nanoseconds": 353911647,
+            "reported_upper_bound_milliseconds": 354.124484
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 46644162,
+            "reported_upper_bound_milliseconds": 46.649482
+          },
+          "p95": {
+            "exact_nanoseconds": 69527436,
+            "reported_upper_bound_milliseconds": 69.578941
+          },
+          "p99": {
+            "exact_nanoseconds": 69527436,
+            "reported_upper_bound_milliseconds": 69.578941
+          },
+          "p99_9": {
+            "exact_nanoseconds": 69527436,
+            "reported_upper_bound_milliseconds": 69.578941
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 353911647,
+        "financial_succeeded": 353911647,
+        "enqueue_ack": 69527436
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py310/default",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "e62af96e4e02f49d3ec6f0ee47258b5b39203edbac2965e168b019ee4a01fdcf",
+      "summary_sha256": "8ca2f4127338d6ca1c814048d5db260cbb63360d634d6cfaf09f74629512d922",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.321545221,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 24.879859744517866,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 170632522,
+            "reported_upper_bound_milliseconds": 170.718031
+          },
+          "p95": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          },
+          "p99": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          },
+          "p99_9": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 170632522,
+            "reported_upper_bound_milliseconds": 170.718031
+          },
+          "p95": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          },
+          "p99": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          },
+          "p99_9": {
+            "exact_nanoseconds": 315147473,
+            "reported_upper_bound_milliseconds": 315.357357
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 77300517,
+            "reported_upper_bound_milliseconds": 77.355292
+          },
+          "p95": {
+            "exact_nanoseconds": 148844272,
+            "reported_upper_bound_milliseconds": 148.871231
+          },
+          "p99": {
+            "exact_nanoseconds": 148844272,
+            "reported_upper_bound_milliseconds": 148.871231
+          },
+          "p99_9": {
+            "exact_nanoseconds": 148844272,
+            "reported_upper_bound_milliseconds": 148.871231
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 315147473,
+        "financial_succeeded": 315147473,
+        "enqueue_ack": 148844272
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py310/samecap-baseline",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "7ee13c32da83010852fcd00acfd7322005d41d193499cef4b59ad104ec74ec8d",
+      "summary_sha256": "e138616fc435e884d4a03bd8f8608228e60e77251659f6ac83476518354100e6",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.463433946,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 17.26243851804503,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 255498082,
+            "reported_upper_bound_milliseconds": 255.650529
+          },
+          "p95": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          },
+          "p99": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          },
+          "p99_9": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 255498082,
+            "reported_upper_bound_milliseconds": 255.650529
+          },
+          "p95": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          },
+          "p99": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          },
+          "p99_9": {
+            "exact_nanoseconds": 425761923,
+            "reported_upper_bound_milliseconds": 426.049724
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 41202818,
+            "reported_upper_bound_milliseconds": 41.211765
+          },
+          "p95": {
+            "exact_nanoseconds": 71019508,
+            "reported_upper_bound_milliseconds": 71.054804
+          },
+          "p99": {
+            "exact_nanoseconds": 71019508,
+            "reported_upper_bound_milliseconds": 71.054804
+          },
+          "p99_9": {
+            "exact_nanoseconds": 71019508,
+            "reported_upper_bound_milliseconds": 71.054804
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 425761923,
+        "financial_succeeded": 425761923,
+        "enqueue_ack": 71019508
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py312/batch3-cache8",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "d90fd7345b19d21d4d613f204897cb6da31d2a341694a0095bf50f4854b8c9e4",
+      "summary_sha256": "20303fb2af2e5559b46e49fde2cfdb9ee7192013da5efdc498bd229c37d5d059",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.414133536,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 19.31744064310696,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 321438523,
+            "reported_upper_bound_milliseconds": 321.724783
+          },
+          "p95": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          },
+          "p99": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          },
+          "p99_9": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 321438523,
+            "reported_upper_bound_milliseconds": 321.724783
+          },
+          "p95": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          },
+          "p99": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          },
+          "p99_9": {
+            "exact_nanoseconds": 393661121,
+            "reported_upper_bound_milliseconds": 393.702495
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 11964826,
+            "reported_upper_bound_milliseconds": 11.969262
+          },
+          "p95": {
+            "exact_nanoseconds": 91323649,
+            "reported_upper_bound_milliseconds": 91.407318
+          },
+          "p99": {
+            "exact_nanoseconds": 91323649,
+            "reported_upper_bound_milliseconds": 91.407318
+          },
+          "p99_9": {
+            "exact_nanoseconds": 91323649,
+            "reported_upper_bound_milliseconds": 91.407318
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 393661121,
+        "financial_succeeded": 393661121,
+        "enqueue_ack": 91323649
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py312/batch8-cache100",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "e030bd08ec5b11139be1a54691b21db112d45409c33b82c60f7004ec460afca8",
+      "summary_sha256": "45be7f7251d1a41692c61fae420977b115f2757cbc3173ef1d4dbe0c22408ba1",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.766136529,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 10.442003085849468,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 456625115,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p95": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          },
+          "p99": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          },
+          "p99_9": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 456625115,
+            "reported_upper_bound_milliseconds": 456.925833
+          },
+          "p95": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          },
+          "p99": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          },
+          "p99_9": {
+            "exact_nanoseconds": 765955322,
+            "reported_upper_bound_milliseconds": 766.061734
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 40895563,
+            "reported_upper_bound_milliseconds": 40.924433
+          },
+          "p95": {
+            "exact_nanoseconds": 108739996,
+            "reported_upper_bound_milliseconds": 108.770331
+          },
+          "p99": {
+            "exact_nanoseconds": 108739996,
+            "reported_upper_bound_milliseconds": 108.770331
+          },
+          "p99_9": {
+            "exact_nanoseconds": 108739996,
+            "reported_upper_bound_milliseconds": 108.770331
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 765955322,
+        "financial_succeeded": 765955322,
+        "enqueue_ack": 108739996
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py312/default",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "ec0a81224bd424c7c7a99d01a3fac18ea9d3407cf443909a278347e08c88a046",
+      "summary_sha256": "e8c7cc8b0e96d81eceec3c7118761470a87ab3fcf8b4acf3225f89c58e2f850f",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.378374602,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 21.143068159738693,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 239146137,
+            "reported_upper_bound_milliseconds": 239.330243
+          },
+          "p95": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          },
+          "p99": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          },
+          "p99_9": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 239146137,
+            "reported_upper_bound_milliseconds": 239.330243
+          },
+          "p95": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          },
+          "p99": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          },
+          "p99_9": {
+            "exact_nanoseconds": 371965087,
+            "reported_upper_bound_milliseconds": 372.271534
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 17449444,
+            "reported_upper_bound_milliseconds": 17.464198
+          },
+          "p95": {
+            "exact_nanoseconds": 70164269,
+            "reported_upper_bound_milliseconds": 70.207662
+          },
+          "p99": {
+            "exact_nanoseconds": 70164269,
+            "reported_upper_bound_milliseconds": 70.207662
+          },
+          "p99_9": {
+            "exact_nanoseconds": 70164269,
+            "reported_upper_bound_milliseconds": 70.207662
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 371965087,
+        "financial_succeeded": 371965087,
+        "enqueue_ack": 70164269
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py312/samecap-baseline",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "23be211ff24dd8eec634913c2a4444ae5d7e1dc534a1560b844a6088363767d2",
+      "summary_sha256": "b0764fed689625178fb3d4b40d0ae7d583d3ee2999773b13d5043acd7604755b",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.350709776,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 22.810883948669854,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 180571778,
+            "reported_upper_bound_milliseconds": 180.726489
+          },
+          "p95": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          },
+          "p99": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          },
+          "p99_9": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 180571778,
+            "reported_upper_bound_milliseconds": 180.726489
+          },
+          "p95": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          },
+          "p99": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          },
+          "p99_9": {
+            "exact_nanoseconds": 344201315,
+            "reported_upper_bound_milliseconds": 344.351346
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 23847199,
+            "reported_upper_bound_milliseconds": 23.855077
+          },
+          "p95": {
+            "exact_nanoseconds": 115867775,
+            "reported_upper_bound_milliseconds": 115.955515
+          },
+          "p99": {
+            "exact_nanoseconds": 115867775,
+            "reported_upper_bound_milliseconds": 115.955515
+          },
+          "p99_9": {
+            "exact_nanoseconds": 115867775,
+            "reported_upper_bound_milliseconds": 115.955515
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 344201315,
+        "financial_succeeded": 344201315,
+        "enqueue_ack": 115867775
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py313/batch3-cache8",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "4b5fadeb53a6cc98af1e09efd2d283b165050abcef87af0aff9d131bf1ad62f5",
+      "summary_sha256": "2aa9ffa43e3cadd5f5189d56134e19bb481835c0976d66bda873385f16c7ff32",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.465386229,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 17.190023042130026,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 296513193,
+            "reported_upper_bound_milliseconds": 296.704573
+          },
+          "p95": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          },
+          "p99": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          },
+          "p99_9": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 296513193,
+            "reported_upper_bound_milliseconds": 296.704573
+          },
+          "p95": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          },
+          "p99": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          },
+          "p99_9": {
+            "exact_nanoseconds": 423583254,
+            "reported_upper_bound_milliseconds": 423.925851
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 22812487,
+            "reported_upper_bound_milliseconds": 22.828713
+          },
+          "p95": {
+            "exact_nanoseconds": 143808970,
+            "reported_upper_bound_milliseconds": 143.897134
+          },
+          "p99": {
+            "exact_nanoseconds": 143808970,
+            "reported_upper_bound_milliseconds": 143.897134
+          },
+          "p99_9": {
+            "exact_nanoseconds": 143808970,
+            "reported_upper_bound_milliseconds": 143.897134
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 423583254,
+        "financial_succeeded": 423583254,
+        "enqueue_ack": 143808970
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py313/batch8-cache100",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "d0d9752fc984992d7c471856bccb6ecdd6d43e406333bebeacc4c3e71eb22f13",
+      "summary_sha256": "d2a79a1be6c9eed8b4cd12adb73f6fd083cf704234dd9d406418d4d93cbd1620",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.388332121,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 20.600922682880515,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 195561378,
+            "reported_upper_bound_milliseconds": 195.575267
+          },
+          "p95": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          },
+          "p99": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          },
+          "p99_9": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 195561378,
+            "reported_upper_bound_milliseconds": 195.575267
+          },
+          "p95": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          },
+          "p99": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          },
+          "p99_9": {
+            "exact_nanoseconds": 374661507,
+            "reported_upper_bound_milliseconds": 374.885265
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 10856578,
+            "reported_upper_bound_milliseconds": 10.863302
+          },
+          "p95": {
+            "exact_nanoseconds": 94983646,
+            "reported_upper_bound_milliseconds": 95.04078
+          },
+          "p99": {
+            "exact_nanoseconds": 94983646,
+            "reported_upper_bound_milliseconds": 95.04078
+          },
+          "p99_9": {
+            "exact_nanoseconds": 94983646,
+            "reported_upper_bound_milliseconds": 95.04078
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 374661507,
+        "financial_succeeded": 374661507,
+        "enqueue_ack": 94983646
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py313/default",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "65f771ecd6829c2591c6133929dec874a59a13b3ebacddc42736948d470500e0",
+      "summary_sha256": "a21577d139b880e483122c866773912bda212c508b493b4c0bc9c6ff1586630f",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.315483123,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 25.357933330715763,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 118650609,
+            "reported_upper_bound_milliseconds": 118.652035
+          },
+          "p95": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          },
+          "p99": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          },
+          "p99_9": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 118650609,
+            "reported_upper_bound_milliseconds": 118.652035
+          },
+          "p95": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          },
+          "p99": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          },
+          "p99_9": {
+            "exact_nanoseconds": 290346392,
+            "reported_upper_bound_milliseconds": 290.541794
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 79515318,
+            "reported_upper_bound_milliseconds": 79.550735
+          },
+          "p95": {
+            "exact_nanoseconds": 186712622,
+            "reported_upper_bound_milliseconds": 186.78688
+          },
+          "p99": {
+            "exact_nanoseconds": 186712622,
+            "reported_upper_bound_milliseconds": 186.78688
+          },
+          "p99_9": {
+            "exact_nanoseconds": 186712622,
+            "reported_upper_bound_milliseconds": 186.78688
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 290346392,
+        "financial_succeeded": 290346392,
+        "enqueue_ack": 186712622
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    },
+    {
+      "case": "raw/py313/samecap-baseline",
+      "rows": 8,
+      "manifest_files": 7,
+      "raw_sha256": "03fee848a37a721a8b5965f9651ab9f49c5743748175ded2ffbe0b7ace9dbcc1",
+      "summary_sha256": "5db14dbeb59b2bea8b452a0e2a634c5f5758b37c3ea59d50382e160873ce41a9",
+      "configured_rate_not_capacity": 160,
+      "arrival_window_seconds": 0.05,
+      "observed_receipt_denominator_seconds": 0.438934525,
+      "financial_receipts": 8,
+      "recomputed_observed_receipt_per_second": 18.225952948221604,
+      "exact_and_reported_percentiles": {
+        "all": {
+          "p50": {
+            "exact_nanoseconds": 207200612,
+            "reported_upper_bound_milliseconds": 207.248037
+          },
+          "p95": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          },
+          "p99": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          },
+          "p99_9": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          }
+        },
+        "financial_succeeded": {
+          "p50": {
+            "exact_nanoseconds": 207200612,
+            "reported_upper_bound_milliseconds": 207.248037
+          },
+          "p95": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          },
+          "p99": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          },
+          "p99_9": {
+            "exact_nanoseconds": 406036488,
+            "reported_upper_bound_milliseconds": 406.092127
+          }
+        },
+        "enqueue_ack": {
+          "p50": {
+            "exact_nanoseconds": 18352099,
+            "reported_upper_bound_milliseconds": 18.359148
+          },
+          "p95": {
+            "exact_nanoseconds": 121180732,
+            "reported_upper_bound_milliseconds": 121.289972
+          },
+          "p99": {
+            "exact_nanoseconds": 121180732,
+            "reported_upper_bound_milliseconds": 121.289972
+          },
+          "p99_9": {
+            "exact_nanoseconds": 121180732,
+            "reported_upper_bound_milliseconds": 121.289972
+          }
+        }
+      },
+      "latency_group_counts": {
+        "all": 8,
+        "financial_succeeded": 8,
+        "enqueue_ack": 8
+      },
+      "exact_max_latency_nanoseconds": {
+        "all": 406036488,
+        "financial_succeeded": 406036488,
+        "enqueue_ack": 121180732
+      },
+      "same_factor_comparison": false,
+      "performance_qualification": false,
+      "database_reopened_by_this_check": false
+    }
+  ],
+  "counterfactual_only_not_a_new_load": {
+    "change": "counts.financial_success_late=1",
+    "current_technical_gate": {
+      "passed": true,
+      "stop_remaining_cases": false,
+      "reasons": [],
+      "financial_soft_deadline_passed": false,
+      "scope": "bounded probe technical stop gate; business/control rejection and overload remain outcomes",
+      "production_approved": false,
+      "capacity_10000_per_s_passed": false,
+      "stability_passed": false
+    },
+    "composite_diagnostic_gate": false,
+    "existing_source_intent": "technical and latency gates are deliberately separate"
+  },
+  "blocks_go_without_execution_amendment": true,
+  "review_requires": [
+    "check technical passed AND financial_soft_deadline_passed",
+    "report exact ranks/N/max from raw rows",
+    "external bounded watchdog and owned-child cleanup",
+    "pin actual source and explicit allowed CPU set",
+    "do not infer capacity from offered20/s unsaturated runs"
+  ],
+  "new_load_executed": false,
+  "database_opened": false,
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false
+}

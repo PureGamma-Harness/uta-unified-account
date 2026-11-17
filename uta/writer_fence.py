@@ -36,7 +36,10 @@ class WriterToken:
 
 _BASE_NAMES = frozenset({"writer_fence_authority", "writer_fence_lease", "writer_fence_events"})
 _GUARD_NAMES = frozenset({"writer_fence_guard_config", "writer_fence_guard_tables"})
-_NAMES = _BASE_NAMES | _GUARD_NAMES
+_STANDARD_NAMES = _BASE_NAMES | _GUARD_NAMES
+_BATCH_NAMES = frozenset({"writer_fence_batch_capability"})
+_NAMES = _STANDARD_NAMES | _BATCH_NAMES
+_BATCH_TABLES = frozenset({"uta_command_batch_manifests", "uta_command_batch_outcomes"})
 _INBOX_TABLES = frozenset({"uta_command_config", "uta_command_inbox"})
 _INBOX_INDEXES = frozenset({"uta_command_pending", "uta_command_account_pending"})
 _INBOX_TRIGGERS = frozenset({"uta_command_config_no_replace", "uta_command_config_no_update",
@@ -65,6 +68,7 @@ _DDL = {_ACTIONS[name] for name in _ACTIONS if name.startswith(("CREATE_", "DROP
 _OK, _DENY = getattr(sqlite3, "SQLITE_OK", 0), getattr(sqlite3, "SQLITE_DENY", 1)
 
 _CONTROL_TABLE_SQL = MappingProxyType({
+    "writer_fence_batch_capability": "CREATE TABLE writer_fence_batch_capability(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))",
     "writer_fence_authority": "CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)",
     "writer_fence_lease": "CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)",
     "writer_fence_events": "CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)",
@@ -81,7 +85,7 @@ def _control_trigger_definitions():
             definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
     definitions["writer_fence_lease_no_delete"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
     definitions["writer_fence_lease_monotonic"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
-    for table in _GUARD_NAMES:
+    for table in _GUARD_NAMES | _BATCH_NAMES:
         for action in ("UPDATE", "DELETE"):
             name = f"{table}_no_{action.lower()}"
             definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END")
@@ -92,7 +96,9 @@ _CONTROL_TRIGGER_SQL = _control_trigger_definitions()
 
 
 def _verify_control_schema(connection, state):
-    names = _NAMES if state["guard_format"] == 1 else _BASE_NAMES
+    names = _STANDARD_NAMES if state["guard_format"] == 1 else _BASE_NAMES
+    if state.get("batch_format") == 1:
+        names |= _BATCH_NAMES
     rows = connection.execute("SELECT name,type,tbl_name,sql FROM sqlite_master").fetchall()
     tables = {row[0]: row[3] for row in rows if row[1] == "table" and row[0] in names}
     if tables != {name: _CONTROL_TABLE_SQL[name] for name in names}:
@@ -149,9 +155,9 @@ def _load(connection):
         "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'writer_fence_%'")}
     if not found:
         return None
-    if _BASE_NAMES <= found and found != _BASE_NAMES and found != _NAMES:
+    if _BASE_NAMES <= found and found not in (_BASE_NAMES, _STANDARD_NAMES, _NAMES):
         raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata is incomplete; automatic repair is forbidden")
-    if found != _BASE_NAMES and found != _NAMES:
+    if found not in (_BASE_NAMES, _STANDARD_NAMES, _NAMES):
         raise WriterFenceError("fence_corrupt", "managed authority schema is incomplete")
     try:
         authority = connection.execute("SELECT singleton,format,authority_id,canonical_path FROM writer_fence_authority").fetchall()
@@ -172,14 +178,22 @@ def _load(connection):
                 or owner is None and pid is not None or owner is not None and (type(pid) is not int or pid <= 0)):
             raise ValueError("invalid lease")
         guard_format = 0
-        if found == _NAMES:
+        if _STANDARD_NAMES <= found:
             guard = connection.execute("SELECT singleton,format FROM writer_fence_guard_config").fetchall()
             if [tuple(row) for row in guard] != [(1, 1)]:
                 raise ValueError("invalid persistent guard format")
             guard_format = 1
         elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind IN ('enabled_guard_v1','guards_upgraded') LIMIT 1").fetchone() is not None:
             raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata disappeared after activation")
-        return {"authority_id": authority[0][2], "guard_format": guard_format,
+        batch_format = 0
+        if found == _NAMES:
+            rows = connection.execute("SELECT singleton,format FROM writer_fence_batch_capability").fetchall()
+            if [tuple(row) for row in rows] != [(1, 1)] or guard_format != 1:
+                raise ValueError("invalid batch capability")
+            batch_format = 1
+        elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind='batches_enabled' LIMIT 1").fetchone() is not None:
+            raise WriterFenceError("fence_guard_corrupt", "persistent batch capability disappeared")
+        return {"authority_id": authority[0][2], "guard_format": guard_format, "batch_format": batch_format,
                 "canonical_path": authority[0][3], "generation": generation, "owner_nonce": owner,
                 "owner_pid": pid, "boot_id": boot, "expires_ns": expires, "observed_ns": observed}
     except (sqlite3.Error, ValueError, TypeError) as exc:
@@ -315,6 +329,31 @@ class WriterFence:
                 self._event(connection, "enabled_guard_v1", _load(connection), now)
         return self.status()
 
+    def enable_batches(self):
+        """Irreversible offline capability; existing live leases are rejected.
+
+        Batch tables must already be explicitly installed and exact. Old
+        binaries reject the new persistent fence-table inventory.
+        """
+        from .durable_batches import BatchStore
+        with self.database._fence_transaction() as connection:
+            state = _load(connection)
+            if state is None:
+                raise WriterFenceError("fence_not_managed", "batch capability requires a managed authority")
+            _require_guard_format(state)
+            now, boot = _observed(self.database, state)
+            if state["owner_nonce"] is not None and boot == state["boot_id"] and state["expires_ns"] > now:
+                raise WriterFenceError("lease_busy", "stop every writer before enabling durable batches")
+            BatchStore._verify_schema(connection)
+            if state["batch_format"] == 0:
+                _create_control_object(connection, "writer_fence_batch_capability")
+                connection.execute("INSERT INTO writer_fence_batch_capability VALUES(1,1)")
+                for name, (table, sql) in _CONTROL_TRIGGER_SQL.items():
+                    if table in _BATCH_NAMES:
+                        _create_control_object(connection, name)
+                self._event(connection, "batches_enabled", _load(connection), now)
+        return self.status()
+
     def upgrade_guards(self):
         """Explicit offline upgrade of the first managed format, never repair.
 
@@ -403,7 +442,7 @@ class WriterFence:
 
 class _TransactionGuard:
     def __init__(self, database, connection, role):
-        if role == "financial":
+        if role in ("financial", "batch_metadata"):
             from .startup import _assert_initialization_actor
             _assert_initialization_actor(database)
         self.database, self.connection, self.role = database, connection, role
@@ -418,9 +457,11 @@ class _TransactionGuard:
             _verify_control_schema(connection, self.state)
         if self.state is not None and self.state["guard_format"] == 1:
             _verify_data_guards(connection)
-        if role == "financial" and (self.state is not None or database.writer_token is not None):
+        if role in ("financial", "batch_metadata") and (self.state is not None or database.writer_token is not None):
             try:
                 _require_guard_format(self.state)
+                if role == "batch_metadata" and (self.state is None or self.state.get("batch_format") != 1):
+                    raise WriterFenceError("batch_capability_required", "batch metadata requires its recorded authority capability")
                 self.started_at = _assert_token(database, self.state, database.writer_token)
             except WriterFenceError as exc:
                 self.token_error = exc
@@ -435,7 +476,7 @@ class _TransactionGuard:
 
     def _sql_permit(self):
         try:
-            if self.role != "financial" or self.denied is not None:
+            if self.role not in ("financial", "batch_metadata") or self.denied is not None:
                 return 0
             # BEGIN IMMEDIATE prevents any other connection from changing this
             # persistent lease snapshot. Expiry/PID/boot are checked on every
@@ -505,6 +546,13 @@ class _TransactionGuard:
             return _OK if allowed else self._deny()
         if self.token_error is not None:
             return self._deny(self.token_error)
+        if self.role == "batch_metadata":
+            if self.state is None or self.state.get("batch_format") != 1:
+                return self._deny(WriterFenceError("batch_capability_required", "batch metadata requires an enabled authority"))
+            if action != _ACTIONS["INSERT"] or first not in _BATCH_TABLES:
+                return self._deny()
+            self.written = True
+            return _OK
         if self.state is None:
             # Preserve un-managed legacy transaction behavior, except that
             # reserved lease state can only be initialized through its control API.
@@ -548,6 +596,22 @@ class _TransactionGuard:
             self.connection.set_authorizer(None)
         if self._udf_registered:
             self.connection.create_function("uta_writer_fence_v1", 0, None)
+
+
+def _assert_financial_joinable(database, connection):
+    """Require an existing financial role; never create or elevate one.
+
+    The legacy ledger join contract below intentionally permits raw unmanaged
+    transactions. New composable admission paths use this stricter contract.
+    """
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is not None and guard.connection is connection
+            and guard.database.path == database.path
+            and guard.database.writer_token == database.writer_token
+            and guard.role == "financial"):
+        return
+    raise WriterFenceError("unguarded_connection", "borrowing requires the existing authority's financial transaction")
 
 
 def _assert_joinable(database, connection):

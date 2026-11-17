@@ -743,7 +743,7 @@ class ShardWorkerView:
     """
 
     def __init__(self, directory, shard, token, *, service_options=None,
-                 account_batch=25, matches_per_symbol=10, _startup=None):
+                 account_batch=25, matches_per_symbol=10, normal_cache_size=0, _startup=None):
         from .supervisor import ExchangeWorker
 
         self._control = _open_router_control(directory)
@@ -771,10 +771,12 @@ class ShardWorkerView:
                     self._exchange.credit = CreditService(self._exchange, _startup=_startup)
                 if _startup is None:
                     self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
-                                                      matches_per_symbol=matches_per_symbol)
+                                                      matches_per_symbol=matches_per_symbol,
+                                                      normal_cache_size=normal_cache_size)
                 else:
                     self._background = _startup.take_worker(self._exchange, account_batch=account_batch,
-                                                            matches_per_symbol=matches_per_symbol)
+                                                            matches_per_symbol=matches_per_symbol,
+                                                            normal_cache_size=normal_cache_size)
         except ServiceError as exc:
             if exc.code in _INTEGRITY_FAULTS:
                 self._freeze(exc.code)
@@ -849,6 +851,29 @@ class ShardWorkerView:
             if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:
                 self._freeze(cause.code)
             raise
+
+    def process_batch(self, store, batches, *, size):
+        """Prepare outside the router gate; execute one financial txn under SH."""
+        try:
+            attempt_id = batches.prepare(size=size)
+            if attempt_id is None:
+                receipt = self.process_one(store)
+                return [] if receipt is None else [receipt]
+            with self._control._lock():
+                state = self._control._state()
+                claims = self._control._batch_funding_claims()
+                return batches.process(self._exchange, attempt_id,
+                    guard=lambda connection, record: self._command_guard(connection, record, state, claims),
+                    credit=self._exchange.credit)
+        except BaseException as exc:
+            cause = getattr(exc, "cause", exc)
+            if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:
+                self._freeze(cause.code)
+            raise
+
+    def recover_batch(self, batches, attempt_id):
+        with self._control._lock():
+            return batches.recover(attempt_id)
 
     def run_background_once(self):
         try:

@@ -1,0 +1,16 @@
+--- a/benchmarks/run_managed_soak.py
++++ b/benchmarks/run_managed_soak.py
+@@ -814,7 +814,12 @@
+         # Stat once, count every surviving regular file, and never hide main
+         # database loss or permission/I/O errors behind an is_file() predicate.
+         required = {self.directory / name for name in _RESOURCE_DATABASES}
+-        paths = dict.fromkeys([*required, *self.directory.rglob("*")])
++        def enumeration_error(error):
++            raise error  # pathlib's recursive glob can suppress scan errors.
++        discovered = (Path(root) / name
++            for root, directories, files in os.walk(self.directory, onerror=enumeration_error)
++            for name in directories + files)
++        paths = dict.fromkeys([*required, *discovered])
+         total = 0
+         for path in paths:
+             try:

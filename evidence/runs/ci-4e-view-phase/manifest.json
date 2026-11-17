@@ -1,0 +1,83 @@
+{
+  "investigated_head": "4e59084544b8816e6e50e4caea7c6f60cff43a00",
+  "reported_ci_merge_commit": "1702398f52970ac7b29619c46ad11b2a9f6909c2",
+  "ci_context": {
+    "pr_run": 44049410166,
+    "push_run": 44049229592,
+    "artifact_id": 14312264166
+  },
+  "original_ci": {
+    "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+    "sqlite": "3.46.1",
+    "tests_run": 1168,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "passed": false,
+    "source_unchanged": true,
+    "test_log_sha256": "ec310773c639fcfd0fbc0a19ecff99194398dfd11479a4d5d6efaaceab2719cd"
+  },
+  "ci_validator_manifest_matches_head_source_files": 217,
+  "all_ci_validator_input_hashes_match_head": true,
+  "original_test_sha256": "42d5f46629dec1ef70766ffcb272f3b41e98e0b1e9c8851d5a391e99f3a14cfb",
+  "patched_test_sha256": "854812c76cb88b91012eeac7f0ba8fc3b9e77ed15624632fe9ae04610203d37a",
+  "local_runtime": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "cpus_per_probe_or_test_run": 1,
+    "python311_available": false
+  },
+  "controlled_phase_probe_passed": true,
+  "controlled_phase_is_unique_ci_cause_proof": false,
+  "patched_http_tests": {
+    "tests_run": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "duration_seconds": 6.134
+  },
+  "runtime_changed": false,
+  "production_approved": false,
+  "artifacts": {
+    "baseline-phase-probe.jsonl": {
+      "bytes": 23158,
+      "sha256": "bf73325f88f4bb0ff97b019639a45d24514e815dc9aa98b3ddcb2f31f936db61"
+    },
+    "baseline-phase-probe.py": {
+      "bytes": 4823,
+      "sha256": "3277a8aba5468703d04ac7d8b55afc9064c34ae92cf2f8d04b25913ea9d1a998"
+    },
+    "original-ci-artifact.zip": {
+      "bytes": 50258,
+      "sha256": "a5d8348e692215ed95dead61e09d03e51136c97e2ccc049d5d83a6da508ad929"
+    },
+    "original-ci-failure-excerpt.txt": {
+      "bytes": 797,
+      "sha256": "778a73f564a9a404687acd7617ffa0e4380750ffc68917813490333a44a527f6"
+    },
+    "patched-http-py312.txt": {
+      "bytes": 746,
+      "sha256": "618ea4cb11bcf7a52b92d97b0d53d250b79d18bca7bb71805f74e1c8633a9940"
+    },
+    "patched-phases/test_pending_partial_publication_does_not_claim_a_local_market_commit/1-partial-before-local-owner.json": {
+      "bytes": 5317,
+      "sha256": "6d884459f21d889f817aa5ed6686e8423b05e8d7a4fb3402a010c99d26a87d2a"
+    },
+    "patched-phases/test_pending_partial_publication_does_not_claim_a_local_market_commit/2-local-publication-committed.json": {
+      "bytes": 5232,
+      "sha256": "a84c52b3d0d332ff7f19cfa91c30adb4a06510223738ba6cc5a3e319aa4a309c"
+    },
+    "patched-phases/test_pending_partial_publication_does_not_claim_a_local_market_commit/3-same-original-publication-still-partial.json": {
+      "bytes": 3236,
+      "sha256": "11783b17e38ae7a8e95e5d853158ac32dbf102bf4aad161989b11679e60cdd18"
+    },
+    "patched-phases/test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http/1-owner-ready-before-market.json": {
+      "bytes": 1782,
+      "sha256": "a7ffa42f725c687fde1e24c2b21d14efd5e63cf45b5c8a7076f206f9fbb38517"
+    },
+    "patched-phases/test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http/2-local-publication-committed.json": {
+      "bytes": 5498,
+      "sha256": "1f45e2424389f94da072bc652fb553a5ebf2bef8ce4e69ee7c6cbc6cc9b8ad9d"
+    }
+  }
+}

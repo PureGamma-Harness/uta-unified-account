@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import configparser
+from email.parser import BytesParser
+from email.policy import compat32
 from hashlib import sha256
 import io
 import json
 from pathlib import Path, PurePosixPath
+import re
 import subprocess
 import tarfile
 import zipfile
@@ -14,6 +18,65 @@ import zipfile
 
 def digest(data):
     return sha256(data).hexdigest()
+
+
+def declared_version(project_source, init_source):
+    """Read this repository's controlled static declarations without execution.
+
+    Python 3.10 has no tomllib. Accept canonical bare table/key names and one
+    unescaped ASCII project.version string. Dynamic, duplicate, quoted/dotted
+    keys and multiline TOML strings need an explicitly reviewed format change.
+    The current package initializer contains only its docstring and version.
+    """
+    table, tables, keys, version = None, set(), set(), None
+    literal = r"(?P<quote>['\"])(?P<version>[0-9][0-9A-Za-z.!+_-]{0,63})(?P=quote)"
+    for raw in project_source.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if '"""' in line or "'''" in line:
+            raise AssertionError("project.version requires controlled static TOML; multiline strings are unsupported")
+        if line.startswith("["):
+            header = re.fullmatch(r"\[([A-Za-z0-9_.-]+)\]\s*(?:#.*)?", line)
+            if header is None:
+                raise AssertionError("project.version requires canonical unquoted TOML tables")
+            table = header[1]
+            if table in tables:
+                raise AssertionError("duplicate TOML table declaration")
+            if table.split(".")[:2] in (["project", "version"], ["project", "dynamic"]):
+                raise AssertionError("project.version must be one static string")
+            tables.add(table)
+            continue
+        if table is None:
+            raise AssertionError("project.version requires a canonical [project] table")
+        if table != "project" or "=" not in line:
+            continue
+        assignment = re.match(r"([A-Za-z0-9_-]+)\s*=", line)
+        if assignment is None:
+            raise AssertionError("project.version requires unquoted bare project keys")
+        key = assignment[1]
+        if key in keys:
+            raise AssertionError("duplicate project key declaration")
+        keys.add(key)
+        if key == "dynamic":
+            raise AssertionError("project.version must be static; project.dynamic is unsupported")
+        if key == "version":
+            match = re.fullmatch(r"version\s*=\s*" + literal + r"\s*(?:#.*)?", line)
+            if match is None:
+                raise AssertionError("project.version must be one static ASCII string")
+            version = match["version"]
+    if "project" not in tables or version is None:
+        raise AssertionError("frozen source must declare one static project.version")
+    body = ast.parse(init_source, filename="uta/__init__.py").body
+    if body and isinstance(body[0], ast.Expr) and isinstance(body[0].value, ast.Constant) and isinstance(body[0].value.value, str):
+        body = body[1:]
+    if (len(body) != 1 or not isinstance(body[0], ast.Assign) or len(body[0].targets) != 1
+            or not isinstance(body[0].targets[0], ast.Name) or body[0].targets[0].id != "__version__"
+            or not isinstance(body[0].value, ast.Constant) or not isinstance(body[0].value.value, str)):
+        raise AssertionError("uta.__version__ must be one static literal assignment")
+    if body[0].value.value != version:
+        raise AssertionError("frozen uta.__version__ differs from project.version")
+    return version
 
 
 def main():
@@ -31,6 +94,14 @@ def main():
     if git("rev-parse", "HEAD") != commit or git("diff", "--name-only", commit, "--"):
         raise AssertionError("release checkout HEAD/runtime/manifest differs from the frozen commit")
     paths = git("ls-tree", "-r", "--name-only", commit).splitlines()
+    if not {"pyproject.toml", "uta/__init__.py"} <= set(paths):
+        raise AssertionError("frozen source must track both release version declarations")
+    if git("ls-files", "--others", "--exclude-standard"):
+        raise AssertionError("release checkout contains untracked source files")
+    project_source, init_source = (subprocess.check_output(
+        ["git", "show", commit + ":" + name], cwd=root, text=True)
+        for name in ("pyproject.toml", "uta/__init__.py"))
+    version = declared_version(project_source, init_source)
     runtime = {name: digest((root / name).read_bytes()) for name in paths
                if name.startswith("uta/") and name.endswith((".py", ".html"))}
     # The release contract includes every tracked source/evidence path. New
@@ -46,8 +117,12 @@ def main():
             raise AssertionError("unexpected wheel runtime file")
         installed = {name: digest(wheel.read(name)) for name in wheel.namelist()
                      if name.startswith("uta/") and name.endswith((".py", ".html"))}
-        metadata_name = next(name for name in wheel.namelist() if name.endswith(".dist-info/METADATA"))
-        metadata = wheel.read(metadata_name).decode()
+        metadata_names = [name for name in wheel_names if name.endswith(".dist-info/METADATA")]
+        if len(metadata_names) != 1:
+            raise AssertionError("wheel must contain exactly one METADATA file")
+        metadata_name = metadata_names[0]
+        metadata = BytesParser(policy=compat32).parsebytes(wheel.read(metadata_name), headersonly=True)
+        metadata_versions = metadata.get_all("Version", [])
         entry_points = wheel.read(metadata_name.removesuffix("METADATA") + "entry_points.txt").decode()
     parsed_entries = configparser.ConfigParser(interpolation=None)
     parsed_entries.read_string(entry_points)
@@ -76,13 +151,14 @@ def main():
         provenance = json.loads(source.extractfile(members["tests/fixtures/legacy_ad3f5b8_provenance.json"]).read())
         with tarfile.open(fileobj=io.BytesIO(fixture), mode="r:gz") as original:
             licensed = "LICENSE" in original.getnames()
-    checks = {"version": "Version: 0.4.0a1\n" in metadata,
+    checks = {"version": len(metadata_versions) == 1 and metadata_versions[0] == version,
         "wheel_runtime_exact": installed == runtime, "sdist_runtime_exact": source_runtime == runtime,
         "sdist_required_files_exact": not missing and not mismatched,
         "legacy_fixture_pinned": digest(fixture) == provenance["archive_sha256"],
         "legacy_fixture_licensed": licensed,
         "entry_points": dict(parsed_entries["console_scripts"]) == expected_entries}
-    report = {"source_commit": commit, "version": "0.4.0a1", "runtime_files": runtime,
+    report = {"source_commit": commit, "version": version,
+        "metadata_versions": metadata_versions, "runtime_files": runtime,
         "runtime_tree_sha256": digest(json.dumps(runtime, sort_keys=True, separators=(",", ":")).encode()),
         "sdist_required_files": required, "sdist_missing": missing, "sdist_mismatched": mismatched,
         "sdist_member_count": len(members), "legacy_fixture_provenance": provenance, "entry_points": entry_points,

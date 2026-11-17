@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/workspace/uta-private-stream-review/evidence/runs/private-stream-independent-review/reference_vectors.py", line 113, in <module>
+    main(sys.argv[1])
+  File "/workspace/uta-private-stream-review/evidence/runs/private-stream-independent-review/reference_vectors.py", line 80, in main
+    if 'server_close_hex' in case['expected']:assert result.get('reply_hex', '8802'+struct.pack('>H',result['close']).hex())==case['expected']['server_close_hex']
+                                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+struct.error: required argument is not an integer

@@ -1,0 +1,22 @@
+test_batch_eight_and_cache_eight_recover_prepared_before_new_ready (tests.test_batch_cache_integration.BatchCacheIntegrationTests.test_batch_eight_and_cache_eight_recover_prepared_before_new_ready) ... FAIL
+test_batch_three_with_enabled_cache_keeps_actual_financial_receipts (tests.test_batch_cache_integration.BatchCacheIntegrationTests.test_batch_three_with_enabled_cache_keeps_actual_financial_receipts) ... ok
+test_cli_keeps_both_flags_and_rejects_invalid_values_without_changing_defaults (tests.test_batch_cache_integration.BatchCacheIntegrationTests.test_cli_keeps_both_flags_and_rejects_invalid_values_without_changing_defaults) ... ok
+
+======================================================================
+FAIL: test_batch_eight_and_cache_eight_recover_prepared_before_new_ready (tests.test_batch_cache_integration.BatchCacheIntegrationTests.test_batch_eight_and_cache_eight_recover_prepared_before_new_ready)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-batch-cache-validation/tests/test_batch_cache_integration.py", line 232, in test_batch_eight_and_cache_eight_recover_prepared_before_new_ready
+    new_ready = self.assert_native(new_pid, 8)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-batch-cache-validation/tests/test_batch_cache_integration.py", line 162, in assert_native
+    native = self.wait(lambda: self.observation("native", pid))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-batch-cache-validation/tests/test_batch_cache_integration.py", line 150, in wait
+    self.fail("bounded combined worker fact missing: " + repr(self.router.diagnostics()))
+AssertionError: bounded combined worker fact missing: {'state': {'halted': False, 'publishing': False, 'epoch': 1, 'market_version': 1, 'market_digest': '056d3955f9531c47c7e8e07405b110c1bdda0eb09ecaac6f4afa1a2b62acacc7', 'watermarks': {'0': 1}, 'error': None}, 'state_observed': True, 'workers': [{'shard': 0, 'pid': 116082, 'alive': True, 'lease_active': True, 'owner_pid': 116082, 'generation': 2, 'report': {'shard': 0, 'pid': 116082, 'generation': 2, 'state': 'ready'}, 'market_ready': True, 'owner_ready': True, 'locally_active': True, 'funding_registry_ready': True, 'reason': 'ready', 'market_version': 1, 'market_digest': '056d3955f9531c47c7e8e07405b110c1bdda0eb09ecaac6f4afa1a2b62acacc7', 'market_observed_at': '2026-11-17T09:25:22.536930+00:00'}], 'managed': True, 'decision_audit_required': True, 'profile': 'managed_audit_required', 'recovered_orphans': [], 'workers_alive': True, 'financial_ready': True, 'ready': True, 'reason': 'ready'}
+
+----------------------------------------------------------------------
+Ran 3 tests in 6.561s
+
+FAILED (failures=1)

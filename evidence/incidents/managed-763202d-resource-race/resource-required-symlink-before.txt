@@ -1,0 +1,31 @@
+test_required_main_direct_or_dangling_symlink_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_required_main_direct_or_dangling_symlink_is_fatal) ... 
+  test_required_main_direct_or_dangling_symlink_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_required_main_direct_or_dangling_symlink_is_fatal) (dangling=False) ... FAIL
+  test_required_main_direct_or_dangling_symlink_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_required_main_direct_or_dangling_symlink_is_fatal) (dangling=True) ... ERROR
+
+======================================================================
+ERROR: test_required_main_direct_or_dangling_symlink_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_required_main_direct_or_dangling_symlink_is_fatal) (dangling=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 126, in test_required_main_direct_or_dangling_symlink_is_fatal
+    ManagedSoak._resources(job)
+  File "/workspace/uta-managed-resource-incident/benchmarks/run_managed_soak.py", line 826, in _resources
+    details = path.stat()
+              ^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpfj8mrruw/managed/shard-0000.sqlite3'
+
+======================================================================
+FAIL: test_required_main_direct_or_dangling_symlink_is_fatal (tests.test_managed_soak_resources.ManagedSoakResourceTests.test_required_main_direct_or_dangling_symlink_is_fatal) (dangling=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-resource-incident/tests/test_managed_soak_resources.py", line 125, in test_required_main_direct_or_dangling_symlink_is_fatal
+    with self.assertRaisesRegex(RuntimeError, 'required managed database'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.004s
+
+FAILED (failures=1, errors=1)

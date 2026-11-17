@@ -2,6 +2,11 @@
 
 本规范对应同一个 SQLite 事务内的 `ExchangeService`、`DurableLedger` 与 `CreditService`。范围是多资产抵押、USD 报告单位、线性永续及显式现货借贷；本阶段没有 Isolated、完整 PM、自动借款或第三方资金托管。所有金额都用 `Decimal` 输入，按资产固定精度转换成整数最小单位；不能整除最小单位的输入直接拒绝，不隐式四舍五入。
 
+入口另有独立的表示和幅度限制：交易、成交及存款最多8位小数和绝对值1e12；信用金额按
+资产 codec 可达18位；持久金额和余额均严格小于10^38个最小单位。不能由资产 scale 推断
+每个入口都接受该精度。完整 exponent/coefficient、舍入方向及手算标准见
+[数值契约独立复核](numeric-contract-independent-review.md)。
+
 ## 总账不变量
 
 每个 journal event 的每一种资产分别满足 `sum(posting.amount) = 0`。正数增加命名科目余额，负数减少余额；这里是代数记账约定，不能把 BTC 与 USD 数量相加平账。科目名同时区分现金与债权债务，不能把借款到账和借款负债提前净额化。

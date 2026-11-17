@@ -1,0 +1,171 @@
+{
+  "helper_sha256": "52a6fdf166df9a8da88d0de1cccdff302d2ce71caaefd805ed60c5e4f6e40479",
+  "historical_results_preserved": true,
+  "inclusions": [
+    {
+      "bytes": 50258,
+      "historical_ci": {
+        "code_commit": "1702398f52970ac7b29619c46ad11b2a9f6909c2",
+        "errors": 0,
+        "failures": 1,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1168
+      },
+      "historical_ci_is_current_release_qualification": false,
+      "members": [
+        {
+          "bytes": 46001,
+          "name": "summary.json",
+          "sha256": "31ab7127e89417e4d1a5680b8cd9a5db003d11d243641c0f3d9abbf2d2d2a829",
+          "tracked_raw_sibling_present_and_exact": false
+        },
+        {
+          "bytes": 237128,
+          "name": "unittest.txt",
+          "sha256": "ec310773c639fcfd0fbc0a19ecff99194398dfd11479a4d5d6efaaceab2719cd",
+          "tracked_raw_sibling_present_and_exact": false
+        },
+        {
+          "bytes": 155,
+          "name": "worker-result.json",
+          "sha256": "e305da86e33d1780121bfe584bbb5d43655cf42263b6fcb953a4053acb393869",
+          "tracked_raw_sibling_present_and_exact": false
+        }
+      ],
+      "provenance": {
+        "recorded_code_commit": "1702398f52970ac7b29619c46ad11b2a9f6909c2",
+        "reference_commit": "4e59084544b8816e6e50e4caea7c6f60cff43a00",
+        "reference_source": "frozen evidence/runs/ci-4e-view-phase/manifest.json investigated_head + reported_ci_merge_commit + original artifact hash; exact217 input source hashes are independently recomputed",
+        "sha256": "a5d8348e692215ed95dead61e09d03e51136c97e2ccc049d5d83a6da508ad929"
+      },
+      "recorded_source_file_count": 217,
+      "sha256": "a5d8348e692215ed95dead61e09d03e51136c97e2ccc049d5d83a6da508ad929",
+      "source_hashes_match_reference_commit": true,
+      "source_sdist_unpacked_byte_exact": true,
+      "tracked_path": "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip"
+    },
+    {
+      "bytes": 47935,
+      "historical_ci": {
+        "code_commit": "bd8e5b452166477bb15adeb5807f2c1b98b782ab",
+        "errors": 1,
+        "failures": 0,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1110
+      },
+      "historical_ci_is_current_release_qualification": false,
+      "members": [
+        {
+          "bytes": 44013,
+          "name": "summary.json",
+          "sha256": "e84a3dbcfbe47bdd3244b275b4651b035a2f5d096ee0b899b0a4590718f0f1c0",
+          "tracked_raw_sibling_present_and_exact": true
+        },
+        {
+          "bytes": 224907,
+          "name": "unittest.txt",
+          "sha256": "458ece9c5c89cc8ef1abb0fc45538ce0fdbb78a769c9dd4b60da6b4dbd5ac5a3",
+          "tracked_raw_sibling_present_and_exact": true
+        },
+        {
+          "bytes": 155,
+          "name": "worker-result.json",
+          "sha256": "ae4c058712110bc176588f28ee564dfe562b04d2a56c2a3e39f6e5ed4104eb30",
+          "tracked_raw_sibling_present_and_exact": true
+        }
+      ],
+      "provenance": {
+        "recorded_code_commit": "bd8e5b452166477bb15adeb5807f2c1b98b782ab",
+        "reference_commit": "7ae94eb8a783f8e134ac90c11a713df7bb02d5f1",
+        "reference_source": "frozen evidence/20261117-package-763202d/verify_ci_zip.py; original CI source hashes were tied to source candidate7ae; merge commit is preserved separately",
+        "sha256": "097dd0d4e266d82a85404c32c9e9c6ec8ea19c7bd8817831b76a6c4b44893bdf"
+      },
+      "recorded_source_file_count": 208,
+      "sha256": "097dd0d4e266d82a85404c32c9e9c6ec8ea19c7bd8817831b76a6c4b44893bdf",
+      "source_hashes_match_reference_commit": true,
+      "source_sdist_unpacked_byte_exact": true,
+      "tracked_path": "evidence/runs/startup-producer-fixture/original-ci/artifact.zip"
+    }
+  ],
+  "negative_artifacts_installed": false,
+  "omission_controls": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-capacity-freeze-a35fd56/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-capacity-freeze-a35fd56",
+        "--commit",
+        "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+        "--wheel",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/tracked-ci-zip-checks/zip-0-omitted.tar.gz",
+        "--output",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/tracked-ci-zip-checks/zip-0-report.json"
+      ],
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "cwd": "/workspace/uta-package-a35fd56/evidence/20261117-package-a35fd56",
+      "negative_archive_sha256": "b27127de5ad05584e20b7a4338652cc26917a8d3d6c37e750296c73b85ab20ba",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip",
+      "returncode": 1,
+      "sdist_missing": [
+        "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip"
+      ],
+      "unchanged_positive_wheel_and_runtime_maps": true
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-capacity-freeze-a35fd56/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-capacity-freeze-a35fd56",
+        "--commit",
+        "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+        "--wheel",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/tracked-ci-zip-checks/zip-1-omitted.tar.gz",
+        "--output",
+        "/tmp/uta-release-a35fd56-gfjdl4l_/tracked-ci-zip-checks/zip-1-report.json"
+      ],
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "cwd": "/workspace/uta-package-a35fd56/evidence/20261117-package-a35fd56",
+      "negative_archive_sha256": "5f2c3cbc6f939354d9286699d7961f019989ea7099f96b8a723812276fe86a90",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "evidence/runs/startup-producer-fixture/original-ci/artifact.zip",
+      "returncode": 1,
+      "sdist_missing": [
+        "evidence/runs/startup-producer-fixture/original-ci/artifact.zip"
+      ],
+      "unchanged_positive_wheel_and_runtime_maps": true
+    }
+  ],
+  "passed": true,
+  "positive_artifacts_unchanged": true,
+  "production_approved": false,
+  "provenance_sha256": "d17371135a1058c671be95ad04e5c54bc06e1b3ce15f559e68a04e62ad1e9098",
+  "scope": "all tracked historical CI ZIPs; new actual artifact inclusion and omission checks",
+  "source_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537"
+}

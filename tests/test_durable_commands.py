@@ -18,7 +18,7 @@ from uta.writer_fence import WriterFence
 
 
 class DurableCommandTests(unittest.TestCase):
-    def setUp(self):
+    def setUp(self, *, bootstrap=None):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.path = Path(temporary.name) / "financial.sqlite3"
@@ -29,6 +29,8 @@ class DurableCommandTests(unittest.TestCase):
         self.legacy.deposit("alice", "fund", "USD", D("20.08"))
         self.legacy.publish_market(self.market())
         self.legacy.set_kill_switch(False)
+        if bootstrap is not None:
+            bootstrap(self.legacy)
         self.queue = QueueStore(self.database, clock=lambda: self.now, initialize=True)
         self.fence = WriterFence(self.database)
         self.fence.enable("test-inbox")
@@ -236,14 +238,21 @@ class DurableRepaymentTests(unittest.TestCase):
     market = DurableCommandTests.market
 
     def setUp(self):
-        DurableCommandTests.setUp(self)
+        def bootstrap(legacy):
+            credit = CreditService(legacy)
+            credit.configure_asset_limit("USD", D(100))
+            credit.configure_limit("alice", "USD", D(100))
+            credit.fund_pool("pool", "USD", D(100), source_reference="synthetic-pool-capital")
+            if self._testMethodName in {
+                    "test_repayment_pays_interest_then_principal_during_halt_and_price_outage",
+                    "test_repayment_ledger_and_receipt_rollback_together_on_technical_failure"}:
+                credit.borrow("alice", "loan", "USD", D(10))
+        # Existing loans are source obligations before sealing; a managed owner
+        # does not manufacture new unaudited credit to test debt repayment.
+        DurableCommandTests.setUp(self, bootstrap=bootstrap)
         self.credit = CreditService(self.writer)
-        self.credit.configure_asset_limit("USD", D(100))
-        self.credit.configure_limit("alice", "USD", D(100))
-        self.credit.fund_pool("pool", "USD", D(100), source_reference="synthetic-pool-capital")
 
     def test_repayment_pays_interest_then_principal_during_halt_and_price_outage(self):
-        self.credit.borrow("alice", "loan", "USD", D(10))
         self.credit.accrue_interest("alice", "interest", "USD", D(1))
         self.writer.set_kill_switch(True)
         self.now += timedelta(seconds=6)
@@ -285,7 +294,6 @@ class DurableRepaymentTests(unittest.TestCase):
         self.assertIsNone(queue.status("cancel"))
 
     def test_repayment_ledger_and_receipt_rollback_together_on_technical_failure(self):
-        self.credit.borrow("alice", "loan", "USD", D(10))
         before = self.writer.account("alice")
         journal = self.writer.ledger.journal()
         self.queue.enqueue_repay("alice", "repay", "USD", D(2))
