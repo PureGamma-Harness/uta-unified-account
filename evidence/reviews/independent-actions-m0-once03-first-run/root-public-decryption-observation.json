@@ -1,0 +1,93 @@
+{
+  "started_utc": "2026-11-17T21:33:41.137117+00:00",
+  "run_id": 44179679904,
+  "attempt": 1,
+  "marker_commit": "dfd62ae6fbbdad51b5e1b3507318b343cdc314b5",
+  "control_commit": "39151b745418e70c23fc786a484beee3dc429594",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "helper_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+  "input_sha256": "4e04676e5377bfc5299f684023d6d08d2229cca95ebd7c7d864eb834e9e23076",
+  "certificate": {
+    "openssl_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+    "openssl_executable_sha256": "acc10176d038aeb7b2a77d9ec972ac2985857a7191f7aecb7c54ef0e2c7e9549",
+    "public_certificate_pem_sha256": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed",
+    "public_certificate_der_sha256": "93e081eb110b196c355e0b6a3d91358ef530d7b8a98d6a3b392f47e64229c783",
+    "public_spki_der_sha256": "de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1"
+  },
+  "expected_total_streams": 4,
+  "missing_streams": [
+    "case-owner.stderr"
+  ],
+  "missing_stream_not_assumed_empty": true,
+  "stream_observations": [
+    {
+      "stream": "driver.stdout",
+      "cipher_sha256": "f50733771f0dfbaf203ace2b19d291fb0d76c5aa69a716e705bdb381ac5c8393",
+      "cipher_bytes": 1156,
+      "binding_valid": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "plaintext_published": false,
+      "authenticated_decrypt_exit_zero": true,
+      "protocol": {
+        "protocol_verified": true,
+        "format": "CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256_MGF1_SHA256",
+        "canonical_definite_DER": true,
+        "nonce_bytes": 12,
+        "tag_bytes": 16,
+        "recipient_count": 1,
+        "attributes_allowed": false
+      },
+      "original_contents_not_published": true,
+      "status": "AUTHENTICATED_CONTAINER_VALID"
+    },
+    {
+      "stream": "driver.stderr",
+      "cipher_sha256": "85e0dd9706b31a3d61b6072a57f8a229bd8bb00f2df57e4416916e83c64c4428",
+      "cipher_bytes": 1156,
+      "binding_valid": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "plaintext_published": false,
+      "authenticated_decrypt_exit_zero": true,
+      "protocol": {
+        "protocol_verified": true,
+        "format": "CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256_MGF1_SHA256",
+        "canonical_definite_DER": true,
+        "nonce_bytes": 12,
+        "tag_bytes": 16,
+        "recipient_count": 1,
+        "attributes_allowed": false
+      },
+      "original_contents_not_published": true,
+      "status": "AUTHENTICATED_CONTAINER_VALID"
+    },
+    {
+      "stream": "case-owner.stdout",
+      "cipher_sha256": "61178f6f27ff98c75302d6a613a6aa2dcd50c6d7df276307e9c85f262fc15454",
+      "cipher_bytes": 1160,
+      "binding_valid": true,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "plaintext_published": false,
+      "authenticated_decrypt_exit_zero": true,
+      "protocol": {
+        "protocol_verified": true,
+        "format": "CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256_MGF1_SHA256",
+        "canonical_definite_DER": true,
+        "nonce_bytes": 12,
+        "tag_bytes": 16,
+        "recipient_count": 1,
+        "attributes_allowed": false
+      },
+      "original_contents_not_published": true,
+      "status": "AUTHENTICATED_CONTAINER_VALID"
+    }
+  ],
+  "plaintext_published": false,
+  "production_approved": false,
+  "all_three_available_valid": true,
+  "four_stream_retention_complete": false,
+  "elapsed_ns": 72233707,
+  "ended_utc": "2026-11-17T21:33:41.209351+00:00"
+}
