@@ -37,6 +37,7 @@ sys.path.insert(0, str(ROOT))
 from benchmarks.run_soak import _atomic, _pid_identity, environment, readonly
 from benchmarks.run_benchmark import LatencyHistogram
 from benchmarks.managed_qualification import qualify
+from benchmarks.managed_read_holders import IdleReadHolders
 from uta.durable_process import DurableProcessRouter
 from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
@@ -205,6 +206,7 @@ class ManagedSoak:
         self.process = None
         self.listener = None
         self.stderr = None
+        self.read_holders = None
         self.strict_source = strict_source
         self.configuration = requested
         self.configuration.validate()
@@ -215,7 +217,7 @@ class ManagedSoak:
         self.env = environment()
         self.env["source_sha256"]["benchmarks/run_managed_soak.py"] = sha256(Path(__file__).read_bytes()).hexdigest()
         self.env["source_sha256"]["benchmarks/run_benchmark.py"] = sha256((ROOT / "benchmarks/run_benchmark.py").read_bytes()).hexdigest()
-        for relative in ("benchmarks/managed_qualification.py", "tools/run_validation.py"):
+        for relative in ("benchmarks/managed_qualification.py", "benchmarks/managed_read_holders.py", "tools/run_validation.py"):
             self.env["source_sha256"][relative] = sha256((ROOT / relative).read_bytes()).hexdigest()
         self.env["workload_spec_sha256"] = sha256((ROOT / "docs/managed-soak-golden.md").read_bytes()).hexdigest()
         try:
@@ -886,6 +888,10 @@ class ManagedSoak:
         self._state("controller_sessions", sessions)
         self._state("logs_verified", False)
         try:
+            # The driver owns these idle readers across child generations.
+            # Open after initialization and before the original active clock.
+            self.read_holders = IdleReadHolders(self.directory,
+                expected_identities=self.meta["file_identities"])
             self._start_server()
             with self.checkpoint.read_transaction() as connection:
                 pending_faults = [tuple(row) for row in connection.execute("SELECT round,kind FROM faults WHERE state!='DONE' ORDER BY round,kind")]
@@ -985,9 +991,14 @@ class ManagedSoak:
             if getattr(self, "process", None) is not None or getattr(self, "listener", None) is not None:
                 self._stop_server()
         finally:
-            if getattr(self, "lock", None) is not None:
-                os.close(self.lock)
-                self.lock = None
+            try:
+                if getattr(self, "read_holders", None) is not None:
+                    self.read_holders.close()
+                    self.read_holders = None
+            finally:
+                if getattr(self, "lock", None) is not None:
+                    os.close(self.lock)
+                    self.lock = None
 
 
 def inspect_job(directory):

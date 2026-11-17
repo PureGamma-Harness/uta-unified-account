@@ -1,0 +1,82 @@
+{
+  "started_at": "2026-11-17T11:40:56.358525+00:00",
+  "finished_at": "2026-11-17T11:40:57.507665+00:00",
+  "duration_seconds": 1.1491525970050134,
+  "shared_hard_child_budget_seconds": 29,
+  "authorized_total_ceiling_seconds": 30,
+  "runs": [
+    {
+      "name": "python310",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-ro-anchor-prototype/evidence/experiments/managed-ro-idle-holders/run.py",
+        "--worker",
+        "python310"
+      ],
+      "started_at": "2026-11-17T11:40:56.358567+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T11:40:56.776122+00:00"
+    },
+    {
+      "name": "python312",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-ro-anchor-prototype/evidence/experiments/managed-ro-idle-holders/run.py",
+        "--worker",
+        "python312"
+      ],
+      "started_at": "2026-11-17T11:40:56.776350+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T11:40:57.141600+00:00"
+    },
+    {
+      "name": "python313",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/usr/bin/python3.13",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-ro-anchor-prototype/evidence/experiments/managed-ro-idle-holders/run.py",
+        "--worker",
+        "python313"
+      ],
+      "started_at": "2026-11-17T11:40:57.141869+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T11:40:57.507419+00:00"
+    }
+  ],
+  "source_before": {
+    "tools/managed_ro_anchor_prototype.py": "c064811fb3c3a48c0d34ab70e95d512ca9a8ac5985886e113dc40e1bdb916116",
+    "tests/test_managed_ro_anchor_prototype.py": "d86e515f9e37b4b568429761c928cd175a5862c17a438dba855755029e489021"
+  },
+  "source_after": {
+    "tools/managed_ro_anchor_prototype.py": "c064811fb3c3a48c0d34ab70e95d512ca9a8ac5985886e113dc40e1bdb916116",
+    "tests/test_managed_ro_anchor_prototype.py": "d86e515f9e37b4b568429761c928cd175a5862c17a438dba855755029e489021"
+  },
+  "source_unchanged": true,
+  "all_three_runtime_experiments_passed": true,
+  "service_wired": false,
+  "service_started": false,
+  "original_job_or_source_sql": false,
+  "original_historical_error_cause_proven": false,
+  "production_approved": false,
+  "continuous_6h_stability_passed": false
+}
