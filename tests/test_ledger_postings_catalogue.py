@@ -126,6 +126,8 @@ class LedgerPostingsCatalogueTests(unittest.TestCase):
         self.assertEqual({tuple(r[2:]) for r in self.original["foreign_keys"]},
                          {("ledger_events", "sequence", "sequence", "NO ACTION", "NO ACTION", "NONE"),
                           ("ledger_assets", "asset", "asset", "NO ACTION", "NO ACTION", "NONE")})
+        (self.directory / "positive-state.json").write_text(json.dumps(
+            {"verified_events": 2, "current": self.snapshot(), "backup": self.snapshot(backup)}, indent=2) + "\n")
 
     def test_lc002_missing_event_fk_with_orphan_refuses(self):
         self.rebuild(lambda sql: sql.replace("sequence INTEGER NOT NULL REFERENCES ledger_events(sequence)",
@@ -212,6 +214,9 @@ class LedgerPostingsCatalogueTests(unittest.TestCase):
             self.assertTrue(any(row[0] == "trigger" and row[2] == "ledger_postings"
                                 and row[1].startswith("writer_fence_data_") for row in rows))
             self.assertEqual(self.snapshot()["tables"], self.original["tables"])
+            # Only base-ledger rows are serialized; control/owner/token rows stay private.
+            (self.directory / "positive-state.json").write_text(json.dumps(
+                {"verified_events": 2, "current": self.snapshot()}, indent=2) + "\n")
         finally:
             fence.release(token)
 
