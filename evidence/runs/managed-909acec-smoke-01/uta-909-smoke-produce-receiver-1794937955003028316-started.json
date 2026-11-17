@@ -1,0 +1,35 @@
+{
+  "actual_popen_wall_ns": 1794938042576678112,
+  "admission_guard": {
+    "fresh_admission_check_passed": true,
+    "guard_is_not_blanket_permission": true,
+    "phase": "smoke-produce",
+    "phase_execution_performed": false,
+    "remaining_validity_ns": 12696743599
+  },
+  "exact_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+    "--profile",
+    "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+    "--root-go-profile-sha256",
+    "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+    "--invoke",
+    "smoke-produce",
+    "--record",
+    "producer.json"
+  ],
+  "other_phase_or_long_authorized": false,
+  "root_go_file": "/tmp/uta-909-root-go-smoke-produce-1794938042535766421.json",
+  "root_go_sha256": "23e9da44bf155e31d99352ecb7d6a373ae954dc4cf63df1a9a74a131f4596994",
+  "snapshot_file": "/tmp/uta-909-admission-root-produce-1794938042473511972.json",
+  "snapshot_sha256": "308a9dadef85cd44746f567d3c626f667fb7aa13fe354bc2e38a29200291e881",
+  "status": "ACTUAL_AUTHORIZED_SMOKE_PRODUCE_WRAPPER_STARTED",
+  "wrapper_identity": {
+    "birth": "7516905",
+    "pid": 289106,
+    "started_boottime_ns": 75169053583039,
+    "started_wall_ns": 1794938042576272015
+  }
+}
