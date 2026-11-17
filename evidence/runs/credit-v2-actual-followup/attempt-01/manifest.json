@@ -1,0 +1,37 @@
+{
+  "scope": "actual BORROW then partial REPAY/historical replay; known quota SAVEPOINT rollback; opening principal+interest REPAY under halt/stale market with actual SELECT trace; separate retained synthetic fixtures",
+  "source_commit": "1156ba1bd90b7fdf4cea3b3289e41b3b44449ce3",
+  "source_sha256": {
+    "uta/credit_native_v2.py": "eabb26de248f7ead003464719e393c56bff0d5feca86c79e80cc69f56b3a63c4",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+    "tests/credit_v2_runtime_fixture.py": "ac0a7140f1d74fd7ebfbdb3ffd09d5252bfe1ba94b32ba21e952ae876a040ef6",
+    "tests/test_credit_v2_runtime_chain.py": "aed2f04fd11e6bdca6141932cf1a5d3e1da2f1876694f50e5582b1093f3c4339"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 50,
+  "begin": "2026-11-17T14:48:38.377743+00:00",
+  "end": "2026-11-17T14:48:54.033758+00:00",
+  "elapsed_seconds": 15.656019822999951,
+  "exit_code": 1,
+  "raw_sha256": "bf97ac2d032430ccd3aad83db27880defea23ff17c8393e8d5a3a7f1fbc5c580",
+  "private_original_databases_retained": true
+}
