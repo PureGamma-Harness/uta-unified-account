@@ -1,0 +1,55 @@
+Frozen source: 4608ffeda0651f8dafd2cd151618a71ed99aa62e
+Frozen checkout: /workspace/uta-operations-freeze-4608ffe (unchanged)
+Report worktree: /workspace/uta-package-4608ffe
+New external work: /tmp/uta-release-4608ffe-QxAxe9
+Every command explicitly selected its stated working directory. Choose new empty build/install/output directories when reproducing; retain these original artifacts and logs.
+
+At /workspace/uta-next-integration:
+git worktree add -b test/package-4608ffe /workspace/uta-package-4608ffe 4608ffeda0651f8dafd2cd151618a71ed99aa62e
+
+At the report worktree:
+mktemp -d /tmp/uta-release-4608ffe-XXXXXX
+Observed directory: /tmp/uta-release-4608ffe-QxAxe9
+python -m venv /tmp/uta-release-4608ffe-QxAxe9/venv
+mkdir /tmp/uta-release-4608ffe-QxAxe9/artifacts /tmp/uta-release-4608ffe-QxAxe9/build-source /tmp/uta-release-4608ffe-QxAxe9/external /tmp/uta-release-4608ffe-QxAxe9/sdist-unpacked
+
+At the frozen checkout:
+git rev-parse HEAD
+git status --short
+git archive --format=tar --output=/tmp/uta-release-4608ffe-QxAxe9/frozen-source.tar HEAD
+Final repeated raw commit/status records are frozen-source-*.stdout.txt; HEAD is exact and status is clean.
+
+At the report worktree:
+tar -xf /tmp/uta-release-4608ffe-QxAxe9/frozen-source.tar -C /tmp/uta-release-4608ffe-QxAxe9/build-source
+
+At the external build-source directory (no .git):
+taskset -c 0 python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-4608ffe-QxAxe9/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-4608ffe-QxAxe9/artifacts"))'
+Exit 0; complete raw stdout/stderr are build.*.txt. CPU 0 was allowed in this environment; select an allowed CPU when reproducing elsewhere.
+
+At the report worktree:
+taskset -c 0 python /workspace/uta-operations-freeze-4608ffe/tools/verify_release_archives.py --source /workspace/uta-operations-freeze-4608ffe --commit 4608ffeda0651f8dafd2cd151618a71ed99aa62e --wheel /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-4608ffe-QxAxe9/artifact-manifest.json
+Exit 0. All 1258 tracked source files and dynamic 50 runtime files are exact.
+
+At the new external directory:
+taskset -c 0 /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -I /workspace/uta-operations-freeze-4608ffe/tools/validate_installed_release.py --source /workspace/uta-operations-freeze-4608ffe --artifact-manifest /tmp/uta-release-4608ffe-QxAxe9/artifact-manifest.json --output /tmp/uta-release-4608ffe-QxAxe9/external/installed
+Both exit 0; actual 8/8 tests in 9.286s, zero skips, plus all eight console commands. Test and individual console stdout/stderr files are retained.
+
+At the same external directory, with a new view output directory:
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -I /workspace/uta-operations-freeze-4608ffe/evidence/20261117-package-13e6924/validate_installed_views.py --source /workspace/uta-operations-freeze-4608ffe --artifact-manifest /tmp/uta-release-4608ffe-QxAxe9/artifact-manifest.json --output /tmp/uta-release-4608ffe-QxAxe9/external/installed-views
+Exit 0; actual 3/3 unchanged frozen view tests in 0.453s, zero skips. The script is generic code from source4608ffe; it does not load old reports. It rebinds the source HEAD, frozen test-helper bytes, new artifacts, all installed files and module paths. View setup/auth writes, constructor tripwires and localhost HTTP transport limits are explicit in its report.
+
+At the report worktree:
+tar -xzf /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1.tar.gz -C /tmp/uta-release-4608ffe-QxAxe9/sdist-unpacked
+
+At /tmp/uta-release-4608ffe-QxAxe9/sdist-unpacked/uta_reference_exchange-0.4.0a1 (no .git):
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-4608ffe-QxAxe9/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+Each exits 0; respectively 7, 1 and 4 tests, no skips. Complete separate stdout/stderr logs are retained.
+
+At the report worktree, actual new-module omission controls:
+taskset -c 0 python evidence/20261117-package-4608ffe/runtime_omission_controls.py --source /workspace/uta-operations-freeze-4608ffe --manifest /tmp/uta-release-4608ffe-QxAxe9/artifact-manifest.json --wheel /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-4608ffe-QxAxe9/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-4608ffe-QxAxe9/negative-controls
+The control harness exits 0 after the two actual primary verifier subprocesses each exit 1 for omitting exactly uta/failure_diagnostics.py. The complete tested script is retained. Each child argv/cwd, return code, expected gate failures and negative archive hash is in negative-controls.json. Child reports and stdout/stderr have negative-wheel/negative-sdist prefixes. No negative archive is installed and no financial test is executed by these controls.
+
+No old package/runtime PASS or long-run result is reused. No six-hour run, benchmark, deployment or full repository suite is attributed to these package checks. Earlier 13e package records and intermediate full-suite red records remain unchanged. No financial/auth database, TLS private key or signing profile is committed.

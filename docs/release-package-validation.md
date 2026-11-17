@@ -1,6 +1,23 @@
 # Independent release package validation
 
-The current frozen candidate `13e6924377f031bb3da7ec94aa88df25ed7612ec` passes
+The current frozen candidate `4608ffeda0651f8dafd2cd151618a71ed99aa62e` passes
+new independent package acceptance: all **1258 tracked files** at that commit
+are exact in the sdist, and both artifacts contain the dynamic **50 runtime
+files**, including `failure_diagnostics.py`. A new venv passes the actual
+isolated **8/8** CLI/protocol cases, all eight console commands and **3/3** frozen
+read-view smoke cases. The no-`.git` sdist passes its 7 legacy, 1 historical
+profile and 4 archive-verifier cases. Actual copies of the new wheel and sdist
+with the diagnostic module omitted each make the primary gate exit 1.
+
+The [4608ffe evidence and artifact hashes](../evidence/20261117-package-4608ffe/README.md)
+and [exact commands](../evidence/20261117-package-4608ffe/commands.txt) bind this
+result to that source and a freshly built/installed runtime. Earlier 13e results
+and intermediate full-suite failures remain unchanged. The integration gate
+owns the separate full runtime matrix and diagnostic/corrupt-inbox regression
+validation. This package exercise runs no six-hour or capacity workload and
+changes no production/HA/real-funds scope; `production_approved` remains false.
+
+The earlier frozen candidate `13e6924377f031bb3da7ec94aa88df25ed7612ec` passes
 fresh independent package acceptance. Its sdist contains all **1171 tracked
 files at that commit** with exact bytes, and both artifacts contain the dynamic
 **49 runtime files**, including the added startup protocol and read projections.
