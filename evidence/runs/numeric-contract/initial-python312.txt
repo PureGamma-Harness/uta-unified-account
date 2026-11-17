@@ -1,0 +1,35 @@
+test_18_place_credit_and_8_place_deposit_are_distinct_existing_contracts (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_18_place_credit_and_8_place_deposit_are_distinct_existing_contracts) ... ok
+test_38_digit_unit_boundary_is_strict_and_overflow_preserves_id (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_38_digit_unit_boundary_is_strict_and_overflow_preserves_id) ... ok
+test_asset_minimum_units_are_exact_and_subunits_are_atomic_rejections (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_asset_minimum_units_are_exact_and_subunits_are_atomic_rejections) ... ok
+test_cumulative_fee_partition_keeps_one_cent_not_three (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_cumulative_fee_partition_keeps_one_cent_not_three) ... ok
+test_display_ratio_can_equal_one_while_exact_amounts_are_above_mm (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_display_ratio_can_equal_one_while_exact_amounts_are_above_mm) ... ok
+test_ledger_representation_envelope_is_separate_from_numeric_equality (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_ledger_representation_envelope_is_separate_from_numeric_equality) ... ok
+test_market_precision_is_bounded_and_does_not_adopt_trading_input_limits (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_market_precision_is_bounded_and_does_not_adopt_trading_input_limits) ... ok
+test_partial_close_carries_rounding_dust_into_remaining_cost (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_partial_close_carries_rounding_dust_into_remaining_cost) ... 
+  test_partial_close_carries_rounding_dust_into_remaining_cost (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_partial_close_carries_rounding_dust_into_remaining_cost) (name='gain') ... ERROR
+  test_partial_close_carries_rounding_dust_into_remaining_cost (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_partial_close_carries_rounding_dust_into_remaining_cost) (name='loss') ... ERROR
+test_settlement_floor_and_fee_ceiling_ignore_caller_context (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_settlement_floor_and_fee_ceiling_ignore_caller_context) ... ok
+test_trading_input_envelope_is_stricter_than_the_asset_codec (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_trading_input_envelope_is_stricter_than_the_asset_codec) ... ok
+
+======================================================================
+ERROR: test_partial_close_carries_rounding_dust_into_remaining_cost (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_partial_close_carries_rounding_dust_into_remaining_cost) (name='gain')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-numeric-contract/tests/test_numeric_contract_reference.py", line 176, in test_partial_close_carries_rounding_dust_into_remaining_cost
+    and row["payload"]["order_id"] == "close"]
+        ~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'order_id'
+
+======================================================================
+ERROR: test_partial_close_carries_rounding_dust_into_remaining_cost (tests.test_numeric_contract_reference.NumericContractReferenceTests.test_partial_close_carries_rounding_dust_into_remaining_cost) (name='loss')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-numeric-contract/tests/test_numeric_contract_reference.py", line 176, in test_partial_close_carries_rounding_dust_into_remaining_cost
+    and row["payload"]["order_id"] == "close"]
+        ~~~~~~~~~~~~~~^^^^^^^^^^^^
+KeyError: 'order_id'
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.243s
+
+FAILED (errors=2)
