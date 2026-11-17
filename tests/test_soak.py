@@ -248,12 +248,29 @@ class SoakTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             job = self.make(directory, duration=1.6, queue_capacity=4)
             def unknown(sequence):
-                time.sleep(1.1)  # Later absolute arrivals are already durable.
+                # Establish the durable precondition, not a wall-clock guess:
+                # a slow producer/heartbeat may not enqueue both later rounds
+                # before a fixed sleep expires. Never execute those rounds here.
+                expected = [(0, "active"), (1, "queued"), (2, "queued")]
+                deadline = time.monotonic() + 3
+                while True:
+                    with soak.readonly(job.path) as connection:
+                        arrivals = [tuple(row) for row in connection.execute(
+                            "SELECT sequence,status FROM soak_arrivals ORDER BY sequence")]
+                    if arrivals == expected:
+                        break
+                    if time.monotonic() >= deadline:
+                        raise AssertionError(
+                            f"durable queue precondition timed out: expected={expected!r}, "
+                            f"observed={arrivals!r}, stopped={job.stop.is_set()}")
+                    time.sleep(.01)
                 job.exchange.submit_order("soak-alice", f"soak:{sequence}:open-buy", "BTC-PERP", D(".02"), D(100))
                 raise RuntimeError("unknown earlier round must fence later financial execution")
             with patch.object(job, "roundtrip", side_effect=unknown):
                 report = job.run()
             self.assertEqual(report["status"], "failed")
+            self.assertEqual([(error["type"], error["message"]) for error in report["errors"]],
+                             [("RuntimeError", "unknown earlier round must fence later financial execution")], report)
             self.assertEqual(report["counts"], {"pending": 1, "queued": 2}, report)
             self.assertEqual(report["financial_counts"]["uta_orders"], 1)
             self.assertEqual(report["financial_counts"]["uta_matches"], 0)
