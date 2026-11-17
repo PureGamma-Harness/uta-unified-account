@@ -87,7 +87,8 @@ matches the historical original assertion explicitly. It no longer interprets
 any earlier testcase failure as reproduction of the original line1252. The
 original baseline recorder/result remain immutable in their earlier archive.
 
-Only syntax compilation and AST/runtime-delta checks have run for this code.
-There has been **no candidate native run**, controlled red/green, whole suite,
-capacity test or production approval. Static peer review and explicit controlled
-run authorization are required before executing it.
+At proposal commit3af, only syntax compilation and AST/runtime-delta checks had
+run. After static peer review and explicit authorization, exactly one native
+component ran; its [subsequent scoped result](expired-publication-controlled-result.md)
+preserves all raw records and timing origins. It does not qualify the failed
+full d421 source, a whole suite, capacity, long soak or production deployment.

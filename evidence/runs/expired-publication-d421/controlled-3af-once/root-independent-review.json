@@ -1,0 +1,28 @@
+{
+  "scope": "independent root read-only component trace review; no SQL or native rerun",
+  "checks": {
+    "one_case_passed": true,
+    "logger_clear": true,
+    "trace_hash_matches": true,
+    "exit_and_watchdog": true,
+    "all_owned_gone": true,
+    "no_forced_cleanup": true,
+    "writer_probe_after_native_sh": true,
+    "unexpired_control": true,
+    "three_recovery_milestones_in_five": true,
+    "publication_lifecycle_in_fifteen": true,
+    "new_generation": true,
+    "financial_rows_unchanged": true
+  },
+  "seconds_from_publication_thread_start": {
+    "old_pidfd_exit_observed_at": 0.2724279559988645,
+    "new_generation_observed_at": 0.6108018249942688,
+    "publication_first_ex_entered_at": 0.27810275899537373,
+    "publication_finished_at": 0.8502445459962473
+  },
+  "seconds_from_captured_fault_to_old_exit": 4.83095341000444,
+  "seconds_from_captured_fault_to_publication_complete": 5.408770000001823,
+  "strict_trace_component_passed": true,
+  "original_d421_qualified": false,
+  "production_approved": false
+}
