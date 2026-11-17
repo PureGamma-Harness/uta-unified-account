@@ -419,9 +419,21 @@ class SpotExchange:
         # retained confirmation event. Index once rather than rescan all audit
         # rows for each historical match.
         audit = {"SPOT_MATCH_CONFIRMED": {}, "SPOT_TRADE_CONFIRMED": {}}
+        def invalid_number(value):
+            # The recorded confirmation contract uses strings for money and
+            # JSON integers for versions/sequence, never floating point values.
+            raise ValueError("floating point confirmation value")
+        def unique_object(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError("duplicate confirmation field")
+                result[key] = value
+            return result
         for row in connection.execute("SELECT event_type,account_id,payload FROM uta_events WHERE event_type IN ('SPOT_MATCH_CONFIRMED','SPOT_TRADE_CONFIRMED')"):
             try:
-                payload = json.loads(row["payload"])
+                payload = json.loads(row["payload"], parse_float=invalid_number,
+                                     parse_constant=invalid_number, object_pairs_hook=unique_object)
             except (ValueError, TypeError) as exc:
                 raise ServiceError("spot_corrupt", "spot audit payload is invalid", 503) from exc
             if (not isinstance(payload, dict) or not isinstance(payload.get("trade_id"), str)

@@ -64,3 +64,11 @@ unchanged. Raw results and source/test digests are in
 `evidence/runs/spot-confirmation-json-review/`. A later runtime repair must run
 these same assertions unchanged and retain the original red evidence. No
 production or long-run approval follows. Production remains **NO-GO**.
+
+The integration correction parses confirmation JSON with duplicate-key rejection
+and rejects JSON floating-point/constant tokens. The recorded contract uses
+decimal strings for money and JSON integers for sequence and version fields, so
+this rejects neither a valid execution price nor an ordinary order lifecycle
+event. Parse failures use the existing `503 spot_corrupt` boundary. The original
+red tests are retained unchanged; their post-correction run and independent
+recheck remain pending while the coordinated performance window is active.
