@@ -125,8 +125,20 @@ def check_original(connection, command_id, *, exported=None):
         "SELECT symbol,quantity,cost_basis FROM uta_positions WHERE account_id=? ORDER BY symbol", (account_id,))}
     equal(positions, post["account"]["positions"], "actual position rows differ")
     orders = [dict(row) for row in connection.execute(
-        "SELECT * FROM uta_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED') ORDER BY order_id", (account_id,))]
+        "SELECT * FROM uta_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED') ORDER BY rowid", (account_id,))]
     equal(orders, post["account"]["orders"], "actual live order rows differ")
+    frozen = defaultdict(int)
+    if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_spot_orders'").fetchone():
+        for lock in connection.execute("SELECT reserved_asset,reserved_amount FROM uta_spot_orders WHERE account_id=? AND status IN ('OPEN','PARTIALLY_FILLED')", (account_id,)):
+            units = CAPTURE.decimal_units(lock["reserved_amount"], "actual frozen amount")
+            need(units >= 0 and lock["reserved_asset"] in {"USD", "BTC"}, "invalid actual spot lock")
+            frozen[lock["reserved_asset"]] += units
+    equal({asset: REF.amount_text(units) for asset, units in frozen.items() if units}, post["account"]["frozen_assets"], "actual frozen balances differ")
+    control = one(connection, "SELECT value FROM uta_config WHERE key='halted'")["value"]
+    need(control in {"true", "false"}, "invalid actual halt state")
+    equal(control == "true", post["account"]["halted"], "actual halt differs")
+    liquidation = connection.execute("SELECT * FROM uta_liquidation_accounts WHERE account_id=?", (account_id,)).fetchone()
+    equal(dict(liquidation) if liquidation is not None else None, post["account"]["liquidation_state"], "actual liquidation state differs")
     for field, table, where, params in (
             ("account_limit_units", "credit_account_limits", "account_id=? AND asset=?", (account_id, "BTC")),
             ("local_asset_limit_units", "credit_asset_limits", "asset=?", ("BTC",))):
