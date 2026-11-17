@@ -263,6 +263,23 @@ class DurableViewTests(unittest.TestCase):
         with self.database.read_transaction() as connection:
             self.assertIsNone(connection.execute("SELECT name FROM sqlite_master WHERE name='audit_order_requires_decision'").fetchone())
 
+    def test_read_preflight_never_raw_opens_or_closes_a_financial_inode(self):
+        before = self.financial()
+        with patch("uta.durable_views.os.open", side_effect=AssertionError("raw inode open forbidden")), \
+             patch("uta.durable_views.os.close", side_effect=AssertionError("raw inode close forbidden")), \
+             patch("uta.durable_views.os.fstat", side_effect=AssertionError("raw fd validation forbidden")):
+            result = self.views.read("alice")
+        self.assertEqual(result["account"]["balances"]["USD"]["balance"], "999.98")
+        self.assertEqual(self.financial(), before)
+        empty = self.root / "empty.sqlite3"
+        empty.touch(mode=0o600)
+        with self.assertRaises(ServiceError) as error:
+            ManagedAccountViews(Database(empty)).read("alice")
+        self.assertEqual(error.exception.status, 503)
+        self.assertEqual(empty.stat().st_size, 0)
+        self.assertFalse(Path(str(empty) + "-wal").exists())
+        self.assertFalse(Path(str(empty) + "-shm").exists())
+
     def test_legacy_evidence_is_an_explicit_gap_and_never_backfilled_by_a_read(self):
         database = Database(self.root / "legacy.sqlite3")
         legacy = ExchangeService(database, {"USD": 8}, clock=lambda: self.now)

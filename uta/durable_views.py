@@ -10,6 +10,7 @@ from decimal import Decimal
 from hashlib import sha256
 import json
 import os
+from pathlib import Path
 import re
 import sqlite3
 import stat
@@ -89,18 +90,39 @@ class _ExistingViewDatabase(Database):
 
     def _private_file(self):
         try:
-            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+            info = os.stat(self.path, follow_symlinks=False)
         except OSError as exc:
             raise StorageError("existing view authority unavailable; creation is forbidden") from exc
+        self._validate_info(info)
+        identity = info.st_dev, info.st_ino
+        self._reader_identity.value = identity
+        return identity
+
+    @staticmethod
+    def _validate_info(info):
+        if (not stat.S_ISREG(info.st_mode) or info.st_size <= 0 or info.st_uid != os.geteuid()
+                or stat.S_IMODE(info.st_mode) & 0o077):
+            raise StorageError("view authority must remain an existing nonempty private service-user-owned file")
+
+    def _connect(self):
+        # Raw open/fstat/close of this inode would release this process's OTHER
+        # SQLite fcntl locks. Only SQLite may open/close the published DB here.
+        identity = self._private_file()
+        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=ro", uri=True,
+                                     timeout=self.timeout, isolation_level=None)
         try:
-            info = os.fstat(descriptor)
-            if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or stat.S_IMODE(info.st_mode) & 0o077:
-                raise StorageError("view authority must remain a private service-user-owned file")
-            identity = info.st_dev, info.st_ino
-            self._reader_identity.value = identity
-            return identity
-        finally:
-            os.close(descriptor)
+            info = os.stat(self.path, follow_symlinks=False)
+            self._validate_info(info)
+            if (info.st_dev, info.st_ino) != identity:
+                raise StorageError("view authority changed during open")
+            connection.row_factory = sqlite3.Row
+            connection.execute("PRAGMA foreign_keys=ON")
+            connection.execute("PRAGMA query_only=ON")
+            connection.execute(f"PRAGMA busy_timeout={int(self.timeout * 1000)}")
+            return connection
+        except BaseException:
+            connection.close()
+            raise
 
 
 class ManagedAccountViews:
