@@ -9,6 +9,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from hashlib import sha256
 import json
+from math import isfinite
 import os
 from pathlib import Path
 import re
@@ -55,7 +56,12 @@ def _object(value):
             return result
         def constant(_):
             raise ValueError("nonstandard number")
-        result = json.loads(value, object_pairs_hook=pairs, parse_constant=constant)
+        def floating(token):
+            parsed = float(token)
+            if not isfinite(parsed):
+                raise ValueError("nonfinite parsed number")
+            return parsed
+        result = json.loads(value, object_pairs_hook=pairs, parse_constant=constant, parse_float=floating)
     except (ValueError, TypeError, RecursionError):
         raise ServiceError("view_data_invalid", "stored JSON is invalid", 503) from None
     if not isinstance(result, dict):

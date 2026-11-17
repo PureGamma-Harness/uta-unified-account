@@ -385,6 +385,26 @@ class DurableViewTests(unittest.TestCase):
             connection.execute("UPDATE uta_liabilities SET principal='1.0E-8',interest='1E-8' WHERE account_id='alice'")
         self.assertEqual(self.expect(200, "/v2/accounts/alice")["account"]["liabilities"][0]["principal"], "1.0E-8")
 
+    def test_overflowing_json_numbers_fail_with_view_error_before_http_serialization(self):
+        for payload in ('{"amount":1e999}', '{"amount":-1e999}', '{"records":[{"amount":1e999}]}'):
+            with self.subTest(payload=payload):
+                with self.writer.database.transaction() as connection:
+                    cursor = connection.execute("INSERT INTO uta_events(event_type,account_id,payload,created_at) VALUES (?,?,?,?)",
+                        ("SYNTHETIC_BAD_NUMBER", "alice", payload, self.now.isoformat())).lastrowid
+                before = self.financial()
+                with self.assertRaises(ServiceError) as error:
+                    self.views.read("alice", "events", after=cursor - 1, until=cursor)
+                self.assertEqual((error.exception.status, error.exception.code), (503, "view_data_invalid"))
+                result = self.expect(503, f"/v2/accounts/alice/events?after={cursor - 1}&until={cursor}")
+                self.assertEqual(result["error"]["code"], "view_data_invalid")
+                self.assertNotIn("1e999", json.dumps(result))
+                self.assertEqual(self.financial(), before)
+        with self.writer.database.transaction() as connection:
+            cursor = connection.execute("INSERT INTO uta_events(event_type,account_id,payload,created_at) VALUES (?,?,?,?)",
+                ("SYNTHETIC_FINITE_NUMBER", "alice", '{"ratio":1.25,"exponent":1e2}', self.now.isoformat())).lastrowid
+        result = self.expect(200, f"/v2/accounts/alice/events?after={cursor - 1}&until={cursor}")
+        self.assertEqual(result["events"][0]["payload"], {"ratio": 1.25, "exponent": 100.0})
+
 
 class RouterReadTests(unittest.TestCase):
     def test_existing_router_reads_only_owning_shard_without_financial_constructors(self):
