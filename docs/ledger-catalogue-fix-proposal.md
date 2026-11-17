@@ -7,9 +7,12 @@ neither path may claim that ignoring unmatched inventory preserves integrity.
 
 ## Minimal policy
 
-Extend the existing `DurableLedger._verify_protection` catalogue validation
-only for the original `ledger_postings` base table, in addition to its existing
-seven exact trigger definitions. Require that table's exact `sqlite_master`
+Add one narrow static postings-definition helper and invoke it from the
+existing constructor before any DDL and from the start of `verify`, before
+foreign-key access. Keep the original `_verify_protection` seven-trigger
+implementation unchanged. This avoids a malformed FK target producing a raw
+SQLite error before the intended typed catalogue refusal; it does not move the
+original trigger checks ahead of valid-catalogue data validation. Require that table's exact `sqlite_master`
 type, name and original compiled definition from `_SCHEMA` after the same
 `IF NOT EXISTS` removal SQLite performs. This covers all five columns, their
 types and NOT NULL, ordinal CHECK, composite PK and both exact FK declarations:
@@ -32,7 +35,8 @@ This validates only the fixed postings table plus the existing trigger inventory
 fencing/audit extension triggers remain under their existing separate fixed
 registries; this small change must not reject or bless them by a new prefix
 heuristic. No unrelated table is dropped or repaired. Constructors must perform
-the new check before any existing-schema CREATE IF NOT EXISTS statements, and
+the new check after their existing version refusal and before any existing-
+schema CREATE IF NOT EXISTS statements, and
 both default and opt-in verification paths must perform it before claiming
 reconciliation. Automatic initialization of genuinely empty new files remains
 the original path. An existing ledger missing this postings table refuses
@@ -42,6 +46,8 @@ without one of these original protection triggers. This proposal does not claim
 a full five-table verifier or complete partial-repair closure.
 
 ## Required next controls, all NOT_RUN
+
+The independent literal [control contract](../evidence/runs/ledger-catalogue-gap/fix-control-contract.json) fixes16 controls before implementation; the table metadata expectations are independent of any production helper.
 
 - Original canonical public schema still constructs, posts, reopens, verifies
   and joins a real transaction without changes to balances or hashes.
