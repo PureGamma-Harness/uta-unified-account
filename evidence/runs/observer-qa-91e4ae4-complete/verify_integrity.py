@@ -139,11 +139,39 @@ def main():
     assert len(jobs) == 8 and all(j["status"] == "completed" for j in jobs)
     assert sum(j["conclusion"] == "failure" for j in jobs) == 1
     assert sum(j["conclusion"] == "success" for j in jobs) == 7
+    local_count = 0
+    if manifest["local_status"] == "COMPLETE_ORIGINAL_MATRIX":
+        matrix = json.loads((HERE / "local/matrix-summary.json").read_bytes())
+        assert matrix["source_commit"] == SOURCE and matrix["source_clean_after"] is True
+        assert [r["label"] for r in matrix["records"]] == ["python312", "python310", "python313-sqlite346"]
+        assert len(manifest["local_runs"]) == 3
+        assert sha((HERE / "local/execution-driver.py").read_bytes()) == matrix["launcher_sha256"]
+        for item in manifest["local_runs"]:
+            folder = HERE / "local" / item["label"]
+            summary = json.loads((folder / "summary.json").read_bytes())
+            worker = json.loads((folder / "worker-result.json").read_bytes())
+            assert summary["code_commit"] == SOURCE
+            assert summary["source_sha256"] == input_map
+            assert summary["tests_run"] == 1512 and summary["skipped"] == 0
+            assert summary["source_unchanged"] is True
+            assert summary["tracked_source_clean_before"] is True
+            assert summary["tracked_source_clean_after"] is True
+            for key in ("tests_run", "failures", "errors", "skipped", "unittest_passed"):
+                assert worker[key] == summary[key]
+            for key in ("tests_run", "failures", "errors", "skipped", "passed", "worker_exit_code"):
+                assert summary[key] == item[key]
+            original = next(r for r in matrix["records"] if r["label"] == item["label"])
+            assert original["exit_code"] == summary["worker_exit_code"]
+            local_count += 1
+        for item in manifest["local_files"]:
+            data = (HERE / item["path"]).read_bytes()
+            assert len(data) == item["bytes"] and sha(data) == item["sha256"]
     print(json.dumps({"integrity_passed": True, "unit_artifacts": 8,
                       "package_artifacts": 7, "wheel_artifacts": 7,
                       "original_zips_verified": verified_zip_count,
                       "sdists_each_3633_tracked_files_verified": verified_sdist_count,
                       "unit_input_hashes_each": 266,
+                      "local_complete_runs": local_count,
                       "qualification": "NO_GO", "tests_rerun": False,
                       "production_approved": False}, indent=2))
 

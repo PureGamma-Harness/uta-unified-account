@@ -36,4 +36,18 @@ python evidence/runs/observer-qa-91e4ae4-complete/verify_integrity.py \
   --original-zip-root /workspace/uta-ci-91e4-original-zips-unique
 ```
 
-实际核验输出记录 `integrity_passed=true`、22 份 ZIP 与七份完整 sdist 文件核验通过，同时保留 `qualification=NO_GO` 和 `production_approved=false`。本地三次原始运行还在按原顺序执行，将在原矩阵自然完成后追加封存；当前未完成的证据不能当作通过。
+实际核验输出记录 `integrity_passed=true`、22 份 ZIP 与七份完整 sdist 文件核验通过，同时保留 `qualification=NO_GO` 和 `production_approved=false`。
+
+## 原始本地三运行自然结束
+
+原外部矩阵在 `2026-11-17T14:32:07.754972+00:00` 开始，于 `14:46:37.547332` 自然结束，没有取消、重启、重跑或跳过任何运行。顺序、CPU 1 绑定和共享宿主保持原样。三份实际 summary 均为 1512 项测试、零失败、零错误、零跳过，exit 0；266 项输入摘要与八份原 CI 及冻结源完全一致。原始 stdout、summary、worker-result、矩阵进度/总结、启动日志与 driver 全部逐字节封存，原始完整文件的摘要记录在 manifest。
+
+| 本地运行 | worker 日志秒数 | summary 秒数 | 外部启动到结束秒数 |
+| --- | ---: | ---: | ---: |
+| Python 3.12 | 282.921 | 284.108142742 | 284.264781711 |
+| Python 3.10 | 290.732 | 291.556025144 | 291.652169250 |
+| Python 3.13 / SQLite 3.46 | 292.816 | 293.694314715 | 293.797941292 |
+
+三种计时边界各自保留，未相互替代。原外部 driver SHA-256 为 `8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8`。最终只读检查同时验证了三份 local 原始运行和完整 CI；包含原 ZIP 与仅已提交 members 两种核验均通过，未执行任何新业务测试或 SQL。
+
+本地三次通过不能覆盖原 CI push 3.13 的五秒恢复期限失败。该源仍为 **NO_GO**，包完整性与本地正确性结果不构成生产、万笔容量、HA 或真实资金批准。

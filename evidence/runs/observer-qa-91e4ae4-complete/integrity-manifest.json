@@ -10,7 +10,7 @@
   "ci_package_artifacts": 7,
   "ci_wheel_artifacts": 7,
   "missing_eighth_package": "push3.13 package/wheel steps skipped after unit FAIL; no provider artifact exists",
-  "local_status": "IN_PROGRESS_ORIGINAL_MATRIX_NOT_CANCELLED",
+  "local_status": "COMPLETE_ORIGINAL_MATRIX",
   "artifacts": [
     {
       "id": 14339180986,
@@ -1108,6 +1108,116 @@
         }
       ],
       "captured_directory": "ci/44104172236/uta-package-validation-python-3.10"
+    }
+  ],
+  "local_captured_at_utc": "2026-11-17T14:47:24.155357+00:00",
+  "local_runs": [
+    {
+      "label": "python312",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 284.1081427419995
+    },
+    {
+      "label": "python310",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 291.5560251440038
+    },
+    {
+      "label": "python313-sqlite346",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 293.6943147150014
+    }
+  ],
+  "local_files": [
+    {
+      "path": "local/execution-driver.py",
+      "bytes": 2634,
+      "sha256": "8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8"
+    },
+    {
+      "path": "local/matrix-progress.json",
+      "bytes": 1635,
+      "sha256": "d2eea60d6eaccd520f1f5209fb1dc7a801b3a4e3329898c6d8a016a1fa362e03"
+    },
+    {
+      "path": "local/matrix-summary.json",
+      "bytes": 2028,
+      "sha256": "2a324662e4813398b37c74af74aa6fb97e61ec4aed6f42ffb85f60134cf3e6d1"
+    },
+    {
+      "path": "local/python310/summary.json",
+      "bytes": 57146,
+      "sha256": "adc9d235a02d3e7c48793879f721855319db22a69750025ddf55964e3362bfd2"
+    },
+    {
+      "path": "local/python310/unittest.txt",
+      "bytes": 198287,
+      "sha256": "5ba668cf28d66a986cc6dd9280126730084cbf22b5b53d2d3f3d9d9d5cf8a27f"
+    },
+    {
+      "path": "local/python310/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python310-launcher.txt",
+      "bytes": 1024,
+      "sha256": "9b26476f6cd87253f2660fe4b6d0c5704f4f7054f22845cbb7b917ef3c3fd780"
+    },
+    {
+      "path": "local/python312/summary.json",
+      "bytes": 57152,
+      "sha256": "b0d1f74912f10faf220e72066230522e404a63e6babb2704868c5c25eb2de735"
+    },
+    {
+      "path": "local/python312/unittest.txt",
+      "bytes": 299145,
+      "sha256": "0adf4ab2c4641fa11c509d455aa18db6d61d9c2dedf6b036c8b449d99e55a473"
+    },
+    {
+      "path": "local/python312/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python312-launcher.txt",
+      "bytes": 1030,
+      "sha256": "5c4d266eb01f2dc70405a7436819dd679aef752f1bd5770d7d32fef37e5a1207"
+    },
+    {
+      "path": "local/python313-sqlite346/summary.json",
+      "bytes": 57105,
+      "sha256": "8ef1c545eaa94901d6710ea7018378e7c088a5beb30d6139b97311ff12c8b2ae"
+    },
+    {
+      "path": "local/python313-sqlite346/unittest.txt",
+      "bytes": 297742,
+      "sha256": "87430bb01fa158e4b6e9153bc5c3345f8d02c1822f152ffb23e2392328f9cd74"
+    },
+    {
+      "path": "local/python313-sqlite346/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python313-sqlite346-launcher.txt",
+      "bytes": 983,
+      "sha256": "c5b7fc55c8efe048003f67723ca42d932a7c333093db5a1c66d86f0ee32002a5"
     }
   ]
 }
