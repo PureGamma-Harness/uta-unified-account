@@ -1,0 +1,90 @@
+"""Read-only scoped publication check; not a repository security audit or QA run.
+
+Read immutable Git blobs only. Report candidate locations/hashes, never matched
+credential values. No product imports, SQL, provider calls, job reads or signals.
+"""
+import argparse
+from datetime import datetime,timezone
+from hashlib import sha256
+import json
+from pathlib import Path
+import re
+import subprocess
+
+SOURCE='909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
+ALLOWED=('docs/','evidence/','benchmarks/plans/','benchmarks/profiles/')
+BINARY_SUFFIXES=('.zip','.whl','.tar','.tar.gz','.sqlite','.sqlite3','.db','.wal','.shm','.pem','.p12','.pfx','.key')
+RULES={
+ 'private_key_header':re.compile(r'-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----'),
+ 'github_credential':re.compile(r'\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{50,})\b'),
+ 'aws_access_key_id':re.compile(r'\b(?:AKIA|ASIA)[A-Z0-9]{16}\b'),
+ 'signed_or_token_URL':re.compile(r'https?://[^\s\x22\x27<>]*(?:[?&](?:X-Amz-(?:Signature|Credential|Security-Token)|sig|signature|token|access_token)=)[^\s\x22\x27<>]*',re.I),
+ 'nonempty_sensitive_JSON_field':re.compile(r'\x22(?:owner_nonce|writer_nonce|hmac_secret|private_key|password|authorization|signature|access_token|refresh_token)\x22\s*:\s*\x22([^\x22\n]+)\x22',re.I),
+}
+
+def git(repo,*args):
+ return subprocess.check_output(['git','--no-optional-locks',*args],cwd=repo)
+
+
+def tree(repo,ref):
+ result={}
+ for record in git(repo,'ls-tree','-rz','--full-tree',ref).split(b'\0'):
+  if not record:continue
+  head,path=record.split(b'\t',1);mode,kind,oid=head.decode().split();result[path.decode()]={'mode':mode,'kind':kind,'oid':oid}
+ return result
+
+
+def scan(repo,base,tip):
+ old,new=tree(repo,base),tree(repo,tip)
+ preserved=all(new.get(p)==record for p,record in old.items())
+ commits=git(repo,'rev-list','--reverse',base+'..'+tip).decode().splitlines()
+ blobs={};changes=[];violations=[]
+ for commit in commits:
+  rows=git(repo,'diff-tree','--no-commit-id','--raw','--abbrev=40','-rz',commit).split(b'\0');i=0
+  while i<len(rows) and rows[i]:
+   header=rows[i].decode();path=rows[i+1].decode();i+=2
+   _,newmode,_,newid,status=header.split();mode=newmode
+   change={'commit':commit,'path':path,'status':status,'blob':newid};changes.append(change)
+   if not path.startswith(ALLOWED):violations.append({'rule':'outside_public_addition_paths',**change})
+   if status=='D':continue
+   if mode not in {'100644','100755'}:violations.append({'rule':'symlink_or_special_Git_mode',**change})
+   if path.lower().endswith(BINARY_SUFFIXES):violations.append({'rule':'private_or_binary_artifact_extension',**change})
+   blobs.setdefault(newid,[]).append({'commit':commit,'path':path})
+ findings=[];bytes_scanned=0
+ process=subprocess.Popen(['git','--no-optional-locks','cat-file','--batch'],cwd=repo,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ try:
+  for oid,locations in blobs.items():
+   process.stdin.write((oid+'\n').encode());process.stdin.flush()
+   returned,kind,size=process.stdout.readline().decode().split();size=int(size)
+   assert returned==oid and kind=='blob' and size<=16*1024**2
+   raw=process.stdout.read(size);assert len(raw)==size and process.stdout.read(1)==b'\n';bytes_scanned+=len(raw)
+   try:text=raw.decode('utf8')
+   except UnicodeDecodeError:
+    findings.append({'rule':'non_UTF8_blob','blob':oid,'locations':locations});continue
+   if b'\0' in raw:findings.append({'rule':'NUL_in_text_blob','blob':oid,'locations':locations})
+   for rule,pattern in RULES.items():
+    for match in pattern.finditer(text):
+     line=text.count('\n',0,match.start())+1
+     findings.append({'rule':rule,'blob':oid,'line':line,'matched_text_sha256':sha256(match.group(0).encode()).hexdigest(),'locations':locations})
+ finally:
+  process.stdin.close();process.stdout.close();process.stderr.close();assert process.wait(timeout=5)==0
+ return {'status':'NO_PUBLICATION_CANDIDATE_MATCHES' if not findings and not violations and preserved else 'REVIEW_REQUIRED',
+  'recorded_utc':datetime.now(timezone.utc).isoformat(),'scope_base':base,'scope_tip':tip,'scope_history_commits':commits,
+  'scope_history_changed_paths':len(changes),'scope_unique_history_blobs':len(blobs),'scope_bytes_scanned':bytes_scanned,
+  'original_source_tree_preserved':preserved,'original_source_tracked_count':len(old),'tip_tracked_count':len(new),
+  'original_uta_tests_pyproject_preserved':all(new.get(p)==r for p,r in old.items() if p.startswith(('uta/','tests/')) or p=='pyproject.toml'),
+  'matched_candidates':findings,'path_or_type_violations':violations,
+  'credential_values_printed':False,'product_or_operational_checks_rerun':False,'live_job_or_SQL_reads':False,
+  'scope_limit':'Pattern and file-type publication check of the exact added history/tip only; not an exhaustive security audit, proof of absence, financial qualification, source requalification, deployment authorization or phase GO.'}
+
+
+def main():
+ parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--repository',type=Path,required=True)
+ parser.add_argument('--base',default=SOURCE);parser.add_argument('--tip',required=True);parser.add_argument('--output',type=Path,required=True)
+ args=parser.parse_args();tip=git(args.repository,'rev-parse',args.tip).decode().strip();result=scan(args.repository,args.base,tip)
+ with args.output.open('x') as f:json.dump(result,f,indent=2,sort_keys=True);f.write('\n')
+ print(json.dumps({k:result[k] for k in ('status','scope_base','scope_tip','scope_history_changed_paths','scope_unique_history_blobs','scope_bytes_scanned','original_source_tree_preserved','original_uta_tests_pyproject_preserved')}))
+ return 0 if result['status']=='NO_PUBLICATION_CANDIDATE_MATCHES' else 1
+
+
+if __name__=='__main__':raise SystemExit(main())
