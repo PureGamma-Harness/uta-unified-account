@@ -167,12 +167,42 @@ def main():
             assert job["name"] == "test (3.10)"
             failed = [step["name"] for step in job["steps"] if step["conclusion"] == "failure"]
             assert failed == ["Run unit tests"]
+    local_count = 0
+    local_passed = None
+    if manifest.get("local_matrix_status") == "COMPLETE_ORIGINAL_MATRIX":
+        matrix = json.loads((HERE / "local/matrix-summary.json").read_bytes())
+        assert matrix["source_commit"] == SOURCE and matrix["source_clean_after"] is True
+        assert [r["label"] for r in matrix["records"]] == ["python312", "python310", "python313-sqlite346"]
+        assert len(manifest["local_runs"]) == 3
+        driver_sha = digest((HERE / "local/execution-driver.py").read_bytes())
+        assert driver_sha == matrix["launcher_sha256"] == "8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8"
+        for item in manifest["local_runs"]:
+            folder = HERE / "local" / item["label"]
+            summary = json.loads((folder / "summary.json").read_bytes())
+            worker = json.loads((folder / "worker-result.json").read_bytes())
+            assert summary["code_commit"] == SOURCE
+            assert summary["source_sha256"] == source_map
+            assert summary["source_unchanged"] is True
+            assert summary["tracked_source_clean_before"] is True and summary["tracked_source_clean_after"] is True
+            for key in ("tests_run", "failures", "errors", "skipped", "unittest_passed"):
+                assert worker[key] == summary[key]
+            for key in ("tests_run", "failures", "errors", "skipped", "passed", "worker_exit_code"):
+                assert summary[key] == item[key]
+            original = next(r for r in matrix["records"] if r["label"] == item["label"])
+            assert original["exit_code"] == summary["worker_exit_code"]
+            local_count += 1
+        for item in manifest["local_files"]:
+            data = (HERE / item["path"]).read_bytes()
+            assert len(data) == item["bytes"] and digest(data) == item["sha256"]
+        local_passed = all(record["exit_code"] == 0 for record in matrix["records"])
+        assert matrix["all_exit_zero"] is local_passed
     print(json.dumps({"integrity_passed": True, "final_source_ci_passed": False,
                       "source_commit": SOURCE, "unit_artifacts": unit_count,
                       "tests_each": 1801, "input_hashes_each": 348,
                       "package_artifacts": len(packages), "original_zips_verified": zip_count,
                       "sdists_each_5159_tracked_files_verified": sdist_count,
-                      "runtime_files": 62, "local_full_three_runs_collected_here": False,
+                      "runtime_files": 62, "local_full_three_runs_collected_here": local_count == 3,
+                      "local_full_matrix_passed": local_passed,
                       "failed_python310_jobs": 2,
                       "overall_acceptance": "NO_GO", "tests_rerun": False,
                       "production_approved": False}, indent=2))

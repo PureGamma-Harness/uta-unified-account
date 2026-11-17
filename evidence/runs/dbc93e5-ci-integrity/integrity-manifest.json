@@ -7,7 +7,7 @@
   "overall_acceptance": "NO_GO",
   "production_approved": false,
   "tests_rerun": false,
-  "local_full_three_runs_collected_here": false,
+  "local_full_three_runs_collected_here": true,
   "actual_unit_artifacts": 8,
   "actual_package_artifacts": 6,
   "actual_wheel_artifacts": 6,
@@ -982,6 +982,117 @@
         }
       ],
       "captured_directory": "ci/44125881372/uta-package-validation-python-3.11"
+    }
+  ],
+  "local_matrix_status": "COMPLETE_ORIGINAL_MATRIX",
+  "local_captured_at_utc": "2026-11-17T16:48:27.033399+00:00",
+  "local_runs": [
+    {
+      "label": "python312",
+      "tests_run": 1801,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 391.1640031230054
+    },
+    {
+      "label": "python310",
+      "tests_run": 1801,
+      "failures": 0,
+      "errors": 11,
+      "skipped": 0,
+      "passed": false,
+      "worker_exit_code": 1,
+      "duration_seconds": 427.6629762960074
+    },
+    {
+      "label": "python313-sqlite346",
+      "tests_run": 1801,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 408.75914105199627
+    }
+  ],
+  "local_files": [
+    {
+      "path": "local/execution-driver.py",
+      "bytes": 2634,
+      "sha256": "8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8"
+    },
+    {
+      "path": "local/matrix-progress.json",
+      "bytes": 1636,
+      "sha256": "32034b3b735c904bccd89730c50abd7e05bdb4c5b19289a0045620d9abbb5e5b"
+    },
+    {
+      "path": "local/matrix-summary.json",
+      "bytes": 2030,
+      "sha256": "f0543ec878a786dd369ffdd41904f5694e7742f871700cfcd51fe95f15efa8b1"
+    },
+    {
+      "path": "local/python310/summary.json",
+      "bytes": 75959,
+      "sha256": "dbd34037bb3fa2ccce9fc45a723a493f30d66fa4d0532208845575561715e9aa"
+    },
+    {
+      "path": "local/python310/unittest.txt",
+      "bytes": 248728,
+      "sha256": "482f18a66715e26ea5b71f47eb6997ae8fe8034b0c86a14a9c3ed156412d1a27"
+    },
+    {
+      "path": "local/python310/worker-result.json",
+      "bytes": 156,
+      "sha256": "e7762a4dacfd00c659d7abf72e948315f7e4a978fc92dd2013c8d75e34095d8b"
+    },
+    {
+      "path": "local/python310-launcher.txt",
+      "bytes": 1027,
+      "sha256": "6cd90832206738bb9872c02f21db74d1c5f72b69a6007d6425f870a873a3dde8"
+    },
+    {
+      "path": "local/python312/summary.json",
+      "bytes": 75962,
+      "sha256": "1a22d7e893f9d08f4d7c4aa56e17a5b9d9986820a55a61e491700cab266d108e"
+    },
+    {
+      "path": "local/python312/unittest.txt",
+      "bytes": 358931,
+      "sha256": "8e32bcb24e4080380125eb3b77dd6357416d383b8bd6af7c28486ccbefadd31f"
+    },
+    {
+      "path": "local/python312/worker-result.json",
+      "bytes": 154,
+      "sha256": "e82cbb6e2c7ec27c03e4230582529163902f007c49078e327fe4c7957db343f6"
+    },
+    {
+      "path": "local/python312-launcher.txt",
+      "bytes": 1030,
+      "sha256": "6cf5ab21e84c01d943c3522403bd69c0e99b4d72a1736dc7b78e4cf3e62211ad"
+    },
+    {
+      "path": "local/python313-sqlite346/summary.json",
+      "bytes": 75916,
+      "sha256": "cb6528813807a135e2504336da8698a12bfcc4e4672713e6d8800483899280f6"
+    },
+    {
+      "path": "local/python313-sqlite346/unittest.txt",
+      "bytes": 360070,
+      "sha256": "bf13890778ebf8aff14622c897c76a9c874af5402026b14e0727652423a75552"
+    },
+    {
+      "path": "local/python313-sqlite346/worker-result.json",
+      "bytes": 154,
+      "sha256": "e82cbb6e2c7ec27c03e4230582529163902f007c49078e327fe4c7957db343f6"
+    },
+    {
+      "path": "local/python313-sqlite346-launcher.txt",
+      "bytes": 984,
+      "sha256": "9f7783c69aef563df0e3003f3c0bbb98d4b82587185be145674ec8992c6f83a1"
     }
   ]
 }

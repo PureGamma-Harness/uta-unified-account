@@ -26,7 +26,23 @@ python evidence/runs/dbc93e5-ci-integrity/verify_integrity.py \
   --original-zip-root /workspace/uta-ci-dbc93e5-original-zips-unique
 ```
 
-省略 `--original-zip-root` 时核验已提交 raw、原报告和原 Git blobs，不声称复核未提交 ZIP。包含原 ZIP 和仅已提交 members 两种实际核验输出均保留：`integrity_passed=true` 只代表这些文件和来源检查通过，`final_source_ci_passed=false`、`overall_acceptance=NO_GO`、`production_approved=false` 保持不变。本证据集不收集或替代根集成组正在执行的本地矩阵。
+省略 `--original-zip-root` 时核验已提交 raw、原报告和原 Git blobs，不声称复核未提交 ZIP。包含原 ZIP 和仅已提交 members 两种实际核验输出均保留：`integrity_passed=true` 只代表这些文件和来源检查通过，`final_source_ci_passed=false`、`overall_acceptance=NO_GO`、`production_approved=false` 保持不变。
+
+## 原本地完整三运行封存
+
+根集成组原外部矩阵从 `2026-11-17T16:27:02.425424+00:00` 到 `16:47:30.559308` 自然完成，固定 CPU 1、共享宿主，顺序为 3.12、3.10、3.13。没有取消、重启、重跑或修改原作业。
+
+| 原本地运行 | 实际测试 | FAIL | ERROR | 跳过 | 退出码 | worker 秒数 | summary 秒数 | 外部矩阵秒数 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Python 3.12 | 1801 | 0 | 0 | 0 | 0 | 389.864 | 391.164003123 | 391.314390568 |
+| Python 3.10 | 1801 | 0 | 11 | 0 | 1 | 426.677 | 427.662976296 | 427.833145402 |
+| Python 3.13 / SQLite 3.46 | 1801 | 0 | 0 | 0 | 0 | 407.638 | 408.759141052 | 408.875393733 |
+
+三种计时边界分开保留，没有互相替代。三份原 `summary.json`、`worker-result.json`、完整 `unittest.txt`、所有原启动日志、矩阵 progress/summary 均逐字节归档并列出大小与 SHA-256。原矩阵记录 `source_clean_after=true`、`all_exit_zero=false`；每份报告均记录前后跟踪源干净、源未改变。三份原 348 项输入映射与八份 CI 及原 Git blobs 完全一致。
+
+原外部 launcher `/workspace/run_uta_final_matrix.py` 的完整字节保存在 `local/execution-driver.py`，SHA-256 为 `8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8`，与原矩阵记录一致。核验只读取已经结束的原文件，没有执行此 launcher。
+
+此前 CI-only 完整性输出保持原样，追加带 `local-complete` 文件名的两种实际只读核验结果。它们记录三轮原本地运行已收集、`local_full_matrix_passed=false`；CI 六绿和本地两绿均不能覆盖三个 Python3.10 原 11 ERROR 结果，整体仍为 **NO_GO**。
 
 ## 资源、部署与回滚
 
