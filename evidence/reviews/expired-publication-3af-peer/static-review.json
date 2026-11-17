@@ -1,0 +1,31 @@
+{
+  "reviewed_candidate": "3af589415ccfdb65ed84a952184a77030319a3df",
+  "reviewed_original_proposal": "749e37ac90933b5d0037ca16e559972e224ca9b8",
+  "runtime_base": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+  "runtime_and_packaging_unchanged": true,
+  "existing_methods_changed": [
+    "ManagedProcessFaultTests.setUp",
+    "ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+  ],
+  "existing_other_methods_AST_identical": true,
+  "source_sha256": {
+    "tests/test_durable_faults.py": "03d48b5d34348a617c0a8cfee69abd9f3449a0c8e95a83020d26b14d70ab3105",
+    "docs/expired-publication-fixture-proposal.md": "f9f2bce24d6d468d49d7ce2635c478be016289b4a045fa061ef0cc20c693e9a7",
+    "evidence/runs/expired-publication-d421/candidate/trace-candidate.py": "d3387b91640171fe81fea4bc2ecf0d49f995eb4ce992affc2db9bc5789f3f8b5"
+  },
+  "native_execution_performed_by_reviewer": false,
+  "SQL_performed_by_reviewer": false,
+  "scoped_decision": "NO_ADDITIONAL_STATIC_BLOCKER_FOR_OWNER_AUTHORIZED_SINGLE_CONTROLLED_RUN",
+  "mandatory_manual_result_conditions": [
+    "case_passed true and no original assertion failure",
+    "logger_failures empty",
+    "launch timed_out false",
+    "no cleanup_forced_kill or forced residual cleanup",
+    "all owned original child pidfds exited; no live residuals",
+    "all three recovery milestones within original publication-start plus5 seconds",
+    "publication receipts/source/finance assertions exact",
+    "15 second publication-thread lifecycle not represented as5 second end-to-end API completion"
+  ],
+  "full_QA_CI_package_approved": false,
+  "production_approved": false
+}
