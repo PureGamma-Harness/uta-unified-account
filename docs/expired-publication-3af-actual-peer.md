@@ -77,7 +77,7 @@ had a PENDING enqueue assertion. There is no claim here of accepted order,
 confirmed fill, money settlement, physical COMMIT count or financial throughput.
 Configured zero caches are not cache hit measurements.
 
-The new peer standard-library checker independently ANDs26 explicit conditions,
+The new peer standard-library checker independently ANDs25 explicit conditions,
 uses original bytes and rational timing arithmetic, and completed in0.010s on
 CPU3 under a3s bound. The separate252-input source proof is also read-only and
 bounded. Its result records all limitations above; the integration owner's
