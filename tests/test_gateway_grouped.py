@@ -83,7 +83,8 @@ class GroupedGatewayTests(unittest.TestCase):
 
         The fixture's 50ms HTTP observation deadline is deliberately unchanged.
         A running command may finish after it, and a cancelled queued attempt
-        has no effect. Both permit a finite retry of the original operation.
+        has no effect. Queue overload is a third explicit unqueued rejection.
+        These permit a finite retry of the original operation and content.
         """
         deadline = time.monotonic() + 3
         observations = []
@@ -93,7 +94,7 @@ class GroupedGatewayTests(unittest.TestCase):
             if status != 503:
                 return status, result
             if result.get("error", {}).get("code") not in {
-                    "command_result_unknown", "admission_queue_timeout"}:
+                    "command_result_unknown", "admission_queue_timeout", "admission_overloaded"}:
                 self.fail("unexpected grouped result: " + json.dumps(observations))
             if time.monotonic() >= deadline:
                 self.fail("original operation remained unknown: " + json.dumps(observations))

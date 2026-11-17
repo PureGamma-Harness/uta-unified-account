@@ -11,6 +11,7 @@ import fcntl
 import json
 import os
 from pathlib import Path
+import select
 import signal
 import sqlite3
 from tempfile import TemporaryDirectory
@@ -48,19 +49,37 @@ class ReadinessSamplingTests(unittest.TestCase):
         self.fail("readiness did not become true within the observation budget: " + json.dumps(samples, sort_keys=True))
 
     def observe_market_rejection(self, router, reason, *, timeout=1):
-        report = router.diagnostics(timeout=min(.1, timeout))
-        self.market_observations = [report]
-        message = json.dumps(report, sort_keys=True)
-        self.assertFalse(report["ready"], message)
-        self.assertFalse(report["financial_ready"], message)
-        inactive = [row for row in report["workers"]
-                    if row["generation"] is not None and not row["lease_active"]]
-        self.assertFalse(inactive, "observed inactive native lease: " + message)
-        self.assertTrue(all(row["owner_ready"] for row in report["workers"]),
-                        "complete owner observation required: " + message)
-        self.assertTrue(all(row["lease_active"] and row["funding_registry_ready"] for row in report["workers"]), message)
-        self.assertEqual([row["reason"] for row in report["workers"]], [reason] * len(report["workers"]), message)
-        return report
+        deadline = monotonic() + timeout
+        self.market_observations = []
+        while monotonic() < deadline:
+            report = router.diagnostics(timeout=min(.1, max(.001, deadline - monotonic())))
+            self.market_observations.append(report)
+            message = json.dumps(report, sort_keys=True)
+            self.assertIs(report["ready"], False, message)
+            self.assertIs(report["financial_ready"], False, message)
+            inactive = [row for row in report["workers"]
+                        if row["generation"] is not None and not row["lease_active"]]
+            self.assertFalse(inactive, "observed inactive native lease: " + message)
+            for row in report["workers"]:
+                if row["generation"] is None:
+                    self.assertIs(row["owner_ready"], False, message)
+                    self.assertIs(row["lease_active"], False, message)
+                else:
+                    self.assertTrue(row["alive"], message)
+                    self.assertEqual(row["pid"], row["owner_pid"], message)
+                    self.assertEqual(row["report"].get("state"), "ready", message)
+                    self.assertEqual(row["report"].get("pid"), row["owner_pid"], message)
+                    self.assertEqual(row["report"].get("generation"), row["generation"], message)
+            if all(row["owner_ready"] and row["funding_registry_ready"] for row in report["workers"]):
+                self.assertTrue(all(row["lease_active"] for row in report["workers"]), message)
+                self.assertEqual([row["reason"] for row in report["workers"]], [reason] * len(report["workers"]), message)
+                return report
+            transient = (report["reason"] == "diagnostic_timeout"
+                         or report["reason"] == reason and any(row["reason"] == "diagnostic_timeout"
+                                                               for row in report["workers"]))
+            self.assertTrue(transient, "non-transient incomplete owner observation: " + message)
+            sleep(min(.01, max(0, deadline - monotonic())))
+        self.fail("complete owner observation budget exhausted: " + json.dumps(self.market_observations, sort_keys=True))
 
     def test_real_activation_precedes_parent_ready_pipe_consumption(self):
         fixture = self.original_fixture()
@@ -121,7 +140,9 @@ class ReadinessSamplingTests(unittest.TestCase):
                     return snapshot.observed_at + timedelta(seconds=offset)
             with self.subTest(reason=reason), patch.object(durable_process, "datetime", ShiftedClock):
                 self.observe_market_rejection(router, reason)
-        self.assertTrue(router.diagnostics()["ready"])
+        restored = self.wait_ready(router)
+        self.assertTrue(restored["ready"])
+        self.assertTrue(all(row["owner_ready"] and row["lease_active"] for row in restored["workers"]))
 
     def test_market_probe_observes_actual_control_timeout_before_complete_owner_sample(self):
         fixture = self.original_fixture()
@@ -227,8 +248,29 @@ class ReadinessSamplingTests(unittest.TestCase):
         finally:
             try:
                 if paused:
-                    self.assertEqual(birth(), original_birth)
-                    signal.pidfd_send_signal(pidfd, signal.SIGCONT)
+                    terminal = select.poll()
+                    terminal.register(pidfd, select.POLLIN)
+                    if terminal.poll(0):
+                        print("owned-lease-cleanup " + json.dumps({"pid": pid, "birth": original_birth,
+                            "outcome": "bound_old_owner_exited", "resume_sent": False}), flush=True)
+                    else:
+                        try:
+                            observed_birth = birth()
+                        except OSError:
+                            self.assertTrue(terminal.poll(0), "old owner exit is not proven by bound pidfd")
+                            print("owned-lease-cleanup " + json.dumps({"pid": pid, "birth": original_birth,
+                                "outcome": "bound_old_owner_exited", "resume_sent": False}), flush=True)
+                        else:
+                            self.assertEqual(observed_birth, original_birth)
+                            try:
+                                signal.pidfd_send_signal(pidfd, signal.SIGCONT)
+                            except ProcessLookupError:
+                                self.assertTrue(terminal.poll(0), "old owner exit is not proven by bound pidfd")
+                                print("owned-lease-cleanup " + json.dumps({"pid": pid, "birth": original_birth,
+                                    "outcome": "bound_old_owner_exited", "resume_sent": False}), flush=True)
+                            else:
+                                print("owned-lease-cleanup " + json.dumps({"pid": pid, "birth": original_birth,
+                                    "outcome": "same_bound_owner_resumed", "resume_sent": True}), flush=True)
             finally:
                 os.close(pidfd)
 
