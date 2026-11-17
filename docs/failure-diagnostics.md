@@ -47,7 +47,7 @@ ORDER BY sequence LIMIT 100;
 
 只统计已提交 v1 事件能得到**已保存诊断的下界**。执行进程先死亡、失租、磁盘满、记录前失败、旧版本 worker 或旧 caller 缺 cause 都可能留下缺口；没有 event 不证明没有技术失败。failure-recording COMMIT 响应未知时先重查原 CID 的 attempts 和同一 attempt 的 event：二者同提交，重试同一 `attempt` 不重复写。执行的 financial COMMIT 响应未知时必须先查原终态，SUCCEEDED 不能被诊断或重试改写。不能拿诊断 event 数量声称全部实际 attempts、完整根因、金融事务实际输入或错误后自动恢复成功。
 
-`20261117-managed-corrected-7200097` 原始 720 秒运行中真实 S1、CID `bench:684/shard0` 有一次技术 failure 记录，最终 REJECTED `market_unavailable` 503、3928ms、无订单金融效果。原版本没有保留实际 exception chain，本次补丁不能反推该次技术失败根因，也不回填虚构事件。该次故障仍是未解释的 release gate，当前没有新的负载 GO。
+`20261117-managed-corrected-7200097` SHA `7200097` 的原始 S1 探针中真实 S1、CID `bench:684/shard0` 有一次技术 failure 记录，最终 REJECTED `market_unavailable` 503、3928ms、无订单金融效果。原版本没有保留实际 exception chain，本次补丁不能反推该次技术失败根因，也不回填虚构事件。该次故障仍是未解释的 release gate，当前没有新的负载 GO。
 
 ## 部署、消费者与回滚
 
