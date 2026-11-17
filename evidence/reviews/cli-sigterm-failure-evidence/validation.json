@@ -1,0 +1,32 @@
+{
+  "actual_SQL_CLI_worker_signals": false,
+  "base_commit": "6b7d473c0fbf92b17c146140c88eb2c25d38dce1",
+  "command": [
+    "timeout",
+    "10s",
+    "taskset",
+    "-c",
+    "1",
+    "python",
+    "-B",
+    "tests/test_cli_sigterm_failure_evidence.py"
+  ],
+  "configured_cpu_ids": [
+    1
+  ],
+  "exec_wall_seconds": 0.053034901,
+  "only_pure_fake_validation_executed": true,
+  "result": "PASS",
+  "returncode": 0,
+  "runtime_uta_paths_changed": false,
+  "separate_in_process_affinity_ACK": false,
+  "source_sha256_after_sole_pure_run_no_intervening_edits": {
+    "evidence/reviews/cli-sigterm-failure-evidence/original-case-ast.json": "70b1939a6156f41f1bf1390455fa408bd8db614dfbb45ed599c3cf2ee178b999",
+    "evidence/reviews/cli-sigterm-failure-evidence/pure-first.txt": "ba72c0535388fed18d2d9d3f2a3603f0b6e9978ce14dc2c1c2702f16795fe2f6",
+    "tests/cli_sigterm_failure_evidence.py": "833aa7706ad9a3c3aa4afc7370206bc2af530011eb65b6579a5f05fc45c97943",
+    "tests/test_cli_sigterm_failure_evidence.py": "3430222ac3ad5b96836bf6f76c206da5d18063879970adb2f37cff6320085e61",
+    "tests/test_runtime_review.py": "b1a5b2c8083cf5e9ea25c6fecc93b802152dbf7d80728b458d8da4fa6ddab9fa"
+  },
+  "tests": 7,
+  "unittest_seconds": 0.033
+}

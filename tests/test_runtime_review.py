@@ -156,28 +156,43 @@ class RuntimeReviewTests(unittest.TestCase):
              "--credentials", str(credentials), "--catalog", str(catalog_path), "--risk-rules", str(rules_path),
              "--asset-scale", "USD=8", "--asset-scale", "BTC=8", "--automate", "--port", "0"],
             cwd=root, env={**os.environ, "PYTHONPATH": str(SOURCE)},
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
 
-        def cleanup():
-            if process.poll() is None:
-                process.kill()
-            process.communicate(timeout=5)
-        self.addCleanup(cleanup)
-        with selectors.DefaultSelector() as selector:
-            selector.register(process.stdout, selectors.EVENT_READ)
-            self.assertTrue(selector.select(timeout=5), "automated CLI did not start")
-        line = process.stdout.readline()
-        self.assertTrue(line, "automated CLI failed before announcing its local port")
-        banner = json.loads(line)
-        self.assertTrue(banner["automated"])
-        with urlopen("http://127.0.0.1:" + str(banner["port"]) + "/healthz", timeout=3) as response:
-            self.assertEqual(json.load(response), {"status": "ok"})
-        process.send_signal(signal.SIGTERM)
-        self.assertEqual(process.wait(timeout=5), 0)
-        reopened = ExchangeService(Database(root / "automated.sqlite3"), {"USD": 8, "BTC": 8},
-                                   clock=lambda: NOW, product_catalog=catalog, portfolio_rules=rules)
-        self.assertEqual(reopened.accounts(), [])
-        self.assertFalse(reopened.readiness()["ready"], "the explicit policy must not generate funds or prices")
+        from tests.cli_sigterm_failure_evidence import CliFailureEvidence
+        evidence = CliFailureEvidence(process)
+        self.addCleanup(evidence.cleanup)
+        try:
+            evidence.event("startup_wait_before")
+            with selectors.DefaultSelector() as selector:
+                selector.register(process.stdout, selectors.EVENT_READ)
+                self.assertTrue(selector.select(timeout=5), "automated CLI did not start")
+            evidence.event("startup_wait_return")
+            line = process.stdout.readline()
+            evidence.banner(line)
+            self.assertTrue(line, "automated CLI failed before announcing its local port")
+            banner = json.loads(line)
+            self.assertTrue(banner["automated"])
+            evidence.event("health_before")
+            with urlopen("http://127.0.0.1:" + str(banner["port"]) + "/healthz", timeout=3) as response:
+                self.assertEqual(json.load(response), {"status": "ok"})
+            evidence.event("health_return")
+            evidence.event("sigterm_before")
+            process.send_signal(signal.SIGTERM)
+            evidence.event("sigterm_return")
+            evidence.event("exit_wait_before")
+            self.assertEqual(process.wait(timeout=5), 0)
+            evidence.event("exit_wait_return")
+            reopened = ExchangeService(Database(root / "automated.sqlite3"), {"USD": 8, "BTC": 8},
+                                       clock=lambda: NOW, product_catalog=catalog, portfolio_rules=rules)
+            self.assertEqual(reopened.accounts(), [])
+            self.assertFalse(reopened.readiness()["ready"], "the explicit policy must not generate funds or prices")
+            evidence.event("post_exit_assertions_return")
+        except BaseException as primary:
+            try:
+                evidence.primary_failure(primary)
+            except BaseException:
+                pass
+            raise
 
 
 if __name__ == "__main__":
