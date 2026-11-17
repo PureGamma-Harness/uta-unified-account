@@ -1,0 +1,280 @@
+{
+  "initial_equity": "14800",
+  "steps": [
+    {
+      "version": 1,
+      "action": "order_placed",
+      "health": "HEALTHY",
+      "equity": "14800",
+      "fills": []
+    },
+    {
+      "version": 2,
+      "action": "order_filled",
+      "health": "HEALTHY",
+      "equity": "14746",
+      "fills": [
+        {
+          "fee": "54",
+          "journal": [
+            {
+              "account": "fees",
+              "amount": "54.000000000000000000",
+              "asset": "USD"
+            },
+            {
+              "account": "user_net_usd",
+              "amount": "-54.000000000000000000",
+              "asset": "USD"
+            }
+          ],
+          "price": "60000",
+          "quantity": "0.9",
+          "realized_pnl": "0",
+          "symbol": "BTC-PERP"
+        }
+      ]
+    },
+    {
+      "version": 3,
+      "action": "order_placed",
+      "health": "HEALTHY",
+      "equity": "14746",
+      "fills": []
+    },
+    {
+      "version": 4,
+      "action": "prices_updated",
+      "health": "INSOLVENT",
+      "equity": "-4854",
+      "fills": []
+    },
+    {
+      "version": 5,
+      "action": "liquidation_cancel",
+      "health": "INSOLVENT",
+      "equity": "-4854",
+      "fills": []
+    },
+    {
+      "version": 6,
+      "action": "liquidation_fill",
+      "health": "INSOLVENT",
+      "equity": "-5105.64",
+      "fills": [
+        {
+          "fee": "71.64",
+          "journal": [
+            {
+              "account": "fees",
+              "amount": "71.640000000000000000",
+              "asset": "USD"
+            },
+            {
+              "account": "simulated_clearing",
+              "amount": "18180.000000000000000000",
+              "asset": "USD"
+            },
+            {
+              "account": "user_net_usd",
+              "amount": "-18180.000000000000000000",
+              "asset": "USD"
+            },
+            {
+              "account": "user_net_usd",
+              "amount": "-71.640000000000000000",
+              "asset": "USD"
+            }
+          ],
+          "price": "39800",
+          "quantity": "-0.9",
+          "realized_pnl": "-18180",
+          "symbol": "BTC-PERP"
+        }
+      ]
+    }
+  ],
+  "ending_account": {
+    "state": {
+      "as_of": "2026-11-17T15:50:45.831607+00:00",
+      "asset_factors": {
+        "BTC": "0.8",
+        "ETH": "0.75",
+        "USD": "1"
+      },
+      "balances": {
+        "BTC": "0.1",
+        "USD": "0"
+      },
+      "instruments": {
+        "BTC-PERP": {
+          "initial_margin_rate": "0.10",
+          "maintenance_margin_rate": "0.06"
+        },
+        "ETH-PERP": {
+          "initial_margin_rate": "0.12",
+          "maintenance_margin_rate": "0.07"
+        }
+      },
+      "liabilities": {
+        "USD": "8305.64"
+      },
+      "lots": {},
+      "marks": {
+        "BTC-PERP": "40000",
+        "ETH-PERP": "2100"
+      },
+      "orders": {
+        "entry": {
+          "closed_version": 2,
+          "fee_rate": "0.001",
+          "limit_price": "60000",
+          "quantity": "0.9",
+          "remaining": "0",
+          "status": "FILLED",
+          "symbol": "BTC-PERP"
+        },
+        "resting": {
+          "closed_version": 5,
+          "fee_rate": "0.001",
+          "limit_price": "60000",
+          "quantity": "0.1",
+          "remaining": "0.1",
+          "status": "CANCELED",
+          "symbol": "BTC-PERP"
+        }
+      },
+      "positions": {},
+      "prices": {
+        "BTC": "40000",
+        "ETH": "2100",
+        "USD": "1"
+      },
+      "source": null,
+      "version": 6
+    },
+    "risk": {
+      "equity": "-5105.64",
+      "initial_margin": "576",
+      "maintenance_margin": "460.8",
+      "open_order_margin": "0",
+      "available_margin": "-5681.64",
+      "margin_ratio": "-11.07994791666666666666666666666667",
+      "model_version": "linear-pm-v1",
+      "stress_loss": "576",
+      "worst_scenario": "collateral_gap_down",
+      "initial_margin_floor": "0",
+      "maintenance_margin_floor": "0",
+      "scenarios": [
+        {
+          "name": "market_down",
+          "equity": "-5585.64",
+          "loss": "480",
+          "collateral_change": "-480",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "-0.15",
+            "ETH": "-0.2"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "-0.15",
+            "ETH-PERP": "-0.2"
+          }
+        },
+        {
+          "name": "market_up",
+          "equity": "-4625.64",
+          "loss": "-480",
+          "collateral_change": "480",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "0.15",
+            "ETH": "0.2"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "0.15",
+            "ETH-PERP": "0.2"
+          }
+        },
+        {
+          "name": "btc_down_eth_up",
+          "equity": "-5489.64",
+          "loss": "384",
+          "collateral_change": "-384",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "-0.12",
+            "ETH": "0.12"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "-0.12",
+            "ETH-PERP": "0.12"
+          }
+        },
+        {
+          "name": "btc_up_eth_down",
+          "equity": "-4721.64",
+          "loss": "-384",
+          "collateral_change": "384",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "0.12",
+            "ETH": "-0.12"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "0.12",
+            "ETH-PERP": "-0.12"
+          }
+        },
+        {
+          "name": "collateral_gap_down",
+          "equity": "-5681.64",
+          "loss": "576",
+          "collateral_change": "-576",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "-0.18",
+            "ETH": "-0.25"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "0.08",
+            "ETH-PERP": "0.12"
+          }
+        },
+        {
+          "name": "collateral_gap_up",
+          "equity": "-4529.64",
+          "loss": "-576",
+          "collateral_change": "576",
+          "liability_change": "0",
+          "position_change": "0",
+          "asset_shocks": {
+            "USD": "0",
+            "BTC": "0.18",
+            "ETH": "0.25"
+          },
+          "mark_shocks": {
+            "BTC-PERP": "-0.08",
+            "ETH-PERP": "-0.12"
+          }
+        }
+      ]
+    },
+    "health": "INSOLVENT"
+  },
+  "replay": {
+    "account_id": "demo",
+    "version": 6,
+    "events_verified": 7
+  }
+}
