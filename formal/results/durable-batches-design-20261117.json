@@ -1,0 +1,5014 @@
+{
+  "passed": true,
+  "safe": {
+    "fifo_cancel_repay": {
+      "states": 3801,
+      "transitions": 8585,
+      "violation": null,
+      "coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "required_coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "missing_coverage": []
+    },
+    "cumulative_reduce_only": {
+      "states": 3801,
+      "transitions": 8585,
+      "violation": null,
+      "coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_batch_success_and_business_rejection",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "required_coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_batch_success_and_business_rejection",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "missing_coverage": []
+    },
+    "duplicate_order": {
+      "states": 3801,
+      "transitions": 8585,
+      "violation": null,
+      "coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "duplicate_order_links_existing_effect",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "required_coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "duplicate_order_links_existing_effect",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "missing_coverage": []
+    },
+    "conflicting_order": {
+      "states": 3801,
+      "transitions": 8585,
+      "violation": null,
+      "coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_batch_success_and_business_rejection",
+        "same_order_different_payload_rejected_without_effect",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "required_coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_order_different_payload_rejected_without_effect",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "missing_coverage": []
+    },
+    "reject_and_poison": {
+      "states": 3207,
+      "transitions": 7086,
+      "violation": null,
+      "coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "poison_isolated_without_neighbour_quarantine",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_batch_success_and_business_rejection",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "required_coverage": [
+        "all_original_cids_terminal",
+        "committed_prefix_unknown_has_terminal_and_pending_originals",
+        "exclusive_control_served_between_batches",
+        "poison_isolated_without_neighbour_quarantine",
+        "restart_recovers_all_original_cids_from_manifest",
+        "same_batch_success_and_business_rejection",
+        "soft_budget_seals_prefix_without_executing_later_originals",
+        "unknown_after_actual_commit",
+        "unknown_after_rollback"
+      ],
+      "missing_coverage": []
+    }
+  },
+  "negative_controls": {
+    "split_terminal": {
+      "states": 99,
+      "transitions": 144,
+      "violation": "effect/reservation/evidence/terminal were not one COMMIT",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "effect/reservation/evidence/terminal were not one COMMIT"
+    },
+    "skip_same_account_head": {
+      "states": 24,
+      "transitions": 24,
+      "violation": "reserved command skipped an earlier same-account PENDING head",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (1,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              1
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              1
+            ],
+            "manifest": [
+              1
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "reserved command skipped an earlier same-account PENDING head"
+    },
+    "skip_final_lease": {
+      "states": 173,
+      "transitions": 268,
+      "violation": "financial COMMIT after lease expiry",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "lease expires inside batch",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": false,
+            "fresh": true,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": false,
+            "fresh": true,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": false,
+            "fresh": true,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": "financial COMMIT after lease expiry"
+          }
+        }
+      ],
+      "expected_violation": "financial COMMIT after lease expiry"
+    },
+    "skip_final_quote": {
+      "states": 423,
+      "transitions": 703,
+      "violation": "new financial effect after final quote-age failure",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2, 0)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "quote reaches age limit inside batch",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": false,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": false,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 0",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                1,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 2,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": false,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 2,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                1,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": false,
+            "environment_changed": true,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": "new financial effect after final quote-age failure"
+          }
+        }
+      ],
+      "expected_violation": "new financial effect after final quote-age failure"
+    },
+    "release_gate_early": {
+      "states": 225,
+      "transitions": 413,
+      "violation": "financial COMMIT outside SH router gate",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "unsafe release SH before financial COMMIT",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": "financial COMMIT outside SH router gate"
+          }
+        }
+      ],
+      "expected_violation": "financial COMMIT outside SH router gate"
+    },
+    "retry_before_query_all": {
+      "states": 111,
+      "transitions": 160,
+      "violation": "retry before querying every original CID",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "process crash discards volatile list; durable manifest survives",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "recover",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": true,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "restart reads durable original-CID manifest",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "unknown",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": true,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "unsafe retry/isolation before all original CIDs resolved",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "unknown",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": true,
+            "unknown_actual_commit": false,
+            "bad": "retry before querying every original CID"
+          }
+        }
+      ],
+      "expected_violation": "retry before querying every original CID"
+    },
+    "replay_committed_unknown": {
+      "states": 209,
+      "transitions": 324,
+      "violation": "original CID produced its financial effect twice",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response unknown",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "unknown",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": true,
+            "bad": ""
+          }
+        },
+        {
+          "action": "unsafe blind execution after committed unknown",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                2
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "unknown",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": true,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "original CID produced its financial effect twice"
+    },
+    "stale_reduce_only": {
+      "states": 1242,
+      "transitions": 2301,
+      "violation": "cumulative reduce-only reservation exceeds reducible position",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (0, 1)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              0,
+              1
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 2,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              0,
+              1
+            ],
+            "manifest": [
+              0,
+              1
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 2,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 0",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                1,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              0,
+              1
+            ],
+            "manifest": [
+              0,
+              1
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 2,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 1",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                1,
+                1,
+                1
+              ],
+              "effects": [
+                1,
+                1,
+                1
+              ],
+              "evidence": [
+                1,
+                1,
+                1
+              ],
+              "reservation": [
+                1,
+                1,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              0,
+              1
+            ],
+            "manifest": [
+              0,
+              1
+            ],
+            "cursor": 2,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 2,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 2,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                1,
+                1,
+                1
+              ],
+              "effects": [
+                1,
+                1,
+                1
+              ],
+              "evidence": [
+                1,
+                1,
+                1
+              ],
+              "reservation": [
+                1,
+                1,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 2,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "cumulative reduce-only reservation exceeds reducible position"
+    },
+    "reject_leaks_effect": {
+      "states": 252,
+      "transitions": 407,
+      "violation": "business savepoint rejection leaked a financial effect",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2, 0)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 0",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                2,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                1,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 2,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 2,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                2,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                1,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "business savepoint rejection leaked a financial effect"
+    },
+    "terminal_only_success": {
+      "states": 99,
+      "transitions": 144,
+      "violation": "successful terminal lacks its financial effect or existing-effect link",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "successful terminal lacks its financial effect or existing-effect link"
+    },
+    "missing_reservation": {
+      "states": 251,
+      "transitions": 406,
+      "violation": "committed NEW effect lacks exact active reservation (or CANCEL did not release it)",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2, 0)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 0",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 2,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 2,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                1,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "committed NEW effect lacks exact active reservation (or CANCEL did not release it)"
+    },
+    "missing_repayment": {
+      "states": 99,
+      "transitions": 144,
+      "violation": "REPAY terminal/effect lacks matching committed ledger amount",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2,)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2
+            ],
+            "manifest": [
+              2
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "REPAY terminal/effect lacks matching committed ledger amount"
+    },
+    "forged_replay_link": {
+      "states": 252,
+      "transitions": 407,
+      "violation": "duplicate order did not link to a committed original effect",
+      "counterexample": [
+        {
+          "action": "fenced metadata COMMIT records immutable original-CID manifest (2, 0)",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "prepared",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "SH gate + actual Wtxn; revalidate original manifest CIDs",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 0,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 2",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                0,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                0,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 1,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 1,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "savepoint evaluates original CID 0",
+          "after": {
+            "durable": {
+              "terminal": [
+                0,
+                0,
+                0
+              ],
+              "effects": [
+                0,
+                0,
+                0
+              ],
+              "evidence": [
+                0,
+                0,
+                0
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                -1,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                0
+              ]
+            },
+            "scratch": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                0,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "batch": [
+              2,
+              0
+            ],
+            "manifest": [
+              2,
+              0
+            ],
+            "cursor": 2,
+            "phase": "run",
+            "gate": true,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 2,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        },
+        {
+          "action": "actual atomic COMMIT; response known",
+          "after": {
+            "durable": {
+              "terminal": [
+                1,
+                0,
+                1
+              ],
+              "effects": [
+                0,
+                0,
+                1
+              ],
+              "evidence": [
+                1,
+                0,
+                1
+              ],
+              "reservation": [
+                0,
+                0,
+                0
+              ],
+              "replay_of": [
+                0,
+                -1,
+                -1
+              ],
+              "repaid": [
+                0,
+                1
+              ]
+            },
+            "scratch": null,
+            "batch": [],
+            "manifest": [],
+            "cursor": 0,
+            "phase": "idle",
+            "gate": false,
+            "lease": true,
+            "fresh": true,
+            "environment_changed": false,
+            "control_requested": false,
+            "control_served": false,
+            "attempts": 1,
+            "generic_faults": 0,
+            "poison_seen": false,
+            "query_mask": 0,
+            "work": 0,
+            "sealed": false,
+            "restarted": false,
+            "unknown_actual_commit": false,
+            "bad": ""
+          }
+        }
+      ],
+      "expected_violation": "duplicate order did not link to a committed original effect"
+    }
+  },
+  "identity": {
+    "cases": 16,
+    "passed": true,
+    "same_cid_different_payload": "conflict; immutable queued identity",
+    "ack_is_financial_success": false
+  },
+  "bounds": {
+    "commands": 3,
+    "accounts": 2,
+    "batch_size": 2,
+    "attempts": 3,
+    "abstract_work_steps": 2,
+    "environment_changes": 1,
+    "generic_technical_faults": 1,
+    "poison_failures": 1,
+    "process_crashes": 1,
+    "local_writers": 1,
+    "shards_in_transaction": 1
+  },
+  "assumptions": [
+    "atomic local financial/reservation/evidence/terminal COMMIT",
+    "durable inbox and authentic immutable original CID",
+    "durable immutable batch manifest and authoritative successful CID queries",
+    "one local writer; no external unmodelled financial writer",
+    "SH gate excludes EX control and funding transitions",
+    "SQL fencing validates actual token identity and lease at COMMIT"
+  ],
+  "not_proven": [
+    "runtime implementation/refinement",
+    "liveness/fair scheduling",
+    "physical WAL/fsync durability or real RPO",
+    "clock/pause bounds",
+    "real control-response latency or flock fairness",
+    "all exception classes",
+    "arbitrary batch size/scale",
+    "cross-shard atomicity/HA/replication",
+    "full financial calculator correctness or production approval"
+  ],
+  "production_approved": false
+}
