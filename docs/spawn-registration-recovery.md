@@ -1,4 +1,4 @@
-# Spawn registration failure recovery: scoped candidate, native acceptance pending
+# Spawn registration failure recovery: scoped candidate, wider acceptance pending
 
 This change repairs an exception path in the managed process supervisor. It is
 not a production approval or a claim that the original CI publication timeout
@@ -84,7 +84,7 @@ diagnostics. Raw first outputs, the original runtime identity and static
 prepare result are retained under
 `evidence/recovery/spawn-registration-20261117/`.
 
-## Exact bounded native diagnostic plan: requires separate execution GO
+## Exact bounded native diagnostic and first authorized result
 
 `tests/stopped_gate_recovery_probe.py` is prepare-only by default. It checks all
 runtime blobs against `ff814d4bcaee079b0e0503ea8072c24e3563c443`, and byte-pins
@@ -92,7 +92,7 @@ the unchanged source-e439 `owned_run`, orphan-reaper and kernel-lock helpers.
 It reports its own and the new test module's SHA256. The static preparation
 performed no SQLite connection, worker start or signal operation.
 
-The proposed once-only combined command is:
+The root-authorized once-only combined command was:
 
 ```sh
 python -B tests/stopped_gate_recovery_probe.py --execute --case all \
@@ -144,9 +144,20 @@ It did not run a model case, SQL, worker or signal operation.
 and the same output stream, before its blocked-I/O model tests. Its first raw
 output is `pure/terminal-fixed-same-process-first.txt`.
 
+The single approved native batch subsequently passed 4/4 in 4.091s. Its
+detached outer supervisor completed in 5.302555280s and both ownership harness
+leaders were reaped. The 440-event trace is complete. The kernel case retained
+the exact target SH through STOP, then completed publication in 1.126711011s
+with publishing=false, halted=true. No repeat was performed. The detached
+wrapper itself was exited/Z under PID1 at the metadata-only post-check; the
+observer could not reap it. Full first raw evidence and these scope boundaries
+are in evidence/recovery/spawn-registration-20261117/native-once/README.md.
+Broader regression QA and independent acceptance are still pending; original
+CI causality is not proven.
+
 ## Candidate rollout and rollback
 
-Native acceptance and independent review are still required. Keep existing
+Broader native regression acceptance and independent review are still required. Keep existing
 authorities on their pinned binaries. Deploy this candidate only to a new
 synthetic authority after model tests, the bounded native batch, existing
 process/gateway regressions and independent review pass. Check worker PID /
