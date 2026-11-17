@@ -1,0 +1,15 @@
+test_close_still_closes_real_holders_when_drain_raises (tests.test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests) ... ok
+test_constructor_failure_never_opens_holders_before_initialization (tests.test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests) ... ok
+test_original_metadata_mismatch_fails_before_server_and_closes_partial_holders (tests.test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests) ... ok
+test_run_keeps_holders_through_real_progress_then_closes_without_changing_flags (tests.test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests) ... ok
+test_start_failure_retains_original_error_and_holders_until_drain_and_progress (tests.test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests) ... ok
+test_warm_three_real_readers_preserve_aux_and_actual_kernel_ro_read (tests.test_managed_read_holders.IdleReadHolderPrototypeTests) ... ok
+test_no_pinned_snapshot_actual_writer_truncate_checkpoint_succeeds (tests.test_managed_read_holders.IdleReadHolderPrototypeTests) ... ok
+test_every_real_warm_cursor_is_closed_before_idle_connection_is_retained (tests.test_managed_read_holders.IdleReadHolderPrototypeTests) ... ok
+test_query_only_denies_real_dml_and_ddl (tests.test_managed_read_holders.IdleReadHolderPrototypeTests) ... ok
+test_partial_open_closes_all_and_owner_thread_controls_idempotent_cleanup (tests.test_managed_read_holders.IdleReadHolderPrototypeTests) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.226s
+
+OK

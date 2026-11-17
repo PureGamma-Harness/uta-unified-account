@@ -1,8 +1,4 @@
-"""Experimental producer-owned idle WAL readers; not connected to any service.
-
-Only owned temporary fixtures may use this prototype until separately reviewed.
-It neither implements a consistent snapshot nor establishes financial readiness.
-"""
+"""Producer-owned idle WAL readers; never a financial snapshot/readiness proof."""
 from pathlib import Path
 import os
 import sqlite3
@@ -34,14 +30,17 @@ def _identity(path):
 
 
 class IdleReadHolders:
-    """Single-thread owned, all-or-close prototype with real SQLite connections."""
-    def __init__(self, directory):
+    """Single-thread owned, all-or-close existing-file SQLite connections."""
+    def __init__(self, directory, *, expected_identities=None):
         self.owner_thread = get_ident()
         self.connections = []
         try:
             for relative, statement in WARM_READS:
                 path = Path(directory).absolute() / relative
                 identity = _identity(path)
+                if (expected_identities is not None
+                        and list(identity) != expected_identities[str(path)]):
+                    raise ValueError('main identity differs from original job metadata')
                 connection = sqlite3.connect(path.as_uri() + '?mode=ro', uri=True,
                     timeout=.2, isolation_level=None)
                 self.connections.append(connection)

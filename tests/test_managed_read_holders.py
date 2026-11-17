@@ -11,7 +11,7 @@ from threading import Thread
 import unittest
 from unittest.mock import patch
 
-from tools.managed_ro_anchor_prototype import IdleReadHolders, WARM_READS
+from benchmarks.managed_read_holders import IdleReadHolders, WARM_READS
 
 
 SCHEMAS = (
@@ -121,7 +121,7 @@ class IdleReadHolderPrototypeTests(unittest.TestCase):
                 return cursor
         def connect(*args, **kwargs):
             return original(*args, factory=TracedConnection, **kwargs)
-        with patch('tools.managed_ro_anchor_prototype.sqlite3.connect', connect):
+        with patch('benchmarks.managed_read_holders.sqlite3.connect', connect):
             holders = self.holders(root)
         self.assertTrue(all(query in statements for _, query in WARM_READS))
         for cursor in cursors:
@@ -169,7 +169,7 @@ class IdleReadHolderPrototypeTests(unittest.TestCase):
             captured.append(connection)
             os.replace(replacement, root / WARM_READS[0][0])
             return connection
-        with patch('tools.managed_ro_anchor_prototype.sqlite3.connect', replace_after_open):
+        with patch('benchmarks.managed_read_holders.sqlite3.connect', replace_after_open):
             with self.assertRaises((ValueError, sqlite3.DatabaseError)):
                 IdleReadHolders(root)
         for connection in captured:
@@ -216,7 +216,7 @@ class IdleReadHolderPrototypeTests(unittest.TestCase):
             connection = original(*args, **kwargs)
             captured.append(connection)
             return connection
-        with patch('tools.managed_ro_anchor_prototype.sqlite3.connect', capture):
+        with patch('benchmarks.managed_read_holders.sqlite3.connect', capture):
             with self.assertRaises(sqlite3.DatabaseError):
                 IdleReadHolders(root)
         self.assertEqual(len(captured), 2)
