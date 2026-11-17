@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "scope": "synthetic single-node functional foundation",
+  "production_approved": false,
+  "checks": [
+    "durable admission, reservation and atomic local settlement",
+    "partial fills, cumulative fees and hand-computed round-trip balance",
+    "restart recovery and immutable command deduplication",
+    "recoverable event consumption with persistent checkpoint",
+    "consistent backup, offline restore and exact ledger replay",
+    "M1 classic / credit / spot / paired perpetual / liquidation / restart / reconciliation"
+  ],
+  "ledger_events": 4,
+  "outbox_events": 10,
+  "vertical": {
+    "status": "passed",
+    "production_approved": false,
+    "checks": [
+      "classic gross snapshot handover, retained source evidence and initial freeze",
+      "explicit funded borrowing, spot asset locks, real cash matching, separate interest and repayment",
+      "market shock, automatic risk freeze, real partial liquidation and residual-risk preservation",
+      "worker restart, second matched liquidation, recovery and hand-computed terminal balances",
+      "read-only four-side replay plus source, spot and debt reconciliation after reopening storage"
+    ],
+    "linear_matches": 3,
+    "spot_matches": 2,
+    "final_balances": {
+      "BTC": "0.999",
+      "USD": "93.152"
+    },
+    "reconciliation": {
+      "status": "passed",
+      "matching_only": true,
+      "accounts": 2,
+      "orders": 6,
+      "fills": 6,
+      "positions": 0,
+      "active_imports": 1,
+      "ledger_events": 15,
+      "matches": 3,
+      "paired_fills": 6,
+      "unpaired_fills": 0,
+      "nonzero_liabilities": 0
+    },
+    "source_fence_verified": false,
+    "scope": "synthetic single-node Cross; not production capacity or real-source cutover approval"
+  }
+}
