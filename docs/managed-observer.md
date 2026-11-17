@@ -50,8 +50,9 @@ start/deadline, boot, schema or identity fails closed.
 Every observation writes one fsynced `timeline.jsonl` row and atomically replaces
 `latest.json`. Temporary files live beside those outputs, outside the job and
 source, so they cannot trigger the producer's historical rglob/stat race.
-Default cadence is 60 seconds, measured after a sample; a slow sample does not
-cause a catch-up burst. Do not run multiple observers into one output directory.
+Default start cadence is 60 seconds. A sample overrunning that interval delays
+the next start and causes no catch-up burst. Do not run multiple observers into
+one output directory.
 Reserve an independent output/disk budget: retaining every CID every minute
 can produce several GB across six hours. Keep that private timeline outside Git
 and the producer's directory budget. No large-run RSS, sampling-latency or output

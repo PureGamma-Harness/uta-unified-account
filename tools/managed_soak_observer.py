@@ -700,6 +700,7 @@ def main(argv=None):
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: stop.set())
     while not stop.is_set():
+        sample_started = time.monotonic()
         try:
             result = observer.sample()
         except (OSError, ValueError, KeyError, TypeError, ArithmeticError, RecursionError,
@@ -713,7 +714,9 @@ def main(argv=None):
         if args.once:
             print(canonical(result))
             return 0 if "observation_failed_closed" not in result["alerts"] else 1
-        deadline = time.monotonic() + args.interval
+        deadline = sample_started + args.interval
+        if deadline <= time.monotonic():
+            deadline = time.monotonic() + args.interval
         while not stop.is_set() and time.monotonic() < deadline:
             stop.wait(min(60, max(0, deadline - time.monotonic())))
     return 0
