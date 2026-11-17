@@ -159,3 +159,38 @@ AST alone), unknown/mid-COMMIT and storage failure semantics, operational rollou
 and compatibility review, clean public history/artifact inspection, and explicit
 later-stage approval for any financial source or public endpoint. Existing full3
 inner results do not replace those gates. This commit does not push or open a PR.
+
+## R3 preparation revision after cc74 — still NOT_RUN
+
+The initial cc74 commit and every original static result remain in history.
+`r3-supervisor-revision.json` supersedes only its supervisor SHA; all three shared
+support/P2/P3 harness hashes, the262-request target and the commands/budgets above
+are unchanged. No P1/full3 rerun or AuthDB execution accompanies this revision.
+
+After direct subject Popen returns, the supervisor now immediately enters its
+try block with owned metadata initializedNone. It first opens pidfd while this
+sole parent's new direct child is still unreaped, before any fallible `/proc`
+identity read or save. That descriptor stays in local binding state if a later
+metadata/record step raises. The primary error and bounded cleanup are recorded
+separately as UNKNOWN, with an early exclusive unknown record attempted before
+later result inspection. A bound direct-child descriptor may be killed/reaped
+even when optional metadata failed; an unavailable descriptor permits no PID or
+group fallback. Raw hashes remain final only after actual wait/reap.
+
+The starter now fsyncs an exclusive `launch-intent.json` before Popen. This intent
+alone is not proof that Popen succeeded. After Popen returns, identity/save errors
+produce START_OCCURRED_RECORD_UNKNOWN rather than “not started”. A separate
+exclusive unknown-record write is attempted, and the first error survives any
+secondary write failure. The existing outer directory, intent, private streams
+and independently written supervisor-owner remain possible recovery inputs;
+their absence/presence is inspected rather than inferred. In particular a failed
+post-start record is never authorization to repeat `start`.
+
+`check_r3_fake_owned.py` extracts only four supervisor helper declarations into a
+namespace of pure fakes, without importing the supervisor or starting processes.
+Eight cases cover fd-before-identity, failed identity, failed fd binding, failed
+signal/wait cleanup, and starter identity/one-write/two-write failures. These are
+control-flow simulations, not injected real process failures or dynamic AuthDB
+results. `r3-fake-owned-first.json` preserves the first pure run; the final pure
+run additionally pins the exact supervisor SHA. Both P2/P3 stay NOT_RUN until root
+authorizes their exact revised bundle one batch at a time.

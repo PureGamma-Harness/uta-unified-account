@@ -90,23 +90,85 @@ def start(args):
     command = [sys.executable, '-I', '-B', str(Path(__file__).resolve()), 'supervise',
                '--kind', args.kind, '--source', str(args.source), '--bundle-root', str(args.bundle_root),
                '--outer', str(args.outer)]
-    with (args.outer / 'private-supervisor-stdout.txt').open('xb') as out, \
-         (args.outer / 'private-supervisor-stderr.txt').open('xb') as err:
-        child = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=out, stderr=err,
-                                 cwd=Path(__file__).resolve().parent, start_new_session=True, close_fds=True)
-        try:
-            owned = identity(child.pid)
-        except FileNotFoundError:
-            owned = {'pid': child.pid, 'birth_capture_missing': True, 'exit_if_observed': child.poll()}
-    record = {'kind': args.kind, 'started_at': utc(), 'actual_Popen_supervisor': owned,
+    record = {'kind': args.kind, 'launch_prepared_at': utc(),
               'command': command, 'source_commit': SOURCE_REF, 'runtime_commit': RUNTIME_REF,
               'bundle_sha256': BUNDLE, 'supervisor_sha256': sha(Path(__file__)),
               'free_bytes_before_start': free, 'floor_plus_private_budget_required': FLOOR + SUBJECTS[args.kind][2],
               'streams': 'exclusive private files; stdin DEVNULL; no exec-server pipe',
               'start_new_session': True, 'production_approved': False}
-    save(args.outer / 'start-record.json', record)
-    print(json.dumps({'status': 'STARTED_ONCE', 'kind': args.kind, 'supervisor': owned,
-                      'outer': str(args.outer), 'supervisor_sha256': record['supervisor_sha256']}), flush=True)
+    # Persist the exclusive one-shot attempt before launch. If a later record
+    # fails, this directory/intent remains an UNKNOWN attempt, never retry GO.
+    save(args.outer / 'launch-intent.json', {'status': 'INTENT_NOT_START_OUTCOME',
+         'kind': args.kind, 'command': command, 'created_at': record['launch_prepared_at'],
+         'supervisor_sha256': record['supervisor_sha256'], 'never_resubmit_this_outer': True})
+    with (args.outer / 'private-supervisor-stdout.txt').open('xb') as out, \
+         (args.outer / 'private-supervisor-stderr.txt').open('xb') as err:
+        child = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=out, stderr=err,
+                                 cwd=Path(__file__).resolve().parent, start_new_session=True, close_fds=True)
+        outcome = record_started(args.outer, child, record)
+    print(json.dumps(outcome), flush=True)
+    return 2 if outcome['primary_error'] else 0
+
+
+def record_started(outer, child, record):
+    """Popen already returned: metadata/record failure must not mean no start."""
+    owned, primary = None, None
+    try:
+        owned = identity(child.pid)
+    except BaseException as error:
+        primary = {'phase': 'post_Popen_identity', 'type': type(error).__name__}
+    record.update({'actual_Popen_supervisor': owned, 'actual_Popen_pid': child.pid,
+                   'Popen_returned': True, 'primary_error': primary})
+    try:
+        save(outer / 'start-record.json', record)
+    except BaseException as error:
+        record['record_save_error'] = {'phase': 'post_Popen_start_record', 'type': type(error).__name__}
+        primary = primary or record['record_save_error']
+        record['primary_error'] = primary
+        try:
+            save(outer / 'start-record-unknown.json', record)
+        except BaseException:
+            # The pre-launch exclusive intent and private streams still exist;
+            # supervisor-owner may independently prove the actual start.
+            pass
+    return {'status': 'START_OCCURRED_RECORD_UNKNOWN' if primary else 'STARTED_ONCE',
+            'kind': record['kind'], 'supervisor': owned, 'actual_Popen_pid': child.pid,
+            'Popen_returned': True, 'primary_error': primary, 'never_resubmit': True,
+            'outer': str(outer), 'supervisor_sha256': record['supervisor_sha256']}
+
+
+def bind_direct_child(child, state):
+    # No wait/poll has occurred since this direct Popen child was returned.
+    # Its PID cannot be reused until this sole parent reaps it. Bind first,
+    # before fallible /proc metadata or recording, and retain the fd in state
+    # even if a later step raises. Never use this rule for arbitrary old PIDs.
+    state['pidfd'] = os.pidfd_open(child.pid)
+    state['owned'] = identity(child.pid)
+    assert same(state['owned'], identity(child.pid)) and state['owned']['ppid'] == os.getpid()
+
+
+def cleanup_direct_child(child, pidfd):
+    result = {'forced': False, 'wait_reaped': False, 'pidfd_bound': pidfd is not None}
+    try:
+        try:
+            result['exit_code'] = child.wait(timeout=0)
+            result['wait_reaped'] = True
+            return result
+        except subprocess.TimeoutExpired:
+            pass
+        if pidfd is None:
+            result['reason'] = 'UNKNOWN_NO_PIDFD_NO_PID_OR_GROUP_FALLBACK'
+            return result
+        result['forced'] = True
+        try:
+            signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        result['exit_code'] = child.wait(timeout=.75)
+        result['wait_reaped'] = True
+    except BaseException as error:
+        result['cleanup_error'] = type(error).__name__
+    return result
 
 
 def stop_bound_grandchild(args, subject):
@@ -154,16 +216,16 @@ def supervise(args):
     harness = args.bundle_root / 'tests' / 'auth_h0_p2p3_independent' / SUBJECTS[args.kind][0]
     command = [sys.executable, '-I', '-B', str(harness), '--source', str(args.source),
                '--private', str(args.outer / 'cases'), '--result', str(args.outer / 'probe-result.json')]
-    reason, reaped, code, pidfd, grandchild = None, False, None, None, None
+    reason, reaped, code, grandchild, primary, cleanup = None, False, None, None, None, None
+    unknown_record_error = None
+    binding = {'owned': None, 'pidfd': None}
     with (args.outer / 'private-probe-stdout.txt').open('xb') as out, \
          (args.outer / 'private-probe-stderr.txt').open('xb') as err:
         child = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=out, stderr=err,
                                  start_new_session=True, close_fds=True, cwd=args.bundle_root)
-        owned = identity(child.pid)
         try:
-            pidfd = os.pidfd_open(child.pid)
-            assert same(owned, identity(child.pid)) and owned['ppid'] == os.getpid()
-            save(args.outer / 'probe-actual-Popen.json', {'identity': owned, 'command': command,
+            bind_direct_child(child, binding)
+            save(args.outer / 'probe-actual-Popen.json', {'identity': binding['owned'], 'command': command,
                  'pidfd_bound': True, 'affinity_inherited_from_supervisor': [4]})
             try:
                 # Reserve2.5s for own-child cleanup, stream fsync, hashes and result.
@@ -171,24 +233,26 @@ def supervise(args):
                 reaped = True
             except subprocess.TimeoutExpired:
                 reason = 'WATCHDOG_27_5_SECONDS_WITHIN_HARD30_BUDGET'
-                grandchild = stop_bound_grandchild(args, owned)
-                assert same(owned, identity(child.pid))
-                signal.pidfd_send_signal(pidfd, signal.SIGKILL)
-                try:
-                    code = child.wait(timeout=.75)
-                    reaped = True
-                except subprocess.TimeoutExpired:
-                    reason = 'OWN_SUBJECT_REAP_UNKNOWN'
+                grandchild = stop_bound_grandchild(args, binding['owned'])
+                cleanup = cleanup_direct_child(child, binding['pidfd'])
+                code, reaped = cleanup.get('exit_code'), cleanup['wait_reaped']
         except BaseException as error:
+            primary = {'phase': 'post_Popen_bind_record_or_control', 'type': type(error).__name__}
             reason = 'SUPERVISOR_BIND_OR_CONTROL_' + type(error).__name__
-            if child.poll() is not None:
-                code = child.wait(timeout=.1)
-                reaped = True
-            # No PID-number/group fallback. Probe/worker have their own bounded
-            # paths; absent binding is UNKNOWN, never a fabricated clean exit.
+            if binding['owned'] is not None:
+                grandchild = stop_bound_grandchild(args, binding['owned'])
+            cleanup = cleanup_direct_child(child, binding['pidfd'])
+            code, reaped = cleanup.get('exit_code'), cleanup['wait_reaped']
+            try:
+                save(args.outer / 'probe-control-unknown.json', {'status': 'UNKNOWN',
+                     'actual_Popen_pid': child.pid, 'metadata': binding['owned'],
+                     'pidfd_bound': binding['pidfd'] is not None, 'primary_error': primary,
+                     'cleanup': cleanup, 'raw_final_only_if_wait_reaped': reaped})
+            except BaseException as record_error:
+                unknown_record_error = type(record_error).__name__
         finally:
-            if pidfd is not None:
-                os.close(pidfd)
+            if binding['pidfd'] is not None:
+                os.close(binding['pidfd'])
         out.flush()
         os.fsync(out.fileno())
         err.flush()
@@ -206,7 +270,11 @@ def supervise(args):
     result = {'kind': args.kind, 'started_at': started, 'raw_closed_fsynced_hashed_at': utc(),
               'source_commit': SOURCE_REF, 'runtime_commit': RUNTIME_REF, 'source_validation_scope': '64 runtime only',
               'bundle_sha256': BUNDLE, 'supervisor_sha256': self_hash, 'supervisor_identity': owner,
-              'subject_actual_Popen': owned, 'subject_exit_code': code, 'subject_wait_reaped': reaped,
+              'subject_actual_Popen': binding['owned'], 'subject_actual_Popen_pid': child.pid,
+              'subject_pidfd_bound': binding['pidfd'] is not None,
+              'primary_control_error': primary, 'owned_subject_cleanup': cleanup,
+              'control_unknown_record_error': unknown_record_error,
+              'subject_exit_code': code, 'subject_wait_reaped': reaped,
               'watchdog_or_control_reason': reason, 'grandchild_forced_cleanup': grandchild,
               'private_raw_streams': streams, 'source_and_harness_unchanged': same_inputs,
               'raw_hashes_final_only_if_subject_reaped': reaped,
@@ -236,13 +304,14 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     args = parser.parse_args()
     if args.operation == 'start':
-        start(args)
-        return 0
+        return start(args)
     if args.operation == 'supervise':
         return supervise(args)
     # Safe metadata only; never dump private AuthDB/credentials/requests/raw.
     value = {}
-    for name in ('start-record.json', 'supervisor-owner.json', 'probe-actual-Popen.json',
+    for name in ('launch-intent.json', 'start-record.json', 'start-record-unknown.json',
+                 'supervisor-owner.json', 'probe-actual-Popen.json',
+                 'probe-control-unknown.json',
                  'supervisor-result.json', 'completion.json'):
         path = args.outer / name
         value[name] = json.loads(path.read_bytes()) if path.exists() else None

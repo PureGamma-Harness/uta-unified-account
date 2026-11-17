@@ -1,0 +1,21 @@
+{
+  "status": "CODE_AND_PURE_REVISION_ONLY",
+  "supersedes_only_supervisor_in": "cc74e1013f450f886c71872b1b779f822782079c",
+  "original_commit_and_static_records_preserved": true,
+  "supervisor_sha256": "670bd0a1f78e8d0f9ec656aa0bd7936368aac788f1d26c95fd35e9cfaeacae9e",
+  "P2_harness_sha256_unchanged": "f2ecd948ab3b5b261282dfa1650beac60c1c610da6783c65669cd79ef133b1e1",
+  "P3_harness_sha256_unchanged": "7fd73d8a77173528f21dd94604e50437f4e91dfce4a4ab744b617cf4bf9a668d",
+  "support_sha256_unchanged": "5498be6b04d32250128c2f1edebae339180dc99b061b84eff99c3fb01e497152",
+  "scope": "postPopen metadata/binding/record failures preserve UNKNOWN and bounded own-child cleanup",
+  "supervise_order": "Popen return -> immediate try -> direct still-unreaped child pidfd first -> fallible identity -> save; pidfd retained if later step raises",
+  "binding_failure": "primary error and cleanup recorded; only bound direct-child fd may be signalled; no pidfd means UNKNOWN/no PID/group fallback",
+  "early_unknown_record": "exclusive probe-control-unknown.json best effort before other result parsing, preserving primary plus cleanup",
+  "raw_final_only_when_wait_reaped": true,
+  "starter_order": "exclusive launch-intent before Popen; metadata and start-record failure after successful Popen returns START_OCCURRED_RECORD_UNKNOWN/no resubmit",
+  "P2_fixed_requests_unchanged": 262,
+  "commands_and_budget": "same README start commands; CPU4, watchdog27.5/hard30s; P2 then P3 only on separate specific root GO",
+  "P2_actual_status": "NOT_RUN",
+  "P3_actual_status": "NOT_RUN",
+  "real_process_signal_SQL_DB_product_import_in_pure_failure_cases": false,
+  "production_approved": false
+}
