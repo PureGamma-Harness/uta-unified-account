@@ -1,0 +1,143 @@
+"""Independent oracle omissions at the immutable operations review origin.
+
+Public bootstrap drift and explicit in-memory archive faults are synthetic test
+inputs, not ordinary customer exploits or real-funds observations. No source
+checkout, old soak authority, file guard, or live writer token is modified.
+"""
+from contextlib import contextmanager
+from decimal import Decimal as D
+import gzip
+from hashlib import sha256
+import json
+from pathlib import Path
+import sqlite3
+from tempfile import TemporaryDirectory
+import unittest
+from unittest.mock import patch
+
+from benchmarks import run_managed_soak as soak
+from benchmarks.run_soak import readonly
+from uta.sharding import ShardRouter
+
+
+REVIEW_ORIGIN = "8e1de5c4d79e9a45f638b67b65cbed87b7ad3d09"
+SCALE = 100_000_000
+
+
+class FixedBudgetOracleReferenceTests(unittest.TestCase):
+    def bootstrap_fixture(self, *, credit_usd_extra=0, extra_account=False):
+        temporary = TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        authority = Path(temporary.name) / "authority"
+        original = ShardRouter.deposit
+        def source_deposit(router, account, event_id, asset, amount):
+            if account == soak.ACCOUNTS[2] and asset == "USD":
+                amount += D(credit_usd_extra)
+                if extra_account:
+                    router.create_account("unexpected-fourth-account")
+            return original(router, account, event_id, asset, amount)
+        # All source changes use real public router administration before
+        # management seals the source. Only the expected genesis input drifts.
+        with patch.object(ShardRouter, "deposit", source_deposit):
+            soak.bootstrap(authority, 1, "synthetic:oracle-reference:fixed-budget")
+        view = soak.ManagedSoak.__new__(soak.ManagedSoak)
+        view.financial = authority / "shard-0000.sqlite3"
+        view.configuration = soak.Configuration(duration=4)
+        return view
+
+    def facts(self, view):
+        with readonly(view.financial) as connection:
+            return {
+                "accounts": [row[0] for row in connection.execute("SELECT account_id FROM uta_accounts ORDER BY account_id")],
+                "credit_usd": int(connection.execute("SELECT units FROM ledger_balances WHERE account=? AND asset='USD'",
+                    ("customer:" + soak.ACCOUNTS[2],)).fetchone()[0]),
+                "ledger_events": connection.execute("SELECT COUNT(*) FROM ledger_events").fetchone()[0],
+            }
+
+    def test_exact_public_bootstrap_is_a_valid_control(self):
+        view = self.bootstrap_fixture()
+        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+        self.assertEqual(self.facts(view), {"accounts": sorted(soak.ACCOUNTS),
+            "credit_usd": 1_000_000 * SCALE, "ledger_events": 6})
+
+    def test_credit_usd_budget_drift_currently_passes_the_full_oracle(self):
+        view = self.bootstrap_fixture(credit_usd_extra=1)
+        self.assertEqual(self.facts(view)["credit_usd"], 1_000_001 * SCALE)
+        self.assertEqual(self.facts(view)["ledger_events"], 6)
+        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+
+    def test_unexpected_account_currently_passes_the_full_oracle(self):
+        view = self.bootstrap_fixture(extra_account=True)
+        self.assertEqual(set(self.facts(view)["accounts"]), set(soak.ACCOUNTS) | {"unexpected-fourth-account"})
+        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+
+    def test_original_combined_reproduction_keeps_all_four_accounts_and_wrong_usd(self):
+        view = self.bootstrap_fixture(credit_usd_extra=1, extra_account=True)
+        actual = self.facts(view)
+        self.assertEqual(len(actual["accounts"]), 4)
+        self.assertEqual(actual["credit_usd"], 100_000_100_000_000)
+        self.assertEqual(actual["ledger_events"], 6)
+        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+
+
+class ArchivedEvidenceOracleReferenceTests(unittest.TestCase):
+    def setUp(self):
+        # This committed historical synthetic snapshot is test input only. It
+        # does not qualify the current release or endorse its historical run.
+        fixture = Path(__file__).resolve().parents[1] / "benchmarks/results/20261116-managed-smoke-final/smoke10/financial-snapshot.json.gz"
+        snapshot = json.loads(gzip.decompress(fixture.read_bytes()))
+        self.connection = sqlite3.connect(":memory:")
+        self.addCleanup(self.connection.close)
+        self.connection.row_factory = sqlite3.Row
+        for item in snapshot["schema"]:
+            if item["type"] == "table" and item["sql"] and not item["name"].startswith("sqlite_"):
+                self.connection.execute(item["sql"])
+        for table, rows in snapshot["tables"].items():
+            for row in rows:
+                columns = ",".join('"' + field + '"' for field in row)
+                parameters = ",".join("?" for _ in row)
+                self.connection.execute(f'INSERT INTO "{table}" ({columns}) VALUES ({parameters})', tuple(row.values()))
+        # The historical export omitted this immutable codec table's rows.
+        # Restore the documented USD/BTC=8 fixture scales before either baseline
+        # or negative inspection; do not infer them from a current engine.
+        self.connection.executemany("INSERT INTO ledger_assets(asset,scale) VALUES (?,8)", (("USD",), ("BTC",)))
+        self.connection.commit()
+        self.view = soak.ManagedSoak.__new__(soak.ManagedSoak)
+        self.view.configuration = soak.Configuration(duration=10)
+        self.view.financial = Path("/unused-memory-only-oracle-fixture")
+        @contextmanager
+        def memory_read(_):
+            yield self.connection
+        self.reader = patch.object(soak, "readonly", memory_read)
+        self.reader.start()
+        self.addCleanup(self.reader.stop)
+        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+
+    def test_original_historical_fixture_is_a_valid_oracle_control_only(self):
+        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+
+    def test_wrong_artifact_content_id_currently_passes_the_full_oracle(self):
+        self.connection.execute("UPDATE uta_code_artifacts SET manifest='{}'")
+        row = self.connection.execute("SELECT artifact_id,manifest FROM uta_code_artifacts LIMIT 1").fetchone()
+        self.assertNotEqual(row[0], "artifact:" + sha256(row[1].encode()).hexdigest())
+        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+
+    def test_wrong_policy_content_id_currently_passes_the_full_oracle(self):
+        self.connection.execute("UPDATE uta_risk_policies SET payload='{}'")
+        row = self.connection.execute("SELECT policy_id,payload FROM uta_risk_policies LIMIT 1").fetchone()
+        self.assertNotEqual(row[0], "policy:" + sha256(row[1].encode()).hexdigest())
+        self.assertTrue(self.view.verify(3, full=True)["golden_passed"])
+
+    def test_missing_decision_artifact_is_already_rejected(self):
+        self.connection.execute("UPDATE uta_code_artifacts SET artifact_id=?", ("artifact:" + sha256(b"{}").hexdigest(),))
+        with self.assertRaisesRegex(RuntimeError, "reference"):
+            self.view.verify(3, full=True)
+
+    def test_market_content_digest_damage_is_already_rejected(self):
+        self.connection.execute("UPDATE uta_market_history SET payload='{}'")
+        with self.assertRaisesRegex(RuntimeError, "digest"):
+            self.view.verify(3, full=True)
+
+
+if __name__ == "__main__":
+    unittest.main()
