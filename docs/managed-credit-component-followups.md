@@ -39,3 +39,23 @@ No runtime, route, DDL installer, prior source, raw log, frozen code or active
 job changes. Production/runtime remain NO-GO. Only the necessary new positive
 component case will run for the canonical identity change; this is not a rerun
 to overwrite the 59 result or expand its ten-case acceptance.
+
+## Actual follow-up results
+
+Frozen component source `daea6814a2fbcbcabc787e09d693c001df5025b0` ran on CPU3 at
+**2026-11-17 10:52:44.034244–10:52:48.059698 UTC**. The necessary 3.12 canonical
+positive case passed and the base decision reader actually returned its canonical
+ID/account/kind/version fields. Then the 3.10 microfile passed all ten tests,
+including the real old binary controls, once. No 3.12 full microfile or 3.13 run
+was repeated or claimed. New window4.025737s; combined actual probe time with
+the original window is7.997538s, below the predeclared30s budget.
+
+The 3.10 error observations preserve `sqlite_errorcode=null`, native attribute
+absent, and the explicit exact-message classification basis. The original 59
+3.12 evidence retains its observed numeric codes. Both remain separate source
+and runtime evidence; there is no fabricated native code or test skip.
+
+[Commands, time and raw observations](../evidence/runs/credit-obligation-component-daea681/execution.json)
+include all actual results and cleaned temporary authorities. Credit runtime,
+complete credit audit/replay, native context/authorizer and first-source budget
+contracts remain unimplemented and NO-GO.

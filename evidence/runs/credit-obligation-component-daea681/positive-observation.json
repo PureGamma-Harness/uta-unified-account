@@ -1,0 +1,159 @@
+[
+  {
+    "test": "test_complete_candidate_tuple_really_commits_four_legs",
+    "options": {},
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": true,
+      "fk_violations_before_commit": [],
+      "in_transaction_before_exit": true,
+      "after_reopen": {
+        "ledger_events": 3,
+        "borrow_rows": 1,
+        "decisions": 1,
+        "accounts": [
+          [
+            "alice",
+            2
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [
+          [
+            "alice",
+            "BTC",
+            "0.4",
+            "0"
+          ]
+        ],
+        "balances": [
+          [
+            "customer:alice",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "liability:principal:alice",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "60000000"
+          ],
+          [
+            "system:credit-principal-receivable",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "SUCCEEDED",
+        "loan_legs": [
+          [
+            "customer:alice",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "liability:principal:alice",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-principal-receivable",
+            "BTC",
+            "40000000"
+          ]
+        ],
+        "intents": 1
+      },
+      "base_decision_reader": {
+        "decision_id": "decision:5af940e2e99212613e2d40c3fa92db3f7ffb94a53b527e41ee5fa0d8aaf00132",
+        "kind": "CREDIT_BORROWED",
+        "account_id": "alice",
+        "business_id": "probe:loan:1",
+        "pre_version": 1,
+        "post_version": 2
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": false,
+      "financial_unchanged": false,
+      "core_ledger_verified_events": 3,
+      "core_credit_nonzero_liabilities": 1,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  }
+]

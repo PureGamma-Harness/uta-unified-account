@@ -1,0 +1,46 @@
+{
+  "component_source_commit": "daea6814a2fbcbcabc787e09d693c001df5025b0",
+  "affinity": [
+    3
+  ],
+  "previous_window_seconds": 3.9718003629968734,
+  "current_window_seconds": 4.025737219999428,
+  "cumulative_probe_seconds": 7.997537843992177,
+  "runs": [
+    {
+      "label": "python312-canonical-positive",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "tests.test_credit_obligation_probe",
+        "evidence/runs/credit-obligation-component-daea681/positive-observation.json",
+        "CandidateCreditObligationTests.test_complete_candidate_tuple_really_commits_four_legs",
+        "-v"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-17T10:52:44.034244+00:00",
+      "finished_utc": "2026-11-17T10:52:44.399505+00:00",
+      "duration_seconds": 0.3652668659997289,
+      "log": "python312-canonical-positive.txt",
+      "log_sha256": "9fd043383f4f83cab3c3d99cf3320e25a7501b74bfa66ed8b9d8efc45d60a0e5"
+    },
+    {
+      "label": "python310-microtests",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-m",
+        "tests.test_credit_obligation_probe",
+        "evidence/runs/credit-obligation-component-daea681/python310-observations.json",
+        "-v"
+      ],
+      "exit_code": 0,
+      "started_utc": "2026-11-17T10:52:44.400054+00:00",
+      "finished_utc": "2026-11-17T10:52:48.059698+00:00",
+      "duration_seconds": 3.659659520999412,
+      "log": "python310-microtests.txt",
+      "log_sha256": "8d9a1b40e8157bc27b773b84e46882eb0ec638754298f3312906677d98652f32"
+    }
+  ],
+  "production_approved": false,
+  "credit_runtime_integrated": false
+}
