@@ -6,10 +6,10 @@ import json
 import os
 from pathlib import Path
 import re
-import sys
 import unittest
 
 from tests.credit_v2_runtime_fixture import SyntheticCreditAuthority, actual_credit_observation
+from tests.sqlite_connection_observer import trace_new_sqlite_connections
 from uta.credit_audit_v2 import CreditAuditV2, canonical
 from uta.credit_audit_v2_replay import replay_bundle
 from uta.existing_services import open_existing_services
@@ -156,17 +156,9 @@ class CreditV2RuntimeChainTests(unittest.TestCase):
         fixture.now += timedelta(days=1)  # Own synthetic fixture clock only.
         fifo.enqueue_repay("alice", "repay-stale-halt", "BTC", D(".1"), actor_id="synthetic:integration-borrower",
                            source_reference="synthetic:integration:repay-stale-halt")
-        statements, enabled = [], [True]
-        def observe(event, arguments):
-            if event == "sqlite3.connect/handle" and enabled[0]:
-                arguments[0].set_trace_callback(statements.append)
-        # Observe actual new SQLite handles without substituting any financial
-        # method, Database object, guard, market or successful callback.
-        sys.addaudithook(observe)
-        try:
+        statements = []
+        with trace_new_sqlite_connections(statements):
             receipt = fifo.process_one()
-        finally:
-            enabled[0] = False
         self.assertEqual(receipt["state"], "SUCCEEDED")
         self.assertEqual({field: receipt["result"][field] for field in
             ("principal", "interest", "principal_repaid", "interest_repaid")},

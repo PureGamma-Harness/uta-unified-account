@@ -34,3 +34,12 @@ original database. This does not accept repayment. V2 stays default off,
 synthetic-only, non-trading-ready, with no public activation. Runtime and harness
 fixes and their new targeted evidence will be separate commits; the original
 failed run and all unknown outcomes remain retained.
+
+The observation-only harness was then corrected independently of runtime code:
+the audit event only retains the actual handle, and a temporary profile observer
+attaches tracing after the real `sqlite3.connect` C return. Neither connection
+creation nor financial methods/guards are substituted. Two real constructor,
+SQL-observation and cleanup tests passed on Python3.10/3.12/3.13 in 0.001s each;
+raw evidence is in `evidence/runs/credit-v2-sql-observer-fix`. The original
+halt/stale case still requires targeted rerun after the native runtime blocker
+is fixed. No previous red is relabelled green by these harness-only tests.
