@@ -8,6 +8,11 @@ under stated assumptions; it does not establish SQLite, process, host or
 real-funds acceptance. This is this system's proposed policy, not a claim of
 alignment with Bybit, Binance or another exchange.
 
+The independently prompted clarification in
+`credit-authority-upgrade-boundary-addendum.md` is part of this contract: a new
+physical inbox does not inherit global CID deduplication automatically, and
+pre-barrier AuthStore acceptance/nonce COMMITs must join the source/financial cut.
+
 The selected strategy is a stopped, verified **successor authority** with an
 append-only epoch lineage. The old authority becomes permanently read-only
 before a successor can write. An existing V2 database is never opened for

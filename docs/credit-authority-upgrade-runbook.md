@@ -7,6 +7,11 @@ for a published authority is recovery using its exact retained artifact/runtime
 and original CIDs. Production and real funds remain NO-GO without independent
 implementation review and explicit trusted-operator/financial approval.
 
+Apply `credit-authority-upgrade-boundary-addendum.md`: new POSTs require inherited
+global original-CID lookup, and the drain includes AuthStore-accepted grants and
+nonce COMMITs not yet delivered to financial source/PENDING. A local empty inbox
+or zero financial PENDING count is insufficient. Both bridges remain unimplemented.
+
 ## Prepare a concrete review packet
 
 Record the frozen old and proposed new actual source/runtime artifacts, domain
