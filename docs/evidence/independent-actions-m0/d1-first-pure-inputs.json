@@ -1,0 +1,30 @@
+{
+  "git_base": "ab933bec61d5c4be3e40c1a337f8ce55705ba48d",
+  "command": [
+    "timeout",
+    "--kill-after=1s",
+    "10s",
+    "taskset",
+    "-c",
+    "2",
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_diagnostics.py",
+    "-v"
+  ],
+  "controller_sha256": "b57da447551f85ce767aa1a46c9b63244e780783c7f9715cbc26cc4c7486b107",
+  "test_sha256": "381bcd375e0d06e1ba02f30c9e7fd216c4ac405187db5937e0083377154dc5ea",
+  "patch_sha256": "3261d97c4f2f4dfef25f128e5b0ad4896a672054c0c579779054758585eab505",
+  "result": "14 PASS,0failures,0errors",
+  "reported_unittest_seconds": 0.028,
+  "timing_precision": "unittest duration and tool finished clock22:37:00UTC; no invented start timestamp",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "b5fd9d3ad7f67a4fb7ff51de8ef6b2629c6a0b7be2fbbd2f45ceeb973caa85bb",
+  "actual_SQL_native_crypto_services": false
+}
