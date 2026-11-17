@@ -164,3 +164,13 @@ noninteger diagnostic counter blocks technical qualification, even with all
 individual CID attempts equal to zero. The existing benchmark still does not
 select batch capability, so no batch performance run is implied. Its tiny
 existing .1/.2-second real-spawn unit cases verify this reporting contract only.
+
+Final focused checkpoint `ebf8459` executes **105/105 cases on each** of Python
+3.10.22/SQLite 3.53.1, Python 3.12.14/SQLite 3.53.1 and Python 3.13.5/SQLite
+3.46.1. The actual interval is 2026-11-17 08:21–08:23 UTC; every runtime source
+manifest is unchanged, with no ResourceWarning or ignored-exception output.
+It includes real batch ownership/restart, both archived binaries, original
+single-command/fence/startup behavior, diagnostic stop gates and original native
+TLS CLI checks. [Commands, source manifests and actual raw outputs](../evidence/20261117-durable-batches-runtime/targeted-ebf8459/manifest.json)
+are retained. This is a focused matrix, not a complete release run, packaging,
+capacity test, independent approval or permission to enable real funds.
