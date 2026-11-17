@@ -1,0 +1,33 @@
+{
+  "cwd": "/workspace/uta-auth-h0-runtime-independent",
+  "started_at": "2026-11-17T18:05:58.920825+00:00",
+  "finished_at": "2026-11-17T18:05:59.158258+00:00",
+  "outer_monotonic_ns": 237438465,
+  "exit_code": 1,
+  "script_sha256": "81d056d5a0d315e47a293f9ea3278b990fe32d55d636deca3b9b8070a3f1ed63",
+  "script_unchanged": true,
+  "stdout_sha256": "eb45564627508007e21179fc15720c0f4a6e80d9429ef81615c5aa7bdb863e51",
+  "stderr_sha256": "0ac0081c815541bfe806ea40c680163a8eb457c83418304267fe4d2a582a43db",
+  "runtime_commit": "072cc77c5a96b48c81a143020ab8ac6c9a794a9b",
+  "scope": "fresh synthetic auth-only independent negative; no author DB touched",
+  "command_template": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-auth-h0-runtime-independent/tests/auth_h0_independent/grant_payload_corruption.py",
+    "--source",
+    "/workspace/uta-credit-auth-h0",
+    "--private",
+    "<operator-private-private> ",
+    "--result",
+    "<operator-private-result> "
+  ],
+  "exact_command_retained_private": true,
+  "actual_private_stderr_class": "AssertionError",
+  "actual_private_stderr_message": "grant payload corruption was accepted despite normative full grant payload equality",
+  "private_stdout_not_published": true,
+  "private_stderr_not_published": true
+}
