@@ -199,3 +199,12 @@ adaptation moves loan seeding to an explicit pre-seal bootstrap callback, keepin
 the original pool/borrow CIDs and all cash, gross debt and six-entry assertions.
 This supports credit A2's managed new-borrow rejection; it does not enable managed
 borrowing or alter production runtime.
+
+The pre-seal adapter is additionally verified against the integration lead's
+credit A2 runtime `5dc19ee43e49d133cfbdcf0be3e8875467ca3190` (runtime bytes equal
+`6730f44`), using this branch's `d5b4001` test file explicitly. All **4/4 cases
+pass on each** of the three runtimes. The external harness asserts both runtime
+and test import locations, records both source identities and hashes, and sees
+unchanged sources with no ResourceWarning/ignored exceptions. [Raw mixed-source
+adapter evidence](../evidence/20261117-durable-batches-runtime/credit-a2-fixture-adapter/manifest.json)
+is separate from release qualification; no root or frozen worktree was edited.
