@@ -1,0 +1,436 @@
+"""Dispatch-only independent-host M0 draft. PREP is the default.
+
+No product imports, SQL, subprocess or workload occurs by importing this module.
+Execute is intentionally gated by an operator manifest, exact source/control
+hashes, provider context, different host/boot, local storage and fresh space.
+Private authority/request/stream files are never copied to the public directory.
+"""
+from contextlib import contextmanager
+from datetime import datetime, timezone
+from hashlib import sha256, sha1
+import argparse
+import gzip
+import importlib.util
+import json
+import marshal
+import math
+import os
+from pathlib import Path
+import platform
+import re
+import resource
+import socket
+import stat
+import subprocess
+import sys
+import time
+
+SOURCE = '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
+SOURCE_TREE = 'cee60bc0b5413551030300e065d0dcaac6a7ff55'
+TRACKED = 5518
+CASE_CAP = 32 * 1024**2
+AGGREGATE_CAP = 64 * 1024**2
+CLEANUP_RESERVE = 32 * 1024**2
+MIN_FREE = 2 * 1024**3 + CASE_CAP + CLEANUP_RESERVE
+OUTCOMES = {'financial_succeeded', 'business_rejected', 'control_or_market_rejected',
+    'local_outstanding_full', 'durable_queue_full', 'enqueue_business_rejected',
+    'submission_failed', 'technical_quarantined', 'unknown', 'timeout'}
+EVIDENCE_COMMITS = {'local_three':'841b5cc908e7e15e9461c0ecc91a173e2162cada',
+    'ci_eight':'85e96b63813e0b993e532f054ef97740e64176cd',
+    'package_author':'721e9d02308d900cd39db2a209d0130394f78338',
+    'package_peer':'5c98110359f293413ebe561b3cb2f5683ee26863'}
+
+class GateError(Exception):
+    pass
+
+def need(value, code):
+    if not value:
+        raise GateError(code)
+
+def digest(path):
+    return sha256(Path(path).read_bytes()).hexdigest()
+
+def numeric(value):
+    need(type(value) in (int,float) and math.isfinite(value), 'numeric_type')
+    return value
+
+def integer(value, lower=0, upper=2**63-1):
+    need(type(value) is int and lower <= value <= upper, 'integer_domain')
+    return value
+
+def strict_json(raw):
+    def pairs(items):
+        result = {}
+        for key,value in items:
+            need(key not in result, 'duplicate_json_key')
+            result[key] = value
+        return result
+    return json.loads(raw, object_pairs_hook=pairs, parse_constant=lambda _: (_ for _ in ()).throw(GateError('json_nonfinite')))
+
+def read_json(path, limit=4*1024**2):
+    info = Path(path).lstat()
+    need(stat.S_ISREG(info.st_mode) and info.st_size <= limit, 'input_file_type_or_size')
+    return strict_json(Path(path).read_bytes())
+
+def public_write(root, name, value):
+    need(re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_.-]{0,150}', name) is not None, 'public_filename')
+    path = root / name
+    raw = (json.dumps(value,sort_keys=True,indent=2,allow_nan=False)+'\n').encode()
+    need(len(raw) <= 4*1024**2, 'public_record_cap')
+    fd = os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
+    with os.fdopen(fd,'wb') as stream:
+        stream.write(raw);stream.flush();os.fsync(stream.fileno())
+    return {'name':name,'bytes':len(raw),'sha256':sha256(raw).hexdigest()}
+
+def tree_bytes(root, entries_limit=20000):
+    if not root.exists():
+        return 0
+    total = entries = 0
+    for parent,dirs,files in os.walk(root,followlinks=False):
+        for name in dirs+files:
+            entries += 1
+            need(entries <= entries_limit, 'tree_entries_cap')
+            info = (Path(parent)/name).lstat()
+            need(not stat.S_ISLNK(info.st_mode), 'output_symlink')
+            need(stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'output_special')
+            if stat.S_ISREG(info.st_mode):total += info.st_size
+    return total
+
+def validate_dispatch(approval, environment, actual, controller_sha):
+    need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')
+    need(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}',approval['operator_approval_id']) is not None,'approval_id')
+    need(re.fullmatch(r'[0-9a-f]{40}',approval['control_commit']) is not None,'control_commit_format')
+    need(approval['controller_sha256'] == controller_sha,'controller_hash_changed')
+    need(approval['source_commit'] == SOURCE,'workload_source_not_approved')
+    need(environment.get('GITHUB_ACTIONS') == 'true' and environment.get('RUNNER_ENVIRONMENT') == 'github-hosted','hosted_runner_context_required')
+    need(environment.get('GITHUB_EVENT_NAME') == 'workflow_dispatch','dispatch_only')
+    need(environment.get('GITHUB_SHA') == approval['control_commit'],'control_checkout_commit')
+    need(environment.get('RUNNER_OS') == 'Linux','linux_required')
+    need(environment.get('GITHUB_RUN_ATTEMPT') == '1','first_attempt_only')
+    need(re.fullmatch(r'[1-9][0-9]*',environment.get('GITHUB_RUN_ID','')) is not None,'run_identity')
+    need(actual['boot_id'] != approval['workspace_boot_id'],'same_boot_as_workspace')
+    need(actual['hostname_sha256'] != approval['workspace_hostname_sha256'],'same_host_as_workspace')
+    need(re.fullmatch(r'[0-9a-f-]{36}',approval['workspace_boot_id']) is not None,'workspace_boot_format')
+    need(re.fullmatch(r'[0-9a-f]{64}',approval['workspace_hostname_sha256']) is not None,'workspace_host_format')
+    stamp=datetime.fromisoformat(approval['workspace_recorded_at'])
+    need(stamp.tzinfo is not None,'workspace_reference_timezone')
+    age=(datetime.now(timezone.utc)-stamp).total_seconds()
+    need(0 <= age <= 900,'workspace_reference_expired')
+    need(actual['filesystem_type'] not in {'tmpfs','ramfs','nfs','nfs4','cifs','smb3','9p'} and not actual['filesystem_type'].startswith('fuse'),'nonlocal_or_memory_filesystem')
+    need(actual['free_bytes'] >= MIN_FREE,'independent_runner_free_space')
+    need(actual['network_external_exchange_configured'] is False,'external_exchange_prohibited')
+    return True
+
+def source_snapshot(source):
+    def git(*args):return subprocess.check_output(['git',*args],cwd=source)
+    need(git('rev-parse','HEAD').decode().strip()==SOURCE,'source_head')
+    need(git('rev-parse','HEAD^{tree}').decode().strip()==SOURCE_TREE,'source_tree')
+    need(git('status','--porcelain','--untracked-files=all')==b'','source_dirty')
+    manifest={}
+    for row in git('ls-tree','-rz','--full-tree',SOURCE).split(b'\0'):
+        if not row:continue
+        header,name=row.split(b'\t',1);mode,kind,oid=header.split();name=name.decode()
+        need(kind==b'blob' and mode in {b'100644',b'100755'},'source_entry_kind')
+        path=source/name;info=path.lstat();need(stat.S_ISREG(info.st_mode),'source_regular')
+        data=path.read_bytes()
+        need(sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==oid.decode(),'source_git_blob')
+        manifest[name]={'bytes':len(data),'sha256':sha256(data).hexdigest()}
+    need(len(manifest)==TRACKED,'source_file_count')
+    return manifest
+
+def load_owned_runner(source):
+    path=source/'tools/run_managed_variants.py'
+    spec=importlib.util.spec_from_file_location('frozen_independent_owned_runner',path)
+    module=importlib.util.module_from_spec(spec);sys.modules[spec.name]=module
+    spec.loader.exec_module(module)
+    return module
+
+def collect_host(private, environment):
+    cpu_models=[]
+    for line in Path('/proc/cpuinfo').read_text().splitlines():
+        if line.startswith('model name'):
+            model=line.split(':',1)[1].strip()
+            if model not in cpu_models:cpu_models.append(model)
+    fs=subprocess.check_output(['findmnt','-n','-o','FSTYPE','--target',str(private)],text=True,timeout=3).strip()
+    need(fs and '\n' not in fs,'filesystem_metadata')
+    disk=os.statvfs(private)
+    cg={}
+    for name in ('cpu.max','memory.max','pids.max'):
+        path=Path('/sys/fs/cgroup')/name
+        cg[name]=path.read_text().strip() if path.exists() else None
+    return {'observed_at':datetime.now(timezone.utc).isoformat(),'boot_id':Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
+        'hostname_sha256':sha256(socket.gethostname().encode()).hexdigest(),'os_release':Path('/etc/os-release').read_text(),
+        'platform':platform.platform(),'python':sys.version,'python_executable_sha256':digest(Path(sys.executable).resolve()),
+        'cpu_models':cpu_models,'cpu_count':os.cpu_count(),'cpu_affinity':sorted(os.sched_getaffinity(0)),
+        'compiler_version_first_line':subprocess.check_output(['cc','--version'],text=True,timeout=3).splitlines()[0],
+        'cgroup_limits':cg,'rlimits':{name:list(resource.getrlimit(getattr(resource,name))) for name in ('RLIMIT_NOFILE','RLIMIT_NPROC','RLIMIT_AS','RLIMIT_CPU','RLIMIT_FSIZE')},
+        'filesystem_type':fs,'filesystem_device':os.stat(private).st_dev,'filesystem_free_bytes_kind':'statvfs_f_bavail_times_frsize_not_thin_storage_guarantee',
+        'free_bytes':disk.f_bavail*disk.f_frsize,'network_interfaces':sorted(p.name for p in Path('/sys/class/net').iterdir()),
+        'network_external_exchange_configured':False,'network_sandbox_enforced':False,
+        'workload_transport':'local SDK/file inbox/owned multiprocessing pipes; no REST/TLS/exchange',
+        'replication':False,'provider_context':{key:environment.get(key) for key in ('RUNNER_ENVIRONMENT','RUNNER_OS','RUNNER_ARCH','GITHUB_RUN_ID','GITHUB_RUN_ATTEMPT','GITHUB_SHA','GITHUB_EVENT_NAME')}}
+
+@contextmanager
+def child_environment(tmp):
+    original=dict(os.environ)
+    allowed={name:original[name] for name in ('PATH','LANG','LC_ALL','LD_LIBRARY_PATH') if name in original}
+    allowed.update(PYTHONDONTWRITEBYTECODE='1',TMPDIR=str(tmp))
+    os.environ.clear();os.environ.update(allowed)
+    try:yield
+    finally:os.environ.clear();os.environ.update(original)
+
+def child_argv(source, output, profile):
+    argv=[sys.executable,str(source/'benchmarks/run_managed_benchmark.py'),'--output',str(output),
+        '--duration','10','--rate','20','--accounts','100','--shards','2','--cpu-limit','1',
+        '--durable-batches','--financial-batch-size','0','--normal-cache-size','0']
+    if profile:argv.append('--profile')
+    return argv
+
+def numeric_tree(value, depth=0):
+    need(depth<=8,'numeric_tree_depth')
+    if value is None or type(value) is bool:return value
+    if type(value) in (int,float):return numeric(value)
+    need(type(value) is dict and len(value)<=100,'numeric_tree_shape')
+    result={}
+    for key,item in value.items():
+        need(type(key) is str and re.fullmatch(r'[A-Za-z0-9_.:-]{1,100}',key) is not None,'numeric_key')
+        result[key]=numeric_tree(item,depth+1)
+    return result
+
+def project_summary(summary, profile):
+    expected={'duration':10,'rate':20,'accounts':100,'shards':2,'normal_cache_size':0,'financial_batch_size':0,'durable_batches':True,'profile':profile}
+    for key,value in expected.items():
+        need(type(summary['configuration'][key]) is type(value) or type(value) is int and type(summary['configuration'][key]) is float,'configuration_type')
+        need(summary['configuration'][key]==value,'configuration_changed')
+    need(summary['offered']==200,'offered_count')
+    outcomes=summary['outcome_counts'];need(set(outcomes)<=OUTCOMES,'unknown_outcome_name')
+    need(sum(integer(v,0,200) for v in outcomes.values())==200,'outcomes_not_partition')
+    technical=summary['command_technical_diagnostics']
+    for key in ('internal_execution_attempts','commands_with_internal_attempts','commands_with_last_error','quarantined_commands','nonterminal_commands','control_commands_not_succeeded'):
+        need(type(technical[key]) is int and technical[key]==0,'technical_diagnostic')
+    batches=summary['batch_dispatch_diagnostics']
+    for key in ('failure_events','unresolved_batches','recovered_batches'):
+        need(type(batches[key]) is int and batches[key]==0,'batch_diagnostic')
+    need(summary['poll_errors']==[],'poll_error')
+    gate=summary['probe_qualification']
+    need(gate['passed'] is True and gate['financial_soft_deadline_passed'] is True,'probe_gate')
+    check=summary['readonly_reconciliation']
+    need(check['reopened_readonly'] is True and check['pending_count']==0 and check['unobserved_successes_found_on_reopen']==0,'reconciliation')
+    count=summary['counts'];need(set(count)<=OUTCOMES|{'durably_enqueued','enqueue_technical_errors','financial_success_late'},'counts_key')
+    need(all(type(v) is int and 0<=v<=200 for v in count.values()),'counts_value')
+    need(integer(count.get('financial_succeeded',0),0,200)>=100,'financial_success_floor')
+    need(10<=integer(count.get('business_rejected',0),0,200)<=30,'business_rejection_mix')
+    need(summary['environment']['code_commit']==SOURCE and summary['environment']['working_tree_dirty'] is False,'recorded_source')
+    need(summary['environment']['cpu_affinity_count']==1,'recorded_affinity')
+    need(check['observed_financial_successes']==check['persistent_successes']==count['financial_succeeded'],'reopened_success_count')
+    need(check['durable_enqueue_acknowledgements_verified']==count['durably_enqueued'],'reopened_ack_count')
+    runtime=summary['actual_runtime'];need(runtime['durable_batches_capability'] is True and runtime['decision_audit_required'] is True,'actual_runtime_capability')
+    settings=runtime['router_settings']
+    for key,value in {'normal_cache_size':0,'financial_batch_size':0,'account_batch':25,'matches_per_symbol':10,'max_attempts':3,'lease_seconds':5,'poll_interval':.02,'background_interval':.1}.items():
+        need(settings[key]==value and type(settings[key]) is not bool,'actual_runtime_setting')
+    workers=summary['actual_spawned_worker_inputs'];need(type(workers) is list and len(workers)==2,'actual_worker_count')
+    need(len({integer(w['pid'],1) for w in workers})==2,'actual_worker_identity')
+    need(all(w['pid']!=os.getpid() and w['received_settings']==settings for w in workers),'actual_worker_settings')
+    latency=summary['latency_ms']
+    need(set(latency)=={'all','financial_succeeded','enqueue_ack'},'latency_classes')
+    need(all(set(v)=={'p50','p95','p99','p99_9'} for v in latency.values()),'latency_keys')
+    # Explicit projection: no error text, requests, accounts, payload, writer token,
+    # key, nonce, signature, profile secrets or raw stream copies are published.
+    return {'source_commit':SOURCE,'configuration':expected,'offered':200,'outcome_counts':numeric_tree(outcomes),
+        'counts':numeric_tree(count),'latency_ms':numeric_tree(summary['latency_ms']),
+        'duration_including_terminal_observation_drain':numeric(summary['duration_including_terminal_observation_drain']),
+        'drain_seconds':numeric(summary['drain_seconds']),'close_seconds_excluded':numeric(summary['close_seconds_excluded']),
+        'startup_seconds_excluded':numeric(summary['startup_seconds_excluded']),
+        'unique_observed_financial_success_per_s':numeric(summary['unique_observed_financial_success_per_s']),
+        'enqueue_ack_per_s_not_financial_success':numeric(summary['enqueue_ack_per_s_not_financial_success']),
+        'actual_router_settings':numeric_tree(settings),'actual_worker_pids':[w['pid'] for w in workers],
+        'probe_gate_passed':True,'read_only_reconciled':True,'confirmed_fills':0,'all_successful_orders_open':True,
+        'profile_is_instrumented':profile,'speedup_comparison_authorized':False,'production_approved':False,'capacity_10000_per_s_passed':False}
+
+def project_arrivals(path):
+    raw=gzip.decompress(Path(path).read_bytes());need(len(raw)<=8*1024**2,'arrival_unpacked_cap')
+    rows=[]
+    for line in raw.splitlines():
+        need(len(rows)<200 and len(line)<=65536,'arrival_count_or_line_cap')
+        row=strict_json(line);sequence=integer(row['sequence'],0,199)
+        need(row['command_id']==f'bench:{sequence}' and row['order_id']==f'order:{sequence}','synthetic_cid')
+        need(row['outcome'] in OUTCOMES,'arrival_outcome')
+        safe={'sequence':sequence,'command_id':row['command_id'],'outcome':row['outcome']}
+        for key in ('planned_ns','offered_ns','enqueue_started_ns','enqueue_ack_ns','enqueue_call_finished_ns','observed_completion_ns','latency_ns'):
+            safe[key]=None if row[key] is None else integer(row[key])
+        need(type(row['deadline_exceeded']) is bool and type(row['intended_product_rejection']) is bool,'arrival_boolean')
+        safe.update(deadline_exceeded=row['deadline_exceeded'],intended_product_rejection=row['intended_product_rejection'])
+        receipt=row.get('receipt')
+        if receipt is not None:
+            need(receipt['state'] in {'SUCCEEDED','REJECTED','QUARANTINED','PENDING'},'receipt_state')
+            safe.update(receipt_state=receipt['state'],receipt_attempts=integer(receipt['attempts']),receipt_last_error_present=receipt['last_error'] is not None)
+        rows.append(safe)
+    need(len(rows)==200 and {r['sequence'] for r in rows}==set(range(200)),'missing_arrivals')
+    return rows
+
+def profile_semantic(path, source_root=None):
+    need(path.stat().st_size<=4*1024**2,'profile_binary_cap')
+    with path.open('rb') as stream:
+        data=marshal.load(stream);need(stream.read(1)==b'','profile_trailing_bytes')
+    need(type(data) is dict and len(data)<=10000,'profile_record_shape')
+    result=[];caller_total=0
+    allowed_roots=[Path(sys.base_prefix).resolve()]
+    if source_root is not None:allowed_roots.append(Path(source_root).resolve())
+    def label(key):
+        need(type(key) is tuple and len(key)==3,'profile_function_key')
+        file,line,name=key
+        need(type(file) is str and len(file)<=1024 and '\0' not in file and type(name) is str and len(name)<=256 and '\0' not in name,'profile_label')
+        synthetic_file=file=='<string>' or re.fullmatch(r'<frozen [A-Za-z0-9_.]+>',file) is not None
+        if file!='~' and not synthetic_file:
+            resolved=Path(file).resolve()
+            need(any(resolved==root or root in resolved.parents for root in allowed_roots),'profile_private_filename')
+        need(re.fullmatch(r'''[A-Za-z0-9_<> .:'"()+-]{1,256}''',name) is not None,'profile_function_label')
+        return [file,integer(line),name]
+    for key,value in data.items():
+        need(type(value) is tuple and len(value)==5,'profile_value')
+        primitive,calls,own,cumulative,callers=value
+        need(type(callers) is dict and len(callers)<=10000,'profile_callers')
+        caller_total+=len(callers);need(caller_total<=50000,'profile_total_callers_cap')
+        safe_callers=[]
+        for caller,counter in callers.items():
+            need(type(counter) is tuple and len(counter)==4,'profile_caller_counter')
+            safe_callers.append([label(caller),integer(counter[0]),integer(counter[1]),float(numeric(counter[2])).hex(),float(numeric(counter[3])).hex()])
+        result.append({'function':label(key),'primitive_calls':integer(primitive),'calls':integer(calls),
+            'internal_seconds_hex':float(numeric(own)).hex(),'cumulative_seconds_hex':float(numeric(cumulative)).hex(),
+            'callers':safe_callers,'internal_exceeds_cumulative':own>cumulative})
+    return {'format':'complete_cprofile_function_and_caller_counters_no_arguments','raw_binary_bytes':path.stat().st_size,
+        'raw_binary_sha256':digest(path),'raw_binary_uploaded':False,'rows':result,
+        'overlapping_times_are_not_cpu_percentages':True,'parent_mixed_thread_profile_may_be_anomalous':True}
+
+def verify_public(root):
+    need(root.is_absolute() and root.is_dir() and not root.is_symlink(),'public_directory')
+    manifest=read_json(root/'manifest.json')
+    need(manifest['source_commit']==SOURCE and manifest['private_authorities_requests_keys_nonces_signatures_streams_not_uploaded'] is True,'public_manifest_scope')
+    records=manifest['files'];need(type(records) is list and len(records)<=100,'public_file_count')
+    names=[]
+    for item in records:
+        need(set(item)=={'name','bytes','sha256'},'public_manifest_fields')
+        name=item['name'];need(re.fullmatch(r'[a-zA-Z0-9][a-zA-Z0-9_.-]{0,145}\.json',name) is not None,'public_filename')
+        path=root/name;info=path.lstat()
+        need(stat.S_ISREG(info.st_mode) and info.st_size==item['bytes'] and digest(path)==item['sha256'],'public_manifest_mismatch')
+        names.append(name)
+    need(len(names)==len(set(names)) and set(p.name for p in root.iterdir())==set(names)|{'manifest.json'},'unlisted_public_file')
+    return True
+
+
+def cases_sequence(run_case):
+    results=[]
+    for name,profile in [('B',False),('P',True)]:
+        value=run_case(name,profile)
+        results.append(value)
+        if value['status']!='PASS':break
+    return results
+
+def main(argv=None):
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--execute',action='store_true')
+    parser.add_argument('--verify-public',type=Path)
+    parser.add_argument('--source',type=Path)
+    parser.add_argument('--private',type=Path)
+    parser.add_argument('--public',type=Path)
+    args=parser.parse_args(argv)
+    if args.verify_public is not None:
+        need(not args.execute,'mutually_exclusive_modes')
+        verify_public(args.verify_public)
+        print(json.dumps({'status':'PUBLIC_ALLOWLIST_VERIFIED'}));return 0
+    if not args.execute:
+        print(json.dumps({'status':'PREP_ONLY','source_commit':SOURCE,'minimum_fresh_free_bytes':MIN_FREE,'cases':['B','P'],'profile_is_not_speedup_arm':True,'execution_authorized':False}))
+        return 0
+    approval_raw=os.environ['M0_APPROVAL_JSON'];need(len(approval_raw)<=4096,'approval_size')
+    approval=strict_json(approval_raw)
+    need(args.source and args.private and args.public,'execute_paths_required')
+    for path in (args.private,args.public):
+        need(path.is_absolute() and not path.exists() and path.parent.is_dir(),'exclusive_output_path')
+        need(path.parent.resolve()==Path(os.environ['RUNNER_TEMP']).resolve(),'runner_temp_only')
+    args.private.mkdir(mode=0o700);args.public.mkdir(mode=0o700)
+    records=[];stage='source_preflight';result={'status':'UNKNOWN','source_commit':SOURCE,'cases':[],'production_approved':False,'capacity_10000_per_s_passed':False}
+    try:
+        snapshot=source_snapshot(args.source)
+        control_root=Path(__file__).resolve().parents[1]
+        need(subprocess.check_output(['git','rev-parse','HEAD'],cwd=control_root).decode().strip()==approval['control_commit'],'actual_control_checkout_commit')
+        need(subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=control_root)==b'','control_dirty')
+        control=Path(__file__).resolve();control_sha=digest(control)
+        actual=collect_host(args.private,dict(os.environ))
+        validate_dispatch(approval,dict(os.environ),actual,control_sha)
+        records.append(public_write(args.public,'host.json',actual))
+        records.append(public_write(args.public,'source-manifest.json',{'source_commit':SOURCE,'source_tree':SOURCE_TREE,'files':snapshot}))
+        records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'single hosted job, sequential driver, two spawned owners, one allowed CPU'}))
+        owned=load_owned_runner(args.source);cpus=[min(actual['cpu_affinity'])]
+        def health(case_root=None):
+            need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==actual['boot_id'],'runner_boot_changed')
+            need(sha256(socket.gethostname().encode()).hexdigest()==actual['hostname_sha256'],'runner_host_changed')
+            need(set(cpus)<=os.sched_getaffinity(0),'runner_cpu_unavailable')
+            free=os.statvfs(args.private);need(free.f_bavail*free.f_frsize>=MIN_FREE,'fresh_space')
+            need(tree_bytes(args.private)+tree_bytes(args.public)<=AGGREGATE_CAP,'aggregate_output_cap')
+            if case_root:need(tree_bytes(case_root)<=CASE_CAP,'case_output_cap')
+        # Actual WAL/FULL and SQLite compile metadata are collected in an owned
+        # isolated child only after execute approval; no product module is used.
+        stage='runtime_probe';probe=args.private/'runtime-probe';probe.mkdir(mode=0o700)
+        code="import json,sqlite3,sys; c=sqlite3.connect(sys.argv[1],isolation_level=None,timeout=2); mode=c.execute('PRAGMA journal_mode=WAL').fetchone()[0]; c.execute('PRAGMA synchronous=FULL'); sync=c.execute('PRAGMA synchronous').fetchone()[0]; options=[r[0] for r in c.execute('PRAGMA compile_options')]; c.close(); print(json.dumps({'python':sys.version,'sqlite':sqlite3.sqlite_version,'journal_mode':mode,'synchronous':sync,'compile_options':options,'replication':False}))"
+        with child_environment(probe):
+            observed=owned.owned_run([sys.executable,'-I','-c',code,str(probe/'private.sqlite3')],args.source,probe/'probe',cpu_ids=cpus,wall_seconds=10,grace_seconds=2,kill_wait_seconds=2,output_cap=65536,protected={os.getpid(),os.getppid()},health_check=health)
+        need(observed['outcome']=='EXITED' and observed['returncode']==0,'runtime_probe_unknown')
+        runtime=read_json(probe/'probe.stdout',65536)
+        need(runtime['journal_mode']=='wal' and runtime['synchronous']==2 and runtime['replication'] is False,'wal_full_required')
+        records.append(public_write(args.public,'runtime.json',runtime))
+        def run_case(name,profile):
+            case_start=time.monotonic_ns();case=args.private/name;case.mkdir(mode=0o700);tmp=case/'tmp';tmp.mkdir(mode=0o700)
+            command=child_argv(args.source,case/'workload',profile)
+            entry={'case':name,'status':'UNKNOWN','profile':profile,'source_commit':SOURCE,'production_approved':False}
+            try:
+                health(case);need(source_snapshot(args.source)==snapshot,'source_changed_before_case')
+                with child_environment(tmp):
+                    observed=owned.owned_run(command,args.source,case/'driver',cpu_ids=cpus,wall_seconds=50,grace_seconds=2,kill_wait_seconds=2,output_cap=CASE_CAP,protected={os.getpid(),os.getppid()},health_check=lambda:health(case))
+                # Private stdout/stderr/request/database originals remain private.
+                # Only structured projections and semantic profiler data leave it.
+                need(observed['outcome']=='EXITED' and observed['returncode']==0 and observed['stdout_stderr_complete'] is True,'owned_case_unknown')
+                need((case/'driver.stderr').stat().st_size==0,'unclassified_stderr')
+                summary=read_json(case/'workload/summary.json')
+                safe=project_summary(summary,profile)
+                arrivals=project_arrivals(case/'workload/arrivals.jsonl.gz')
+                need(source_snapshot(args.source)==snapshot,'source_changed_after_case')
+                health(case)
+                records.append(public_write(args.public,f'case-{name}.json',safe))
+                records.append(public_write(args.public,f'arrivals-{name}.json',arrivals))
+                profile_paths=sorted((case/'workload/profiles').glob('*.prof'))
+                need(len(profile_paths)==(3 if profile else 0),'actual_profile_file_count')
+                if profile:
+                    need(sum(p.name=='dispatcher-0.prof' for p in profile_paths)==1 and {int(p.name.split('-')[1]) for p in profile_paths if p.name.startswith('worker-')}=={0,1},'profile_pid_topology')
+                for path in profile_paths:
+                    need(re.fullmatch(r'(worker-[0-9]+-pid-[0-9]+|dispatcher-[0-9]+)\.prof',path.name) is not None,'profile_filename')
+                    records.append(public_write(args.public,f'{name}-{path.stem}.json',profile_semantic(path,args.source)))
+                elapsed=time.monotonic_ns()-case_start
+                need(elapsed<=60*10**9,'case_complete_outer_deadline')
+                entry.update(status='PASS',complete_outer_monotonic_ns=elapsed,actual_cpu_ids=cpus,
+                    actual_driver_pid=observed['identity']['pid'],driver_birth_ticks=observed['identity']['birth_ticks'],
+                    launcher_affinity_acknowledged=observed['launcher_affinity_acknowledged'],leader_reaped=observed['leader_reaped'],
+                    original_child_argv=command,private_originals_uploaded=False,
+                    private_raw_retention='private runner lifetime only; provider teardown is not durable escrow')
+            except BaseException as error:
+                entry.update(error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure',complete_outer_monotonic_ns=time.monotonic_ns()-case_start,private_originals_uploaded=False)
+            return entry
+        stage='cases';result['cases']=cases_sequence(run_case)
+        result['status']='PASS_COMPONENT_DIAGNOSTIC_ONLY' if len(result['cases'])==2 and all(c['status']=='PASS' for c in result['cases']) else 'UNKNOWN_OR_NO_GO'
+        need(source_snapshot(args.source)==snapshot,'source_changed_at_end')
+    except BaseException as error:
+        result.update(status='UNKNOWN_OR_NO_GO',stage=stage,error_type=type(error).__name__,error_code=str(error) if isinstance(error,GateError) else 'unclassified_private_failure')
+    result.update(no_external_exchange=True,no_network_sandbox_claim=True,private_originals_uploaded=False,
+        profile_binary_uploaded=False,private_raw_retention='private runner lifetime only; no durable private raw retention claim',
+        speedup_claim=False,ha_approved=False)
+    records.append(public_write(args.public,'result.json',result))
+    public_write(args.public,'manifest.json',{'files':records,'private_authorities_requests_keys_nonces_signatures_streams_not_uploaded':True,'source_commit':SOURCE})
+    print(json.dumps({'status':result['status'],'source_commit':SOURCE,'public_records':len(records),'production_approved':False}))
+    return 0 if result['status']=='PASS_COMPONENT_DIAGNOSTIC_ONLY' else 1
+
+if __name__=='__main__':
+    try:
+        code=main()
+    except Exception as error:
+        print(json.dumps({'status':'UNKNOWN_OR_NO_GO','error_type':type(error).__name__,'error_code':str(error) if isinstance(error,GateError) else 'unclassified_private_failure','production_approved':False}))
+        code=1
+    raise SystemExit(code)

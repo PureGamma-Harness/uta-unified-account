@@ -1,0 +1,76 @@
+{
+  "status": "DESIGN_OPTIONS_ONLY_NO_KEYGEN_NO_ENCRYPTION_NO_DISPATCH",
+  "existing_implementation": "safe scalar and complete profile-semantic projection only; not fullraw",
+  "actual_source_stdout_assessment": {
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "source_path": "benchmarks/run_managed_benchmark.py",
+    "main_prints_complete_summary_json": true,
+    "summary_file_and_stdout_must_be_byte_equal_before_copying": true,
+    "currently_recursive_validation_complete": false,
+    "must_validate_all_top_level_and_nested_branches": [
+      "configuration",
+      "actual_runtime",
+      "actual_spawned_worker_inputs",
+      "evidence_kind",
+      "outcome_counts",
+      "counts",
+      "latency_ms",
+      "initial_real_pid_and_fence",
+      "startup_readiness_observation",
+      "final_diagnostics",
+      "poll_errors",
+      "feed_publications",
+      "readonly_reconciliation",
+      "command_technical_diagnostics",
+      "batch_dispatch_diagnostics",
+      "profile",
+      "environment",
+      "scope",
+      "execution_classification",
+      "probe_qualification",
+      "production_approved",
+      "capacity_10000_per_s_passed"
+    ],
+    "failure_risk": "unknown error/message/private values must fail whitelist; never publish arbitrary repr/exception text"
+  },
+  "option_A": {
+    "name": "strict recursive complete whitelist plus exact original-byte safe streams",
+    "status": "NOT_IMPLEMENTED_OR_INDEPENDENTLY_ACCEPTED",
+    "stdout": "only if one strict duplicate-free JSON object, exact bytes equal summary.json and every branch passes reviewed field/type/string-source/size policy",
+    "stderr": "empty bytes are safe exact; nonempty only under a separate complete safe grammar, otherwise UNKNOWN/private",
+    "raw_profile": "default no binary upload; complete validated semantic records preserve all function/caller/time values, original binary hash/size labelled, not byte-archive claim",
+    "limitation": "cannot guarantee durable unexpected-private raw retention after hosted-runner teardown"
+  },
+  "option_B": {
+    "name": "encrypted stdout/stderr-only escrow to workspace-held recipient",
+    "status": "DESIGN_NOT_IMPLEMENTED_NOT_AUTHORIZED_KEYGEN_OR_ENCRYPTION",
+    "dependencies": "existing runner openssl only; exact CMS authenticated-envelope command/version support requires independent tiny fixture validation after separate GO",
+    "proposed_primitive": "OpenSSL3 CMS AuthEnvelopedData AES-256-GCM to approved public recipient certificate; no ad-hoc RSA bulk or unauthenticated enc fallback",
+    "key_boundary": "workspace private decryption key0600 never enters Git/Actions; only public recipient certificate/SPKI identity is provided; ephemeral content key stays inside OpenSSL envelope implementation",
+    "plaintext_container": "versioned bound header(source/control/run/attempt/case/stream/byte-length/plaintextSHA256) plus exact original stdout or stderr bytes, all inside authenticated encryption",
+    "uploaded": "only ciphertext stream envelopes plus ciphertext length/SHA/public-recipient fingerprint and safe metadata",
+    "never_packaged": [
+      "DB",
+      "WAL",
+      "SHM",
+      "key files",
+      "nonce records",
+      "signatures",
+      "original request/arrival/payload bundles",
+      "private keybundle",
+      "entire private case directory"
+    ],
+    "not_a_production_key_management_or_RPO_claim": true,
+    "recipient_and_tamper_tests_required": [
+      "wrong recipient must fail",
+      "ciphertext/header/truncation mutation must fail",
+      "decrypted original stream byte equality",
+      "public artifact contains no plaintext/private key",
+      "first failed stream preserved without rerun",
+      "all keygen stays on workspace only after explicit GO"
+    ]
+  },
+  "root_must_choose_and_independent_review_before_claiming_full_stream_retention": true,
+  "actual_sql_or_workload_performed": false,
+  "actual_keygen_or_encryption_performed": false
+}

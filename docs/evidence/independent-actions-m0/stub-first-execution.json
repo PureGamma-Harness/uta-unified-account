@@ -1,0 +1,32 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_controller.py",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "started_at": "2026-11-17T18:19:41.238354+00:00",
+  "finished_at": "2026-11-17T18:19:41.577001+00:00",
+  "outer_monotonic_ns": 338651264,
+  "exit_code": 0,
+  "controller_sha256": "ae20694c597aaf64717320d5978987cf32416782b69c6ad59e705b5c42f5097f",
+  "test_sha256": "eabc5dbfbfc421bf739d090537b0caff6bff57e1bf3adf10e10da022bc9831e4",
+  "stub_only": true,
+  "product_imported": false,
+  "sql_or_database_opened": false,
+  "native_compile": false,
+  "workload_or_profile_executed": false,
+  "actions_dispatched": false
+}
