@@ -1,0 +1,69 @@
+{
+  "recorded_utc": "2026-11-17T21:47:05.111449+00:00",
+  "status": "SCOPED_PURE_DIFFERENTIAL_PASS_NO_FINANCIAL_ACTIVATION",
+  "tested_candidate_commit": "c507e0b458f24d2434ed2c24df597ba171113d3c",
+  "independent_driver_commit": "1af0b244806b304edbf8024c7871ea2996d9ffe8",
+  "manual_expectations_frozen_commit": "a4c2b5fead086e3dad994bae026e95296818ebd3",
+  "argv": [
+    "python",
+    "-B",
+    "scripts/interest_accrual_independent/check_candidate.py",
+    "--output",
+    "/workspace/uta-interest-accrual-reference/docs/reviews/interest-accrual-independent/candidate-c507-first.json"
+  ],
+  "actual_exit_code": 0,
+  "original_result_sha256": "3eebca98597d881d0676b4333e9fa62ecd9bb3d755328b91d697046bcaa81947",
+  "actual_PID": 508437,
+  "CPU": [
+    3
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "elapsed_ns_before_result_write": 121475573,
+  "checks": 68,
+  "manual_cases": 12,
+  "deterministic_partition_properties": 32,
+  "lifecycle_and_rejection_checks": 24,
+  "same_process_source_inputs_match_Git": [
+    {
+      "path": "uta/interest_accrual.py",
+      "commit": "c507e0b458f24d2434ed2c24df597ba171113d3c",
+      "sha256": "2d85c6112a9c908cae8d1609ffdb873f6a4d6ee9f373a414e637eea4f3a5843c",
+      "original_current_and_Git_equal": true
+    },
+    {
+      "path": "scripts/interest_accrual_independent/reference.py",
+      "commit": "1af0b244806b304edbf8024c7871ea2996d9ffe8",
+      "sha256": "e98ac9fb4b2e40507455f96d6e5e823b93197c6512236b74ca0594c1d64fe2db",
+      "original_current_and_Git_equal": true
+    },
+    {
+      "path": "docs/reviews/interest-accrual-independent/manual-cases-v1.json",
+      "commit": "1af0b244806b304edbf8024c7871ea2996d9ffe8",
+      "sha256": "c61f856621ec095210622efc08bc38b64571c39f5ec31f6636e64d6891357711",
+      "original_current_and_Git_equal": true
+    },
+    {
+      "path": "scripts/interest_accrual_independent/check_candidate.py",
+      "commit": "1af0b244806b304edbf8024c7871ea2996d9ffe8",
+      "sha256": "37a4fb791091e339e4e449053df72e5c3b210106ec4719d283d6e6649cbeda9f",
+      "original_current_and_Git_equal": true
+    }
+  ],
+  "candidate_diff_from_frozen909": [
+    "A\ttests/test_interest_accrual.py",
+    "A\tuta/interest_accrual.py"
+  ],
+  "unchanged_V2_and_existing_interest_paths_sha256": {
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/credit_policy.py": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a",
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "docs/accounting-spec.md": "9cddc05c83b458038daca180c0d67dd66cac237057898a8eb0e501d19ee0fba5",
+    "docs/credit-internal-v2-contract.md": "257b0f60ecceb0a7b8ff263fb252dde3c422f483197873ff721a1b213c8d5e42"
+  },
+  "original_result_file_rewritten": false,
+  "expected_calculation_reused_candidate_core": false,
+  "SQL_or_worker_financial_source_used": false,
+  "positive_valid_to_equality_independently_executed": false,
+  "persisted_cross_process_dedup_scheduler_or_money_effects_proven": false,
+  "production_approved": false
+}
