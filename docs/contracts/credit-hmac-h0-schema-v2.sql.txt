@@ -1,0 +1,122 @@
+-- DESIGN DRAFT ONLY. Not executed or accepted as SQLite syntax/runtime evidence.
+-- Fresh private auth authority only. Never run as a format1 migration.
+-- No financial/source/PENDING/native/listener/READY objects are included.
+-- Exact compiled MAIN object inventory is required before opening any authority.
+CREATE TABLE main.auth_config (
+ singleton INTEGER PRIMARY KEY CHECK(singleton=1),
+ format INTEGER NOT NULL CHECK(typeof(format)='integer' AND format=2),
+ canonical_path TEXT NOT NULL, auth_authority_id TEXT NOT NULL,
+ tenant TEXT NOT NULL, audience TEXT NOT NULL, producer_binding TEXT NOT NULL,
+ domain_id TEXT NOT NULL, domain_epoch INTEGER NOT NULL CHECK(typeof(domain_epoch)='integer' AND domain_epoch=1),
+ account_id TEXT NOT NULL,
+ past_window INTEGER NOT NULL CHECK(typeof(past_window)='integer' AND past_window BETWEEN 1 AND 300000),
+ future_skew INTEGER NOT NULL CHECK(typeof(future_skew)='integer' AND future_skew BETWEEN 0 AND 30000),
+ max_nonces INTEGER NOT NULL CHECK(typeof(max_nonces)='integer' AND max_nonces BETWEEN 2 AND 1000000),
+ query_nonce_reserve INTEGER NOT NULL CHECK(typeof(query_nonce_reserve)='integer' AND query_nonce_reserve>0 AND query_nonce_reserve<max_nonces),
+ max_audit INTEGER NOT NULL CHECK(typeof(max_audit)='integer' AND max_audit BETWEEN 3 AND 1000000),
+ query_audit_reserve INTEGER NOT NULL CHECK(typeof(query_audit_reserve)='integer' AND query_audit_reserve>0),
+ control_audit_reserve INTEGER NOT NULL CHECK(typeof(control_audit_reserve)='integer' AND control_audit_reserve>0),
+ max_acceptances INTEGER NOT NULL CHECK(typeof(max_acceptances)='integer' AND max_acceptances BETWEEN 1 AND 10000),
+ max_grants INTEGER NOT NULL CHECK(typeof(max_grants)='integer' AND max_grants BETWEEN 1 AND 10000),
+ highwater INTEGER NOT NULL CHECK(typeof(highwater)='integer' AND highwater BETWEEN 0 AND 9223372036854775807),
+ revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision BETWEEN 0 AND 9223372036854775807),
+ grant_revision INTEGER NOT NULL CHECK(typeof(grant_revision)='integer' AND grant_revision BETWEEN 0 AND 9223372036854775807),
+ fingerprint TEXT NOT NULL,
+ CHECK(query_audit_reserve+control_audit_reserve<max_audit)
+);
+CREATE TABLE main.auth_keys (
+ key_id TEXT PRIMARY KEY NOT NULL, identity TEXT NOT NULL,
+ role TEXT NOT NULL CHECK(role IN ('admin','reader','funding','risk','trader')),
+ account_id TEXT,
+ not_before_ms INTEGER NOT NULL CHECK(typeof(not_before_ms)='integer' AND not_before_ms BETWEEN 0 AND 9223372036854775806),
+ expires_at_ms INTEGER NOT NULL CHECK(typeof(expires_at_ms)='integer' AND expires_at_ms>not_before_ms AND expires_at_ms<=9223372036854775807),
+ revoked INTEGER NOT NULL CHECK(typeof(revoked)='integer' AND revoked IN (0,1)),
+ UNIQUE(key_id,identity),
+ CHECK((role IN ('reader','funding','trader') AND account_id IS NOT NULL) OR (role IN ('admin','risk') AND account_id IS NULL))
+);
+CREATE TABLE main.auth_nonces (
+ key_id TEXT NOT NULL REFERENCES auth_keys(key_id), nonce_hash TEXT NOT NULL,
+ expires_ms INTEGER NOT NULL CHECK(typeof(expires_ms)='integer' AND expires_ms BETWEEN 0 AND 9223372036854775807),
+ PRIMARY KEY(key_id,nonce_hash)
+);
+CREATE INDEX main.auth_nonce_expiry ON auth_nonces(expires_ms);
+CREATE TABLE main.auth_audit (
+ sequence INTEGER PRIMARY KEY CHECK(typeof(sequence)='integer' AND sequence>0),
+ event TEXT NOT NULL, outcome TEXT NOT NULL, request_kind TEXT NOT NULL,
+ key_id TEXT, key_identity TEXT, nonce_hash TEXT, request_hash TEXT,
+ request_ms INTEGER CHECK(request_ms IS NULL OR (typeof(request_ms)='integer' AND request_ms BETWEEN 0 AND 9223372036854775807)),
+ server_ms INTEGER CHECK(server_ms IS NULL OR (typeof(server_ms)='integer' AND server_ms BETWEEN 0 AND 9223372036854775807)),
+ revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision BETWEEN 0 AND 9223372036854775807),
+ grant_revision INTEGER NOT NULL CHECK(typeof(grant_revision)='integer' AND grant_revision BETWEEN 0 AND 9223372036854775807),
+ business_key TEXT, grant_id TEXT, original_acceptance_id TEXT,
+ FOREIGN KEY(key_id,key_identity) REFERENCES auth_keys(key_id,identity),
+ FOREIGN KEY(grant_id) REFERENCES auth_credit_grants(grant_id) DEFERRABLE INITIALLY DEFERRED,
+ FOREIGN KEY(original_acceptance_id) REFERENCES auth_credit_acceptances(acceptance_id) DEFERRABLE INITIALLY DEFERRED
+);
+CREATE TABLE main.auth_credit_grants (
+ grant_id TEXT PRIMARY KEY NOT NULL, key_id TEXT NOT NULL REFERENCES auth_keys(key_id),
+ account_id TEXT NOT NULL, asset TEXT NOT NULL CHECK(asset='BTC'),
+ operation TEXT NOT NULL CHECK(operation IN ('credit.borrow','credit.repay','credit.read')),
+ grant_epoch INTEGER NOT NULL UNIQUE CHECK(typeof(grant_epoch)='integer' AND grant_epoch>0),
+ audit_sequence INTEGER NOT NULL UNIQUE REFERENCES auth_audit(sequence) DEFERRABLE INITIALLY DEFERRED,
+ payload TEXT NOT NULL,
+ UNIQUE(grant_id,key_id,account_id,asset,operation,grant_epoch),
+ UNIQUE(grant_id,key_id,account_id,grant_epoch)
+);
+CREATE TABLE main.auth_credit_grant_revocations (
+ grant_id TEXT PRIMARY KEY NOT NULL REFERENCES auth_credit_grants(grant_id),
+ revocation_revision INTEGER NOT NULL UNIQUE CHECK(typeof(revocation_revision)='integer' AND revocation_revision>0),
+ audit_sequence INTEGER NOT NULL UNIQUE REFERENCES auth_audit(sequence) DEFERRABLE INITIALLY DEFERRED,
+ payload TEXT NOT NULL
+);
+CREATE TABLE main.auth_credit_acceptances (
+ acceptance_id TEXT PRIMARY KEY NOT NULL,
+ domain_id TEXT NOT NULL, tenant TEXT NOT NULL, account_id TEXT NOT NULL, command_id TEXT NOT NULL,
+ kind TEXT NOT NULL CHECK(kind IN ('BORROW','REPAY')),
+ command_payload TEXT NOT NULL, payload_hash TEXT NOT NULL,
+ auth_audit_sequence INTEGER NOT NULL UNIQUE REFERENCES auth_audit(sequence),
+ key_id TEXT NOT NULL, key_identity TEXT NOT NULL, grant_id TEXT NOT NULL,
+ grant_epoch INTEGER NOT NULL CHECK(typeof(grant_epoch)='integer' AND grant_epoch>0),
+ profile_revision INTEGER NOT NULL CHECK(typeof(profile_revision)='integer' AND profile_revision>0),
+ grant_revision INTEGER NOT NULL CHECK(typeof(grant_revision)='integer' AND grant_revision>=grant_epoch),
+ domain_epoch INTEGER NOT NULL CHECK(typeof(domain_epoch)='integer' AND domain_epoch=1),
+ request_hash TEXT NOT NULL, body_hash TEXT NOT NULL, nonce_hash TEXT NOT NULL,
+ request_ms INTEGER NOT NULL CHECK(typeof(request_ms)='integer' AND request_ms BETWEEN 0 AND 9223372036854775807),
+ auth_checked_server_ms INTEGER NOT NULL CHECK(typeof(auth_checked_server_ms)='integer' AND auth_checked_server_ms BETWEEN 0 AND 9223372036854775807),
+ payload TEXT NOT NULL,
+ UNIQUE(domain_id,tenant,account_id,command_id),
+ FOREIGN KEY(key_id,key_identity) REFERENCES auth_keys(key_id,identity),
+ FOREIGN KEY(grant_id,key_id,account_id,grant_epoch)
+   REFERENCES auth_credit_grants(grant_id,key_id,account_id,grant_epoch)
+);
+CREATE TRIGGER main.auth_audit_no_update BEFORE UPDATE ON auth_audit BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_audit_no_delete BEFORE DELETE ON auth_audit BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_grants_no_update BEFORE UPDATE ON auth_credit_grants BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_grants_no_delete BEFORE DELETE ON auth_credit_grants BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_grant_revocations_no_update BEFORE UPDATE ON auth_credit_grant_revocations BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_grant_revocations_no_delete BEFORE DELETE ON auth_credit_grant_revocations BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_acceptances_no_update BEFORE UPDATE ON auth_credit_acceptances BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_credit_acceptances_no_delete BEFORE DELETE ON auth_credit_acceptances BEGIN SELECT RAISE(ABORT,'retained auth evidence is immutable'); END;
+CREATE TRIGGER main.auth_config_no_replace BEFORE INSERT ON auth_config WHEN EXISTS (SELECT 1 FROM main.auth_config) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_keys_no_replace BEFORE INSERT ON auth_keys WHEN EXISTS (SELECT 1 FROM main.auth_keys WHERE key_id=NEW.key_id) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_nonces_no_replace BEFORE INSERT ON auth_nonces WHEN EXISTS (SELECT 1 FROM main.auth_nonces WHERE key_id=NEW.key_id AND nonce_hash=NEW.nonce_hash) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_audit_no_replace BEFORE INSERT ON auth_audit WHEN EXISTS (SELECT 1 FROM main.auth_audit WHERE sequence=NEW.sequence) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_credit_grants_no_replace BEFORE INSERT ON auth_credit_grants WHEN EXISTS (SELECT 1 FROM main.auth_credit_grants WHERE grant_id=NEW.grant_id OR grant_epoch=NEW.grant_epoch OR audit_sequence=NEW.audit_sequence) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_credit_grant_revocations_no_replace BEFORE INSERT ON auth_credit_grant_revocations WHEN EXISTS (SELECT 1 FROM main.auth_credit_grant_revocations WHERE grant_id=NEW.grant_id OR revocation_revision=NEW.revocation_revision OR audit_sequence=NEW.audit_sequence) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_credit_acceptances_no_replace BEFORE INSERT ON auth_credit_acceptances WHEN EXISTS (SELECT 1 FROM main.auth_credit_acceptances WHERE acceptance_id=NEW.acceptance_id OR auth_audit_sequence=NEW.auth_audit_sequence OR (domain_id=NEW.domain_id AND tenant=NEW.tenant AND account_id=NEW.account_id AND command_id=NEW.command_id)) BEGIN SELECT RAISE(ABORT,'auth identity cannot replace'); END;
+CREATE TRIGGER main.auth_config_monotonic BEFORE UPDATE ON auth_config WHEN NEW.singleton IS NOT OLD.singleton OR NEW.format IS NOT OLD.format OR NEW.canonical_path IS NOT OLD.canonical_path OR NEW.auth_authority_id IS NOT OLD.auth_authority_id OR NEW.tenant IS NOT OLD.tenant OR NEW.audience IS NOT OLD.audience OR NEW.producer_binding IS NOT OLD.producer_binding OR NEW.domain_id IS NOT OLD.domain_id OR NEW.domain_epoch IS NOT OLD.domain_epoch OR NEW.account_id IS NOT OLD.account_id OR NEW.past_window IS NOT OLD.past_window OR NEW.future_skew IS NOT OLD.future_skew OR NEW.max_nonces IS NOT OLD.max_nonces OR NEW.query_nonce_reserve IS NOT OLD.query_nonce_reserve OR NEW.max_audit IS NOT OLD.max_audit OR NEW.query_audit_reserve IS NOT OLD.query_audit_reserve OR NEW.control_audit_reserve IS NOT OLD.control_audit_reserve OR NEW.max_acceptances IS NOT OLD.max_acceptances OR NEW.max_grants IS NOT OLD.max_grants OR NEW.highwater<OLD.highwater OR NEW.revision<OLD.revision OR NEW.grant_revision<OLD.grant_revision BEGIN SELECT RAISE(ABORT,'auth identity and limits are immutable; revisions are monotonic'); END;
+CREATE TRIGGER main.auth_config_no_delete BEFORE DELETE ON auth_config BEGIN SELECT RAISE(ABORT,'auth authority cannot disappear'); END;
+CREATE TRIGGER main.auth_keys_immutable BEFORE UPDATE ON auth_keys WHEN NEW.key_id IS NOT OLD.key_id OR NEW.identity IS NOT OLD.identity OR NEW.role IS NOT OLD.role OR NEW.account_id IS NOT OLD.account_id OR NEW.not_before_ms IS NOT OLD.not_before_ms OR NEW.expires_at_ms IS NOT OLD.expires_at_ms OR NEW.revoked<OLD.revoked BEGIN SELECT RAISE(ABORT,'key identity cannot rebind or unrevoked'); END;
+CREATE TRIGGER main.auth_keys_no_delete BEFORE DELETE ON auth_keys BEGIN SELECT RAISE(ABORT,'key identity history is retained'); END;
+CREATE TRIGGER main.auth_nonces_immutable BEFORE UPDATE ON auth_nonces BEGIN SELECT RAISE(ABORT,'nonce is immutable'); END;
+CREATE TRIGGER main.auth_nonces_window BEFORE DELETE ON auth_nonces WHEN OLD.expires_ms >= (SELECT highwater FROM main.auth_config WHERE singleton=1) BEGIN SELECT RAISE(ABORT,'nonce remains replayable'); END;
+CREATE TRIGGER main.auth_credit_grants_no_active_duplicate BEFORE INSERT ON auth_credit_grants WHEN EXISTS (SELECT 1 FROM main.auth_credit_grants g WHERE g.key_id=NEW.key_id AND g.account_id=NEW.account_id AND g.asset=NEW.asset AND g.operation=NEW.operation AND NOT EXISTS (SELECT 1 FROM main.auth_credit_grant_revocations r WHERE r.grant_id=g.grant_id)) BEGIN SELECT RAISE(ABORT,'exact grant is already active'); END;
+CREATE TRIGGER main.auth_credit_grant_revoke_order BEFORE INSERT ON auth_credit_grant_revocations WHEN NOT EXISTS (SELECT 1 FROM main.auth_credit_grants WHERE grant_id=NEW.grant_id AND grant_epoch<NEW.revocation_revision) BEGIN SELECT RAISE(ABORT,'revocation must follow the original grant'); END;
+CREATE TRIGGER main.auth_credit_acceptances_authority BEFORE INSERT ON auth_credit_acceptances WHEN NOT EXISTS (SELECT 1 FROM main.auth_config WHERE singleton=1 AND domain_id=NEW.domain_id AND tenant=NEW.tenant AND account_id=NEW.account_id AND domain_epoch=NEW.domain_epoch AND revision=NEW.profile_revision AND grant_revision=NEW.grant_revision) BEGIN SELECT RAISE(ABORT,'first acceptance differs from actual authority'); END;
+CREATE TRIGGER main.auth_credit_acceptances_audit BEFORE INSERT ON auth_credit_acceptances WHEN NOT EXISTS (SELECT 1 FROM main.auth_audit WHERE sequence=NEW.auth_audit_sequence AND event='nonce_consumed' AND outcome='FIRST_ACCEPTED' AND key_id=NEW.key_id AND key_identity=NEW.key_identity AND request_hash=NEW.request_hash AND nonce_hash=NEW.nonce_hash AND request_ms=NEW.request_ms AND server_ms=NEW.auth_checked_server_ms AND revision=NEW.profile_revision AND grant_revision=NEW.grant_revision AND grant_id=NEW.grant_id) BEGIN SELECT RAISE(ABORT,'first acceptance lacks actual nonce audit'); END;
+CREATE TRIGGER main.auth_credit_acceptances_active_grant BEFORE INSERT ON auth_credit_acceptances WHEN NOT EXISTS (SELECT 1 FROM main.auth_credit_grants g JOIN main.auth_keys k ON k.key_id=g.key_id WHERE g.grant_id=NEW.grant_id AND g.grant_epoch=NEW.grant_epoch AND g.key_id=NEW.key_id AND g.account_id=NEW.account_id AND g.asset='BTC' AND g.operation=CASE NEW.kind WHEN 'BORROW' THEN 'credit.borrow' ELSE 'credit.repay' END AND k.identity=NEW.key_identity AND k.role='funding' AND k.account_id=NEW.account_id AND k.revoked=0 AND NOT EXISTS (SELECT 1 FROM main.auth_credit_grant_revocations r WHERE r.grant_id=g.grant_id)) BEGIN SELECT RAISE(ABORT,'first acceptance has no active exact grant'); END;
+-- Runtime validation must additionally enforce bounded canonical ASCII identifiers,
+-- canonical JSON/hash/decimal/UTC values, full profile and grant payload equality,
+-- byte-stable exact MAIN catalogue/xinfo/FK/trigger inventory, PRAGMA foreign_keys=ON,
+-- real same-transaction audit/profile/grant identity and actual successful COMMIT return.
+-- These requirements are NOT evidence that this draft has been run.
