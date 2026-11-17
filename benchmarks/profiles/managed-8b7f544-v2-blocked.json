@@ -1,0 +1,59 @@
+{
+  "source_root": "/workspace/uta-observer-freeze-8b7f544",
+  "source_commit": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "validation_report": "/workspace/uta-observer-validation/final-8b7f544/python312/summary.json",
+  "plan": "/workspace/uta-managed-8b7f544-prepare/benchmarks/plans/20261117-managed-8b7f544-six-hours-v1-pending.json",
+  "amendment": "/workspace/uta-managed-8b7f544-prepare/benchmarks/plans/20261117-managed-8b7f544-six-hours-v1-observer-amendment.json",
+  "plan_sha256": "36ccc4558bb2dc5fb8cd3b2412d8594ae16a3a6eb110dd2c20336ebcf685203d",
+  "amendment_sha256": "9538b54c1ead7a28d6a3661c1866946a92ce447fea2e7224e1edfb804811caf7",
+  "smoke_scratch": "/workspace/uta-managed-observer-runs/8b7f544-smoke-20261117-01",
+  "long_scratch": "/workspace/uta-managed-observer-runs/8b7f544-six-hours-20261117",
+  "qualification": {
+    "status": "BLOCKED",
+    "blocked_reason": "Original full local and CI8 qualification failed; immutable source 8b7f544 is NO_GO",
+    "all_three_local_passed": false,
+    "all_eight_ci_passed": false,
+    "independent_new_package_passed": false,
+    "actual_executed_tests_each": 1472
+  },
+  "resource_review": {
+    "old_observer_floor_approved": false,
+    "operator_record": null,
+    "operator_record_sha256": null,
+    "old_observer_floor_bytes": 268435456,
+    "current_free_bytes": null,
+    "current_combined_gap_bytes": null
+  },
+  "count_successor_version_required": true,
+  "production_approved": false,
+  "continuous_6h_stability_passed": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "execution_authorized": false,
+  "blocked_at_utc": "2026-11-17T14:30:37.640275+00:00",
+  "original_pending_profile_sha256": "89f8b7d24923c5ddc75ce18d30c3eedf9746760f08baf04f87cf12b1b415aa1f",
+  "original_pending_profile": "benchmarks/profiles/managed-8b7f544-v1-pending.json",
+  "original_ci_runs": [
+    44095333582,
+    44095344867
+  ],
+  "local_results": {
+    "python312": {
+      "tests": 1472,
+      "failures": 1,
+      "errors": 0
+    },
+    "python310": {
+      "tests": 1472,
+      "failures": 1,
+      "errors": 0
+    },
+    "python313": {
+      "tests": 1472,
+      "failures": 1,
+      "errors": 1
+    }
+  },
+  "limited_package_result": "PASS does not override failed source qualification; bc715c1"
+}
