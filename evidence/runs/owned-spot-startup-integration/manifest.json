@@ -1,0 +1,41 @@
+{
+  "existing_focused_result": {
+    "passed": true,
+    "seconds": 10.524,
+    "tests": 28
+  },
+  "large_history_test_run": false,
+  "production_approved": false,
+  "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "real_worker_observation": {
+    "actual_worker_ready": true,
+    "configured_ttl_seconds": 0.6,
+    "crossed_original_expiry": true,
+    "financial_and_spot_rows_unchanged": true,
+    "generation": 2,
+    "helper_calls": {
+      "owned": 1,
+      "pre_acquire": 1
+    },
+    "helper_ddl": [],
+    "owned_read_seconds": 0.904935979,
+    "pid": 59763,
+    "pre_acquire_scan_is_outside_owned_budget": true,
+    "real_renewals": 7,
+    "same_generation": true,
+    "schema_unchanged": true
+  },
+  "runtime_modified": false,
+  "sha256": {
+    "evidence/runs/owned-spot-startup-integration/actual-ready-py313.txt": "b17103d9b5eabdd81a1fba05a902692656d46c765800fa809639f1beeab0f603",
+    "tests/test_managed_migration_scope.py": "9815ed87d607575509acdc89d012dcd4acbc65dd1fdd7264d318a8f71c5fc7b7",
+    "tests/test_owned_spot_startup_integration.py": "6e64712d50c83893e4c85b51a520dd76bfd6bc81fbc2b617c747c806823d12de",
+    "tests/test_owned_startup_reference.py": "074a694026289c00058a1f5b90da41de57d2a3d632533761f12ab53f6a4dd499",
+    "uta/durable_process.py": "fe967fa58b57954e7fecc106df9b5a55d951fdb3b5317301d80cb13da17cec31",
+    "uta/spot.py": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26",
+    "uta/startup.py": "b28596ec922bd5134da28f56db73c08c7da657a57baea9b204dbd1ae129ada1f",
+    "uta/storage.py": "e50bb0d2ad8f929d5206b19cbb7b337aa4445fa06f55298a44ade216260d3966"
+  },
+  "sqlite": "3.46.1",
+  "subject_commit": "21aa6510bafcce8383fc24ac2c35e671074b9baf"
+}
