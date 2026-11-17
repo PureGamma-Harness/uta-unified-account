@@ -1,0 +1,243 @@
+{
+  "all_match": false,
+  "arithmetic_elapsed_seconds": 0.001403,
+  "cases": [
+    {
+      "actual_cross_calculator": {
+        "accounting_equity": "99",
+        "available_margin": "79",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "1",
+        "frozen_value": "0",
+        "initial_margin": "0",
+        "interest_value": "0",
+        "loan_value": "40",
+        "maintenance_margin": "0",
+        "principal_value": "0",
+        "risk_equity": "79",
+        "unrealized_pnl": "0"
+      },
+      "actual_replay_state": {
+        "accounting_equity": "99",
+        "available_margin": "79",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "1",
+        "equity": "79",
+        "frozen_value": "0",
+        "initial_margin": "0",
+        "interest_value": "0",
+        "loan_value": "40",
+        "maintenance_margin": "0",
+        "open_order_margin": "0",
+        "principal_value": "0",
+        "risk_equity": "79",
+        "unrealized_pnl": "0"
+      },
+      "archival_state": {
+        "balances": {
+          "BTC": "1",
+          "USD": "-1"
+        },
+        "frozen_assets": {},
+        "liabilities": [],
+        "orders": [],
+        "positions": {},
+        "version": 1
+      },
+      "id": "no_loan_debt",
+      "independent_fraction": {
+        "accounting_equity": "99",
+        "available_margin": "79",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "1",
+        "equity": "79",
+        "frozen_value": "0",
+        "initial_margin": "0",
+        "interest_value": "0",
+        "loan_value": "40",
+        "maintenance_margin": "0",
+        "open_order_margin": "0",
+        "principal_value": "0",
+        "risk_equity": "79",
+        "unrealized_pnl": "0"
+      },
+      "matches_independent": true
+    },
+    {
+      "actual_cross_calculator": {
+        "accounting_equity": "88",
+        "available_margin": "65.8",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "12",
+        "frozen_value": "0",
+        "initial_margin": "2.2",
+        "interest_value": "1",
+        "loan_value": "40",
+        "maintenance_margin": "1.1",
+        "principal_value": "10",
+        "risk_equity": "68",
+        "unrealized_pnl": "0"
+      },
+      "actual_replay_state": {
+        "accounting_equity": "88",
+        "available_margin": "65.8",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "12",
+        "equity": "68",
+        "frozen_value": "0",
+        "initial_margin": "2.2",
+        "interest_value": "1",
+        "loan_value": "40",
+        "maintenance_margin": "1.1",
+        "open_order_margin": "0",
+        "principal_value": "10",
+        "risk_equity": "68",
+        "unrealized_pnl": "0"
+      },
+      "archival_state": {
+        "balances": {
+          "BTC": "1",
+          "USD": "-1"
+        },
+        "frozen_assets": {},
+        "liabilities": [
+          {
+            "asset": "BTC",
+            "interest": "0.01",
+            "principal": "0.1"
+          }
+        ],
+        "orders": [],
+        "positions": {},
+        "version": 1
+      },
+      "id": "explicit_principal_and_interest",
+      "independent_fraction": {
+        "accounting_equity": "88",
+        "available_margin": "4630263366890291/70368744177664",
+        "cash_deficit_value": "1",
+        "collateral_value": "80",
+        "debt_value": "12",
+        "equity": "68",
+        "frozen_value": "0",
+        "initial_margin": "2476979795053773/1125899906842624",
+        "interest_value": "1",
+        "loan_value": "40",
+        "maintenance_margin": "2476979795053773/2251799813685248",
+        "open_order_margin": "0",
+        "principal_value": "10",
+        "risk_equity": "68",
+        "unrealized_pnl": "0"
+      },
+      "matches_independent": false
+    }
+  ],
+  "elapsed_after_imports_seconds": 0.002053,
+  "frozen_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+  "market": {
+    "assets": {
+      "BTC": {
+        "collateral_factor": "0.8",
+        "price": "1E+2"
+      },
+      "USD": {
+        "collateral_factor": "1",
+        "price": "1"
+      }
+    },
+    "instruments": {
+      "BTC-PERP": {
+        "initial_margin_rate": "0.1",
+        "maintenance_margin_rate": "0.05",
+        "mark_price": "1E+2"
+      }
+    },
+    "observed_at": "2026-11-17T00:00:00+00:00",
+    "version": 1
+  },
+  "native_or_production_credit_go": false,
+  "policy": {
+    "catalog": {
+      "products": {
+        "BTC-PERP": {
+          "eligible_hedges": [],
+          "expiry": null,
+          "funding_interval_seconds": null,
+          "kind": "linear_perpetual",
+          "min_notional": "1",
+          "multiplier": "1",
+          "price_tick": "0.01",
+          "quantity_step": "0.01",
+          "quote_asset": "USD",
+          "risk_tier": "tier-1",
+          "settlement_asset": "USD",
+          "status": "active",
+          "underlying": "BTC"
+        }
+      },
+      "settlement_asset": "USD",
+      "version": 1
+    },
+    "fee_rate": "0.1",
+    "format": 1,
+    "max_price_age_us": 5000000,
+    "risk_mode": "phase1_cross",
+    "rules": {
+      "borrow_limits": {
+        "BTC": {
+          "initial_margin_rate": "0.2",
+          "maintenance_margin_rate": "0.1",
+          "max_principal": "1E+1",
+          "quantity_step": "1E-8"
+        }
+      },
+      "collaterals": {
+        "BTC": {
+          "loan_to_value": "0.5",
+          "tiers": [
+            {
+              "factor": "0.8",
+              "up_to": null
+            }
+          ]
+        },
+        "USD": {
+          "loan_to_value": "0.5",
+          "tiers": [
+            {
+              "factor": "1",
+              "up_to": null
+            }
+          ]
+        }
+      },
+      "linear_margin": {
+        "tier-1": {
+          "initial_margin_rate": "0.1",
+          "maintenance_margin_rate": "0.05"
+        }
+      },
+      "max_total_debt": "1E+4",
+      "rule_id": "UTA-CROSS-LOAN-v1",
+      "version": 1
+    },
+    "scales": {
+      "BTC": 8,
+      "USD": 2
+    }
+  },
+  "probe_source_sha256": "ce90f847eb209e331e715f37fbf9ec11d4a29a096c92aa770b5b0f982d9f6157",
+  "python": "3.12.14",
+  "scope": "pure archival state/helper/Cross; no actual service transaction or audit archive reachability proved by this phase",
+  "source_sha256": {
+    "uta/decision_audit.py": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6",
+    "uta/portfolio.py": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+    "uta/service.py": "76e666497bd37c4955d0ac67bc7fd751387fa585047c3ed28c24565add13e0bd"
+  },
+  "status": "NO_DIFFERENCE_REPRODUCED_IN_ACTUAL_FROZEN_PURE_HELPER"
+}
