@@ -32,5 +32,13 @@ credit.py、CLI、订单路由、长稳源码或已有authority。
 移交及上线审批不由此单库方法完成。失败保留原库和证据按review前滚；不能删marker、
 退generation或用旧备份覆盖新资金。合成单测只能清理它自行创建的临时目录。
 
-本提交先交可review代码，实际小规模测试结果另以固定源码和原始日志追加；不得预填
-通过状态。生产、真实资金、持续容量、复制RPO/RTO均为未验。
+首份实际验证固定 `c33abf1109d925960e2c6dc12100bbd2e3630fef`（含完整M2祖先8338与
+实际policy模块），CPU4在2026-11-17 11:24:25.982717–11:24:28.528445 UTC执行。14项
+专项通过，unittest2.241秒，实际进程2.545733秒，零skip。包括真owner与prepare竞争、
+无cap金融COMMIT、opening利息、实际DDL拒绝/捕获后的fatal、准备态无owner/作用域、
+中断回滚与不修复、旧458四组合及旧ad3写入拒绝。完整[原日志及源hash](../evidence/runs/credit-native-c33abf1/manifest.json)
+保留；它只证明此准备切片，不证明逐借款正向native操作已完成。
+
+普通base/batch语义的更广回归、新增cap事件检查的开销审查及独立peer review尚待完成。
+后续源码需另行记录，不把这一14项通过迁移到新SHA。生产、真实资金、持续容量和复制
+RPO/RTO均为未验。
