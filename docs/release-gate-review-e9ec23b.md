@@ -164,3 +164,13 @@ states only the new-borrow 501. The linked durable API already states this
 restriction unambiguously. Describing cache reuse as repeated NORMAL
 supervision results would also be more precise than merely diagnostic results.
 Neither recommendation authorizes a product or changes a runtime gate.
+
+Commit `ceb15c7` was then inspected read-only. It replaces diagnostic-result
+wording with repeated NORMAL supervision results and explicitly states both
+unsupported v2 new-borrow/spot operations' `501
+unsupported_durable_operation`, separately from trusted credit's `501
+unsupported_credit_operation`. Both wording recommendations are closed.
+The final scoped verdict therefore has **no outstanding documentation or
+reviewed implementation blocker**. Full exact-source qualification, capacity,
+long-duration, replicated recovery and financial/production approval remain
+independent open gates.
