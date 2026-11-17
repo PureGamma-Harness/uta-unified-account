@@ -27,6 +27,17 @@ unexpired original binding can be resumed for another observation. Setup has a
 five-second horizon and at most eight captures. This does not retry a financial
 command. The other shard is never paused solely to infer lock ownership.
 
+Static peer review identified an additional necessary precondition: native SH
+may already enclose a SQLite financial writer. After SIGSTOP, the candidate
+therefore also requires a real `mode=rw`, timeout0 `BEGIN IMMEDIATE` followed by
+ROLLBACK, with zero DML and unchanged connection total_changes. A busy writer
+means that capture has not reached the intended pre-write phase. Only native
+SQLITE_BUSY (including extended base5), or the exact builtin Python3.10
+no-native-code `database is locked` form, permits resume/re-observation within
+the existing eight-attempt/five-second capture budget. LOCKED, I/O, permission,
+schema and other unknown errors fail. The probe installs no owner/UDF, does not
+write data or change a lease, and is closed before the real durable enqueue.
+
 An explicit unexpired-owner control waits .1 seconds while the owner holds SH.
 It requires no pidfd exit, the same active generation and the retained kernel
 lock. This guards against making recovery pass by killing a live unexpired

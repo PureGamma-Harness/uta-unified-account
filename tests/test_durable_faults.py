@@ -105,6 +105,32 @@ def bound_router_shared_flocks(pid, identity, path, file_identity):
     return records
 
 
+def router_writer_available_without_dml(path):
+    """Probe real SQLite writer availability; do not install an owner or write.
+
+    The stopped child must hold SH before its financial write transaction, or
+    the subsequent durable enqueue could itself wait for lease recovery.
+    """
+    with closing(sqlite3.connect(Path(path).as_uri() + "?mode=rw", uri=True,
+                                 timeout=0, isolation_level=None)) as connection:
+        changes = connection.total_changes
+        try:
+            connection.execute("BEGIN IMMEDIATE")
+        except sqlite3.OperationalError as error:
+            code = getattr(error, "sqlite_errorcode", None)
+            if type(code) is int and code & 255 == 5:  # Native SQLITE_BUSY.
+                return {"available": False, "classification": "sqlite_busy", "native_errorcode": code}
+            if (not hasattr(error, "sqlite_errorcode") and type(error) is sqlite3.OperationalError
+                    and error.args == ("database is locked",)):
+                return {"available": False, "classification": "sqlite_busy_legacy_builtin", "native_errorcode": None}
+            raise
+        assert connection.in_transaction
+        connection.rollback()
+        assert not connection.in_transaction and connection.total_changes == changes
+        return {"available": True, "classification": "begin_immediate_rolled_back_zero_dml",
+                "native_errorcode": None}
+
+
 class DurableFaultFixture(unittest.TestCase):
     def setUp(self):
         temporary = TemporaryDirectory()
@@ -1320,6 +1346,9 @@ class ManagedProcessFaultTests(unittest.TestCase):
                                                         "candidate": candidate,
                                                         "retained_after_stop": retained})
                 if retained:
+                    writer_probe = router_writer_available_without_dml(self.shard_path(0))
+                    observation["capture_attempts"][-1]["writer_availability_probe"] = writer_probe
+                if retained and writer_probe["available"]:
                     descriptor = os.open(lock_path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW)
                     try:
                         opened = os.fstat(descriptor)
