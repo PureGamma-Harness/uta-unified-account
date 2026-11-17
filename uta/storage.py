@@ -367,7 +367,7 @@ class DurableLedger:
                 table = definition.split(" ON ", 1)[1].split()[0]
                 expected[name] = ("trigger", table, definition)
         installed = {row[0]: tuple(row[1:]) for row in connection.execute(
-            "SELECT name,type,tbl_name,sql FROM sqlite_master")}
+            "SELECT name,type,tbl_name,sql FROM main.sqlite_master")}
         for name, definition in expected.items():
             if name not in installed:
                 raise LedgerError("journal protection trigger is missing")
@@ -511,25 +511,25 @@ class DurableLedger:
         """
         with self.database._using(connection) as current:
             self._verify_postings_definition(current)
-            if [row[0] for row in current.execute("PRAGMA integrity_check")] != ["ok"]:
+            if [row[0] for row in current.execute("PRAGMA main.integrity_check")] != ["ok"]:
                 raise LedgerError("database integrity check failed")
-            if current.execute("PRAGMA foreign_key_check").fetchone() is not None:
+            if current.execute("PRAGMA main.foreign_key_check").fetchone() is not None:
                 raise LedgerError("database foreign-key check failed")
-            version = current.execute("SELECT version FROM ledger_schema WHERE singleton = 1").fetchone()
+            version = current.execute("SELECT version FROM main.ledger_schema WHERE singleton = 1").fetchone()
             if version is None or version[0] != _SCHEMA_VERSION:
                 raise LedgerError("ledger schema version changed")
-            if dict(current.execute("SELECT asset, scale FROM ledger_assets")) != self.scales:
+            if dict(current.execute("SELECT asset, scale FROM main.ledger_assets")) != self.scales:
                 raise LedgerError("ledger asset scales changed")
             self._verify_protection(current)
             projected: dict[tuple[str, str], int] = {}
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
-                                   "FROM ledger_events ORDER BY sequence").fetchall()
+                                   "FROM main.ledger_events ORDER BY sequence").fetchall()
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
+                postings = current.execute("SELECT ordinal, account, asset, units FROM main.ledger_postings "
                                            "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")
@@ -550,7 +550,7 @@ class DurableLedger:
                         raise LedgerError("replayed balance exceeds supported range")
                 previous_hash = event_hash
             stored = {(row[0], row[1]): self._stored_units(row[2]) for row in current.execute(
-                "SELECT account, asset, units FROM ledger_balances")}
+                "SELECT account, asset, units FROM main.ledger_balances")}
             if stored != projected:
                 raise LedgerError("materialized balances differ from journal replay")
             return len(rows)

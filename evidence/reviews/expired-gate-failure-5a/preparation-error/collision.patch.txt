@@ -1,0 +1,474 @@
+diff --git a/tests/test_failure_diagnostics.py b/tests/test_failure_diagnostics.py
+index af1749f..8b6ffcd 100644
+--- a/tests/test_failure_diagnostics.py
++++ b/tests/test_failure_diagnostics.py
+@@ -1,299 +1,189 @@
+-"""Failure evidence is internal, bounded and atomic with retry accounting."""
+-from contextlib import contextmanager
+-from datetime import datetime, timezone
+-from decimal import Decimal
+-from hashlib import sha256
++"""Pure failure-evidence/privacy checks. Never import the financial testcase."""
++import ast
++import hashlib
++import io
+ import json
+ from pathlib import Path
+-import sqlite3
+-import tempfile
++import sys
++import threading
++from types import SimpleNamespace
+ import unittest
+ from unittest.mock import patch
+ 
+-from uta.durable_commands import CommandExecutionError, QueueStore
+-from uta.durable_views import ManagedAccountViews
+-from uta.market import MarketSnapshot
+-from uta.models import AssetSpec, InstrumentSpec
+-from uta.service import ExchangeService, ServiceError
+-from uta.storage import Database
+-from uta.writer_fence import WriterFence, WriterFenceError
++from tests import failure_diagnostics as diagnostic
+ 
++SECRET = 'SYNTHETIC_SECRET_NEVER_OUTPUT_741'
++ROOT = Path(__file__).resolve().parents[1]
++METHOD = 'test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover'
+ 
+-class FailureDiagnosticTests(unittest.TestCase):
+-    def setUp(self):
+-        temporary = tempfile.TemporaryDirectory()
+-        self.addCleanup(temporary.cleanup)
+-        self.path = Path(temporary.name) / "financial.sqlite3"
+-        self.now = datetime(2026, 11, 17, tzinfo=timezone.utc)
+-        self.database = Database(self.path)
+-        bootstrap = ExchangeService(self.database, {"USD": 2}, clock=lambda: self.now)
+-        bootstrap.create_account("alice")
+-        bootstrap.deposit("alice", "fund", "USD", Decimal("1000"))
+-        bootstrap.publish_market(MarketSnapshot(1, self.now,
+-            {"USD": AssetSpec(Decimal(1), Decimal(1))},
+-            {"X": InstrumentSpec(Decimal(100), Decimal(".1"), Decimal(".05"))}))
+-        bootstrap.set_kill_switch(False)
+-        self.queue = QueueStore(self.database, initialize=True, clock=lambda: self.now)
+-        self.fence = WriterFence(self.database)
+-        self.fence.enable("diagnostic-test")
+-        self.token = self.fence.acquire("writer", 30)
+-        self.writer = ExchangeService(self.database.for_writer(self.token), {"USD": 2}, clock=lambda: self.now)
+-        self.queue.enqueue_submit("alice", "original-cid", "order", "X", Decimal(1), Decimal(100))
+-
+-    def diagnostics(self):
+-        with self.database.read_transaction() as connection:
+-            return [{**dict(row), "payload": json.loads(row["payload"])} for row in connection.execute(
+-                "SELECT * FROM uta_events WHERE event_type='COMMAND_EXECUTION_FAILED' ORDER BY sequence")]
+-
+-    def financial(self):
+-        with self.database.read_transaction() as connection:
+-            names = [r[0] for r in connection.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]
+-            return {name: [tuple(r) for r in connection.execute('SELECT * FROM "' + name + '" ORDER BY rowid')]
+-                    for name in names if name.startswith(("uta_", "ledger_"))
+-                    and name not in {"uta_command_inbox", "uta_events"}}
+ 
+-    def fail_execution(self):
+-        original = self.writer._event
+-        def fail_after_dml(connection, kind, account_id, payload):
+-            original(connection, kind, account_id, payload)
+-            if kind == "ORDER_ACCEPTED":
+-                try:
+-                    connection.execute("SELECT * FROM missing_diagnostic_test_table")
+-                except sqlite3.Error as cause:
+-                    raise ServiceError("storage_unavailable", "sensitive SQL/account/key message", 503) from cause
+-        with patch.object(self.writer, "_event", side_effect=fail_after_dml):
+-            with self.assertRaises(CommandExecutionError) as caught:
+-                self.queue.process_one(self.writer)
+-        return caught.exception
++def canonical(value):
++    if isinstance(value, ast.AST):
++        return [type(value).__name__, [[key, canonical(item)] for key, item in ast.iter_fields(value)
++                if not (key == 'type_params' and item == [])]]
++    if type(value) is list:
++        return [canonical(item) for item in value]
++    if type(value) is bytes:
++        return ['bytes', value.hex()]
++    if value is Ellipsis:
++        return ['ellipsis']
++    if type(value) is complex:
++        return ['complex', repr(value)]
++    return value
+ 
+-    def test_legacy_caller_retains_generic_fields_and_explicit_missing_cause(self):
+-        receipt = self.queue.record_failure(self.writer, "original-cid")
+-        self.assertEqual((receipt["attempts"], receipt["last_error"]), (1, "technical_execution_failure"))
+-        events = self.diagnostics()
+-        self.assertEqual(len(events), 1, "generic last_error alone cannot identify the actual cause")
+-        self.assertEqual(events[0]["payload"]["diagnostic"]["status"], "cause_not_supplied")
+ 
+-    def test_real_cause_digest_attempt_and_global_visibility_without_financial_effect(self):
+-        before = self.financial()
+-        failure = self.fail_execution()
+-        self.assertEqual((failure.command_id, failure.attempt), ("original-cid", 1))
+-        receipt = self.queue.record_failure(self.writer, failure.command_id, cause=failure.cause, attempt=failure.attempt)
+-        self.assertEqual(self.financial(), before)
+-        self.assertEqual(self.writer.orders("alice"), [])
+-        event, = self.diagnostics()
+-        self.assertIsNone(event["account_id"])
+-        payload = event["payload"]
+-        self.assertEqual((payload["event_version"], payload["command_id"], payload["command_kind"], payload["attempt"]),
+-                         (1, "original-cid", "SUBMIT_ORDER", 1))
+-        with self.database.read_transaction() as connection:
+-            row = connection.execute("SELECT sequence,payload FROM uta_command_inbox WHERE command_id=?", ("original-cid",)).fetchone()
+-        self.assertEqual(payload["command_sequence"], row["sequence"])
+-        self.assertEqual(payload["canonical_payload_sha256"], sha256(row["payload"].encode("utf-8")).hexdigest())
+-        chain = payload["diagnostic"]["chain"]
+-        self.assertEqual([r["type"] for r in chain], ["uta.service.ServiceError", "sqlite3.OperationalError"])
+-        self.assertEqual(chain[0]["public_code"], "storage_unavailable")
+-        if hasattr(failure.cause.__cause__, "sqlite_errorcode"):
+-            self.assertEqual((chain[1]["sqlite_errorcode"], chain[1]["sqlite_errorname"]), (1, "SQLITE_ERROR"))
+-        self.assertTrue(any(frame["function"] == "fail_after_dml" for node in chain for frame in node["frames"]))
+-        encoded = json.dumps(payload)
+-        for secret in ("sensitive", "missing_diagnostic_test_table", "SELECT", str(self.path), "locals", "snapshot"):
+-            self.assertNotIn(secret, encoded)
+-        self.assertFalse(any(e["event_type"] == "COMMAND_EXECUTION_FAILED" for e in self.writer.account_events("alice")))
+-        view = ManagedAccountViews(self.database, clock=lambda: self.now).read("alice", "events")
+-        self.assertFalse(any(e["event_type"] == "COMMAND_EXECUTION_FAILED" for e in view["events"]))
+-        self.assertEqual(self.queue.record_failure(self.writer, failure.command_id, cause=failure.cause, attempt=1), receipt)
+-        self.assertEqual(len(self.diagnostics()), 1)
+-        recovered = QueueStore(Database(self.path))
+-        self.assertEqual(recovered.status("original-cid")["attempts"], 1)
+-        self.assertEqual(recovered.process_one(self.writer)["state"], "SUCCEEDED")
+-        self.assertEqual(len(self.diagnostics()), 1)
++def ast_sha(value):
++    return hashlib.sha256(json.dumps(canonical(value), separators=(',', ':'), ensure_ascii=True).encode()).hexdigest()
+ 
+-    def test_terminal_commit_reply_unknown_is_never_rewritten_or_diagnosed(self):
+-        original = self.writer._transaction
+-        @contextmanager
+-        def lose_reply():
+-            with original() as connection:
+-                yield connection
+-            raise ConnectionError("secret after COMMIT")
+-        with patch.object(self.writer, "_transaction", lose_reply):
+-            with self.assertRaises(CommandExecutionError) as caught:
+-                self.queue.process_one(self.writer)
+-        terminal = self.queue.status("original-cid")
+-        self.assertEqual(terminal["state"], "SUCCEEDED")
+-        self.assertEqual(self.queue.record_failure(self.writer, "original-cid", cause=caught.exception.cause, attempt=1), terminal)
+-        self.assertEqual(self.diagnostics(), [])
+-        self.assertIsNone(self.queue.process_one(self.writer))
+-        self.assertEqual(len(self.writer.orders("alice")), 1)
+ 
+-    def test_failure_record_commit_reply_unknown_recovery_is_idempotent_for_same_attempt(self):
+-        original = self.writer._transaction
+-        @contextmanager
+-        def lose_reply():
+-            with original() as connection:
+-                yield connection
+-            raise ConnectionError("after failure COMMIT")
+-        with patch.object(self.writer, "_transaction", lose_reply), self.assertRaises(ConnectionError):
+-            self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(self.queue.status("original-cid")["attempts"], 1)
+-        self.assertEqual(len(self.diagnostics()), 1)
+-        self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(len(self.diagnostics()), 1)
+-        self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=2, max_attempts=2)
+-        self.assertEqual(self.queue.status("original-cid")["state"], "QUARANTINED")
+-        self.assertEqual([e["payload"]["attempt"] for e in self.diagnostics()], [1, 2])
++def router():
++    return SimpleNamespace(_monitor=threading.current_thread(), _stop=threading.Event())
+ 
+-    def test_before_commit_failure_rolls_back_event_and_attempt_then_can_recover(self):
+-        original = self.writer._event
+-        def interrupt(connection, kind, account_id, payload):
+-            original(connection, kind, account_id, payload)
+-            if kind == "COMMAND_EXECUTION_FAILED":
+-                raise ConnectionError("before COMMIT")
+-        before = self.financial()
+-        with patch.object(self.writer, "_event", side_effect=interrupt), self.assertRaises(ConnectionError):
+-            self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(self.queue.status("original-cid")["attempts"], 0)
+-        self.assertEqual(self.diagnostics(), [])
+-        self.assertEqual(self.financial(), before)
+-        self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(len(self.diagnostics()), 1)
+ 
+-    def test_real_sqlite_full_rolls_back_attempt_and_diagnostic(self):
+-        with self.writer.database.transaction() as connection:
+-            connection.execute("CREATE TABLE diagnostic_full_blob (value BLOB)")
+-            pages = connection.execute("PRAGMA page_count").fetchone()[0]
+-        original_connect, original_event = self.writer.database._connect, self.writer._event
+-        def restricted_connection():
+-            connection = original_connect()
+-            connection.execute("PRAGMA max_page_count=" + str(pages))
+-            return connection
+-        def fill_after_event(connection, kind, account_id, payload):
+-            original_event(connection, kind, account_id, payload)
+-            if kind == "COMMAND_EXECUTION_FAILED":
+-                connection.execute("INSERT INTO diagnostic_full_blob VALUES (zeroblob(65536))")
+-        with patch.object(self.writer.database, "_connect", side_effect=restricted_connection), \
+-                patch.object(self.writer, "_event", side_effect=fill_after_event):
+-            with self.assertRaises(ServiceError) as caught:
+-                self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(caught.exception.code, "storage_unavailable")
+-        self.assertEqual(self.queue.status("original-cid")["attempts"], 0)
+-        self.assertEqual(self.diagnostics(), [])
++def packet(observation=None, errors=None, primary=None):
++    stream = io.StringIO()
++    emitted = diagnostic.emit_expired_gate_failure(observation or {}, errors or [], primary, router(), threading.current_thread(), stream=stream)
++    text = stream.getvalue()
++    if not emitted:
++        raise AssertionError('pure in-memory writer did not accept record')
++    return text, json.loads(text[len(diagnostic.PREFIX):])
+ 
+-    def test_expired_lease_cannot_claim_a_diagnostic_or_attempt(self):
+-        self.fence.release(self.token)
+-        with self.assertRaises(WriterFenceError):
+-            self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(self.queue.status("original-cid")["attempts"], 0)
+-        self.assertEqual(self.diagnostics(), [])
+ 
+-    def test_lease_expiring_after_diagnostic_insert_rolls_back_at_commit(self):
+-        tick = [1_000_000_000]
+-        database = Database(self.path.with_name("lease.sqlite3"),
+-                            fence_clock_ns=lambda: tick[0], fence_boot_id="synthetic-boot")
+-        ExchangeService(database, {"USD": 2}, clock=lambda: self.now)
+-        queue = QueueStore(database, initialize=True)
+-        queue.enqueue_halt("expiry", True)
+-        fence = WriterFence(database)
+-        fence.enable("diagnostic-expiry")
+-        token = fence.acquire("expiry-writer", 1)
+-        writer = ExchangeService(database.for_writer(token), {"USD": 2}, clock=lambda: self.now)
+-        original = writer._event
+-        def expire(connection, kind, account_id, payload):
+-            original(connection, kind, account_id, payload)
+-            if kind == "COMMAND_EXECUTION_FAILED":
+-                tick[0] += 1_000_000_000
+-        with patch.object(writer, "_event", side_effect=expire), self.assertRaises(WriterFenceError) as caught:
+-            queue.record_failure(writer, "expiry", cause=RuntimeError("private"), attempt=1)
+-        self.assertEqual(caught.exception.code, "lease_expired")
+-        self.assertEqual(queue.status("expiry")["attempts"], 0)
+-        with database.read_transaction() as connection:
+-            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_events WHERE event_type='COMMAND_EXECUTION_FAILED'").fetchone()[0], 0)
++def recursive_error():
++    code = ('def ' + METHOD + '(n):\n'
++            '    if n: return ' + METHOD + '(n-1)\n'
++            '    raise ValueError("' + SECRET + '")\n' + METHOD + '(40)')
++    try:
++        exec(compile(code, '/' + SECRET + '/tests/test_durable_faults.py', 'exec'), {})
++    except ValueError as error:
++        return error
+ 
+-    def test_deep_cycles_frames_and_hostile_exception_access_are_bounded(self):
+-        class Hostile(RuntimeError):
+-            def __str__(self):
+-                raise AssertionError("must never stringify exception")
+-            def __getattribute__(self, name):
+-                raise AssertionError("must never invoke exception attribute hooks")
+-        current = Hostile("private-secret")
+-        for _ in range(40):
+-            parent = Hostile("private-secret")
+-            BaseException.__dict__["__cause__"].__set__(parent, current)
+-            current = parent
+-        self.queue.record_failure(self.writer, "original-cid", cause=current, attempt=1)
+-        diagnostic = self.diagnostics()[0]["payload"]["diagnostic"]
+-        self.assertEqual(len(diagnostic["chain"]), 8)
+-        self.assertTrue(diagnostic["chain_truncated"])
+-        self.assertNotIn("private-secret", json.dumps(diagnostic))
+-        cycle = Hostile("private-secret")
+-        BaseException.__dict__["__cause__"].__set__(cycle, cycle)
+-        self.queue.record_failure(self.writer, "original-cid", cause=cycle, attempt=2)
+-        self.assertTrue(self.diagnostics()[1]["payload"]["diagnostic"]["chain_cycle"])
+ 
+-    def test_unknown_public_code_is_not_copied_from_exception_data(self):
+-        self.queue.record_failure(self.writer, "original-cid", cause=ServiceError("PRIVATE_API_KEY", "private"), attempt=1)
+-        diagnostic = self.diagnostics()[0]["payload"]["diagnostic"]
+-        self.assertIsNone(diagnostic["chain"][0]["public_code"])
+-        self.assertNotIn("PRIVATE_API_KEY", json.dumps(diagnostic))
+-
+-    def test_deep_traceback_is_bounded_and_attempt_gaps_cannot_invent_failures(self):
+-        def recurse(depth):
+-            if depth:
+-                return recurse(depth - 1)
+-            raise RuntimeError("private-secret")
++class FailureDiagnosticTests(unittest.TestCase):
++    def test_complete_original_ast_is_preserved_except_exact_failure_hook(self):
++        tree = ast.parse((ROOT / 'tests/test_durable_faults.py').read_text())
++        method = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == METHOD)
++        hooks = [(block, index, node) for block in ast.walk(method) if isinstance(block, ast.Try)
++                 for index, node in enumerate(block.finalbody) if isinstance(node, ast.If)
++                 and any(isinstance(part, ast.ImportFrom) and part.module == 'tests.failure_diagnostics' for part in ast.walk(node))]
++        self.assertEqual(len(hooks), 1)
++        block, index, actual = hooks[0]
++        expected = ast.parse('''if primary_error is not None:
++    try:
++        from tests.failure_diagnostics import emit_expired_gate_failure
++        emit_expired_gate_failure(observation, errors, primary_error, self.router, thread)
++    except BaseException:
++        pass
++''').body[0]
++        self.assertEqual(canonical(actual), canonical(expected))
++        self.assertIsInstance(block.finalbody[index - 1], ast.Assign)
++        del block.finalbody[index]
++        reference = json.loads((ROOT / 'evidence/reviews/failure-diagnostics-5a/original-ast.json').read_text())
++        self.assertEqual(ast_sha(tree), reference['canonical_module_ast_sha256'])
++
++    def test_success_hook_does_not_import_collect_or_write(self):
++        tree = ast.parse((ROOT / 'tests/test_durable_faults.py').read_text())
++        method = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == METHOD)
++        hook = next(node for node in ast.walk(method) if isinstance(node, ast.If)
++                    and any(isinstance(part, ast.ImportFrom) and part.module == 'tests.failure_diagnostics' for part in ast.walk(node)))
++        code = compile(ast.fix_missing_locations(ast.Module(body=[hook], type_ignores=[])), '<actual-success-hook>', 'exec')
++        # All other argument names deliberately absent: a success-path reference,
++        # import or call would fail instead of silently passing a mirror fixture.
++        with patch('builtins.__import__', side_effect=AssertionError(SECRET)):
++            exec(code, {'primary_error': None})
++
++    def test_secret_observation_fields_and_malformed_values_are_not_serialized(self):
++        observation = {'owner_nonce': SECRET, 'message': SECRET, 'publication_started_at': SECRET,
++            'selected_binding': {'pid': 11, 'start_ticks': 12, 'uid': 13, 'boot_id': SECRET},
++            'captured_lease': {'owner_pid': 11, 'generation': 1, 'active': True, 'expires_ns': 15, 'owner_nonce': SECRET},
++            'lease_reads': [{'observed': False, 'error_type': SECRET, 'message': SECRET}],
++            'capture_attempts': [{'at': 1.25, 'candidate': [{'path': SECRET}],
++                'retained_after_stop': [{'nonce': SECRET}], 'writer_availability_probe': {'available': False, 'native_errorcode': 15, 'message': SECRET}}]}
++        text, data = packet(observation)
++        self.assertNotIn(SECRET, text)
++        self.assertEqual(data['observation']['captured_lease']['generation'], 1)
++        self.assertEqual(data['observation']['last_capture']['writer_availability_probe']['native_errorcode'], 15)
++        self.assertIsNone(data['observation']['publication_started_at'])
++        self.assertGreater(data['drop_counts']['fields'], 0)
++
++    def test_exception_messages_notes_locals_dynamic_names_and_codes_are_private(self):
++        private_local = SECRET
++        cls = type(SECRET, (Exception,), {})
+         try:
+-            recurse(40)
+-        except RuntimeError as cause:
+-            self.queue.record_failure(self.writer, "original-cid", cause=cause, attempt=1)
+-        node = self.diagnostics()[0]["payload"]["diagnostic"]["chain"][0]
+-        self.assertEqual(node["type"], "builtins.RuntimeError")
+-        self.assertEqual(len(node["frames"]), 8)
+-        self.assertTrue(node["frames_truncated"])
+-        self.assertTrue(all(set(frame) == {"module", "function", "lineno"} for frame in node["frames"]))
+-        with self.assertRaises(ValueError):
+-            self.queue.record_failure(self.writer, "original-cid", cause=RuntimeError("private"), attempt=3)
+-        self.assertEqual(self.queue.status("original-cid")["attempts"], 1)
+-        self.assertEqual(len(self.diagnostics()), 1)
+-
+-    def test_native_metadata_access_does_not_call_dict_key_or_metaclass_hooks(self):
+-        class BadDict(dict):
+-            def get(self, *args):
+-                raise AssertionError("must not call overridden dict.get")
+-        class BadKey:
+-            def __hash__(self):
+-                return hash("code")
+-            def __eq__(self, other):
+-                raise AssertionError("must not compare arbitrary metadata keys")
+-        class BadMeta(type):
+-            @property
+-            def __module__(cls):
+-                raise AssertionError("must not execute module property")
+-            def __eq__(cls, other):
+-                raise AssertionError("must not compare arbitrary exception types")
+-        class Hostile(RuntimeError, metaclass=BadMeta):
+-            pass
+-        cause = Hostile("private")
+-        data = BadDict()
+-        data[BadKey()] = "private"
+-        for i in range(20):
+-            data[str(i)] = "private"
+-        cause.__dict__ = data
+-        self.queue.record_failure(self.writer, "original-cid", cause=cause, attempt=1)
+-        node = self.diagnostics()[0]["payload"]["diagnostic"]["chain"][0]
+-        self.assertTrue(node["attributes_truncated"])
+-        self.assertEqual(node["type"], __name__ + ".Hostile")
+-        self.assertNotIn("private", json.dumps(node))
+-
+-    def test_invalid_persisted_kind_does_not_make_event_unbounded(self):
+-        oversized = "PRIVATE_KIND_" * 4096
+-        with self.database.inbox_transaction() as connection:
+-            connection.execute("INSERT INTO uta_command_inbox(command_id,kind,payload,state,enqueued_at) VALUES (?,?,'{}','PENDING',?)",
+-                               ("invalid-kind", oversized, self.now.isoformat()))
+-        self.queue.record_failure(self.writer, "invalid-kind", cause=RuntimeError("private"), attempt=1)
+-        event, = self.diagnostics()
+-        self.assertIsNone(event["payload"]["command_kind"])
+-        self.assertEqual(event["payload"]["command_kind_sha256"], sha256(oversized.encode("utf-8")).hexdigest())
+-        self.assertLess(len(json.dumps(event)), 4096)
+-
+-
+-if __name__ == "__main__":
+-    unittest.main()
++            raise cls(private_local)
++        except Exception as error:
++            error.code = SECRET
++            error.sqlite_errorcode = 5
++            error.__notes__ = [SECRET]
++            text, data = packet(errors=[error], primary=error)
++        self.assertNotIn(SECRET, text)
++        self.assertEqual(data['publisher_errors'][0][0]['type'], '<unlisted>')
++        self.assertEqual(data['publisher_errors'][0][0]['sqlite_errorcode'], 5)
++        self.assertNotIn('code', data['publisher_errors'][0][0])
++
++    def test_source_paths_are_labels_and_frames_do_not_read_source(self):
++        error = recursive_error()
++        with patch('builtins.open', side_effect=AssertionError('forbidden source read')):
++            text, data = packet(errors=[error], primary=error)
++        self.assertNotIn(SECRET, text)
++        self.assertIn('tests.test_durable_faults', text)
++        self.assertTrue(data['publisher_errors'][0][0]['frames'])
++
++    def test_only_three_named_thread_roles_and_monitor_flags_are_collected(self):
++        text, data = packet()
++        self.assertEqual(set(data['threads']), {'main', 'monitor', 'publisher', 'monitor_stop'})
++        self.assertIs(data['threads']['monitor']['alive'], True)
++        self.assertIs(data['threads']['monitor_stop'], False)
++        self.assertIsInstance(data['monotonic_ns'], int)
++        self.assertIsInstance(data['boottime_ns'], int)
++        self.assertIsInstance(data['utc_ns'], int)
++
++    def test_collections_frames_and_total_output_are_bounded_without_input_mutation(self):
++        first, second = recursive_error(), recursive_error()
++        second.__cause__ = first
++        errors = [second] * 32
++        reads = [{'observed': True, 'value': {'owner_pid': 11, 'generation': 1, 'active': True}}] * 5000
++        observation = {'lease_reads': reads}
++        text, data = packet(observation, errors, second)
++        self.assertLessEqual(len(text.encode('utf-8')), diagnostic.MAX_BYTES)
++        self.assertIs(data['truncated'], True)
++        self.assertGreater(data['drop_counts']['items'], 0)
++        self.assertEqual(len(errors), 32)
++        self.assertEqual(len(reads), 5000)
++        self.assertIs(second.__cause__, first)
++
++    def test_logger_failure_preserves_original_exception_and_cleanup(self):
++        class BrokenWriter:
++            def write(self, value):
++                raise KeyboardInterrupt(SECRET)
++        primary = ValueError(SECRET)
++        cleaned = []
++        try:
++            try:
++                raise primary
++            finally:
++                self.assertIs(diagnostic.emit_expired_gate_failure({}, [], primary, None, None, stream=BrokenWriter()), False)
++                cleaned.append(True)
++        except ValueError as observed:
++            self.assertIs(observed, primary)
++        self.assertEqual(cleaned, [True])
++
++    def test_collector_failure_is_bounded_literal_fallback_and_cleanup_continues(self):
++        stream = io.StringIO()
++        with patch.object(diagnostic, 'build_failure_diagnostic', side_effect=RuntimeError(SECRET)):
++            self.assertIs(diagnostic.emit_expired_gate_failure({}, [], None, None, None, stream=stream), True)
++        self.assertNotIn(SECRET, stream.getvalue())
++        self.assertIs(json.loads(stream.getvalue()[len(diagnostic.PREFIX):])['collector_failed'], True)
++
++    def test_partial_writer_is_not_reported_as_complete(self):
++        class PartialWriter:
++            def write(self, value):
++                return 0
++        self.assertIs(diagnostic.emit_expired_gate_failure({}, [], None, None, None, stream=PartialWriter()), False)
++
++    def test_helper_has_no_source_SQL_status_signal_thread_start_or_wait_calls(self):
++        tree = ast.parse((ROOT / 'tests/failure_diagnostics.py').read_text())
++        forbidden = {'open', 'connect', 'status', 'kill', 'pidfd_send_signal', 'start', 'wait', 'sleep', 'join', 'getsource', 'read_text', 'read_bytes'}
++        names = {node.func.id if isinstance(node.func, ast.Name) else node.func.attr
++                 for node in ast.walk(tree) if isinstance(node, ast.Call) and isinstance(node.func, (ast.Name, ast.Attribute))}
++        self.assertEqual(names & forbidden, set())

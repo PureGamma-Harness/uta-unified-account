@@ -201,3 +201,170 @@ watchdog, observer failure or residual state stops; remaining slots must be
 NOT_RUN, never replaced or added. Sixteen successes would remain NO_REPRO under
 that design, not qualification. No native batch, SQL or original testcase was
 executed while preparing this independent static review.
+
+## Independent closure of the strict serialized-result validator
+
+Candidate `7ce60c197a79f25dac887f352d35749386b812f9`, following `21b473a`,
+adds a pure validator with SHA
+`dbd32f4db11bb6449f63839e46595f574065b03026386dc362bc63f518a05c71`.
+Independent pure controls executed only the audited78-line validator definition,
+without importing the driver, financial runtime or SQL. The original four malformed
+result vectors now refuse. Additional controls cover exact count/boolean types,
+missing fields, one actual unskipped case, mutually consistent outcomes and
+historical-stage flags, source identity, forbidden production approval, exact two
+observer lifecycle records and aggregate consistency. Valid PASS and ordinary
+assertion FAIL records can continue; a valid UNITTEST_ERROR or forced-cleanup
+record requires stop. All26 first-pass controls passed and are retained.
+
+This closes the earlier serialized-result shape finding for that validator. It
+does not approve an entire controller. The controller must also bind the actual
+test worker's recorded runtime, not only its preceding capability probe, and must
+classify original cleanup kills from the event trace. For this fixed testcase,
+normal expired-owner killing occurs in `uta-process-supervisor`; a MainThread
+kill during `router.close` is forced cleanup even when the testcase's local
+`cleanup_forced_kill` observation remains false. Verifying only an event-file hash
+does not independently enforce that safety-stop policy. These concrete integration
+conditions were sent to the author before any batch authorization. No batch ran
+and no original raw result was changed by this review.
+
+## Bound runtime/event controls and final whole-budget ordering finding
+
+Candidate `1e6e7f7c35d9803b13358010d3e984b0acfc1567` adds the actual-worker
+runtime contract and event semantics to new bound files, preserving older
+proposals and raw records. Independent synthetic pure controls first passed:
+10 runtime controls and12 event controls. They reject a B-labeled actual A
+version, wrong executable/SQLite/loader environment/mapped library/hash, invalid
+CPU/flag types, MainThread cleanup kill, missing expired ownership, wrong owner,
+missing spawn/pidfd/postjoin records, live observer, sampling unknown, incomplete
+status and invalid clock types. No actual native process or SQL was executed.
+These close the specific actual-worker identity and cleanup-kill conditions for
+the audited pure contracts; the actual batch pipeline remains unexecuted.
+
+Root explicitly selected a diagnostic interpretation: a completely recorded
+original business/supervisor native status exception is part of the observed
+system, not itself a logger/sampler/source/result evidence gap. A paired original
+status error may therefore be retained while the unchanged testcase continues;
+it grants no healthy lease or financial authority. Any subsequent supervisor
+kill still needs an original fresh expired-owner witness. Unittest ERROR or
+logger/sampler/source/result incompleteness stops the batch; a technically
+complete ordinary assertion FAIL preserves the fixed remaining order. The
+independent event controls include this distinction explicitly.
+
+One further concrete whole30 ordering defect remained in1e6e. Its finalizer sets
+`whole_external_budget` before code hashes and new provider/binary/library posthash
+reads. It later computes `safe` from that earlier flag, but records elapsed time
+again. A pure extracted-finalizer control with synthetic time29.95s before a
+synthetic hash and30.10s afterwards produces `all_checks=true` and
+`DIAGNOSTIC_SAMPLE_COMPLETE` despite `whole_seconds=30.10`. The original script
+and red JSON are retained; they do not represent an actual runtime overrun.
+
+Before whole-batch GO, remeasure after all validation/hash work and use the same
+final elapsed value for budget, safe and report. An additional outer sample-return
+measurement must cover writing END and stop if that whole interval exceeds30,
+retaining the original sample record rather than rewriting it. This is a timing
+bookkeeping repair, not permission to change an original5-second assertion, add
+samples or repeat a failure. No batch was run during this review.
+
+## Final80fa clock closure and conditional diagnostic recommendation
+
+Final candidate `80fae18c7afafdbb0145e5e8b44741323994b74f` binds controller SHA
+`5ce9884cfd39238482c0282cf357aab52497b7fbacb395505eecb97f67eec15e`
+and registration SHA
+`e5b67407cc1ddec6e2b85bd96037649f8803d0e714b99ff15a95f867e717b13e`.
+Independent Git-blob inspection confirms all seven registered dependencies match
+their hashes, all266 original source entries remain unchanged, and the previously
+reviewed result/runtime/event contracts, bound helper and no-SQL probe are byte
+identical to1e6e. Earlier controls therefore still apply; no original red vector,
+proposal, raw file or single-run result is rewritten.
+
+The final controller remeasures after all verification/posthash operations and
+uses one final elapsed value for sample budget, safe flag and report. Independent
+pure extracted-code controls now reject the original29.95→30.10 hash-overrun
+vector. A29.99-second on-time synthetic finalizer may pass. The caller also measures
+through sample return, including original END writing. A synthetic END tail that
+crosses30 stops after the first slot and marks the remaining15 NOT_RUN. The
+original sample END remains unchanged and its exact hash is retained in the
+separate OUTER-END record. END exceptions likewise stop. A technically complete
+synthetic ordinary assertion FAIL follows all16 registered ABBA slots without
+retries. All seven clock/caller controls first passed, with no native or SQL run.
+
+There is no remaining concrete static blocker to **one exact, root-authorized
+fixed16-sample diagnostic batch** under these bindings. This is a conditional
+engineering recommendation, not execution permission from this review alone.
+Require fresh private output, CPU2, registered per-process environment and actual
+runtime checks, unchanged original windows and both watchdog/whole clocks. Stop
+on technical evidence/runtime/source error, forced cleanup or residual state;
+preserve every raw attempt and all NOT_RUN slots. Fully observed original native
+status errors remain diagnostic observations under root's explicit amendment,
+never healthy authority or permission to kill without a fresh expired-owner
+witness. Unbound residuals are escalated, not signaled by guessed SID.
+
+The actual controller and both real runtimes have not been executed by this
+independent review. Remaining empirical behavior is deliberately pending. Sixteen
+case successes would be NO_REPRO within this design; the historical CI failure,
+source91 NO_GO and production acceptance stay unresolved. A captured failure is
+retained by its original stage without authorizing an unreviewed runtime fix.
+
+## Independent review of the completed fixed ABBA16 experiment
+
+The registered batch ran once from2026-11-17T15:31:02.991727Z through
+15:33:08.844121Z, outer125.852420290 seconds. Author evidence commit
+`6ee8b3149e1793d2d6441a88e8c4ae2b0aaa6d89` preserves327 captured files. An
+independent read-only integrity pass compared every original file with both its
+manifest hash and committed Git bytes; all match. The separate independent
+`verify_ab16_actual.py` checks saved files, exact80fa Git source and current native
+process metadata. It executes no SQL, original testcase, replay, runtime probe
+or signal. Its first full inspection took0.872 seconds on CPU3; the later newly
+available327-file archive integrity pass took0.720 seconds.
+
+All16 predetermined slots ran exactly once in ABBA repeated four times, with A/B
+each eight. Both actual worker start/result identities, their real probe records,
+scoped environment, mapped libpython hashes, provider/executable/library posthashes
+and266 source maps match their bindings. A is3.13.5 with embedded Python core;
+B is3.13.18 with its pinned prefix libpython. This remains a different host/compiler/
+libc context from the failed CI job. All16 cases passed without failure, error,
+skip, expected failure or unexpected success, and every recorded technical gate
+and independent check passed. Each inner finalizer and caller-through-END interval
+was under30 seconds; original sample END bytes and outer hashes agree.
+
+The traces contain12,483 events,5,190 original status calls with matching finishes
+and **zero original native status exceptions**,48 original spawn bindings and16
+supervisor expiry kills. Every kill has its original expired-owner witness; no
+MainThread cleanup kill, forced signal, logger/sampling unknown or original fixture
+cleanup error occurred. Both observers have actual start/end and post-join
+nonalive observations in every sample. All32 recorded launcher/worker sessions
+were empty at the original final scans and at the independent current `/proc`
+scan. The32 original publication CIDs are unique and SUCCEEDED. Each original
+case reached its unchanged financial conservation assertions; this review does
+not independently reopen a financial DB or claim full replay.
+
+Maximum observed intervals across the fixed16 samples were:
+
+| Clock origin and observation | Maximum seconds |
+| --- | ---: |
+| Native SH capture to parent old-PID pidfd observation | 4.815680910 |
+| Publication start to that old-PID observation | 0.310596608 |
+| Publication start to actual parent EX entry | 0.376912652 |
+| Publication start to fresh new-generation observation | 0.917738792 |
+| Publication start to publication completion | 1.256557170 |
+
+The capture clock includes most of the intentionally awaited five-second lease.
+These are observed timestamps in this experiment, not a production RTO guarantee
+or exact kernel exit instants. Raw per-sample times remain available independently
+of these maxima. The original testcase hash is unchanged and its original5-second
+acquisition/recovery and separate15-second lifecycle assertions were reached.
+
+The conclusion is **16 diagnostic NO_REPRO results**. This neither resolves the
+historical root cause nor establishes that a five-second runtime defect was
+fixed: no production runtime fix was introduced by this experiment. Source91's
+original failing CI remains NO_GO, and b570's first observation remains incomplete.
+The new complete observer evidence does not retrospectively fill that old gap.
+
+A fresh diagnostic candidate may collect richer full-QA/CI and synthetic long-run
+evidence while retaining the original assertions and unresolved release blocker.
+It must have a concrete new diagnostic scope; repeatedly testing unchanged source
+until it turns green is not a fix. Full local/CI/package and short-chain/resource
+requirements for a separately planned six-hour synthetic observation remain in
+force; these16 samples replace none of them. No suppressed failure, widened
+window, production qualification, capacity/HA claim or real-funds enablement is
+accepted by this review.

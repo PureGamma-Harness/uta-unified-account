@@ -1,0 +1,30 @@
+{
+  "started_at": "2026-11-17T16:02:42.458864+00:00",
+  "source_commit": "afe275e95d832e238e033faa84b3ee5cae1b8431",
+  "command": [
+    "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+    "-B",
+    "-c",
+    "import json,sys,unittest; print(json.dumps({\"python\":sys.version,\"executable\":sys.executable}),flush=True); suite=unittest.defaultTestLoader.loadTestsFromName(\"tests.test_expired_gate_failure_evidence\"); result=unittest.TextTestRunner(verbosity=2).run(suite); print(json.dumps({\"tests_run\":result.testsRun,\"failures\":len(result.failures),\"errors\":len(result.errors),\"skipped\":len(result.skipped),\"passed\":result.wasSuccessful()}),flush=True); raise SystemExit(0 if result.wasSuccessful() else 1)"
+  ],
+  "cwd": "/workspace/uta-failure-diagnostic-review",
+  "cpu_affinity": [
+    3
+  ],
+  "timeout_seconds": 3,
+  "source_before": {
+    "tests/expired_gate_failure_evidence.py": "872b38c73c10faa360ddebfb85328b23b847b08311174c0abcbcf95700f53e56",
+    "tests/test_expired_gate_failure_evidence.py": "12d3c2bb29a3c86d26a36cd5e9ae01f7305025d9a5156f54809319d1d9022e1a",
+    "tests/test_durable_faults.py": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba",
+    "tests/test_failure_diagnostics.py": "20a0f8927040f378c33f1f07bc58f0f5d5ebdcb74cf0c246f265eef582379044"
+  },
+  "scope": "new afe scalar privacy patch, one 12-case invocation; earlier b58 eleven-case evidence unchanged",
+  "environment_overrides": {
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "LD_LIBRARY_PATH": null,
+    "LD_PRELOAD": null,
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "SQL_or_native_case_authorized": false
+}
