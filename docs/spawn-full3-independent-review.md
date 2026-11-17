@@ -50,3 +50,35 @@ fixed CPU 4, sequential Python 3.10 / 3.12 / 3.13 order, 900s active budgets,
 No full-matrix execution is authorized by this review. The first PR22 CI
 failure remains a failure with unproven cause; the four-case native component
 and its wrapper-zombie boundary retain their narrower original conclusions.
+
+## Limited follow-up: four boundaries closed
+
+Commit `7ec6f31abacd9c2eeb6bda52a2b69cffabeed8c8`, controller SHA-256
+`084a9aa9b1fa357c0f485ea92a19b9185948361f7740aeff16c5f84966b7dabd`,
+closes the four listed static findings. The controller observes newly adopted
+live direct children before the unchanged reaper can kill them and records
+UNKNOWN. It rejects loader overrides and checks the actual summary's full
+Python build and SQLite version against the retained approved values. A pipe
+write attempt enters possibly-delivered state before writing, preserving the
+original supervisor for query on an unknown result. Matrix finalization now
+uses a provisional summary, END and post-END observation, followed by deadline
+checks after their persistence.
+
+Acceptance explicitly requires the actual supervisor's normal status-zero
+exit bound to the saved PID/birth/boot, and no launch, supervisor or deadline
+UNKNOWN/error record. The files and planned exit code alone are insufficient.
+A missing kernel exit observation stays UNKNOWN. This actual observation
+remains work for any subsequently authorized full execution.
+
+The new `verify_final_bindings.py` performed only read-only Git/AST/hash and
+retained-evidence checks on CPU 4: all 15 checks passed on the first run.
+It bound the 351 selected / 874 total input maps, unchanged 62 financial
+runtime blobs, fixed budgets, and final controller. The author's original
+16-case pure log reports 16 PASS in 0.008s and was read without rerunning it.
+Runtime build fields match the retained provenance and hash references; this
+follow-up did not reopen the historical H0 summaries themselves.
+
+There is no remaining specific static blocker among these four findings.
+This conclusion authorizes no execution and establishes no full-QA result,
+CI root cause, capacity acceptance or production approval. The earlier blocked
+review, original CI error and native diagnostic limitations remain preserved.
