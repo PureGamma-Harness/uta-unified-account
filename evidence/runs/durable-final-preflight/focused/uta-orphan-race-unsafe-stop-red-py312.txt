@@ -1,0 +1,16 @@
+$ /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -W error::ResourceWarning -m unittest discover -s tests -p test_orphan_harness.py -v
+test_reaper_cleans_unregistered_adopted_child_and_preserves_existing_child (test_orphan_harness.HarnessRaceTests.test_reaper_cleans_unregistered_adopted_child_and_preserves_existing_child) ... ok
+test_supervisor_reaps_reported_owner_before_later_fault_injection (test_orphan_harness.HarnessRaceTests.test_supervisor_reaps_reported_owner_before_later_fault_injection) ... FAIL
+
+======================================================================
+FAIL: test_supervisor_reaps_reported_owner_before_later_fault_injection (test_orphan_harness.HarnessRaceTests.test_supervisor_reaps_reported_owner_before_later_fault_injection)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-orphan-acceptance/tests/test_orphan_harness.py", line 116, in test_supervisor_reaps_reported_owner_before_later_fault_injection
+    self.assertTrue(exited.poll(8000), "supervisor did not kill the stopped owner")
+AssertionError: [] is not true : supervisor did not kill the stopped owner
+
+----------------------------------------------------------------------
+Ran 2 tests in 15.721s
+
+FAILED (failures=1)

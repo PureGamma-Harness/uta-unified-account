@@ -1,0 +1,1306 @@
+﻿2026-11-17T04:40:44.1326240Z Current runner version: '2.338.2'
+2026-11-17T04:40:44.1351427Z ##[group]Runner Image Provisioner
+2026-11-17T04:40:44.1352665Z Hosted Compute Agent
+2026-11-17T04:40:44.1353273Z Version: 20261103.629
+2026-11-17T04:40:44.1353989Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-17T04:40:44.1354773Z Build Date: 2026-11-03T17:26:59Z
+2026-11-17T04:40:44.1355440Z Worker ID: {43109790-84ee-4e61-bfdc-2b08b592b628}
+2026-11-17T04:40:44.1356222Z Region: eastus
+2026-11-17T04:40:44.1356770Z Cloud: Azure
+2026-11-17T04:40:44.1357338Z ##[endgroup]
+2026-11-17T04:40:44.1358908Z ##[group]Operating System
+2026-11-17T04:40:44.1359542Z Ubuntu
+2026-11-17T04:40:44.1360160Z 26.04.1
+2026-11-17T04:40:44.1360674Z LTS
+2026-11-17T04:40:44.1361219Z ##[endgroup]
+2026-11-17T04:40:44.1362007Z ##[group]Runner Image
+2026-11-17T04:40:44.1362712Z Image: ubuntu-26.04
+2026-11-17T04:40:44.1363296Z Version: 20261111.196.1
+2026-11-17T04:40:44.1364609Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-17T04:40:44.1366219Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-17T04:40:44.1367232Z ##[endgroup]
+2026-11-17T04:40:44.1368331Z ##[group]GITHUB_TOKEN Permissions
+2026-11-17T04:40:44.1370607Z Contents: read
+2026-11-17T04:40:44.1371268Z Metadata: read
+2026-11-17T04:40:44.1372173Z ##[endgroup]
+2026-11-17T04:40:44.1374319Z Secret source: Actions
+2026-11-17T04:40:44.1375367Z Cache mode: write
+2026-11-17T04:40:44.1376492Z Prepare workflow directory
+2026-11-17T04:40:44.1709213Z Prepare all required actions
+2026-11-17T04:40:44.1756949Z Getting action download info
+2026-11-17T04:40:44.3639492Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-17T04:40:44.4671741Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-17T04:40:44.5278341Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-17T04:40:44.7285775Z Complete job name: test (3.10)
+2026-11-17T04:40:44.8231080Z ##[group]Run actions/checkout@v4
+2026-11-17T04:40:44.8232227Z with:
+2026-11-17T04:40:44.8232874Z   repository: PureGamma-Harness/uta-unified-account
+2026-11-17T04:40:44.8237142Z   token: ***
+2026-11-17T04:40:44.8237596Z   ssh-strict: true
+2026-11-17T04:40:44.8238043Z   ssh-user: git
+2026-11-17T04:40:44.8238496Z   persist-credentials: true
+2026-11-17T04:40:44.8239009Z   clean: true
+2026-11-17T04:40:44.8239481Z   sparse-checkout-cone-mode: true
+2026-11-17T04:40:44.8240012Z   fetch-depth: 1
+2026-11-17T04:40:44.8240453Z   fetch-tags: false
+2026-11-17T04:40:44.8240906Z   show-progress: true
+2026-11-17T04:40:44.8241370Z   lfs: false
+2026-11-17T04:40:44.8241917Z   submodules: false
+2026-11-17T04:40:44.8242379Z   set-safe-directory: true
+2026-11-17T04:40:44.8242901Z   allow-unsafe-pr-checkout: false
+2026-11-17T04:40:44.8243742Z ##[endgroup]
+2026-11-17T04:40:45.1167225Z Syncing repository: PureGamma-Harness/uta-unified-account
+2026-11-17T04:40:45.1170967Z ##[group]Getting Git version info
+2026-11-17T04:40:45.1172336Z Working directory is '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-17T04:40:45.1174103Z [command]/usr/bin/git version
+2026-11-17T04:40:45.1183658Z git version 2.56.1
+2026-11-17T04:40:45.1200815Z ##[endgroup]
+2026-11-17T04:40:45.1232873Z Temporarily overriding HOME='/home/runner/work/_temp/b6035599-7522-4b71-b98f-9c2d6a3238de' before making global git config changes
+2026-11-17T04:40:45.1234462Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T04:40:45.1236013Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-17T04:40:45.1316264Z Deleting the contents of '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-17T04:40:45.1321019Z ##[group]Initializing the repository
+2026-11-17T04:40:45.1326896Z [command]/usr/bin/git init /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-17T04:40:45.1481207Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-17T04:40:45.1483754Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-17T04:40:45.1485462Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-17T04:40:45.1486721Z hint: call:
+2026-11-17T04:40:45.1487560Z hint:
+2026-11-17T04:40:45.1488720Z hint: 	git config --global init.defaultBranch <name>
+2026-11-17T04:40:45.1489758Z hint:
+2026-11-17T04:40:45.1591205Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-17T04:40:45.1600193Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-17T04:40:45.1602104Z hint:
+2026-11-17T04:40:45.1603361Z hint: 	git branch -m <name>
+2026-11-17T04:40:45.1604507Z hint:
+2026-11-17T04:40:45.1605907Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-17T04:40:45.1609450Z Initialized empty Git repository in /home/runner/work/uta-unified-account/uta-unified-account/.git/
+2026-11-17T04:40:45.1621155Z [command]/usr/bin/git remote add origin https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-17T04:40:45.1626123Z ##[endgroup]
+2026-11-17T04:40:45.1627897Z ##[group]Disabling automatic garbage collection
+2026-11-17T04:40:45.1643196Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-17T04:40:45.1647862Z ##[endgroup]
+2026-11-17T04:40:45.1649695Z ##[group]Setting up auth
+2026-11-17T04:40:45.1651470Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T04:40:45.1688092Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T04:40:45.2259190Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T04:40:45.2300304Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T04:40:45.2600402Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T04:40:45.2642980Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T04:40:45.2940904Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-17T04:40:45.2982462Z ##[endgroup]
+2026-11-17T04:40:45.2983368Z ##[group]Fetching the repository
+2026-11-17T04:40:45.2994984Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8eeab43fcbc57f0c94701069109c230750f9926a:refs/remotes/origin/feat/uta-durable-integration
+2026-11-17T04:40:45.8687300Z From https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-17T04:40:45.8690680Z  * [new ref]         8eeab43fcbc57f0c94701069109c230750f9926a -> origin/feat/uta-durable-integration
+2026-11-17T04:40:45.8698008Z ##[endgroup]
+2026-11-17T04:40:45.8700430Z ##[group]Determining the checkout info
+2026-11-17T04:40:45.8703187Z ##[endgroup]
+2026-11-17T04:40:45.8704426Z [command]/usr/bin/git sparse-checkout disable
+2026-11-17T04:40:45.8766518Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-17T04:40:45.8802562Z ##[group]Checking out the ref
+2026-11-17T04:40:45.8806509Z [command]/usr/bin/git checkout --progress --force -B feat/uta-durable-integration refs/remotes/origin/feat/uta-durable-integration
+2026-11-17T04:40:46.0071628Z Switched to a new branch 'feat/uta-durable-integration'
+2026-11-17T04:40:46.0078481Z branch 'feat/uta-durable-integration' set up to track 'origin/feat/uta-durable-integration'.
+2026-11-17T04:40:46.0089505Z ##[endgroup]
+2026-11-17T04:40:46.0141387Z [command]/usr/bin/git log -1 --format=%H
+2026-11-17T04:40:46.0166665Z 8eeab43fcbc57f0c94701069109c230750f9926a
+2026-11-17T04:40:46.0586069Z ##[group]Run actions/setup-python@v5
+2026-11-17T04:40:46.0587395Z with:
+2026-11-17T04:40:46.0588325Z   python-version: 3.10
+2026-11-17T04:40:46.0589385Z   check-latest: false
+2026-11-17T04:40:46.0600303Z   token: ***
+2026-11-17T04:40:46.0601295Z   update-environment: true
+2026-11-17T04:40:46.0602537Z   allow-prereleases: false
+2026-11-17T04:40:46.0603663Z   freethreaded: false
+2026-11-17T04:40:46.0604671Z ##[endgroup]
+2026-11-17T04:40:46.2026631Z ##[group]Installed versions
+2026-11-17T04:40:46.2155180Z Version 3.10 was not found in the local cache
+2026-11-17T04:40:46.2387031Z (node:2505) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-17T04:40:46.2390726Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-17T04:40:46.7170811Z Version 3.10 is available for downloading
+2026-11-17T04:40:46.7172957Z Download from "https://github.com/actions/python-versions/releases/download/3.10.22-36876129702/python-3.10.22-linux-26.04-x64.tar.gz"
+2026-11-17T04:40:47.0778441Z Extract downloaded archive
+2026-11-17T04:40:47.0917209Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/34eddb4a-d3f3-4e7f-b4ff-f59adfa4843f -f /home/runner/work/_temp/8533ccac-e501-48d0-b13e-59fdb474218a
+2026-11-17T04:40:47.9847553Z Execute installation script
+2026-11-17T04:40:48.0002627Z Check if Python hostedtoolcache folder exist...
+2026-11-17T04:40:48.0003417Z Create Python 3.10.22 folder
+2026-11-17T04:40:48.0029102Z Copy Python binaries to hostedtoolcache folder
+2026-11-17T04:40:48.4641646Z Create additional symlinks (Required for the UsePythonVersion Azure Pipelines task and the setup-python GitHub Action)
+2026-11-17T04:40:48.4755555Z Upgrading pip...
+2026-11-17T04:40:50.3565827Z Collecting pip
+2026-11-17T04:40:50.4176069Z Downloading pip-26.3-py3-none-any.whl (2.0 MB)
+2026-11-17T04:40:50.5019442Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 24.0 MB/s eta 0:00:00
+2026-11-17T04:40:50.5020308Z 
+2026-11-17T04:40:50.5617493Z Installing collected packages: pip
+2026-11-17T04:40:50.5618303Z Attempting uninstall: pip
+2026-11-17T04:40:50.5625027Z Found existing installation: pip 23.0.1
+2026-11-17T04:40:50.7335375Z Uninstalling pip-23.0.1:
+2026-11-17T04:40:50.7406109Z Successfully uninstalled pip-23.0.1
+2026-11-17T04:40:51.6375400Z Successfully installed pip-26.3
+2026-11-17T04:40:51.6900284Z Create complete file
+2026-11-17T04:40:51.6964127Z Successfully set up CPython (3.10.22)
+2026-11-17T04:40:51.6965270Z ##[endgroup]
+2026-11-17T04:40:51.7181341Z ##[group]Run python - <<'PY'
+2026-11-17T04:40:51.7181698Z [36;1mpython - <<'PY'[0m
+2026-11-17T04:40:51.7182235Z [36;1mfrom contextlib import closing[0m
+2026-11-17T04:40:51.7182633Z [36;1mimport json, os, pathlib, platform, sqlite3, subprocess, sys[0m
+2026-11-17T04:40:51.7183094Z [36;1mwith closing(sqlite3.connect(':memory:')) as connection:[0m
+2026-11-17T04:40:51.7183579Z [36;1m    options = [row[0] for row in connection.execute('PRAGMA compile_options')][0m
+2026-11-17T04:40:51.7184086Z [36;1mcpu = pathlib.Path('/sys/fs/cgroup/cpu.max')[0m
+2026-11-17T04:40:51.7184654Z [36;1mprint(json.dumps({'checkout_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),[0m
+2026-11-17T04:40:51.7185289Z [36;1m                  'python': sys.version, 'sqlite': sqlite3.sqlite_version,[0m
+2026-11-17T04:40:51.7185783Z [36;1m                  'sqlite_compile_options': options, 'platform': platform.platform(),[0m
+2026-11-17T04:40:51.7186251Z [36;1m                  'cpu_count': os.cpu_count(),[0m
+2026-11-17T04:40:51.7186763Z [36;1m                  'cpu_affinity': sorted(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else None,[0m
+2026-11-17T04:40:51.7187410Z [36;1m                  'cgroup_cpu_max': cpu.read_text().strip() if cpu.exists() else None}, indent=2))[0m
+2026-11-17T04:40:51.7187828Z [36;1mPY[0m
+2026-11-17T04:40:51.7243752Z shell: /usr/bin/bash -e {0}
+2026-11-17T04:40:51.7244299Z env:
+2026-11-17T04:40:51.7244577Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7245029Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-11-17T04:40:51.7245463Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7245846Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7246235Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7246621Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-11-17T04:40:51.7246957Z ##[endgroup]
+2026-11-17T04:40:51.7750316Z {
+2026-11-17T04:40:51.7750920Z   "checkout_commit": "8eeab43fcbc57f0c94701069109c230750f9926a",
+2026-11-17T04:40:51.7751514Z   "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+2026-11-17T04:40:51.7752273Z   "sqlite": "3.46.1",
+2026-11-17T04:40:51.7752533Z   "sqlite_compile_options": [
+2026-11-17T04:40:51.7752789Z     "ALLOW_ROWID_IN_VIEW",
+2026-11-17T04:40:51.7753097Z     "ATOMIC_INTRINSICS=1",
+2026-11-17T04:40:51.7753333Z     "COMPILER=gcc-15.2.0",
+2026-11-17T04:40:51.7753569Z     "DEFAULT_AUTOVACUUM",
+2026-11-17T04:40:51.7753833Z     "DEFAULT_CACHE_SIZE=-2000",
+2026-11-17T04:40:51.7754093Z     "DEFAULT_FILE_FORMAT=4",
+2026-11-17T04:40:51.7754341Z     "DEFAULT_JOURNAL_SIZE_LIMIT=-1",
+2026-11-17T04:40:51.7754608Z     "DEFAULT_MMAP_SIZE=0",
+2026-11-17T04:40:51.7754849Z     "DEFAULT_PAGE_SIZE=4096",
+2026-11-17T04:40:51.7755096Z     "DEFAULT_PCACHE_INITSZ=20",
+2026-11-17T04:40:51.7755357Z     "DEFAULT_RECURSIVE_TRIGGERS",
+2026-11-17T04:40:51.7755633Z     "DEFAULT_SECTOR_SIZE=4096",
+2026-11-17T04:40:51.7755883Z     "DEFAULT_SYNCHRONOUS=2",
+2026-11-17T04:40:51.7756143Z     "DEFAULT_WAL_AUTOCHECKPOINT=1000",
+2026-11-17T04:40:51.7756422Z     "DEFAULT_WAL_SYNCHRONOUS=2",
+2026-11-17T04:40:51.7756716Z     "DEFAULT_WORKER_THREADS=0",
+2026-11-17T04:40:51.7756963Z     "DIRECT_OVERFLOW_READ",
+2026-11-17T04:40:51.7757201Z     "ENABLE_COLUMN_METADATA",
+2026-11-17T04:40:51.7757440Z     "ENABLE_DBPAGE_VTAB",
+2026-11-17T04:40:51.7757690Z     "ENABLE_DBSTAT_VTAB",
+2026-11-17T04:40:51.7757909Z     "ENABLE_FTS3",
+2026-11-17T04:40:51.7758127Z     "ENABLE_FTS3_PARENTHESIS",
+2026-11-17T04:40:51.7758363Z     "ENABLE_FTS4",
+2026-11-17T04:40:51.7758565Z     "ENABLE_FTS5",
+2026-11-17T04:40:51.7758780Z     "ENABLE_LOAD_EXTENSION",
+2026-11-17T04:40:51.7759013Z     "ENABLE_MATH_FUNCTIONS",
+2026-11-17T04:40:51.7759259Z     "ENABLE_PREUPDATE_HOOK",
+2026-11-17T04:40:51.7759485Z     "ENABLE_RTREE",
+2026-11-17T04:40:51.7759695Z     "ENABLE_SESSION",
+2026-11-17T04:40:51.7760354Z     "ENABLE_STMTVTAB",
+2026-11-17T04:40:51.7760617Z     "ENABLE_UNLOCK_NOTIFY",
+2026-11-17T04:40:51.7760869Z     "ENABLE_UPDATE_DELETE_LIMIT",
+2026-11-17T04:40:51.7761114Z     "HAVE_ISNAN",
+2026-11-17T04:40:51.7761347Z     "LIKE_DOESNT_MATCH_BLOBS",
+2026-11-17T04:40:51.7761709Z     "MALLOC_SOFT_LIMIT=1024",
+2026-11-17T04:40:51.7762176Z     "MAX_ATTACHED=10",
+2026-11-17T04:40:51.7762398Z     "MAX_COLUMN=2000",
+2026-11-17T04:40:51.7762637Z     "MAX_COMPOUND_SELECT=500",
+2026-11-17T04:40:51.7762900Z     "MAX_DEFAULT_PAGE_SIZE=32768",
+2026-11-17T04:40:51.7763162Z     "MAX_EXPR_DEPTH=1000",
+2026-11-17T04:40:51.7763394Z     "MAX_FUNCTION_ARG=127",
+2026-11-17T04:40:51.7763623Z     "MAX_LENGTH=1000000000",
+2026-11-17T04:40:51.7763869Z     "MAX_LIKE_PATTERN_LENGTH=50000",
+2026-11-17T04:40:51.7764136Z     "MAX_MMAP_SIZE=0x7fff0000",
+2026-11-17T04:40:51.7764387Z     "MAX_PAGE_COUNT=0xfffffffe",
+2026-11-17T04:40:51.7764630Z     "MAX_PAGE_SIZE=65536",
+2026-11-17T04:40:51.7764858Z     "MAX_SCHEMA_RETRY=25",
+2026-11-17T04:40:51.7765085Z     "MAX_SQL_LENGTH=1000000000",
+2026-11-17T04:40:51.7765341Z     "MAX_TRIGGER_DEPTH=1000",
+2026-11-17T04:40:51.7765599Z     "MAX_VARIABLE_NUMBER=250000",
+2026-11-17T04:40:51.7765844Z     "MAX_VDBE_OP=250000000",
+2026-11-17T04:40:51.7766074Z     "MAX_WORKER_THREADS=8",
+2026-11-17T04:40:51.7766302Z     "MUTEX_PTHREADS",
+2026-11-17T04:40:51.7766512Z     "SECURE_DELETE",
+2026-11-17T04:40:51.7766712Z     "SOUNDEX",
+2026-11-17T04:40:51.7767095Z     "SYSTEM_MALLOC",
+2026-11-17T04:40:51.7767300Z     "TEMP_STORE=1",
+2026-11-17T04:40:51.7767503Z     "THREADSAFE=1",
+2026-11-17T04:40:51.7767697Z     "USE_URI"
+2026-11-17T04:40:51.7767883Z   ],
+2026-11-17T04:40:51.7768148Z   "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+2026-11-17T04:40:51.7768479Z   "cpu_count": 4,
+2026-11-17T04:40:51.7768678Z   "cpu_affinity": [
+2026-11-17T04:40:51.7768869Z     0,
+2026-11-17T04:40:51.7769047Z     1,
+2026-11-17T04:40:51.7769225Z     2,
+2026-11-17T04:40:51.7769394Z     3
+2026-11-17T04:40:51.7769562Z   ],
+2026-11-17T04:40:51.7769754Z   "cgroup_cpu_max": null
+2026-11-17T04:40:51.7769974Z }
+2026-11-17T04:40:51.7849272Z ##[group]Run python -m unittest discover -s tests -v
+2026-11-17T04:40:51.7849735Z [36;1mpython -m unittest discover -s tests -v[0m
+2026-11-17T04:40:51.7901491Z shell: /usr/bin/bash -e {0}
+2026-11-17T04:40:51.7901970Z env:
+2026-11-17T04:40:51.7902323Z   pythonLocation: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7902796Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib/pkgconfig
+2026-11-17T04:40:51.7903232Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7903621Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7904008Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.10.22/x64
+2026-11-17T04:40:51.7904389Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.10.22/x64/lib
+2026-11-17T04:40:51.7904719Z ##[endgroup]
+2026-11-17T04:40:52.5015633Z test_business_rejection_isolated_by_savepoint (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.5292703Z test_callback_cannot_reenter_worker_and_baseexception_does_not_strand_group (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.5537026Z test_callback_cannot_wait_for_unpublished_same_worker_future (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.5815385Z test_cancel_reserve_remains_bounded_without_overtaking_queued_submit (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.6052639Z test_configuration_bounds_and_thread_start_failure_do_not_write (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.6446962Z test_duplicate_ids_and_conflicts_cannot_double_reserve_under_concurrency (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.6745002Z test_expiring_market_before_commit_rolls_back_new_admission_and_cancel (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.6980645Z test_financial_results_are_independent_of_callers_decimal_context (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.7212387Z test_groups_share_one_commit_and_match_sync_receipts (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.7422362Z test_input_validation_and_liquidation_id_protection_match_core (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.7650426Z test_no_future_or_business_rejection_is_released_before_commit (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.7898170Z test_overload_is_nonblocking_and_close_drains_accepted_work (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:53.8123046Z test_pending_future_cancellation_has_no_financial_effect (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.8419891Z test_programmer_failure_rolls_back_entire_group_and_same_ids_can_retry (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.8674658Z test_sql_failure_is_not_misreported_as_business_rejection (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.8921361Z test_stale_idempotent_replay_does_not_require_new_market (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.9159303Z test_stale_market_rejects_submit_but_allows_same_group_cancel (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.9415367Z test_submit_cancel_and_replay_are_sequential_within_group (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.9675520Z test_unknown_service_code_is_not_silently_classified_as_business (test_admission.AdmissionTests) ... ok
+2026-11-17T04:40:54.9932430Z test_business_rejection_isolated_between_valid_commands (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.2274422Z test_error_after_real_commit_is_unknown_and_original_ids_resolve_once (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.2582885Z test_later_sql_failure_rolls_back_an_earlier_valid_admission (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.2909351Z test_ledger_corruption_wrapped_as_409_is_a_whole_batch_failure (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.5270710Z test_market_expiring_after_an_earlier_admission_aborts_before_commit_checkpoint (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.5523301Z test_no_future_reports_success_until_outer_commit_is_visible (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:55.5759103Z test_panicking_or_reentrant_callback_cannot_lose_another_committed_receipt (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:56.8425585Z test_process_exit_at_batch_boundaries_and_lost_receipts_recover_exactly_once (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:56.9176844Z test_queue_cancel_overload_and_close_do_not_lose_running_work (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:56.9492778Z test_real_deferred_foreign_key_commit_failure_cannot_publish_early_receipts (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:57.4297687Z test_real_sqlite_full_rejects_whole_batch_and_ids_can_retry_after_recovery (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:57.4620314Z test_reserved_cancel_capacity_is_bounded_and_does_not_overtake_queued_orders (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:57.4879517Z test_stale_admission_rejection_still_allows_cancellation_to_commit (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:57.5163014Z test_undeclared_409_policy_error_cannot_be_treated_as_safe_business_rejection (test_admission_faults.GroupedAdmissionFaultTests) ... ok
+2026-11-17T04:40:57.5527319Z test_business_rejection_and_success_are_not_published_before_outer_commit (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:57.6757651Z test_configured_cross_catalog_tick_step_and_product_type_cannot_be_bypassed (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:57.7345521Z test_conflicting_retries_and_lost_success_reply_do_not_repeat_reserve (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:57.7786279Z test_corrupt_persisted_margin_rules_are_technical_not_business_rejection (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:57.9444645Z test_distinct_batchers_and_synchronous_writer_cannot_duplicate_capacity (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:57.9723655Z test_low_decimal_context_cannot_change_reserve_or_input_limits (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.0633039Z test_market_error_and_halt_reject_new_risk_but_cancel_still_commits (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.1037876Z test_market_that_expires_during_group_rolls_back_before_publication (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.2153915Z test_reduce_only_total_quantity_and_reserved_liquidation_ids_are_protected (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.2466060Z test_rejection_after_business_writes_releases_only_that_commands_reserve (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.3970689Z test_seeded_fifo_trace_matches_independent_cash_and_reserve_book (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.4264613Z test_unknown_409_after_mutation_is_not_a_declared_business_rejection (test_admission_invariants.AdmissionInvariants) ... ok
+2026-11-17T04:40:58.4267435Z test_input_missing_specs_and_numeric_precision_fail_closed (test_api.APITests) ... ok
+2026-11-17T04:40:58.4322896Z test_real_http_json_success_and_bad_request (test_api.APITests) ... ok
+2026-11-17T04:40:58.4329915Z test_risk_sample_and_order_check (test_api.APITests) ... ok
+2026-11-17T04:40:58.4831606Z test_account_cursor_rotates_and_survives_restart (test_automation.AutomationTests) ... ok
+2026-11-17T04:40:58.5074691Z test_configuration_limits_and_worker_bounds (test_automation.AutomationTests) ... ok
+2026-11-17T04:40:58.6338555Z test_real_matching_partial_liquidation_and_restart_are_automated (test_automation.AutomationTests) ... ok
+2026-11-17T04:40:58.6734037Z test_stale_tick_preserves_pending_orders (test_automation.AutomationTests) ... ok
+2026-11-17T04:40:58.7087682Z test_unexpected_background_failure_persists_halt_for_operator_recovery (test_automation.AutomationTests) ... ok
+2026-11-17T04:40:59.4039954Z test_durable_smoke_reconciles_unique_orders_across_two_shards (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:40:59.4054664Z test_histogram_tail_percentiles_and_empty_report (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:40:59.4057781Z test_nonfinite_or_impossible_configuration_rejected (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:40:59.4059115Z test_only_durable_success_can_satisfy_default_capacity_gate (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:40:59.8475251Z test_real_open_loop_compute_smoke_keeps_every_arrival_and_fails_capacity_gate (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:41:00.5157626Z test_real_router_smoke_includes_control_gate_and_keeps_failed_long_gate (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:41:00.8884188Z test_recorded_raw_evidence_hashes_unique_ids_and_result_counts (test_benchmark.BenchmarkTests) ... ok
+2026-11-17T04:41:00.8888662Z test_both_source_and_market_must_still_be_fresh (test_bridge.BridgeTests) ... ok
+2026-11-17T04:41:00.8895152Z test_corrupt_shadow_cannot_be_used_as_reconciled_risk (test_bridge.BridgeTests) ... ok
+2026-11-17T04:41:00.8899908Z test_exact_aggregation_ignores_low_precision_and_inexact_traps (test_bridge.BridgeTests) ... ok
+2026-11-17T04:41:00.8907879Z test_gross_assets_liabilities_and_reserves_are_preserved (test_bridge.BridgeTests) ... ok
+2026-11-17T04:41:00.8912061Z test_no_implicit_zero_order_reserve (test_bridge.BridgeTests) ... ok
+2026-11-17T04:41:01.7394846Z test_acceptance_is_repeatable_without_network_or_persistent_customer_state (test_cli.CLITests) ... ok
+2026-11-17T04:41:01.7402920Z test_default_and_explicit_asset_scales (test_cli.CLITests) ... ok
+2026-11-17T04:41:01.9282080Z test_help_and_demo_work_outside_repository (test_cli.CLITests) ... ok
+2026-11-17T04:41:02.3319246Z test_invalid_cli_configuration_does_not_create_financial_database (test_cli.CLITests) ... ok
+2026-11-17T04:41:02.5818228Z test_sigterm_drains_an_admitted_http_request_before_clean_exit (test_cli.CLITests) ... ok
+2026-11-17T04:41:02.6448804Z test_asset_limit_and_pool_liquidity_cannot_be_oversubscribed (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.7174141Z test_configured_rules_ltv_and_quantity_step_gate_actual_borrow (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.8125670Z test_configured_total_debt_and_rule_principal_limits_cannot_be_bypassed (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.8552997Z test_corrupt_debt_projection_is_rejected_before_new_credit_or_startup (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.9004847Z test_failure_after_mutation_rolls_back_every_projection_and_command (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.9450040Z test_funded_borrow_preserves_gross_assets_and_debt_haircut (test_credit.CreditTests) ... ok
+2026-11-17T04:41:02.9848009Z test_funding_proof_cannot_be_reused_with_another_command_or_asset (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.0445501Z test_idempotency_survives_restart_and_commands_cannot_change_kind (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.0892489Z test_interest_has_no_invented_rate_clock_or_implicit_compounding (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.1358361Z test_limits_are_required_immutable_and_enforced_against_gross_debt (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.1895258Z test_monetary_amounts_use_exact_asset_scale_independent_of_decimal_context (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.2294062Z test_price_updates_include_full_gross_liability_and_cannot_drop_its_asset (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.2812152Z test_rejected_post_borrow_risk_rolls_back_cash_debt_journal_and_id (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.3302204Z test_repay_during_halt_or_stale_prices_never_fabricates_a_borrow (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.3692559Z test_repay_honors_the_shared_available_asset_gate (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.4468596Z test_same_command_concurrent_retry_posts_once (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.4860702Z test_schema_one_upgrade_adds_unique_funding_sources_without_changing_money (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.5365267Z test_separate_interest_and_repayment_order_have_reconcilable_cashflows (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.5733064Z test_unknown_schema_version_blocks_existing_instances_too (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.6192434Z test_unpriced_stale_halted_or_frozen_account_cannot_borrow (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.6577348Z test_upgrade_rejects_duplicate_historical_funding_proofs_without_rewriting_journal (test_credit.CreditTests) ... ok
+2026-11-17T04:41:03.6964670Z test_joined_repayment_remains_available_during_halt_and_stale_market (test_credit_joined.JoinedRepaymentTests) ... ok
+2026-11-17T04:41:03.7535895Z test_receipt_failure_rolls_back_cash_debt_interest_and_idempotent_effect (test_credit_joined.JoinedRepaymentTests) ... ok
+2026-11-17T04:41:03.7541223Z test_assets_and_liabilities_are_never_netted_before_haircut (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7546427Z test_borrow_capacity_uses_full_liability_loss_and_incremental_im (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7554806Z test_hand_computed_tiers_gross_loans_interest_freeze_and_multiplier (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7565517Z test_immutable_models_round_trip_and_low_precision (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7574831Z test_maintenance_equality_is_unsafe_even_with_zero_mm (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7588790Z test_stress_reference_has_no_spot_perpetual_offsets_and_cannot_activate_pm (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7594658Z test_unsupported_modes_products_prices_and_bad_rules_fail_closed (test_cross_margin.PortfolioTests) ... ok
+2026-11-17T04:41:03.7900171Z test_compensating_handback_preserves_original_history_and_deduplicates (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.8542306Z test_concurrent_importers_commit_one_receipt_and_one_journal (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.8791630Z test_digest_unknown_asset_and_unsupported_product_fail_atomically (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.9135999Z test_empty_existing_account_is_allowed_but_financial_history_is_not (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.9412660Z test_global_command_conflict_and_repeated_source_rejected (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.9664352Z test_import_and_compensation_ignore_decimal_precision_and_traps (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:03.9986558Z test_import_preserves_gross_cash_principal_interest_position_and_freezes (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.0381547Z test_imported_debt_can_be_repaid_without_inventing_prior_pool_funding (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.0689596Z test_insert_failure_cannot_leave_assets_positions_debt_or_consumed_id (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.0935401Z test_negative_equity_is_retained_frozen_and_supervised_as_bankrupt (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.1175655Z test_new_activity_requires_forward_recovery_and_cannot_be_database_rolled_back (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.2279526Z test_process_death_after_book_updates_before_commit_rolls_back_then_resumes (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.2505207Z test_receipts_immutable_and_verify_detects_dropped_guard_and_corruption (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.2816671Z test_required_in_flight_and_locked_state_are_never_discarded (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.3076772Z test_same_command_returns_immutable_receipt_after_expiry_and_restart (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.3278812Z test_stale_source_or_market_rejected_before_any_book_change (test_cutover.ClassicCutoverTests) ... ok
+2026-11-17T04:41:04.3508238Z test_configured_reconciliation_is_independent_of_decimal_context (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.3738661Z test_existing_debt_above_new_borrow_limit_is_retained_frozen_without_netting (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.4010321Z test_existing_halted_supported_exposure_is_imported_frozen_and_can_be_valued (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.4332482Z test_imported_cross_debt_repayment_preserves_cashflow_and_reduces_configured_loan_margin (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.4610826Z test_restart_and_expired_retry_keep_original_rules_and_receipt (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.6133189Z test_same_market_symbol_cannot_smuggle_option_inverse_spot_or_multiplier_positions (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.6317609Z test_unlisted_symbol_is_rejected_even_if_market_retains_a_price (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.6566628Z test_versioned_loan_margin_can_differ_from_legacy_without_discarding_source_finances (test_cutover_configured.ConfiguredCutoverTests) ... ok
+2026-11-17T04:41:04.6568632Z test_low_precision_cannot_round_position_up_and_allow_over_reduction (test_decimal_context.DecimalContextTests) ... ok
+2026-11-17T04:41:04.6569823Z test_reservations_ignore_caller_exponent_limits_and_traps (test_decimal_context.DecimalContextTests) ... ok
+2026-11-17T04:41:04.7007593Z test_content_archives_are_immutable_including_replace (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:04.7475631Z test_explicit_upgrade_keeps_legacy_gap_and_current_observation (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:04.7929825Z test_live_audited_writer_rolls_back_after_guard_definition_changes (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:04.8339661Z test_missing_required_guard_is_rejected_without_automatic_repair (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:04.8742245Z test_old_protocol_new_order_and_unarchived_market_writes_fail_closed (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:04.9327607Z test_same_named_weakened_guard_is_rejected_without_repair (test_decision_audit.AuditArchiveTests) ... ok
+2026-11-17T04:41:05.0064358Z test_acceptance_replays_archived_market_and_account_after_later_changes (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.0685888Z test_audit_write_failure_and_missing_deferred_record_rollback_financial_effects (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.1816407Z test_configured_cross_audit_reconstructs_full_rule_based_values (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.2992786Z test_durable_terminal_receipt_and_audit_link_commit_atomically (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.5122777Z test_engine_fingerprint_is_stable_between_process_hash_seeds (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.6112557Z test_fenced_upgrade_installs_data_guards_for_new_archive_tables (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.6729401Z test_loaded_financial_code_change_is_rejected_even_when_source_files_match (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.7662132Z test_low_decimal_context_preserves_recorded_and_replayed_numbers (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.8404787Z test_partial_fill_replays_cash_position_fees_and_remaining_reserve (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.9018672Z test_replay_refuses_claims_from_a_different_artifact (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:05.9746366Z test_schema_three_rejects_legacy_constructor_and_preserves_legacy_row_gaps (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:06.0218069Z test_unavailable_current_release_is_an_explicit_replay_failure (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:06.0865481Z test_validly_hashed_old_source_artifact_is_not_authorized_by_startup_cache (test_decision_audit.AuditedServiceTests) ... ok
+2026-11-17T04:41:06.2944115Z test_actual_ad3_process_held_before_upgrade_cannot_insert_orders_or_fills_without_required_refs (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.3716039Z test_failed_explicit_upgrade_rolls_back_schema_columns_archives_and_capability (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.4822125Z test_historical_market_code_and_policy_body_corruption_never_returns_replay_matches (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.7086674Z test_identical_math_from_a_different_real_source_release_is_not_an_authoritative_replay (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.7697643Z test_market_publication_commit_failure_rolls_back_full_history_current_quote_and_event (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.8716612Z test_match_commit_response_loss_reopens_with_exact_receipts_and_no_duplicate_audit_or_cash (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:06.9672828Z test_paired_match_commit_failure_rolls_back_two_sides_ledger_and_all_decision_refs (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:07.0155262Z test_partial_audit_metadata_does_not_trigger_automatic_upgrade_or_repair (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:07.0785262Z test_real_commit_failure_rolls_back_order_and_decision_then_original_id_converges_once (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:07.1399815Z test_real_sqlite_full_after_decision_insert_never_commits_an_order_without_its_audit (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:07.5782820Z test_same_source_under_an_actual_optimized_interpreter_cannot_replay_unoptimized_artifact (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:07.6517548Z test_valid_names_with_weakened_required_reference_guard_fail_closed_without_repair (test_decision_audit_faults.DecisionAuditFaultTests) ... ok
+2026-11-17T04:41:09.8377311Z test_actual_tls_hmac_sigterm_and_new_parent_preserve_pending_and_nonce (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:10.7029792Z test_failed_bind_preserves_nonce_state_and_never_starts_workers (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:11.4284459Z test_init_is_empty_required_audit_and_inspect_is_not_a_writer (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:12.2231742Z test_private_tls_permissions_and_symlinks_fail_before_workers_start (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:13.4577812Z test_real_offline_audit_upgrade_preserves_original_config_and_financial_heads (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:14.0832704Z test_startup_validation_does_not_initialize_missing_authorities_or_auth (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:14.7310985Z test_unconfigured_signing_profile_is_rejected_without_implicit_key_setup (test_durable_cli.DurableCLITests) ... ok
+2026-11-17T04:41:14.8021652Z test_backoff_and_technical_quarantine_release_account_head (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:14.8633956Z test_bounded_financial_cancel_and_separate_control_capacity (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:14.9295338Z test_canonical_identity_conflicts_and_stable_terminal_retries (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.0052161Z test_control_lane_publishes_fresh_market_and_halt_atomically (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.0612397Z test_guard_and_precommit_market_age_share_financial_receipt_transaction (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.1183320Z test_late_business_rejection_rolls_back_order_event_and_reserve (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.1765948Z test_lost_commit_reply_is_queried_before_failure_recording (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.2299105Z test_old_writer_and_unmanaged_worker_cannot_change_financial_state (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.3163816Z test_per_account_fifo_rejection_cancel_and_exact_capacity (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.3749744Z test_producer_cannot_forge_replace_or_update_terminal_receipt (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.4381039Z test_queued_ack_has_no_reserve_and_survives_queue_restart (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.4968860Z test_technical_failure_rolls_back_business_and_receipt_then_retries (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.5393297Z test_unknown_operations_and_liquidation_ids_never_enter_queue (test_durable_commands.DurableCommandTests) ... ok
+2026-11-17T04:41:15.6162921Z test_repayment_business_rejections_and_missing_worker_credit (test_durable_commands.DurableRepaymentTests) ... ok
+2026-11-17T04:41:15.7097782Z test_repayment_ledger_and_receipt_rollback_together_on_technical_failure (test_durable_commands.DurableRepaymentTests) ... ok
+2026-11-17T04:41:15.8111527Z test_repayment_pays_interest_then_principal_during_halt_and_price_outage (test_durable_commands.DurableRepaymentTests) ... ok
+2026-11-17T04:41:15.8877417Z test_repayment_uses_the_same_reserved_pending_budget_as_cancel (test_durable_commands.DurableRepaymentTests) ... ok
+2026-11-17T04:41:15.9654039Z test_legacy_ready_does_not_claim_new_financial_observation_and_scope_precedes_read (test_durable_diagnostic_adapter.DurableDiagnosticAdapterTests) ... ok
+2026-11-17T04:41:16.0425392Z test_stale_market_details_remain_false_and_sensitive_reason_text_is_not_echoed (test_durable_diagnostic_adapter.DurableDiagnosticAdapterTests) ... ok
+2026-11-17T04:41:16.1209613Z test_unknown_control_is_nullable_and_never_promoted_from_worker_liveness (test_durable_diagnostic_adapter.DurableDiagnosticAdapterTests) ... ok
+2026-11-17T04:41:16.3320975Z test_actual_ad3_binary_initialized_before_enable_cannot_deposit_order_post_or_match_afterwards (test_durable_faults.ActualLegacyBinaryFaultTests) ... ok
+2026-11-17T04:41:16.5167255Z test_actual_ad3_binary_started_after_enable_cannot_write_or_reinitialize_authority (test_durable_faults.ActualLegacyBinaryFaultTests) ... ok
+2026-11-17T04:41:16.5499576Z test_enqueue_ack_is_not_published_before_actual_metadata_commit (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:16.7123390Z test_enqueue_ack_survives_real_process_exit_and_never_claims_risk_acceptance (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:16.7930893Z test_lost_commit_response_cannot_be_overwritten_as_retry_or_business_rejection (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:16.8960275Z test_poison_is_bounded_other_accounts_progress_and_same_account_cancel_waits_for_quarantine (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:16.9842382Z test_producer_metadata_role_cannot_forge_replace_or_update_terminal_receipts (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:17.0701338Z test_real_deferred_constraint_commit_failure_rolls_back_financial_and_terminal_receipt (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:17.1551654Z test_real_sqlite_full_after_financial_dml_leaves_pending_then_recovers_once (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:19.1386281Z test_real_worker_exit_after_dml_before_commit_and_after_commit_retries_original_id_once (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:19.2776384Z test_restart_with_missing_inbox_or_guard_refuses_to_recreate_history (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:19.6887154Z test_unavailable_database_cannot_ack_more_work_or_lose_existing_ack (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:19.7314154Z test_unsupported_commands_and_capacity_are_explicit_and_never_fall_back_to_sync (test_durable_faults.DurableCommandFaultTests) ... ok
+2026-11-17T04:41:19.8551739Z test_missing_initialized_credit_is_technical_pending_and_never_fake_success (test_durable_faults.DurableRepaymentFaultTests) ... ok
+2026-11-17T04:41:19.9867008Z test_repayment_postings_debt_cash_and_terminal_receipt_share_actual_commit (test_durable_faults.DurableRepaymentFaultTests) ... ok
+2026-11-17T04:41:20.1218214Z test_same_account_poison_quarantine_unblocks_repayment_without_funding_or_quote_dependency (test_durable_faults.DurableRepaymentFaultTests) ... ok
+2026-11-17T04:41:20.2494537Z test_same_asset_repayment_is_available_during_halt_and_complete_quote_outage (test_durable_faults.DurableRepaymentFaultTests) ... ok
+2026-11-17T04:41:20.3139119Z test_old_managed_format_requires_explicit_offline_upgrade_before_writing (test_durable_faults.LegacyManagedFormatUpgradeFaultTests) ... ok
+2026-11-17T04:41:20.3610651Z test_persistent_guard_upgrade_refuses_live_old_lease_until_explicit_release (test_durable_faults.LegacyManagedFormatUpgradeFaultTests) ... ok
+2026-11-17T04:41:21.9293186Z test_ack_before_real_worker_kill_is_recovered_by_new_pid_and_generation_once (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:23.6427889Z test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:24.2399006Z test_missing_managed_shard_is_not_recreated_and_persists_global_halt (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:25.8988456Z test_partial_publication_stays_halted_until_exact_publication_replay_completes (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:26.5946170Z test_real_worker_quarantines_persisted_poison_and_then_processes_same_account_cancel (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:27.5635326Z test_real_worker_quarantines_predecessor_then_repays_during_halt_without_quotes (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:28.3159533Z test_startup_with_missing_funding_claim_halts_instead_of_restarting_into_new_risk (test_durable_faults.ManagedProcessFaultTests) ... Process uta-shard-1:
+2026-11-17T04:41:28.3184143Z Traceback (most recent call last):
+2026-11-17T04:41:28.3221100Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+2026-11-17T04:41:28.3222411Z     self.run()
+2026-11-17T04:41:28.3223282Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 108, in run
+2026-11-17T04:41:28.3224229Z     self._target(*self._args, **self._kwargs)
+2026-11-17T04:41:28.3225243Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 334, in _run_worker
+2026-11-17T04:41:28.3226620Z     view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+2026-11-17T04:41:28.3227942Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 760, in __init__
+2026-11-17T04:41:28.3228855Z     self._reconcile(connection, claims)
+2026-11-17T04:41:28.3229778Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 771, in _reconcile
+2026-11-17T04:41:28.3231244Z     self._control._batch_reconcile_shard(connection, self.shard, claims)
+2026-11-17T04:41:28.3232678Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 457, in _batch_reconcile_shard
+2026-11-17T04:41:28.3234227Z     raise ServiceError("funding_registry_conflict", "shard funding receipt has no exact unique global claim", 503)
+2026-11-17T04:41:28.3235405Z uta.service.ServiceError: shard funding receipt has no exact unique global claim
+2026-11-17T04:41:28.3468508Z ok
+2026-11-17T04:41:28.6809519Z test_without_live_worker_ack_is_only_pending_and_has_no_financial_effect (test_durable_faults.ManagedProcessFaultTests) ... ok
+2026-11-17T04:41:28.7401537Z test_missing_both_guard_metadata_tables_cannot_downgrade_or_silently_upgrade_again (test_durable_faults.PersistentGuardFaultTests) ... ok
+2026-11-17T04:41:28.7964864Z test_missing_persistent_guard_blocks_current_writer_and_reopen_without_automatic_repair (test_durable_faults.PersistentGuardFaultTests) ... ok
+2026-11-17T04:41:28.8531274Z test_new_financial_table_is_guarded_on_commit_and_raw_legacy_connections_cannot_insert (test_durable_faults.PersistentGuardFaultTests) ... ok
+2026-11-17T04:41:28.9088051Z test_same_name_weakened_persistent_guard_sql_is_rejected_without_financial_change (test_durable_faults.PersistentGuardFaultTests) ... ok
+2026-11-17T04:41:28.9089425Z test_isolated_empty_git_checkout_runs_the_same_real_legacy_binary_assertions (test_durable_faults.ShallowLegacyFixtureFaultTests)
+2026-11-17T04:41:29.4886713Z Exercise the pinned archive fallback without mocking Git or storage. ... ok
+2026-11-17T04:41:29.6006872Z test_enabling_managed_mode_fences_existing_service_matcher_ledger_and_plain_database (test_durable_faults.StorageFencingFaultTests) ... ok
+2026-11-17T04:41:29.6498624Z test_managed_ledger_rejects_a_raw_unguarded_sqlite_transaction (test_durable_faults.StorageFencingFaultTests) ... ok
+2026-11-17T04:41:29.6987487Z test_token_bound_writer_cannot_fall_back_to_legacy_after_restoring_pre_enable_database (test_durable_faults.StorageFencingFaultTests) ... ok
+2026-11-17T04:41:29.7467838Z test_lease_expiring_after_financial_dml_rolls_back_at_commit_checkpoint (test_durable_faults.StorageLeaseFaultTests) ... ok
+2026-11-17T04:41:29.8918911Z test_same_owner_nonce_cannot_reuse_released_generation_and_pid_bound_token_cannot_transfer (test_durable_faults.StorageLeaseFaultTests) ... ok
+2026-11-17T04:41:32.0681498Z test_two_real_processes_cannot_share_live_lease_and_expired_owner_cannot_resume_writes (test_durable_faults.StorageLeaseFaultTests) ... ok
+2026-11-17T04:41:32.1512870Z test_actual_lost_http_response_is_recovered_with_the_same_command_id (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:32.2392788Z test_bounded_inbox_rejects_without_record_but_keeps_cancel_and_control_lanes (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:32.5058814Z test_control_commands_have_durable_ids_and_risk_permissions (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:32.5730359Z test_inconsistent_receipt_never_becomes_a_fake_http_success (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:32.9152889Z test_queue_ack_is_not_admission_then_real_child_commits_order_reject_and_cancel (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:33.2011031Z test_repay_is_funding_scoped_and_terminal_result_is_real_debt_change (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:33.3164035Z test_scope_stable_ids_unsupported_operations_and_parent_restart_do_not_open_financial_service (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:33.6962673Z test_strict_json_framing_timeout_auth_and_diagnostics_reuse_existing_http_boundary (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:33.7666785Z test_unknown_enqueue_outcome_returns_no_fake_result_and_original_id_recovers (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:34.0386361Z test_worker_quarantine_is_not_risk_rejection_or_acceptance (test_durable_gateway.DurableGatewayTests) ... ok
+2026-11-17T04:41:34.8821401Z test_real_process_router_scopes_same_command_id_by_account_and_parent_reopen (test_durable_gateway.DurableRouterGatewayTests) ... ok
+2026-11-17T04:41:35.0163538Z test_commit_and_rollback_survive_abrupt_process_exit (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.2434867Z test_concurrent_instances_share_action_and_acknowledgement (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.3671311Z test_concurrent_processes_propose_one_durable_action (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.3749393Z test_configuration_is_persisted_and_conflicting_policies_fail (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.3836553Z test_corrupt_state_fails_closed_without_resetting_or_acknowledging (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.3950238Z test_decimal_and_utc_serialization_ignore_callers_context (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4104660Z test_failed_acknowledgement_and_invalid_bool_never_complete (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4231190Z test_fresh_after_ack_is_enforced_across_restart (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4276838Z test_initial_status_is_blocked_and_json_safe (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4403535Z test_invalid_reduction_does_not_advance_durable_action_sequence (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4549889Z test_pending_action_and_history_survive_restart (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4709636Z test_recovery_hysteresis_and_new_cycle_survive_restart (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4768006Z test_schema_version_is_checked_on_every_method (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.4951702Z test_stale_and_invalid_data_block_without_losing_pending (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.5007113Z test_state_validation_rejects_inconsistent_flags_even_with_recomputed_digest (test_durable_liquidation.DurableLiquidationTests) ... ok
+2026-11-17T04:41:35.9507431Z test_audit_upgrade_stops_globally_but_never_promotes_with_a_live_coordinator (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:36.1483268Z test_controlled_worker_view_never_opens_another_managed_shard (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:37.3647427Z test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:38.1975331Z test_explicit_existing_layout_takeover_preserves_orders_and_disables_old_writers (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:38.4749575Z test_first_wave_config_without_flag_requires_explicit_promotion_and_remains_byte_exact (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:38.6622942Z test_fresh_required_audit_is_persisted_and_explicit_false_is_development_only (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:39.1755574Z test_guard_rejects_wrong_shard_inbox_and_persists_global_stop (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:39.6195676Z test_incomplete_explicit_takeover_resumes_without_recreating_managed_history (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:39.7660471Z test_managed_is_explicit_and_old_untokened_objects_cannot_write (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:40.9762261Z test_new_parent_uses_registered_birth_identity_to_recover_sigstopped_orphans (test_durable_process.DurableProcessTests) ... ERROR
+2026-11-17T04:41:40.9905207Z test_offline_audit_upgrade_preserves_config_legacy_gaps_and_monies_then_audits_new_fills (test_durable_process.DurableProcessTests) ... Process uta-shard-0:
+2026-11-17T04:41:40.9915119Z Traceback (most recent call last):
+2026-11-17T04:41:40.9916572Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 110, in _private_file
+2026-11-17T04:41:40.9917904Z     info = os.stat(self.path, follow_symlinks=False)
+2026-11-17T04:41:40.9919051Z FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpaib9ybn9/managed/router.sqlite3'
+2026-11-17T04:41:40.9919909Z 
+2026-11-17T04:41:40.9920423Z During handling of the above exception, another exception occurred:
+2026-11-17T04:41:40.9921099Z 
+2026-11-17T04:41:40.9921699Z Traceback (most recent call last):
+2026-11-17T04:41:40.9923131Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 115, in _private_file
+2026-11-17T04:41:40.9924254Z     _publish_private_database(self.path)
+2026-11-17T04:41:40.9925500Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 43, in _publish_private_database
+2026-11-17T04:41:40.9927062Z     descriptor, temporary = tempfile.mkstemp(prefix=".uta-create-", dir=str(Path(path).parent))
+2026-11-17T04:41:40.9928548Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/tempfile.py", line 357, in mkstemp
+2026-11-17T04:41:40.9929796Z     return _mkstemp_inner(dir, prefix, suffix, flags, output_type)
+2026-11-17T04:41:40.9931186Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/tempfile.py", line 256, in _mkstemp_inner
+2026-11-17T04:41:40.9932562Z     fd = _os.open(file, flags, 0o600)
+2026-11-17T04:41:40.9933699Z FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpaib9ybn9/managed/.uta-create-3sop5b15'
+2026-11-17T04:41:40.9934653Z 
+2026-11-17T04:41:40.9935235Z The above exception was the direct cause of the following exception:
+2026-11-17T04:41:40.9936000Z 
+2026-11-17T04:41:40.9936387Z Traceback (most recent call last):
+2026-11-17T04:41:40.9937651Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+2026-11-17T04:41:40.9938877Z     self.run()
+2026-11-17T04:41:40.9939930Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 108, in run
+2026-11-17T04:41:40.9941157Z     self._target(*self._args, **self._kwargs)
+2026-11-17T04:41:40.9943088Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 332, in _run_worker
+2026-11-17T04:41:40.9944321Z     _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
+2026-11-17T04:41:40.9945793Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 267, in _record_process
+2026-11-17T04:41:40.9947001Z     with control.control.transaction() as connection:
+2026-11-17T04:41:40.9948072Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:40.9949108Z     return next(self.gen)
+2026-11-17T04:41:40.9950136Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 159, in transaction
+2026-11-17T04:41:40.9951241Z     with self._role_transaction("financial") as connection:
+2026-11-17T04:41:40.9952535Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:40.9953581Z     return next(self.gen)
+2026-11-17T04:41:40.9954619Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 187, in _role_transaction
+2026-11-17T04:41:40.9955680Z     connection = self._connect()
+2026-11-17T04:41:40.9956637Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 131, in _connect
+2026-11-17T04:41:40.9957619Z     identity = self._private_file()
+2026-11-17T04:41:40.9958656Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 120, in _private_file
+2026-11-17T04:41:40.9959916Z     raise StorageError("database path cannot be opened safely") from exc
+2026-11-17T04:41:40.9961150Z uta.storage.StorageError: database path cannot be opened safely
+2026-11-17T04:41:40.9962092Z Process uta-shard-1:
+2026-11-17T04:41:40.9962651Z Traceback (most recent call last):
+2026-11-17T04:41:40.9963677Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 54, in _private_file
+2026-11-17T04:41:40.9964791Z     details = os.stat(self.path, follow_symlinks=False)
+2026-11-17T04:41:40.9965752Z FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpaib9ybn9/managed/shard-0001.sqlite3'
+2026-11-17T04:41:40.9966537Z 
+2026-11-17T04:41:40.9967275Z The above exception was the direct cause of the following exception:
+2026-11-17T04:41:40.9967982Z 
+2026-11-17T04:41:40.9968375Z Traceback (most recent call last):
+2026-11-17T04:41:40.9969448Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 761, in __init__
+2026-11-17T04:41:40.9970813Z     self._exchange = ExchangeService(self.database, self._control.layout["scales"], **options)
+2026-11-17T04:41:40.9972553Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/service.py", line 150, in __init__
+2026-11-17T04:41:40.9973616Z     with database.transaction() as connection:
+2026-11-17T04:41:40.9974718Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:40.9975738Z     return next(self.gen)
+2026-11-17T04:41:40.9976752Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 64, in transaction
+2026-11-17T04:41:40.9977843Z     with super().transaction() as connection:
+2026-11-17T04:41:40.9978902Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:40.9979916Z     return next(self.gen)
+2026-11-17T04:41:40.9981005Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 159, in transaction
+2026-11-17T04:41:40.9982500Z     with self._role_transaction("financial") as connection:
+2026-11-17T04:41:40.9983642Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:40.9984713Z     return next(self.gen)
+2026-11-17T04:41:40.9985753Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 187, in _role_transaction
+2026-11-17T04:41:40.9986792Z     connection = self._connect()
+2026-11-17T04:41:40.9987887Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/storage.py", line 131, in _connect
+2026-11-17T04:41:40.9988939Z     identity = self._private_file()
+2026-11-17T04:41:40.9990051Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 56, in _private_file
+2026-11-17T04:41:40.9991980Z     raise ServiceError("shard_unavailable", "persisted shard cannot be safely opened; automatic creation is forbidden", 503) from exc
+2026-11-17T04:41:40.9993583Z uta.service.ServiceError: persisted shard cannot be safely opened; automatic creation is forbidden
+2026-11-17T04:41:40.9994482Z 
+2026-11-17T04:41:40.9994986Z During handling of the above exception, another exception occurred:
+2026-11-17T04:41:40.9995668Z 
+2026-11-17T04:41:40.9996023Z Traceback (most recent call last):
+2026-11-17T04:41:40.9997160Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+2026-11-17T04:41:40.9998260Z     self.run()
+2026-11-17T04:41:40.9999256Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 108, in run
+2026-11-17T04:41:41.0000369Z     self._target(*self._args, **self._kwargs)
+2026-11-17T04:41:41.0001604Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 334, in _run_worker
+2026-11-17T04:41:41.0003512Z     view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+2026-11-17T04:41:41.0005064Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 767, in __init__
+2026-11-17T04:41:41.0006501Z     self._freeze(exc.code)
+2026-11-17T04:41:41.0007396Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 822, in _freeze
+2026-11-17T04:41:41.0008447Z     with self._control._lock(exclusive=True):
+2026-11-17T04:41:41.0009554Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/contextlib.py", line 135, in __enter__
+2026-11-17T04:41:41.0010503Z     return next(self.gen)
+2026-11-17T04:41:41.0011446Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 249, in _lock
+2026-11-17T04:41:41.0013108Z     descriptor = os.open(self._lock_path, flags | os.O_CREAT | os.O_EXCL, 0o600)
+2026-11-17T04:41:41.0014286Z FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpaib9ybn9/managed/router.lock'
+2026-11-17T04:41:41.8481421Z ok
+2026-11-17T04:41:42.3599012Z test_partial_audit_upgrade_blocks_start_and_resumes_without_fake_backfill (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:43.0023552Z test_partial_publication_is_closed_and_exact_pending_generation_resumes (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:43.8140735Z test_pending_and_terminal_survive_parent_reopen_without_financial_initialization (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:45.2313905Z test_real_independent_pids_match_then_new_owner_restarts_and_closes_positions (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:46.4646653Z test_real_new_pid_repayments_use_same_fenced_credit_and_stable_receipts (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:46.7544800Z test_required_control_does_not_silently_upgrade_a_restored_pre_promotion_snapshot (test_durable_process.DurableProcessTests) ... ok
+2026-11-17T04:41:48.0528924Z test_120_seeded_commands_match_independent_per_account_cash_book_and_fifo (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.1524360Z test_backoff_holds_only_its_account_head_until_equal_deadline (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.2152060Z test_business_rejection_after_attempted_financial_writes_rolls_back_only_finance (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.3057912Z test_durable_queue_ack_has_no_order_or_reserve_and_survives_service_restart (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.4477131Z test_durable_repay_pays_interest_first_and_same_id_never_reduces_debt_twice (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.5379767Z test_equivalent_retry_and_conflicting_command_never_add_financial_effect (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.6022745Z test_exhausted_technical_attempts_are_stable_quarantine_not_business_rejection (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.6814607Z test_queued_order_uses_execution_time_market_and_old_rejection_does_not_revive (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.7874770Z test_same_command_rejection_stays_terminal_after_capacity_recovers (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.8673901Z test_unknown_after_real_commit_preserves_terminal_during_failure_recording_and_retry (test_durable_reference.IndependentDurableCommandTests) ... ok
+2026-11-17T04:41:48.8933698Z test_safe_bounded_protocol_and_five_negative_controls (test_durable_reference.IndependentDurableProtocolModelTests) ... ok
+2026-11-17T04:41:50.1635250Z test_real_pid_restart_retains_queued_terminal_and_exact_cash_capacity (test_durable_reference.IndependentProcessReceiptTests) ... ok
+2026-11-17T04:41:50.1648710Z test_original_precision_replays_exactly_and_keeps_future_balance_limit (test_durable_reference.IndependentReplayPrecisionTests) ... ok
+2026-11-17T04:41:50.1650350Z test_replay_rejects_invalid_precision_instead_of_inferencing_history (test_durable_reference.IndependentReplayPrecisionTests) ... ok
+2026-11-17T04:41:50.1652197Z test_wide_history_cannot_implicitly_expand_default_precision (test_durable_reference.IndependentReplayPrecisionTests) ... ok
+2026-11-17T04:41:50.2263307Z test_boot_change_requires_new_generation_and_minimum_ttl_expires_at_equality (test_durable_reference.IndependentWriterLeaseTests) ... ok
+2026-11-17T04:41:50.2789638Z test_clock_high_water_regression_and_invalid_ttl_fail_closed (test_durable_reference.IndependentWriterLeaseTests) ... ok
+2026-11-17T04:41:50.3397892Z test_competing_lease_and_read_transaction_never_grant_financial_authority (test_durable_reference.IndependentWriterLeaseTests) ... ok
+2026-11-17T04:41:50.4125194Z test_lease_equality_expires_and_financial_changes_roll_back_before_commit (test_durable_reference.IndependentWriterLeaseTests) ... ok
+2026-11-17T04:41:50.4776586Z test_preexisting_unfenced_service_cannot_write_after_enable_but_still_reads (test_durable_reference.IndependentWriterLeaseTests) ... ok
+2026-11-17T04:41:50.4781650Z test_explicit_cursors_and_percent_encoded_digits_remain_supported (test_event_query_compat.EventQueryCompatibilityTests) ... ok
+2026-11-17T04:41:50.4787897Z test_nonempty_malformed_duplicate_and_out_of_range_queries_remain_rejected (test_event_query_compat.EventQueryCompatibilityTests) ... ok
+2026-11-17T04:41:50.4792005Z test_omitted_query_uses_defaults_without_version_specific_parser_behavior (test_event_query_compat.EventQueryCompatibilityTests) ... ok
+2026-11-17T04:41:50.5010510Z test_admission_and_settlement_ignore_ambient_decimal_context (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.5373026Z test_current_market_revalues_outstanding_order_reservations (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.5653430Z test_execution_rechecks_current_margin_before_creating_new_exposure (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.6172409Z test_hand_computed_partial_close_reverse_and_restart (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.7206125Z test_independent_service_instances_serialize_admission (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.7498937Z test_partial_execution_keeps_remaining_order_margin_in_its_risk_gate (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.8248229Z test_per_order_fee_is_independent_of_fill_splitting (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.9392604Z test_process_exit_before_commit_recovers_entire_fill_atomically (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:50.9749375Z test_rejected_fill_and_conflicting_retry_leave_no_partial_state (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:52.0652776Z test_seeded_round_trips_match_independent_cashflow_calculator (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:52.1222143Z test_signed_cost_basis_dust_cannot_create_an_extra_rounding_loss (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:52.1584890Z test_successful_fill_retry_survives_stale_market_and_global_halt (test_exchange_invariants.ExchangeAccountingInvariants) ... ok
+2026-11-17T04:41:52.2018332Z test_external_pool_funding_proof_cannot_be_credited_under_a_new_command_id (test_fault_acceptance.CreditFaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.3385965Z test_repayment_process_exit_before_commit_rolls_back_cash_debt_and_receipt (test_fault_acceptance.CreditFaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.3983986Z test_stale_and_halted_repayment_reduces_same_asset_debt_without_new_credit (test_fault_acceptance.CreditFaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.4475959Z test_bounded_settlement_model_and_deliberately_unsafe_mutants (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.6453815Z test_confirmed_and_response_lost_commits_survive_abrupt_exit_exactly_once (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.7492627Z test_sqlite_full_rolls_back_every_projection_and_same_id_can_retry (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.7890120Z test_stale_market_distinguishes_cancel_replay_and_new_execution (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.8978255Z test_unacknowledged_process_exit_before_commit_has_no_financial_effect (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:52.9775479Z test_writer_lock_timeout_never_returns_an_admission_receipt (test_fault_acceptance.FaultAcceptanceTests) ... ok
+2026-11-17T04:41:53.2153180Z test_process_exit_after_second_side_or_receipt_cannot_publish_half_a_trade (test_fault_acceptance.MatchingFaultAcceptanceTests) ... ok
+2026-11-17T04:41:53.2665555Z test_receipt_storage_failure_rolls_back_both_legs_and_original_book_remains (test_fault_acceptance.MatchingFaultAcceptanceTests) ... ok
+2026-11-17T04:41:53.4009482Z test_response_lost_after_match_commit_recovers_two_sides_without_duplicate_execution (test_fault_acceptance.MatchingFaultAcceptanceTests) ... ok
+2026-11-17T04:41:53.4439166Z test_changed_official_control_table_definition_is_rejected_before_any_caller_sql (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.5040530Z test_complete_published_format_zero_schema_upgrades_offline_without_financial_changes (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.5743433Z test_control_role_cannot_create_any_additional_main_or_temporary_schema_objects (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.6390322Z test_control_role_cannot_rewrite_official_schema_or_financial_projections (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.7496171Z test_legal_lease_lifecycle_preserves_finance_and_real_matching_remains_durable (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.7842876Z test_swallowed_ddl_denial_does_not_commit_following_control_dml (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.8930247Z test_unknown_attached_control_triggers_reject_at_begin_without_repair (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.9491219Z test_weakened_official_control_trigger_and_extra_index_are_corruption_without_repair (test_fence_control_boundary.ControlBoundaryTests) ... ok
+2026-11-17T04:41:53.9493270Z test_bind_and_limits_fail_closed_before_socket_creation (test_gateway.CredentialTests) ... ok
+2026-11-17T04:41:53.9499490Z test_file_permissions_scope_and_secret_repr (test_gateway.CredentialTests) ... ok
+2026-11-17T04:41:53.9517442Z test_invalid_configuration_never_echoes_tokens (test_gateway.CredentialTests) ... ok
+2026-11-17T04:41:54.4605385Z test_account_scopes_apply_to_reads_orders_and_cancellations (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:54.9723953Z test_admin_cash_fills_halt_and_bounded_audit_cursor (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:55.4792969Z test_duplicate_lengths_transfer_encodings_and_truncated_body_fail_closed (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:55.9817945Z test_explicit_business_errors_keep_their_status (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:56.4912929Z test_funding_is_account_bound_and_cannot_trade_or_change_prices (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:56.9954016Z test_liveness_is_public_and_all_account_access_requires_authentication (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:57.5012016Z test_only_pricing_roles_can_publish_a_typed_market_snapshot (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:58.0054414Z test_overlapping_credentials_and_atomic_rotation (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:58.5184621Z test_reader_and_trader_events_are_account_filtered_before_pagination (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:59.0236299Z test_readiness_is_authenticated_and_reflects_closed_gate (test_gateway.GatewayTests) ... ok
+2026-11-17T04:41:59.5357346Z test_risk_can_diagnose_and_supervise_but_cannot_adjust_funds_or_manual_fills (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:00.3424116Z test_slow_body_timeout_content_type_and_unknown_paths (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:00.8594026Z test_strict_json_and_financial_types_reject_before_service_call (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:01.3665597Z test_traders_cannot_mutate_cash_market_fills_or_admin_controls (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:01.8684417Z test_unexpected_exceptions_do_not_expose_internal_details (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:02.8705245Z test_worker_limit_returns_503_instead_of_spawning_unbounded_threads (test_gateway.GatewayTests) ... ok
+2026-11-17T04:42:03.3272194Z test_invalid_grouping_bounds_fail_before_creating_financial_state (test_gateway_grouped.GroupedCLITests) ... ok
+2026-11-17T04:42:03.6249637Z test_sigterm_drains_a_real_grouped_order_before_clean_exit (test_gateway_grouped.GroupedCLITests) ... ok
+2026-11-17T04:42:03.6560180Z test_business_rejection_keeps_its_status_and_does_not_create_an_order (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.6993755Z test_cancellation_keeps_its_reserved_capacity_when_the_submit_queue_is_full (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.7316019Z test_cleanup_still_closes_http_and_group_worker_if_risk_worker_stop_fails (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.8022220Z test_configured_catalog_and_margin_gates_are_preserved_through_grouped_http (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.8359734Z test_metrics_and_readiness_reflect_the_actual_batch_worker (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.8708228Z test_queue_overload_is_explicit_and_has_no_business_effect (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:03.9167217Z test_real_submit_cancel_and_response_loss_retry_preserve_one_business_effect (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:04.0067348Z test_running_timeout_reports_unknown_and_original_id_recovers_exactly_once (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:04.0411631Z test_scope_and_input_rejections_never_enter_the_admission_queue (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:04.1277188Z test_wait_timeout_cancels_only_a_still_queued_command (test_gateway_grouped.GroupedGatewayTests) ... ok
+2026-11-17T04:42:04.1983707Z test_authenticated_partial_execution_retry_cancel_and_restart (test_gateway_integration.GatewayExchangeAcceptance) ... ok
+2026-11-17T04:42:04.2555895Z test_read_funding_and_risk_roles_keep_separate_write_authority (test_gateway_integration.GatewayExchangeAcceptance) ... ok
+2026-11-17T04:42:04.3039190Z test_role_and_account_boundaries_protect_real_state (test_gateway_integration.GatewayExchangeAcceptance) ... ok
+2026-11-17T04:42:04.3575321Z test_stale_market_errors_leave_ready_liveness_and_cancellation_distinct (test_gateway_integration.GatewayExchangeAcceptance) ... ok
+2026-11-17T04:42:04.4405669Z test_supervisor_freezes_cancels_and_preserves_managed_reductions_on_restart (test_gateway_integration.GatewayExchangeAcceptance) ... ok
+2026-11-17T04:42:04.5336294Z test_configured_catalog_rejects_standalone_rest_fill_but_real_paired_match_succeeds (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.6265281Z test_funded_borrow_interest_and_repayment_are_real_idempotent_journal_operations (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.7094827Z test_linear_http_matching_produces_a_bounded_global_trade_audit (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.7650094Z test_malformed_new_requests_do_not_change_real_financial_state (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.8217273Z test_missing_components_fail_explicitly_after_authorization_without_mutation (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.8862727Z test_operational_roles_cannot_cross_account_or_use_other_roles_mutations (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:04.9391508Z test_original_order_lookup_survives_stale_market_without_relaxing_scope (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:05.0285756Z test_spot_http_orders_match_actual_counterparties_and_release_only_remaining_cash (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:05.0821308Z test_worker_health_does_not_expose_accounts_or_promote_one_account_block_to_outage (test_gateway_products.ProductGatewayTests) ... ok
+2026-11-17T04:42:05.0825544Z test_asset_and_borrow_haircut_separately (test_gross_liabilities.GrossLiabilityTests) ... ok
+2026-11-17T04:42:05.0829290Z test_legacy_negative_balance_and_new_liabilities (test_gross_liabilities.GrossLiabilityTests) ... ok
+2026-11-17T04:42:05.7140686Z test_archived_probes_preserve_every_arrival_and_failed_gate (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:05.9587466Z test_batch_raw_records_real_group_commit_and_worker_timing (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:05.9590661Z test_bounds_prevent_fake_long_feed_or_order_limit_results (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:05.9591939Z test_capacity_uses_success_and_long_window_not_attempts (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.1683847Z test_cli_smoke_is_distinct_from_failed_capacity_gate (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.2623934Z test_legacy_is_explicit_and_cannot_be_confused_with_configured_cross (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.3550394Z test_lost_success_receipt_is_unknown_and_not_counted_as_acknowledged_capacity (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.4841632Z test_slow_sync_worker_does_not_shift_planned_arrivals_or_lose_overload (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.7226223Z test_sync_open_loop_keeps_orders_live_and_checks_exact_reserves (test_group_benchmark.GroupBenchmarkTests) ... ok
+2026-11-17T04:42:06.8895846Z test_auth_schema_loss_and_missing_database_never_recreate_or_enqueue (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:07.0299712Z test_duplicate_signed_headers_and_framing_are_rejected_over_actual_tls (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:07.1487995Z test_exact_body_method_and_raw_target_are_bound_without_consuming_invalid_mac_nonce (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:07.2477776Z test_nonce_exact_expiry_and_clock_highwater_survive_reopened_authenticator (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:07.4077426Z test_real_auth_commit_failure_prevents_enqueue_and_rolls_back_nonce (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:07.5410919Z FAULT_EVIDENCE {"fixture": "single-node-process-exit", "outcome": "acknowledged", "recovery_ms": 5.291, "verified_journal_events": 2, "lost_confirmed_commands": 0, "duplicate_business_effects": 0, "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"}
+2026-11-17T04:42:07.5413066Z FAULT_EVIDENCE {"fixture": "single-node-process-exit", "outcome": "unknown", "recovery_ms": 5.214, "verified_journal_events": 3, "lost_confirmed_commands": 0, "duplicate_business_effects": 0, "scope": "local WAL/FULL; no power-loss, AZ-loss or replicated-commit claim"}
+2026-11-17T04:42:07.9216717Z test_real_tls_lost_reply_new_nonce_same_command_recovers_after_http_pid_restart_once (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:08.1865124Z test_revocation_is_seen_by_old_http_process_and_profile_rollback_stays_rejected (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:08.6022845Z test_two_independent_tls_http_processes_can_consume_a_nonce_only_once (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:08.7595310Z test_verified_tls_domain_account_and_role_isolation_never_enqueue_denied_requests (test_hmac_reference.IndependentHMACProtocolTests) ... ok
+2026-11-17T04:42:08.7600122Z test_ack_requires_a_real_boolean_without_consuming_pending_action (test_invariants.LiquidationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7602041Z test_complete_must_be_true_boolean_to_permit_trading (test_invariants.LiquidationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7603351Z test_extreme_recovery_buffer_is_rejected (test_invariants.LiquidationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7604856Z test_extreme_risk_is_blocked_before_financial_arithmetic (test_invariants.LiquidationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7611469Z test_recovery_threshold_is_independent_of_decimal_context (test_invariants.LiquidationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7614415Z test_decimal_inputs_are_bounded_before_fixed_point_digest_expansion (test_invariants.MigrationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7616492Z test_identifiers_and_versions_are_bounded (test_invariants.MigrationSafetyInvariants) ... ok
+2026-11-17T04:42:08.7618796Z test_rejected_input_cannot_mutate_supplied_snapshot (test_invariants.MigrationSafetyInvariants) ... ok
+2026-11-17T04:42:11.3408695Z test_archived_kernel_pairs_retain_all_arrivals_and_frozen_source (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3413396Z test_cache_and_workload_bounds_are_explicit (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3506985Z test_cohort_keeps_source_identity_each_run_and_hashes_all_evidence (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3508336Z test_counter_delta_excludes_setup_and_rejects_reset (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3790051Z test_hot_schedule_preserves_exact_counts_and_live_order_headroom (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3794879Z test_paired_plan_alternates_order_and_only_changes_cache_sizes (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3812151Z test_plan_only_does_not_create_services_or_start_load (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.3822206Z test_service_plumbing_passes_both_capacities_including_reopen_zero (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.5445255Z test_short_varied_probe_reopens_uncached_and_checks_every_request (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.5469467Z test_source_change_or_dirty_frozen_tree_stops_before_load (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.5474434Z test_unsupported_optimization_is_never_silently_ignored (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.5479092Z test_varied_terms_are_40_legal_economic_keys_and_reference_is_independent (test_kernel_benchmark.KernelBenchmarkTests) ... ok
+2026-11-17T04:42:11.7754072Z test_cached_decode_never_caches_freshness_and_stale_cancel_remains_available (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:11.7994727Z test_enabled_caches_cannot_publish_success_or_business_rejection_before_real_commit (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:11.8484560Z test_partial_fill_fee_rounding_and_reprice_are_not_reused_from_old_order (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:11.8819220Z test_post_commit_unknown_is_reconciled_by_original_ids_after_cold_restart (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.1287789Z test_process_exit_with_warm_caches_reopens_only_durable_orders_and_retries_once (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.2627879Z test_real_commit_constraint_failure_does_not_turn_warm_cache_into_committed_reserve (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.2964460Z test_real_sqlite_full_rolls_back_cached_admissions_and_original_ids_can_recover (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.3400243Z test_same_account_and_market_version_in_distinct_databases_have_no_cache_alias (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.4706218Z test_same_version_changed_valid_payload_is_decoded_before_each_decision (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.7053882Z test_same_version_corrupt_payload_cannot_hit_prior_valid_decode_or_poison_repair (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.7319710Z test_savepoint_rollback_cannot_leave_a_ghost_order_or_cached_account_reserve (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.7682565Z test_two_cached_instances_cannot_spend_the_same_accounts_last_margin (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.7988828Z test_warm_decoding_still_rechecks_freshness_at_group_commit (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:12.8315010Z test_whole_batch_rollback_and_worker_restart_do_not_preserve_mutated_state (test_kernel_faults.KernelCacheFaultTests) ... ok
+2026-11-17T04:42:13.1655846Z test_cli_defaults_and_opt_in_are_visible_in_actual_service_metrics (test_kernel_gateway.KernelGatewayTests) ... ok
+2026-11-17T04:42:13.5880485Z test_invalid_cli_cache_bounds_do_not_create_financial_state (test_kernel_gateway.KernelGatewayTests) ... ok
+2026-11-17T04:42:13.6292681Z test_metrics_observe_real_cache_work_and_keep_risk_permissions (test_kernel_gateway.KernelGatewayTests) ... ok
+2026-11-17T04:42:13.7348053Z test_concurrent_batchers_and_sync_share_capacity_even_on_repeated_kernel_hits (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:13.7565006Z test_market_cache_hit_revalidates_current_policy_without_reparsing (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:13.7872856Z test_new_version_and_same_version_changed_payload_revalue_live_orders (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.0472400Z test_public_partial_fill_trace_recomputes_remaining_reserve_and_cumulative_fees (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.0791669Z test_public_warm_and_cold_partial_fills_ignore_hostile_decimal_context (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.1228752Z test_restart_cold_caches_and_disabled_service_have_same_durable_results (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.1626577Z test_same_cached_amount_is_not_a_balance_halt_or_frozen_account_decision (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.2069314Z test_same_version_corruption_and_margin_conflict_are_not_hidden_by_warm_cache (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.2743429Z test_service_cached_and_disabled_reserves_match_independent_oracle_across_policies (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.3044652Z test_warm_market_hit_rechecks_clock_staleness_and_missing_instrument (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.3311686Z test_warm_reserve_cannot_bypass_current_catalog_or_configuration_mode (test_kernel_reference.IndependentKernelAuthorityTests) ... ok
+2026-11-17T04:42:14.4603065Z test_896_seeded_cases_match_fraction_reference_under_hostile_decimal_context (test_kernel_reference.IndependentKernelMathTests) ... ok
+2026-11-17T04:42:14.4634367Z test_each_economic_key_dimension_affects_the_answer_without_poisoning_prior_key (test_kernel_reference.IndependentKernelMathTests) ... ok
+2026-11-17T04:42:14.4642381Z test_hand_calculable_fee_rounding_and_reduce_only_examples (test_kernel_reference.IndependentKernelMathTests) ... ok
+2026-11-17T04:42:14.4650474Z test_lru_eviction_disabled_mode_and_clearing_preserve_exact_values (test_kernel_reference.IndependentKernelMathTests) ... ok
+2026-11-17T04:42:14.4658694Z test_full_payload_key_bounded_lru_and_immutable_results (test_kernel_reference.IndependentMarketCacheTests) ... ok
+2026-11-17T04:42:14.4660343Z test_invalid_payload_is_not_cached_and_service_instances_do_not_share_entries (test_kernel_reference.IndependentMarketCacheTests) ... ok
+2026-11-17T04:42:14.6692635Z test_classic_credit_spot_paired_liquidation_and_restart_with_warm_caches (test_kernel_vertical.CachedVerticalAcceptanceTests) ... ok
+2026-11-17T04:42:14.6697142Z test_atomic_rejection_for_unbalanced_or_invalid_events (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6742100Z test_concurrent_retries_commit_once (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6744018Z test_cross_asset_event_requires_balance_for_each_asset (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6745632Z test_exactness_is_independent_of_decimal_context (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6748175Z test_replay_and_idempotency_with_reordered_postings (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6750061Z test_replay_keeps_requested_balance_limit_for_new_events (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6753654Z test_replay_preserves_wide_journal_amounts_and_idempotency (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6755562Z test_replay_rejects_gaps_and_duplicate_ids (test_ledger.LedgerTests) ... ok
+2026-11-17T04:42:14.6758605Z test_cancel_then_reduce_and_recover_with_new_snapshots (test_liquidation.LiquidationTests) ... ok
+2026-11-17T04:42:14.6759946Z test_no_data_stale_and_invalid_are_blocked (test_liquidation.LiquidationTests) ... ok
+2026-11-17T04:42:14.6762038Z test_recovery_buffer_and_position_bounds (test_liquidation.LiquidationTests) ... ok
+2026-11-17T04:42:14.6763219Z test_stale_data_does_not_discard_pending_action (test_liquidation.LiquidationTests) ... ok
+2026-11-17T04:42:14.6764212Z test_unknown_ack_fails_and_healthy_can_trade (test_liquidation.LiquidationTests) ... ok
+2026-11-17T04:42:14.6767599Z test_full_published_computation_and_admission_scales_are_preserved (test_main_baseline_evidence.PublishedMainEvidenceTests) ... ok
+2026-11-17T04:42:14.6781648Z test_original_outputs_and_invocations_have_integrity_and_no_technical_errors (test_main_baseline_evidence.PublishedMainEvidenceTests) ... ok
+2026-11-17T04:42:14.6785985Z test_simulated_liquidations_and_paced_overload_are_never_conflated (test_main_baseline_evidence.PublishedMainEvidenceTests) ... ok
+2026-11-17T04:42:14.6790625Z test_authoritative_entry_notional_preserves_exact_fifo_cost (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.6792474Z test_entry_notional_and_decimal_bounds_still_reject_malformed_research_inputs (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7049122Z test_exchange_database_cannot_be_opened_as_research_and_remains_unchanged (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7260006Z test_existing_exchange_schema_without_marker_is_reopened_losslessly (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7337555Z test_existing_research_schema_without_marker_is_reopened_losslessly (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7339496Z test_json_serialization_handles_immutable_account_mappings (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7404468Z test_research_database_cannot_be_opened_as_exchange_and_remains_unchanged (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:14.7471167Z test_research_wide_units_do_not_change_durable_default_range (test_main_compatibility.MainCompatibilityTests) ... ok
+2026-11-17T04:42:17.3426620Z test_all_seventeen_negative_variants_have_specific_real_counterexamples (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3440719Z test_both_registered_stopped_orphans_expire_before_reap_and_reactivate_new_owners (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3442774Z test_both_safe_graphs_exhaust_their_entire_declared_state_spaces (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3748435Z test_each_counterexample_replays_actual_edges_and_first_bad_state (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3755331Z test_historically_valid_commit_remains_valid_after_later_takeover (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3760149Z test_incomplete_or_unknown_enumerations_never_return_a_false_pass (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3769087Z test_lost_partial_fill_reply_restarts_and_queries_without_repeating_settlement (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3909019Z test_model_implementation_imports_only_its_declared_standard_library_modules (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3911561Z test_required_recovery_partial_publication_and_lost_reply_states_are_reachable (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3917499Z test_reused_pid_birth_is_never_selected_for_orphan_kill (test_managed_authority_model.ManagedAuthorityModelTests) ... ok
+2026-11-17T04:42:17.3973393Z test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits (test_managed_benchmark.ManagedBenchmarkTests) ... ok
+2026-11-17T04:42:17.3977402Z test_bounds_reject_long_or_unbounded_component_capacity_claims (test_managed_benchmark.ManagedBenchmarkTests) ... ok
+2026-11-17T04:42:17.8496511Z test_missing_enqueue_ack_queries_original_cid_and_preserves_error_count (test_managed_benchmark.ManagedBenchmarkTests) ... ok
+2026-11-17T04:42:17.8498074Z test_queued_ack_cannot_be_counted_as_financial_success (test_managed_benchmark.ManagedBenchmarkTests) ... ok
+2026-11-17T04:42:18.4381478Z test_real_spawn_audited_commit_reject_and_per_pid_profile (test_managed_benchmark.ManagedBenchmarkTests) ... ok
+2026-11-17T04:42:20.1750362Z test_managed_partial_liquidation_survives_real_worker_kill_and_reconciles (test_managed_liquidation.ManagedPartialLiquidationTests) ... ok
+2026-11-17T04:42:22.5226012Z test_required_audit_partial_liquidation_replays_historical_decisions_after_restart (test_managed_liquidation.ManagedPartialLiquidationTests) ... ok
+2026-11-17T04:42:22.5227642Z test_defensive_copy_prevents_parameter_mutation (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5232289Z test_extreme_time_unicode_and_input_size_fail_closed (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5234883Z test_freshness_exact_boundaries_and_clock_policy (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5238524Z test_invalid_constructor_fields_fail_closed (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5245762Z test_json_precision_independent_of_callers_context (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5249848Z test_round_trip_and_equal_numeric_spelling_canonicalize (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5264684Z test_untrusted_json_rejects_duplicates_extra_fields_and_numeric_amounts (test_market.MarketSnapshotTests) ... ok
+2026-11-17T04:42:22.5272383Z test_actual_sqlite_payload_changes_with_same_version_do_not_reuse_price (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5280337Z test_arbitrary_decoder_exceptions_propagate_without_evicting_or_caching (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5284671Z test_caching_a_parse_never_caches_freshness_or_future_clock_decision (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5318947Z test_capacity_and_one_mebibyte_payload_bound (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5322796Z test_clear_is_explicit_about_resetting_detached_statistics (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5346404Z test_concurrent_same_payload_decodes_once_and_preserves_lru_bound (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5349474Z test_custom_unhashable_string_subclass_uses_reference_path (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5355358Z test_default_zero_runs_reference_parser_every_time (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5361736Z test_enabled_exact_payload_reuses_only_successful_decode (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5367530Z test_lru_hit_changes_eviction_order_and_failed_decode_does_not_evict (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5370012Z test_maps_and_nested_financial_specs_remain_immutable_after_hit (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5376273Z test_reference_errors_and_unhashable_inputs_are_not_negative_cached (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5380807Z test_service_owned_instances_do_not_share_cached_models_or_statistics (test_market_cache.MarketDecodeCacheTests) ... ok
+2026-11-17T04:42:22.5400596Z test_archived_probe_counts_receipts_sizes_hashes_and_unfilled_risk (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.0650256Z test_cli_smoke_success_is_not_capacity_success_and_default_exit_is_gate_failure (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.2631326Z test_half_liquidity_reports_actual_fifo_volume_and_residual_not_attempt_count (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.2634141Z test_long_or_unbounded_probe_is_explicitly_rejected_without_creating_state (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.4291020Z test_no_liquidity_preserves_actual_risk_and_never_creates_mark_fills (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.9125235Z test_open_loop_overload_is_retained_as_unresolved_not_hidden_as_rejection_success (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:23.9127252Z test_parallel_duplicate_health_observations_use_first_recovery (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:24.1515083Z test_real_paired_partial_liquidations_reconcile_unique_trades_not_legs (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:24.4299193Z test_shards_are_independent_books_and_all_reopen_for_four_side_replay (test_matched_load.MatchedLoadTests) ... ok
+2026-11-17T04:42:24.5196932Z test_confirmed_partial_liquidation_survives_restart_and_reconciles_four_sides (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.5730900Z test_failure_after_receipt_before_event_rolls_back_both_financial_legs (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.6414774Z test_halt_and_stale_preserve_unexecuted_orders_and_margin (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.8114800Z test_inputs_and_independent_cli_help (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.8613175Z test_matching_financial_arithmetic_ignores_callers_decimal_context (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.9127711Z test_price_priority_is_numeric_not_lexical_and_time_breaks_ties (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:24.9628853Z test_real_opposing_orders_partial_settlement_and_maker_price (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.0732480Z test_restart_and_competing_matchers_cannot_settle_one_trade_twice (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.1275648Z test_second_side_risk_failure_rolls_back_first_side_before_cancelling_rejected_order (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.1694209Z test_self_trade_prevention_cancels_taker_without_financial_effect (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.2119954Z test_strict_reconciliation_rejects_standalone_fill_and_detects_missing_receipt_protection (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.2638547Z test_trade_receipts_are_immutable_and_paginated (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.3162840Z test_uncrossed_or_one_sided_book_never_creates_mark_fills (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.3667930Z test_unexpected_second_side_failure_rolls_back_whole_batch (test_matching.MatchingTests) ... ok
+2026-11-17T04:42:25.3671571Z test_decimal_digest_preserves_precision_beyond_default_context (test_migration.MigrationTests) ... ok
+2026-11-17T04:42:25.3680318Z test_idempotency_and_version_ordering (test_migration.MigrationTests) ... ok
+2026-11-17T04:42:25.3688055Z test_incomplete_invalid_or_stale_snapshot_fails_closed (test_migration.MigrationTests) ... ok
+2026-11-17T04:42:25.3690239Z test_reconciles_each_field_and_preserves_source_compartment (test_migration.MigrationTests) ... ok
+2026-11-17T04:42:25.3692221Z test_retry_must_still_be_fresh (test_migration.MigrationTests) ... ok
+2026-11-17T04:42:25.3758973Z test_cli_outputs_parseable_report_and_nonzero_for_invalid_storage (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.3821078Z test_consistent_wal_snapshot_includes_committed_rows_and_excludes_uncommitted (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.3856926Z test_destination_and_sidecars_never_overwritten (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.3926292Z test_exclusive_publication_handles_concurrent_destination_creation (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.3985975Z test_foreign_key_violation_is_not_a_publishable_backup (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.4018466Z test_invalid_timeouts_fail_before_creating_output (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.4063703Z test_missing_corrupt_empty_and_symlink_sources_are_rejected (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.4144444Z test_restore_to_new_path_and_check_without_mutating_rows (test_ops.OperationsTests) ... ok
+2026-11-17T04:42:25.4160837Z test_gross_asset_debt_and_position_stress_matches_hand_calculation (test_portfolio.PortfolioTests) ... ok
+2026-11-17T04:42:25.4176466Z test_joint_offset_survives_but_decorrelation_preserves_margin (test_portfolio.PortfolioTests) ... ok
+2026-11-17T04:42:25.4185034Z test_numeric_context_and_invalid_universe (test_portfolio.PortfolioTests) ... ok
+2026-11-17T04:42:25.7420799Z test_position_change_bound_covers_floor_and_scenario_regimes (test_portfolio.PortfolioTests) ... ok
+2026-11-17T04:42:25.7437046Z test_usd_settlement_moves_all_equities_equally_and_does_not_change_margin (test_portfolio.PortfolioTests) ... ok
+2026-11-17T04:42:25.8069177Z test_borrow_quote_step_and_shared_rule_caps_cannot_be_bypassed (test_portfolio_reference.IndependentConfiguredServiceTests) ... ok
+2026-11-17T04:42:25.8726753Z test_cash_deficit_from_real_fee_is_not_relabelled_as_borrowed_principal (test_portfolio_reference.IndependentConfiguredServiceTests) ... ok
+2026-11-17T04:42:26.0545501Z test_funded_credit_orders_paired_fills_interest_and_repay_share_rule_evidence (test_portfolio_reference.IndependentConfiguredServiceTests) ... ok
+2026-11-17T04:42:26.1346973Z test_live_credit_and_paired_settlement_ignore_hostile_decimal_context (test_portfolio_reference.IndependentConfiguredServiceTests) ... ok
+2026-11-17T04:42:26.1969056Z test_order_fill_and_restart_cannot_silently_switch_rule_sources (test_portfolio_reference.IndependentConfiguredServiceTests) ... ok
+2026-11-17T04:42:27.1141150Z test_320_seeded_accounts_match_feasibility_search_exactly (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2427087Z test_32_cases_ignore_precision_rounding_exponent_bounds_and_traps (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2559869Z test_maintenance_equality_and_borrow_grid_require_strict_surplus (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2581736Z test_manual_case_matches_published_rule_numbers_and_independent_reference (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2601499Z test_missing_data_and_unsupported_modes_or_products_fail_closed (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2619969Z test_settled_cash_deficits_are_full_debt_without_fabricated_loan_margin (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.2746921Z test_tier_boundaries_freezes_and_same_asset_debt_are_not_netted (test_portfolio_reference.IndependentCrossReferenceTests) ... ok
+2026-11-17T04:42:27.6382254Z test_96_seeded_stresses_revalue_separate_units_and_floor_addons (test_portfolio_reference.IndependentStressReferenceTests) ... ok
+2026-11-17T04:42:27.6404596Z test_same_underlying_opposite_positions_never_offset_other_unit_losses (test_portfolio_reference.IndependentStressReferenceTests) ... ok
+2026-11-17T04:42:27.6422429Z test_usd_depeg_pm_activation_and_unimplemented_revaluation_are_rejected (test_portfolio_reference.IndependentStressReferenceTests) ... ok
+2026-11-17T04:42:30.0667812Z test_actual_expiration_keeps_workers_alive_and_new_price_recovers (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:30.7052873Z test_clock_rollback_detects_future_without_relabeling_prices (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:30.8391343Z test_diagnostic_timeout_rejects_unsafe_inputs (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:31.3326419Z test_freshness_is_checked_after_last_shard_and_slow_claim_work (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:31.9817616Z test_gate_and_mutex_observations_have_one_bounded_timeout (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:32.5979882Z test_guard_sql_is_interrupted_and_exception_details_are_redacted (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:33.2415342Z test_healthy_real_workers_and_read_only_original_observation (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:33.7654122Z test_incomplete_watermarks_and_invalid_control_flags_are_unready (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:34.7215859Z test_malformed_missing_and_oversize_persistent_quotes_fail_closed (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:35.4251610Z test_partial_fanout_is_unready_until_exact_generation_finishes (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:36.0489677Z test_read_guard_failure_after_payload_cannot_report_ready (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:36.9971229Z test_same_version_changed_persistent_content_is_not_reused (test_process_readiness.ProcessReadinessTests) ... ok
+2026-11-17T04:42:36.9975719Z test_catalog_round_trip_and_metadata_immutability (test_products.ProductCatalogTests) ... ok
+2026-11-17T04:42:36.9982776Z test_halt_delist_and_reduce_only_are_execution_gates (test_products.ProductCatalogTests) ... ok
+2026-11-17T04:42:36.9988810Z test_malformed_metadata_and_json_fail_closed (test_products.ProductCatalogTests) ... ok
+2026-11-17T04:42:36.9996749Z test_only_explicit_cross_first_batch_products_can_be_activated (test_products.ProductCatalogTests) ... ok
+2026-11-17T04:42:37.0002038Z test_order_tick_step_and_notional_use_exact_decimals (test_products.ProductCatalogTests) ... ok
+2026-11-17T04:42:37.0443623Z test_checker_never_repairs_missing_matching_or_migration_guard (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.0923438Z test_credit_projection_is_checked_in_same_snapshot (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.1333372Z test_full_checker_uses_one_transaction_and_does_not_mutate_or_nest_begin (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.1817298Z test_low_context_and_production_projection_replacement_cannot_change_reference_replay (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.2494566Z test_matches_orders_position_cost_cashflow_and_restart_reconcile (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.3142597Z test_mutated_order_fill_and_fee_metadata_are_detected (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.3642818Z test_mutated_position_quantity_and_cost_are_detected_beyond_old_match_verification (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.4143056Z test_private_trade_confirmation_and_global_match_payload_are_verified (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.4498727Z test_reversed_import_does_not_remain_as_position_genesis (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.4994694Z test_source_genesis_position_can_close_and_reverse_using_real_matches (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.5324337Z test_source_receipt_checksum_is_rechecked_after_schema_guards (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.5663644Z test_standalone_execution_requires_explicit_nonmatching_inspection (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.5922431Z test_unknown_external_position_origin_is_never_assumed_flat (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.6219752Z test_unknown_gross_liability_asset_is_rejected_without_initializing_credit (test_reconciliation.ReconciliationTests) ... ok
+2026-11-17T04:42:37.6225610Z test_arithmetic_ignores_callers_low_decimal_precision (test_reference_validation.ReferenceValidationTests) ... ok
+2026-11-17T04:42:37.6237842Z test_hand_computed_golden_case (test_reference_validation.ReferenceValidationTests) ... ok
+2026-11-17T04:42:37.6239774Z test_out_of_range_inputs_rejected (test_reference_validation.ReferenceValidationTests) ... ok
+2026-11-17T04:42:37.6243407Z test_ratio_rounding_is_fixed_at_34_significant_digits (test_reference_validation.ReferenceValidationTests) ... ok
+2026-11-17T04:42:37.7834991Z test_seeded_differential_order_checks (test_reference_validation.ReferenceValidationTests) ... ok
+2026-11-17T04:42:37.8438038Z test_auth_database_failure_prevents_enqueue_and_does_not_recreate_it (test_request_signing.SignedHTTPTests) ... ok
+2026-11-17T04:42:37.9611600Z test_hmac_production_factory_requires_tls_and_real_tls_request_succeeds (test_request_signing.SignedHTTPTests) ... ok
+2026-11-17T04:42:38.0455636Z test_nonce_commit_precedes_enqueue_and_hmac_never_falls_back_to_bearer (test_request_signing.SignedHTTPTests) ... ok
+2026-11-17T04:42:38.1494428Z test_real_lost_signed_response_and_http_restart_recover_with_new_nonce_same_command (test_request_signing.SignedHTTPTests) ... ok
+2026-11-17T04:42:38.5219620Z test_two_real_http_processes_compete_for_one_persistent_nonce (test_request_signing.SignedHTTPTests) ... ok
+2026-11-17T04:42:38.5296828Z test_canonical_vector_covers_version_key_domain_time_nonce_method_raw_target_and_exact_body (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.5508328Z test_capacity_and_lost_database_fail_closed_without_memory_fallback (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.6775039Z test_default_real_clock_serializes_concurrent_distinct_nonces_without_false_regression (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.6879813Z test_duplicate_signature_headers_and_corrupt_store_are_rejected (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7018000Z test_fresh_audiences_are_unique_and_copied_auth_authorities_fail_closed (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7163183Z test_future_timestamp_keeps_nonce_for_its_full_window_and_rejects_skew (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7371551Z test_nonce_survives_restart_and_cannot_be_pruned_at_exact_replay_boundary (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7465728Z test_private_keyfile_and_audit_do_not_contain_secret_signature_body_or_raw_nonce (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7670163Z test_rotation_revocation_expiry_and_tenant_domains_are_durable (test_request_signing.SigningStoreTests) ... ok
+2026-11-17T04:42:38.7673478Z test_capacity_drop_blocks_new_orders_but_keeps_reserve (test_reservations.ReservationTests) ... ok
+2026-11-17T04:42:38.7728510Z test_concurrent_orders_cannot_reserve_same_capacity (test_reservations.ReservationTests) ... ok
+2026-11-17T04:42:38.7729873Z test_decimal_arithmetic_not_affected_by_low_caller_precision (test_reservations.ReservationTests) ... ok
+2026-11-17T04:42:38.7732237Z test_idempotency_release_and_replay_cannot_reopen (test_reservations.ReservationTests) ... ok
+2026-11-17T04:42:38.7736340Z test_stale_version_and_invalid_amounts_fail_without_mutation (test_reservations.ReservationTests) ... ok
+2026-11-17T04:42:38.7755485Z test_every_economic_input_participates_in_the_key (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.7758705Z test_invalid_capacity_and_failed_math_are_not_cached (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.7765465Z test_lru_bound_clear_and_disabled_mode (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.7768182Z test_manual_cumulative_fee_case_and_read_only_key (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.7770425Z test_miss_and_hit_ignore_decimal_precision_and_traps (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.7916400Z test_parallel_misses_and_evictions_remain_bounded (test_reserve_kernel.ReserveKernelTests) ... ok
+2026-11-17T04:42:38.8183386Z test_current_product_rules_are_checked_even_on_a_warm_entry (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.8280105Z test_default_path_remains_the_original_reference (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.8289222Z test_invalid_market_size_fails_before_database_file_creation (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.8297423Z test_invalid_size_fails_before_database_file_creation (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.8539015Z test_market_cache_clear_and_configured_policy_are_rechecked (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.8905204Z test_partial_fill_repricing_restart_and_reference_reconciliation (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.9224529Z test_seeded_cached_and_original_fraction_formulas_agree (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.9457830Z test_warm_market_decode_rechecks_freshness_and_same_version_row (test_reserve_kernel.ReserveServiceTests) ... ok
+2026-11-17T04:42:38.9460661Z test_collateral_liability_unrealized_pnl_and_margins (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9464348Z test_crossing_position_uses_resulting_absolute_notional (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9467260Z test_invalid_values_rejected (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9470455Z test_large_order_is_rejected (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9473197Z test_marked_short_position (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9475202Z test_missing_specs_fail_closed (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9477107Z test_negative_asset_balance_is_not_discounted (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9480045Z test_order_reduction_accounts_for_execution_and_fee (test_risk.RiskEngineTest) ... ok
+2026-11-17T04:42:38.9490281Z test_arithmetic_under_rounding_and_inexact_traps_is_deterministic (test_risk_boundaries.RiskBoundaryTests) ... ok
+2026-11-17T04:42:38.9499799Z test_non_mapping_and_invalid_identifier_inputs_are_domain_errors (test_risk_boundaries.RiskBoundaryTests) ... ok
+2026-11-17T04:42:38.9502944Z test_ordinary_risk_check_does_not_bypass_deficit_for_reducing_order (test_risk_boundaries.RiskBoundaryTests) ... ok
+2026-11-17T04:42:38.9505448Z test_unsupported_types_fail_with_domain_errors (test_risk_boundaries.RiskBoundaryTests) ... ok
+2026-11-17T04:42:38.9508816Z test_validated_account_cannot_be_changed_through_original_mappings (test_risk_boundaries.RiskBoundaryTests) ... ok
+2026-11-17T04:42:39.1275575Z test_cli_explicit_automation_starts_with_synthetic_policy_and_stops_cleanly (test_runtime_review.RuntimeReviewTests) ... ok
+2026-11-17T04:42:39.1791516Z test_known_account_rejection_advances_durable_cursor_without_global_halt (test_runtime_review.RuntimeReviewTests) ... ok
+2026-11-17T04:42:39.2253821Z test_reconciliation_neither_mutates_successful_state_nor_repairs_missing_guard (test_runtime_review.RuntimeReviewTests) ... ok
+2026-11-17T04:42:39.3235604Z test_stop_drains_one_real_inflight_match_without_an_extra_tick (test_runtime_review.RuntimeReviewTests) ... ok
+2026-11-17T04:42:39.3666515Z test_unexpected_automation_failure_commits_halt_and_preserves_waiting_orders (test_runtime_review.RuntimeReviewTests) ... ok
+2026-11-17T04:42:39.3883084Z test_full_worker_pool_rejects_overload_and_remains_responsive (test_server.AdmissionTests) ... ok
+2026-11-17T04:42:39.4312040Z test_batch_keeps_input_order_and_isolates_command_rejections (test_server.SimulatorHttpTests) ... ok
+2026-11-17T04:42:39.4616996Z test_import_and_guard_reject_ambiguous_or_external_requests (test_server.SimulatorHttpTests) ... ok
+2026-11-17T04:42:39.5056172Z test_order_and_fill_persist_with_an_idempotent_receipt (test_server.SimulatorHttpTests) ... ok
+2026-11-17T04:42:39.6369749Z test_competing_connections_cannot_oversubscribe (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.6935591Z test_cost_basis_dust_preserves_sign_across_tiny_remaining_position (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.7266715Z test_failed_transition_rolls_back_ledger_positions_order_and_event (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.7577576Z test_fee_is_invariant_to_microscopic_fill_partition (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.7869998Z test_halt_persists_and_cancels_do_not_require_market (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.8137768Z test_invalid_fills_leave_all_state_unchanged (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.8480149Z test_local_execution_rechecks_latest_risk_after_market_revaluation (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.8747597Z test_low_decimal_context_and_traps_do_not_change_financial_results (test_service.ServiceTests) ... ok
+2026-11-17T04:42:39.9104052Z test_market_monotonicity_expiry_repricing_and_retry (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.2404212Z test_partial_fill_does_not_reserve_previously_charged_rounding_again (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.2628794Z test_policy_conflict_missing_specs_and_input_limits (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.3012313Z test_reduce_only_quantity_allocation_and_position_change_cancellation (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.3381006Z test_reduction_allowed_under_deficit_and_halt_but_not_equity_destruction (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.3737304Z test_restart_idempotency_and_closed_ids_never_reopen (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.4167367Z test_roundtrip_partial_close_reverse_and_exact_fees (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.4951941Z test_same_order_concurrent_retry_is_one_transition (test_service.ServiceTests) ... ok
+2026-11-17T04:42:40.7043158Z test_corrupt_or_missing_kill_switch_blocks_new_and_reducing_execution (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.7384676Z test_existing_halted_order_cannot_fill_and_reduce_only_remains_strict (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.7610127Z test_legacy_mode_is_explicit_and_cannot_silently_activate_phase_one (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.7920356Z test_live_risk_uses_gross_principal_interest_and_one_rule_version (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.8164529Z test_negative_settled_cash_remains_visible_without_fabricating_loan_principal (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.8493370Z test_pair_required_and_canonical_persisted_policy_cannot_downgrade (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.8773462Z test_perpetual_execution_never_treats_spot_inverse_options_or_multiplier_as_linear (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.9017248Z test_shared_spot_locks_reduce_available_cash_and_risk_not_gross_accounting (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:40.9653282Z test_tick_step_minimum_and_partial_fill_dust_gate_real_execution (test_service_catalog.ServiceCatalogTests) ... ok
+2026-11-17T04:42:41.0177858Z test_loan_recovery_obeys_maintenance_hysteresis (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.0610716Z test_negative_equity_is_bankrupt_and_real_repayment_can_resolve_it (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.1193245Z test_positive_equity_loan_distress_blocks_and_cancels_without_fake_settlement (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.1902265Z test_release_spot_locks_before_deciding_on_existing_perpetual_position (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.2583914Z test_release_spot_locks_then_revalue_prevents_false_loan_liquidation (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.3065196Z test_single_order_requery_preserves_original_id_during_market_outage (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.3629307Z test_spot_cancel_and_supervisor_state_share_one_rollback_boundary (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.4129408Z test_true_loan_distress_remains_blocked_after_spot_cancellation (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.4517393Z test_zero_equity_with_debt_is_blocked_but_empty_account_remains_normal (test_service_credit_supervisor.CreditSupervisorTests) ... ok
+2026-11-17T04:42:41.4734716Z test_low_decimal_context_cannot_change_money_or_input_limits (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.4955813Z test_market_advance_revalues_pending_orders_before_admission (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.5168306Z test_opposite_queued_orders_never_net_margin_reservations (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.5622883Z test_partial_average_and_position_flip_conserve_cash (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.5912293Z test_repriced_pending_order_cannot_authorize_an_insolvent_local_execution (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.6381434Z test_short_average_and_partial_reductions_conserve_cash (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.9459058Z test_split_fills_cannot_multiply_reserved_fee (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:41.9872464Z test_tiny_long_residual_preserves_signed_cost_rounding_dust (test_service_finance.ServiceFinanceTests) ... ok
+2026-11-17T04:42:42.0092014Z test_account_events_apply_predicate_before_limit (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.1128629Z test_concurrent_cycles_generate_one_plan (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.1498237Z test_customer_cannot_cancel_or_forge_supervisor_orders_and_damaged_plan_repairs (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.1875812Z test_distress_cancels_and_queues_once_across_restarts (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.2127879Z test_flat_zero_account_is_normal_and_flat_negative_equity_is_bankrupt (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.2569100Z test_partial_fill_replans_remaining_position_and_market_version (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.3005001Z test_recovery_uses_hysteresis_and_cancels_pending_local_plan (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.3339884Z test_stale_cycle_preserves_pending_plan_and_persisted_freeze (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.3681464Z test_unrepresentable_liquidation_mark_blocks_without_creating_any_orders (test_service_supervisor.ServiceSupervisorTests) ... ok
+2026-11-17T04:42:42.3685801Z test_exact_gross_projection_and_source_reference (test_shadow_adapter.ShadowAdapterTests) ... ok
+2026-11-17T04:42:42.3689914Z test_locked_balance_fails_without_order_reconciliation (test_shadow_adapter.ShadowAdapterTests) ... ok
+2026-11-17T04:42:42.3694384Z test_multiple_positions_never_net (test_shadow_adapter.ShadowAdapterTests) ... ok
+2026-11-17T04:42:42.3698705Z test_unmapped_assets_and_instruments_reject (test_shadow_adapter.ShadowAdapterTests) ... ok
+2026-11-17T04:42:43.4378177Z test_callback_reentrancy_and_pool_wait_are_rejected_without_worker_loss (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.5005214Z test_group_commits_once_with_business_savepoints_and_fifo_cancel (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.5699658Z test_halt_rejects_submit_but_cancel_can_commit_same_group (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.6343003Z test_last_freshness_check_rolls_back_whole_group (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.7373441Z test_missing_or_invalid_active_market_is_a_durable_barrier_failure (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.8013462Z test_ordinary_stale_quote_is_rejection_without_an_integrity_halt (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.8610644Z test_partial_worker_start_failure_joins_already_started_threads (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:43.9292997Z test_pending_cancel_overload_reserved_capacity_and_close_drain (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:44.0338215Z test_real_matching_receipts_positions_and_orders_survive_reopen (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.1870611Z test_receipts_wait_for_commit_and_exclusive_market_publication (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.2693116Z test_rollback_is_group_wide_and_original_ids_retry_after_restart (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.3394720Z test_sqlite_failure_wrapped_as_router_halt_rolls_back_both_written_commands (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.4044444Z test_validation_bounds_do_not_create_workers_or_queue_invalid_commands (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.4942331Z test_workers_parallelize_shards_but_never_overtake_same_shard (test_shard_admission.ShardAdmissionTests) ... ok
+2026-11-17T04:42:46.7761610Z test_detected_same_version_wrong_payload_persists_global_halt_for_other_shards (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:46.8422896Z test_duplicate_ids_inside_one_group_reserve_once_and_conflict_has_no_effect (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.1114800Z test_invalid_published_shard_payload_is_integrity_failure_and_persists_halt (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.3817324Z test_missing_published_shard_market_is_integrity_failure_and_persists_halt (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.4461297Z test_ordinary_stale_publication_refuses_new_risk_without_halt_and_cancels (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.5178311Z test_pending_group_rechecks_halt_when_it_enters_gate_and_still_cancels (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.6036235Z test_post_commit_response_loss_and_cold_router_original_id_retry_are_exactly_once (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.6825663Z test_queue_cancel_reserved_capacity_and_shutdown_preserve_every_running_promise (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:47.8746077Z test_restored_control_missing_funding_claim_halts_before_routed_batch_dml (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:48.0391591Z test_runtime_identity_swap_cannot_use_prequeued_routing_to_write_wrong_shard (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:48.2123512Z test_shared_router_gate_covers_actual_commit_and_exclusive_halt_waits (test_shard_admission_faults.ShardAdmissionFaultTests) ... ok
+2026-11-17T04:42:48.3493289Z test_cached_grouped_route_revalues_and_reopens_uncached_without_layout_change (test_shard_kernel.ShardKernelTests) ... ok
+2026-11-17T04:42:48.3497928Z test_invalid_capacities_fail_before_layout_or_database_creation (test_shard_kernel.ShardKernelTests) ... ok
+2026-11-17T04:42:48.4446144Z test_credit_debt_pool_and_funding_proof_have_explicit_shard_ownership (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.4975899Z test_diagnostics_detected_runtime_identity_fault_persists_global_stop (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.5348551Z test_empty_or_exchanged_database_cannot_impersonate_a_persisted_shard (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.5752709Z test_fixed_hash_layout_policy_and_schema_are_immutable_across_restart (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.6399388Z test_fresh_layout_starts_halted_and_publication_never_auto_activates (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.6943608Z test_funding_proof_claim_survives_ambiguous_local_funding_failure (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.7657718Z test_halt_excludes_inflight_admission_and_other_router_instances (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.7961004Z test_missing_persisted_shard_is_not_silently_recreated (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.8575745Z test_partial_activation_cannot_open_global_gate (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:48.9573776Z test_partial_market_fanout_stays_closed_after_restart_and_new_version_recovers (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:49.0311431Z test_same_shard_matches_atomically_and_cross_shard_transfer_is_rejected (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:49.0792181Z test_unsealed_initialization_is_not_completed_on_restart (test_sharding.ShardingTests) ... ok
+2026-11-17T04:42:49.0980200Z test_control_cannot_be_opened_as_exchange_or_research (test_sharding_authority.ShardAuthorityTests) ... ok
+2026-11-17T04:42:49.1113296Z test_exchange_cannot_be_used_as_router_control (test_sharding_authority.ShardAuthorityTests) ... ok
+2026-11-17T04:42:49.1391309Z test_existing_router_can_claim_legacy_control_without_mutating_funds (test_sharding_authority.ShardAuthorityTests) ... ok
+2026-11-17T04:42:49.2916514Z test_crash_after_global_proof_claim_preserves_exact_ownership_on_restart (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:49.4539355Z test_crash_after_local_funding_commit_does_not_reassign_its_global_proof (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:49.5196866Z test_detected_market_barrier_mismatch_persists_halt_before_returning_error (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:49.8658085Z test_exclusive_halt_in_another_process_waits_for_inflight_routed_admission (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.0269890Z test_process_exit_during_activation_cannot_bypass_global_halt (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.1529506Z test_process_exit_during_initial_layout_does_not_silently_create_missing_shards (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.3504840Z test_process_exit_during_market_fanout_keeps_all_router_instances_closed (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.4215960Z test_restored_older_control_cannot_reuse_an_already_booked_funding_proof (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.4779351Z test_runtime_missing_shard_is_not_recreated_as_an_empty_database (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.5318564Z test_runtime_shard_exchange_is_rejected_before_any_account_mutation (test_sharding_faults.ShardingFaultTests) ... ok
+2026-11-17T04:42:50.5423553Z test_classic_seed_preserves_gross_balances_and_lot_cost (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:50.6129940Z test_extreme_price_move_executes_liquidation_and_replays (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:50.6597427Z test_fifo_partial_fills_and_reversal_keep_exact_cost (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:50.6976373Z test_market_shock_cancels_and_settles_in_one_command (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:50.7108124Z test_parallel_checks_cannot_admit_orders_using_same_margin (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:50.7339848Z test_stale_quotes_block_fills_and_invalid_limit_preserves_reservation (test_simulator.SimulatorTests) ... ok
+2026-11-17T04:42:52.6238872Z test_bounded_outstanding_records_overload_without_losing_arrivals (test_soak.SoakTests) ... ok
+2026-11-17T04:42:52.6871096Z test_dead_process_is_pending_instead_of_claiming_running (test_soak.SoakTests) ... ok
+2026-11-17T04:42:52.8900625Z test_disk_budget_failure_keeps_authority_and_reports_failed (test_soak.SoakTests) ... ok
+2026-11-17T04:42:52.9676001Z test_export_crash_before_cursor_preserves_nonoverlapping_segment_ranges (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.1015933Z test_heartbeat_survives_sidecar_removal_after_directory_listing (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.2836649Z test_interest_commit_before_checkpoint_does_not_accrue_twice (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.4743479Z test_lost_match_receipt_queries_confirmed_partial_quantity_before_retry (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.6521108Z test_lost_order_receipt_replays_original_id_after_checkpoint_gap (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.9581694Z test_partial_non_crossing_and_full_round_have_two_actual_matches_each (test_soak.SoakTests) ... ok
+2026-11-17T04:42:53.9584800Z test_resource_and_rate_bounds (test_soak.SoakTests) ... ok
+2026-11-17T04:42:54.0349691Z test_schema_damage_is_rejected_before_any_constructor_can_repair_it (test_soak.SoakTests) ... ok
+2026-11-17T04:42:54.7216931Z test_short_real_roundtrip_credit_feed_and_readonly_reopen (test_soak.SoakTests) ... ok
+2026-11-17T04:42:54.8393809Z test_single_process_writer_and_original_start_survive_pause_resume (test_soak.SoakTests) ... ok
+2026-11-17T04:42:54.9696565Z test_size_observation_preserves_required_file_and_permission_errors (test_soak.SoakTests) ... ok
+2026-11-17T04:42:56.3937648Z test_unknown_round_preserves_later_queue_without_executing_its_book (test_soak.SoakTests) ... ok
+2026-11-17T04:42:56.3959255Z test_atomic_staging_is_outside_producer_scan_and_leaves_no_temporary_path (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3966706Z test_changed_job_definition_is_rejected_before_status_subprocess (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3969814Z test_changed_original_timing_or_source_and_impossible_clocks_are_rejected (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3971276Z test_exited_or_reused_pid_and_stale_heartbeat_are_observer_alerts (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3986688Z test_final_log_audit_rehashes_every_segment_and_checks_complete_sequence (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3988181Z test_final_review_requires_actual_24h_and_entire_log_audit (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.3989880Z test_mid_round_golden_difference_is_not_reported_as_financial_fault (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5755760Z test_observe_uses_fixed_status_action_and_does_not_change_authority (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5760669Z test_observer_cannot_write_at_producer_root_or_unbounded_rate (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5762171Z test_old_full_replay_cannot_cover_new_financial_activity (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5775071Z test_proc_birth_and_terminal_states_are_checked_independently (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5793696Z test_source_content_must_match_producer_fingerprint (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.5878978Z test_watch_pins_definition_and_never_overwrites_old_observations (test_soak_monitor.SoakMonitorTests) ... ok
+2026-11-17T04:42:56.6341663Z test_actual_pair_settles_two_assets_with_maker_price_and_remaining_locks (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.6741411Z test_cancel_remains_available_during_stale_feed_and_global_halt (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.7653000Z test_concurrent_books_cannot_reserve_the_same_cash (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.8322415Z test_configured_cross_policy_reports_same_spot_freeze_and_settlement (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.8638899Z test_corrupt_order_lock_or_receipt_protection_is_detected (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.9262261Z test_credit_repay_and_spot_sell_compete_for_one_shared_cash_balance (test_spot.SpotTests) ... ok
+2026-11-17T04:42:56.9799332Z test_failure_after_both_balances_change_rolls_back_orders_and_receipt (test_spot.SpotTests) ... ok
+2026-11-17T04:42:57.0354630Z test_lock_blocks_duplicate_sell_and_credit_repayment (test_spot.SpotTests) ... ok
+2026-11-17T04:42:57.0974591Z test_locked_borrowed_asset_cannot_be_repaid_again (test_spot.SpotTests) ... ok
+2026-11-17T04:42:57.1417640Z test_low_decimal_context_cannot_change_cash_or_locks (test_spot.SpotTests) ... ok
+2026-11-17T04:42:57.9062706Z test_microscopic_partial_fills_charge_cumulative_fee_once (test_spot.SpotTests) ... ok
+2026-11-17T04:42:57.9797951Z test_parallel_matchers_commit_one_pair_once (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.0191322Z test_price_priority_is_numeric_and_time_order_chooses_maker (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.0916756Z test_product_metadata_unsupported_mode_precision_and_unpriced_are_rejected (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.1479580Z test_replay_does_not_lose_confirmed_fills_or_reopen_closed_order (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.1850114Z test_restart_idempotency_terminal_ids_and_conflicting_content (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.2297869Z test_self_trade_cancels_newer_order_without_settlement (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.2629822Z test_spot_encumbrance_is_part_of_the_common_margin_gate (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.3049104Z test_supervisor_hook_releases_only_unfilled_obligations_in_outer_transaction (test_spot.SpotTests) ... ok
+2026-11-17T04:42:58.4593337Z test_bounded_concurrent_dml_and_ddl_conserve_balances_and_reopen_cleanly (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:42:58.4994177Z test_existing_public_or_symlink_database_is_rejected_without_modifying_its_bytes (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:42:58.5376851Z test_missing_read_only_targets_never_create_main_database_or_sidecars (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:42:58.9694939Z test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:42:59.4027551Z test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:42:59.8222155Z test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:43:00.4014420Z test_separate_pid_sqlite_writer_stays_busy_until_original_writer_releases (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:43:00.4813352Z test_shard_identity_and_managed_writer_fencing_remain_mandatory (test_sqlite_lock_ownership.SQLiteLockOwnershipTests) ... ok
+2026-11-17T04:43:00.6006480Z test_abrupt_process_exit_rolls_back_uncommitted_writes_and_keeps_commits (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.7796269Z test_concurrent_processes_retry_and_distinct_events_without_lost_updates (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.7863589Z test_configuration_and_connection_contract (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9039982Z test_cross_instance_concurrent_retries_commit_once (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9098251Z test_database_schema_version_cannot_silently_downgrade (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9225284Z test_exactness_and_balance_limit_are_independent_of_decimal_context (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9375223Z test_journal_and_scale_mutation_protection (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9455373Z test_outer_transaction_rollback_includes_ledger_and_business_rows (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9581096Z test_rejected_post_does_not_consume_id_or_change_balances (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9682967Z test_restart_preserves_journal_exact_balances_and_idempotency (test_storage.StorageTests) ... ok
+2026-11-17T04:43:00.9785842Z test_sql_failure_rolls_back_only_ledger_savepoint (test_storage.StorageTests) ... ok
+2026-11-17T04:43:01.0015010Z test_verify_detects_balance_corruption_hash_corruption_and_missing_triggers (test_storage.StorageTests) ... ok
+2026-11-17T04:43:01.0120576Z test_verify_uses_event_net_deltas_as_post_does (test_storage.StorageTests) ... ok
+2026-11-17T04:43:01.0826151Z test_auth_database_peer_preserves_active_reader_lock (test_storage_locks.StorageLockTests) ... ok
+2026-11-17T04:43:01.1528385Z test_bound_shard_peer_preserves_active_reader_lock (test_storage_locks.StorageLockTests) ... ok
+2026-11-17T04:43:01.2161445Z test_database_peer_preserves_active_reader_lock (test_storage_locks.StorageLockTests) ... ok
+2026-11-17T04:43:01.2193242Z test_database_and_sidecars_are_private_even_with_permissive_umask (test_storage_permissions.StoragePermissionTests) ... ok
+2026-11-17T04:43:01.2198686Z test_existing_public_database_and_symlink_are_rejected (test_storage_permissions.StoragePermissionTests) ... ok
+2026-11-17T04:43:01.2231351Z test_permission_change_is_checked_on_each_connection (test_storage_permissions.StoragePermissionTests) ... ok
+2026-11-17T04:43:01.2388833Z test_batch_is_independent_per_shard_and_preserves_input_order (test_store.ShardedStoreTests) ... ok
+2026-11-17T04:43:01.2430806Z test_existing_single_database_is_not_replaced_by_shards (test_store.ShardedStoreTests) ... ok
+2026-11-17T04:43:01.2595782Z test_independent_shards_can_write_while_same_account_conflicts (test_store.ShardedStoreTests) ... ok
+2026-11-17T04:43:01.2874069Z test_stable_routing_and_manifest_checked_on_reopen (test_store.ShardedStoreTests) ... ok
+2026-11-17T04:43:01.2971329Z test_audit_and_retries_survive_reopening_database (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3062190Z test_audit_write_failure_rolls_back_snapshot (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3148062Z test_batch_commits_successes_and_replays_exact_receipts_in_order (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3212905Z test_batch_database_failure_rolls_back_earlier_commands (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3323542Z test_command_ids_are_scoped_to_account (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3403185Z test_compare_and_swap_serializes_independent_connections (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3462505Z test_failed_transition_and_unserializable_result_do_not_mutate_storage (test_store.StoreTests) ... ok
+2026-11-17T04:43:01.3640618Z test_batch_commit_failure_rolls_back_every_account_and_later_command (test_store_commit.StoreCommitTests) ... ok
+2026-11-17T04:43:01.3904467Z test_cross_shard_retry_preserves_other_shards_committed_receipt (test_store_commit.StoreCommitTests) ... ok
+2026-11-17T04:43:01.4034371Z test_single_command_commit_failure_rolls_back_and_retries_once (test_store_commit.StoreCommitTests) ... ok
+2026-11-17T04:43:01.5472864Z test_loader_failure_is_recorded_as_an_error_not_a_fake_success (test_validation_recorder.ValidationRecorderTests) ... ok
+2026-11-17T04:43:01.6924870Z test_passing_tests_cannot_approve_sources_changed_during_execution (test_validation_recorder.ValidationRecorderTests) ... ok
+2026-11-17T04:43:01.8493685Z test_raw_os_child_stderr_is_archived_and_real_test_count_retained (test_validation_recorder.ValidationRecorderTests) ... ok
+2026-11-17T04:43:02.0009227Z test_real_failure_count_and_worker_exit_are_preserved (test_validation_recorder.ValidationRecorderTests) ... ok
+2026-11-17T04:43:02.1510154Z test_uncommitted_sources_cannot_be_certified_as_the_recorded_commit (test_validation_recorder.ValidationRecorderTests) ... ok
+2026-11-17T04:43:02.3528180Z test_six_repeated_runs_preserve_unique_raw_results_and_failed_gates (test_wal_diagnostics.WALDiagnosticEvidenceTests) ... ok
+2026-11-17T04:43:02.3668352Z test_concurrent_subscription_is_fenced (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.3879393Z test_crashed_worker_lease_can_be_taken_over_after_expiry (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.4128652Z test_cursor_survives_restart_and_subscriptions_are_independent (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.4284593Z test_expired_lease_cannot_checkpoint (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.4432874Z test_failure_redelivers_without_skipping_committed_checkpoint (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.4646054Z test_handler_mutation_cannot_change_checkpoint_sequence (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:02.4816536Z test_missing_or_reordered_events_fail_closed (test_worker.WorkerTests) ... ok
+2026-11-17T04:43:03.5484133Z test_initialization_near_expiry_renews_before_ready_and_executes_commands (test_worker_startup_lease.StartupLeaseTests) ... ok
+2026-11-17T04:43:04.3527327Z test_initialization_past_expiry_fails_without_ready_or_reviving_generation (test_worker_startup_lease.StartupLeaseTests) ... Process SpawnProcess-102:
+2026-11-17T04:43:04.3532395Z Traceback (most recent call last):
+2026-11-17T04:43:04.3533411Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 314, in _bootstrap
+2026-11-17T04:43:04.3534327Z     self.run()
+2026-11-17T04:43:04.3535072Z   File "/opt/hostedtoolcache/Python/3.10.22/x64/lib/python3.10/multiprocessing/process.py", line 108, in run
+2026-11-17T04:43:04.3535917Z     self._target(*self._args, **self._kwargs)
+2026-11-17T04:43:04.3536912Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_worker_startup_lease.py", line 25, in _delayed_owner
+2026-11-17T04:43:04.3538081Z     runtime._run_worker(directory, 0, settings, stop, ready, parent_pid, gate,
+2026-11-17T04:43:04.3539159Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 341, in _run_worker
+2026-11-17T04:43:04.3540059Z     fence.renew(token, settings["lease_seconds"])
+2026-11-17T04:43:04.3540899Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/writer_fence.py", line 370, in renew
+2026-11-17T04:43:04.3542017Z     now, boot = _assert_token(self.database, state, token)
+2026-11-17T04:43:04.3542948Z   File "/home/runner/work/uta-unified-account/uta-unified-account/uta/writer_fence.py", line 207, in _assert_token
+2026-11-17T04:43:04.3544092Z     raise WriterFenceError("lease_expired", "writer lease expired; renew cannot revive it")
+2026-11-17T04:43:04.3545000Z uta.writer_fence.WriterFenceError: writer lease expired; renew cannot revive it
+2026-11-17T04:43:04.3744573Z ok
+2026-11-17T04:43:04.4207424Z test_boot_change_and_clock_regression_are_fail_closed (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.4617184Z test_bound_token_cannot_fall_back_to_legacy_when_managed_marker_is_missing (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.5015418Z test_caught_control_ddl_denial_still_rolls_back_lease_writes (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.5405047Z test_changed_control_trigger_definition_is_corruption (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.5959402Z test_control_and_read_roles_cannot_write_finance_and_financial_token_cannot_edit_lease (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.6748313Z test_control_cannot_add_lease_triggers_and_legal_lease_operations_conserve_finance (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.7167227Z test_copy_to_another_path_cannot_reuse_managed_authority (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.8003091Z test_enable_irreversible_and_old_exchange_credit_matcher_ledger_writers_are_denied (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.8491158Z test_expiring_lease_at_commit_rolls_back_financial_rows_and_version (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.8986390Z test_expiry_equal_now_prevents_renew_and_reacquire_increments_generation (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.9459500Z test_inbox_bootstrap_allows_only_required_implicit_sqlite_schema (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:04.9817739Z test_invalid_settings_and_no_managed_worker_assertion (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.0557271Z test_live_token_writes_and_release_then_monotonic_acquire_fences_old_token (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.0909042Z test_managed_ledger_refuses_bare_sqlite_supplied_connection (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.1315429Z test_old_unbound_ddl_and_swallowed_denial_cannot_commit (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.1729418Z test_process_identity_cannot_be_transferred_by_serializing_a_token (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.6421644Z test_real_expired_process_resumes_but_cannot_write_after_takeover (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.7471640Z test_real_processes_compete_and_only_one_acquires_a_live_lease (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.7952859Z test_unknown_control_trigger_is_corruption_without_automatic_repair (test_writer_fence.WriterFenceTests) ... ok
+2026-11-17T04:43:05.8547846Z test_all_guard_metadata_disappearing_cannot_be_misidentified_as_old_format (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.0083104Z test_current_writer_settles_real_match_and_new_tables_get_persistent_guards (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.0718806Z test_missing_guard_is_rejected_without_startup_or_upgrade_repair (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.2712944Z test_old_binary_started_after_activation_cannot_initialize_a_writer (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.3375183Z test_python_only_managed_format_requires_explicit_offline_upgrade (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.4814466Z test_real_old_process_objects_cannot_write_after_management_activation (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.5343171Z test_trigger_checks_expiry_during_reused_sql_statement_and_rolls_back (test_writer_fence_legacy.LegacyBinaryFenceTests) ... ok
+2026-11-17T04:43:06.5495841Z test_committed_new_table_cannot_split_an_existing_read_guard_snapshot (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.5611233Z test_delete_mode_read_preserves_bytes_journal_mode_and_sentinel (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.6542948Z test_diagnostic_read_preserves_another_active_sqlite_kernel_lock (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.6642616Z test_existing_empty_file_read_does_not_initialize_pages_or_sidecars (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.6758393Z test_missing_read_only_authority_creates_neither_database_nor_sidecar (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.6883978Z test_pre_begin_schema_cache_cannot_override_the_new_transaction_snapshot (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.7782581Z test_preflight_does_not_release_an_active_sqlite_posix_lock (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.7905063Z test_real_unregistered_table_remains_corruption_and_is_not_repaired (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.8022385Z test_uri_open_does_not_recreate_a_path_removed_after_validation (test_writer_fence_snapshots.GuardSnapshotTests) ... ok
+2026-11-17T04:43:06.8023298Z 
+2026-11-17T04:43:06.8023558Z ======================================================================
+2026-11-17T04:43:06.8024627Z ERROR: test_new_parent_uses_registered_birth_identity_to_recover_sigstopped_orphans (test_durable_process.DurableProcessTests)
+2026-11-17T04:43:06.8025683Z ----------------------------------------------------------------------
+2026-11-17T04:43:06.8026258Z Traceback (most recent call last):
+2026-11-17T04:43:06.8028024Z   File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_durable_process.py", line 365, in test_new_parent_uses_registered_birth_identity_to_recover_sigstopped_orphans
+2026-11-17T04:43:06.8029347Z     os.kill(prior["workers"][0], signal.SIGSTOP)
+2026-11-17T04:43:06.8029871Z ProcessLookupError: [Errno 3] No such process
+2026-11-17T04:43:06.8030198Z 
+2026-11-17T04:43:06.8030436Z ----------------------------------------------------------------------
+2026-11-17T04:43:06.8030952Z Ran 899 tests in 134.329s
+2026-11-17T04:43:06.8031176Z 
+2026-11-17T04:43:06.8031306Z FAILED (errors=1)
+2026-11-17T04:43:06.8483761Z ##[error]Process completed with exit code 1.
+2026-11-17T04:43:06.8706930Z Post job cleanup.
+2026-11-17T04:43:06.9602105Z [command]/usr/bin/git version
+2026-11-17T04:43:06.9661731Z git version 2.56.1
+2026-11-17T04:43:06.9733354Z Temporarily overriding HOME='/home/runner/work/_temp/e081cb9a-d0e8-45e1-9d11-12ac9e255f78' before making global git config changes
+2026-11-17T04:43:06.9735212Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-17T04:43:06.9745047Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-17T04:43:06.9797705Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-17T04:43:06.9846105Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-17T04:43:07.0188577Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-17T04:43:07.0222014Z http.https://github.com/.extraheader
+2026-11-17T04:43:07.0235551Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-17T04:43:07.0292678Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-17T04:43:07.0636845Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-17T04:43:07.0678625Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-17T04:43:07.1148394Z Cleaning up orphan processes
+2026-11-17T04:43:07.1525101Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
