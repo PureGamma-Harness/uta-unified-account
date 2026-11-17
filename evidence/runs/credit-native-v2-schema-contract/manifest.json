@@ -1,0 +1,55 @@
+{
+  "base_commit": "899c91d0a032d88cc4cb8c73ffb09cb2d1bd7236",
+  "cpu_affinity": [
+    4
+  ],
+  "database_created": false,
+  "evidence_sha256": {
+    "catalog-raw.json": "192bf17d63ec93cbc9c8bacaa22a85e93b22c825208da2e9e55f084654e20602",
+    "check_catalog.py": "a28216a92008f7925b1b281c950b7d5260c40b182a849dce7258bb7fb731390f",
+    "final-catalog-raw.json": "70098eda6f0802f0c6ebbc5b8312e1b1ffbfe06a160b46fb222c96487bc1cc03"
+  },
+  "final_actual_exit": 0,
+  "final_command": "taskset -c 4 timeout 5s python3 -W error::ResourceWarning evidence/runs/credit-native-v2-schema-contract/check_catalog.py",
+  "final_run": {
+    "db_created": false,
+    "elapsed_seconds": 0.0019859429958160035,
+    "ended_at": "2026-11-17T12:37:17.461471+00:00",
+    "financial_admission": false,
+    "immutable_trigger_count": 18,
+    "index_count": 2,
+    "kind": "syntax_and_catalog_only",
+    "marker_is_only_compiled_text": true,
+    "positive_apis_present": false,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "source_sha256": "80445b1b7e2507db4c15c50f0798cbaa5922b1269e72a244afe629e8bc5a849f",
+    "sql_executed": false,
+    "started_at": "2026-11-17T12:37:17.459483+00:00",
+    "table_count": 6
+  },
+  "initial_development_raw": "catalog-raw.json",
+  "initial_development_scope": "Earlier syntax/catalog-only output before capability_id/static-descriptor separation; no SQL and no runtime authorization. Initial unstaged source hash was not retained. Final output binds final exact source.",
+  "initial_development_source_hash": null,
+  "kind": "native_v2_contract_only_no_positive_capability",
+  "local_dependency_copies": [
+    "084e29e",
+    "641b04a"
+  ],
+  "native_acceptance_gates": "NV2-01 through NV2-10 ALL PENDING",
+  "parent_audit_dependencies": [
+    "3a434f2d33f7fcf020f31cf78cc59f1388a99031",
+    "aec453592e08f4f8d17aeab4d922a2fe6f97b0c5"
+  ],
+  "parent_before_own": "641b04aad3fc1dca0b44d5d9322cb8133d234da9",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "positive_apis_present": false,
+  "production_approved": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "recorded_at": "2026-11-17T12:37:33.579137+00:00",
+  "runtime_fence_modified": false,
+  "source_sha256": {
+    "docs/credit-native-v2-schema-contract.md": "600289aa0fbbe71091e7270ae567394333fea0576655ce18b340857abcdb0dad",
+    "uta/credit_native_v2.py": "80445b1b7e2507db4c15c50f0798cbaa5922b1269e72a244afe629e8bc5a849f"
+  },
+  "sql_executed": false
+}
