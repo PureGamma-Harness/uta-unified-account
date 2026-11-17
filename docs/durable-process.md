@@ -141,6 +141,8 @@ processes = DurableProcessRouter.take_over(
 
 新增真实过程测试使用一个独立 coordinator，保留已成功接纳的原挂单；把两个子进程 SIGSTOP，其中一个确认持有 router SH，再 SIGKILL coordinator。新父进程不发人工 SIGCONT，以持久出生事实回收两个旧进程，启动新 PID、重新发布/激活，再由新对手单与原挂单真实成交，原 command 回执保持不变。生命周期信号改用 FD 管道，避免该破坏性测试依赖父进程清理命名 semaphore。它不把这些 IPC 当作持久命令来源。
 
+该测试的旧 coordinator 在报告 PID 前，先于已知空闲点持有自身 supervisor mutex，防止测试布置故障时旧监督器已正常回收过期 owner，导致待暂停的 PID 被替换。夹具随后通过 pidfd 发出 SIGSTOP 并确认 `/proc` 的停止状态，保留真实 SH/SQLite 锁竞争、父进程 SIGKILL 和过期孤儿恢复。异常路径也关闭测试持有的数据库连接，并用 pidfd 等待旧 worker 退出后再清理目录；不把删除目录成功当作进程已退出。
+
 ### 历史二进制及格式升级
 
 当前候选已接入存储组的持久 SQL guard 格式 1：实际旧 `ad3f5b8` 源码包无受控 UDF 时也会由金融表触发器拒绝。`tests/test_writer_fence_legacy.py` 的七项实际历史进程验证在本分支通过；最终合入仍以独立组与整体回归为准。运行器遇到 guard 格式 0 会 fail closed 要求显式离线 `upgrade_guards()`，不会自动升级、重新绑定路径或把旧 snapshot 当作当前 authority。出生登记解决的是本机相关进程回收，不替代持久 SQL guard，也不提供 OS 所有者之外的安全隔离。

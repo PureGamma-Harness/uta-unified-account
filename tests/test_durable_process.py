@@ -7,6 +7,7 @@ import signal
 import sqlite3
 import multiprocessing
 from pathlib import Path
+import select
 from tempfile import TemporaryDirectory
 from time import monotonic, sleep
 import unittest
@@ -32,9 +33,14 @@ def _orphan_coordinator(directory, buyer, report):
     router.set_kill_switch(False, timeout=8)
     router.submit_order(buyer, "orphan-original", "resting", "X", D(1), D(100))
     receipt = router.wait("orphan-original", account_id=buyer, timeout=8)
-    report.send({"parent": os.getpid(), "workers": [router.worker_pid(i) for i in range(2)], "receipt": receipt})
-    while True:
-        sleep(1)
+    # Quiesce monitoring at an idle point while the test stages the combined
+    # fault. Otherwise the live supervisor correctly reaps an expired worker
+    # before the test can kill the parent and create the intended orphan state.
+    with router._mutex:
+        report.send({"parent": os.getpid(), "workers": [router.worker_pid(i) for i in range(2)],
+                     "receipt": receipt, "monitor_quiesced": True})
+        while True:
+            sleep(1)
 
 
 class DurableProcessTests(unittest.TestCase):
@@ -342,13 +348,24 @@ class DurableProcessTests(unittest.TestCase):
         self.assertTrue(receive.poll(8))
         prior = receive.recv()
         self.assertEqual(prior["receipt"]["state"], "SUCCEEDED")
+        self.assertTrue(prior["monitor_quiesced"])
+        connection, worker_fds = None, []
         try:
+            for pid in prior["workers"]:
+                try:
+                    worker_fds.append(os.pidfd_open(pid))
+                except ProcessLookupError:
+                    worker_fds.append(None)
+            self.assertTrue(all(descriptor is not None for descriptor in worker_fds), prior)
+            def stopped(pid):
+                return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0] == "T"
             # Pause shard 1 at an EX safe point; only shard 0 can then take SH
             # and block on our DB lock. Stop it there before killing its parent.
             with self.router._control._lock(exclusive=True, timeout=3):
                 connection = sqlite3.connect(self.router._database(0).path, isolation_level=None)
                 connection.execute("BEGIN IMMEDIATE")
-                os.kill(prior["workers"][1], signal.SIGSTOP)
+                signal.pidfd_send_signal(worker_fds[1], signal.SIGSTOP)
+                self.eventually(lambda: stopped(prior["workers"][1]))
             def held_by_zero():
                 descriptor = os.open(self.path / "router.lock", os.O_RDWR)
                 try:
@@ -360,9 +377,11 @@ class DurableProcessTests(unittest.TestCase):
                 finally:
                     os.close(descriptor)
             self.eventually(held_by_zero)
-            os.kill(prior["workers"][0], signal.SIGSTOP)
+            signal.pidfd_send_signal(worker_fds[0], signal.SIGSTOP)
+            self.eventually(lambda: stopped(prior["workers"][0]))
             connection.rollback()
             connection.close()
+            connection = None
             coordinator.kill()
             coordinator.join(timeout=3)
             recovered = DurableProcessRouter(self.path, lease_seconds=.6, poll_interval=.01)
@@ -384,12 +403,25 @@ class DurableProcessTests(unittest.TestCase):
         finally:
             if coordinator.is_alive():
                 coordinator.kill()
-                coordinator.join(timeout=3)
-            for pid in prior["workers"]:
+            coordinator.join(timeout=3)
+            exited = []
+            for descriptor in worker_fds:
+                if descriptor is None:
+                    continue
                 try:
-                    os.kill(pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
+                    try:
+                        signal.pidfd_send_signal(descriptor, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    observer = select.poll()
+                    observer.register(descriptor, select.POLLIN)
+                    exited.append(bool(observer.poll(3000)))
+                finally:
+                    os.close(descriptor)
+            if connection is not None:
+                connection.rollback()
+                connection.close()
+            self.assertTrue(all(exited), "registered worker did not exit before fixture cleanup")
 
     def test_fresh_required_audit_is_persisted_and_explicit_false_is_development_only(self):
         self.assertTrue(self.router.decision_audit_required)
