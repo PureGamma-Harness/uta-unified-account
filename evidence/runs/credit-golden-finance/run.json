@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/review_credit_golden_finance.py",
+        "--output",
+        "evidence/runs/credit-golden-finance/review.json"
+      ],
+      "cwd": "/workspace/uta-credit-golden-finance",
+      "elapsed_seconds": 0.035774,
+      "exit_code": 0,
+      "stderr": "ARITHMETIC ONLY: cases=10; numeric_fields=48; mismatches=0; budget_states=36; NATIVE/PRODUCTION NOT EXECUTED; NO-GO\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_credit_golden_finance_reference.py",
+        "-v"
+      ],
+      "cwd": "/workspace/uta-credit-golden-finance",
+      "elapsed_seconds": 0.10356,
+      "exit_code": 0,
+      "stderr": "test_bad_global_certificate_is_rejected_before_arithmetic (test_credit_golden_finance_reference.IndependentOracleTests.test_bad_global_certificate_is_rejected_before_arithmetic) ... ok\ntest_changing_input_moves_oracle_without_using_expected (test_credit_golden_finance_reference.IndependentOracleTests.test_changing_input_moves_oracle_without_using_expected) ... ok\ntest_expected_value_mutation_is_detected (test_credit_golden_finance_reference.IndependentOracleTests.test_expected_value_mutation_is_detected) ... ok\ntest_gross_assets_are_haircut_before_full_debt_subtraction (test_credit_golden_finance_reference.IndependentOracleTests.test_gross_assets_are_haircut_before_full_debt_subtraction) ... ok\ntest_model_proves_only_static_truth_caps_and_exposes_unsafe_reclamation (test_credit_golden_finance_reference.IndependentOracleTests.test_model_proves_only_static_truth_caps_and_exposes_unsafe_reclamation) ... ok\ntest_opening_interest_repayment_is_not_all_principal_pool_cash (test_credit_golden_finance_reference.IndependentOracleTests.test_opening_interest_repayment_is_not_all_principal_pool_cash) ... ok\ntest_zero_minor_unit_rounding_and_case_branching_are_explicit (test_credit_golden_finance_reference.IndependentOracleTests.test_zero_minor_unit_rounding_and_case_branching_are_explicit) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.014s\n\nOK\n",
+      "stdout": ""
+    }
+  ],
+  "file_sha256": {
+    "docs/managed-credit-capability-design.md": "3a8e70a261d8d11291f9cb634955e3ea6931037d5c8c13d6e0269b756efbd7dd",
+    "docs/managed-credit-golden-finance-review.md": "7fed56d96888a896e6d6dd92cc674bd5d65cb105feadf3a38d12b545785b2970",
+    "evidence/runs/credit-golden-finance/review.json": "314a988d1918b55ba402bc4e539bb4f3de795873cb8420c8a8096e54dbe6b0bd",
+    "scripts/review_credit_golden_finance.py": "b0a4d9eb5e0911c420a6690279bd2b1a596d483cff84bdc937e4985f762567b1",
+    "tests/fixtures/managed_credit_v1_golden.json": "494a6a88397f9677cdb82bb1bcedf9338a0441cd5df6cd5acfe2fd28209be260",
+    "tests/test_credit_golden_finance_reference.py": "e2c1023ebc2f1884bea64fd7623748cc3dcf3d3699160d5e2972934c85acbb34"
+  },
+  "frozen_commit": "7aa48202ddc4663a1e815609716c1a6b7110289f",
+  "python": "3.12.14",
+  "status": "PURE_STDLIB_REFERENCE_ONLY_NO_SQL_NO_PRODUCTION_EXECUTION_NO_GO"
+}

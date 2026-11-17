@@ -1,0 +1,1367 @@
+{
+  "allocation_certificate": {
+    "allocations_BTC": {
+      "0": "0.5",
+      "1": "0.5"
+    },
+    "global_budget_BTC": "1",
+    "sum_BTC": "1",
+    "sum_le_global": true
+  },
+  "cases": {
+    "CREDIT-MANUAL-001": {
+      "after": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.1",
+          "available_margin_USD": "84",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.26",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "0.7",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "before": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.5",
+          "available_margin_USD": "100",
+          "collateral_value_USD": "100",
+          "debt_value_USD": "0",
+          "gross_asset_value_USD": "100",
+          "initial_margin_USD": "0",
+          "loan_value_USD": "50",
+          "local_asset_headroom_BTC": "100",
+          "maintenance_margin_USD": "0",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.5",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "10",
+            "account_total_debt_BTC": "100",
+            "conservative_available_margin_BTC": "5/6",
+            "loan_to_value_BTC": "0.5"
+          },
+          "risk_equity_USD": "100",
+          "shard_budget_headroom_BTC": "0.5"
+        },
+        "state": {
+          "customer_BTC": "0",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "1",
+          "principal_BTC": "0",
+          "principal_receivable_BTC": "0",
+          "shard_used_BTC": "0"
+        }
+      },
+      "posting_sum_BTC": "0",
+      "predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": true,
+        "positive_amount": true,
+        "quantity_step": true,
+        "shard_budget": true
+      },
+      "reference_BTC_postings": {
+        "customer_cash": "0.4",
+        "pool_cash": "-0.4",
+        "principal_liability": "-0.4",
+        "principal_receivable": "0.4"
+      },
+      "request_BTC": "0.4"
+    },
+    "CREDIT-MANUAL-002": {
+      "attempted_shard_debt_BTC": "0.51",
+      "before_and_after_if_rejected": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.1",
+          "available_margin_USD": "84",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.26",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "0.7",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "mathematical_rejection": true,
+      "predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": true,
+        "positive_amount": true,
+        "quantity_step": true,
+        "shard_budget": false
+      },
+      "request_BTC": "0.11"
+    },
+    "CREDIT-MANUAL-003": {
+      "after": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0",
+          "available_margin_USD": "80",
+          "collateral_value_USD": "140",
+          "debt_value_USD": "50",
+          "gross_asset_value_USD": "150",
+          "initial_margin_USD": "10",
+          "loan_value_USD": "70",
+          "local_asset_headroom_BTC": "99.5",
+          "maintenance_margin_USD": "5",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.2",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.5",
+            "account_total_debt_BTC": "99.5",
+            "conservative_available_margin_BTC": "2/3",
+            "loan_to_value_BTC": "0.2"
+          },
+          "risk_equity_USD": "90",
+          "shard_budget_headroom_BTC": "0"
+        },
+        "state": {
+          "customer_BTC": "0.5",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.5",
+          "principal_BTC": "0.5",
+          "principal_receivable_BTC": "0.5",
+          "shard_used_BTC": "0.5"
+        }
+      },
+      "before": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.1",
+          "available_margin_USD": "84",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.26",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "0.7",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "request_BTC": "0.1"
+    },
+    "CREDIT-MANUAL-004": {
+      "after_request_1": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.02",
+          "available_margin_USD": "2.8",
+          "collateral_value_USD": "134.4",
+          "debt_value_USD": "43",
+          "gross_asset_value_USD": "143",
+          "initial_margin_USD": "8.6",
+          "loan_value_USD": "67.2",
+          "local_asset_headroom_BTC": "99.57",
+          "maintenance_margin_USD": "4.3",
+          "order_reserve_USD": "80",
+          "portfolio_quote_BTC": "0.02",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.57",
+            "account_total_debt_BTC": "99.57",
+            "conservative_available_margin_BTC": "7/300",
+            "loan_to_value_BTC": "0.242"
+          },
+          "risk_equity_USD": "91.4",
+          "shard_budget_headroom_BTC": "0.07"
+        },
+        "state": {
+          "customer_BTC": "0.43",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "80",
+          "pool_BTC": "0.57",
+          "principal_BTC": "0.43",
+          "principal_receivable_BTC": "0.43",
+          "shard_used_BTC": "0.43"
+        }
+      },
+      "before": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.03",
+          "available_margin_USD": "4",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "80",
+          "portfolio_quote_BTC": "0.03",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "1/30",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "80",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "computed_order_reserve_USD": "80",
+      "implicit_multiplier": "1; instrument/symbol/side/product status/tick/min-notional are not supplied",
+      "pre_step_margin_bound_BTC": "1/30",
+      "request_0_predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": false,
+        "positive_amount": true,
+        "quantity_step": true,
+        "shard_budget": true
+      },
+      "request_1_predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": true,
+        "positive_amount": true,
+        "quantity_step": true,
+        "shard_budget": true
+      }
+    },
+    "CREDIT-MANUAL-005": {
+      "alternative_second_after": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0",
+          "available_margin_USD": "92",
+          "collateral_value_USD": "116",
+          "debt_value_USD": "20",
+          "gross_asset_value_USD": "120",
+          "initial_margin_USD": "4",
+          "loan_value_USD": "58",
+          "local_asset_headroom_BTC": "99.5",
+          "maintenance_margin_USD": "2",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.38",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.8",
+            "account_total_debt_BTC": "99.8",
+            "conservative_available_margin_BTC": "23/30",
+            "loan_to_value_BTC": "0.38"
+          },
+          "risk_equity_USD": "96",
+          "shard_budget_headroom_BTC": "0"
+        },
+        "state": {
+          "customer_BTC": "0.2",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.5",
+          "principal_BTC": "0.2",
+          "principal_receivable_BTC": "0.5",
+          "shard_used_BTC": "0.5"
+        }
+      },
+      "first_after": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.2",
+          "available_margin_USD": "88",
+          "collateral_value_USD": "124",
+          "debt_value_USD": "30",
+          "gross_asset_value_USD": "130",
+          "initial_margin_USD": "6",
+          "loan_value_USD": "62",
+          "local_asset_headroom_BTC": "99.7",
+          "maintenance_margin_USD": "3",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.32",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.7",
+            "account_total_debt_BTC": "99.7",
+            "conservative_available_margin_BTC": "11/15",
+            "loan_to_value_BTC": "0.32"
+          },
+          "risk_equity_USD": "94",
+          "shard_budget_headroom_BTC": "0.2"
+        },
+        "state": {
+          "customer_BTC": "0.3",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.7",
+          "principal_BTC": "0.3",
+          "principal_receivable_BTC": "0.3",
+          "shard_used_BTC": "0.3"
+        }
+      },
+      "normalized_inputs_not_machine_supplied": {
+        "accounts": "two distinct accounts, each USD100, no BTC/debt/interest/freeze/positions/orders",
+        "opening_pool_BTC": "1",
+        "opening_shard_debt_BTC": "0",
+        "requests_BTC": [
+          "0.3",
+          "0.3"
+        ],
+        "shard": 0
+      },
+      "second_before": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.2",
+          "available_margin_USD": "100",
+          "collateral_value_USD": "100",
+          "debt_value_USD": "0",
+          "gross_asset_value_USD": "100",
+          "initial_margin_USD": "0",
+          "loan_value_USD": "50",
+          "local_asset_headroom_BTC": "99.7",
+          "maintenance_margin_USD": "0",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.5",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "10",
+            "account_total_debt_BTC": "100",
+            "conservative_available_margin_BTC": "5/6",
+            "loan_to_value_BTC": "0.5"
+          },
+          "risk_equity_USD": "100",
+          "shard_budget_headroom_BTC": "0.2"
+        },
+        "state": {
+          "customer_BTC": "0",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.7",
+          "principal_BTC": "0",
+          "principal_receivable_BTC": "0.3",
+          "shard_used_BTC": "0.3"
+        }
+      },
+      "second_request_predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": true,
+        "positive_amount": true,
+        "quantity_step": true,
+        "shard_budget": false
+      }
+    },
+    "CREDIT-MANUAL-006": {
+      "allocation_sum_BTC": "1",
+      "current_global_gross_debt_BTC": "0.5",
+      "global_budget_BTC": "1",
+      "hypothetical_after_global_gross_debt_BTC": "0.51",
+      "local_budget_predicate": false,
+      "local_shard0_headroom_BTC": "0",
+      "normalized_prose_gross_debt_BTC": {
+        "0": "0.5",
+        "1": "0"
+      },
+      "other_gates": "not evaluable: customer, principal/interest split, pool, receipts and risk state are absent"
+    },
+    "CREDIT-MANUAL-007": {
+      "after": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.2",
+          "available_margin_USD": "88",
+          "collateral_value_USD": "124",
+          "debt_value_USD": "30",
+          "gross_asset_value_USD": "130",
+          "initial_margin_USD": "6",
+          "loan_value_USD": "62",
+          "local_asset_headroom_BTC": "99.7",
+          "maintenance_margin_USD": "3",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.32",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.7",
+            "account_total_debt_BTC": "99.7",
+            "conservative_available_margin_BTC": "11/15",
+            "loan_to_value_BTC": "0.32"
+          },
+          "risk_equity_USD": "94",
+          "shard_budget_headroom_BTC": "0.2"
+        },
+        "state": {
+          "customer_BTC": "0.3",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.7",
+          "principal_BTC": "0.3",
+          "principal_receivable_BTC": "0.3",
+          "shard_used_BTC": "0.3"
+        }
+      },
+      "before": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.1",
+          "available_margin_USD": "84",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.26",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "0.7",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "repay_BTC": "0.1",
+      "repay_arithmetic_market_reads": 0,
+      "risk_values_note": "reference valuation at fixed fixture price; repayment arithmetic does not call risk or need a live price"
+    },
+    "CREDIT-MANUAL-008": {
+      "arithmetic_status": "NOT_COMPUTABLE_FROM_CASE_INPUT",
+      "missing_inputs": [
+        "initial account/shard/pool snapshot",
+        "attempted asset/amount",
+        "exact failure stage",
+        "actual persisted tuple and transaction status"
+      ],
+      "native_status": "NOT_EXECUTED: every expected boolean requires actual native/COMMIT/rollback/reopen evidence"
+    },
+    "CREDIT-MANUAL-009": {
+      "conditional_original_commit_truth": {
+        "risk": {
+          "accounting_equity_USD": "100",
+          "authorized_quote_BTC": "0.1",
+          "available_margin_USD": "84",
+          "collateral_value_USD": "132",
+          "debt_value_USD": "40",
+          "gross_asset_value_USD": "140",
+          "initial_margin_USD": "8",
+          "loan_value_USD": "66",
+          "local_asset_headroom_BTC": "99.6",
+          "maintenance_margin_USD": "4",
+          "order_reserve_USD": "0",
+          "portfolio_quote_BTC": "0.26",
+          "portfolio_quote_bounds_BTC": {
+            "account_principal_BTC": "9.6",
+            "account_total_debt_BTC": "99.6",
+            "conservative_available_margin_BTC": "0.7",
+            "loan_to_value_BTC": "0.26"
+          },
+          "risk_equity_USD": "92",
+          "shard_budget_headroom_BTC": "0.1"
+        },
+        "state": {
+          "customer_BTC": "0.4",
+          "customer_USD": "100",
+          "interest_BTC": "0",
+          "interest_cash_BTC": "0",
+          "interest_receivable_BTC": "0",
+          "order_reserve_USD": "0",
+          "pool_BTC": "0.6",
+          "principal_BTC": "0.4",
+          "principal_receivable_BTC": "0.4",
+          "shard_used_BTC": "0.4"
+        }
+      },
+      "reference_retry": "identity operation only if original canonical CID is proven committed; no executor was called",
+      "rollback_branch": "cannot reuse committed snapshot; confirm authoritative PENDING before a new transaction on original CID",
+      "unknown_query_branch": "NO RESULT / BLOCK DEPENDENT ACTIONS; do not assume zero debt or allocate a new CID"
+    },
+    "CREDIT-MANUAL-010": {
+      "predicates": {
+        "local_asset_limit": true,
+        "pool_cash": true,
+        "portfolio_quote": true,
+        "positive_amount": true,
+        "quantity_step": false,
+        "shard_budget": true
+      },
+      "reference_policy": "reject without changing amount; actual no-effect guarantee is unexecuted",
+      "request_BTC": "0.00000001",
+      "request_minor_units": 1,
+      "step_minor_units": 1000000
+    }
+  },
+  "explicit_reference_assumptions": [
+    "all starting_after references branch independently from a freshly recalculated case001, never cumulative file order",
+    "default shard0; complete immutable two-shard allocation certificate .5+.5<=1; no additional local debt",
+    "zero frozen assets, deficits, unrealized PnL, positions and fees unless explicitly introduced",
+    "flat collateral factors, USD reporting/settlement, linear contract multiplier1 for case004",
+    "pool and matching opening receivable amounts are assumed reconciled; funding-source ownership is not supplied",
+    "case005 prose is normalized explicitly; case006 validates budget predicate only; case008 has no numeric oracle",
+    "reason strings/outcomes are design labels, not an implemented API contract"
+  ],
+  "frozen_commit": "7aa48202ddc4663a1e815609716c1a6b7110289f",
+  "numeric_field_comparisons": [
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "40000000",
+      "field": "expected.borrow_units",
+      "fixture": "40000000",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "100",
+      "field": "expected.cash.USD",
+      "fixture": "100",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.4",
+      "field": "expected.cash.BTC",
+      "fixture": "0.4",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.4",
+      "field": "expected.principal_BTC",
+      "fixture": "0.4",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0",
+      "field": "expected.interest_BTC",
+      "fixture": "0",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.6",
+      "field": "expected.pool_cash_BTC",
+      "fixture": "0.6",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.4",
+      "field": "expected.principal_receivable_BTC",
+      "fixture": "0.4",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "-0.4",
+      "field": "expected.principal_liability_ledger_BTC",
+      "fixture": "-0.4",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "100",
+      "field": "expected.accounting_equity_USD",
+      "fixture": "100",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "132",
+      "field": "expected.collateral_value_USD",
+      "fixture": "132",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "66",
+      "field": "expected.loan_value_USD",
+      "fixture": "66",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "40",
+      "field": "expected.debt_value_USD",
+      "fixture": "40",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "92",
+      "field": "expected.risk_equity_USD",
+      "fixture": "92",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "8",
+      "field": "expected.initial_margin_USD",
+      "fixture": "8",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "4",
+      "field": "expected.maintenance_margin_USD",
+      "fixture": "4",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "84",
+      "field": "expected.available_margin_USD",
+      "fixture": "84",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.1",
+      "field": "expected.shard_budget_headroom_BTC",
+      "fixture": "0.1",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0",
+      "field": "expected.new_order_margin_USD",
+      "fixture": "0",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.26",
+      "field": "expected.next_portfolio_quote_BTC",
+      "fixture": "0.26",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-001",
+      "computed": "0.1",
+      "field": "expected.next_authorized_quote_including_budget_BTC",
+      "fixture": "0.1",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "0.5",
+      "field": "expected.principal_BTC",
+      "fixture": "0.5",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "0.5",
+      "field": "expected.cash_BTC",
+      "fixture": "0.5",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "0.5",
+      "field": "expected.pool_cash_BTC",
+      "fixture": "0.5",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "90",
+      "field": "expected.risk_equity_USD",
+      "fixture": "90",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "10",
+      "field": "expected.initial_margin_USD",
+      "fixture": "10",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "5",
+      "field": "expected.maintenance_margin_USD",
+      "fixture": "5",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "80",
+      "field": "expected.available_margin_USD",
+      "fixture": "80",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-003",
+      "computed": "0",
+      "field": "expected.shard_budget_headroom_BTC",
+      "fixture": "0",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "80",
+      "field": "extra_state.reserved_margin_USD",
+      "fixture": "80",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "4",
+      "field": "expected.available_margin_USD",
+      "fixture": "4",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "0.03",
+      "field": "expected.next_conservative_borrow_quote_BTC",
+      "fixture": "0.03",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "0.43",
+      "field": "requests.1.post_principal_BTC",
+      "fixture": "0.43",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "91.4",
+      "field": "requests.1.post_risk_equity_USD",
+      "fixture": "91.4",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "8.6",
+      "field": "requests.1.post_IM_USD",
+      "fixture": "8.6",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "computed": "2.8",
+      "field": "requests.1.post_available_margin_USD",
+      "fixture": "2.8",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "computed": "0.3",
+      "field": "expected.first_loan_BTC",
+      "fixture": "0.3",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "computed": "0.3",
+      "field": "expected.second_request_BTC",
+      "fixture": "0.3",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "computed": "0.3",
+      "field": "expected.shard_used_BTC",
+      "fixture": "0.3",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "computed": "0.7",
+      "field": "expected.pool_cash_BTC",
+      "fixture": "0.7",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "computed": "0.2",
+      "field": "expected.alternative_second_maximum_BTC",
+      "fixture": "0.2",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "computed": "0.3",
+      "field": "expected.principal_BTC",
+      "fixture": "0.3",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "computed": "0.3",
+      "field": "expected.customer_cash_BTC",
+      "fixture": "0.3",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "computed": "0.7",
+      "field": "expected.pool_cash_BTC",
+      "fixture": "0.7",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "computed": "0",
+      "field": "expected.interest_repaid_BTC",
+      "fixture": "0",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "computed": "0.1",
+      "field": "expected.principal_repaid_BTC",
+      "fixture": "0.1",
+      "kind": "arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-009",
+      "computed": 0,
+      "field": "expected.additional_loan_count",
+      "fixture": 0,
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-009",
+      "computed": "0.4",
+      "field": "expected.principal_BTC",
+      "fixture": "0.4",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    },
+    {
+      "case": "CREDIT-MANUAL-009",
+      "computed": "0.6",
+      "field": "expected.pool_cash_BTC",
+      "fixture": "0.6",
+      "kind": "conditional_arithmetic",
+      "matches": true
+    }
+  ],
+  "numeric_fields_compared": 48,
+  "numeric_mismatches": 0,
+  "production_approved": false,
+  "review_format": 1,
+  "scope": "synthetic original-asset principal+interest budgets; no cash-deficit cap, external funding confirmation or production/native proof",
+  "source_sha256": {
+    "docs/managed-credit-capability-design.md": "3a8e70a261d8d11291f9cb634955e3ea6931037d5c8c13d6e0269b756efbd7dd",
+    "docs/margin-rules.md": "463befac633c19d5e7b5ee96c4475aa9ea8505045269ef50618615277eb113b0",
+    "scripts/review_credit_golden_finance.py": "b0a4d9eb5e0911c420a6690279bd2b1a596d483cff84bdc937e4985f762567b1",
+    "tests/fixtures/managed_credit_v1_golden.json": "494a6a88397f9677cdb82bb1bcedf9338a0441cd5df6cd5acfe2fd28209be260"
+  },
+  "status": "INDEPENDENT_ARITHMETIC_ONLY_RUNTIME_NOT_EXECUTED_NO_GO",
+  "supplemental_opening_interest_repayment": {
+    "after": {
+      "risk": {
+        "accounting_equity_USD": "105",
+        "authorized_quote_BTC": "0.15",
+        "available_margin_USD": "90",
+        "collateral_value_USD": "132",
+        "debt_value_USD": "35",
+        "gross_asset_value_USD": "140",
+        "initial_margin_USD": "7",
+        "loan_value_USD": "66",
+        "local_asset_headroom_BTC": "99.65",
+        "maintenance_margin_USD": "3.5",
+        "order_reserve_USD": "0",
+        "portfolio_quote_BTC": "0.31",
+        "portfolio_quote_bounds_BTC": {
+          "account_principal_BTC": "9.65",
+          "account_total_debt_BTC": "99.65",
+          "conservative_available_margin_BTC": "0.75",
+          "loan_to_value_BTC": "0.31"
+        },
+        "risk_equity_USD": "97",
+        "shard_budget_headroom_BTC": "0.15"
+      },
+      "state": {
+        "customer_BTC": "0.4",
+        "customer_USD": "100",
+        "interest_BTC": "0",
+        "interest_cash_BTC": "0.05",
+        "interest_receivable_BTC": "0",
+        "order_reserve_USD": "0",
+        "pool_BTC": "0.65",
+        "principal_BTC": "0.35",
+        "principal_receivable_BTC": "0.35",
+        "shard_used_BTC": "0.35"
+      }
+    },
+    "allocation_headroom_release_BTC": "0.1",
+    "before": {
+      "risk": {
+        "accounting_equity_USD": "105",
+        "authorized_quote_BTC": "0.05",
+        "available_margin_USD": "86",
+        "collateral_value_USD": "140",
+        "debt_value_USD": "45",
+        "gross_asset_value_USD": "150",
+        "initial_margin_USD": "9",
+        "loan_value_USD": "70",
+        "local_asset_headroom_BTC": "99.55",
+        "maintenance_margin_USD": "4.5",
+        "order_reserve_USD": "0",
+        "portfolio_quote_BTC": "0.25",
+        "portfolio_quote_bounds_BTC": {
+          "account_principal_BTC": "9.6",
+          "account_total_debt_BTC": "99.55",
+          "conservative_available_margin_BTC": "43/60",
+          "loan_to_value_BTC": "0.25"
+        },
+        "risk_equity_USD": "95",
+        "shard_budget_headroom_BTC": "0.05"
+      },
+      "state": {
+        "customer_BTC": "0.5",
+        "customer_USD": "100",
+        "interest_BTC": "0.05",
+        "interest_cash_BTC": "0",
+        "interest_receivable_BTC": "0.05",
+        "order_reserve_USD": "0",
+        "pool_BTC": "0.6",
+        "principal_BTC": "0.4",
+        "principal_receivable_BTC": "0.4",
+        "shard_used_BTC": "0.45"
+      }
+    },
+    "id": "REVIEW-OPENING-INTEREST-001",
+    "input_provenance": "review task supplied complete new numeric input without expected values",
+    "interest_cash_increase_BTC": "0.05",
+    "interest_repaid_BTC": "0.05",
+    "opening_source_note": "USD100/BTC.5 with debt .45 is an externally supplied opening snapshot; not reconstructed as a fresh .4 loan from the ten-case baseline",
+    "pool_cash_increase_BTC": "0.05",
+    "posting_sum_BTC": "0",
+    "principal_repaid_BTC": "0.05",
+    "reference_BTC_postings": {
+      "customer_cash": "-0.1",
+      "interest_cash": "0.05",
+      "interest_liability": "0.05",
+      "interest_receivable": "-0.05",
+      "pool_cash": "0.05",
+      "principal_liability": "0.05",
+      "principal_receivable": "-0.05"
+    },
+    "repay_BTC": "0.1"
+  },
+  "tiny_static_budget_graph": {
+    "all_truth_states_within_local_and_global_caps": true,
+    "allocations": [
+      2,
+      2
+    ],
+    "assumptions": [
+      "fixed, complete, identity-bound, nonnegative allocations whose sum is <= global budget",
+      "opening principal+interest debt fits each allocation; no new interest, adjustment, transfer, or outside writer",
+      "each local committed borrow checks actual staged gross debt; committed repay reduces actual debt",
+      "UNKNOWN changes observation only, never actual debt or an allocation; rollback changes no debt",
+      "zero amount is a budget-model no-op, not permission for a zero-amount production request"
+    ],
+    "global_budget": 4,
+    "reachable_states": 36,
+    "scope": "principal+interest in one original asset only; no cash deficits, native guards, transactions, scheduler, HA or real funding proof",
+    "transitions": 1152,
+    "truth_debt_pairs": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "unit": "abstract integer asset minor units; not BTC .01 quantity steps",
+    "unsafe_model_dropped_required_check": "actual shard0 debt 2 no longer fits its purported allocation 0; retaining that check rejects reclamation",
+    "unsafe_reclamation_counterexample": [
+      {
+        "action": "both shards commit 2; shard0 reply is UNKNOWN",
+        "actual_debts": [
+          2,
+          2
+        ],
+        "actual_global_debt": 4,
+        "allocations": [
+          2,
+          2
+        ]
+      },
+      {
+        "action": "UNSAFE: discard shard0 unknown obligation and move its allocation",
+        "actual_debts": [
+          2,
+          2
+        ],
+        "actual_global_debt": 4,
+        "allocations": [
+          0,
+          4
+        ]
+      },
+      {
+        "action": "UNSAFE: shard1 commits 2 more using enlarged local allocation",
+        "actual_debts": [
+          2,
+          4
+        ],
+        "actual_global_debt": 6,
+        "allocations": [
+          0,
+          4
+        ],
+        "exceeds_global_by": 2
+      }
+    ]
+  },
+  "unexecuted_expected_fields": [
+    {
+      "case": "CREDIT-MANUAL-001",
+      "field": "expected.outcome",
+      "fixture": "SUCCEEDED_ONLY_IF_ALL_NATIVE_AND_AUDIT_GATES_PASS",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-002",
+      "field": "expected.outcome",
+      "fixture": "REJECTED",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-002",
+      "field": "expected.reason",
+      "fixture": "shard_budget_exceeded",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-002",
+      "field": "expected.no_financial_effect",
+      "fixture": true,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "field": "requests.0.outcome",
+      "fixture": "REJECTED",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "field": "requests.0.reason",
+      "fixture": "borrow_quote_exceeded",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "field": "requests.0.no_financial_effect",
+      "fixture": true,
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-004",
+      "field": "requests.1.outcome",
+      "fixture": "ELIGIBLE_SUBJECT_TO_OTHER_GATES",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-005",
+      "field": "expected.second_outcome",
+      "fixture": "REJECTED",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-006",
+      "field": "expected.outcome",
+      "fixture": "REJECTED",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-006",
+      "field": "expected.reason",
+      "fixture": "shard_budget_exceeded",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-006",
+      "field": "expected.unused_other_shard_budget_is_transferable",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "field": "expected.market_dependency",
+      "fixture": "NONE",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-007",
+      "field": "expected.new_borrow_decision_created",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-008",
+      "field": "expected.uncommitted_intent_present",
+      "fixture": true,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-008",
+      "field": "expected.commit_allowed",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-008",
+      "field": "expected.durable_loan_or_debt_or_pool_change",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-008",
+      "field": "expected.recover_using_original_CID",
+      "fixture": true,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-009",
+      "field": "expected.original_receipt_reused",
+      "fixture": true,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-009",
+      "field": "expected.first_source_record_overwritten",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-010",
+      "field": "expected.outcome",
+      "fixture": "REJECTED",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-010",
+      "field": "expected.reason",
+      "fixture": "quantity_step",
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-010",
+      "field": "expected.amount_rounded_up_or_down",
+      "fixture": false,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    },
+    {
+      "case": "CREDIT-MANUAL-010",
+      "field": "expected.no_financial_effect",
+      "fixture": true,
+      "note": "arithmetic predicates may support eligibility/rejection; no native effect, API reason string, source or receipt behavior was tested",
+      "status": "NOT_EXECUTED_RUNTIME_OR_POLICY_LABEL"
+    }
+  ]
+}
