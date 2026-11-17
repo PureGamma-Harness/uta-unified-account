@@ -384,8 +384,17 @@ def finish_matrix(records, error, started):
     sync_directory()
     # Include END's own durable close too. Never leave an apparent accepted END
     # as the only result after a deadline crossed during that final write.
-    if time.monotonic() - started > MATRIX_SECONDS:
+    post_end_elapsed = time.monotonic() - started
+    if post_end_elapsed > MATRIX_SECONDS:
         save(OUTPUT / "matrix-deadline-unknown.json", {"outcome": "UNKNOWN", "reason": "FINALIZATION_EXCEEDED_MATRIX_BUDGET"})
+        return 1
+    save(OUTPUT / "matrix-post-end.json", {"post_end_elapsed_seconds": post_end_elapsed,
+         "within_budget": True, "planned_exit_code": 0 if complete else 1,
+         "requires_observed_normal_supervisor_exit": True,
+         "acceptance_requires_no_unknown_or_error_records": True})
+    sync_directory()
+    if time.monotonic() - started > MATRIX_SECONDS:
+        save(OUTPUT / "matrix-deadline-unknown.json", {"outcome": "UNKNOWN", "reason": "POST_END_RECORD_EXCEEDED_MATRIX_BUDGET"})
         return 1
     return 0 if complete else 1
 

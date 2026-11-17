@@ -143,6 +143,16 @@ and the measured commit time. The END file/directory close is followed by a
 second whole-budget check; crossing during finalization appends a deadline-
 UNKNOWN veto and returns failure. Acceptance requires the completed END, no
 deadline veto, and normal supervisor completion, not a provisional summary.
+The successful post-END elapsed/decision is also retained in matrix-post-end.
+Neither provisional summary nor END nor that planned-exit record alone is
+sufficient: acceptance requires no supervisor-error, launch-unknown or deadline-
+unknown record and an actual normal final supervisor exit with status zero,
+bound to the saved PID/birth/boot. After the post-END record is persisted the
+clock is checked again. An interrupted observer cannot infer that exit from
+file existence. If the host has already reaped the detached supervisor before
+its final exit can be observed and no original kernel observation exists,
+completion stays UNKNOWN rather than being reconstructed from the three unit
+reports. This is a finite receipt/exit check, not an unbounded fsync loop.
 
 All three actual summary.json, worker-result.json, unittest.txt and outer
 first-outcome files are required for complete acceptance. Their exact byte
