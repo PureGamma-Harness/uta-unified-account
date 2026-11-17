@@ -226,3 +226,41 @@ kill during `router.close` is forced cleanup even when the testcase's local
 does not independently enforce that safety-stop policy. These concrete integration
 conditions were sent to the author before any batch authorization. No batch ran
 and no original raw result was changed by this review.
+
+## Bound runtime/event controls and final whole-budget ordering finding
+
+Candidate `1e6e7f7c35d9803b13358010d3e984b0acfc1567` adds the actual-worker
+runtime contract and event semantics to new bound files, preserving older
+proposals and raw records. Independent synthetic pure controls first passed:
+10 runtime controls and12 event controls. They reject a B-labeled actual A
+version, wrong executable/SQLite/loader environment/mapped library/hash, invalid
+CPU/flag types, MainThread cleanup kill, missing expired ownership, wrong owner,
+missing spawn/pidfd/postjoin records, live observer, sampling unknown, incomplete
+status and invalid clock types. No actual native process or SQL was executed.
+These close the specific actual-worker identity and cleanup-kill conditions for
+the audited pure contracts; the actual batch pipeline remains unexecuted.
+
+Root explicitly selected a diagnostic interpretation: a completely recorded
+original business/supervisor native status exception is part of the observed
+system, not itself a logger/sampler/source/result evidence gap. A paired original
+status error may therefore be retained while the unchanged testcase continues;
+it grants no healthy lease or financial authority. Any subsequent supervisor
+kill still needs an original fresh expired-owner witness. Unittest ERROR or
+logger/sampler/source/result incompleteness stops the batch; a technically
+complete ordinary assertion FAIL preserves the fixed remaining order. The
+independent event controls include this distinction explicitly.
+
+One further concrete whole30 ordering defect remained in1e6e. Its finalizer sets
+`whole_external_budget` before code hashes and new provider/binary/library posthash
+reads. It later computes `safe` from that earlier flag, but records elapsed time
+again. A pure extracted-finalizer control with synthetic time29.95s before a
+synthetic hash and30.10s afterwards produces `all_checks=true` and
+`DIAGNOSTIC_SAMPLE_COMPLETE` despite `whole_seconds=30.10`. The original script
+and red JSON are retained; they do not represent an actual runtime overrun.
+
+Before whole-batch GO, remeasure after all validation/hash work and use the same
+final elapsed value for budget, safe and report. An additional outer sample-return
+measurement must cover writing END and stop if that whole interval exceeds30,
+retaining the original sample record rather than rewriting it. This is a timing
+bookkeeping repair, not permission to change an original5-second assertion, add
+samples or repeat a failure. No batch was run during this review.

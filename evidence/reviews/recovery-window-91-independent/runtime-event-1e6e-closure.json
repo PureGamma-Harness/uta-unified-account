@@ -1,0 +1,135 @@
+{
+  "candidate": "1e6e7f7c35d9803b13358010d3e984b0acfc1567",
+  "runtime_contract_sha256": "caa70274945c9fbd550403f631bd28261eaaafe0c5ce1c5dd77140857f956022",
+  "event_contract_sha256": "bfd772751a1c35932a6394cb5e3949233bcc6d7ee3e4fb56b6010508b2752cfe",
+  "runtime_controls": [
+    {
+      "name": "synthetic B exact worker metadata",
+      "accepted": true
+    },
+    {
+      "name": "actual A version in B slot",
+      "accepted": false
+    },
+    {
+      "name": "resolved wrong executable",
+      "accepted": false
+    },
+    {
+      "name": "wrong SQLite",
+      "accepted": false
+    },
+    {
+      "name": "wrong library path",
+      "accepted": false
+    },
+    {
+      "name": "wrong mapped library hash",
+      "accepted": false
+    },
+    {
+      "name": "wrong per-process loader environment",
+      "accepted": false
+    },
+    {
+      "name": "boolean CPU field",
+      "accepted": false
+    },
+    {
+      "name": "float optimization count",
+      "accepted": false
+    },
+    {
+      "name": "string bytecode bool",
+      "accepted": false
+    }
+  ],
+  "event_controls": [
+    {
+      "name": "synthetic ordinary FAIL complete original observations",
+      "accepted": true,
+      "errors": []
+    },
+    {
+      "name": "router.close MainThread fallback kill",
+      "accepted": false,
+      "errors": [
+        "non-supervisor kill is forced cleanup or unclassified; stop"
+      ]
+    },
+    {
+      "name": "supervisor kill without expired native witness",
+      "accepted": false,
+      "errors": [
+        "kill lacks original observed expired ownership proof"
+      ]
+    },
+    {
+      "name": "supervisor kill with another owner witness",
+      "accepted": false,
+      "errors": [
+        "kill lacks original observed expired ownership proof"
+      ]
+    },
+    {
+      "name": "missing original spawn return",
+      "accepted": false,
+      "errors": [
+        "original spawn accounting incomplete",
+        "all original bound children need real final pidfd exits"
+      ]
+    },
+    {
+      "name": "missing final original pidfd exit",
+      "accepted": false,
+      "errors": [
+        "all original bound children need real final pidfd exits"
+      ]
+    },
+    {
+      "name": "missing observer postjoin",
+      "accepted": false,
+      "errors": [
+        "code_stack: missing/duplicate observer lifecycle"
+      ]
+    },
+    {
+      "name": "observer still live",
+      "accepted": false,
+      "errors": [
+        "pidfd: actual observer end/postjoin inconsistency"
+      ]
+    },
+    {
+      "name": "sampling evidence unknown",
+      "accepted": false,
+      "errors": [
+        "sampling_unavailable: technical unknown"
+      ]
+    },
+    {
+      "name": "unfinished original status call",
+      "accepted": false,
+      "errors": [
+        "native status observations missing or unfinished"
+      ]
+    },
+    {
+      "name": "boolean event clock",
+      "accepted": false,
+      "errors": [
+        "event shape/clocks must have exact types"
+      ]
+    },
+    {
+      "name": "fully observed native status error is observation, no kill grant",
+      "accepted": true,
+      "errors": []
+    }
+  ],
+  "all_controls_passed": true,
+  "records_are_synthetic_controls_not_native_evidence": true,
+  "native_or_SQL_run": false,
+  "whole_batch_approved": false,
+  "production_approved": false
+}
