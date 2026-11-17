@@ -22,6 +22,16 @@ from uta.reconciliation import reconcile_exchange
 from uta.storage import Database
 
 
+def observed_owner(diagnostics, shard=0):
+    """Return a complete live-owner sample, never turn unknown into generation 0."""
+    row = diagnostics['workers'][shard]
+    if (type(row['pid']) is int and row['pid'] > 0 and row['pid'] != os.getpid()
+            and row['owner_pid'] == row['pid'] and row['lease_active']
+            and type(row['generation']) is int and row['generation'] > 0):
+        return row
+    return None
+
+
 class ReadOnlyAuthorityDatabase(Database):
     def transaction(self):
         return self.read_transaction()
@@ -136,11 +146,12 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
             checkpoints.add(state['writer_time'])
             return len(checkpoints) >= 4
         self.wait_for(no_fabricated_liquidity, 'three real no-liquidity background checkpoints')
-        old = self.router.diagnostics()['workers'][0]
+        old = self.wait_for(lambda: observed_owner(self.router.diagnostics()),
+                            'a complete active old-owner observation before fault injection')
         self.router.terminate_worker(0)
         def new_owner():
-            current = self.router.diagnostics()['workers'][0]
-            return (current['pid'] not in (None, old['pid'], os.getpid()) and current['lease_active']
+            current = observed_owner(self.router.diagnostics())
+            return (current is not None and current['pid'] not in (None, old['pid'], os.getpid()) and current['lease_active']
                     and current['owner_pid'] == current['pid'] and current['generation'] > old['generation'])
         self.wait_for(new_owner, 'a genuinely new PID and fenced generation')
         resumed = self.snapshot()
@@ -227,3 +238,45 @@ class ManagedPartialLiquidationTests(unittest.TestCase):
                 self.assertTrue(replayed['matches'], replayed['differences'])
                 self.assertEqual(F(replayed['values']['before']['equity']), F(before_equity[index]))
                 self.assertEqual(F(replayed['values']['after']['equity']), F(after_equity[index]))
+
+
+class OwnerObservationTests(unittest.TestCase):
+    def sample(self, **changes):
+        row = dict(pid=os.getpid() + 10000, owner_pid=os.getpid() + 10000,
+                   lease_active=True, generation=7)
+        row.update(changes)
+        return {'workers': [row]}
+
+    def test_complete_sample_preserves_generation(self):
+        sample = self.sample()
+        self.assertIs(observed_owner(sample), sample['workers'][0])
+
+    def test_unknown_and_invalid_samples_are_not_owners(self):
+        for changes in ({'generation': None}, {'generation': True}, {'generation': 0},
+                        {'pid': None}, {'pid': os.getpid()}, {'owner_pid': None},
+                        {'lease_active': False}):
+            with self.subTest(changes=changes):
+                self.assertIsNone(observed_owner(self.sample(**changes)))
+
+    def test_transient_unknown_is_retried_before_returning_owner(self):
+        samples = iter([self.sample(generation=None), self.sample()])
+        case = ManagedPartialLiquidationTests()
+        result = case.wait_for(lambda: observed_owner(next(samples)), 'valid owner')
+        self.assertEqual(result['generation'], 7)
+
+    def test_persistent_unknown_fails_with_diagnostics(self):
+        case = ManagedPartialLiquidationTests()
+        sample = self.sample(generation=None)
+        class Router:
+            def diagnostics(self):
+                return sample
+        case.router = Router()
+        with self.assertRaisesRegex(AssertionError, "generation.*None"):
+            case.wait_for(lambda: observed_owner(sample), 'valid owner', timeout=.01)
+
+    def test_diagnostics_exception_is_not_hidden(self):
+        case = ManagedPartialLiquidationTests()
+        def broken():
+            raise RuntimeError('observation broken')
+        with self.assertRaisesRegex(RuntimeError, 'observation broken'):
+            case.wait_for(broken, 'valid owner')
