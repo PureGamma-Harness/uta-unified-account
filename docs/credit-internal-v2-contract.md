@@ -106,6 +106,21 @@ source, intent or journal; it and both archive rows are always rolled back and
 never represented as a valid credit decision or successful loan. Raw evidence is
 in `evidence/runs/credit-v2-audit-unique-identities/`.
 
+Read/capture building blocks now include a same-connection financial credit
+snapshot (gross p/i/receivables/cash/pool), persisted runtime-policy binding,
+strict retained JSON/UTC parsing, historical checkpoint freshness and actual
+sealed journal/hash/head verification. Repayment reads skip all borrow limits
+and market queries; recorded after-state may use the terminal integer version
+without requiring another increment. These helpers do not grant context or
+create a decision. Actual V2 capture/dispatch remains pending.
+
+Nineteen component tests per runtime passed on Python3.12 (0.746s), 3.10
+(0.717s), and3.13 (0.818s), each with ResourceWarning treated as an error. They
+include actual preseal financial reads and journal COMMIT/reopen, the six catalog
+cases and seven source/data cases. The source structural-COMMIT residual remains
+explicit; no V2 owner or credit decision was created. All commands, begin/end,
+source hashes and raw output are in `evidence/runs/credit-v2-audit-read-helpers/`.
+
 Rollback of this unwired schema slice is a code revert. A later persisted fresh
 V2 authority cannot be downgraded by deleting markers, changing allocation or
 rewinding financial history; forward recovery must reconcile the original CID

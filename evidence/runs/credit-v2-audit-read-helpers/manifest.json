@@ -1,0 +1,74 @@
+{
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "fb8eacc84b59961c055fb889b3afff6f96fcafb590268927a8160e6cddf6c931",
+    "uta/credit_native_v2.py": "c2074cd26364a1a7ac4a73fab979c54d9ed1e139742ce0328cc5da846600b672",
+    "tests/test_credit_audit_v2_helpers.py": "ce45120ad61132aa4868ce8fed1c962b0ecf1b205e73ca79d5e39b53cab114fe",
+    "tests/test_credit_audit_v2_schema.py": "de1ea0d2121864a9c82f6d08d5de84b178495212a8bfed32366c8b496a85a2a7"
+  },
+  "scope": "6actual preseal helper,6catalog,7native source/parser components; no V2financialsuccess/owner/decision/listener",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "tests.test_credit_audit_v2_schema",
+        "tests.test_credit_native_v2_primitives",
+        "-v"
+      ],
+      "begin": "2026-11-17T12:59:26.690607+00:00",
+      "end": "2026-11-17T12:59:27.579673+00:00",
+      "elapsed_seconds": 0.8888754250001512,
+      "exit_code": 0,
+      "raw_sha256": "1d4b723c89a2a17769c54508905538ca80e83dbe04fe0156ee25cd12797a542c"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "tests.test_credit_audit_v2_schema",
+        "tests.test_credit_native_v2_primitives",
+        "-v"
+      ],
+      "begin": "2026-11-17T12:59:27.579740+00:00",
+      "end": "2026-11-17T12:59:28.438267+00:00",
+      "elapsed_seconds": 0.8583636609982932,
+      "exit_code": 0,
+      "raw_sha256": "53688a946a5d5d0aaa37cde8228eca009b060b9fc5087d42d0aa3478ca384f99"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "tests.test_credit_audit_v2_schema",
+        "tests.test_credit_native_v2_primitives",
+        "-v"
+      ],
+      "begin": "2026-11-17T12:59:28.438318+00:00",
+      "end": "2026-11-17T12:59:29.417496+00:00",
+      "elapsed_seconds": 0.9788654809963191,
+      "exit_code": 0,
+      "raw_sha256": "059df04be3c251cbf1a1665d8319d26edf7913602c6f59e51a372327e8707c1a"
+    }
+  ]
+}
