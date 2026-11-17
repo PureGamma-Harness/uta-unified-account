@@ -45,7 +45,25 @@ python evidence/runs/credit-909acec-ci-integrity/verify_integrity.py \
   --original-zip-root /workspace/uta-ci-909acec-original-zips-unique
 ```
 
-Git 仓库只需持有原提交对象，当前 HEAD 无需切换。省略 `--original-zip-root` 时检查已提交原始文件、来源与报告，不声称复核未提交 ZIP/sdist。两种实际核验输出均已保存：`successor_ci_component_passed=true` 仅属于这组原 CI，`overall_acceptance=NO_GO`、`production_approved=false` 保持不变。本地完整三运行尚未收集到此证据集，将等待根集成组确认自然完成后另行追加，不继承旧源结果。
+Git 仓库只需持有原提交对象，当前 HEAD 无需切换。省略 `--original-zip-root` 时检查已提交原始文件、来源与报告，不声称复核未提交 ZIP/sdist。两种原 CI-only 核验输出均保持原样：`successor_ci_component_passed=true` 仅属于这组原 CI，`overall_acceptance=NO_GO`、`production_approved=false` 保持不变。
+
+## 原本地完整三运行追加
+
+根集成组的原外部矩阵从 `2026-11-17T17:00:22.323064+00:00` 到 `17:21:49.977200` 自然完成。固定 CPU 1、共享宿主，按原 3.12、3.10、3.13 顺序执行，没有取消、重启、重跑或修改源。三份原报告各 1801 项、零 FAIL、零 ERROR、零跳过、零 expected failures、零 unexpected successes，exit 0。
+
+| 原本地运行 | unittest worker 秒数 | summary 秒数 | 外部启动到结束秒数 |
+| --- | ---: | ---: | ---: |
+| Python 3.12 | 413.640 | 414.891240885 | 415.093104541 |
+| Python 3.10 | 436.002 | 436.943419647 | 437.047777010 |
+| Python 3.13 / SQLite 3.46 | 434.084 | 435.290359655 | 435.412202396 |
+
+三种原计时边界各自保留，不相互替代。三份完整 `summary.json`、`worker-result.json`、`unittest.txt`、原启动日志、矩阵 progress/summary 均逐字节封存，大小和 SHA-256 列入 manifest。矩阵 `source_clean_after=true`、`all_exit_zero=true` 原值保留；每份原报告均记录前后跟踪源干净、源未变更。
+
+原外部 `/workspace/run_uta_final_matrix.py` 的完整字节保存为 `local/execution-driver.py`，SHA-256 为 `8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8`，与原矩阵记录一致。归档过程中没有执行 launcher。
+
+一次新的 CPU4 纯文件/Git 核验输出保存为 `integrity-local-complete.stdout.txt`：三份本地与八份原 CI 共十一份报告的 348 项输入映射完全相同，并与原 909 Git blobs 闭合；原文件摘要、worker/summary、矩阵退出码、launcher 字节均核对通过。原 CI-only 核验输出不覆盖，本次没有重验 ZIP、运行测试、SQL、smoke 或长跑。
+
+新增输出明确本地三运行已收集且通过，同时保留 `capacity_10000_per_s_passed=false`、`ha_approved=false`、`production_approved=false` 和整体 **NO_GO**。这是该冻结源的测试组件证据，不能替代独立包复核、后续演练、完整风险重执行、容量、HA 或真实资金上线审批，也不授予下一阶段执行权。
 
 下载前实际可用空间为 18,660,986,880 字节，下载后采样为 17,341,812,736 字节；可验证时间边界记录于 `resource-observations.json`，没有编造精确采样单点时间。同宿主其他工作影响空间，差值不能全部归因于下载。该记录不是预留、后续执行授权或容量证明；原 archive 全部保留。
 
