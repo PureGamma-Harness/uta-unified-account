@@ -20,6 +20,8 @@ USD 每账户初始 1,000,000；借贷账户另有 1 BTC 利息缓冲，池有 1
 
 目标数据量在 GiB 以下，硬上限为财务 DB/WAL/SHM 合计 4 GiB、整个 job 6 GiB、剩余磁盘至少 1 GiB。触限立即停止新到达，保留在途义务和失败状态。资源上限不是事后删除旧账的许可。默认每 5 秒持久 heartbeat，每 60 秒导出压缩日志，每段最多 1,000 条 evidence；每 60 秒只读轻检，每 900 秒完整只读重新连接、账本及独立 reconciliation。固定数量线程：生成器主线程、一个真实 settlement worker、一个 live-feed worker。共享主机上其他工程及 CI 流量明确记录，不声称专用硬件隔离。
 
+容量统计由 [_observed_file_bytes](../benchmarks/run_soak.py) 逐文件采样，不是原子文件系统快照。SQLite 的 `authority.sqlite3-wal`、`authority.sqlite3-shm` 和原子发布的 `.tmp` 文件可能在列出后正常消失；仅这类文件的 `FileNotFoundError` 被跳过。主库及其他必需文件缺失、权限错误或其他 I/O 错误仍使检查失败。目录统计使用一次 `stat` 判断类型与大小，避免 `is_file()` 与第二次 `stat()` 之间的消失窗口。[test_soak.py](../tests/test_soak.py) 以真实创建后删除的 sidecar 目录项验证 heartbeat，并保留主库缺失及权限错误的拒绝回归。
+
 ## 持久状态与恢复语义
 
 计划到达、queued/active/pending/done/overload、各动作 checkpoint、不可修改 evidence、session 的原始开始/heartbeat/active 纳秒和导出范围都在同一权威 DB。动作与工具 checkpoint 是两个提交；工具没有声称这两者跨调用原子。每个财务命令有原始、确定性的业务 ID：

@@ -27,17 +27,28 @@ python -m uta scenario --shards 4
 python formal/explore_reservation.py
 ```
 
-当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12 的独立作业中执行相同的四个检查，任一步失败会阻止该作业继续：
+上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12、3.13 的独立作业中还执行源码编译、认证交易验收、其余有界模型，以及 wheel 构建和源码目录之外的安装验证。任一步失败会阻止该作业继续：
 
 ```mermaid
-flowchart LR
-    Matrix["Python 3.10 / 3.11 / 3.12 各自运行"] --> Tests["unittest 测试"]
-    Tests --> Demo["固定费率 demo"]
+flowchart TD
+    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13 各自运行"] --> Tests["unittest 测试"]
+    Tests --> Compile["编译 uta / formal / tests"]
+    Compile --> Demo["固定费率 demo"]
     Demo --> Scenario["4 分片情景、重开与回放"]
-    Scenario --> Model["Python 有界预占枚举"]
+    Scenario --> Acceptance["认证交易 acceptance"]
+    Acceptance --> Model["预占、双侧结算、组提交、分片、持久命令有界枚举"]
+    Model --> Wheel["构建 wheel，独立目录安装与 CLI 验证"]
 ```
 
+额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 `formal/explore_settlement.py`、`formal/explore_group_commit.py`、`formal/explore_shard_admission.py`、`formal/explore_durable_commands.py` 各自的 Python 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，并初始化、inspect、status 一个新的 managed 目录；完整顺序以工作流为准。
+
 本地单一 Python 版本通过，不等于整个 CI 矩阵已通过。`scenario` 未指定数据库时使用临时目录并清理；要保存并再次回放，使用 [流程文档](workflows.md) 中带 `--db` 的命令。Python 枚举器与 TLA+ TLC 是不同工具；当前 CI 没有执行 TLC，范围见 [形式化模型说明](../formal/README.md)。
+
+## 认证链路的 SQLite 锁回归
+
+认证交易链路使用 `uta.storage.Database`，与上面的研究模拟器 Store 分开。[test_storage_locks.py](../tests/test_storage_locks.py) 对普通库、分片库与认证 nonce 库分别验证：同进程打开和关闭第二个连接时，原读事务持有的 SQLite POSIX 文件锁不能消失。独立子进程直接探测实际锁，不以线程内互斥或最终余额相等代替锁证据。原文件检查会额外打开并关闭已有数据库，三个入口均可触发该回归；实现已改为无额外描述符的文件元数据检查。
+
+时序图、运行命令、SQLite 版本差异及未验证边界见 [SQLite 文件检查与进程锁](storage-locks.md)。该项通过不等于持续容量、断电恢复或跨主机验收通过。
 
 ## 验证问题和证据
 
