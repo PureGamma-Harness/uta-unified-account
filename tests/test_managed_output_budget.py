@@ -369,6 +369,17 @@ class OutputIntegrationTests(unittest.TestCase):
         self.assertIsNone(event[2]['measured_output_bytes'])
         self.assertLess(events.index('drain'), events.index(event))
 
+    def test_explicit_measurement_memoryerror_is_unknown_and_drains_before_log(self):
+        # Controlled metadata failure only; this does not allocate/exhaust memory.
+        with TemporaryDirectory() as directory:
+            events, producer = self.exercise_one_collect(Path(directory), measure_error=MemoryError('synthetic measurement unavailable'))
+        producer.terminate_owned.assert_called_once()
+        event = next(item for item in events if isinstance(item, tuple) and item[2].get('code') == 'observer_output_budget_measurement_unknown')
+        self.assertEqual(event[2]['error_type'], 'MemoryError')
+        self.assertIsNone(event[2]['measured_output_bytes'])
+        self.assertFalse(event[2]['financial_corruption_inferred'])
+        self.assertLess(events.index('drain'), events.index(event))
+
     def test_explicit_initial_write_failure_still_requests_drain_before_error_log(self):
         with TemporaryDirectory() as directory:
             events, producer = self.exercise_one_collect(Path(directory), failed_write=True)

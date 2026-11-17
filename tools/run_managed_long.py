@@ -390,7 +390,7 @@ def supervise(args):
             last_budget_check = time.monotonic()
             try:
                 measured = measured_output_bytes(control, output)
-            except (OSError, ValueError) as error:
+            except (OSError, ValueError, MemoryError) as error:
                 resource_no_go('observer_output_budget_measurement_unknown', error)
             else:
                 if measured > output_budget:
