@@ -60,16 +60,20 @@ class FixedBudgetOracleReferenceTests(unittest.TestCase):
         self.assertEqual(self.facts(view), {"accounts": sorted(soak.ACCOUNTS),
             "credit_usd": 1_000_000 * SCALE, "ledger_events": 6})
 
-    def test_credit_usd_budget_drift_currently_passes_the_full_oracle(self):
+    def test_credit_usd_budget_drift_is_rejected_without_changing_it(self):
         view = self.bootstrap_fixture(credit_usd_extra=1)
         self.assertEqual(self.facts(view)["credit_usd"], 1_000_001 * SCALE)
         self.assertEqual(self.facts(view)["ledger_events"], 6)
-        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+        with self.assertRaisesRegex(RuntimeError, "fixed-budget"):
+            view.verify(0, full=True)
+        self.assertEqual(self.facts(view)["credit_usd"], 1_000_001 * SCALE)
 
-    def test_unexpected_account_currently_passes_the_full_oracle(self):
+    def test_unexpected_account_is_rejected_without_deleting_it(self):
         view = self.bootstrap_fixture(extra_account=True)
         self.assertEqual(set(self.facts(view)["accounts"]), set(soak.ACCOUNTS) | {"unexpected-fourth-account"})
-        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+        with self.assertRaisesRegex(RuntimeError, "fixed-account"):
+            view.verify(0, full=True)
+        self.assertIn("unexpected-fourth-account", self.facts(view)["accounts"])
 
     def test_original_combined_reproduction_keeps_all_four_accounts_and_wrong_usd(self):
         view = self.bootstrap_fixture(credit_usd_extra=1, extra_account=True)
@@ -77,7 +81,9 @@ class FixedBudgetOracleReferenceTests(unittest.TestCase):
         self.assertEqual(len(actual["accounts"]), 4)
         self.assertEqual(actual["credit_usd"], 100_000_100_000_000)
         self.assertEqual(actual["ledger_events"], 6)
-        self.assertTrue(view.verify(0, full=True)["golden_passed"])
+        with self.assertRaisesRegex(RuntimeError, "fixed-account"):
+            view.verify(0, full=True)
+        self.assertEqual(self.facts(view), actual)
 
 
 class ArchivedEvidenceOracleReferenceTests(unittest.TestCase):
@@ -137,6 +143,19 @@ class ArchivedEvidenceOracleReferenceTests(unittest.TestCase):
         self.connection.execute("UPDATE uta_market_history SET payload='{}'")
         with self.assertRaisesRegex(RuntimeError, "digest"):
             self.view.verify(3, full=True)
+
+    def test_extra_gross_debt_row_is_rejected_even_when_its_amounts_are_zero(self):
+        self.connection.execute("INSERT INTO uta_liabilities(account_id,asset,principal,interest) VALUES (?,?,?,?)",
+                                (soak.ACCOUNTS[0], "USD", "0", "0"))
+        with self.assertRaisesRegex(RuntimeError, "gross principal/interest"):
+            self.view.verify(3, full=True)
+        self.assertEqual(self.connection.execute("SELECT COUNT(*) FROM uta_liabilities").fetchone()[0], 2)
+
+    def test_initial_funding_receipt_drift_is_rejected_even_with_unchanged_ledger_cash(self):
+        self.connection.execute("UPDATE credit_commands SET amount='2' WHERE kind='pool_funded'")
+        with self.assertRaisesRegex(RuntimeError, "funding/loan/repayment"):
+            self.view.verify(3, full=True)
+        self.assertEqual(self.connection.execute("SELECT amount FROM credit_commands WHERE kind='pool_funded'").fetchone()[0], "2")
 
 
 if __name__ == "__main__":

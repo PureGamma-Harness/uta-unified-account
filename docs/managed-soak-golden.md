@@ -112,6 +112,10 @@ is hidden in this golden case.
 After r fully verified rounds, with initial balances A0=B0=1,000,000 USD:
 
 - Alice USD minor units: `A0*10^8 - 80,000*r`; Bob has the same formula.
+- Credit USD minor units remain `1,000,000*10^8`. The exact account set is
+  `managed-soak-alice`, `managed-soak-bob`, and `managed-soak-credit`; no fourth
+  participant, extra asset balance, or extra gross-debt row belongs to this
+  closed workload. Ledger asset scales remain exactly USD=8 and BTC=8.
 - `system:fees` USD increase: `160,000*r` minor units.
 - Both trader positions and remaining order reserves: zero.
 - Matching: `2*r` distinct trade IDs, `4*r` distinct fills, `4*r` orders, exactly
@@ -123,6 +127,16 @@ After r fully verified rounds, with initial balances A0=B0=1,000,000 USD:
   its original 1 BTC buffer with no debt.
 - Every currency's complete journal posting sum is zero. Cash/debt/receivable
   components remain separate; do not infer conservation by netting gross debt.
+- Custody contra-balances remain `-3,000,000*10^8` USD and `-10^8` BTC; the
+  funded capital contra-balance remains `-10^8` BTC. The only fee owner is
+  `system:fees` in USD. Compare the complete owner/asset map, including zero
+  retained principal and receivable rows at final repayment, rather than only
+  checking selected customer amounts.
+- Credit history has exactly one original 1 BTC pool funding, one original
+  `2*N*u` loan to the credit account, and `r` repayments of `2*u`; no additional
+  funding, borrowing, interest event or credit command is permitted. These
+  business checks supplement the fixed six genesis and `5*r` later journal
+  events and independent posting conservation.
 
 Before cancellation, Alice's partial position is +0.01 with signed cost basis
 +1 USD; Bob is -0.01 with cost basis -1 USD. The first fill fee is 40,000 USD

@@ -622,26 +622,40 @@ class ManagedSoak:
     def verify(self, completed, *, full=False):
         """Independent integer cash/debt/quantity oracle; no production risk math."""
         planned = self.configuration.rounds
+        if type(completed) is not int or not 0 <= completed <= planned:
+            raise RuntimeError("independent completed-round budget is invalid")
         with readonly(self.financial) as connection:
             if connection.execute("PRAGMA quick_check").fetchone()[0] != "ok":
                 raise RuntimeError("financial SQLite integrity failure")
+            if {row[0] for row in connection.execute("SELECT account_id FROM uta_accounts")} != set(ACCOUNTS):
+                raise RuntimeError("independent fixed-account identity golden mismatch")
+            if dict(connection.execute("SELECT asset,scale FROM ledger_assets")) != {"USD": 8, "BTC": 8}:
+                raise RuntimeError("independent fixed asset/precision golden mismatch")
             balances = {(row[0], row[1]): int(row[2]) for row in connection.execute("SELECT account,asset,units FROM ledger_balances")}
-            for account in ACCOUNTS[:2]:
-                if balances[("customer:" + account, "USD")] != 1_000_000 * SCALE - completed * 80000:
-                    raise RuntimeError("independent USD fee/cash golden mismatch")
-            if balances.get(("system:fees", "USD"), 0) != completed * 160000:
-                raise RuntimeError("independent fee ownership golden mismatch")
             remaining = 2 * (planned - completed)
-            if balances[("customer:" + ACCOUNTS[2], "BTC")] != SCALE + remaining:
-                raise RuntimeError("independent borrower cash golden mismatch")
-            if balances[("system:credit-pool", "BTC")] != SCALE - remaining:
-                raise RuntimeError("independent pool cash golden mismatch")
-            if balances.get(("system:credit-principal-receivable", "BTC"), 0) != remaining:
-                raise RuntimeError("independent gross principal receivable mismatch")
-            if balances.get(("liability:principal:" + ACCOUNTS[2], "BTC"), 0) != -remaining:
-                raise RuntimeError("independent customer liability ownership mismatch")
-            debt = connection.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id=? AND asset='BTC'", (ACCOUNTS[2],)).fetchone()
-            if debt is None or Fraction(debt[0]) * SCALE != remaining or Fraction(debt[1]) != 0:
+            # Hand-derived closed budget: three USD deposits, one BTC buffer,
+            # one funded BTC pool/loan, two equal-price fill sides per trader
+            # and a two-satoshi repayment per completed round. Compare every
+            # owner/asset, retaining gross debt instead of netting it into cash.
+            expected_balances = {
+                ("customer:" + ACCOUNTS[0], "USD"): 1_000_000 * SCALE - completed * 80000,
+                ("customer:" + ACCOUNTS[1], "USD"): 1_000_000 * SCALE - completed * 80000,
+                ("customer:" + ACCOUNTS[2], "USD"): 1_000_000 * SCALE,
+                ("customer:" + ACCOUNTS[2], "BTC"): SCALE + remaining,
+                ("system:custody", "USD"): -3_000_000 * SCALE,
+                ("system:custody", "BTC"): -SCALE,
+                ("system:credit-capital", "BTC"): -SCALE,
+                ("system:credit-pool", "BTC"): SCALE - remaining,
+                ("liability:principal:" + ACCOUNTS[2], "BTC"): -remaining,
+                ("system:credit-principal-receivable", "BTC"): remaining,
+            }
+            if completed:
+                expected_balances[("system:fees", "USD")] = completed * 160000
+            if balances != expected_balances:
+                raise RuntimeError("independent fixed-budget gross cash/debt/ownership golden mismatch")
+            debts = {(row[0], row[1]): (Fraction(row[2]) * SCALE, Fraction(row[3]) * SCALE)
+                     for row in connection.execute("SELECT account_id,asset,principal,interest FROM uta_liabilities")}
+            if debts != {(ACCOUNTS[2], "BTC"): (remaining, 0)}:
                 raise RuntimeError("independent gross principal/interest golden mismatch")
             if connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0]:
                 raise RuntimeError("completed rounds left positions")
@@ -649,6 +663,19 @@ class ManagedSoak:
                 raise RuntimeError("completed rounds left unconfirmed order reserves")
             counts = {}
             if full:
+                credit = [tuple(row) for row in connection.execute(
+                    "SELECT scope,command_id,kind,asset,amount,source_reference FROM credit_commands")]
+                pool = [row for row in credit if row[2] == "pool_funded"]
+                loans = [row for row in credit if row[2] == "borrowed"]
+                repayments = [row for row in credit if row[2] == "repaid"]
+                if (len(credit) != 2 + completed or len(pool) != 1 or len(loans) != 1 or len(repayments) != completed
+                        or pool[0][:4] != ("pool", "synthetic-initial-pool", "pool_funded", "BTC")
+                        or Fraction(pool[0][4]) != 1 or not pool[0][5]
+                        or loans[0][:4] != ("account:" + ACCOUNTS[2], "synthetic-initial-loan", "borrowed", "BTC")
+                        or Fraction(loans[0][4]) * SCALE != 2 * planned or loans[0][5] is not None
+                        or any(row[0] != "account:" + ACCOUNTS[2] or row[3] != "BTC"
+                               or Fraction(row[4]) * SCALE != 2 or row[5] is not None for row in repayments)):
+                    raise RuntimeError("independent fixed funding/loan/repayment history golden mismatch")
                 for table in ("uta_orders", "uta_fills", "uta_matches", "uta_risk_decisions"):
                     if completed == 0 and table == "uta_matches" and connection.execute("SELECT 1 FROM sqlite_master WHERE name='uta_matches' AND type='table'").fetchone() is None:
                         counts[table] = 0

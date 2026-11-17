@@ -5,6 +5,24 @@ The operations integration, root checkout and old long-running soak were not
 modified. No job longer than the existing four-second smoke was started.
 Production remains **NO-GO**.
 
+## Fixed-budget correction
+
+Original incorrect behavior and all nine characterization tests are retained at
+`6fc64909fa702afad0ceab7189d7b29e5328eaca`, directly after the reviewed tool SHA.
+The next tool-only correction requires the exact three account IDs and USD/BTC
+scales, compares every ledger owner/asset against a hand-derived closed gross
+budget, and checks the complete debt projection plus one initial pool funding,
+one initial loan and exactly one two-satoshi repayment per completed round.
+The credit account's unchanged 1,000,000 USD, custody obligations, funded capital,
+pool cash, principal receivable, customer principal and fee ownership are all
+included. No production fee, risk, credit or replay helper generates expected
+money. Existing complete posting conservation/projection and business counts
+remain required. Extra accounts or cash are rejected and retained for evidence;
+the verifier never removes them or adds a compensating top-up.
+
+The historical findings below describe the immutable origin. Archive hash
+coverage remains a separately tracked correction at this stage.
+
 Two acceptance-oracle gaps were concretely reproduced. These are validation
 coverage defects, not customer API vulnerabilities or evidence of real money loss.
 
