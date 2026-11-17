@@ -1,0 +1,45 @@
+{
+  "base_sha": "8b7f544fcbdfd540d43de1d6560022c6ebbd3799",
+  "command": [
+    "timeout",
+    "30s",
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_credit_hmac_source.py",
+    "-v"
+  ],
+  "contract_sha": "1f8b52b79da65e76bed1d599151d52d84f37cc53",
+  "elapsed_seconds": 0.3483672449947335,
+  "ended_at": "2026-11-17T13:53:32.099600+00:00",
+  "exit_code": 0,
+  "financial_source_commit": "NOT_IMPLEMENTED",
+  "kind": "synthetic_temp_authdb_component_only",
+  "observed_affinity": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "revocation_barrier": "NO_GO",
+  "runtime": "Python 3.12.14",
+  "source_sha256": {
+    "docs/credit-hmac-source-contract.md": "26868290f55faebdc4e5af7f2a42e70a72e1f23cf56e7e9c05e0c2863725001e",
+    "tests/test_credit_hmac_source.py": "7d7712b933e1138ec9c6622f505c5ebcf64da10b7e2587bb1adb9c879af3ba5b",
+    "tests/vectors/credit-hmac-source-v1.json": "11d9f00c4a42643455e90401b65f7dee23a943f7a8029762a59c32b358cf0178",
+    "uta/credit_hmac_source.py": "6cdc6ffe9bc155089b95705920487a62733c2d12a528e538f081e68c4e64c624",
+    "uta/gateway.py": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7",
+    "uta/request_signing.py": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+  },
+  "started_at": "2026-11-17T13:53:31.749505+00:00"
+}
