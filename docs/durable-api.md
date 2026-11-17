@@ -71,7 +71,7 @@ HMAC 认证先在独立认证库提交 nonce 消费，随后才解析业务 JSON
 
 多 shard parent 的 market/halt 控制采用独立的持久化 generation/fanout/barrier 协议，目前没有稳定的外部 client command-ID 契约。因此这些 HTTP 控制路由在多 shard producer 上明确返回 `501 unsupported_durable_operation`，不会调用其同步 `publish_market()` 或 `set_kill_switch()` 充当替代。单 authority 控制 lane 也不能当作跨 shard 发布屏障。
 
-没有 durable 协议的操作不会偷偷使用 v1 路径：账户/风险快照读取、入金、借款、计息、现货订单、成交摄入、撮合、提现、条件单等不在这里支持。已识别的 v2 账户下不支持操作返回 501，未知路径及 v1 路径返回 404；不会伪造账户或风险结果。不得把这个较窄的接口能力解释为整个交易所已生产化。
+没有 durable 协议的操作不会偷偷使用 v1 路径：实时风险复算、入金、借款、计息、现货订单、成交摄入、撮合、提现、条件单等不在这里支持。另有 [managed 只读投影](durable-views.md) 提供账户、订单、仓位、账单、私有事件及已有证据；它不构造金融 writer，不伪造风险结果。已识别的 v2 账户下不支持操作返回 501，未知路径及 v1 路径返回 404。不得把这个较窄的接口能力解释为整个交易所已生产化。
 
 ## 两阶段回执
 

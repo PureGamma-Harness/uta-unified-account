@@ -10,10 +10,12 @@ import json
 import hashlib
 import io
 import os
+import re
 import secrets
 import sqlite3
 import ssl
 from typing import Iterable
+from urllib.parse import parse_qsl
 
 from .durable_commands import QueueStore
 from .gateway import (Credential, _Handler, _RequestError, _decimal, _fields,
@@ -58,6 +60,10 @@ class _InboxProducer:
     def status(self, command_id, account_id):
         return self.queue.status(command_id, account_id=account_id)
 
+    def read_view(self, account_id, resource, **options):
+        from .durable_views import ManagedAccountViews
+        return ManagedAccountViews(self.queue.database).read(account_id, resource, **options)
+
     def publish_market(self, command_id, snapshot):
         return self.queue.enqueue_market(command_id, snapshot)
 
@@ -98,6 +104,13 @@ class _RouterProducer:
 
     def status(self, command_id, account_id):
         return self.router.status(command_id, account_id=account_id)
+
+    def read_view(self, account_id, resource, **options):
+        from .durable_views import ManagedAccountViews
+        shard = self.router.shard_for(account_id)
+        layout_hash = hashlib.sha256(self.router._control._descriptor.encode()).hexdigest()
+        return ManagedAccountViews(self.router._database(shard), shard=shard,
+                                   layout_hash=layout_hash).read(account_id, resource, **options)
 
     def publish_market(self, *args):
         # The parent's control fanout currently has no stable client command-ID
@@ -193,10 +206,49 @@ def _receipt(record, *, status_url: str):
                                       "status_url": status_url}
 
 
+def _view_options(query, *, pageable):
+    # Python 3.10 treats an empty strict parse_qsl input as an invalid field.
+    # An absent query uses the documented view defaults on every interpreter.
+    if query == "":
+        return {}
+    try:
+        pairs = parse_qsl(query, keep_blank_values=True, strict_parsing=True, max_num_fields=5)
+        fields = dict(pairs)
+        allowed = {"at_version", "stream_id"} | ({"after", "until", "limit"} if pageable else set())
+        if len(fields) != len(pairs) or set(fields) - allowed:
+            raise ValueError("unsupported or duplicate query")
+        for name, value in fields.items():
+            if name == "stream_id":
+                if not re.fullmatch(r"account-stream:[0-9a-f]{64}", value):
+                    raise ValueError("invalid stream ID")
+            else:
+                if not re.fullmatch(r"[0-9]{1,19}", value, re.ASCII) or int(value) > 2**63 - 1:
+                    raise ValueError("invalid integer")
+                fields[name] = int(value)
+        return fields
+    except ValueError:
+        raise _RequestError(400, "invalid_query", "invalid managed-view cursor or query fields") from None
+
+
 class _DurableHandler(_Handler):
     """Reuse v1 authentication/framing, with no route delegation to v1."""
 
     def _route(self, principal, path, query, payload, body):
+        parts = path.split("/")
+        if self.command == "GET" and len(parts) >= 4 and parts[:3] == ["", "v2", "accounts"]:
+            resource = "account" if len(parts) == 4 else parts[4]
+            identity = None
+            recognized = (len(parts) == 4 or len(parts) == 5 and resource in {"orders", "positions", "ledger", "events", "liquidation"}
+                          or len(parts) == 6 and resource in {"orders", "decisions"})
+            if recognized:
+                account_id = _identifier(parts[3])
+                self._account(principal, account_id)
+                self._permit(principal, "reader", "trader", "risk")
+                if len(parts) == 6:
+                    identity = _identifier(parts[5])
+                options = _view_options(query, pageable=resource in {"orders", "positions", "ledger", "events"} and identity is None)
+                return 200, self.server.service.call("read_view", account_id, resource,
+                                                      identity=identity, **options)
         if query:
             raise _RequestError(400, "invalid_query", "durable routes do not accept query parameters")
         api = self.server.service
@@ -206,7 +258,6 @@ class _DurableHandler(_Handler):
             observed = api.call("diagnostics")
             return 200, observed if path.endswith("worker-health") else {**self.server.counters(), "durable": observed}
 
-        parts = path.split("/")
         if len(parts) >= 4 and parts[:3] == ["", "v2", "accounts"]:
             account_id = _identifier(parts[3])
             self._account(principal, account_id)
