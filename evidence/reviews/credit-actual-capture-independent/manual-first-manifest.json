@@ -1,0 +1,32 @@
+{
+  "scope": "pure artificial-wire mapping only; no actual capture or SQL",
+  "commit": "e04ac7b59c58af4a7b6cea08ac9d5d978c1f9599",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_credit_v2_capture_reference.py",
+    "-v"
+  ],
+  "started_at": "2026-11-17T14:41:40.630232+00:00",
+  "finished_at": "2026-11-17T14:41:40.739418+00:00",
+  "wall_seconds": 0.10918623700126773,
+  "timeout_seconds": 15,
+  "returncode": 0,
+  "files": {
+    "scripts/credit_v2_capture_reference.py": "f3c55cdbc5c4ae542fc9c4699daee0b4cbc95d10ed860b3166f133a7f1765330",
+    "scripts/credit_v2_financial_reference.py": "37bb40f876951e32304cccb7b21e8fe13b8b27dd1e617eec101fbf5c32b1395e",
+    "tests/test_credit_v2_capture_reference.py": "315fec898d0a1f2bbc57af02d22adce0e732f2884032b0aaba1a77fc9cc759f8"
+  },
+  "actual_capture_tested": false,
+  "production_approved": false
+}

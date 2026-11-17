@@ -61,3 +61,15 @@ Deployment is unnecessary: this is an offline reference addition, no schema
 or API migration. Rollback reverts these new checker/docs/tests in a new commit
 and retains original evidence; it cannot delete published authority or funding
 history, enable public borrowing or downgrade a capability-marked database.
+
+
+## First executed mapping controls
+
+The adapter/contract were committed at `9028e4f`, then the eight manual and
+adversarial tests at `e04ac7b`, before execution. The first and only pure batch
+ran on CPU4/Python3.12 at 2026-11-17T14:41:40.630232–40.739418 UTC,
+wall0.109186 seconds, eight tests passed with ResourceWarning treated as error.
+No actual observation, SQL, native scope or service was involved. All source
+hashes, exact command and original stdout/stderr are retained in
+`evidence/reviews/credit-actual-capture-independent/`. The actual gate remains
+PENDING; these mapping controls do not upgrade it.
