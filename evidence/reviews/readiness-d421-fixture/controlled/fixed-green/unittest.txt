@@ -1,0 +1,20 @@
+test_controlled_original_sampling (__main__.ExpiredPartialGeneration.test_controlled_original_sampling) ... FAIL
+test_controlled_original_actual_expiration (__main__.PartialStaleRead.test_controlled_original_actual_expiration) ... ok
+test_controlled_original_clock_rollback (__main__.RestoredClockContention.test_controlled_original_clock_rollback) ... ok
+test_market_probe_never_promotes_persistently_unknown_native_owners (test_readiness_sampling.ReadinessSamplingTests.test_market_probe_never_promotes_persistently_unknown_native_owners) ... ok
+test_market_probe_rejects_a_real_expired_owner_lease_without_retry (test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry) ... ok
+
+======================================================================
+FAIL: test_controlled_original_sampling (__main__.ExpiredPartialGeneration.test_controlled_original_sampling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-readiness-d421-fixture-fix/evidence/reviews/readiness-d421-fixture/controlled/run_components.py", line 62, in test_controlled_original_sampling
+    self.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes()
+  File "/workspace/uta-readiness-d421-fixture-fix/tests/test_readiness_sampling.py", line 338, in test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes
+    self.assertIsNotNone(initialized, "unblocked native owner did not initialize within one second")
+AssertionError: unexpectedly None : unblocked native owner did not initialize within one second
+
+----------------------------------------------------------------------
+Ran 5 tests in 11.808s
+
+FAILED (failures=1)

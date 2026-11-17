@@ -1,0 +1,650 @@
+{
+  "stage": "sampling-native-frame",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "cpu_ids": [
+    2
+  ],
+  "wall_seconds": 3.464456860005157,
+  "tests_run": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "source_before": {
+    "tests/test_readiness_sampling.py": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+    "tests/test_process_readiness.py": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "source_after": {
+    "tests/test_readiness_sampling.py": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+    "tests/test_process_readiness.py": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "events": [
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 58025.419071695,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": false,
+          "epoch": 0,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {},
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196640,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196640,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196640,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196641,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196638,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_publication_return",
+      "monotonic": 58025.535154685,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:08:18.942038+00:00\",\"version\":1}",
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:1:0:3d03b7405cb37d47",
+          "1": "market:1:1:3d03b7405cb37d47"
+        },
+        "epoch": 1,
+        "error": "market_fanout_incomplete",
+        "halted": true,
+        "market_digest": null,
+        "market_version": null,
+        "publishing": true,
+        "target_digest": "3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+        "target_version": 1,
+        "watermarks": {
+          "0": 1
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:1:0:3d03b7405cb37d47",
+            "sequence": 1,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+              "observed_at": "2026-11-17T13:08:18.942038+00:00",
+              "version": 1
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:18.948505+00:00",
+            "completed_at": "2026-11-17T13:08:18.962131+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:1:1:3d03b7405cb37d47",
+            "sequence": 1,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "PENDING",
+            "ack": "durably_queued",
+            "result": null,
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:18.952064+00:00",
+            "completed_at": null,
+            "next_attempt_at": null
+          }
+        }
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 58025.545116604,
+      "report": {
+        "state": {
+          "halted": true,
+          "publishing": true,
+          "epoch": 1,
+          "market_version": null,
+          "market_digest": null,
+          "watermarks": {
+            "0": 1
+          },
+          "error": "market_fanout_incomplete"
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196640,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196640,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196640,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_barrier_mismatch",
+            "observation_error": {
+              "type": "service_error"
+            }
+          },
+          {
+            "shard": 1,
+            "pid": 196641,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196638,
+            "generation": 1,
+            "report": {},
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "market_missing",
+            "observation_error": {
+              "type": "service_error"
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "publication_incomplete"
+      }
+    },
+    {
+      "kind": "actual_publication_return",
+      "monotonic": 58025.744152429,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:08:18.942038+00:00\",\"version\":1}",
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:1:0:3d03b7405cb37d47",
+          "1": "market:1:1:3d03b7405cb37d47"
+        },
+        "epoch": 1,
+        "error": null,
+        "halted": true,
+        "market_digest": "3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+        "market_version": 1,
+        "publishing": false,
+        "target_digest": "3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+        "target_version": 1,
+        "watermarks": {
+          "0": 1,
+          "1": 1
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:1:0:3d03b7405cb37d47",
+            "sequence": 1,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+              "observed_at": "2026-11-17T13:08:18.942038+00:00",
+              "version": 1
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:18.948505+00:00",
+            "completed_at": "2026-11-17T13:08:18.962131+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:1:1:3d03b7405cb37d47",
+            "sequence": 1,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:3d03b7405cb37d47116a09f616953b65b7e45f4968c2af77ed7a1ec8d5c8d1c9",
+              "observed_at": "2026-11-17T13:08:18.942038+00:00",
+              "version": 1
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:18.952064+00:00",
+            "completed_at": "2026-11-17T13:08:19.247513+00:00",
+            "next_attempt_at": null
+          }
+        }
+      }
+    },
+    {
+      "kind": "actual_completed_SID1_delayed_beyond_original_TTL",
+      "monotonic": 58026.479517894,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:08:18.942038+00:00\",\"version\":1}",
+      "original_observed_at": "2026-11-17T13:08:18.942038+00:00"
+    },
+    {
+      "kind": "actual_publication_return",
+      "monotonic": 58026.553740153,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:08:20.009727+00:00\",\"version\":2}",
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:2:0:7b19b89cb7d854bc",
+          "1": "market:2:1:7b19b89cb7d854bc"
+        },
+        "epoch": 2,
+        "error": null,
+        "halted": true,
+        "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+        "market_version": 2,
+        "publishing": false,
+        "target_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+        "target_version": 2,
+        "watermarks": {
+          "0": 2,
+          "1": 2
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:2:0:7b19b89cb7d854bc",
+            "sequence": 2,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+              "observed_at": "2026-11-17T13:08:20.009727+00:00",
+              "version": 2
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:20.023958+00:00",
+            "completed_at": "2026-11-17T13:08:20.038262+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:2:1:7b19b89cb7d854bc",
+            "sequence": 2,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+              "observed_at": "2026-11-17T13:08:20.009727+00:00",
+              "version": 2
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:20.027439+00:00",
+            "completed_at": "2026-11-17T13:08:20.033667+00:00",
+            "next_attempt_at": null
+          }
+        }
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 58026.626217761,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196640,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196640,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196640,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+            "market_observed_at": "2026-11-17T13:08:20.009727+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196641,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196641,
+            "generation": 2,
+            "report": {
+              "shard": 1,
+              "pid": 196641,
+              "generation": 2,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 2,
+            "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+            "market_observed_at": "2026-11-17T13:08:20.009727+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 58027.542589488,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 2,
+          "market_version": 2,
+          "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+          "watermarks": {
+            "0": 2,
+            "1": 2
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196640,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196640,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196640,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 2,
+            "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+            "market_observed_at": "2026-11-17T13:08:20.009727+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196641,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196641,
+            "generation": 2,
+            "report": {
+              "shard": 1,
+              "pid": 196641,
+              "generation": 2,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 2,
+            "market_digest": "7b19b89cb7d854bcfac8378ffc2d9d79567a367021b5775cfede2baeb6acffe4",
+            "market_observed_at": "2026-11-17T13:08:20.009727+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_stale"
+      }
+    },
+    {
+      "kind": "actual_publication_return",
+      "monotonic": 58027.60468128,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T13:08:21.065345+00:00\",\"version\":3}",
+      "publication": {
+        "durable_desired_halt": true,
+        "durable_halt_commands": {},
+        "durable_market_commands": {
+          "0": "market:3:0:a72ff40cb2916943",
+          "1": "market:3:1:a72ff40cb2916943"
+        },
+        "epoch": 3,
+        "error": null,
+        "halted": true,
+        "market_digest": "a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+        "market_version": 3,
+        "publishing": false,
+        "target_digest": "a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+        "target_version": 3,
+        "watermarks": {
+          "0": 3,
+          "1": 3
+        },
+        "receipts": {
+          "0": {
+            "command_id": "market:3:0:a72ff40cb2916943",
+            "sequence": 4,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+              "observed_at": "2026-11-17T13:08:21.065345+00:00",
+              "version": 3
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:21.068811+00:00",
+            "completed_at": "2026-11-17T13:08:21.088041+00:00",
+            "next_attempt_at": null
+          },
+          "1": {
+            "command_id": "market:3:1:a72ff40cb2916943",
+            "sequence": 4,
+            "account_id": null,
+            "kind": "PUBLISH_MARKET",
+            "state": "SUCCEEDED",
+            "ack": "durably_queued",
+            "result": {
+              "market_snapshot_id": "market:a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+              "observed_at": "2026-11-17T13:08:21.065345+00:00",
+              "version": 3
+            },
+            "error": null,
+            "attempts": 0,
+            "last_error": null,
+            "enqueued_at": "2026-11-17T13:08:21.072579+00:00",
+            "completed_at": "2026-11-17T13:08:21.085403+00:00",
+            "next_attempt_at": null
+          }
+        }
+      }
+    },
+    {
+      "kind": "actual_sampling_diagnostic",
+      "monotonic": 58027.700776507,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 3,
+          "market_version": 3,
+          "market_digest": "a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+          "watermarks": {
+            "0": 3,
+            "1": 3
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 196640,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196640,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 196640,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 3,
+            "market_digest": "a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+            "market_observed_at": "2026-11-17T13:08:21.065345+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 196641,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 196641,
+            "generation": 2,
+            "report": {
+              "shard": 1,
+              "pid": 196641,
+              "generation": 2,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 3,
+            "market_digest": "a72ff40cb29169431ae910d3218286913a5d222a299104864ec78a849e92be4b",
+            "market_observed_at": "2026-11-17T13:08:21.065345+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_prequote_owner_witness",
+      "monotonic": 58027.700816455,
+      "pid": 196640,
+      "birth_ticks": "5802445",
+      "generation": 1,
+      "witness_utc": "2026-11-17T13:08:18.942026+00:00"
+    }
+  ],
+  "no_existing_job_or_live_SQL": true,
+  "temporary_component_only": true,
+  "runtime_TTL_timeout_snapshot_content_not_relaxed": true,
+  "unique_historical_cause_proven": false,
+  "production_approved": false
+}
