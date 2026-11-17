@@ -1,0 +1,33 @@
+{
+  "cpu_ids": [
+    3
+  ],
+  "identity": {
+    "birth_ticks": 5601777,
+    "group": 179266,
+    "parent": 179261,
+    "pid": 179266,
+    "session": 179266,
+    "state": "R"
+  },
+  "launcher_affinity_acknowledged": true,
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import json,os,sys; os.sched_setaffinity(0,{3}); os.write(4,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(4); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import json,os;print(json.dumps(sorted(os.sched_getaffinity(0))))"
+  ],
+  "observed_child_cpu_ids": [
+    3
+  ],
+  "observed_utc": "2026-11-17T12:34:51.326057+00:00",
+  "owned_session": true,
+  "pidfd_used": true,
+  "protected_pids": [
+    4471,
+    8784,
+    179261
+  ]
+}

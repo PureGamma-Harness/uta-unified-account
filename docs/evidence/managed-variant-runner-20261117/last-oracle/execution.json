@@ -1,0 +1,98 @@
+[
+  {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import sys,os,unittest,gc;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests,RunnerDummyTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerDummyTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:09:44.766249+00:00",
+    "finished_utc": "2026-11-17T12:09:45.558255+00:00",
+    "wall_seconds": 0.7920334840018768,
+    "returncode": 0,
+    "scope": "pure fixtures plus own dummy only on3.12; no financial call",
+    "source_before": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "source_after": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "PYTHONWARNINGS": "error::ResourceWarning"
+  },
+  {
+    "command": [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import sys,os,unittest,gc;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:09:45.559054+00:00",
+    "finished_utc": "2026-11-17T12:09:45.702801+00:00",
+    "wall_seconds": 0.14376180999533972,
+    "returncode": 0,
+    "scope": "pure fixtures plus own dummy only on3.12; no financial call",
+    "source_before": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "source_after": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "PYTHONWARNINGS": "error::ResourceWarning"
+  },
+  {
+    "command": [
+      "/usr/bin/python3.13",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import sys,os,unittest,gc;os.sched_setaffinity(0,{3});sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T12:09:45.703559+00:00",
+    "finished_utc": "2026-11-17T12:09:45.853081+00:00",
+    "wall_seconds": 0.149539805999666,
+    "returncode": 0,
+    "scope": "pure fixtures plus own dummy only on3.12; no financial call",
+    "source_before": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "source_after": {
+      "benchmarks/run_managed_benchmark.py": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746",
+      "tools/run_managed_variants.py": "28ffc28e223e0c9098099f199138ee8131e0eac254401e20c77a37fa027282ff",
+      "tests/test_managed_variant_runner.py": "c8e8fb0ecc968f2180441226b56478c06f12f61d25cbd3dc3dd8d2bb1c3fce04",
+      "benchmarks/plans/20261117-managed-variants.json": "cfd24bcbde07a5db38a2c93e073be8471fa2fc32206b56f03f00a43d111f8c12",
+      "benchmarks/plans/20261117-managed-variants-execution-template.json": "37a6e9ea7d92db32980cd2e1284a289150521d5c4bf53ab5b302b7bcc97e8f4b"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "PYTHONWARNINGS": "error::ResourceWarning"
+  }
+]

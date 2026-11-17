@@ -1,0 +1,32 @@
+{
+  "cpu_ids": [
+    3
+  ],
+  "identity": {
+    "birth_ticks": 5405352,
+    "group": 168448,
+    "parent": 168435,
+    "pid": 168448,
+    "session": 168448,
+    "state": "R"
+  },
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import os,sys; os.sched_setaffinity(0,{3}); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "print(\"owned-ok\")"
+  ],
+  "observed_child_cpu_ids": [
+    3
+  ],
+  "observed_utc": "2026-11-17T12:02:07.051327+00:00",
+  "owned_session": true,
+  "pidfd_used": true,
+  "protected_pids": [
+    4471,
+    8784,
+    168435
+  ]
+}

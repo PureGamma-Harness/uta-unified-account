@@ -1,0 +1,16 @@
+{
+  "parent_candidate": "749e37ac90933b5d0037ca16e559972e224ca9b8",
+  "test_source_sha256": "03d48b5d34348a617c0a8cfee69abd9f3449a0c8e95a83020d26b14d70ab3105",
+  "native_run_performed": false,
+  "syntax_compile_only": true,
+  "new_helper": "router_writer_available_without_dml",
+  "available_requires": "real BEGIN IMMEDIATE plus ROLLBACK; connection changes unchanged",
+  "retryable_probe_result": "native SQLITE_BUSY base5, or absent-code exact builtin OperationalError args database is locked",
+  "all_other_errors": "raise; no unknown-as-available",
+  "capture_budget_unchanged": {
+    "seconds": 5,
+    "max_attempts": 8
+  },
+  "runtime_diff_empty": true,
+  "production_approved": false
+}

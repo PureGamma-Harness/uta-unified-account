@@ -1,0 +1,450 @@
+{
+  "stage": "original-red",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "cpu_ids": [
+    2
+  ],
+  "wall_seconds": 12.685059139999794,
+  "tests_run": 6,
+  "failures": 3,
+  "errors": 0,
+  "skipped": 0,
+  "passed": false,
+  "source_before": {
+    "tests/test_readiness_sampling.py": "2068bdff5830dfc4e1e365c0d23c6c7a7bb11dd935f6bd5d674521bf86a69b7f",
+    "tests/test_process_readiness.py": "61e1b57e961725b37bce25d49287423fba4f0390f2a837d44cddc18b10e1f796",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "source_after": {
+    "tests/test_readiness_sampling.py": "2068bdff5830dfc4e1e365c0d23c6c7a7bb11dd935f6bd5d674521bf86a69b7f",
+    "tests/test_process_readiness.py": "61e1b57e961725b37bce25d49287423fba4f0390f2a837d44cddc18b10e1f796",
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+  },
+  "events": [
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57375.411487089,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195428,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195428,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 195428,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+            "market_observed_at": "2026-11-17T12:57:27.925422+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 195429,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195429,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 195429,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+            "market_observed_at": "2026-11-17T12:57:27.925422+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_second_shard_read_crossed_original_deadline",
+      "monotonic": 57377.458033659,
+      "deadline": 57377.442845639,
+      "snapshot_json": "{\"assets\":{\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"X\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"1E+2\"}},\"observed_at\":\"2026-11-17T12:57:27.925422+00:00\",\"version\":1}"
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57377.462534735,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195428,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": 195428,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 195428,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_stale",
+            "market_version": 1,
+            "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+            "market_observed_at": "2026-11-17T12:57:27.925422+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 195429,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195429,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 195429,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": false,
+            "reason": "diagnostic_timeout",
+            "market_version": 1,
+            "market_digest": "48c57290fb2a937f8b10f2a490cea7114a85202aa0073d7bb3acc2c388818cec",
+            "market_observed_at": "2026-11-17T12:57:27.925422+00:00",
+            "observation_error": {
+              "type": "sqlite_operational_error",
+              "sqlite_errorcode": 9
+            }
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_stale"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57378.845596629,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195433,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195433,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 195433,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+            "market_observed_at": "2026-11-17T12:57:31.202531+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 195434,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195434,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 195434,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": true,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "ready",
+            "market_version": 1,
+            "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+            "market_observed_at": "2026-11-17T12:57:31.202531+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": true,
+        "ready": true,
+        "reason": "ready"
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57378.869813414,
+      "report": {
+        "state": {
+          "halted": false,
+          "publishing": false,
+          "epoch": 1,
+          "market_version": 1,
+          "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+          "watermarks": {
+            "0": 1,
+            "1": 1
+          },
+          "error": null
+        },
+        "state_observed": true,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195433,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195433,
+            "generation": 1,
+            "report": {
+              "shard": 0,
+              "pid": 195433,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_future",
+            "market_version": 1,
+            "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+            "market_observed_at": "2026-11-17T12:57:31.202531+00:00"
+          },
+          {
+            "shard": 1,
+            "pid": 195434,
+            "alive": true,
+            "lease_active": true,
+            "owner_pid": 195434,
+            "generation": 1,
+            "report": {
+              "shard": 1,
+              "pid": 195434,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": true,
+            "locally_active": true,
+            "funding_registry_ready": true,
+            "reason": "market_future",
+            "market_version": 1,
+            "market_digest": "f4bdf5d1b7d31ec10f82279da3b600baea5f201ebaa9bcbe1340b922dde944e2",
+            "market_observed_at": "2026-11-17T12:57:31.202531+00:00"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "market_future"
+      }
+    },
+    {
+      "kind": "actual_restored_clock_control_gate_timeout",
+      "monotonic": 57379.888276814,
+      "report": {
+        "state": null,
+        "state_observed": false,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195433,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 0,
+              "pid": 195433,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          },
+          {
+            "shard": 1,
+            "pid": 195434,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 1,
+              "pid": 195434,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    },
+    {
+      "kind": "actual_diagnostic",
+      "monotonic": 57379.88828051,
+      "report": {
+        "state": null,
+        "state_observed": false,
+        "workers": [
+          {
+            "shard": 0,
+            "pid": 195433,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 0,
+              "pid": 195433,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          },
+          {
+            "shard": 1,
+            "pid": 195434,
+            "alive": true,
+            "lease_active": false,
+            "owner_pid": null,
+            "generation": null,
+            "report": {
+              "shard": 1,
+              "pid": 195434,
+              "generation": 1,
+              "state": "ready"
+            },
+            "market_ready": false,
+            "owner_ready": false,
+            "locally_active": false,
+            "funding_registry_ready": false,
+            "reason": "not_observed"
+          }
+        ],
+        "managed": true,
+        "decision_audit_required": true,
+        "profile": "managed_audit_required",
+        "recovered_orphans": [],
+        "workers_alive": true,
+        "financial_ready": false,
+        "ready": false,
+        "reason": "diagnostic_timeout",
+        "observation_error": {
+          "type": "service_error"
+        }
+      }
+    }
+  ],
+  "no_existing_job_or_live_SQL": true,
+  "temporary_component_only": true,
+  "runtime_TTL_timeout_snapshot_content_not_relaxed": true,
+  "unique_historical_cause_proven": false,
+  "production_approved": false
+}

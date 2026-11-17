@@ -14,11 +14,52 @@ import sys
 SOURCE = 'a35fd56fc98126b3e5cced8a459bd04ca580e537'
 ROOT = Path(__file__).resolve().parents[3]
 ARCHIVE = ROOT / 'docs/evidence/managed-variant-wiring-20261117'
+HISTORICAL_SOURCE = Path(__file__).resolve().parent / 'historical-source'
+GENERATOR_COMMIT = '5caf874c12b1d053871abe1986784e2a4b883af8'
+GENERATOR_PARENT = 'e9ec23bf0a54f732b51b91df1bad571dd186dba3'
+GENERATOR_FILE = 'run_managed_benchmark.5caf874.py.txt'
+GENERATOR_SHA256 = 'e261712aece4b3826c514a2a029a77327affd362c7a48216029a85a2110dcfd0'
+PROVENANCE_SHA256 = '614b143c3d1fe9bf4574ac8f04cc25f7d2bb11630ccb20d7572c8ed0aa992ceb'
+LICENSE_FILE = 'LICENSE.Apache-2.0.txt'
+LICENSE_SHA256 = 'cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30'
 QUANTILES = {'p50': Fraction(1,2), 'p95': Fraction(95,100), 'p99': Fraction(99,100), 'p99_9': Fraction(999,1000)}
 
 
 def file_digest(path):
     return sha256(path.read_bytes()).hexdigest()
+
+
+def historical_source():
+    """Validate immutable archived material without importing or requiring Git."""
+    provenance_path=HISTORICAL_SOURCE/'provenance.json'
+    assert not provenance_path.is_symlink()
+    assert file_digest(provenance_path)==PROVENANCE_SHA256
+    proof=json.loads(provenance_path.read_text())
+    assert proof['format']==1
+    assert proof['archived_source_commit']==GENERATOR_COMMIT
+    assert proof['archived_source_parent']==proof['recorded_raw_code_commit']==GENERATOR_PARENT
+    assert proof['recorded_raw_working_tree_dirty'] is True
+    assert proof['source_path_at_commit']=='benchmarks/run_managed_benchmark.py'
+    assert proof['archived_generator_file']==GENERATOR_FILE
+    assert proof['archived_generator_sha256']==GENERATOR_SHA256
+    generator=HISTORICAL_SOURCE/GENERATOR_FILE
+    assert not generator.is_symlink()
+    assert file_digest(generator)==GENERATOR_SHA256
+    assert generator.stat().st_size==proof['archived_generator_bytes']==51601
+    assert proof['license_spdx']=='Apache-2.0' and proof['license_file']==LICENSE_FILE
+    assert proof['license_sha256']==LICENSE_SHA256
+    license_path=HISTORICAL_SOURCE/LICENSE_FILE
+    assert not license_path.is_symlink() and file_digest(license_path)==LICENSE_SHA256
+    return proof, generator.read_text()
+
+
+def historical_environment(environment):
+    proof,_=historical_source()
+    assert environment['generator_sha256']==GENERATOR_SHA256
+    assert environment['code_commit']==proof['recorded_raw_code_commit']
+    assert environment['working_tree_dirty'] is True
+    assert environment['source_sha256']==proof['runtime_uta_sha256']
+    return proof
 
 
 def manifest_check(directory, manifest):
@@ -62,7 +103,8 @@ def composite_gate(summary):
 
 def observed_technical_gate(summary):
     """Execute only the exact frozen pure gate AST, not its importing module."""
-    module=ast.parse((ROOT/'benchmarks/run_managed_benchmark.py').read_text())
+    _,source=historical_source()
+    module=ast.parse(source)
     node=next(n for n in module.body if isinstance(n,ast.FunctionDef) and n.name=='probe_qualification')
     namespace={}
     exec(compile(ast.Module(body=[node],type_ignores=[]),'<frozen pure gate>', 'exec'),namespace)
@@ -130,9 +172,8 @@ def recompute_case(directory):
     assert workers[0]['received_settings']==actual['router_settings']
     assert workers[0]['pid']==summary['initial_real_pid_and_fence']['workers'][0]['pid']
     environment=summary['environment']
-    assert environment['generator_sha256']==file_digest(ROOT/'benchmarks/run_managed_benchmark.py')
-    for name,digest in environment['source_sha256'].items():
-        assert file_digest(ROOT/'uta'/name)==digest,name
+    assert environment==json.loads((directory/'environment.json').read_text())
+    historical_environment(environment)
     checks=summary['readonly_reconciliation']
     assert checks['reopened_readonly'] and checks['persistent_successes']==8
     assert checks['pending_count']==checks['unobserved_successes_found_on_reopen']==0
@@ -161,6 +202,9 @@ def recompute_case(directory):
 def main(output):
     outer=json.loads((ARCHIVE/'manifest.json').read_text())
     files=manifest_check(ARCHIVE,outer)
+    proof,_=historical_source()
+    assert outer['generator_sha256']==GENERATOR_SHA256
+    assert outer['parent_commit']==GENERATOR_PARENT and outer['tested_worktree_dirty'] is True
     plan=json.loads((ROOT/'benchmarks/plans/20261117-managed-variants.json').read_text())
     assert plan['execution_authorized'] is False and plan['frozen_commit'] is None
     baseline=plan['baseline']
@@ -176,11 +220,16 @@ def main(output):
     assert late['probe_qualification']['passed'] is True
     assert late['probe_qualification']['financial_soft_deadline_passed'] is False
     assert composite_gate(late) is False
-    inputs=['benchmarks/plans/20261117-managed-variants.json','benchmarks/run_managed_benchmark.py','benchmarks/run_benchmark.py','benchmarks/run_group_benchmark.py','tests/test_managed_variant_wiring.py','tests/test_managed_retry_gate.py','uta/durable_batches.py','uta/durable_process.py']
-    result={'source_commit':SOURCE,'review_inputs_sha256':{name:file_digest(ROOT/name) for name in inputs},'outer_manifest_files_checked':files,'raw_cases_checked':len(cases),
+    inputs=[HISTORICAL_SOURCE/GENERATOR_FILE,HISTORICAL_SOURCE/'provenance.json',HISTORICAL_SOURCE/LICENSE_FILE]
+    result={'source_commit':SOURCE,'source_commit_meaning':'original independent review base, not replay checkout or a clean original run',
+            'archived_generator_identity':{'source_commit':GENERATOR_COMMIT,'source_parent':GENERATOR_PARENT,'sha256':GENERATOR_SHA256,'recorded_raw_parent':GENERATOR_PARENT,'recorded_raw_working_tree_dirty':True},
+            'review_inputs_sha256':{path.name:file_digest(path) for path in inputs},
+            'replay_checker_sha256':file_digest(Path(__file__)),
+            'historical_runtime_source_sha256':proof['runtime_uta_sha256'],
+            'outer_manifest_files_checked':files,'raw_cases_checked':len(cases),
             'financial_receipt_rows_checked':sum(row['rows'] for row in cases), 'cases':cases,
             'counterfactual_only_not_a_new_load':{'change':'counts.financial_success_late=1',
-                'current_technical_gate':late['probe_qualification'],'composite_diagnostic_gate':False,
+                'archived_original_technical_gate':late['probe_qualification'],'composite_diagnostic_gate':False,
                 'existing_source_intent':'technical and latency gates are deliberately separate'},
             'blocks_go_without_execution_amendment':True,
             'review_requires':['check technical passed AND financial_soft_deadline_passed','report exact ranks/N/max from raw rows',

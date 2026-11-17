@@ -1,0 +1,126 @@
+"""Bounded metadata diagnostics are separate from financial qualification."""
+from argparse import Namespace
+from contextlib import redirect_stdout
+from hashlib import sha256
+import io
+import json
+from pathlib import Path
+import sqlite3
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from tools import diagnose_observer_read as diagnostic
+
+
+class ObserverReadDiagnosticTests(unittest.TestCase):
+    def test_sqlite_native_metadata_has_no_message_or_paths(self):
+        connection = sqlite3.connect(":memory:")
+        try:
+            connection.execute("SELECT value FROM facts")
+        except sqlite3.Error as error:
+            result = diagnostic.safe_error(error)
+            self.assertEqual(result["error_type"], "OperationalError")
+            # Engine exception metadata is optional on supported Python3.10.
+            # The known SQLite error code is1; no module export is required.
+            native_code = getattr(error, "sqlite_errorcode", None)
+            native_name = getattr(error, "sqlite_errorname", None)
+            if native_code is None:
+                self.assertIsNone(result["sqlite_errorcode"])
+            else:
+                self.assertIs(type(native_code), int)
+                self.assertEqual(native_code, 1)
+                self.assertEqual(result["sqlite_errorcode"], 1)
+            if native_name is None:
+                self.assertIsNone(result["sqlite_errorname"])
+            else:
+                self.assertEqual(native_name, "SQLITE_ERROR")
+                self.assertEqual(result["sqlite_errorname"], "SQLITE_ERROR")
+            self.assertEqual(result["error_digest"], sha256(str(error).encode()).hexdigest())
+            self.assertNotIn(str(error), json.dumps(result))
+            self.assertEqual(set(result), {"error_type", "error_digest", "sqlite_errorcode", "sqlite_errorname", "frames"})
+        finally:
+            connection.close()
+
+    def test_python_sqlite_error_without_native_metadata_is_null(self):
+        # A genuine Python-created sqlite exception has no native engine fields.
+        error = sqlite3.OperationalError("private diagnostic fallback detail")
+        self.assertIsNone(getattr(error, "sqlite_errorcode", None))
+        self.assertIsNone(getattr(error, "sqlite_errorname", None))
+        result = diagnostic.safe_error(error)
+        self.assertIsNone(result["sqlite_errorcode"])
+        self.assertIsNone(result["sqlite_errorname"])
+        self.assertEqual(result["error_digest"], sha256(str(error).encode()).hexdigest())
+        self.assertNotIn(str(error), json.dumps(result))
+
+    def test_native_error_callthrough_with_no_exported_sqlite_constants(self):
+        # Hide only module constant exports; connect/Error and the actual
+        # exception still come from the real interpreter's sqlite extension.
+        backend = sqlite3
+        requests = []
+
+        class SQLiteWithoutConstants:
+            def __getattr__(self, name):
+                requests.append(name)
+                if name.startswith("SQLITE_"):
+                    raise AttributeError("sqlite constant is not exported")
+                return getattr(backend, name)
+
+        with patch(__name__ + ".sqlite3", SQLiteWithoutConstants()):
+            self.test_sqlite_native_metadata_has_no_message_or_paths()
+        self.assertFalse(any(name.startswith("SQLITE_") for name in requests))
+
+    def test_sidecar_inspection_only_stats_metadata(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "fixture.sqlite3"
+            Path(str(path) + "-wal").touch()
+            with patch.object(Path, "open", side_effect=AssertionError("must not open")), \
+                 patch.object(diagnostic.os, "open", side_effect=AssertionError("must not raw-open")):
+                self.assertEqual(diagnostic.sidecars(path), {"wal_exists": True, "shm_exists": False})
+
+    def test_live_output_rejected_before_any_source_directory_is_created(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            job, source = root / "job", root / "source"
+            job.mkdir()
+            source.mkdir()
+            output = job / "forbidden"
+            args = Namespace(mode="live", output=output, job=job, source=source,
+                             frozen_commit="a" * 40, driver_pid=1, driver_birth="1")
+            with self.assertRaisesRegex(ValueError, "fresh_external_output_required"):
+                diagnostic.launch(args)
+            self.assertFalse(output.exists())
+
+    def test_fresh_output_is_never_reused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = Namespace(mode="synthetic", output=Path(directory))
+            with patch.object(diagnostic.subprocess, "run", side_effect=AssertionError("must not launch")):
+                with self.assertRaises(FileExistsError):
+                    diagnostic.launch(args)
+
+    def test_diagnostic_cannot_set_financial_or_capacity_eligibility(self):
+        self.assertTrue(diagnostic.FLAGS["diagnostic_only"])
+        self.assertFalse(diagnostic.FLAGS["eligibility_evidence"])
+        self.assertFalse(diagnostic.FLAGS["modifies_existing_coverage"])
+        self.assertFalse(any(diagnostic.FLAGS[name] for name in diagnostic.ro.FLAGS))
+
+    def test_outer_entry_error_is_redacted_and_never_reaches_traceback_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = io.StringIO()
+            with patch.object(diagnostic.ro, "safe_standard_descriptors", return_value=True), redirect_stdout(output):
+                result = diagnostic.main(["--output", directory])
+            value = json.loads(output.getvalue())
+            self.assertEqual(result, 1)
+            self.assertEqual(value["outcome"], "diagnostic_entry_failed")
+            self.assertEqual(value["error_type"], "FileExistsError")
+            self.assertNotIn(directory, output.getvalue())
+            self.assertFalse(value["eligibility_evidence"])
+
+    def test_regular_standard_descriptor_rejected_before_output_or_mutation(self):
+        with patch.object(diagnostic.ro, "safe_standard_descriptors", return_value=False), \
+             patch.object(diagnostic, "launch", side_effect=AssertionError("must not launch")):
+            self.assertEqual(diagnostic.main([]), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

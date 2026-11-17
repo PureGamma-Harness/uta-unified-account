@@ -1,0 +1,80 @@
+{
+  "cases": [
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-d421df3/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-observer-freeze-d421df3",
+        "--commit",
+        "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+        "--wheel",
+        "/tmp/uta-release-d421df3-yy2hmth8/runtime-omission-controls/missing-failure-diagnostics.whl",
+        "--sdist",
+        "/tmp/uta-release-d421df3-yy2hmth8/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-d421df3-yy2hmth8/runtime-omission-controls/wheel-report.json"
+      ],
+      "case": "wheel_missing_new_failure_diagnostics_is_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": true,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": false
+      },
+      "cwd": "/workspace/uta-package-d421df3/raw",
+      "negative_archive_sha256": "463dbb24e32899db4006404797883d7cb0b6d5f5f84b1123bbbc654ebf0bd264",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "uta/failure_diagnostics.py",
+      "returncode": 1,
+      "sdist_missing": [],
+      "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6"
+    },
+    {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-d421df3/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-observer-freeze-d421df3",
+        "--commit",
+        "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6",
+        "--wheel",
+        "/tmp/uta-release-d421df3-yy2hmth8/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-d421df3-yy2hmth8/runtime-omission-controls/missing-failure-diagnostics.tar.gz",
+        "--output",
+        "/tmp/uta-release-d421df3-yy2hmth8/runtime-omission-controls/sdist-report.json"
+      ],
+      "case": "sdist_missing_new_failure_diagnostics_is_rejected",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": false,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "cwd": "/workspace/uta-package-d421df3/raw",
+      "negative_archive_sha256": "d219eef4e92ae7640df87193d38e8decd01c42228358f993945e1394de813896",
+      "passed": true,
+      "removed_count": 1,
+      "removed_member": "uta/failure_diagnostics.py",
+      "returncode": 1,
+      "sdist_missing": [
+        "uta/failure_diagnostics.py"
+      ],
+      "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6"
+    }
+  ],
+  "functional_tests_executed": 0,
+  "negative_artifacts_installed": false,
+  "passed": true,
+  "production_approved": false,
+  "scope": "actual new runtime omission controls only",
+  "source_commit": "d421df3fc5123e8267f0eecf8bb5efdc37cd0dc6"
+}

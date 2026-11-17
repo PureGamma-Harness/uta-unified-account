@@ -1,0 +1,75 @@
+{
+  "scope": "independent pure mocked control only",
+  "rows": [
+    {
+      "name": "cached_same_owner_active",
+      "passed": true,
+      "result": true,
+      "signal_mock_only": 18
+    },
+    {
+      "name": "unknown_undo_grants_no_authority",
+      "passed": true,
+      "result": true,
+      "signal_mock_only": 18
+    },
+    {
+      "name": "known_inactive_no_resume",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "known_inactive_cleanup_records_forced_kill",
+      "passed": true,
+      "result": false,
+      "signal_mock_only": 9
+    },
+    {
+      "name": "known_other_owner_no_resume",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "known_other_generation_no_resume",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "different_birth_no_signal",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "different_boot_no_signal",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "different_uid_no_signal",
+      "passed": true,
+      "result": "AssertionError",
+      "signal_mock_only": null
+    },
+    {
+      "name": "already_exited_no_signal",
+      "passed": true,
+      "result": false,
+      "signal_mock_only": null
+    },
+    {
+      "name": "process_exits_during_undo",
+      "passed": true,
+      "result": false,
+      "signal_mock_only": 18
+    }
+  ],
+  "passed": true,
+  "native_sql_executed": false,
+  "native_signal_executed": false,
+  "production_approved": false
+}

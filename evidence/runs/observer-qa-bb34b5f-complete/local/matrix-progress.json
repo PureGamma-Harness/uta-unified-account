@@ -1,0 +1,49 @@
+{
+  "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "started_at": "2026-11-17T12:24:24.497754+00:00",
+  "cpu_affinity": [
+    1
+  ],
+  "records": [
+    {
+      "label": "python312",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-bb34b5f/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-bb34b5f/python312"
+      ],
+      "started_at": "2026-11-17T12:24:24.508885+00:00",
+      "finished_at": "2026-11-17T12:28:51.682205+00:00",
+      "exit_code": 0,
+      "wall_seconds": 267.1733260580004
+    },
+    {
+      "label": "python310",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "/workspace/uta-observer-freeze-bb34b5f/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-bb34b5f/python310"
+      ],
+      "started_at": "2026-11-17T12:28:51.694300+00:00",
+      "finished_at": "2026-11-17T12:33:19.404059+00:00",
+      "exit_code": 1,
+      "wall_seconds": 267.70976781399804
+    },
+    {
+      "label": "python313-sqlite346",
+      "command": [
+        "/usr/bin/python3.13",
+        "/workspace/uta-observer-freeze-bb34b5f/tools/run_validation.py",
+        "--output",
+        "/workspace/uta-observer-validation/final-bb34b5f/python313-sqlite346"
+      ],
+      "started_at": "2026-11-17T12:33:19.414975+00:00",
+      "finished_at": "2026-11-17T12:37:48.554769+00:00",
+      "exit_code": 0,
+      "wall_seconds": 269.1398020380002
+    }
+  ],
+  "production_approved": false
+}

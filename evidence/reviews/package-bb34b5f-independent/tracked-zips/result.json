@@ -1,0 +1,358 @@
+{
+  "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "passed": true,
+  "scope": "six tracked historical ZIPs and actual omission JSON bindings; no tests/SQL/services/collector rerun",
+  "cpu_ids": [
+    2
+  ],
+  "wall_seconds": 0.8287247259941068,
+  "independently_checked_source_zip_count": 6,
+  "negative_report_count": 6,
+  "historical_results_remain_failed": true,
+  "historical_sources_are_not_bb34_release_CI": true,
+  "negative_tar_full_member_diff_performed": false,
+  "inputs": {
+    "/workspace/uta-package-bb34b5f/ci-zip-provenance.json": {
+      "bytes": 2685,
+      "sha256": "d4e5827ac7e151cbfa9a7abea4552e1cfcc7617166f820b7bc93ea7d895dbf49"
+    },
+    "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/tracked-ci-zips.json": {
+      "bytes": 19759,
+      "sha256": "bafa77a332e2e0b4d28d460414047f9f4eb59df1fa18a02c239aeeff4be54eeb"
+    },
+    "/tmp/uta-release-bb34b5f-09yvddlh/artifact-manifest.json": {
+      "bytes": 192844,
+      "sha256": "df8931415890254ea0bc844d7969c3e0cc3c4249fa5545d8ad9dc0a342ef1328"
+    }
+  },
+  "positive_artifact_identity": {
+    "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {
+      "bytes": 279432,
+      "sha256": "89c9e7503223d8ac519aa5ed6707786d6aecbc45483137d5af90b0488f026cc6"
+    },
+    "uta_reference_exchange-0.5.0a1.tar.gz": {
+      "bytes": 29129419,
+      "sha256": "9e2f05cc187ba0bed1e145a33b38627e50a9ac2351023558578d2dde150d0e2e"
+    }
+  },
+  "cases": [
+    {
+      "tracked_path": "evidence/runs/a35-startup-phase/original-ci-artifact.zip",
+      "sha256": "eb858fb3f0b0daf45040f4f9f784c93ac22acf9355cac5806155861a02b1bd4b",
+      "bytes": 52713,
+      "zip_members": [
+        {
+          "name": "summary.json",
+          "bytes": 48281,
+          "sha256": "f83fb622ec1ed7d830bba8f0d65fc3715385897859f4ef40882e7ef85daa2bbf"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "f99258a0c39579715e363219b33689437c8d300aa33a2397648cc472d2705899"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 251846,
+          "sha256": "88aec8d72729780eb44ac8e9e3dfcca80b6653a7b5abd433ac7fcf9b3ca2c7f8"
+        }
+      ],
+      "historical_reference_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+      "historical_source_hash_count": 227,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "2959d4dec3941d8898f60d27fee8bd15fbd452e8",
+        "errors": 1,
+        "failures": 0,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1243
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-0-report.json",
+      "negative_report_sha256": "3c4ae48f64dd401d31a85e0266ac7a58c67d53e6095f9534689fc5a012dc1ded",
+      "negative_archive_sha256": "52d5314f024d23fe9d317d5d056e73cb5e45207740e1d6bdea70ae14848c4f93",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/a35-startup-phase/original-ci-artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    },
+    {
+      "tracked_path": "evidence/runs/capacity-qa-a35fd56/ci/44066483487/uta-unit-validation-python-3.13/original-ci-artifact.zip",
+      "sha256": "a4c33a2cd5691f05d5e459cdf806ed23063f25cf133ca5e8e28ffeeae15ef671",
+      "bytes": 52843,
+      "zip_members": [
+        {
+          "name": "summary.json",
+          "bytes": 48286,
+          "sha256": "500154a920617aa6b845941698d6308eb6690638b02c636e6313cc5bacbdadae"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "1904a8b91a5003f5ecd90361521e0c8b93bc94d59c9e55a5092c901fc885c4c1"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 251835,
+          "sha256": "7cdf9dc4abe9df00b6cfb7ddbc1121a5c9a5a97bb8f6b7d7575903aae13e0aa9"
+        }
+      ],
+      "historical_reference_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+      "historical_source_hash_count": 227,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+        "errors": 0,
+        "failures": 2,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1243
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-1-report.json",
+      "negative_report_sha256": "360a127c611ebec365b05104bdf173cdd319ffdbbe90b0125a9b3b3ce373a907",
+      "negative_archive_sha256": "33ebffa7f72e55a6fb6690ba6aceae111933d6fa79b94650e4cfd0957f143fe4",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/capacity-qa-a35fd56/ci/44066483487/uta-unit-validation-python-3.13/original-ci-artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    },
+    {
+      "tracked_path": "evidence/runs/capacity-qa-a35fd56/ci/44066492849/uta-unit-validation-python-3.12/original-ci-artifact.zip",
+      "sha256": "eb858fb3f0b0daf45040f4f9f784c93ac22acf9355cac5806155861a02b1bd4b",
+      "bytes": 52713,
+      "zip_members": [
+        {
+          "name": "summary.json",
+          "bytes": 48281,
+          "sha256": "f83fb622ec1ed7d830bba8f0d65fc3715385897859f4ef40882e7ef85daa2bbf"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "f99258a0c39579715e363219b33689437c8d300aa33a2397648cc472d2705899"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 251846,
+          "sha256": "88aec8d72729780eb44ac8e9e3dfcca80b6653a7b5abd433ac7fcf9b3ca2c7f8"
+        }
+      ],
+      "historical_reference_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+      "historical_source_hash_count": 227,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "2959d4dec3941d8898f60d27fee8bd15fbd452e8",
+        "errors": 1,
+        "failures": 0,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1243
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-2-report.json",
+      "negative_report_sha256": "49d5d8d2e839695a9325d7dc0d54eec81e6318a2798e310b47521c418412e607",
+      "negative_archive_sha256": "4b2ba870d09b9b5c1ee3f18d7c7716a36bd4420f2217e166aecbccf18f421b88",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/capacity-qa-a35fd56/ci/44066492849/uta-unit-validation-python-3.12/original-ci-artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    },
+    {
+      "tracked_path": "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip",
+      "sha256": "a5d8348e692215ed95dead61e09d03e51136c97e2ccc049d5d83a6da508ad929",
+      "bytes": 50258,
+      "zip_members": [
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "e305da86e33d1780121bfe584bbb5d43655cf42263b6fcb953a4053acb393869"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 237128,
+          "sha256": "ec310773c639fcfd0fbc0a19ecff99194398dfd11479a4d5d6efaaceab2719cd"
+        },
+        {
+          "name": "summary.json",
+          "bytes": 46001,
+          "sha256": "31ab7127e89417e4d1a5680b8cd9a5db003d11d243641c0f3d9abbf2d2d2a829"
+        }
+      ],
+      "historical_reference_commit": "4e59084544b8816e6e50e4caea7c6f60cff43a00",
+      "historical_source_hash_count": 217,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "1702398f52970ac7b29619c46ad11b2a9f6909c2",
+        "errors": 0,
+        "failures": 1,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1168
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-3-report.json",
+      "negative_report_sha256": "fb015a0b2c2f08bf07b691aa74adacf7e673fe89d2ca2c5ce4291915bba2917f",
+      "negative_archive_sha256": "cf7607108aefabf26d902c541fd25caa3f3b75935ac1b42842ee981d03e3fcb4",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/ci-4e-view-phase/original-ci-artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    },
+    {
+      "tracked_path": "evidence/runs/ci-a35-gateway-readiness/original-push-python313/original-ci-artifact.zip",
+      "sha256": "a4c33a2cd5691f05d5e459cdf806ed23063f25cf133ca5e8e28ffeeae15ef671",
+      "bytes": 52843,
+      "zip_members": [
+        {
+          "name": "summary.json",
+          "bytes": 48286,
+          "sha256": "500154a920617aa6b845941698d6308eb6690638b02c636e6313cc5bacbdadae"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "1904a8b91a5003f5ecd90361521e0c8b93bc94d59c9e55a5092c901fc885c4c1"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 251835,
+          "sha256": "7cdf9dc4abe9df00b6cfb7ddbc1121a5c9a5a97bb8f6b7d7575903aae13e0aa9"
+        }
+      ],
+      "historical_reference_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+      "historical_source_hash_count": 227,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "a35fd56fc98126b3e5cced8a459bd04ca580e537",
+        "errors": 0,
+        "failures": 2,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1243
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-4-report.json",
+      "negative_report_sha256": "79273ac62fd1a28ba45066334ea6cae4c6b3193e4661c543290ef31e8458505b",
+      "negative_archive_sha256": "a61454397f605c16500863e9c47e38e3cdc9dfac2f6b8589f3e8b8c9e2d25a04",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/ci-a35-gateway-readiness/original-push-python313/original-ci-artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    },
+    {
+      "tracked_path": "evidence/runs/startup-producer-fixture/original-ci/artifact.zip",
+      "sha256": "097dd0d4e266d82a85404c32c9e9c6ec8ea19c7bd8817831b76a6c4b44893bdf",
+      "bytes": 47935,
+      "zip_members": [
+        {
+          "name": "summary.json",
+          "bytes": 44013,
+          "sha256": "e84a3dbcfbe47bdd3244b275b4651b035a2f5d096ee0b899b0a4590718f0f1c0"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 224907,
+          "sha256": "458ece9c5c89cc8ef1abb0fc45538ce0fdbb78a769c9dd4b60da6b4dbd5ac5a3"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "ae4c058712110bc176588f28ee564dfe562b04d2a56c2a3e39f6e5ed4104eb30"
+        }
+      ],
+      "historical_reference_commit": "7ae94eb8a783f8e134ac90c11a713df7bb02d5f1",
+      "historical_source_hash_count": 208,
+      "historical_source_hashes_independently_equal_git_blobs": true,
+      "historical_result": {
+        "code_commit": "bd8e5b452166477bb15adeb5807f2c1b98b782ab",
+        "errors": 1,
+        "failures": 0,
+        "passed": false,
+        "skipped": 0,
+        "tests_run": 1110
+      },
+      "current_release_qualification": false,
+      "positive_sdist_member_byte_exact": true,
+      "negative_report": "/tmp/uta-release-bb34b5f-09yvddlh/tracked-ci-zip-checks/zip-5-report.json",
+      "negative_report_sha256": "77cdd38227f9e510e2038b67a37cf93de11080238d12a111346b35a805c44451",
+      "negative_archive_sha256": "13b2cc6fe24badb7a4bac6958d7064cd74b9d2d356a3d9533c49e194c0c7f066",
+      "checks": {
+        "entry_points": true,
+        "legacy_fixture_licensed": true,
+        "legacy_fixture_pinned": true,
+        "sdist_required_files_exact": false,
+        "sdist_runtime_exact": true,
+        "version": true,
+        "wheel_runtime_exact": true
+      },
+      "negative_sdist_missing": [
+        "evidence/runs/startup-producer-fixture/original-ci/artifact.zip"
+      ],
+      "positive_wheel_artifact_identity_exact": true,
+      "negative_runtime_map_equal_positive": true,
+      "negative_raw_report_bindings_exact": true
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+All actual test processes were bound to CPU3. No variant execution or performance load occurred.
+
+Final exact per-runtime commands, UTC and source hashes: final/execution.json; exact wrapper: final-test-runner.py.txt.
+First/intermediate pure/dummy commands used unittest suites RunnerPureTests,RunnerDummyTests with PYTHONWARNINGS=error::ResourceWarning, forced gc and UTA_VARIANT_RUNNER_EVIDENCE paths. They are retained as earlier development observations, not final-source qualification.
+Single actual footer functional command: taskset -c 3 python -c <load tests.test_managed_variant_runner.RunnerFooterTinyTests only; print source hashes before/after; run unittest; forced gc> with UTA_VARIANT_FOOTER_EVIDENCE=/tmp/uta-managed-variants-runner-first/functional and PYTHONWARNINGS=error::ResourceWarning. Complete original stdout/stderr: first/footer-tiny-py312.log.
+Tiny arrival source, actual timestamps, original receipts and manifest are retained under tiny-footer/. No financial DB is included.

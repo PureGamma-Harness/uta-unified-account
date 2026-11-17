@@ -1,0 +1,26 @@
+{
+  "SQL_service_benchmark_or_pressure_executed": false,
+  "controls": [
+    {
+      "control": "201st_row_rejected_before_202nd_read",
+      "maximum_requested_read_bytes": 65537,
+      "read_count": 201,
+      "rejection": "arrival count exceeds plan"
+    },
+    {
+      "control": "oversize_line_rejected_before_decode",
+      "maximum_requested_read_bytes": 65537,
+      "read_count": 1,
+      "rejection": "decompressed arrival byte bound exceeded"
+    },
+    {
+      "control": "aggregate_byte_limit_rejected",
+      "maximum_requested_read_bytes": 65,
+      "read_count": 2,
+      "rejection": "decompressed arrival byte bound exceeded"
+    }
+  ],
+  "elapsed_seconds": 0.0016665639996062964,
+  "production_approved": false,
+  "source_commit": "673d3195b65cdb9e3fed2fd1b18dbad789d99b46"
+}

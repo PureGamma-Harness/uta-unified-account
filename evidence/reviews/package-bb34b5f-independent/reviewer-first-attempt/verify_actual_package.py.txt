@@ -1,0 +1,191 @@
+"""Independent pure archive review; never imports UTA, installs, serves or opens SQL."""
+from datetime import datetime, timezone
+from hashlib import sha256
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import resource
+import signal
+import subprocess
+import tarfile
+import time
+import zipfile
+
+COMMIT = "bb34b5fb4397f485c04fe440557b24bb28d1cae2"
+SOURCE = Path("/workspace/uta-observer-freeze-bb34b5f")
+WORK = Path("/tmp/uta-release-bb34b5f-09yvddlh")
+RAW = Path("/workspace/uta-package-bb34b5f/raw")
+OUTPUT = Path(__file__).with_name("result.json")
+TARGET = "uta/failure_diagnostics.py"
+CHECKS = {"entry_points", "legacy_fixture_licensed", "legacy_fixture_pinned", "sdist_required_files_exact", "sdist_runtime_exact", "version", "wheel_runtime_exact"}
+os.sched_setaffinity(0, {2})
+resource.setrlimit(resource.RLIMIT_CPU, (18, 19))
+signal.alarm(22)
+started = datetime.now(timezone.utc).isoformat()
+t0 = time.monotonic()
+references = {}
+def bounded():
+    assert time.monotonic() - t0 < 20, "independent pure review wall bound"
+def fingerprint(path):
+    path = Path(path)
+    h = sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(65536), b""):
+            h.update(chunk)
+    result = {"bytes": path.stat().st_size, "sha256": h.hexdigest()}
+    references[str(path)] = result
+    return result
+def read(path):
+    path = Path(path)
+    assert path.stat().st_size <= 4 * 1024 * 1024
+    value = json.loads(path.read_bytes())
+    fingerprint(path)
+    return value
+def git(*args):
+    return subprocess.check_output(["git", *args], cwd=SOURCE, text=True).strip()
+def archive_member(stream):
+    h = sha256(); size = 0
+    for chunk in iter(lambda: stream.read(65536), b""):
+        size += len(chunk)
+        assert size < 64 * 1024 * 1024
+        h.update(chunk)
+    return {"bytes": size, "sha256": h.hexdigest()}
+def wheel_members(path):
+    result = {}
+    with zipfile.ZipFile(path) as archive:
+        for member in archive.infolist():
+            bounded()
+            name = member.filename
+            assert name not in result and not name.startswith("/") and ".." not in PurePosixPath(name).parts
+            if not member.is_dir():
+                with archive.open(member) as stream:
+                    result[name] = archive_member(stream)
+    return result
+def tar_members(path):
+    result = {}; root = None; seen = set()
+    with tarfile.open(path, "r|gz") as archive:
+        for member in archive:
+            bounded()
+            name = PurePosixPath(member.name)
+            assert not name.is_absolute() and ".." not in name.parts
+            assert member.name not in seen
+            seen.add(member.name)
+            if root is None:
+                root = name.parts[0]
+            assert name.parts[0] == root and (member.isdir() or member.isfile())
+            if member.isfile():
+                relative = str(PurePosixPath(*name.parts[1:]))
+                with archive.extractfile(member) as stream:
+                    result[relative] = archive_member(stream)
+    return result
+assert git("rev-parse", "HEAD") == COMMIT
+assert git("status", "--porcelain", "--untracked-files=all") == ""
+tracked = git("ls-tree", "-r", "--name-only", COMMIT).splitlines()
+manifest = read(WORK / "artifact-manifest.json")
+assert manifest["source_commit"] == COMMIT and manifest["passed"] is True
+assert set(manifest["checks"]) == CHECKS and all(v is True for v in manifest["checks"].values())
+assert manifest["sdist_missing"] == manifest["sdist_mismatched"] == []
+assert set(manifest["sdist_required_files"]) == set(tracked)
+artifacts = manifest["artifacts"]
+assert len(artifacts) == 2
+wheel = WORK / "artifacts" / next(n for n in artifacts if n.endswith(".whl"))
+sdist = WORK / "artifacts" / next(n for n in artifacts if n.endswith(".tar.gz"))
+for path in (wheel, sdist):
+    assert fingerprint(path) == artifacts[path.name]
+expected_runtime = {name: fingerprint(SOURCE/name)["sha256"] for name in tracked if name.startswith("uta/") and name.endswith((".py", ".html"))}
+assert manifest["runtime_files"] == expected_runtime
+runtime_tree = sha256(json.dumps(expected_runtime, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+assert runtime_tree == manifest["runtime_tree_sha256"]
+positive_wheel = wheel_members(wheel)
+positive_sdist = tar_members(sdist)
+assert {n: m["sha256"] for n, m in positive_wheel.items() if n.startswith("uta/") and n.endswith((".py", ".html"))} == expected_runtime
+assert {n: m["sha256"] for n, m in positive_sdist.items() if n.startswith("uta/") and n.endswith((".py", ".html"))} == expected_runtime
+for name in tracked:
+    assert positive_sdist[name] == fingerprint(SOURCE/name), name
+amended = [name for name in tracked if name.startswith("evidence/") and name.endswith((".jsonl.gz", ".patch"))]
+assert len(amended) == 3
+assert "tools/run_managed_variants.py" not in tracked
+assert "measurement-footer.json" not in (SOURCE/"benchmarks/run_managed_benchmark.py").read_text()
+controls = read(WORK/"runtime-omission-controls/controls.json")
+assert controls["source_commit"] == COMMIT and controls["passed"] is True and len(controls["cases"]) == 2
+negative_results = []
+for kind, expected_false in (("wheel", {"wheel_runtime_exact"}), ("sdist", {"sdist_runtime_exact", "sdist_required_files_exact"})):
+    bounded()
+    case = next(c for c in controls["cases"] if c["case"] == kind + "_missing_new_failure_diagnostics_is_rejected")
+    report = read(WORK/"runtime-omission-controls"/(kind+"-report.json"))
+    assert case["source_commit"] == report["source_commit"] == COMMIT
+    assert case["returncode"] == 1 and case["passed"] is True and report["passed"] is False
+    assert case["removed_member"] == TARGET and case["removed_count"] == 1
+    assert set(report["checks"]) == CHECKS
+    assert {k for k, v in report["checks"].items() if v is False} == expected_false
+    assert all(type(v) is bool for v in report["checks"].values())
+    assert case["checks"] == report["checks"]
+    assert report["runtime_files"] == expected_runtime and report["runtime_tree_sha256"] == runtime_tree
+    assert report["sdist_missing"] == ([] if kind == "wheel" else [TARGET]) and report["sdist_mismatched"] == []
+    assert case["sdist_missing"] == report["sdist_missing"]
+    argv = case["argv"]
+    assert argv[1] == str(SOURCE/"tools/verify_release_archives.py")
+    assert argv[argv.index("--source")+1] == str(SOURCE) and argv[argv.index("--commit")+1] == COMMIT
+    negative = Path(argv[argv.index("--wheel" if kind == "wheel" else "--sdist")+1])
+    other = sdist if kind == "wheel" else wheel
+    assert Path(argv[argv.index("--sdist" if kind == "wheel" else "--wheel")+1]) == other
+    assert report["artifacts"][other.name] == artifacts[other.name]
+    actual_negative = fingerprint(negative)
+    assert actual_negative == report["artifacts"][negative.name] and actual_negative["sha256"] == case["negative_archive_sha256"]
+    member_map = wheel_members(negative) if kind == "wheel" else tar_members(negative)
+    original = positive_wheel if kind == "wheel" else positive_sdist
+    assert TARGET in original and TARGET not in member_map
+    assert member_map == {n: m for n, m in original.items() if n != TARGET}
+    negative_results.append({"kind": kind, "actual_returncode_record": case["returncode"], "false_checks": sorted(expected_false),
+        "source": COMMIT, "removed": TARGET, "negative_archive": actual_negative,
+        "other_positive_artifact_bound": other.name, "exact_member_content_difference": [TARGET]})
+installed = read(WORK/"external/installed/installed-report.json")
+views = read(WORK/"external/installed-views/installed-views-report.json")
+for report, count in ((installed, 8), (views, 3)):
+    assert report["source_commit"] == COMMIT and report["artifacts"] == artifacts and report["passed"] is True
+    assert report["isolated"] is True and report["pythonpath"] is None
+    assert report["runtime_tree_sha256"] == runtime_tree
+    assert report["tests"] == {"run": count, "errors": 0, "failures": 0, "skipped": 0}
+assert len(installed["commands"]) == 8 and all(c["returncode"] == 0 for c in installed["commands"])
+site = Path(installed["installed_site"])
+installed_runtime = {"uta/"+str(p.relative_to(site/"uta")): fingerprint(p)["sha256"] for p in (site/"uta").iterdir() if p.is_file() and p.suffix in (".py", ".html")}
+assert installed_runtime == expected_runtime
+helper = fingerprint(SOURCE/"tests/test_durable_cli.py")["sha256"]
+assert installed["helper_sha256"] == installed["copied_helper_sha256"] == manifest["cli_helper_sha256"] == helper
+views_helper = fingerprint(SOURCE/"tests/test_durable_views.py")["sha256"]
+assert views["helper_sha256"] == views["copied_helper_sha256"] == views_helper
+execution = read(RAW/"execution.json")
+assert execution["source_commit"] == COMMIT
+assert len(execution["runs"]) == 16
+assert all(r["returncode"] == r["expected_returncode"] == 0 and r["affinity"] == [2] for r in execution["runs"])
+checksums = {}
+for name, count in (("sdist-legacy-tests", 7), ("sdist-archival-tests", 1), ("sdist-release-verifier-tests", 19)):
+    stderr = RAW/(name+".stderr.txt")
+    data = stderr.read_text()
+    assert re.search(r"Ran " + str(count) + r" tests? in [0-9.]+s\s+OK\s*$", data)
+    assert "ResourceWarning:" not in data and "Exception ignored in:" not in data
+    checksums[name] = {"tests": count, "stderr": fingerprint(stderr), "stdout": fingerprint(RAW/(name+".stdout.txt"))}
+for name in ("frozen-source-commit", "frozen-source-final-commit"):
+    assert (RAW/(name+".stdout.txt")).read_text().strip() == COMMIT
+for name in ("frozen-source-status", "frozen-source-final-status"):
+    assert (RAW/(name+".stdout.txt")).read_bytes() == b""
+assert git("rev-parse", "HEAD") == COMMIT and git("status", "--porcelain", "--untracked-files=all") == ""
+bounded()
+result = {"source_commit": COMMIT, "verdict": "PASS_PACKAGE_SCOPE_ONLY", "started_utc": started,
+    "finished_utc": datetime.now(timezone.utc).isoformat(), "cpu_ids": sorted(os.sched_getaffinity(0)),
+    "wall_seconds": time.monotonic()-t0, "reviewer_ran_SQL_services_tests_or_collectors": False,
+    "artifacts": artifacts, "tracked_files": len(tracked), "sdist_members": len(positive_sdist),
+    "runtime_files": len(expected_runtime), "runtime_tree_sha256": runtime_tree,
+    "all_tracked_source_bytes_match": True, "amended_manifest_files": amended,
+    "actual_runtime_negative_controls": negative_results,
+    "fresh_installed_report": {"tests": installed["tests"], "console_commands": 8, "isolated": True, "installed_runtime_bytes_match": True},
+    "fresh_views_report": {"tests": views["tests"], "isolated": True}, "sdist_test_records": checksums,
+    "runtime_omission_checker_gap_closed_for_these_actual_bytes": True,
+    "generic_collector_fixed": False, "full_local_QA_accepted_by_this_report": False,
+    "CI_accepted_by_this_report": False, "long_run_accepted": False,
+    "production_approved": False, "capacity_10000_per_s_passed": False,
+    "references": references}
+OUTPUT.write_text(json.dumps(result, indent=2)+"\n")
+signal.alarm(0)
+print(json.dumps({k:result[k] for k in ("verdict", "tracked_files", "runtime_files", "wall_seconds", "cpu_ids")},indent=2))

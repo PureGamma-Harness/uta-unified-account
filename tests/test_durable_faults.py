@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import select
 import shutil
 import signal
 import sqlite3
@@ -17,7 +18,7 @@ import subprocess
 import sys
 import tarfile
 from tempfile import TemporaryDirectory
-from threading import Event, Thread
+from threading import Event, Thread, current_thread
 from time import monotonic, sleep
 import unittest
 from unittest.mock import patch
@@ -58,6 +59,130 @@ def financial_snapshot(path):
         existing = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         return {name: sorted(connection.execute("SELECT * FROM " + name).fetchall(), key=repr)
                 for name in FINANCIAL_TABLES if name in existing}
+
+
+def bound_router_shared_flocks(pid, identity, path, file_identity):
+    """Read kernel evidence for this exact child's own router-lock FD only.
+
+    No UTA worker function is replaced. A read/stop race is handled by the
+    caller checking this evidence again after the bound pidfd is stopped.
+    """
+    from uta.durable_process import _process_identity
+    def require_binding():
+        current = _process_identity(pid)
+        if any(current[key] != identity[key] for key in ("pid", "start_ticks", "boot_id", "uid")):
+            raise AssertionError("selected worker birth identity changed")
+        return current
+    require_binding()
+    current = path.stat(follow_symlinks=False)
+    if (current.st_dev, current.st_ino) != file_identity:
+        raise AssertionError("router lock file identity changed")
+    records = []
+    for entry in Path(f"/proc/{pid}/fdinfo").iterdir():
+        descriptor = Path(f"/proc/{pid}/fd") / entry.name
+        try:
+            if os.readlink(descriptor) != str(path):
+                continue
+            details = descriptor.stat()
+            if (details.st_dev, details.st_ino) != file_identity:
+                raise AssertionError("worker lock descriptor targets a different inode")
+            content = entry.read_text()
+        except FileNotFoundError:
+            continue  # A live worker may close this particular FD meanwhile.
+        for line in content.splitlines():
+            fields = line.split()
+            if (len(fields) == 9 and fields[0] == "lock:"
+                    and fields[2:5] == ["FLOCK", "ADVISORY", "READ"]
+                    and fields[5] == str(pid) and fields[7:] == ["0", "EOF"]):
+                device = fields[6].split(":")
+                if (len(device) != 3 or int(device[0], 16) != os.major(current.st_dev)
+                        or int(device[1], 16) != os.minor(current.st_dev)
+                        or int(device[2]) != current.st_ino):
+                    raise AssertionError("kernel lock record differs from router lock identity")
+                records.append({"fd": int(entry.name), "kernel_record": line,
+                                "device": current.st_dev, "inode": current.st_ino})
+    require_binding()
+    return records
+
+
+def router_writer_available_without_dml(path, *, own_injected_stop=False):
+    """Probe real SQLite writer availability; do not install an owner or write.
+
+    The stopped child must hold SH before its financial write transaction, or
+    the subsequent durable enqueue could itself wait for lease recovery.
+    """
+    if type(own_injected_stop) is not bool:
+        raise ValueError("injected-stop context must be an explicit boolean")
+    with closing(sqlite3.connect(Path(path).as_uri() + "?mode=rw", uri=True,
+                                 timeout=0, isolation_level=None)) as connection:
+        changes = connection.total_changes
+        try:
+            connection.execute("BEGIN IMMEDIATE")
+        except sqlite3.OperationalError as error:
+            code = getattr(error, "sqlite_errorcode", None)
+            if type(code) is int and code & 255 == 5:  # Native SQLITE_BUSY.
+                return {"available": False, "classification": "sqlite_busy", "native_errorcode": code}
+            if (not hasattr(error, "sqlite_errorcode") and type(error) is sqlite3.OperationalError
+                    and error.args == ("database is locked",)):
+                return {"available": False, "classification": "sqlite_busy_legacy_builtin", "native_errorcode": None}
+            # A genuine protocol error has also occurred while this fixture's
+            # selected child was stopped. This is technical UNKNOWN during
+            # our own capture, never a healthy quote/lease or runtime grant.
+            if own_injected_stop and type(code) is int and code & 255 == 15:
+                return {"available": False, "classification": "technical_unknown_own_stop_protocol",
+                        "native_errorcode": code, "lease_observed": False}
+            if (own_injected_stop and not hasattr(error, "sqlite_errorcode")
+                    and type(error) is sqlite3.OperationalError and error.args == ("locking protocol",)):
+                return {"available": False, "classification": "technical_unknown_own_stop_protocol_legacy_builtin",
+                        "native_errorcode": None, "lease_observed": False}
+            raise
+        assert connection.in_transaction
+        connection.rollback()
+        assert not connection.in_transaction and connection.total_changes == changes
+        return {"available": True, "classification": "begin_immediate_rolled_back_zero_dml",
+                "native_errorcode": None}
+
+
+def undo_owned_test_stop(pid, pidfd, identity, observation, *, reason,
+                         known_lease=None, expected_generation=None, cleanup=False):
+    """Undo only this fixture's injected stop, never establish risk authority.
+
+    In particular, no lease read is attempted while the stopped child may hold
+    the SQLite lock that made that observation unavailable.
+    """
+    from uta.durable_process import _process_identity
+    record = {"reason": reason, "pid": pid, "lease_observed": False,
+              "financial_authority_granted": False, "cleanup": cleanup,
+              "action": "not_signalled"}
+    observation.setdefault("injection_undos", []).append(record)
+    poller = select.poll()
+    poller.register(pidfd, select.POLLIN)
+    if poller.poll(0):
+        record["action"] = "already_exited"
+        return False
+    try:
+        current = _process_identity(pid)
+    except FileNotFoundError:
+        record["action"] = "exited_during_identity_observation"
+        return False
+    if any(current[key] != identity[key] for key in ("pid", "start_ticks", "boot_id", "uid")):
+        raise AssertionError("cannot undo a stop on a different process binding")
+    known_invalid = known_lease is not None and (
+        known_lease["active"] is False or known_lease["owner_pid"] != pid
+        or expected_generation is not None and known_lease["generation"] != expected_generation)
+    if known_invalid and not cleanup:
+        record["action"] = "known_inactive_or_changed_rejected"
+        raise AssertionError("known inactive or changed ownership cannot reenter capture")
+    action = signal.SIGKILL if known_invalid else signal.SIGCONT
+    if action == signal.SIGKILL:
+        observation["cleanup_forced_kill"] = True
+    try:
+        signal.pidfd_send_signal(pidfd, action)
+    except ProcessLookupError:
+        record["action"] = "exited_during_undo"
+        return False
+    record["action"] = "SIGKILL_cleanup" if action == signal.SIGKILL else "SIGCONT_undo_own_injection"
+    return action == signal.SIGCONT
 
 
 class DurableFaultFixture(unittest.TestCase):
@@ -1096,9 +1221,14 @@ class ManagedProcessFaultTests(unittest.TestCase):
             router.set_kill_switch(False)
             router.borrow(self.accounts[0], "loan", "USD", D(10))
             router.accrue_interest(self.accounts[0], "interest", "USD", D(1))
+        # Only the native SH-holder fixture needs setup headroom. This is the
+        # real production-default lease from first initialization, not a renewal
+        # of an expired token; every other case retains its one-second lease.
+        fixture_lease = (5 if self._testMethodName ==
+            "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover" else 1)
         self.router = DurableProcessRouter.initialize(self.path, 2, {"USD": 8},
             managed=True, bootstrap=bootstrap, max_price_age=timedelta(minutes=1),
-            lease_seconds=1, poll_interval=.01, background_interval=.05,
+            lease_seconds=fixture_lease, poll_interval=.01, background_interval=.05,
             account_batch=1, matches_per_symbol=1, max_attempts=2)
         self.addCleanup(self.router.close)
 
@@ -1204,63 +1334,274 @@ class ManagedProcessFaultTests(unittest.TestCase):
         self.assertEqual(len([row for row in before["uta_events"] if row[1] == "ORDER_ACCEPTED"]), 1)
 
     def test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover(self):
+        from uta.durable_process import _process_identity
         self.active()
-        pid = self.suspend_outside_transaction(0)
-        other_pid = self.suspend_outside_transaction(1)
-        old_generation = self.router.diagnostics()["workers"][0]["generation"]
-        self.submit("held-gate-command")
-        descriptor = os.open(self.path / "router.lock", os.O_RDWR)
-        held = False
+        before = financial_snapshot(self.shard_path(0))
+        cache_configuration = {key: self.router._config["service"].get(key)
+                               for key in ("reserve_cache_size", "market_cache_size")}
+        cache_configuration["normal_cache_size"] = self.router._settings.get("normal_cache_size")
+        def schema_versions():
+            with self.router._database(0).read_transaction() as connection:
+                return {name: [tuple(row) for row in connection.execute("SELECT * FROM " + name)]
+                        for name in ("uta_schema", "ledger_schema")}
+        versions = schema_versions()
+        observer = self.router._database(0)
+        observer.timeout = .1
+        last_native_lease, bound_generation = None, None
+        def lease(phase="native_lease_observation"):
+            nonlocal last_native_lease
+            try:
+                value = WriterFence(observer).status()
+            except BaseException as error:
+                observation["lease_reads"].append({"phase": phase, "observed": False,
+                                                    "error_type": type(error).__name__})
+                raise
+            # Retain no raw nonce/token material in test observations.
+            last_native_lease = {key: value[key] for key in
+                                 ("owner_pid", "generation", "active", "expires_ns", "now_ns")}
+            observation["lease_reads"].append({"phase": phase, "observed": True,
+                                                "value": last_native_lease})
+            return last_native_lease
+        with self.router._mutex:
+            process = self.router._workers[0][0]
+            self.assertTrue(process.is_alive())
+            pid = process.pid
+            identity = _process_identity(pid)
+            pidfd = os.pidfd_open(pid)
+        exited = select.poll()
+        exited.register(pidfd, select.POLLIN)
+        lock_path = self.path / "router.lock"
+        details = lock_path.stat(follow_symlinks=False)
+        file_identity = (details.st_dev, details.st_ino)
+        observation = self._expired_gate_observation = {
+            "selected_binding": identity, "fixture_lease_seconds": 5,
+            "capture_horizon_seconds": 5, "recovery_horizon_seconds": 5,
+            "api_phase_timeout_seconds": 5, "publication_lifecycle_watchdog_seconds": 15,
+            "capture_attempts": [], "cleanup_forced_kill": False,
+            "lease_reads": [], "injection_undos": [], "cleanup_errors": []}
+        stopped, captured, thread = False, False, None
+        done, gate_entered, results, errors = Event(), Event(), [], []
+        publication_started = None
         try:
-            with closing(sqlite3.connect(self.shard_path(0), timeout=5, isolation_level=None)) as connection:
-                connection.execute("BEGIN IMMEDIATE")
-                try:
-                    os.kill(pid, signal.SIGCONT)
-                    deadline = monotonic() + .75
-                    while monotonic() < deadline:
+            capture_deadline = monotonic() + 5
+            for _ in range(8):
+                # Both the finite capture horizon and the original live binding
+                # constrain every signal. No business command is retried here.
+                while monotonic() < capture_deadline:
+                    self.assertFalse(exited.poll(0), "selected owner exited before SH capture")
+                    current = lease()
+                    self.assertEqual(current["owner_pid"], pid)
+                    self.assertTrue(current["active"], "selected owner expired during SH capture")
+                    if bound_generation is None:
+                        bound_generation = current["generation"]
+                    self.assertEqual(current["generation"], bound_generation)
+                    candidate = bound_router_shared_flocks(pid, identity, lock_path, file_identity)
+                    if candidate:
+                        break
+                    sleep(.001)
+                else:
+                    self.fail("no bound native router SH descriptor within capture horizon")
+                stop_sent_at = monotonic()
+                signal.pidfd_send_signal(pidfd, signal.SIGSTOP)
+                stopped = True
+                stop_deadline = min(capture_deadline, monotonic() + .2)
+                while monotonic() < stop_deadline and _process_identity(pid)["state"] != "T":
+                    self.assertFalse(exited.poll(0))
+                    sleep(.001)
+                self.assertEqual(_process_identity(pid)["state"], "T")
+                retained = bound_router_shared_flocks(pid, identity, lock_path, file_identity)
+                observation["capture_attempts"].append({"at": monotonic(), "stop_sent_at": stop_sent_at,
+                                                        "candidate": candidate,
+                                                        "retained_after_stop": retained})
+                if retained:
+                    writer_probe = router_writer_available_without_dml(
+                        self.shard_path(0), own_injected_stop=stopped)
+                    observation["capture_attempts"][-1]["writer_availability_probe"] = writer_probe
+                if retained and writer_probe["available"]:
+                    descriptor = os.open(lock_path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW)
+                    try:
+                        opened = os.fstat(descriptor)
+                        self.assertEqual((opened.st_dev, opened.st_ino), file_identity)
                         try:
                             fcntl.flock(descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                            fcntl.flock(descriptor, fcntl.LOCK_UN)
                         except BlockingIOError:
-                            held = True
-                            break
-                        sleep(.005)
-                    self.assertTrue(held, "worker never entered the shared gate while its SQLite writer was blocked")
-                    os.kill(pid, signal.SIGSTOP)
+                            captured = True
+                        else:
+                            fcntl.flock(descriptor, fcntl.LOCK_UN)
+                    finally:
+                        os.close(descriptor)
+                    if captured:
+                        observation["captured_at"] = monotonic()
+                        break
+                # The failed capture may have paused a SQLite writer/schema
+                # holder. Do not read its lease through that same blocked DB.
+                observation["capture_attempts"][-1]["resume_lease_observation"] = {
+                    "observed": False, "reason": "undo_own_stop_before_fresh_authority_read"}
+                self.assertTrue(undo_owned_test_stop(
+                    pid, pidfd, identity, observation, reason="unsatisfied_capture",
+                    known_lease=last_native_lease, expected_generation=bound_generation))
+                stopped = False
+                # Require actual kernel progress before the one fresh native
+                # read. This is not a lease-until-green retry loop.
+                while monotonic() < capture_deadline:
+                    self.assertFalse(exited.poll(0), "selected binding exited during capture undo")
+                    current_identity = _process_identity(pid)
+                    self.assertTrue(all(current_identity[key] == identity[key]
+                                        for key in ("pid", "start_ticks", "boot_id", "uid")))
+                    if (current_identity["state"] not in ("T", "t", "Z", "X")
+                            and not bound_router_shared_flocks(pid, identity, lock_path, file_identity)):
+                        break
+                    sleep(.001)
+                else:
+                    self.fail("bound child did not leave SH after undo within original capture horizon")
+                recovered = lease("once_after_own_stop_undo")
+                self.assertTrue(recovered["active"] and recovered["owner_pid"] == pid,
+                                "unknown/inactive observation cannot reenter capture")
+                self.assertEqual(recovered["generation"], bound_generation)
+            self.assertTrue(captured, "read/stop races exhausted the bounded SH capture attempts")
+            old = lease()
+            old_generation = old["generation"]
+            self.assertEqual(old["owner_pid"], pid)
+            self.assertTrue(old["active"])
+            self.assertGreater(old["expires_ns"] - old["now_ns"], 350_000_000)
+            observation["captured_lease"] = old
+            with observer.read_transaction() as connection:
+                acquired = connection.execute(
+                    "SELECT expires_ns-observed_ns FROM writer_fence_events WHERE kind='acquired' AND owner_pid=? AND generation=?",
+                    (pid, old_generation)).fetchall()
+            self.assertEqual([row[0] for row in acquired], [5_000_000_000])
+            # An unexpired held-SH owner must not be killed early.
+            self.assertEqual(exited.poll(100), [])
+            current = lease()
+            self.assertTrue(current["active"] and current["owner_pid"] == pid)
+            self.assertEqual(current["generation"], old_generation)
+            self.assertTrue(bound_router_shared_flocks(pid, identity, lock_path, file_identity))
+            observation["unexpired_control_lease"] = current
+            queued = self.submit("held-gate-command")
+            self.assertEqual((queued["ack"], queued["state"]), ("durably_queued", "PENDING"))
+            snapshot = self.market(2, "110")
+            original_payload = snapshot.to_json()
+            observation["original_snapshot_sha256"] = hashlib.sha256(original_payload.encode()).hexdigest()
+            # Wait for real native time; never alter or renew the paused token.
+            while True:
+                self.assertFalse(exited.poll(0), "unexpired binding was killed before publication")
+                current = lease()
+                self.assertTrue(current["active"] and current["owner_pid"] == pid)
+                self.assertEqual(current["generation"], old_generation)
+                remaining = (current["expires_ns"] - current["now_ns"]) / 1e9
+                if remaining <= .25:
+                    break
+                sleep(min(.05, remaining - .25))
+            observation["publication_entry_lease"] = current
+            original_lock = self.router._control._lock
+            @contextmanager
+            def observed_gate(*, exclusive=False, timeout=None):
+                with original_lock(exclusive=exclusive, timeout=timeout):
+                    if exclusive and current_thread() is thread and not gate_entered.is_set():
+                        observation["publication_first_ex_entered_at"] = monotonic()
+                        gate_entered.set()
+                    yield
+            def publish():
+                try:
+                    entry = lease()
+                    observation["publication_thread_entry_lease"] = entry
+                    self.assertTrue(entry["active"] and entry["owner_pid"] == pid)
+                    self.assertEqual(entry["generation"], old_generation)
+                    self.assertLessEqual((entry["expires_ns"] - entry["now_ns"]) / 1e9, .25)
+                    observation["publication_called_api_at"] = monotonic()
+                    results.append(self.router.publish_market(snapshot, timeout=5))
+                except BaseException as error:
+                    errors.append(error)
                 finally:
-                    connection.rollback()
+                    observation["publication_finished_at"] = monotonic()
+                    done.set()
+            thread = Thread(target=publish, daemon=True)
+            publication_started = monotonic()
+            observation["publication_started_at"] = publication_started
+            recovery_deadline = publication_started + 5
+            lifecycle_deadline = publication_started + 15
+            with patch.object(self.router._control, "_lock", observed_gate):
+                thread.start()
+                self.assertTrue(exited.poll(max(0, int((recovery_deadline - monotonic()) * 1000))),
+                                "original bound PID did not exit within the unchanged five-second recovery horizon")
+                observation["old_pidfd_exit_observed_at"] = monotonic()
+                self.assertLessEqual(observation["old_pidfd_exit_observed_at"], recovery_deadline)
+                stopped = False
+                while monotonic() < recovery_deadline:
+                    current = lease()
+                    if current["active"] and current["generation"] > old_generation and current["owner_pid"] != pid:
+                        observation["new_generation_observed_at"] = monotonic()
+                        self.assertLessEqual(observation["new_generation_observed_at"], recovery_deadline)
+                        observation["new_lease"] = current
+                        break
+                    sleep(.005)
+                else:
+                    self.fail("no actual new-generation lease within the unchanged recovery horizon")
+                self.assertTrue(gate_entered.wait(max(0, recovery_deadline - monotonic())),
+                                "original publication did not actually enter EX after the held-SH owner exited")
+                self.assertLessEqual(observation["publication_first_ex_entered_at"], recovery_deadline)
+                # This is a thread lifecycle bound for three separate API wait
+                # phases, not a replacement or increase of the recovery horizon.
+                self.assertTrue(done.wait(max(0, lifecycle_deadline - monotonic())),
+                                "publication exceeded its explicitly separate phase lifecycle watchdog")
+                thread.join(max(0, lifecycle_deadline - monotonic()))
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(errors, [])
+            self.assertEqual(len(results), 1)
+            result = results[0]
+            self.assertFalse(result["publishing"])
+            self.assertEqual(result["market_version"], 2)
+            self.assertEqual(snapshot.to_json(), original_payload)
+            self.assertEqual(result["market_digest"], hashlib.sha256(original_payload.encode()).hexdigest())
+            self.assertEqual(set(result["receipts"]), {"0", "1"})
+            for shard, receipt in result["receipts"].items():
+                self.assertEqual(receipt["state"], "SUCCEEDED")
+                self.assertEqual(receipt["command_id"], result["durable_market_commands"][shard])
+                self.assertEqual(self.router._queue(int(shard)).status(receipt["command_id"]), receipt)
+                with self.router._database(int(shard)).read_transaction() as connection:
+                    self.assertEqual(connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()[0], original_payload)
+            self.assertNotEqual(self.router.worker_pid(0), pid)
+            self.assertGreater(lease()["generation"], old_generation)
+            after = financial_snapshot(self.shard_path(0))
+            self.assertLessEqual(len(after["uta_orders"]), 1)
+            accepted = [row for row in after["uta_events"] if row[1] == "ORDER_ACCEPTED"]
+            self.assertLessEqual(len(accepted), 1)
+            if after["uta_orders"]:
+                self.assertEqual(after["uta_orders"][0][:2], (self.accounts[0], "held-gate-command"))
+            for table in ("ledger_events", "ledger_postings", "ledger_balances", "uta_liabilities",
+                          "uta_fills", "uta_positions", "uta_matches"):
+                self.assertEqual(after[table], before[table], table)
+            self.assertEqual(schema_versions(), versions)
+            after_cache = {key: self.router._config["service"].get(key)
+                           for key in ("reserve_cache_size", "market_cache_size")}
+            after_cache["normal_cache_size"] = self.router._settings.get("normal_cache_size")
+            self.assertEqual(after_cache, cache_configuration)
+            observation["finance"] = {"orders": len(after["uta_orders"]), "accepted_events": len(accepted),
+                                      "ledger_and_debt_unchanged": True, "schema_versions": versions,
+                                      "cache_configuration": cache_configuration}
         finally:
-            os.close(descriptor)
-            # The other shard was stopped only to disambiguate the flock
-            # observation. Let it process publication normally again.
+            primary_error = sys.exc_info()[1]
             try:
-                os.kill(other_pid, signal.SIGCONT)
-            except ProcessLookupError:
-                pass
-        done, results, errors = Event(), [], []
-        snapshot = self.market(2, "110")
-        def publish():
-            try:
-                results.append(self.router.publish_market(snapshot, timeout=5))
+                if thread is not None and thread.is_alive():
+                    if not exited.poll(0):
+                        observation["cleanup_forced_kill"] = True
+                        signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+                    thread.join(8)
+                elif stopped and not exited.poll(0):
+                    undo_owned_test_stop(pid, pidfd, identity, observation,
+                        reason="cleanup_own_injected_stop", known_lease=last_native_lease,
+                        expected_generation=bound_generation, cleanup=True)
             except BaseException as error:
-                errors.append(error)
+                observation["cleanup_errors"].append({"phase": "undo_or_join", "error_type": type(error).__name__})
+                if primary_error is None:
+                    raise
             finally:
-                done.set()
-        thread = Thread(target=publish, daemon=True)
-        thread.start()
-        try:
-            self.assertTrue(done.wait(5), "expired live PID retained SH flock: supervisor did not kill and replace the paused owner")
-        finally:
-            if not done.is_set() and self.router.worker_pid(0) == pid:
-                self.router.terminate_worker(0)
-            thread.join(8)
-        self.assertFalse(thread.is_alive())
-        self.assertEqual(errors, [])
-        self.assertFalse(results[0]["publishing"])
-        self.assertNotEqual(self.router.worker_pid(0), pid)
-        self.assertGreater(self.router.diagnostics()["workers"][0]["generation"], old_generation)
-        orders = financial_snapshot(self.shard_path(0))["uta_orders"]
-        self.assertLessEqual(len(orders), 1)
+                try:
+                    os.close(pidfd)
+                except BaseException as error:
+                    observation["cleanup_errors"].append({"phase": "close_pidfd", "error_type": type(error).__name__})
+                    if primary_error is None:
+                        raise
 
     def test_partial_publication_stays_halted_until_exact_publication_replay_completes(self):
         self.active()

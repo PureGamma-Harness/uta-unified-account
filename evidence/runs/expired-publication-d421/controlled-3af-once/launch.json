@@ -1,0 +1,81 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "2",
+    "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+    "/workspace/uta-expired-publication-review/evidence/runs/expired-publication-d421/candidate/trace-candidate.py",
+    "--worker",
+    "/tmp/uta-expired-publication-d421/candidate-3af-once/worker"
+  ],
+  "started_at": "2026-11-17T13:27:13.452796+00:00",
+  "finished_at": "2026-11-17T13:27:20.440180+00:00",
+  "wall_seconds": 6.987385729997186,
+  "worker_identity": {
+    "pid": 198059,
+    "state": "R",
+    "start_ticks": "5915993",
+    "pgid": 198059
+  },
+  "exit_code": 0,
+  "watchdog_seconds": 27,
+  "whole_budget_seconds": 30,
+  "timed_out": false,
+  "own_process_group_only": true,
+  "owned_children": [
+    {
+      "original": {
+        "pgid": 198059,
+        "pid": 198062,
+        "start_ticks": "5916033",
+        "state": "R"
+      },
+      "current": {
+        "pid": 198062,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 198059,
+        "pid": 198063,
+        "start_ticks": "5916036",
+        "state": "R"
+      },
+      "current": {
+        "pid": 198063,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 198059,
+        "pid": 198068,
+        "start_ticks": "5916618",
+        "state": "R"
+      },
+      "current": {
+        "pid": 198068,
+        "present": false
+      },
+      "forced_cleanup": false
+    }
+  ],
+  "final_owned_identities": [
+    {
+      "pid": 198062,
+      "present": false
+    },
+    {
+      "pid": 198063,
+      "present": false
+    },
+    {
+      "pid": 198068,
+      "present": false
+    }
+  ],
+  "production_approved": false
+}
