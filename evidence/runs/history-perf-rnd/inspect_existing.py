@@ -14,8 +14,13 @@ BASE = "c30457227e2bfc0a1e665ff67c9c148855ac624a"
 
 
 def read(relative):
-    data = (ROOT / relative).read_bytes()
-    return data, {"path": relative, "bytes": len(data), "sha256": sha256(data).hexdigest()}
+    material = ("evidence/runs/history-perf-rnd/original-storage.py.txt"
+                if relative == "uta/storage.py" else relative)
+    data = (ROOT / material).read_bytes()
+    if relative == "uta/storage.py":
+        assert sha256(data).hexdigest() == "9eee296159d0b0347feac3fd2f2b99b3216e8247e579e159e5adda8cbcb08a08"
+    return data, {"path": relative, "bytes": len(data), "sha256": sha256(data).hexdigest(),
+                  "material_path": material}
 
 
 def main():
