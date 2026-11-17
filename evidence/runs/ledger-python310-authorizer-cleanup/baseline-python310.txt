@@ -1,0 +1,143 @@
+test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_09_real_managed_bound_constructor_and_native_read_role (test_ledger_main_acceptance.IndependentMainAcceptance) ... ok
+test_10_read_only_schema_helpers_grant_no_managed_join_or_write_authority (test_ledger_main_acceptance.IndependentMainAcceptance) ... ok
+test_11_other_main_path_still_refuses_before_any_ledger_lookup (test_ledger_main_acceptance.IndependentMainAcceptance) ... ok
+test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_13_supported_real_sqlite_backup_preserves_canonical_ledger (test_ledger_main_acceptance.IndependentMainAcceptance) ... ok
+test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance) ... ERROR
+test_ms001_healthy_main_raw_join_without_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests) ... ERROR
+test_ms003_bad_main_hash_not_hidden_by_healthy_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms004_bad_main_balance_not_hidden_by_healthy_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms005_bad_main_postings_not_hidden_by_healthy_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms006_bad_main_version_not_hidden_by_healthy_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms007_bad_main_scale_not_hidden_by_healthy_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms008_bad_temp_does_not_change_healthy_main_verdict (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms009_f01_bad_main_catalogue_not_hidden_by_temp (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms010_real_managed_read_transaction_still_verifies_main (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms011_real_managed_raw_join_remains_unguarded (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+test_ms012_different_main_path_still_rejects_raw_join (test_ledger_main_schema.LedgerMainSchemaTests) ... ok
+
+======================================================================
+ERROR: test_01_bad_main_hash_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 159, in test_01_bad_main_hash_refuses_despite_genuine_good_temp
+    self.joined(connection, message=message)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_02_bad_main_balance_refuses_despite_genuine_good_temp (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 166, in test_02_bad_main_balance_refuses_despite_genuine_good_temp
+    self.joined(connection, message=message)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 173, in test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission
+    self.joined(connection)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 195, in test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair
+    self.joined(connection, message=message)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_05_main_version_error_precedes_hash_and_balance_errors (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 203, in test_05_main_version_error_precedes_hash_and_balance_errors
+    self.joined(connection, message="ledger schema version changed")
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_06_main_scales_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 210, in test_06_main_scales_error_precedes_hash_error
+    self.joined(connection, message="ledger asset scales changed")
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_07_main_trigger_error_precedes_hash_error (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 218, in test_07_main_trigger_error_precedes_hash_error
+    self.joined(connection, message="journal protection trigger is missing")
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_08_query_only_verification_preserves_uncommitted_callers_marker (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 225, in test_08_query_only_verification_preserves_uncommitted_callers_marker
+    self.joined(connection, active=True)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_12_read_method_alias_protocol_uses_original_main_checkers (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 293, in test_12_read_method_alias_protocol_uses_original_main_checkers
+    self.joined(connection, view=view, message="journal event hash changed")
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_14_main_foreign_key_failure_precedes_version_and_hash_errors (test_ledger_main_acceptance.IndependentMainAcceptance)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 310, in test_14_main_foreign_key_failure_precedes_version_and_hash_errors
+    self.joined(connection, message=message)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_acceptance.py", line 137, in joined
+    self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)
+sqlite3.DatabaseError: not authorized
+
+======================================================================
+ERROR: test_ms002_healthy_temp_copies_need_no_temp_read_permission (test_ledger_main_schema.LedgerMainSchemaTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_schema.py", line 134, in test_ms002_healthy_temp_copies_need_no_temp_read_permission
+    self.joined(connection, deny_temp=True)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_schema.py", line 112, in joined
+    self.assertEqual(self.snapshot(connection, "main"), before_main)
+  File "/workspace/uta-ledger-py310-fixture/tests/test_ledger_main_schema.py", line 52, in snapshot
+    present = {row[0] for row in connection.execute('SELECT name FROM ' + schema + '.sqlite_master')}
+sqlite3.DatabaseError: not authorized
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.392s
+
+FAILED (errors=11)

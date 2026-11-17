@@ -1,0 +1,24 @@
+{
+  "source": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_ledger_main*.py",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-ledger-py310-fixture",
+  "started_at": "2026-11-17T16:39:04.664648+00:00",
+  "finished_at": "2026-11-17T16:39:05.189122+00:00",
+  "wall_seconds": 0.5244970670028124,
+  "exit_code": 1,
+  "runtime_changes": false,
+  "rerun_of_original_ci": false
+}

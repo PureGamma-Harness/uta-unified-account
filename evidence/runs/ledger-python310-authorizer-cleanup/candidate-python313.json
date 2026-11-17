@@ -1,0 +1,27 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/usr/bin/python3.13",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_ledger_main*.py",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-ledger-py310-fixture",
+  "started_at": "2026-11-17T16:39:33.008027+00:00",
+  "finished_at": "2026-11-17T16:39:33.523404+00:00",
+  "wall_seconds": 0.5153946319915121,
+  "exit_code": 0,
+  "base_source": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "dirty_test_only_patch": true,
+  "test_hashes": {
+    "test_ledger_main_acceptance.py": "0bbc35f05523e284289dac662dd4b04230c2dad6ae78373c62e53d4a90628488",
+    "test_ledger_main_schema.py": "6cfe01d898a271af6abe3164e7037a7440e5fc5dcfb8018da21806aa4315819a"
+  }
+}

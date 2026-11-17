@@ -131,7 +131,9 @@ class IndependentMainAcceptance(unittest.TestCase):
                     (view or self.ledger).verify(connection=connection)
                 observed = {"error_type": "LedgerError", "message": message}
         finally:
-            connection.set_authorizer(None)
+            # Python 3.10 cannot remove a callback with None. This raw fixture
+            # permits subsequent state checks only after verification ends.
+            connection.set_authorizer(lambda *_: sqlite3.SQLITE_OK)
             connection.set_trace_callback(None)
         self.assertTrue(connection.in_transaction)
         self.assertEqual(connection.execute("PRAGMA query_only").fetchone()[0], 1)

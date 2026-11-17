@@ -1,0 +1,14 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import sqlite3,json,platform\nc=sqlite3.connect(':memory:')\nc.set_authorizer(lambda *args: sqlite3.SQLITE_OK)\nc.execute('SELECT 1').fetchone()\nc.set_authorizer(None)\nr={'python':platform.python_version(),'sqlite':sqlite3.sqlite_version}\ntry: r['after_none']=c.execute('SELECT 2').fetchone()\nexcept Exception as e:r['after_none']={'type':type(e).__name__,'message':str(e),'sqlite_errorcode':getattr(e,'sqlite_errorcode',None)}\nc.set_authorizer(lambda *args: sqlite3.SQLITE_OK)\nr['after_explicit_allow']=c.execute('SELECT 3').fetchone()\nc.close();print(json.dumps(r))\n"
+  ],
+  "cwd": "/workspace/uta-ledger-py310-fixture",
+  "exit_code": 0,
+  "stdout": "{\"python\": \"3.12.14\", \"sqlite\": \"3.53.1\", \"after_none\": [2], \"after_explicit_allow\": [3]}\n",
+  "stderr": ""
+}
