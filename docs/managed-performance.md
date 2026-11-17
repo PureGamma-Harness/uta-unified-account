@@ -4,6 +4,16 @@
 
 默认 100 个合成账户、2 分片/独立 worker PID、2 个 dispatcher，计划 20/s 持续 10 秒。主命令进程及其线程/子进程默认只绑定两个可用 CPU，主机整体配额另外记录；现有 24 小时作业和观察器继续共享同一主机，不被暂停或修改。每账户初始 USD100,000,000，所有单均为正向买单、成功订单持续 OPEN，保证金没有通过即时撤单或虚构成交释放。
 
+## 启动观察门
+
+初次行情发布和激活完成后，工具在同一 **5秒总预算** 内观察真实 `diagnostics()`。激活回执只说明控制命令完成；父进程的 monitor 可能还没消费子 PID 已发送的 READY，所以一次即时诊断可能返回 `worker_unready`。仅 `worker_unready` 和 `diagnostic_timeout` 允许等待20毫秒后重新观察，每次诊断预算不超过总预算的剩余时间。required audit 必须开启，最终必须观察到严格 `ready` 与 `financial_ready`；distinct PID、owner 和 lease 检查继续保留。
+
+行情过期/未来报价、I/O、guard/控制数据损坏、发布未完成、停机状态以及已观察到的 worker 失败立即终止。顶层 timeout 不能掩盖同份报告中已有的分片错误。期限到达即失败，错误附最后完整报告，不开始客户到达。每次完整报告、实际 UTC/单调时间、诊断预算及最终结果写入 `startup-readiness.jsonl` 并立即 flush；成功运行的 summary 和 manifest 包含该证据，失败目录也保留观察文件。实际等待计入 `startup_seconds_excluded`，另有 `startup_readiness_observation` 细分；到达、排空、lease、行情年龄和金融准入口径均不变，也不重新标记旧 tick 时间。
+
+回归测试只控制父 monitor 消费 READY 的时机，真实 spawn 子 PID 照常获取 fencing token、发布行情、激活并提交金融订单；测试要求首次 `worker_unready`、随后同 PID/generation 严格 ready 和 RO 逐笔对账通过。原“提交已成功但 enqueue ACK 丢失”的测试继续要求原 CID 查询、错误计数保留及唯一金融提交。本修复针对 CI 的即时观察竞态，不提供新的容量结果，也不修改历史首轮26个原始证据文件或正在运行的稳定性作业。
+
+故障来源为同一旧提交在 [push CI 的 Python3.13 job](https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44018824285/job/133823149724) 的即时准备门失败。修复后的 `python -m unittest discover -s tests -p test_managed_benchmark.py -v` 在本机 Python3.10.22/SQLite3.53.1、Python3.12.14/SQLite3.53.1、Python3.13.5/SQLite3.46.1 分别通过11项（1.571/1.550/1.734秒）；这只是工具回归自检。部署为更新工具源码并先运行该自检，后续负载仍等冻结与静默窗口；没有 schema 或金融数据迁移。回滚只恢复工具和对应测试的旧提交，在下一次新诊断目录运行，保留既有观察文件和所有 authority 数据。
+
 ## 接纳口径
 
 每个计划到达使用唯一 command_id 和 order_id。原始 JSONL 记录计划、实际发出、开始入队、ACK、调用结束和 terminal 观察时间，包含完整 terminal result/error。`ack=durably_queued` 仅证明本地 WAL/FULL inbox 持久写入，不代表金融成功。只有只读事务观察到 `SUCCEEDED` 才计入金融成功；存储复开后还必须对应真实订单、持久预占、账户版本和审计记录。首次 ACK 丢失后，原 command_id 查询若返回真实 SUCCEEDED 可以证明该次接纳，但 enqueue technical error 仍单独保留，不能因恢复查询抹掉。

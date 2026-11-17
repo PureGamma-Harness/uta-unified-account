@@ -132,6 +132,80 @@ def error_details(error):
     return result
 
 
+def observe_startup_ready(router, path, *, timeout=5.0, interval=.02):
+    """Observe real readiness within one budget; never infer it from activation.
+
+    READY pipe delivery can lag a successful control command. Only that known
+    observation race and an exhausted diagnostic read budget permit a retry.
+    Full observations survive failed startup without starting client arrivals.
+    """
+    if (isinstance(timeout, bool) or not isinstance(timeout, (int, float))
+            or not math.isfinite(timeout) or not 0 < timeout <= 5):
+        raise ValueError("startup observation timeout must be in (0,5] seconds")
+    if (isinstance(interval, bool) or not isinstance(interval, (int, float))
+            or not math.isfinite(interval) or not 0 < interval <= .1):
+        raise ValueError("startup observation interval must be in (0,.1] seconds")
+    started = time.monotonic_ns()
+    deadline = started + int(timeout * 1e9)
+    metadata = {"budget_seconds": timeout, "interval_seconds": interval,
+        "started_monotonic_ns": started, "started_utc": datetime.now(timezone.utc).isoformat(),
+        "observations_file": Path(path).name, "observation_count": 0}
+    last = None
+    with Path(path).open("x") as stream:
+        def write(row):
+            stream.write(json.dumps(row, separators=(",", ":")) + "\n")
+            stream.flush()
+        def failed(reason):
+            finished = time.monotonic_ns()
+            write({"event": "finished", "outcome": reason, **metadata,
+                   "finished_monotonic_ns": finished, "elapsed_seconds": (finished - started) / 1e9})
+            raise RuntimeError("managed startup readiness " + reason + "; last complete diagnostic: "
+                               + json.dumps(last, sort_keys=True))
+        write({"event": "started", **metadata})
+        while True:
+            before = time.monotonic_ns()
+            remaining = (deadline - before) / 1e9
+            if remaining <= 0:
+                failed("deadline_exceeded")
+            # Each strict read consumes the same total budget. Neither a new
+            # quote nor a longer lease is manufactured while waiting.
+            diagnostic_budget = min(1.0, remaining)
+            try:
+                report = router.diagnostics(timeout=diagnostic_budget)
+            except Exception as error:
+                write({"event": "diagnostic_exception", "at_monotonic_ns": time.monotonic_ns(),
+                       **error_details(error)})
+                failed("diagnostic_exception")
+            after = time.monotonic_ns()
+            last = report
+            metadata["observation_count"] += 1
+            write({"event": "observation", "index": metadata["observation_count"],
+                   "started_monotonic_ns": before, "finished_monotonic_ns": after,
+                   "observed_utc": datetime.now(timezone.utc).isoformat(),
+                   "elapsed_seconds": (after - started) / 1e9,
+                   "diagnostic_budget_seconds": diagnostic_budget, "report": report})
+            if report.get("decision_audit_required") is not True:
+                failed("required_audit_unavailable")
+            # A top-level timeout must not hide a fatal shard/report already
+            # observed earlier in that same diagnostic transaction sequence.
+            for worker in report.get("workers", []):
+                if (worker.get("reason") not in {"ready", "observed", "not_observed", "diagnostic_timeout", "worker_unready"}
+                        or worker.get("report", {}).get("state") == "failed"
+                        or worker.get("report", {}).get("code")):
+                    failed("non_transient_worker_diagnostic")
+            if report.get("reason") not in {"ready", "worker_unready", "diagnostic_timeout"}:
+                failed("non_transient_diagnostic")
+            if after >= deadline:
+                failed("deadline_exceeded")
+            if report.get("ready") is True and report.get("financial_ready") is True and report.get("reason") == "ready":
+                metadata.update(finished_monotonic_ns=after, elapsed_seconds=(after - started) / 1e9)
+                write({"event": "finished", "outcome": "ready", **metadata})
+                return report, metadata
+            if report.get("reason") == "ready" or report.get("ready") is True:
+                failed("inconsistent_diagnostic")
+            time.sleep(min(interval, max(0, (deadline - time.monotonic_ns()) / 1e9)))
+
+
 def verify_ledger(connection):
     """Independent integer/posting/hash replay; no production ledger function."""
     balances, previous = {}, "0" * 64
@@ -390,9 +464,7 @@ def run(configuration, directory):
         router.start()
         router.publish_market(market(1), timeout=10)
         router.set_kill_switch(False, timeout=10)
-        initial = router.diagnostics()
-        if not initial["ready"] or not initial["decision_audit_required"]:
-            raise RuntimeError("real managed workers/audit were not ready")
+        initial, startup_observation = observe_startup_ready(router, directory / "startup-readiness.jsonl")
         pids = {row["pid"] for row in initial["workers"]}
         if None in pids or os.getpid() in pids or len(pids) != configuration.shards:
             raise RuntimeError("benchmark requires distinct real fenced child PIDs")
@@ -469,7 +541,8 @@ def run(configuration, directory):
         "unique_observed_financial_success_per_s": counts.get("financial_succeeded", 0) / elapsed,
         "enqueue_ack_per_s_not_financial_success": counts["durably_enqueued"] / elapsed,
         "latency_ms": {name: histogram.report() for name, histogram in histograms.items()},
-        "initial_real_pid_and_fence": initial, "final_diagnostics": final_diagnostics,
+        "initial_real_pid_and_fence": initial, "startup_readiness_observation": startup_observation,
+        "final_diagnostics": final_diagnostics,
         "poll_errors": poll_errors, "feed_publications": feed_rows, "readonly_reconciliation": checks,
         "profile": profile_report(profiles), "environment": environment,
         "production_approved": False, "capacity_10000_per_s_passed": False,
@@ -481,7 +554,7 @@ def run(configuration, directory):
     (directory / "arrivals.jsonl").unlink()
     (directory / "manifest.json").write_text(json.dumps({"database_files_included": False, "files": {
         str(path.relative_to(directory)): {"bytes": path.stat().st_size, "sha256": sha256(path.read_bytes()).hexdigest()}
-        for path in directory.rglob("*") if path.is_file() and (path.parent == profiles or path.name in ("summary.json", "environment.json", "arrival-window.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz"))}}, indent=2) + "\n")
+        for path in directory.rglob("*") if path.is_file() and (path.parent == profiles or path.name in ("summary.json", "environment.json", "arrival-window.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz", "startup-readiness.jsonl"))}}, indent=2) + "\n")
     return summary
 
 
