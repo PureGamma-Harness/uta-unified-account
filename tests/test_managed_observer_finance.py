@@ -277,6 +277,40 @@ class IndependentFinanceTests(unittest.TestCase):
         self.mutate("UPDATE uta_accounts SET version=1 WHERE account_id=?", (ACCOUNTS[0],))
         self.assertNotEqual(self.observe(0)["watermark"], before)
 
+    def test_watermark_ignores_row_order_and_retains_duplicate_multiplicity(self):
+        fixture(self.path)
+        before = self.observe(0)["watermark"]
+        self.assertEqual(before["format"], 2)
+        self.mutate("DELETE FROM uta_accounts WHERE account_id=?", (ACCOUNTS[0],))
+        self.mutate("INSERT INTO uta_accounts VALUES (?,0)", (ACCOUNTS[0],))
+        self.assertEqual(self.observe(0)["watermark"], before)
+        self.mutate("INSERT INTO uta_accounts VALUES (?,0)", (ACCOUNTS[0],))
+        self.assertNotEqual(self.observe(0)["watermark"], before)
+        self.assertIn("fixed_three_accounts", self.observe(0)["golden"]["errors"])
+
+    def test_foreign_key_check_failure_is_a_golden_error(self):
+        fixture(self.path)
+        self.mutate("CREATE TABLE parent (id INTEGER PRIMARY KEY)")
+        self.mutate("CREATE TABLE child (parent_id INTEGER REFERENCES parent(id))")
+        self.mutate("INSERT INTO child VALUES (123)")
+        report = self.observe(0)
+        self.assertFalse(report["golden"]["passed"])
+        self.assertIn("sqlite_foreign_key_check_failed", report["golden"]["errors"])
+        self.assertEqual(self.observe(0, compare=False)["golden"]["errors"], [])
+
+    def test_unavailable_integrity_checks_fail_closed_without_raw_errors(self):
+        fixture(self.path)
+        def authorize(action, one, two, database, source):
+            if action == sqlite3.SQLITE_PRAGMA and one in {"quick_check", "foreign_key_check"}:
+                return sqlite3.SQLITE_DENY
+            return sqlite3.SQLITE_OK
+        with readonly(self.path) as con:
+            con.set_authorizer(authorize)
+            report = read_financial(con, 1, 0, compare_golden=True)
+        self.assertFalse(report["golden"]["passed"])
+        self.assertIn("sqlite_quick_check_failed_unavailable", report["golden"]["errors"])
+        self.assertIn("sqlite_foreign_key_check_failed_unavailable", report["golden"]["errors"])
+
     def test_archive_canonical_content_and_unreferenced_rows_checked(self):
         fixture(self.path, completed=1)
         self.mutate("INSERT INTO uta_code_artifacts VALUES ('artifact:bad','{}')")

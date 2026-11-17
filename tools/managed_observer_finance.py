@@ -10,6 +10,7 @@ from fractions import Fraction
 from hashlib import sha256
 import json
 import re
+import sqlite3
 
 ACCOUNTS = ("managed-soak-alice", "managed-soak-bob", "managed-soak-credit")
 SCALE = 100_000_000
@@ -51,6 +52,23 @@ def _canonical(value):
 
 def _digest(value):
     return sha256(_canonical(value).encode()).hexdigest()
+
+
+def _business_digest(tables):
+    """Order-independent rows without retaining a second copy of all payloads.
+
+    A table envelope gives the table name and row count. Sorted fixed-size row
+    digests retain duplicate multiplicity, and avoid one giant manifest JSON or
+    UTF-8 allocation. Domain/version separation makes the byte framing explicit.
+    """
+    aggregate = sha256(b"managed-observer-financial-watermark-v2\0")
+    for table in sorted(tables):
+        rows = tables[table]
+        aggregate.update(_canonical([table, len(rows)]).encode())
+        aggregate.update(b"\0")
+        for fingerprint in sorted(sha256(_canonical(row).encode()).digest() for row in rows):
+            aggregate.update(fingerprint)
+    return aggregate.hexdigest()
 
 
 def _label(value, permitted):
@@ -328,7 +346,7 @@ def read_financial(connection, planned, completed, *, compare_golden=False):
     if not connection.in_transaction or connection.execute("PRAGMA query_only").fetchone()[0] != 1:
         raise ValueError("explicit query-only read transaction required")
     tables = _rows(connection)
-    manifest = {table: sorted((_canonical(row) for row in rows)) for table, rows in tables.items()}
+    business_digest = _business_digest(tables)
     events = sorted(tables["ledger_events"], key=lambda r: r["sequence"])
     uta_events = sorted(tables["uta_events"], key=lambda r: r["sequence"])
     counts = {table: len(rows) for table, rows in tables.items()}
@@ -353,8 +371,23 @@ def read_financial(connection, planned, completed, *, compare_golden=False):
         if row["attempts"] > 0 or row["last_error"] is not None:
             retries.append({"command_id": entry["command_id"], "attempts": row["attempts"],
                             "cause": "unknown", "last_error_present": entry["last_error_present"]})
+    golden = _golden(tables, planned, completed) if compare_golden else {
+        "compared": False, "passed": False, "errors": [], "reason": "inflight_or_logical_point_unproven"}
+    if compare_golden:
+        for statement, code, expected in (
+                ("PRAGMA quick_check", "sqlite_quick_check_failed", "ok"),
+                ("PRAGMA foreign_key_check", "sqlite_foreign_key_check_failed", None)):
+            try:
+                finding = connection.execute(statement).fetchone()
+                valid = finding is None if expected is None else finding is not None and finding[0] == expected
+                if not valid:
+                    golden["errors"].append(code)
+            except sqlite3.Error:
+                golden["errors"].append(code + "_unavailable")
+        golden["errors"] = sorted(set(golden["errors"]))
+        golden["passed"] = not golden["errors"]
     return {"synthetic": True, "redacted": True, "snapshot_scope": "one_query_only_sqlite_transaction",
-        "watermark": {"format": 1, "sha256": _digest(manifest),
+        "watermark": {"format": 2, "sha256": business_digest,
             "ledger_sequence": events[-1]["sequence"] if events else 0,
             "ledger_hash": events[-1]["event_hash"] if events else "0" * 64,
             "business_event_sequence": uta_events[-1]["sequence"] if uta_events else 0},
@@ -368,5 +401,4 @@ def read_financial(connection, planned, completed, *, compare_golden=False):
             "interest_minor": _minor(r["interest"])} for r in tables["uta_liabilities"]],
         "balances": [{"owner": _label(r["account"], _OWNERS), "asset": _label(r["asset"], {"USD", "BTC"}),
             "minor_units": _integer(r["units"])} for r in tables["ledger_balances"]],
-        "golden": _golden(tables, planned, completed) if compare_golden else
-            {"compared": False, "passed": False, "errors": [], "reason": "inflight_or_logical_point_unproven"}}
+        "golden": golden}
