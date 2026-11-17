@@ -1,0 +1,40 @@
+{
+  "sources": {
+    "tools/managed_soak_observer.py": {
+      "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "sha256": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1",
+      "git_blob_oid": "13f2eedead5a9b0e984baa5e6cf6907b67414d44",
+      "excerpts": [
+        {
+          "lines_1_based": [
+            95,
+            114
+          ],
+          "text": "def process_identity(pid, expected_birth=None, *, proc=Path(\"/proc\")):\n    integer(pid, 1)\n    try:\n        fields = (proc / str(pid) / \"stat\").read_text().rsplit(\")\", 1)[1].split()\n        state, birth = fields[0], fields[19]\n    except OSError as error:\n        absent = error.errno in {errno.ENOENT, errno.ESRCH}\n        return {\"pid\": pid, \"birth\": None, \"state\": \"missing\" if absent else \"unavailable\",\n            \"visibility\": \"absent\" if absent else \"unknown\", \"identity_matches\": False,\n            \"alive\": False, \"known_stopped\": absent}\n    except IndexError:\n        return {\"pid\": pid, \"birth\": None, \"state\": \"malformed\", \"visibility\": \"unknown\",\n            \"identity_matches\": False, \"alive\": False, \"known_stopped\": False}\n    if not birth.isdecimal() or state not in {\"R\", \"S\", \"D\", \"Z\", \"T\", \"t\", \"X\", \"x\", \"K\", \"W\", \"P\", \"I\"}:\n        return {\"pid\": pid, \"birth\": None, \"state\": \"malformed\", \"visibility\": \"unknown\",\n            \"identity_matches\": False, \"alive\": False, \"known_stopped\": False}\n    matches = expected_birth is not None and str(expected_birth) == birth\n    stopped = state in {\"Z\", \"X\", \"x\"} or expected_birth is not None and not matches\n    return {\"pid\": pid, \"birth\": birth, \"state\": state, \"visibility\": \"observed\", \"identity_matches\": matches,\n            \"alive\": matches and not stopped, \"known_stopped\": stopped}\n"
+        }
+      ]
+    },
+    "tools/run_managed_long.py": {
+      "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "sha256": "be5470dbecdbf39a8d61fad8d4caba45d96f9b6b9dba7725873dadf41f02fe61",
+      "git_blob_oid": "c57fb415c373b5114c25513d7d70e1dca706a064",
+      "excerpts": [
+        {
+          "lines_1_based": [
+            194,
+            202
+          ],
+          "text": "class Pipes:\n    \"\"\"Keep six-hour pipes drained, retaining bounded final stdout and no stderr.\"\"\"\n    def __init__(self, command, cwd, stdout_limit=4 * 1024**2):\n        self.process = subprocess.Popen(command, cwd=cwd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE, close_fds=True)\n        self.birth = ro.process_identity(self.process.pid)['birth']\n        if self.birth is None:\n            raise ValueError('new_child_birth_unavailable')\n        self.started_wall_ns, self.started_boottime_ns = time.time_ns(), time.clock_gettime_ns(time.CLOCK_BOOTTIME)\n"
+        },
+        {
+          "lines_1_based": [
+            223,
+            225
+          ],
+          "text": "    def identity(self):\n        return {'pid': self.process.pid, 'birth': self.birth, 'started_wall_ns': self.started_wall_ns,\n                'started_boottime_ns': self.started_boottime_ns}\n"
+        }
+      ]
+    }
+  },
+  "scope": "Read Git source only. Observer copies the /proc stat birth field unchanged; source validates decimal text but does not itself prove canonical no-leading-zero kernel emission. No /proc process stat read or live identity observed."
+}
