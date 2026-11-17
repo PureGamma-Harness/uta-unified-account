@@ -20,9 +20,18 @@
 | NC-06 | design:19、62、69、76、158；credit.py:369–388 | 当前 public `repay` 自行起金融事务，并没有 durable inbox。新设计却要求 REPAY scope 只能由 dispatcher 创建，且每个 intent FK 指向同 CID 的 SUCCEEDED inbox。这与“原 public repay 全部不变”不能同时成立。须明确 credit-cap 后的新 direct public repayment 是否 501，历史同 ID replay 是否仍先返回，或另审受控协议；不得偷偷制造 SUCCEEDED inbox。正常持久还款应保留 halt/断价、利息优先、资金权限。 |
 | NC-07 | design:86–87；storage.py:144；writer_fence.py:508–512 | 当前连接执行 SET foreign_keys=ON，但没有读取实际返回值；authorizer 仅阻止装载后修改 PRAGMA。新 credit guard 在任何效果前必须读取并确认 FK 实际启用，提交前再确认，覆盖自定义连接工厂/错误配置。必须拒绝 `foreign_keys`、`defer_foreign_keys` 等修改以及 manual COMMIT，不能依赖 DDL 文字或“在事务中 OFF 通常无效”。无实际 SQL 测试前不宣称这些绕过已封闭。 |
 | NC-08 | design:142–146；durable_batches.py:246–279；sharding.py:855–867 | 现选择器排除非 SUBMIT/CANCEL/REPAY head；其他账户持续提供 >=3 个成员时可一直形成 batch。即使返回 None，普通 process_one 的风险降低优先也不自动保证 BORROW 获得机会。必须冻结一个可测试的 normal opportunity 规则，明确包含 BORROW、backoff/FIFO、控制流假设和冷重启；或首切片明确拒绝 batch+credit 的运行组合。识别四类 marker inventory 不等于组合调度已经支持。 |
+| NC-09 | design:52–55、89–99；writer_fence.py:547–563、574–590 | control exact DDL whitelist 不等于 financial role 不能临时删除 credit 操作保护。当前 financial 分支对非 `writer_fence_` 名称的 DDL 没有立即拒绝；交易末端只看到最终 schema。必须在 authorizer 当场拒绝 DROP/ALTER 受保护 table/index/trigger，捕获异常也使 guard.denied 永久中止本事务，并保持 immutable/no-replace 触发器。否则不能仅凭“先删 guard、裸写、再逐字恢复后最终 inventory 相等”声称原生 effect gate 一直有效。这里是静态可达权限路径与未来契约风险，未执行绕过。 |
 
 这些是确定的契约欠缺/兼容性决策，不是声称一个不存在的 DDL 已被绕过。方案文字
 可以选择不同实现，但必须在 runtime GO 前使义务、作用域及调度时序无歧义。
+
+NC-09 的边界须准确区分：现有 `writer_fence_data_*` 与 reserved control 名称已经由
+writer_fence.py:560–561 的 prefix 检查拒绝金融角色 DROP；本审查没有说这些现有 native
+fence 触发器可被直接删除。新 credit 操作触发器、复合 FK 父 UNIQUE 索引及相关 immutable
+保护若使用其他名称，就不能自动继承该权限。应冻结编译入的受保护对象/对象类型清单和
+正确的 SQLite authorizer 参数语义；ALTER TABLE 的表名不是所有 action 的同一个参数。
+REPLACE 也不是独立 authorizer action，需保留并保护真实 no-replace INSERT 触发器。
+合法初始化由单独 exact control 路径完成；不能为方便重启构造 schema 而扩大 runtime DDL。
 
 ## 原生闭环所需的具体检查
 
