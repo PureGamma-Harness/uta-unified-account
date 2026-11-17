@@ -1,0 +1,103 @@
+{
+  "schema": "uta.read_only_sqlite_fault_review.v1",
+  "verdict": "NO_GO_CAUSE_UNDETERMINED",
+  "source_commit": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+  "original_evidence_commit": "6c9082c9d40e5ef5569b826f0fed4cb5528742d6",
+  "original_diagnostic": {
+    "path": "evidence/ci-6010e92-first-failure/push311-failure-diagnostic.original-json-subsequence.json",
+    "sha256": "e159850926833bd88828e16bc338ff02903d06dda120172b0942f5d86d4ee05e",
+    "bytes": 3952,
+    "phase": "before_original_cleanup",
+    "monotonic_ns": 175737757356,
+    "boottime_ns": 175737758377,
+    "utc_ns": 1794952431284126499
+  },
+  "same_monotonic_domain": {
+    "stop_sent_at_seconds": "165.771680791",
+    "retained_observation_at_seconds": "165.772040087",
+    "diagnostic_at_seconds": "175.737757356",
+    "stop_to_retained_observation_seconds": "0.000359296",
+    "retained_observation_to_diagnostic_seconds": "9.965717269",
+    "stop_to_diagnostic_seconds": "9.966076565",
+    "latest_capture_deadline_upper_bound_seconds": "170.771680791",
+    "diagnostic_past_latest_capture_deadline_lower_bound_seconds": "4.966076565",
+    "precision_note": "Arithmetic preserves serialized decimal displays, not nanosecond measurement accuracy."
+  },
+  "distinct_boottime_domain": {
+    "known_lease_now_ns_tail": [
+      165756076089,
+      165759749484,
+      165763045897,
+      165766285884,
+      165770244191
+    ],
+    "known_lease_expires_ns": 170650649375,
+    "known_last_observed_remaining_ns": 4880405184,
+    "diagnostic_boottime_minus_monotonic_ns": 1021,
+    "no_cross_clock_subtraction_for_stop_or_capture": true,
+    "known_lease_not_current_lease_at_diagnostic": true
+  },
+  "observed": {
+    "capture_attempts_count": 1,
+    "injection_undos_count": 1,
+    "retained_after_stop_count": 1,
+    "writer_probe_available": false,
+    "writer_probe_native_errorcode": 15,
+    "monitor_alive": true,
+    "monitor_stop": false,
+    "publisher_alive": null,
+    "cleanup_forced_kill_at_pre_cleanup_snapshot": false,
+    "cleanup_errors_count_at_pre_cleanup_snapshot": 0,
+    "dropped_fields_count": 10
+  },
+  "unretained": [
+    "capture_start/deadline absolute timestamp",
+    "probe entry/exit and duration",
+    "SIGCONT send/return timestamp and undo action detail",
+    "post-undo process state and SH sample sequence",
+    "failure instant separate from diagnostic clock",
+    "monitor status-call entry time and duration",
+    "native child stack or SQLite locking backoff trace",
+    "final cleanup completion and effects"
+  ],
+  "source_files": {
+    "tests/test_durable_faults.py": {
+      "git_blob_oid": "11d597a3c7189938b6058a2a3f2cd76acafd675e",
+      "sha256": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba",
+      "bytes": 99428
+    },
+    "tests/expired_gate_failure_evidence.py": {
+      "git_blob_oid": "0256e266399db4f403da7a792d48d12bd999d256",
+      "sha256": "872b38c73c10faa360ddebfb85328b23b847b08311174c0abcbcf95700f53e56",
+      "bytes": 11582
+    },
+    "uta/durable_process.py": {
+      "git_blob_oid": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+      "bytes": 106136
+    },
+    "uta/storage.py": {
+      "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "bytes": 30225
+    },
+    "uta/writer_fence.py": {
+      "git_blob_oid": "ddaf296c252ed603312f11e8bf4a496e42feb990",
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+      "bytes": 46393
+    },
+    "uta/sharding.py": {
+      "git_blob_oid": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "bytes": 51451
+    }
+  },
+  "execution": {
+    "sql_executed": false,
+    "project_runtime_imported": false,
+    "tests_executed": false,
+    "signals_sent": false,
+    "ci_retried": false,
+    "runtime_or_timeout_modified": false
+  }
+}
