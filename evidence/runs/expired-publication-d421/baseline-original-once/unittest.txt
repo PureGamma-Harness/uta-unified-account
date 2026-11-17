@@ -1,0 +1,14 @@
+test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover (tests.test_durable_faults.ManagedProcessFaultTests) ... FAIL
+
+======================================================================
+FAIL: test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover (tests.test_durable_faults.ManagedProcessFaultTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-expired-publication-review/tests/test_durable_faults.py", line 1228, in test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover
+    self.assertTrue(held, "worker never entered the shared gate while its SQLite writer was blocked")
+AssertionError: False is not true : worker never entered the shared gate while its SQLite writer was blocked
+
+----------------------------------------------------------------------
+Ran 1 test in 2.844s
+
+FAILED (failures=1)
