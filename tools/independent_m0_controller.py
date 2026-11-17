@@ -27,6 +27,9 @@ import time
 
 SOURCE = '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
 SOURCE_TREE = 'cee60bc0b5413551030300e065d0dcaac6a7ff55'
+APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-once'
+APPROVAL_PATH = 'config/independent-m0-approved.json'
+ONCE_WORKFLOW = '.github/workflows/independent-m0-once.yml'
 TRACKED = 5518
 CASE_CAP = 32 * 1024**2
 AGGREGATE_CAP = 64 * 1024**2
@@ -96,15 +99,15 @@ def tree_bytes(root, entries_limit=20000):
             if stat.S_ISREG(info.st_mode):total += info.st_size
     return total
 
-def validate_dispatch(approval, environment, actual, controller_sha):
+def validate_environment(approval, environment, actual, controller_sha, *, event='workflow_dispatch', event_commit=None):
     need(set(approval) == {'operator_approval_id','control_commit','controller_sha256','workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','source_commit'}, 'approval_fields')
     need(re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,95}',approval['operator_approval_id']) is not None,'approval_id')
     need(re.fullmatch(r'[0-9a-f]{40}',approval['control_commit']) is not None,'control_commit_format')
     need(approval['controller_sha256'] == controller_sha,'controller_hash_changed')
     need(approval['source_commit'] == SOURCE,'workload_source_not_approved')
     need(environment.get('GITHUB_ACTIONS') == 'true' and environment.get('RUNNER_ENVIRONMENT') == 'github-hosted','hosted_runner_context_required')
-    need(environment.get('GITHUB_EVENT_NAME') == 'workflow_dispatch','dispatch_only')
-    need(environment.get('GITHUB_SHA') == approval['control_commit'],'control_checkout_commit')
+    need(environment.get('GITHUB_EVENT_NAME') == event,'wrong_event')
+    need(environment.get('GITHUB_SHA') == (event_commit or approval['control_commit']),'control_checkout_commit')
     need(environment.get('RUNNER_OS') == 'Linux','linux_required')
     need(environment.get('GITHUB_RUN_ATTEMPT') == '1','first_attempt_only')
     need(re.fullmatch(r'[1-9][0-9]*',environment.get('GITHUB_RUN_ID','')) is not None,'run_identity')
@@ -120,6 +123,70 @@ def validate_dispatch(approval, environment, actual, controller_sha):
     need(actual['free_bytes'] >= MIN_FREE,'independent_runner_free_space')
     need(actual['network_external_exchange_configured'] is False,'external_exchange_prohibited')
     return True
+
+def validate_dispatch(approval, environment, actual, controller_sha):
+    return validate_environment(approval,environment,actual,controller_sha)
+
+def command_spec():
+    return {'case_order':[['B',False],['P',True]],'argv_templates':[
+        ['PYTHON','WORKLOAD/benchmarks/run_managed_benchmark.py','--output','PRIVATE/B/workload','--duration','10','--rate','20','--accounts','100','--shards','2','--cpu-limit','1','--durable-batches','--financial-batch-size','0','--normal-cache-size','0'],
+        ['PYTHON','WORKLOAD/benchmarks/run_managed_benchmark.py','--output','PRIVATE/P/workload','--duration','10','--rate','20','--accounts','100','--shards','2','--cpu-limit','1','--durable-batches','--financial-batch-size','0','--normal-cache-size','0','--profile']],
+        'placeholder_resolution':'PYTHON=current recorded executable;WORKLOAD=exact909 checkout;PRIVATE=new exclusive RUNNER_TEMP root; no variable workload flags'}
+
+def budget_spec():
+    return {'case_bytes':CASE_CAP,'aggregate_bytes':AGGREGATE_CAP,'cleanup_bytes':CLEANUP_RESERVE,
+        'extra_free_bytes':2*1024**3,'minimum_fresh_free_bytes':MIN_FREE,'case_inner_wall_seconds':50,
+        'grace_seconds':2,'kill_wait_seconds':2,'case_complete_outer_max_seconds':60}
+
+def validate_once_manifest(value, environment, event, relation):
+    expected={'format','kind','execution_authorized','registration_id','branch','control_commit',
+        'controller_sha256','workflow_sha256','source_commit','source_tree','command_spec','budgets',
+        'workspace_boot_id','workspace_hostname_sha256','workspace_recorded_at','retention_mode'}
+    need(set(value)==expected,'once_manifest_fields')
+    need(type(value['format']) is int and value['format']==1 and value['kind']=='ROOT_REVIEWED_ONCE_M0_V1','once_manifest_format')
+    need(value['execution_authorized'] is True,'once_not_authorized')
+    need(value['registration_id']=='independent-m0-20261117-once','registration_id')
+    need(value['branch']==environment.get('GITHUB_REF')==event.get('ref')==APPROVED_BRANCH,'exact_once_branch')
+    need(environment.get('GITHUB_EVENT_NAME')=='push' and environment.get('GITHUB_RUN_ATTEMPT')=='1','once_first_push_attempt')
+    need(event.get('created') is True and event.get('deleted') is False and event.get('forced') is False,'branch_creation_only')
+    need(event.get('before')=='0'*40,'not_initial_branch_push')
+    need(event.get('after')==environment.get('GITHUB_SHA')==relation['execution_commit'],'event_target_commit')
+    need(re.fullmatch(r'[0-9a-f]{40}',value['control_commit']) is not None,'once_control_commit')
+    need(relation['parents']==[value['control_commit']],'manifest_commit_single_parent')
+    need(relation['changed_paths']==[APPROVAL_PATH] and relation['changed_status']==['A'],'manifest_only_child_commit')
+    need(value['source_commit']==SOURCE and value['source_tree']==SOURCE_TREE,'once_source')
+    canonical=lambda v:json.dumps(v,sort_keys=True,separators=(',',':'),allow_nan=False)
+    need(canonical(value['command_spec'])==canonical(command_spec()) and canonical(value['budgets'])==canonical(budget_spec()),'once_command_or_budget')
+    need(value['retention_mode']=='safe_projection_private_ephemeral_R&D_only','unimplemented_retention_mode')
+    for key in ('controller_sha256','workflow_sha256'):
+        need(re.fullmatch(r'[0-9a-f]{64}',value[key]) is not None,'once_hash')
+    return True
+
+def registration_proof(root, environment):
+    def git(*args):return subprocess.check_output(['git',*args],cwd=root)
+    need(git('status','--porcelain','--untracked-files=all')==b'','registration_dirty')
+    fields=git('rev-list','--parents','-n','1','HEAD').decode().strip().split()
+    need(len(fields)==2,'registration_parent_count')
+    execution,parent=fields
+    changes=[line.split('\t',1) for line in git('diff','--name-status',parent,execution).decode().splitlines()]
+    need(all(len(row)==2 for row in changes),'registration_change_shape')
+    relation={'execution_commit':execution,'parents':[parent],
+        'changed_status':[row[0] for row in changes],'changed_paths':[row[1] for row in changes]}
+    manifest_path=root/APPROVAL_PATH;value=read_json(manifest_path,16384)
+    event=read_json(Path(environment['GITHUB_EVENT_PATH']))
+    validate_once_manifest(value,environment,event,relation)
+    controller=git('show',parent+':tools/independent_m0_controller.py')
+    workflow=git('show',parent+':'+ONCE_WORKFLOW)
+    need(sha256(controller).hexdigest()==value['controller_sha256'],'approved_control_blob')
+    need(sha256(workflow).hexdigest()==value['workflow_sha256'],'approved_workflow_blob')
+    approval={'operator_approval_id':value['registration_id'],'control_commit':parent,
+        'controller_sha256':value['controller_sha256'],'workspace_boot_id':value['workspace_boot_id'],
+        'workspace_hostname_sha256':value['workspace_hostname_sha256'],'workspace_recorded_at':value['workspace_recorded_at'],
+        'source_commit':SOURCE}
+    return approval,{'registration_commit':execution,'manifest_sha256':digest(manifest_path),
+        'manifest_parent_commit':parent,'manifest_only_child':True,'branch':APPROVED_BRANCH,
+        'authorization_source':'explicit root-reviewed push of this manifest-only child; checksums alone do not grant permission'}
+
 
 def source_snapshot(source):
     def git(*args):return subprocess.check_output(['git',*args],cwd=source)
@@ -330,6 +397,7 @@ def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute',action='store_true')
     parser.add_argument('--verify-public',type=Path)
+    parser.add_argument('--registration-root',type=Path)
     parser.add_argument('--source',type=Path)
     parser.add_argument('--private',type=Path)
     parser.add_argument('--public',type=Path)
@@ -341,8 +409,12 @@ def main(argv=None):
     if not args.execute:
         print(json.dumps({'status':'PREP_ONLY','source_commit':SOURCE,'minimum_fresh_free_bytes':MIN_FREE,'cases':['B','P'],'profile_is_not_speedup_arm':True,'execution_authorized':False}))
         return 0
-    approval_raw=os.environ['M0_APPROVAL_JSON'];need(len(approval_raw)<=4096,'approval_size')
-    approval=strict_json(approval_raw)
+    registration=None
+    if args.registration_root is not None:
+        approval,registration=registration_proof(args.registration_root,dict(os.environ))
+    else:
+        approval_raw=os.environ['M0_APPROVAL_JSON'];need(len(approval_raw)<=4096,'approval_size')
+        approval=strict_json(approval_raw)
     need(args.source and args.private and args.public,'execute_paths_required')
     for path in (args.private,args.public):
         need(path.is_absolute() and not path.exists() and path.parent.is_dir(),'exclusive_output_path')
@@ -356,10 +428,13 @@ def main(argv=None):
         need(subprocess.check_output(['git','status','--porcelain','--untracked-files=all'],cwd=control_root)==b'','control_dirty')
         control=Path(__file__).resolve();control_sha=digest(control)
         actual=collect_host(args.private,dict(os.environ))
-        validate_dispatch(approval,dict(os.environ),actual,control_sha)
+        if registration is None:
+            validate_dispatch(approval,dict(os.environ),actual,control_sha)
+        else:
+            validate_environment(approval,dict(os.environ),actual,control_sha,event='push',event_commit=registration['registration_commit'])
         records.append(public_write(args.public,'host.json',actual))
         records.append(public_write(args.public,'source-manifest.json',{'source_commit':SOURCE,'source_tree':SOURCE_TREE,'files':snapshot}))
-        records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'single hosted job, sequential driver, two spawned owners, one allowed CPU'}))
+        records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'single hosted job, sequential driver, two spawned owners, one allowed CPU','registration':registration}))
         owned=load_owned_runner(args.source);cpus=[min(actual['cpu_affinity'])]
         def health(case_root=None):
             need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==actual['boot_id'],'runner_boot_changed')

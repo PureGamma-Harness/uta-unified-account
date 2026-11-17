@@ -1,0 +1,33 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_controller.py",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "started_at": "2026-11-17T18:34:34.264532+00:00",
+  "finished_at": "2026-11-17T18:34:34.640845+00:00",
+  "outer_monotonic_ns": 376333807,
+  "exit_code": 0,
+  "controller_sha256": "4e3298532c8b40733d74f116eb06a3ab58d110cdac2d01bc27e9db59d97e37ad",
+  "test_sha256": "95edafdd05969e3c0ce007bb994c69eea7c7a731786ac39ebc6f182ca4c907ca",
+  "reason": "New exact single-branch initial-push and manifest-only-child protocol; dispatch37original result retained",
+  "stub_only": true,
+  "product_imported": false,
+  "sql_or_database_opened": false,
+  "native_compile": false,
+  "workload_or_profile_executed": false,
+  "actions_dispatched_or_pushed": false
+}

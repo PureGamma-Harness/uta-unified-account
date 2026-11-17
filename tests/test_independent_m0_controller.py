@@ -65,6 +65,61 @@ class PureM0Controls(unittest.TestCase):
     def test_readonly_actual_success_count_is_required(self):
         row=self.summary();row['readonly_reconciliation']['persistent_successes']=159
         with self.assertRaises(m.GateError):m.project_summary(row,False)
+    def once(self):
+        a=self.approval()
+        return {'format':1,'kind':'ROOT_REVIEWED_ONCE_M0_V1','execution_authorized':True,
+            'registration_id':'independent-m0-20261117-once','branch':m.APPROVED_BRANCH,
+            'control_commit':a['control_commit'],'controller_sha256':a['controller_sha256'],'workflow_sha256':'e'*64,
+            'source_commit':m.SOURCE,'source_tree':m.SOURCE_TREE,'command_spec':m.command_spec(),'budgets':m.budget_spec(),
+            'workspace_boot_id':a['workspace_boot_id'],'workspace_hostname_sha256':a['workspace_hostname_sha256'],
+            'workspace_recorded_at':a['workspace_recorded_at'],'retention_mode':'safe_projection_private_ephemeral_R&D_only'}
+    def once_context(self):
+        e=self.env();e.update(GITHUB_EVENT_NAME='push',GITHUB_REF=m.APPROVED_BRANCH,GITHUB_SHA='f'*40)
+        event={'ref':m.APPROVED_BRANCH,'created':True,'deleted':False,'forced':False,'before':'0'*40,'after':'f'*40}
+        relation={'execution_commit':'f'*40,'parents':['a'*40],'changed_paths':[m.APPROVAL_PATH],'changed_status':['A']}
+        return e,event,relation
+    def test_once_manifest_valid_stub(self):
+        e,event,relation=self.once_context();self.assertTrue(m.validate_once_manifest(self.once(),e,event,relation))
+    def test_other_push_branch_has_no_workload_permission(self):
+        e,event,relation=self.once_context();e['GITHUB_REF']='refs/heads/plan/unapproved'
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_existing_branch_update_is_rejected(self):
+        e,event,relation=self.once_context();event['created']=False;event['before']='1'*40
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_second_attempt_on_once_branch_is_rejected(self):
+        e,event,relation=self.once_context();e['GITHUB_RUN_ATTEMPT']='2'
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_manifest_child_cannot_change_code_or_workflow(self):
+        e,event,relation=self.once_context();relation['changed_paths'].append(m.ONCE_WORKFLOW);relation['changed_status'].append('M')
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_manifest_is_added_not_modification(self):
+        e,event,relation=self.once_context();relation['changed_status']=['M']
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_manifest_only_child_single_reviewed_parent(self):
+        e,event,relation=self.once_context();relation['parents'].append('b'*40)
+        with self.assertRaises(m.GateError):m.validate_once_manifest(self.once(),e,event,relation)
+    def test_false_or_numeric_approval_cannot_execute(self):
+        e,event,relation=self.once_context()
+        for flag in (False,1):
+            with self.subTest(flag=flag):
+                v=self.once();v['execution_authorized']=flag
+                with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
+    def test_once_command_or_budget_mutation_rejected(self):
+        e,event,relation=self.once_context();v=self.once();v['budgets']['case_bytes']+=1
+        with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
+    def test_once_case_profile_bool_is_not_numeric(self):
+        e,event,relation=self.once_context();v=self.once();v['command_spec']['case_order'][1][1]=1
+        with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
+    def test_unimplemented_encryption_mode_not_claimed(self):
+        e,event,relation=self.once_context();v=self.once();v['retention_mode']='encrypted-fullraw'
+        with self.assertRaises(m.GateError):m.validate_once_manifest(v,e,event,relation)
+    def test_once_workflow_exact_branch_and_no_manual_main_requirement(self):
+        text=(PATH.parents[1]/'.github/workflows/independent-m0-once.yml').read_text()
+        self.assertIn('      - perf/approved-m0-20261117-once',text)
+        self.assertNotIn('workflow_dispatch:',text)
+        self.assertIn("github.event.before == '0000000000000000000000000000000000000000'",text)
+        self.assertIn('github.event.created == true',text)
+        self.assertIn('git',text);self.assertIn('manifest-only',text)
     def test_prep_has_no_metadata_process_or_sql(self):
         before={name for name in sys.modules if name=='uta' or name.startswith('uta.') or name=='sqlite3'}
         with patch.object(m,'source_snapshot',side_effect=AssertionError('source call')),patch.object(m,'collect_host',side_effect=AssertionError('host call')),patch.object(m.subprocess,'Popen',side_effect=AssertionError('spawn')),redirect_stdout(io.StringIO()) as output:
