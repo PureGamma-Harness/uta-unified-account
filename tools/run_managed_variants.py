@@ -661,6 +661,65 @@ def composite_gate(summary):
     return gate.get("passed") is True and gate.get("financial_soft_deadline_passed") is True
 
 
+def integer_map(value, label):
+    require(type(value) is dict, "counter map required: " + label)
+    for key, count in value.items():
+        integer(count, 0, 1 << 63, label + "." + key)
+
+
+def nanoseconds_and_sequences(value, label, *, nullable_ns=()):
+    """Reject numeric aliases before set membership, arithmetic or ID formatting."""
+    if type(value) is dict:
+        for key, item in value.items():
+            name = label + "." + key
+            if key.endswith("_ns"):
+                if item is None:
+                    require(key in nullable_ns, "nonnullable nanoseconds: " + name)
+                else:
+                    integer(item, 0, 1 << 63, name)
+            elif key == "sequence":
+                integer(item, 0, 1 << 63, name)
+            else:
+                nanoseconds_and_sequences(item, name, nullable_ns=nullable_ns)
+    elif type(value) is list:
+        for index, item in enumerate(value):
+            nanoseconds_and_sequences(item, label + "[" + str(index) + "]", nullable_ns=nullable_ns)
+
+
+def consumed_counter_types(summary):
+    integer_map(summary["counts"], "counts")
+    integer_map(summary["outcome_counts"], "outcome_counts")
+    technical = summary["command_technical_diagnostics"]
+    for key, value in technical.items():
+        if key in ("diagnostics_overlap_outcomes", "original_internal_exception_available"):
+            require(type(value) is bool, "technical flag must be boolean")
+        elif key == "commands_by_kind":
+            integer_map(value, "commands_by_kind")
+        elif key == "affected_commands":
+            require(type(value) is list, "affected commands must be a list")
+            for row in value:
+                integer(row["shard"], 0, 1, "affected command shard")
+                integer(row["attempts"], 0, 1 << 63, "affected command attempts")
+                if row.get("terminal_error_status") is not None:
+                    integer(row["terminal_error_status"], 100, 599, "terminal error status")
+        else:
+            integer(value, 0, 1 << 63, "technical." + key)
+    for key, value in summary["batch_dispatch_diagnostics"].items():
+        if key == "record_counts_are_not_commit_counts":
+            require(value is True, "batch record-count flag")
+        else:
+            integer(value, 0, 1 << 63, "batch." + key)
+    ro = summary["readonly_reconciliation"]
+    for key in ("persistent_successes", "observed_financial_successes", "pending_count",
+                "unobserved_successes_found_on_reopen", "durable_enqueue_acknowledgements_verified"):
+        if key in ro:
+            integer(ro[key], 0, 1 << 63, "readonly." + key)
+    for shard in ro["shards"]:
+        for key in ("shard", "commands", "unique_orders", "confirmed_matches", "ledger_events"):
+            if key in shard:
+                integer(shard[key], 0, 1 << 63, "readonly shard." + key)
+
+
 def bounded_arrivals(path, *, maximum_rows=200, maximum_line_bytes=65536, maximum_total_bytes=8 * MiB, compressed=True, partial_tail=False):
     """Bound decompressed bytes before decode/JSON and detect one excess row.
 
@@ -701,6 +760,7 @@ def recompute(directory, case, source_hashes, commit):
     for name, item in manifest["files"].items():
         require(not Path(name).is_absolute() and ".." not in Path(name).parts, "manifest path escapes")
         path = directory / name
+        integer(item["bytes"], 0, 64 * MiB, "manifest byte count")
         if name in required:
             content = read_blob(path, 64 * MiB if name == "arrivals.jsonl.gz" else 4 * MiB)
             require(len(content) == item["bytes"] and sha256(content).hexdigest() == item["sha256"], "consumed original hash mismatch")
@@ -710,6 +770,9 @@ def recompute(directory, case, source_hashes, commit):
     summary, window, footer = (strict_json(originals[name]) for name in
         ("summary.json", "arrival-window.json", "measurement-footer.json"))
     rows, _ = bounded_arrivals(io.BytesIO(originals["arrivals.jsonl.gz"]))
+    consumed_counter_types(summary)
+    nanoseconds_and_sequences(window, "window")
+    nanoseconds_and_sequences(footer, "footer")
     config = summary["configuration"]
     expected_config = {"duration": 10, "rate": 20, "accounts": 100, "shards": 2,
         "dispatchers": 2, "outstanding": 256, "inbox_capacity": 128, "reject_every": 10,
@@ -717,12 +780,22 @@ def recompute(directory, case, source_hashes, commit):
         "timeout_ms": 1000, "poll_interval": .02, "background_interval": .1,
         "profile": False, "durable_batches": True, "financial_batch_size": case.batch,
         "normal_cache_size": case.cache}
+    for candidate in (config, window["configuration"]):
+        for key in ("accounts", "shards", "dispatchers", "outstanding", "inbox_capacity", "reject_every", "financial_batch_size", "normal_cache_size"):
+            integer(candidate[key], 0, 1 << 63, "configuration." + key)
+        require(type(candidate["profile"]) is type(candidate["durable_batches"]) is bool, "configuration boolean flags")
     require(config == expected_config and window["configuration"] == config, "case configuration differs")
-    require(footer["timing_contract_version"] == 1 and footer["setup_and_close_excluded"] is True, "timing contract")
+    integer(footer["timing_contract_version"], 1, 1, "timing contract version")
+    require(footer["setup_and_close_excluded"] is True, "timing contract")
     start = integer(footer["started_monotonic_ns"], 1, 1 << 63, "start")
     settled = integer(footer["terminal_observation_finished_monotonic_ns"], start, 1 << 63, "settled")
     require(footer["planned_duration_ns"] == 10 ** 10 and window["planned_start_monotonic_ns"] == start, "original timing anchors")
+    integer(summary["offered"], 200, 200, "summary offered")
+    integer(window["offered"], 200, 200, "window offered")
     require(len(rows) == summary["offered"] == window["offered"] == 200, "arrival loss/duplication")
+    for row in rows:
+        integer(row["sequence"], 0, 199, "arrival sequence")
+        nanoseconds_and_sequences(row, "arrival", nullable_ns=("enqueue_started_ns", "enqueue_ack_ns", "enqueue_call_finished_ns"))
     require({row["sequence"] for row in rows} == set(range(200)), "arrival sequences")
     require(len({row["command_id"] for row in rows}) == len({row["order_id"] for row in rows}) == 200, "business IDs reused")
     counts, values, late = Counter(), {"all": [], "financial_succeeded": [], "enqueue_ack": []}, 0
@@ -742,6 +815,10 @@ def recompute(directory, case, source_hashes, commit):
             require(row["offered_ns"] <= row["enqueue_started_ns"] <= ack <= row["enqueue_call_finished_ns"] <= complete, "enqueue chronology")
             values["enqueue_ack"].append(ack - row["planned_ns"])
         outcome, receipt = row["outcome"], row["receipt"]
+        if receipt is not None:
+            require(type(receipt) is dict and receipt["command_id"] == f"bench:{sequence}"
+                and receipt["account_id"] == f"managed-probe-{sequence % 100}", "receipt identity for original arrival")
+            integer(receipt["attempts"], 0, 1 << 63, "receipt attempts")
         if outcome == "financial_succeeded":
             require(receipt["state"] == "SUCCEEDED" and receipt["attempts"] == 0 and receipt["last_error"] is None and receipt["error"] is None, "invalid success receipt")
             require(receipt["command_id"] == row["command_id"] and receipt["account_id"] == row["account_id"], "receipt identity")
@@ -753,6 +830,7 @@ def recompute(directory, case, source_hashes, commit):
         elif outcome in ("business_rejected", "control_or_market_rejected"):
             require(receipt["state"] == "REJECTED", "rejection lacks terminal")
             error = strict_json(receipt["error"]) if isinstance(receipt["error"], str) else receipt["error"]
+            integer(error["status"], 100, 599, "rejection status")
             require((error["status"] < 500) is (outcome == "business_rejected"), "rejection mix changed")
         counts[outcome] += 1
     require(dict(counts) == summary["outcome_counts"], "outcome counts differ from raw")
@@ -781,12 +859,21 @@ def recompute(directory, case, source_hashes, commit):
     require(environment["generator_sha256"] == source_hashes["benchmarks/run_managed_benchmark.py"], "generator source changed")
     require(environment["source_sha256"] == {name.removeprefix("uta/"): value for name, value in source_hashes.items() if name.startswith("uta/") and name.endswith(".py")}, "financial source bytes changed")
     settings = runtime["router_settings"]
+    for key in ("account_batch", "matches_per_symbol", "max_attempts", "financial_batch_size", "normal_cache_size"):
+        integer(settings[key], 0, 1 << 63, "worker setting." + key)
     require(settings == {"lease_seconds": 5.0, "poll_interval": .02, "background_interval": .1,
         "account_batch": 25, "matches_per_symbol": 10, "max_attempts": 3,
         "financial_batch_size": case.batch, "normal_cache_size": case.cache}, "actual worker settings differ")
     require(runtime["durable_batches_capability"] is runtime["decision_audit_required"] is True
         and runtime["financial_batch_soft_budget_seconds"] == .005 and runtime["physical_commit_counts_measured"] is False, "actual capability/audit/budget contract")
     children = summary["actual_spawned_worker_inputs"]
+    for child in children:
+        for key in ("account_batch", "matches_per_symbol", "max_attempts", "financial_batch_size", "normal_cache_size"):
+            integer(child["received_settings"][key], 0, 1 << 63, "spawned setting." + key)
+    for item in children + summary["initial_real_pid_and_fence"]["workers"]:
+        integer(item["pid"], 2, (1 << 31) - 1, "worker PID")
+        if "owner_pid" in item:
+            integer(item["owner_pid"], 2, (1 << 31) - 1, "owner PID")
     require(len(children) == 2 and all(item["received_settings"] == settings for item in children), "spawned settings differ")
     pids = {item["pid"] for item in children}
     require(len(pids) == 2 and pids == {item["pid"] for item in summary["initial_real_pid_and_fence"]["workers"]}, "actual worker PID mismatch")
@@ -843,6 +930,8 @@ def forensic_counts(directory):
     rows, partial_tail = bounded_arrivals(path, compressed=compressed, partial_tail=not compressed)
     groups = {name: [] for name in ("all", "financial_succeeded", "enqueue_ack")}
     for row in rows:
+        integer(row["sequence"], 0, 199, "forensic arrival sequence")
+        nanoseconds_and_sequences(row, "forensic arrival", nullable_ns=("enqueue_started_ns", "enqueue_ack_ns", "enqueue_call_finished_ns"))
         ns = integer(row["observed_completion_ns"] - row["planned_ns"], 0, 1 << 63, "forensic latency")
         groups["all"].append(ns)
         if row["outcome"] == "financial_succeeded":
@@ -852,7 +941,10 @@ def forensic_counts(directory):
     denominator = None
     if (directory / "measurement-footer.json").exists():
         footer = read_json(directory / "measurement-footer.json")
-        denominator = max(footer["planned_duration_ns"], footer["terminal_observation_finished_monotonic_ns"] - footer["started_monotonic_ns"])
+        nanoseconds_and_sequences(footer, "forensic footer")
+        beginning = integer(footer["started_monotonic_ns"], 1, 1 << 63, "forensic start")
+        ending = integer(footer["terminal_observation_finished_monotonic_ns"], beginning, 1 << 63, "forensic settled")
+        denominator = max(footer["planned_duration_ns"], ending - beginning)
         integer(denominator, 1, 1 << 63, "forensic denominator")
     return {"available": True, "financial_verified": False, "complete_compressed_file": compressed,
         "partial_tail_ignored_but_original_retained": partial_tail,
