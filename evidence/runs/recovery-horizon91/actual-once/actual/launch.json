@@ -1,0 +1,84 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "2",
+    "/usr/bin/python3.13",
+    "/workspace/uta-recovery-horizon-91-review/evidence/runs/recovery-horizon91/trace_original91.py",
+    "--worker",
+    "/tmp/uta-recovery-horizon91-once-20261117-actual/actual/worker"
+  ],
+  "started_at": "2026-11-17T14:52:53.358534+00:00",
+  "finished_at": "2026-11-17T14:53:01.228002+00:00",
+  "wall_seconds": 7.869497106003109,
+  "worker_identity": {
+    "pid": 230555,
+    "state": "R",
+    "start_ticks": "6429985",
+    "pgid": 230555
+  },
+  "exit_code": 0,
+  "watchdog_seconds": 27,
+  "whole_budget_seconds": 30,
+  "timed_out": false,
+  "own_process_group_only": true,
+  "owned_children": [
+    {
+      "original": {
+        "pgid": 230555,
+        "pid": 230559,
+        "start_ticks": "6430051",
+        "state": "R"
+      },
+      "current": {
+        "pid": 230559,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 230555,
+        "pid": 230560,
+        "start_ticks": "6430053",
+        "state": "R"
+      },
+      "current": {
+        "pid": 230560,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 230555,
+        "pid": 230565,
+        "start_ticks": "6430659",
+        "state": "R"
+      },
+      "current": {
+        "pid": 230565,
+        "present": false
+      },
+      "forced_cleanup": false
+    }
+  ],
+  "final_owned_identities": [
+    {
+      "pid": 230559,
+      "present": false
+    },
+    {
+      "pid": 230560,
+      "present": false
+    },
+    {
+      "pid": 230565,
+      "present": false
+    }
+  ],
+  "source_unchanged": true,
+  "all_266_match_original": true,
+  "whole_budget_met": true,
+  "production_approved": false
+}
