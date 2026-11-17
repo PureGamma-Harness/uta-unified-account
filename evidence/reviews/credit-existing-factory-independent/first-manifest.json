@@ -1,0 +1,33 @@
+{
+  "source_commit": "6a066d5dd63c5960609b1679dca8eb66d9e62886",
+  "implementation_commit": "a339c1c2b3b731387259839e1562c2c272d56140",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-Werror::ResourceWarning",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.test_existing_factory_independent"
+  ],
+  "started_at": "2026-11-17T14:30:35.016111+00:00",
+  "finished_at": "2026-11-17T14:30:35.484053+00:00",
+  "wall_seconds": 0.4679468359972816,
+  "exit_code": 0,
+  "timed_out": false,
+  "budget_seconds": 15,
+  "cohosted": true,
+  "synthetic_scratch_only": true,
+  "production_approved": false,
+  "native_v2_restart_approved": false,
+  "source_files": {
+    "uta/existing_services.py": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/service.py": "3d22095afd2ae0a37eaab95a8c8d22f88908d73a5da595bcc5b4a89307079df4",
+    "uta/storage.py": "46fc32488cf6b9ffa3c15431b785aea22f4cccceaebd381130e5ef00be4427d5",
+    "uta/writer_fence.py": "d77cbc65d668ca5941ebdcb5876941f85a4145d846d4d22189e38ca1ac8badb0",
+    "tests/test_existing_factory_independent.py": "2d14377312183273b361560c62d51926658544fb9809a1cc33dbe23f54ba4fe4"
+  }
+}
