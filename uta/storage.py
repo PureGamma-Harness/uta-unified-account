@@ -179,6 +179,15 @@ class Database:
 
     @contextmanager
     def _role_transaction(self, role) -> Iterator[sqlite3.Connection]:
+        from .startup import _initialization_write_gate
+        # Include connection setup (WAL pragma) and close in owned write
+        # scheduling. The actual SQL transaction is executed exactly once.
+        with _initialization_write_gate(self, role):
+            with self._role_transaction_body(role) as connection:
+                yield connection
+
+    @contextmanager
+    def _role_transaction_body(self, role) -> Iterator[sqlite3.Connection]:
         from .writer_fence import _TransactionGuard, WriterFenceError
         # Scope creation policy to this connection attempt, retaining existing
         # no-argument subclass hooks without mutating a shared Database object.

@@ -7,6 +7,7 @@ while a separate restricted connection renews that exact live token.
 from __future__ import annotations
 
 from copy import copy
+from contextlib import contextmanager
 import math
 import os
 import re
@@ -24,6 +25,56 @@ class StartupError(StorageError):
 
 _ACTIVE_LOCK = RLock()
 _ACTIVE = {}  # (device, inode) -> private scope; process-local, never persisted.
+
+
+def _initialization_scope(database):
+    with _ACTIVE_LOCK:
+        if not _ACTIVE:
+            return None
+        matching = next((scope for scope in _ACTIVE.values() if scope.path == database.path), None)
+        if matching is None:
+            try:
+                info = os.stat(database.path, follow_symlinks=False)
+            except FileNotFoundError:
+                return None  # An unrelated new authority follows normal creation.
+            matching = _ACTIVE.get((info.st_dev, info.st_ino))
+        return matching
+
+
+@contextmanager
+def _initialization_write_gate(database, role):
+    """Schedule owned writes before SQLite, never retry a SQL operation.
+
+    Read verification and independent producers retain their original paths.
+    The registry/metadata locks are never held while waiting for this gate.
+    """
+    scope = _initialization_scope(database) if role in ("financial", "control") else None
+    if scope is None:
+        yield
+        return
+    def check():
+        if role == "financial":
+            scope._require(database)
+        else:
+            if not scope._active:
+                raise StartupError("startup_context_invalid", "initialization write scope ended while waiting")
+            scope.check()
+            scope._check_identity(database)
+    check()
+    until = min(scope.deadline, monotonic() + scope.lease_seconds)
+    while True:
+        check()
+        remaining = until - monotonic()
+        if remaining <= 0:
+            check()  # Preserve any already recorded keeper failure as primary.
+            raise StartupError("startup_write_gate_timeout", "initialization write scheduling exceeded its lease budget")
+        if scope._write_gate.acquire(timeout=min(.05, remaining)):
+            break
+    try:
+        check()
+        yield
+    finally:
+        scope._write_gate.release()
 
 
 def _assert_initialization_actor(database):
@@ -67,6 +118,7 @@ class _OwnedStartup:
         self.lease_seconds, self.timeout = lease_seconds, float(timeout)
         self._keeper_stop = Event()
         self._lock = RLock()
+        self._write_gate = RLock()
         self._failure = None
         self._active = self._finished = self._entered = False
         self._keeper = None
