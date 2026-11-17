@@ -1,0 +1,84 @@
+{
+  "reviewed_utc": "2026-11-17T23:39:35.805574+00:00",
+  "verdict": "PASS_CODE_ONLY_EXACT_TYPE_DELEGATION",
+  "old_source": "057fa65d1d79ae1855e551e73b6f58eeb375197b",
+  "fixed_source": "c6a7210412ce4e0888c5977743206b47c7933f75",
+  "source_bindings": {
+    "057fa65d1d79ae1855e551e73b6f58eeb375197b": {
+      "uta/reserve_integer.py": {
+        "bytes": 3891,
+        "sha256": "e6aeee830eb74df9ab01b442b0e04f33a93266cade7700ad41c59f3cbdafe09f",
+        "git_blob_oid": "9220ac18b17953ef54ee87b82b9c2e99695c44af"
+      },
+      "uta/reserve_kernel.py": {
+        "bytes": 4923,
+        "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95",
+        "git_blob_oid": "7d6f455c89b0660e24bb0491f5f8d9d558147e4f"
+      },
+      "tests/test_reserve_integer.py": {
+        "bytes": 3932,
+        "sha256": "dc2da2de133064eb9c0447eb32ac46d5a86d149fb9b8de9ee11c8328cbde8dec",
+        "git_blob_oid": "ebeee1739b1e944d56130c2faed3e05793e83580"
+      }
+    },
+    "c6a7210412ce4e0888c5977743206b47c7933f75": {
+      "uta/reserve_integer.py": {
+        "bytes": 3962,
+        "sha256": "4712870a685c8eaad3cc54ee99da419480161f348f75f89ce6e2a32d849daa51",
+        "git_blob_oid": "9a2b347537984c09cf4db852621936f27eb1d25c"
+      },
+      "uta/reserve_kernel.py": {
+        "bytes": 4923,
+        "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95",
+        "git_blob_oid": "7d6f455c89b0660e24bb0491f5f8d9d558147e4f"
+      },
+      "tests/test_reserve_integer.py": {
+        "bytes": 4676,
+        "sha256": "f73bbb3c71e7a1d6e05b031232d57888ad569993e61bd9ef0622ef176612a8a7",
+        "git_blob_oid": "825866d191b659cfb572527dadb6ff22e00a034e"
+      }
+    }
+  },
+  "ast_facts": {
+    "only_production_ast_change_is_first_type_guard": true,
+    "guard_is_exact_type_and_immediate_reference_return": true,
+    "all_math_statements_after_guard_identical": true,
+    "reference_core_bytes_identical": true,
+    "only_test_ast_change_is_one_added_regression": true
+  },
+  "tracked_uta_text_references": [
+    "c6a7210412ce4e0888c5977743206b47c7933f75:uta/reserve_integer.py:49:def calculate_integer_reserve(inputs: ReserveInputs) -> Decimal:"
+  ],
+  "original_subclass_red": {
+    "evidence_commit": "811d583",
+    "elapsed_ns": 55919351,
+    "exit_code": 1,
+    "all_recorded_files_hash_verified": true
+  },
+  "author_single_regression_pass": {
+    "elapsed_ns": 81747535,
+    "exit_code": 0,
+    "hashes_verified": {
+      "stderr.txt": {
+        "bytes": 257,
+        "sha256": "e73799fe1404d9f3479a8034b53b2bd60bf2188c6f8ba6689585be661dd42068"
+      },
+      "stdout.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "independently_reexecuted": false
+  },
+  "prior_mathematical_review": {
+    "commit": "3b9da5452051b5de348c1362e74f5f9cfef7ae01",
+    "source_commit": "057fa65d1d79ae1855e551e73b6f58eeb375197b",
+    "original_core": "02c2193599f403dfe489b95e21123fcd1686ffc2",
+    "3352_checks_not_rerun_or_relabelled_for_fixed_source": true,
+    "wire_oracle_first_red_retained_at": "b661c224125dcf47f6495a83897c93ba5eb9a5fc"
+  },
+  "project_code_executed": false,
+  "sql_service_financial_state_tests_load": "NOT_RUN",
+  "production_approved": false,
+  "persistent_10k_pass": false
+}
