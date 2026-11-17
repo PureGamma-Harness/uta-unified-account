@@ -67,11 +67,14 @@ implemented. New fixed-code fixtures do not repair older code-bound databases.
 
 ## Gates that block merge and production
 
-* Exact stable91e4ae40 is now whole-merged by96b9fdb; all368 previous M3 paths
+* Exact stable91e4ae40 is whole-merged by96b9fdb; all368 previous M3 paths
   are byte-equal at that merge and23 necessary targeted checks passed. Root's
-  new strict ledger-catalog correction is still pending independent acceptance
-  and integration, followed by a frozen SHA and full supported Python matrix,
-  CI and new package checks. This targeted pass does not replace those gates.
+  independently accepted persistent-MAIN ledger-catalog baseline5a29611 is
+  whole-merged byfbfbfea. Its original native-view interface red and minimal
+  direct-checker alias060022c are retained; three new-source targeted controls
+  passed. The raw unmanaged joined TEMP-shadow boundary remains separately
+  open. A frozen final SHA, full supported Python matrix, CI and new package
+  checks remain required; targeted checks do not replace those gates.
 * Further crash/unknown/corruption/governance tests and complete independent
   acceptance; forward binary/schema upgrade remains unsupported.
 * Normal new-order/matching/spot/withdrawal/mode-switch adapters, lending

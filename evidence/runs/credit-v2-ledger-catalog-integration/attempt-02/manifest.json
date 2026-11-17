@@ -1,0 +1,33 @@
+{
+  "scope": "only missing-interface compatibility correction: real original static catalog checker on same snapshot; canonical and missing-FK-with-preserved-rows/guards controls; original first new-source installer target on fresh DB, no old-source result inheritance",
+  "source_commit": "060022cd3050e2ffc0af50aece26d2ab57e90bd4",
+  "source_sha256": {
+    "uta/storage.py": "19fff9b9f680ce9bf83ee8eb9d63c53a0d73ab336d0cd9e279c83b08191595fe",
+    "uta/credit_native.py": "088d6b6b0879124c122cb674d9b347f9688657d7b35019ed643dbeaf1ed19a99",
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "tests/test_credit_catalog_verifier_integration.py": "d3db405a058caf8c265d5744efa004d0978e834ad1690cf9805f1039217cc22d",
+    "tests/credit_v2_runtime_fixture.py": "69d776ca98a649558047c98af8387c654f3996e66a7b12d6f88ba9ba8ffb925a",
+    "tests/test_credit_v2_runtime_chain.py": "edce0997b5866e47ed4a3bfa8de24d5230579dc4e517928f526abb4e747a4c7a"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_catalog_verifier_integration",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 30,
+  "begin": "2026-11-17T15:38:36.252738+00:00",
+  "end": "2026-11-17T15:38:43.908003+00:00",
+  "elapsed_seconds": 7.655270866001956,
+  "exit_code": 0,
+  "raw_sha256": "7636380963d359d7055ab80649cb71a76876e189f21ade60a9f6ea21fcad3cc4"
+}

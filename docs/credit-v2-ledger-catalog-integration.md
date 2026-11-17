@@ -35,3 +35,22 @@ known raw unmanaged joined TEMP-shadow boundary remains separate. This merge
 does not claim complete schema closure or close that boundary. The final fixed
 M3 SHA still needs full supported-Python, CI and new-package acceptance; the
 default-disabled synthetic draft remains overall NO-GO.
+
+Compatibility OWN060022cd3050e2ffc0af50aece26d2ab57e90bd4 adds exactly
+the actual original static checker alias to the existing read-method-only view.
+The separate tests call the original full verifier on one real read snapshot:
+canonical financial state passes without DDL or role changes; removing only the
+event FK while preserving all original postings and immutable guards rejects
+with the exact original `LedgerError("journal postings table definition changed")`
+as the source-invalid cause. No fallback or reconstructed successful callback
+is used.
+
+Those two new controls plus only the original failed new-source native target
+passed once on CPU3/Python3.12 at15:38:36.252738–15:38:43.908003 UTC
+(7.655s process, three tests7.493s). The fresh target actually installs the
+complete capability, acquires a real token, commits its sourced four-leg loan,
+reopens/verifies the ledger, replays/query-retries the original CID without a
+second effect and checks public501/readinessfalse. This is new-source evidence;
+no old code-bound database or previous PASS is inherited. Raw is in `attempt-02`,
+while `attempt-01` remains the unchanged original integration red. Independent
+review of the narrow alias and final full-matrix/package gates remain required.
