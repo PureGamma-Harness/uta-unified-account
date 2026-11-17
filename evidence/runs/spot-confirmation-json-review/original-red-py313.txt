@@ -1,0 +1,165 @@
+test_global_duplicate_key_is_rejected_before_sealing (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_duplicate_key_is_rejected_before_sealing) ... strict-confirmation-json {"event_kind": "SPOT_MATCH_CONFIRMED", "raw_number_token": null, "duplicate_key": true, "raw_payload_preserved": true, "verification_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verification_exception": null, "verification_code": null, "migration_exception": null, "migration_code": null, "manifest_present": true, "financial_rows_unchanged": true}
+FAIL
+test_global_exponent_overflow_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_exponent_overflow_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_MATCH_CONFIRMED", "raw_number_token": "1e999", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_global_nan_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_nan_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_MATCH_CONFIRMED", "raw_number_token": "NaN", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_global_negative_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_negative_infinity_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_MATCH_CONFIRMED", "raw_number_token": "-Infinity", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_global_positive_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_positive_infinity_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_MATCH_CONFIRMED", "raw_number_token": "Infinity", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_private_duplicate_key_is_rejected_before_sealing (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_duplicate_key_is_rejected_before_sealing) ... strict-confirmation-json {"event_kind": "SPOT_TRADE_CONFIRMED", "raw_number_token": null, "duplicate_key": true, "raw_payload_preserved": true, "verification_result": {"matches": 1, "paired_fills": 2, "orders": 3, "ledger_events": 8}, "verification_exception": null, "verification_code": null, "migration_exception": null, "migration_code": null, "manifest_present": true, "financial_rows_unchanged": true}
+FAIL
+test_private_exponent_overflow_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_exponent_overflow_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_TRADE_CONFIRMED", "raw_number_token": "1e999", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_private_nan_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_nan_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_TRADE_CONFIRMED", "raw_number_token": "NaN", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_private_negative_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_negative_infinity_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_TRADE_CONFIRMED", "raw_number_token": "-Infinity", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+test_private_positive_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_positive_infinity_is_a_typed_corruption_error) ... strict-confirmation-json {"event_kind": "SPOT_TRADE_CONFIRMED", "raw_number_token": "Infinity", "duplicate_key": false, "raw_payload_preserved": true, "verification_result": null, "verification_exception": "ValueError", "verification_code": null, "migration_exception": "ServiceError", "migration_code": "spot_corrupt", "manifest_present": false, "financial_rows_unchanged": true}
+FAIL
+
+======================================================================
+FAIL: test_global_duplicate_key_is_rejected_before_sealing (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_duplicate_key_is_rejected_before_sealing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 110, in test_global_duplicate_key_is_rejected_before_sealing
+    self.require_typed_rejection(global_event=True, duplicate=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_global_exponent_overflow_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_exponent_overflow_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 104, in test_global_exponent_overflow_is_a_typed_corruption_error
+    self.require_typed_rejection("1e999", global_event=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_global_nan_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_nan_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 95, in test_global_nan_is_a_typed_corruption_error
+    self.require_typed_rejection("NaN", global_event=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: nan') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_global_negative_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_negative_infinity_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 101, in test_global_negative_infinity_is_a_typed_corruption_error
+    self.require_typed_rejection("-Infinity", global_event=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: -inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_global_positive_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_global_positive_infinity_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 98, in test_global_positive_infinity_is_a_typed_corruption_error
+    self.require_typed_rejection("Infinity", global_event=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_private_duplicate_key_is_rejected_before_sealing (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_duplicate_key_is_rejected_before_sealing)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 107, in test_private_duplicate_key_is_rejected_before_sealing
+    self.require_typed_rejection(duplicate=True)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: None is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_private_exponent_overflow_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_exponent_overflow_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 92, in test_private_exponent_overflow_is_a_typed_corruption_error
+    self.require_typed_rejection("1e999")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_private_nan_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_nan_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 83, in test_private_nan_is_a_typed_corruption_error
+    self.require_typed_rejection("NaN")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: nan') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_private_negative_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_negative_infinity_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 89, in test_private_negative_infinity_is_a_typed_corruption_error
+    self.require_typed_rejection("-Infinity")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: -inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+======================================================================
+FAIL: test_private_positive_infinity_is_a_typed_corruption_error (tests.test_spot_confirmation_json_reference.SpotConfirmationJSONReferenceTests.test_private_positive_infinity_is_a_typed_corruption_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 86, in test_private_positive_infinity_is_a_typed_corruption_error
+    self.require_typed_rejection("Infinity")
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/workspace/uta-spot-json-review/tests/test_spot_confirmation_json_reference.py", line 75, in require_typed_rejection
+    self.assertIsInstance(verification_error, ServiceError,
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError('Out of range float values are not JSON compliant: inf') is not an instance of <class 'uta.service.ServiceError'> : malformed confirmation JSON requires a typed verifier rejection, never a raw error or acceptance
+
+----------------------------------------------------------------------
+Ran 10 tests in 2.793s
+
+FAILED (failures=10)
