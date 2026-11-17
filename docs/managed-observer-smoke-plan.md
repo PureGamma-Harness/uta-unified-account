@@ -164,3 +164,47 @@ inflight/unknown degradation, and final independent/cold reconciliation. It
 must preserve unknown rather than invent a successful financial-ready result.
 The same 150-second outer limit and unchanged long-receipt rejection apply.
 There is no automatic second smoke and no automatic six-hour launch.
+
+## Second execution outcome and future sample accounting
+
+The second short job ran only after another explicit root GO, with the frozen
+`5f5d7bd` wrapper and unchanged producer/observer core inputs. Its actual evidence
+is [smoke-02](evidence/managed-observer-763202d-smoke-02/README.md). Required
+startup, normal active, actual worker/parent fault unknown and final cold phases
+were captured. Final independent golden/FK/same-watermark and actual producer
+cold audit passed within 62.871711726 seconds of actual launch. One earlier
+normal observation remains OperationalError/UNKNOWN; no blanket all-sample pass
+is asserted, and empty health alerts never substitute for a financial golden.
+The first smoke's incomplete coverage remains unchanged. No third or six-hour
+job is authorized by these records.
+
+For any separately authorized six-hour job, preserve **every** actual observer
+sample and derive counts from the complete JSONL, not from the latest successful
+sample. Required counters include total samples; logical-point categories;
+read-error samples by actual exception type/digest; financial golden compared
+and passed/failed; financial golden not compared because inflight/unproven;
+and financial data unavailable because a read failed. Record active rounds,
+unresolved steps/faults, planned recovery, stale/future clocks, source/identity
+changes and unmatched logical points where the actual evidence identifies them.
+Keep unclassified causes explicitly unknown: an OperationalError does not prove
+a particular SQLite race, and unknown causes are never manufactured integer zero.
+State each counter's scope: persisted watch samples are counted from their
+JSONL, while explicit audit/reopen operations retain their own actual attempt
+results. If an internal attempt is not instrumented, its count is unavailable;
+do not silently include it in a claimed zero-error total.
+
+Health facts and finance evidence require separate classifications. Known live
+PID birth, active lease and fresh quote can be recorded while financial golden
+remains unknown. `alerts=[]`, CLI exit zero, process survival and a prior passed
+boundary never imply current financial readiness. A final golden pass belongs
+only to its independently reopened same final watermark and verified logs.
+Retain startup errors, expected fault-period unknowns and unexpected read errors
+alongside later successful observations rather than replacing them.
+
+Before a six-hour job actually starts, its observed sample/error/unknown counts
+are **not yet available** (null/not-started), not an invented zero-error result.
+If JSONL is incomplete or has a truncated/unreadable row, record that defect and
+the incomplete count scope; do not silently discard it. The two minute jobs do
+not add up to a continuous run and cannot satisfy 21,600 seconds/5,400 rounds.
+Root's separately coordinated quiet 1k→250k checks and an explicit later GO
+remain prerequisites to any actual six-hour launch.
