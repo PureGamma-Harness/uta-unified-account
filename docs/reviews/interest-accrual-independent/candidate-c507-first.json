@@ -1,0 +1,325 @@
+{
+  "status": "PASS",
+  "candidate_commit": "c507e0b458f24d2434ed2c24df597ba171113d3c",
+  "candidate_module_sha256": "2d85c6112a9c908cae8d1609ffdb873f6a4d6ee9f373a414e637eea4f3a5843c",
+  "candidate_import_path": "/workspace/uta-interest-accrual-kernel/uta/interest_accrual.py",
+  "reference_import_path": "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/reference.py",
+  "pid": 508437,
+  "cpu_ids": [
+    3
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "elapsed_ns_before_result_write": 121475573,
+  "budget_ns": 10000000000,
+  "source_sha256": {
+    "/workspace/uta-interest-accrual-kernel/uta/interest_accrual.py": "2d85c6112a9c908cae8d1609ffdb873f6a4d6ee9f373a414e637eea4f3a5843c",
+    "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/reference.py": "e98ac9fb4b2e40507455f96d6e5e823b93197c6512236b74ca0594c1d64fe2db",
+    "/workspace/uta-interest-accrual-reference/docs/reviews/interest-accrual-independent/manual-cases-v1.json": "c61f856621ec095210622efc08bc38b64571c39f5ec31f6636e64d6891357711",
+    "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/check_candidate.py": "37a4fb791091e339e4e449053df72e5c3b210106ec4719d283d6e6649cbeda9f"
+  },
+  "source_sha256_after": {
+    "/workspace/uta-interest-accrual-kernel/uta/interest_accrual.py": "2d85c6112a9c908cae8d1609ffdb873f6a4d6ee9f373a414e637eea4f3a5843c",
+    "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/reference.py": "e98ac9fb4b2e40507455f96d6e5e823b93197c6512236b74ca0594c1d64fe2db",
+    "/workspace/uta-interest-accrual-reference/docs/reviews/interest-accrual-independent/manual-cases-v1.json": "c61f856621ec095210622efc08bc38b64571c39f5ec31f6636e64d6891357711",
+    "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/check_candidate.py": "37a4fb791091e339e4e449053df72e5c3b210106ec4719d283d6e6649cbeda9f"
+  },
+  "checks": [
+    {
+      "case": "IR-01-exact-day",
+      "passed": true
+    },
+    {
+      "case": "IR-02-subunit-day",
+      "passed": true
+    },
+    {
+      "case": "IR-03-halfyear-fivepercent",
+      "passed": true
+    },
+    {
+      "case": "IR-04-quarterday-split",
+      "passed": true
+    },
+    {
+      "case": "IR-05-principal-change",
+      "passed": true
+    },
+    {
+      "case": "IR-06-rate-change",
+      "passed": true
+    },
+    {
+      "case": "IR-07-carry-and-small-period",
+      "passed": true
+    },
+    {
+      "case": "IR-08-carry-matures",
+      "passed": true
+    },
+    {
+      "case": "IR-09-zero-principal-carry-retained",
+      "passed": true
+    },
+    {
+      "case": "IR-10-leapyear-fixed-basis",
+      "passed": true
+    },
+    {
+      "case": "IR-11-zero-rate-carry-retained",
+      "passed": true
+    },
+    {
+      "case": "IR-12-existing-carry-completes-year",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-00",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-01",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-02",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-03",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-04",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-05",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-06",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-07",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-08",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-09",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-10",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-11",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-12",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-13",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-14",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-15",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-16",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-17",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-18",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-19",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-20",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-21",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-22",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-23",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-24",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-25",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-26",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-27",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-28",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-29",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-30",
+      "passed": true
+    },
+    {
+      "case": "partition-exact-31",
+      "passed": true
+    },
+    {
+      "case": "historical-replay-preserves-current-state",
+      "passed": true
+    },
+    {
+      "case": "same-reference-changed-payload",
+      "passed": true,
+      "observed_code": "reference_conflict"
+    },
+    {
+      "case": "stale-checkpoint-new-reference",
+      "passed": true,
+      "observed_code": "checkpoint_conflict"
+    },
+    {
+      "case": "interval-gap",
+      "passed": true,
+      "observed_code": "interval_gap_or_overlap"
+    },
+    {
+      "case": "interval-overlap",
+      "passed": true,
+      "observed_code": "interval_gap_or_overlap"
+    },
+    {
+      "case": "principal-mismatch",
+      "passed": true,
+      "observed_code": "principal_checkpoint_mismatch"
+    },
+    {
+      "case": "zero-duration",
+      "passed": true,
+      "observed_code": "interval_invalid"
+    },
+    {
+      "case": "excess-duration",
+      "passed": true,
+      "observed_code": "interval_invalid"
+    },
+    {
+      "case": "rate-version-payload-change",
+      "passed": true,
+      "observed_code": "rate_version_conflict"
+    },
+    {
+      "case": "rate-asset-mismatch",
+      "passed": true,
+      "observed_code": "rate_currency_mismatch"
+    },
+    {
+      "case": "rate-scale-mismatch",
+      "passed": true,
+      "observed_code": "rate_currency_mismatch"
+    },
+    {
+      "case": "rate-not-yet-effective",
+      "passed": true,
+      "observed_code": "rate_not_effective"
+    },
+    {
+      "case": "rate-expired",
+      "passed": true,
+      "observed_code": "rate_not_effective"
+    },
+    {
+      "case": "rejected-rate-does-not-poison-original-version",
+      "passed": true
+    },
+    {
+      "case": "principal-change-must-be-at-cursor",
+      "passed": true,
+      "observed_code": "principal_requires_accrued_boundary"
+    },
+    {
+      "case": "zero-principal-retains-fraction-and-historical-replay",
+      "passed": true
+    },
+    {
+      "case": "risk-bound-overflow-is-atomic",
+      "passed": true,
+      "observed_code": "risk_units_overflow"
+    },
+    {
+      "case": "bool-principal",
+      "passed": true,
+      "observed_code": "principal_invalid"
+    },
+    {
+      "case": "float-principal",
+      "passed": true,
+      "observed_code": "principal_invalid"
+    },
+    {
+      "case": "string-principal",
+      "passed": true,
+      "observed_code": "principal_invalid"
+    },
+    {
+      "case": "negative-principal",
+      "passed": true,
+      "observed_code": "principal_invalid"
+    },
+    {
+      "case": "exclusive-principal-bound",
+      "passed": true,
+      "observed_code": "principal_invalid"
+    },
+    {
+      "case": "new-reference-at-capacity",
+      "passed": true,
+      "observed_code": "receipt_capacity"
+    },
+    {
+      "case": "old-replay-allowed-at-capacity-without-rewind",
+      "passed": true
+    }
+  ],
+  "exception": null,
+  "candidate_core_used_for_expected_values": false,
+  "database_or_worker_or_financial_source_created": false,
+  "scheduler_or_current_V2_policy_modified": false,
+  "production_approved": false
+}
