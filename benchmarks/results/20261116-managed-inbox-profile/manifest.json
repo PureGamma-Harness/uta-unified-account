@@ -17,6 +17,10 @@
       "bytes": 4058,
       "sha256": "613dd1e9aa70a40f0ae5fed765a8edde771f954baff09a212cb9434bb2b6ce70"
     },
+    "ROOT-CAUSE-NOTICE.md": {
+      "bytes": 2115,
+      "sha256": "bf37ef96b19966c2ddd503afb4a516de3f735b1a2391205ccd0f669cb248a2c4"
+    },
     "selfcheck.stderr.txt": {
       "bytes": 810,
       "sha256": "c14023f8b3c72a54c7e5715d4d152b3bd8ebb3f5b597902fc1a08a8a88aec3cf"
@@ -53,9 +57,33 @@
       "bytes": 1017,
       "sha256": "0d432be81757d50251c0a6fb0a85b062517ebacb707fa194edb0239f40580baa"
     },
+    "manifest-before-posix-review.json": {
+      "bytes": 4214,
+      "sha256": "00792abb55ab65bea98fce0e7882be771048d3a788dadb87a0746a6a5a555998"
+    },
     "analysis.json": {
       "bytes": 5746,
       "sha256": "823bf1ba6958debf93a8dd0885fc6aff786c0ca6091abc16dd6d3af9714dc989"
+    },
+    "posix-close-review/sqlite-official-howtocorrupt.html.gz": {
+      "bytes": 15108,
+      "sha256": "4611d3f91fb5385708301066941049a1e66902ad68441ff8c16d24bc49d9895a"
+    },
+    "posix-close-review/implementation-lock-notes.md": {
+      "bytes": 5596,
+      "sha256": "612f4e971249aaf08f4da7e5fff940626fb67f1b9402453e2758bae8733a4535"
+    },
+    "posix-close-review/review.json": {
+      "bytes": 3532,
+      "sha256": "f03f0af5b9a928ff6874c32f4ecd5bf11e6ca73aace2263a024b6e84f37d6667"
+    },
+    "posix-close-review/official-section-2.2.txt": {
+      "bytes": 2492,
+      "sha256": "65d87d8356f4b2152b56eca586719815f43f8d45103a347cc2b818166244b0a2"
+    },
+    "posix-close-review/independent-lock-validation.md": {
+      "bytes": 9441,
+      "sha256": "233b5b04623411bad25e31cbd40c2608ad8ba3e59ed74f481361da70f7a21e26"
     },
     "raw/driver.stderr.txt": {
       "bytes": 0,
@@ -112,6 +140,13 @@
     "raw/profiles/worker-1-pid-18158.prof": {
       "bytes": 108764,
       "sha256": "f1dc7d2557f95ae96c097f56f883d416cc7df632bd685cee7a6e56e29a9d5055"
+    },
+    "posix-close-review/helper-comparison.json": {
+      "bytes": 5247,
+      "sha256": "4b07a2306c7c6ca41457d172e4901f1fa829a468ff291041daf97171e903d702"
     }
-  }
+  },
+  "additional_posix_close_evidence": true,
+  "historical_probe_is_stability_green": false,
+  "release_status": "NO-GO: historical IO error and independently confirmed unsafe application locking pattern"
 }

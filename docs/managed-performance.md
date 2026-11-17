@@ -103,3 +103,15 @@ CPU 为 AMD EPYC 9V74，可见 benchmark affinity **2**，宿主 cgroup 配额�
 原始证据 `benchmarks/results/20261116-managed-inbox-profile/raw/` 包含200条gzip到达、每片telemetry、完整fresh tick/control回执、environment、独立PID及父profile原文件/文本、manifest和实际命令。`analysis.json` 保存剖析限制、子PID函数计数和原始尾部拆解，cohost文件保留实际长稳检查。原SQL数据留在 `/tmp/uta-managed-profile-20261116-first/authority`，不提交Git。
 `startup_seconds_excluded=.458328s` 是spawn/初次publication/activation区间，未单独测量更早的离线开户资金setup；两者均在计划到达起点之前。wrapper总时间、arrival-window和原始setup来源均保留，不能把该字段称为全部初始化时长。关闭耗时 .024675s另外报告。
 四项原冻结工具自检通过，集成后新增归档测试核验200唯一到达、全部摘要、实际171/18/11分类、I/O522和profile限制。无profile对照、重复配对、更高到达率、持续半小时、复制与撮合容量尚未完成；capacity_10000_per_s_passed和production_approved均为false。下一轮先固定同一新source做受控改前改后，不把当前单次低速instrumented观察当作收益百分比。
+
+## 2026-11-17 补充：已复现的应用层 POSIX 锁缺陷
+
+首轮含 SQLITE_IOERR_SHORT_READ(522)，即使最终只读对账通过，也不能标为稳定性绿或并发安全验收通过。其原始200/171/18/11结果、原profile及所有26个既有证据文件均不改写；这次只追加来源和归因边界，完整说明见 [ROOT-CAUSE-NOTICE.md](../benchmarks/results/20261116-managed-inbox-profile/ROOT-CAUSE-NOTICE.md)。当前历史候选仍为 **NO-GO**。
+
+SQLite 官方 [How To Corrupt An SQLite Database File §2.2](https://sqlite.org/howtocorrupt.html#posix_close_bug) 明确说明：同一进程中对同一数据库文件执行 `close()`，会取消该进程所有线程/描述符持有的该文件 POSIX advisory locks。绕过 SQLite 打开再关闭已发布的数据库文件，即使只是辨识文件类型，也可能破坏其他活动 SQLite 连接的锁。SQLite 3.51.0 以后新增的多进程 WAL 防御不是完整替代；这不能靠降低完整性检查或简单更换 SQLite 版本解决。
+
+测量源码7a06的 `Database._private_file` 和 `_BoundShardDatabase._private_file` 与独立红基线57d776c的两个同名方法，归一化 AST 完全相同，均存在直接 `os.open/fstat/close` 已发布数据库 inode 的路径。独立组用真实 SQLite 活跃事务和另一个 PID 的 kernel 锁探测复现：第二线程的文件检查使外部排他锁从被阻塞变为可取得，而原连接仍报告 in_transaction。修复路径和只读 existing-only 补强后的有界测试在 SQLite3.53.1、3.46.1 上通过；原红态及初次修复剩余失败也完整保留。这些是锁协议正确性证据，不是新的吞吐结果。
+
+原始第一手 HTML 的 SHA256 为 `e00709e3f37e95332d8e6df243510665e9cab1d7938d4fd85cbf5f47648a50bf`，压缩原字节、§2.2文本摘录、独立报告和实现说明均归档在 `posix-close-review/`。旧26文件的原manifest另存 `manifest-before-posix-review.json`，逐文件复核均未改变。
+
+应用层锁破坏机制已经独立确认，但首轮单个522事件没有对应的分片、FD/syscall和WAL inode轨迹，因此其精确事件因果仍不得冒称已完成取证。最终 RO 平衡、订单和审计匹配只能确认终态事实，不能反证运行期间从未丢锁。修复后的性能、恢复和稳定性仍需新的冻结提交与同配置复测；本轮没有启动新负载，也没有更改正在运行的887/观察器源码、数据库或任何历史开始时间。
