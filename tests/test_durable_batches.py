@@ -25,6 +25,23 @@ from uta.storage import Database, StorageError
 from uta.writer_fence import WriterFence, WriterFenceError
 
 
+def _preseal_bootstrap(callback):
+    def decorate(test):
+        test._preseal_bootstrap = callback
+        return test
+    return decorate
+
+
+def _seed_existing_loan(exchange):
+    """Explicit offline fixture funding, before this authority is sealed."""
+    from uta.credit import CreditService
+    credit = CreditService(exchange)
+    credit.fund_pool("pool", "USD", D(30), source_reference="synthetic-owned-batch-pool")
+    credit.configure_asset_limit("USD", D(30))
+    credit.configure_limit("alice", "USD", D(2))
+    credit.borrow("alice", "borrow", "USD", D(2))
+
+
 class DurableBatchTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
@@ -38,6 +55,9 @@ class DurableBatchTests(unittest.TestCase):
         legacy.publish_market(MarketSnapshot(1, self.now, {"USD": AssetSpec(D(1), D(1))},
             {"BTC-PERP": InstrumentSpec(D(100), D(".1"), D(".05"))}))
         legacy.set_kill_switch(False)
+        callback = getattr(getattr(self, self._testMethodName), "_preseal_bootstrap", None)
+        if callback is not None:
+            callback(legacy)
         self.queue = QueueStore(self.database, initialize=True, clock=lambda: self.now)
         BatchStore.initialize(self.database)
         self.fence = WriterFence(self.database)
@@ -357,13 +377,10 @@ print(json.dumps({"pid":os.getpid(),"storage_sha256":sha256(Path(uta.storage.__f
         self.assertEqual((counts["failure_events"], counts["recovered_batches"], counts["unresolved_batches"]), (1, 1, 0))
         self.assertTrue(counts["record_counts_are_not_commit_counts"])
 
+    @_preseal_bootstrap(_seed_existing_loan)
     def test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote(self):
         from uta.credit import CreditService
         credit = CreditService(self.exchange)
-        credit.fund_pool("pool", "USD", D(30), source_reference="synthetic-owned-batch-pool")
-        credit.configure_asset_limit("USD", D(30))
-        credit.configure_limit("alice", "USD", D(2))
-        credit.borrow("alice", "borrow", "USD", D(2))
         self.exchange.submit_order("alice", "resting", "BTC-PERP", D(1), D(100))
         self.exchange.set_kill_switch(True)
         self.now += timedelta(days=1)

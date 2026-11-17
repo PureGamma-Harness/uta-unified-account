@@ -190,3 +190,12 @@ before the actual stale-market check, wrong liability table name, and treating
 the debt's decimal string as minor units. Corrected exact assertions check the
 existing documented schema/validation order; runtime was unchanged. This does
 not reclassify those earlier runs as passing.
+
+At exact `8ce91d6`, the four new financial cases plus the updated parent external
+BUSY fixture pass **5/5 on each** of the same three runtimes, with unchanged
+sources and no ResourceWarning/ignored exceptions. Their actual raw outputs and
+commands are retained under `targeted-8ce91d6`. The following test-only integration
+adaptation moves loan seeding to an explicit pre-seal bootstrap callback, keeping
+the original pool/borrow CIDs and all cash, gross debt and six-entry assertions.
+This supports credit A2's managed new-borrow rejection; it does not enable managed
+borrowing or alter production runtime.
