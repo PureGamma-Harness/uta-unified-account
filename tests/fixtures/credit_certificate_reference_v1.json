@@ -1,0 +1,2135 @@
+{
+  "reference_format": 1,
+  "status": "INDEPENDENT_REFERENCE_BEFORE_PRODUCTION_API_NO_NATIVE_EXECUTION",
+  "base_commit": "aa72a953bcbe5fd809b1b159a751d152afedb5d9",
+  "design_fixture_sha256": "3ffcfeae20081bb8f9753999790cc641138a1048c7f58e26d8fc407165d869ab",
+  "unit_contract": "nonnegative canonical ASCII integer strings, each <10^38 minor units; no float/SQLite CAST",
+  "wire_choices_pending_api": [
+    "zero global/allocation acceptance",
+    "38 minor-unit-digit bound versus explicit narrower documented contract",
+    "serialized JSON/unknown fields/identifier grammar and versioning; do not treat wire differences as proven vulnerabilities"
+  ],
+  "documents": {
+    "layout": {
+      "id": "layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55",
+      "payload": {
+        "format": 1,
+        "fixture_layout_name": "two-shard-preassigned",
+        "shard_count": 2,
+        "asset_scales": {
+          "USD": 8,
+          "BTC": 8
+        },
+        "authorities": {
+          "0": "fixture:shard0",
+          "1": "fixture:shard1"
+        }
+      },
+      "canonical_payload": "{\"asset_scales\":{\"BTC\":8,\"USD\":8},\"authorities\":{\"0\":\"fixture:shard0\",\"1\":\"fixture:shard1\"},\"fixture_layout_name\":\"two-shard-preassigned\",\"format\":1,\"shard_count\":2}"
+    },
+    "credit_policy": {
+      "id": "credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f",
+      "payload": {
+        "format": 1,
+        "policy_name": "SYNTHETIC-CREDIT-ZERO-v1",
+        "new_interest_rate": "0",
+        "new_borrow_fee_rate": "0",
+        "scope": "synthetic managed Cross; quantity budgets principal plus interest only",
+        "budget_scope": "borrow_principal_plus_interest_in_native_asset",
+        "cash_deficits_in_credit_quantity_budget": false,
+        "allow_new_interest_accrual": false,
+        "allow_post_cap_pool_funding": false,
+        "batch_size_required": 0,
+        "allowed_customer_source_kind": "managed_hmac_v1",
+        "allowed_low_level_test_source_kind": "synthetic_fixture"
+      },
+      "canonical_payload": "{\"allow_new_interest_accrual\":false,\"allow_post_cap_pool_funding\":false,\"allowed_customer_source_kind\":\"managed_hmac_v1\",\"allowed_low_level_test_source_kind\":\"synthetic_fixture\",\"batch_size_required\":0,\"budget_scope\":\"borrow_principal_plus_interest_in_native_asset\",\"cash_deficits_in_credit_quantity_budget\":false,\"format\":1,\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"policy_name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"scope\":\"synthetic managed Cross; quantity budgets principal plus interest only\"}"
+    },
+    "global_budget": {
+      "id": "credit-budget:6e0c1a7d3857d876063d5530a54eebf1a72ee7153da3279a895a8dca55d35aeb",
+      "payload": {
+        "format": 1,
+        "budget_business_id": "fixture:credit:budget:1",
+        "version": 1,
+        "asset": "BTC",
+        "asset_scale": 8,
+        "global_limit_units": "100000000",
+        "layout_id": "layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55",
+        "credit_policy_id": "credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f",
+        "allocations": [
+          {
+            "shard": 0,
+            "authority_id": "fixture:shard0",
+            "limit_units": "50000000",
+            "opening_principal_units": "0",
+            "opening_interest_units": "0",
+            "pool_opening_units": "100000000",
+            "funding_reference": "fixture:pool-source:0",
+            "funding_proof_kind": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION"
+          },
+          {
+            "shard": 1,
+            "authority_id": "fixture:shard1",
+            "limit_units": "50000000",
+            "opening_principal_units": "0",
+            "opening_interest_units": "0",
+            "pool_opening_units": "100000000",
+            "funding_reference": "fixture:pool-source:1",
+            "funding_proof_kind": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION"
+          }
+        ]
+      },
+      "canonical_payload": "{\"allocations\":[{\"authority_id\":\"fixture:shard0\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:0\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":0},{\"authority_id\":\"fixture:shard1\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:1\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":1}],\"asset\":\"BTC\",\"asset_scale\":8,\"budget_business_id\":\"fixture:credit:budget:1\",\"credit_policy_id\":\"credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f\",\"format\":1,\"global_limit_units\":\"100000000\",\"layout_id\":\"layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55\",\"version\":1}"
+    }
+  },
+  "cases": [
+    {
+      "id": "baseline_full_design_certificate",
+      "category": "positive",
+      "mutations": [],
+      "expected_valid": true
+    },
+    {
+      "id": "unallocated_global_headroom_is_allowed",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "200000000"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "opening_interest_exactly_reaches_allocation",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "49000000"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1000000"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "zero_allocation_shard_still_in_complete_certificate",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "ZERO_ALLOCATION_POLICY_PENDING_API"
+    },
+    {
+      "id": "zero_global_disables_new_borrow_but_is_mathematically_consistent",
+      "category": "positive",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "ZERO_GLOBAL_POLICY_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_9007199254740991",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "9007199254740991"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_9007199254740993",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "9007199254740993"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_9223372036854775807",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "9223372036854775807"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_9223372036854775808",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "9223372036854775808"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_9223372036854775809",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "9223372036854775809"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "exact_large_units_99999999999999999999999999999999999999",
+      "category": "positive_exact_integer",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "id": "global_units_bad_0",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_1",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_2",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": false
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_3",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": 1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_4",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_5",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": []
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_6",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": {}
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_7",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": ""
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_8",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_9",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "+1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_10",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "01"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_11",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "00"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_12",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "1.0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_13",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "1e2"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_14",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": " 1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_15",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "1 "
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_16",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "1_0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_17",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "١"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_18",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "１２"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_19",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "NaN"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_20",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "Infinity"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_21",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "1\u0000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_22",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "global_units_bad_23",
+      "category": "units_lexical_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999999999999999999999999999999999999999999999"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_bool",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_float",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_negative",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_fractional",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_bad_overflow",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "limit_units_missing",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_bool",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_float",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_negative",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_fractional",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_bad_overflow",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_principal_units_missing",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_bool",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_float",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_negative",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_fractional",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_bad_overflow",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_interest_units_missing",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_bad_bool",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_bad_float",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_bad_negative",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "-1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_bad_fractional",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "0.1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_bad_overflow",
+      "category": "allocation_units_type_range",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "100000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_opening_units_missing",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "delete": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_format_bad_bool",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "format"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_format_bad_float",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "format"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_format_bad_string",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "format"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_format_bad_null",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "format"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_format_bad_negative",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "format"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_version_bad_bool",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_version_bad_float",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_version_bad_string",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_version_bad_null",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_version_bad_negative",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_asset_scale_bad_bool",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_asset_scale_bad_float",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": 1.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_asset_scale_bad_string",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_asset_scale_bad_null",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": null
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "budget_asset_scale_bad_negative",
+      "category": "strict_integer_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "shard_bad_bool",
+      "category": "strict_shard_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "shard"
+          ],
+          "value": true
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "shard_bad_float",
+      "category": "strict_shard_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "shard"
+          ],
+          "value": 0.0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "shard_bad_string",
+      "category": "strict_shard_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "shard"
+          ],
+          "value": "0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "shard_bad_negative",
+      "category": "strict_shard_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "shard"
+          ],
+          "value": -1
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "shard_bad_unknown",
+      "category": "strict_shard_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "shard"
+          ],
+          "value": 2
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocation_sum_one_unit_over_global",
+      "category": "global_cap",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "50000001"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "legal_components_sum_beyond_quantity_bound",
+      "category": "global_cap_no_overflow",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "principal_alone_fits_but_interest_over_cap",
+      "category": "opening_gross",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "50000000"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "opening_addition_beyond_quantity_bound",
+      "category": "opening_gross_no_overflow",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "global_limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "99999999999999999999999999999999999999"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_interest_units"
+          ],
+          "value": "1"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "pool_does_not_net_away_opening_debt",
+      "category": "gross_not_net",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "opening_principal_units"
+          ],
+          "value": "50000001"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "pool_opening_units"
+          ],
+          "value": "99999999"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "only_local_shard_is_not_full_certificate",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations"
+          ],
+          "value": [
+            {
+              "shard": 0,
+              "authority_id": "fixture:shard0",
+              "limit_units": "50000000",
+              "opening_principal_units": "0",
+              "opening_interest_units": "0",
+              "pool_opening_units": "100000000",
+              "funding_reference": "fixture:pool-source:0",
+              "funding_proof_kind": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION"
+            }
+          ]
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "no_allocations",
+      "category": "completeness",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations"
+          ],
+          "value": []
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "allocations_not_list",
+      "category": "strict_types",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations"
+          ],
+          "value": {}
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_shard_cannot_be_dict_overwritten",
+      "category": "duplicate_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "shard"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_authority",
+      "category": "duplicate_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "authority_id"
+          ],
+          "value": "fixture:shard0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "duplicate_funding_reference",
+      "category": "duplicate_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "funding_reference"
+          ],
+          "value": "fixture:pool-source:0"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_authority_id",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "authority_id"
+          ],
+          "value": "other-authority"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_funding_reference",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "funding_reference"
+          ],
+          "value": "other-source"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_funding_proof_kind",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "funding_proof_kind"
+          ],
+          "value": "CONFIRMED_REAL_FUNDS"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_budget_asset_USD",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset"
+          ],
+          "value": "USD"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_budget_asset_UNKNOWN",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset"
+          ],
+          "value": "UNKNOWN"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_budget_asset_scale_7",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "asset_scale"
+          ],
+          "value": 7
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_budget_version_2",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "version"
+          ],
+          "value": 2
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_still_wrong_budget_budget_business_id_new-budget",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "budget_business_id"
+          ],
+          "value": "new-budget"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_wrong_cross_reference_layout_id",
+      "category": "reference_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "layout_id"
+          ],
+          "value": "layout:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "refresh": "budget_only"
+    },
+    {
+      "id": "rehash_wrong_cross_reference_credit_policy_id",
+      "category": "reference_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "credit_policy_id"
+          ],
+          "value": "credit-policy:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "refresh": "budget_only"
+    },
+    {
+      "id": "rehash_changed_layout_name_all_references_updated",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "layout",
+            "payload",
+            "fixture_layout_name"
+          ],
+          "value": "another-layout"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_changed_policy_all_references_updated",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "payload",
+            "new_interest_rate"
+          ],
+          "value": "0.01"
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "rehash_changed_policy_boolean_type",
+      "category": "external_identity_after_rehash",
+      "mutations": [
+        {
+          "path": [
+            "credit_policy",
+            "payload",
+            "allow_new_interest_accrual"
+          ],
+          "value": 0
+        }
+      ],
+      "expected_valid": false
+    },
+    {
+      "id": "hash_changed_without_payload",
+      "category": "hash_bytes",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "id"
+          ],
+          "value": "credit-budget:0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "expected_valid": false,
+      "refresh": false
+    },
+    {
+      "id": "canonical_bytes_whitespace_not_exact",
+      "category": "hash_bytes",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "canonical_payload"
+          ],
+          "value": " {\"allocations\":[{\"authority_id\":\"fixture:shard0\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:0\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":0},{\"authority_id\":\"fixture:shard1\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:1\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":1}],\"asset\":\"BTC\",\"asset_scale\":8,\"budget_business_id\":\"fixture:credit:budget:1\",\"credit_policy_id\":\"credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f\",\"format\":1,\"global_limit_units\":\"100000000\",\"layout_id\":\"layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55\",\"version\":1}"
+        }
+      ],
+      "expected_valid": false,
+      "refresh": false
+    },
+    {
+      "id": "alternative_partition_is_statically_consistent_before_seal",
+      "category": "static_vs_history_boundary",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "100000000"
+        }
+      ],
+      "expected_valid": true
+    },
+    {
+      "id": "sealed_unknown_partition_must_not_change_even_after_rehash",
+      "category": "sealed_identity",
+      "mutations": [
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            0,
+            "limit_units"
+          ],
+          "value": "0"
+        },
+        {
+          "path": [
+            "global_budget",
+            "payload",
+            "allocations",
+            1,
+            "limit_units"
+          ],
+          "value": "100000000"
+        }
+      ],
+      "expected_valid": false,
+      "sealed": true
+    },
+    {
+      "id": "sealed_certificate_replay_unchanged_is_allowed",
+      "category": "sealed_identity",
+      "mutations": [],
+      "expected_valid": true,
+      "sealed": true
+    }
+  ],
+  "raw_json_decoder_cases": [
+    {
+      "id": "duplicate_json_key",
+      "raw": "{\"asset\":\"BTC\",\"asset\":\"USD\"}",
+      "expected_valid": false
+    },
+    {
+      "id": "nan_json_constant",
+      "raw": "{\"units\":NaN}",
+      "expected_valid": false
+    },
+    {
+      "id": "infinity_json_constant",
+      "raw": "{\"units\":Infinity}",
+      "expected_valid": false
+    },
+    {
+      "id": "ordinary_json_zero",
+      "raw": "{\"units\":\"0\"}",
+      "expected_valid": true
+    }
+  ],
+  "runtime_not_executed": [
+    "NATIVE_PREPARED owner acquire/READY/activation/new financial success rejection",
+    "actual native amount-units canonical legs and persisted semantic identity",
+    "no-cap base/batch regression",
+    "sealed identity enforcement at real install/load including UNKNOWN",
+    "real audit/source/artifact replay qualification"
+  ]
+}

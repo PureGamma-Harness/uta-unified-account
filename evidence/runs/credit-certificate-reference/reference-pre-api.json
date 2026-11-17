@@ -1,0 +1,1530 @@
+{
+  "base_commit": "aa72a953bcbe5fd809b1b159a751d152afedb5d9",
+  "certificate_case_count": 108,
+  "file_sha256": {
+    "docs/managed-credit-m3-independent-test-plan.md": "9c94f87090c92212230ddfbd1bece6cebce5761eea1416028514b76ffc2101f9",
+    "scripts/build_credit_certificate_reference_cases.py": "4edc9e1ffbaa516b2b74d84644d0c038a3f35352629612293aaffad219d75e21",
+    "tests/credit_certificate_reference.py": "f3d95ed61a40e04ef06117a1f71b190d93bfdfa7daeb56a42a13f71413827f4b",
+    "tests/fixtures/credit_certificate_reference_v1.json": "168fcfccdf08b2daee32056d947f125f83d44f5e781aed49283de5b6281881bc",
+    "tests/test_credit_certificate_reference.py": "aec9b712c556cd4a520b2f56505f717ea0ff71c94217aeb7311dbbfa65a36294"
+  },
+  "mismatches": 0,
+  "python": "3.12.14",
+  "raw_json_case_count": 4,
+  "raw_json_records": [
+    {
+      "error": "duplicate_json_key",
+      "expected_valid": false,
+      "id": "duplicate_json_key",
+      "matches": true,
+      "raw": "{\"asset\":\"BTC\",\"asset\":\"USD\"}",
+      "valid": false
+    },
+    {
+      "error": "nonfinite_json_constant:NaN",
+      "expected_valid": false,
+      "id": "nan_json_constant",
+      "matches": true,
+      "raw": "{\"units\":NaN}",
+      "valid": false
+    },
+    {
+      "error": "nonfinite_json_constant:Infinity",
+      "expected_valid": false,
+      "id": "infinity_json_constant",
+      "matches": true,
+      "raw": "{\"units\":Infinity}",
+      "valid": false
+    },
+    {
+      "error": null,
+      "expected_valid": true,
+      "id": "ordinary_json_zero",
+      "matches": true,
+      "raw": "{\"units\":\"0\"}",
+      "valid": true
+    }
+  ],
+  "records": [
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "baseline_full_design_certificate",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 100000000,
+        "budget_id": "credit-budget:6e0c1a7d3857d876063d5530a54eebf1a72ee7153da3279a895a8dca55d35aeb",
+        "global_units": 100000000,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "unallocated_global_headroom_is_allowed",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 100000000,
+        "budget_id": "credit-budget:e6d21d5668cb91ac1ded1baff1a113731cfeb51472aa39061b22f94981cd51db",
+        "global_units": 200000000,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 100000000
+      },
+      "valid": true,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "opening_interest_exactly_reaches_allocation",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 100000000,
+        "budget_id": "credit-budget:6263ddcab0f395c2a248b288a3f20f274da46282744a42f23d5711aaa65a83d2",
+        "global_units": 100000000,
+        "opening_gross_units": 50000000,
+        "per_shard": {
+          "0": {
+            "allocation_units": 50000000,
+            "headroom_units": 0,
+            "opening_gross_units": 50000000,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "zero_allocation_shard_still_in_complete_certificate",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 50000000,
+        "budget_id": "credit-budget:14c703d3042faa9526fa94833da0ce9e55279858ce2eef434814a6c8d0eed7cb",
+        "global_units": 100000000,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 50000000
+      },
+      "valid": true,
+      "wire_status": "ZERO_ALLOCATION_POLICY_PENDING_API"
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "zero_global_disables_new_borrow_but_is_mathematically_consistent",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 0,
+        "budget_id": "credit-budget:509a046b2667d9d2a773491c5a3edd49db193f0d1ff7a59a904d48bb5ad4cec5",
+        "global_units": 0,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "ZERO_GLOBAL_POLICY_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_9007199254740991",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 9007199254740991,
+        "budget_id": "credit-budget:3f159b15f3a773084ab97f577391418f815f9c0b3f4923a87b68b56d437ae91e",
+        "global_units": 9007199254740991,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 9007199254740991,
+            "headroom_units": 9007199254740991,
+            "opening_gross_units": 0,
+            "pool_units": 9007199254740991
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 9007199354740991,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_9007199254740993",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 9007199254740993,
+        "budget_id": "credit-budget:0af490b1e93b7ab543a3fdf7382ad62f293fea161d23a29b8757700323508f26",
+        "global_units": 9007199254740993,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 9007199254740993,
+            "headroom_units": 9007199254740993,
+            "opening_gross_units": 0,
+            "pool_units": 9007199254740993
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 9007199354740993,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_9223372036854775807",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 9223372036854775807,
+        "budget_id": "credit-budget:e630a8ee405d304e69f0ec6c09d7002cdda5fa32e899dc611f02c48dac4e6267",
+        "global_units": 9223372036854775807,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 9223372036854775807,
+            "headroom_units": 9223372036854775807,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036854775807
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 9223372036954775807,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_9223372036854775808",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 9223372036854775808,
+        "budget_id": "credit-budget:6d085dc2f15cf5e5ed995d3ce74c29adda0d2f35eaf6d1caea7cf7a118c46bbc",
+        "global_units": 9223372036854775808,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 9223372036854775808,
+            "headroom_units": 9223372036854775808,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036854775808
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 9223372036954775808,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_9223372036854775809",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 9223372036854775809,
+        "budget_id": "credit-budget:a824d0c54e137116d4f31440eb46c223e751bbb8b25d734c824a7106f00d45d0",
+        "global_units": 9223372036854775809,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 9223372036854775809,
+            "headroom_units": 9223372036854775809,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036854775809
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 9223372036954775809,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "positive_exact_integer",
+      "error": null,
+      "expected_valid": true,
+      "id": "exact_large_units_99999999999999999999999999999999999999",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 99999999999999999999999999999999999999,
+        "budget_id": "credit-budget:ef72f21d88ef0086a1b670b4d6c2d7965e1d1f53a0e1c337a03487e6d81b855d",
+        "global_units": 99999999999999999999999999999999999999,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 99999999999999999999999999999999999999,
+            "headroom_units": 99999999999999999999999999999999999999,
+            "opening_gross_units": 0,
+            "pool_units": 99999999999999999999999999999999999999
+          },
+          "1": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 100000000000000000000000000000099999999,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "DECLARED_38_MINOR_UNIT_DIGITS_PENDING_API"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_0",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_1",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_2",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_3",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_4",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_5",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_6",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_7",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_8",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_9",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_10",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_11",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_12",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_13",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_14",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_15",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_16",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_17",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_18",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_19",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_20",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_21",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "global_units_bad_22",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "units_lexical_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "global_units_bad_23",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "limit_units_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "limit_units_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "limit_units_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "limit_units_bad_fractional",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "limit_units_bad_overflow",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "'limit_units'",
+      "expected_valid": false,
+      "id": "limit_units_missing",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_fractional",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_overflow",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "'opening_principal_units'",
+      "expected_valid": false,
+      "id": "opening_principal_units_missing",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_fractional",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_overflow",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "'opening_interest_units'",
+      "expected_valid": false,
+      "id": "opening_interest_units_missing",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "pool_opening_units_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "pool_opening_units_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "pool_opening_units_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "pool_opening_units_bad_fractional",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "allocation_units_type_range",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "pool_opening_units_bad_overflow",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "'pool_opening_units'",
+      "expected_valid": false,
+      "id": "pool_opening_units_missing",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_format_type",
+      "expected_valid": false,
+      "id": "budget_format_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_format_type",
+      "expected_valid": false,
+      "id": "budget_format_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_format_type",
+      "expected_valid": false,
+      "id": "budget_format_bad_string",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_format_type",
+      "expected_valid": false,
+      "id": "budget_format_bad_null",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_format_range",
+      "expected_valid": false,
+      "id": "budget_format_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_version_type",
+      "expected_valid": false,
+      "id": "budget_version_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_version_type",
+      "expected_valid": false,
+      "id": "budget_version_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_version_type",
+      "expected_valid": false,
+      "id": "budget_version_bad_string",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_version_type",
+      "expected_valid": false,
+      "id": "budget_version_bad_null",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "budget_version_range",
+      "expected_valid": false,
+      "id": "budget_version_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "asset_scale_type",
+      "expected_valid": false,
+      "id": "budget_asset_scale_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "asset_scale_type",
+      "expected_valid": false,
+      "id": "budget_asset_scale_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "asset_scale_type",
+      "expected_valid": false,
+      "id": "budget_asset_scale_bad_string",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "asset_scale_type",
+      "expected_valid": false,
+      "id": "budget_asset_scale_bad_null",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_integer_types",
+      "error": "asset_scale_range",
+      "expected_valid": false,
+      "id": "budget_asset_scale_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_shard_identity",
+      "error": "shard_type",
+      "expected_valid": false,
+      "id": "shard_bad_bool",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_shard_identity",
+      "error": "shard_type",
+      "expected_valid": false,
+      "id": "shard_bad_float",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_shard_identity",
+      "error": "shard_type",
+      "expected_valid": false,
+      "id": "shard_bad_string",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_shard_identity",
+      "error": "shard_range",
+      "expected_valid": false,
+      "id": "shard_bad_negative",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_shard_identity",
+      "error": "shard_range",
+      "expected_valid": false,
+      "id": "shard_bad_unknown",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "global_cap",
+      "error": "allocation_sum_exceeds_global",
+      "expected_valid": false,
+      "id": "allocation_sum_one_unit_over_global",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "global_cap_no_overflow",
+      "error": "allocation_sum_exceeds_global",
+      "expected_valid": false,
+      "id": "legal_components_sum_beyond_quantity_bound",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "opening_gross",
+      "error": "opening_gross_exceeds_allocation",
+      "expected_valid": false,
+      "id": "principal_alone_fits_but_interest_over_cap",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "opening_gross_no_overflow",
+      "error": "opening_gross_exceeds_allocation",
+      "expected_valid": false,
+      "id": "opening_addition_beyond_quantity_bound",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "gross_not_net",
+      "error": "opening_gross_exceeds_allocation",
+      "expected_valid": false,
+      "id": "pool_does_not_net_away_opening_debt",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "complete_allocation_count",
+      "expected_valid": false,
+      "id": "only_local_shard_is_not_full_certificate",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "completeness",
+      "error": "complete_allocation_count",
+      "expected_valid": false,
+      "id": "no_allocations",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "strict_types",
+      "error": "allocations_type",
+      "expected_valid": false,
+      "id": "allocations_not_list",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "duplicate_identity",
+      "error": "duplicate_shard",
+      "expected_valid": false,
+      "id": "duplicate_shard_cannot_be_dict_overwritten",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "duplicate_identity",
+      "error": "authority_identity",
+      "expected_valid": false,
+      "id": "duplicate_authority",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "duplicate_identity",
+      "error": "duplicate_funding_reference",
+      "expected_valid": false,
+      "id": "duplicate_funding_reference",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "authority_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_authority_id",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "external_funding_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_funding_reference",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "funding_kind",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_funding_proof_kind",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "asset_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_budget_asset_USD",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "asset_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_budget_asset_UNKNOWN",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "asset_scale_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_budget_asset_scale_7",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "budget_version_range",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_budget_version_2",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "external_budget_identity",
+      "expected_valid": false,
+      "id": "rehash_still_wrong_budget_budget_business_id_new-budget",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "reference_identity",
+      "error": "budget_layout_reference",
+      "expected_valid": false,
+      "id": "rehash_wrong_cross_reference_layout_id",
+      "matches": true,
+      "rehash_all_references": "budget_only",
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "reference_identity",
+      "error": "budget_policy_reference",
+      "expected_valid": false,
+      "id": "rehash_wrong_cross_reference_credit_policy_id",
+      "matches": true,
+      "rehash_all_references": "budget_only",
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "external_layout_identity",
+      "expected_valid": false,
+      "id": "rehash_changed_layout_name_all_references_updated",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "external_policy_identity",
+      "expected_valid": false,
+      "id": "rehash_changed_policy_all_references_updated",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "external_identity_after_rehash",
+      "error": "external_policy_identity",
+      "expected_valid": false,
+      "id": "rehash_changed_policy_boolean_type",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "hash_bytes",
+      "error": "content_hash",
+      "expected_valid": false,
+      "id": "hash_changed_without_payload",
+      "matches": true,
+      "rehash_all_references": false,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "hash_bytes",
+      "error": "canonical_bytes",
+      "expected_valid": false,
+      "id": "canonical_bytes_whitespace_not_exact",
+      "matches": true,
+      "rehash_all_references": false,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "static_vs_history_boundary",
+      "error": null,
+      "expected_valid": true,
+      "id": "alternative_partition_is_statically_consistent_before_seal",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 100000000,
+        "budget_id": "credit-budget:cf3d2004b57049aee06eb1d6565c37515be1cf83a548fa1515996a039012186b",
+        "global_units": 100000000,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 0,
+            "headroom_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 100000000,
+            "headroom_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "sealed_identity",
+      "error": "sealed_certificate_changed",
+      "expected_valid": false,
+      "id": "sealed_unknown_partition_must_not_change_even_after_rehash",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": null,
+      "valid": false,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    },
+    {
+      "category": "sealed_identity",
+      "error": null,
+      "expected_valid": true,
+      "id": "sealed_certificate_replay_unchanged_is_allowed",
+      "matches": true,
+      "rehash_all_references": true,
+      "result": {
+        "allocated_units": 100000000,
+        "budget_id": "credit-budget:6e0c1a7d3857d876063d5530a54eebf1a72ee7153da3279a895a8dca55d35aeb",
+        "global_units": 100000000,
+        "opening_gross_units": 0,
+        "per_shard": {
+          "0": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          },
+          "1": {
+            "allocation_units": 50000000,
+            "headroom_units": 50000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000
+          }
+        },
+        "pool_units": 200000000,
+        "unassigned_global_units": 0
+      },
+      "valid": true,
+      "wire_status": "NORMATIVE_SEMANTIC"
+    }
+  ],
+  "status": "INDEPENDENT_REFERENCE_ONLY_NO_PRODUCTION_API_OR_NATIVE_EXECUTED",
+  "test_run": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_credit_certificate_reference.py",
+      "-v"
+    ],
+    "cwd": "/workspace/uta-credit-certificate-reference",
+    "elapsed_seconds": 0.104555,
+    "exit_code": 0,
+    "stderr": "test_independently_labelled_semantic_corpus (test_credit_certificate_reference.CertificateReferenceTests.test_independently_labelled_semantic_corpus) ... ok\ntest_native_64_bit_range_is_not_the_economic_integer_range (test_credit_certificate_reference.CertificateReferenceTests.test_native_64_bit_range_is_not_the_economic_integer_range) ... ok\ntest_pool_and_loan_quantity_budget_are_distinct (test_credit_certificate_reference.CertificateReferenceTests.test_pool_and_loan_quantity_budget_are_distinct) ... ok\ntest_reference_context_is_external_and_not_mutated (test_credit_certificate_reference.CertificateReferenceTests.test_reference_context_is_external_and_not_mutated) ... ok\ntest_strict_json_layer_is_distinct_from_already_decoded_objects (test_credit_certificate_reference.CertificateReferenceTests.test_strict_json_layer_is_distinct_from_already_decoded_objects) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.023s\n\nOK\n",
+    "stdout": ""
+  }
+}
