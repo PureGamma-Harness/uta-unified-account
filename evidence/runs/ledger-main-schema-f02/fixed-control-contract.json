@@ -1,0 +1,22 @@
+{
+  "status": "FIXED_CODE_CONTROLS_NOT_RUN",
+  "policy": "verify certifies MAIN only; TEMP must neither conceal MAIN corruption nor change a healthy MAIN verdict",
+  "controls": [
+    {"id": "MS-001", "main": "canonical healthy manual2", "temp": "none", "caller": "raw same-MAIN active/query_only", "expected": "2; caller txn active and MAIN unchanged"},
+    {"id": "MS-002", "main": "canonical healthy manual2", "temp": "five genuine healthy copies", "caller": "raw authorizer denies every TEMP read", "expected": "2; no TEMP read, no new catalogue permission"},
+    {"id": "MS-003", "main": "event1 hash f*64 with original trigger restored", "temp": "five prior genuine healthy copies", "expected": "LedgerError journal event hash changed"},
+    {"id": "MS-004", "main": "b/USD balance950->951", "temp": "five prior genuine healthy copies", "expected": "LedgerError materialized balances differ from journal replay"},
+    {"id": "MS-005", "main": "event2 posting b units -300->-301 with original trigger restored", "temp": "five prior genuine healthy copies", "expected": "LedgerError event must balance independently for every asset"},
+    {"id": "MS-006", "main": "ledger_schema.version999", "temp": "five prior genuine healthy copies", "expected": "LedgerError ledger schema version changed"},
+    {"id": "MS-007", "main": "USD scale2->3 with original asset trigger restored", "temp": "five prior genuine healthy copies", "expected": "LedgerError ledger asset scales changed"},
+    {"id": "MS-008", "main": "canonical healthy manual2", "temp": "bad event hash, bad balance and orphan posting99", "expected": "2; MAIN and TEMP unchanged by verify"},
+    {"id": "MS-009", "main": "canonical columns/PK/triggers but missing event FK and orphan99", "temp": "five prior genuine healthy copies", "expected": "F01 LedgerError journal postings table definition changed"},
+    {"id": "MS-010", "main": "genuine managed authority with active native token", "caller": "Database.read_transaction", "expected": "2; original read/financial guard boundaries unchanged"},
+    {"id": "MS-011", "main": "genuine managed authority", "temp": "five genuine healthy copies", "caller": "raw unregistered connection", "expected": "original WriterFenceError unguarded_connection"},
+    {"id": "MS-012", "caller": "raw active connection to different actual MAIN file", "expected": "original StorageError another database; caller txn remains active"}
+  ],
+  "additional_regressions": {"F01_author_controls":16,"original_StorageTests":13},
+  "proposed_total_tests":41,
+  "implementation_scope_exclusions": ["raw caller provenance redesign", "TEMP catalogue authorizer grants", "other Ledger read/write methods", "ordered-postings API integration", "repair or migration"],
+  "production_approved":false
+}
