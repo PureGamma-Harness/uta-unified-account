@@ -1,0 +1,112 @@
+test_asset_scale_change (history_postings_stream_tests.HistoryPostingsStreamTests.test_asset_scale_change) ... ok
+test_both_signed_cumulative_overflow (history_postings_stream_tests.HistoryPostingsStreamTests.test_both_signed_cumulative_overflow) ... ok
+test_canonical_units_and_both_signed_bounds (history_postings_stream_tests.HistoryPostingsStreamTests.test_canonical_units_and_both_signed_bounds) ... ok
+test_event_hash (history_postings_stream_tests.HistoryPostingsStreamTests.test_event_hash) ... ok
+test_event_sequence_gap_with_valid_foreign_keys (history_postings_stream_tests.HistoryPostingsStreamTests.test_event_sequence_gap_with_valid_foreign_keys) ... ok
+test_fingerprint_error_before_future_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_fingerprint_error_before_future_invalid_utf8) ... 
+  test_fingerprint_error_before_future_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_fingerprint_error_before_future_invalid_utf8) (column='account') ... FAIL
+  test_fingerprint_error_before_future_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_fingerprint_error_before_future_invalid_utf8) (column='units') ... FAIL
+test_first_chain_error_before_initial_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_chain_error_before_initial_invalid_utf8) ... 
+  test_first_chain_error_before_initial_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_chain_error_before_initial_invalid_utf8) (column='account') ... FAIL
+  test_first_chain_error_before_initial_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_chain_error_before_initial_invalid_utf8) (column='units') ... FAIL
+test_first_error_preserved_before_later_group_decode (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_error_preserved_before_later_group_decode) ... ok
+test_invalid_utf8_asset_keeps_original_foreign_key_priority (history_postings_stream_tests.HistoryPostingsStreamTests.test_invalid_utf8_asset_keeps_original_foreign_key_priority) ... ok
+test_manual_reference_complete_counts_and_balances (history_postings_stream_tests.HistoryPostingsStreamTests.test_manual_reference_complete_counts_and_balances) ... ok
+test_materialized_balance (history_postings_stream_tests.HistoryPostingsStreamTests.test_materialized_balance) ... ok
+test_missing_group (history_postings_stream_tests.HistoryPostingsStreamTests.test_missing_group) ... ok
+test_missing_last_posting (history_postings_stream_tests.HistoryPostingsStreamTests.test_missing_last_posting) ... ok
+test_noncanonical_posting_order (history_postings_stream_tests.HistoryPostingsStreamTests.test_noncanonical_posting_order) ... ok
+test_noninteger_units (history_postings_stream_tests.HistoryPostingsStreamTests.test_noninteger_units) ... ok
+test_option_types_reject_before_storage (history_postings_stream_tests.HistoryPostingsStreamTests.test_option_types_reject_before_storage) ... ok
+test_ordinal_gap (history_postings_stream_tests.HistoryPostingsStreamTests.test_ordinal_gap) ... ok
+test_orphan_inventory (history_postings_stream_tests.HistoryPostingsStreamTests.test_orphan_inventory) ... ok
+test_prior_hash (history_postings_stream_tests.HistoryPostingsStreamTests.test_prior_hash) ... ok
+test_protection_missing (history_postings_stream_tests.HistoryPostingsStreamTests.test_protection_missing) ... ok
+test_reverse_physical_insertion (history_postings_stream_tests.HistoryPostingsStreamTests.test_reverse_physical_insertion) ... ok
+test_schema_change (history_postings_stream_tests.HistoryPostingsStreamTests.test_schema_change) ... ok
+test_sql_dispatch_counts_and_default_off (history_postings_stream_tests.HistoryPostingsStreamTests.test_sql_dispatch_counts_and_default_off) ... ok
+
+======================================================================
+FAIL: test_fingerprint_error_before_future_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_fingerprint_error_before_future_invalid_utf8) (column='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 221, in test_fingerprint_error_before_future_invalid_utf8
+    self.rejected("journal event fingerprint changed")
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 86, in rejected
+    self.assertEqual(self.outcomes(), ("LedgerError", message))
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 82, in outcomes
+    self.assertEqual(outcomes[0], outcomes[1])
+AssertionError: Tuples differ: ('LedgerError', 'journal event fingerprint changed') != ('OperationalError', "Could not decode to UTF-8 column 'account' with text '�'")
+
+First differing element 0:
+'LedgerError'
+'OperationalError'
+
+- ('LedgerError', 'journal event fingerprint changed')
++ ('OperationalError', "Could not decode to UTF-8 column 'account' with text '�'")
+
+======================================================================
+FAIL: test_fingerprint_error_before_future_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_fingerprint_error_before_future_invalid_utf8) (column='units')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 221, in test_fingerprint_error_before_future_invalid_utf8
+    self.rejected("journal event fingerprint changed")
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 86, in rejected
+    self.assertEqual(self.outcomes(), ("LedgerError", message))
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 82, in outcomes
+    self.assertEqual(outcomes[0], outcomes[1])
+AssertionError: Tuples differ: ('LedgerError', 'journal event fingerprint changed') != ('OperationalError', "Could not decode to UTF-8 column 'units' with text '�'")
+
+First differing element 0:
+'LedgerError'
+'OperationalError'
+
+- ('LedgerError', 'journal event fingerprint changed')
++ ('OperationalError', "Could not decode to UTF-8 column 'units' with text '�'")
+
+======================================================================
+FAIL: test_first_chain_error_before_initial_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_chain_error_before_initial_invalid_utf8) (column='account')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 211, in test_first_chain_error_before_initial_invalid_utf8
+    self.rejected("journal sequence or hash chain is broken")
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 86, in rejected
+    self.assertEqual(self.outcomes(), ("LedgerError", message))
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 82, in outcomes
+    self.assertEqual(outcomes[0], outcomes[1])
+AssertionError: Tuples differ: ('LedgerError', 'journal sequence or hash chain is broken') != ('OperationalError', "Could not decode to UTF-8 column 'account' with text '�'")
+
+First differing element 0:
+'LedgerError'
+'OperationalError'
+
+- ('LedgerError', 'journal sequence or hash chain is broken')
++ ('OperationalError', "Could not decode to UTF-8 column 'account' with text '�'")
+
+======================================================================
+FAIL: test_first_chain_error_before_initial_invalid_utf8 (history_postings_stream_tests.HistoryPostingsStreamTests.test_first_chain_error_before_initial_invalid_utf8) (column='units')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 211, in test_first_chain_error_before_initial_invalid_utf8
+    self.rejected("journal sequence or hash chain is broken")
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 86, in rejected
+    self.assertEqual(self.outcomes(), ("LedgerError", message))
+                     ^^^^^^^^^^^^^^^
+  File "/workspace/uta-history-perf-rnd/tests/test_history_postings_stream.py", line 82, in outcomes
+    self.assertEqual(outcomes[0], outcomes[1])
+AssertionError: Tuples differ: ('LedgerError', 'journal sequence or hash chain is broken') != ('OperationalError', "Could not decode to UTF-8 column 'units' with text '�'")
+
+First differing element 0:
+'LedgerError'
+'OperationalError'
+
+- ('LedgerError', 'journal sequence or hash chain is broken')
++ ('OperationalError', "Could not decode to UTF-8 column 'units' with text '�'")
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.339s
+
+FAILED (failures=4)

@@ -1,0 +1,202 @@
+{
+  "current_ledger_verify": {
+    "complexity": "complete O(N+P) application replay plus N indexed postings SELECT statements",
+    "end_line": 529,
+    "function_sha256": "0aa0925d6ca63db4db148a6a01fc78605f247381e5183a9d3e7caf68e503aaa9",
+    "line": 480,
+    "measured_gain": null,
+    "postings_select_calls_for_valid_N_event_history": "N",
+    "postings_sql_inside_event_loop": [
+      "SELECT ordinal, account, asset, units FROM ledger_postings WHERE sequence = ? ORDER BY ordinal"
+    ],
+    "proposed_statement_count": "1 ordered postings SELECT; all N events and P postings retained"
+  },
+  "format": 1,
+  "historical_profile": {
+    "cumulative_times_are_additive_cpu_percentages": false,
+    "parent_mixed_thread_profile_eligible_for_cpu_attribution": false,
+    "source": "7a06c0532ba510653b1feccd7e80030d3cb19f8a",
+    "workers": [
+      {
+        "admission": {
+          "calls": 93,
+          "cumulative_seconds": 0.38794434600000005,
+          "internal_seconds": 0.004232704
+        },
+        "audit_record": {
+          "calls": 81,
+          "cumulative_seconds": 0.033741023,
+          "internal_seconds": 0.0005226
+        },
+        "audit_validate": {
+          "calls": 1298,
+          "cumulative_seconds": 0.29034622200000004,
+          "internal_seconds": 0.139249067
+        },
+        "background": {
+          "calls": 36,
+          "cumulative_seconds": 6.474564814000001,
+          "internal_seconds": 0.00073315
+        },
+        "guard_control_schema": {
+          "calls": 2226,
+          "cumulative_seconds": 0.661278154,
+          "internal_seconds": 0.18991063800000002
+        },
+        "guard_data_inventory": {
+          "calls": 3130,
+          "cumulative_seconds": 1.7919055160000001,
+          "internal_seconds": 0.527797123
+        },
+        "lifecycle": {
+          "calls": 1,
+          "cumulative_seconds": 10.756408629000001,
+          "internal_seconds": 0.0024951540000000003
+        },
+        "profile": "worker-0-pid-18157.prof",
+        "risk": {
+          "calls": 922,
+          "cumulative_seconds": 0.7673193770000001,
+          "internal_seconds": 0.038134926
+        },
+        "supervise_account": {
+          "calls": 760,
+          "cumulative_seconds": 5.838573951000001,
+          "internal_seconds": 0.020436993
+        }
+      },
+      {
+        "admission": {
+          "calls": 96,
+          "cumulative_seconds": 0.411760703,
+          "internal_seconds": 0.0037865480000000003
+        },
+        "audit_record": {
+          "calls": 90,
+          "cumulative_seconds": 0.034003235,
+          "internal_seconds": 0.0005839920000000001
+        },
+        "audit_validate": {
+          "calls": 1194,
+          "cumulative_seconds": 0.29825367,
+          "internal_seconds": 0.14352910800000002
+        },
+        "background": {
+          "calls": 40,
+          "cumulative_seconds": 6.010609624000001,
+          "internal_seconds": 0.000847685
+        },
+        "guard_control_schema": {
+          "calls": 1988,
+          "cumulative_seconds": 0.6060061240000001,
+          "internal_seconds": 0.16857545200000001
+        },
+        "guard_data_inventory": {
+          "calls": 2751,
+          "cumulative_seconds": 1.632122053,
+          "internal_seconds": 0.483639468
+        },
+        "lifecycle": {
+          "calls": 1,
+          "cumulative_seconds": 10.730256554,
+          "internal_seconds": 0.002495539
+        },
+        "profile": "worker-1-pid-18158.prof",
+        "risk": {
+          "calls": 791,
+          "cumulative_seconds": 0.717858996,
+          "internal_seconds": 0.042269078
+        },
+        "supervise_account": {
+          "calls": 611,
+          "cumulative_seconds": 5.224250868,
+          "internal_seconds": 0.018782003000000002
+        }
+      }
+    ]
+  },
+  "independent_author_signoff": false,
+  "inputs": [
+    {
+      "bytes": 5746,
+      "path": "benchmarks/results/20261116-managed-inbox-profile/analysis.json",
+      "sha256": "823bf1ba6958debf93a8dd0885fc6aff786c0ca6091abc16dd6d3af9714dc989"
+    },
+    {
+      "bytes": 5468,
+      "path": "benchmarks/results/20261116-managed-inbox-profile/raw/profiles/worker-0-pid-18157.txt",
+      "sha256": "3030cdceb72fc57721bc2c8ee65f4d78a56755c59c89153264c4868becc15289"
+    },
+    {
+      "bytes": 5461,
+      "path": "benchmarks/results/20261116-managed-inbox-profile/raw/profiles/worker-1-pid-18158.txt",
+      "sha256": "3ed957c773d7a568f0dfe40ce768cf2d01dac36c816fffd3516174c9b7770fd1"
+    },
+    {
+      "bytes": 12293,
+      "path": "benchmarks/results/20261117-recovery-scaling/250000/summary.json",
+      "sha256": "fb637a7fd92c4923688e8011327c1b2353e913695de1b1473911a6cd7b52db49"
+    },
+    {
+      "bytes": 4843,
+      "path": "benchmarks/results/20261117-recovery-763-authorized/250k/analysis-independent.json",
+      "sha256": "40f61c763f530413c90597c8b872b9a625c4f22c9d80f3eec4c25ef6fd26e41b"
+    },
+    {
+      "bytes": 12477,
+      "path": "docs/recovery-763-setup-attribution.md",
+      "sha256": "9db649aab632d9a326aaa4b833b1b4f2076cc47b6413cc788ca003dd6567d3c0"
+    },
+    {
+      "bytes": 28672,
+      "path": "uta/storage.py",
+      "sha256": "9eee296159d0b0347feac3fd2f2b99b3216e8247e579e159e5adda8cbcb08a08"
+    },
+    {
+      "bytes": 34972,
+      "path": "uta/writer_fence.py",
+      "sha256": "a56766a6b63e04102337966d7a172459c94ec2cef6a8f9bd69036934f2e44a9c"
+    },
+    {
+      "bytes": 98314,
+      "path": "uta/durable_process.py",
+      "sha256": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+    },
+    {
+      "bytes": 27476,
+      "path": "uta/durable_batches.py",
+      "sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32"
+    },
+    {
+      "bytes": 27494,
+      "path": "uta/decision_audit.py",
+      "sha256": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6"
+    },
+    {
+      "bytes": 15243,
+      "path": "uta/supervisor.py",
+      "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e"
+    }
+  ],
+  "later_250k": {
+    "all_persisted_cids": [],
+    "capacity_passed": false,
+    "cause_boundary": "The budget ended before command enqueue and supervised worker ownership. No lease was acquired, so this is neither an observed lease expiry nor a completed test of owned read-only startup recovery. Exact setup versus independent replay time is not measured.",
+    "driver_sha": "d886cdbfafbc491e1a7705313080f910712bd185",
+    "driver_summary_present": false,
+    "first_independent_replay_completion": "not established from retained evidence",
+    "full_final_independent_replay": "UNAVAILABLE: not performed after stop; no extra scan was added"
+  },
+  "new_sql_or_profile_executed": false,
+  "old_250k": {
+    "capacity_passed": false,
+    "financial_ready": false,
+    "interpretation": "owned replay crossed ordinary lease; not proof of permanent crashloop",
+    "observed_generation": 2,
+    "tool_source": "91c7b0a08b9a83ca89367bba5fb1d8daf67970f8"
+  },
+  "production_qualified": false,
+  "runtime_changed": false,
+  "scope": "existing-data-and-static-source-only",
+  "source_base": "c30457227e2bfc0a1e665ff67c9c148855ac624a"
+}

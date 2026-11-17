@@ -1,0 +1,16 @@
+# V2 exact harness review: no actual execution
+
+Runtime candidate: `dd502ae538618c6d17a3bd2eae708e09526e9d4c`. The new file `evidence/runs/history-perf-rnd/run_component_v2.py` is separate from original harness `run_component.py`; the original source and all attempt-01 files are unchanged. This document and the [static manifest](../evidence/runs/history-perf-rnd/v2-static-manifest.json) record a new candidate, not a reassessment of the four original failures.
+
+The 239-line stdlib harness retains the original total-15-second outside-controller requirement, internal 14-second alarm, exact CPU4 precondition and new-output-directory requirement. Root must authorize its exact SHA before it runs, after the native and repayment-oracle CPU4 windows explicitly finish. No SQL, unit tests, profile, service, registered workload variant or old-job read has run against V2.
+
+Execution order is unchanged: 27 small real-SQL differential methods first; any failure stops before profiling; then one private N=512/P=1024 authority via two public 256-event committed transactions; independent literal hash/integer reference; original/opt-in/original/opt-in instrumented verification calls; final default full replay using a reopened `Database`/`DurableLedger`; independent final reference; cleanup. The alarm/cleanup/output cost belongs to the total cap. A timed out or partial attempt must be retained and cannot be silently extended or repeated.
+
+V2 measurement changes are explicit:
+
+* Two opt-in posting SELECTs are required: one full `(sequence,count)` metadata query and one full payload query. Original calls still require 512 point SELECTs. An extra or missing statement is a failed component.
+* A measurement-only row factory calls and returns the original `sqlite3.Row` with unchanged values. It counts actual Python-fetched event, payload, group-metadata and balance rows. Required per-call counts are respectively 512, 1024, 512/0 (opt-in/default), and 2. It neither invents financial results nor returns proxy rows. All real decoding errors remain observable.
+* The row callback also counts UTF-8 bytes of compact JSON serializations of the fetched tuples. These are logical selected-row representations, not SQLite pages or storage reads. The new callback/JSON and cProfile overhead is included in instrumented wall/CPU timings, including 512 additional metadata callbacks on the new path. This may dominate small local differences; no native-throughput extrapolation is permitted.
+* Per-call fields retain actual SQL classes/counts, complete fetched-row counts/bytes, `/proc/self/io` deltas, wall/CPU and explicit first/repeated observations. First-after-fixture is not physical cold disk, and a zero `read_bytes` delta may mean page-cache hits. The final default cold replay means a fresh handle and uncached financial proof, not an OS cache flush.
+
+The storage verifier still holds the full existing snapshot/guard protocol, and all event rows plus projected balances stay materialized as before. Bounded postings-group memory is not O(1) complete replay memory. No catalogue patch from another group is bundled, no caller enables the option, and the author cannot independently sign performance or release acceptance. A root/peer review plus a fresh actual GO remains required.

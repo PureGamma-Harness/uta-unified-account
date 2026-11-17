@@ -1,0 +1,13 @@
+# R&D publication and canonical observation identity
+
+本页保留原发布链与冻结观测的身份记录；其源文件一致性结论不覆盖后续修改。原 `e3df52f` 在 Python 3.10 的首错等价性失败已复现，后续候选的读取/解码边界、兼容回退与验证路径见 [首错顺序修复](history-postings-error-order.md)。原始 hash、红色 CI 和 ABBA 数据均保留，不能改标为新源码资格证据。
+
+原始 draft 发布分支 `perf/history-postings-review` 以 `feat/uta-observer-delivery` 的 `91e4ae40b5e9b884c54026406299df5000c9c100` 为 base，最初仅按原顺序移植原 base `c30457227e2bfc0a1e665ff67c9c148855ac624a` 后的十一项 perf-author/independent-review 提交；九项无关 root 证据提交和独立的默认账本 catalogue 修复不在该发布范围。本轮首错修复继续复用同一 draft PR，新增提交不继承原冻结观测的资格。
+
+The original complete observation chain is retained under [`evidence/history-postings-observed-3a48`](https://github.com/PureGamma-Harness/uta-unified-account/tree/evidence/history-postings-observed-3a48) with canonical tip `8a6ef98bfd229c309588138a6103ec3a53e2dd2d`. The actual candidates remain original `52d2a4cc6edfe5b8f11146b6472274746135a6e3` (four red UTF-8 subtests, no profile) and V2 `3a48aa4eb27b8c7a61241c7045b25faf24a8737c` / runtime `dd502ae538618c6d17a3bd2eae708e09526e9d4c` (27 author-executed tests and the retained instrumented measurements). Their recorded commit/source identities are not rewritten to the new publication commit IDs.
+
+The [commit mapping](evidence/history-postings-publication/cherry-map.json) and [source identity proof](evidence/history-postings-publication/source-identity.json) bind canonical and publication files by exact bytes. All 53 observed runtime/test/harness inputs match the publication worktree. This establishes byte equivalence, not a new execution or release result. The independent review remains a 145-check file/AST/raw audit, not an independent dynamic correctness signature.
+
+The [publication scan](evidence/history-postings-publication/allowlist.json) enumerates the pure perf diff: UTF-8 source, docs, synthetic JSON/JSONL, raw text and exported profile text only. No database, binary profile/pickle, key, TLS material, captured worker nonce or signed URL is included. Source tokens such as the name `owner_nonce` are source code, not captured nonce values. The original observed chain's nine root evidence commits were separately approved by root; this Draft PR does not import their files.
+
+The option remains default false. Query dispatch drops from N to two full queries in the explicit experimental branch, while all original financial checks remain. The original four red controls and the slower instrumented V2 results remain visible: +2.177847% and +18.431009% versus each preceding default call. There is no demonstrated speedup or reason to enable the option. No migration is required; rollback is to leave the option false or omit this R&D branch. No ready-for-review transition, main merge or production approval is authorized by this publication.

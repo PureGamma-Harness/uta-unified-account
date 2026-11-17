@@ -477,12 +477,17 @@ class DurableLedger:
                 raise LedgerError("unsealed journal event")
             return tuple(self._event(current, row[0], row[1]) for row in rows)
 
-    def verify(self, *, connection: sqlite3.Connection | None = None) -> int:
+    def verify(self, *, connection: sqlite3.Connection | None = None,
+               ordered_postings: bool = False) -> int:
         """Independently replay the journal and compare its hashes and balances.
 
         Returns the count of verified events. Raises LedgerError on corruption.
         Verification holds a transaction, so it sees one consistent state.
+        ``ordered_postings`` is an opt-in statement-dispatch experiment, not a
+        cached proof: both paths revalidate the complete current journal.
         """
+        if type(ordered_postings) is not bool:
+            raise ValueError("ordered_postings must be a boolean")
         with self.database._using(connection) as current:
             if [row[0] for row in current.execute("PRAGMA integrity_check")] != ["ok"]:
                 raise LedgerError("database integrity check failed")
@@ -498,12 +503,64 @@ class DurableLedger:
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
                                    "FROM ledger_events ORDER BY sequence").fetchall()
+            # CAST(TEXT AS BLOB) exposes database-encoding bytes. Keep the
+            # original query path for other encodings or caller text factories.
+            stream_postings = (ordered_postings and current.text_factory is str
+                               and current.execute("SELECT CAST('A' AS BLOB)").fetchone()[0] == b"A")
+            group_cursor = (current.execute("SELECT sequence,COUNT(*) FROM ledger_postings "
+                                           "GROUP BY sequence ORDER BY sequence")
+                            if stream_postings else None)
+            following_group = next(group_cursor, None) if group_cursor is not None else None
+            posting_cursor = None
+
+            def posting_text(value, storage_type, column):
+                if storage_type != "text":
+                    return value  # A stored BLOB must not become valid TEXT.
+                try:
+                    return value.decode("utf-8")
+                except UnicodeDecodeError:
+                    pass
+                # Ask SQLite to report the reached bad TEXT with its original
+                # exception type/message. Do this outside the decoder except
+                # block, without changing the connection's text_factory.
+                return current.execute("SELECT CAST(? AS TEXT) AS " + column,
+                                       (value,)).fetchone()[0]
+
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
-                                           "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
+                if not stream_postings:
+                    postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
+                                               "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
+                else:
+                    postings = []
+                    if following_group is not None and following_group[0] < sequence:
+                        raise LedgerError("journal posting sequence is broken")
+                    if following_group is not None and following_group[0] == sequence:
+                        if posting_cursor is None:
+                            posting_cursor = current.execute("""SELECT sequence, ordinal, account, asset, units,
+                                    account_type, asset_type, units_type FROM (
+                                SELECT sequence, ordinal,
+                                    CASE WHEN typeof(account)='text' THEN CAST(account AS BLOB) ELSE account END AS account,
+                                    CASE WHEN typeof(asset)='text' THEN CAST(asset AS BLOB) ELSE asset END AS asset,
+                                    CASE WHEN typeof(units)='text' THEN CAST(units AS BLOB) ELSE units END AS units,
+                                    typeof(account) AS account_type, typeof(asset) AS asset_type, typeof(units) AS units_type
+                                FROM ledger_postings) ORDER BY sequence, ordinal""")
+                        count = following_group[1]
+                        if type(count) is not int or count < 1:
+                            raise LedgerError("journal posting sequence is broken")
+                        # Drivers may prefetch a future row. Its TEXT is raw
+                        # bytes here; decode only the current checked group.
+                        for _ in range(count):
+                            posting = next(posting_cursor, None)
+                            if posting is None or posting[0] != sequence:
+                                raise LedgerError("journal posting sequence is broken")
+                            postings.append((posting[1],
+                                posting_text(posting[2], posting[5], "account"),
+                                posting_text(posting[3], posting[6], "asset"),
+                                posting_text(posting[4], posting[7], "units")))
+                        following_group = next(group_cursor, None)
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")
                 canonical = tuple((posting[1], posting[2], self._stored_units(posting[3])) for posting in postings)
@@ -522,6 +579,9 @@ class DurableLedger:
                     if abs(projected[key]) >= Ledger._LIMIT:
                         raise LedgerError("replayed balance exceeds supported range")
                 previous_hash = event_hash
+            if (following_group is not None or
+                    posting_cursor is not None and next(posting_cursor, None) is not None):
+                raise LedgerError("journal posting sequence is broken")
             stored = {(row[0], row[1]): self._stored_units(row[2]) for row in current.execute(
                 "SELECT account, asset, units FROM ledger_balances")}
             if stored != projected:
