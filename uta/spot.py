@@ -415,21 +415,36 @@ class SpotExchange:
         if not required <= installed:
             raise ServiceError("spot_corrupt", "spot receipt/fill protection is missing", 503)
         journal = {event.event_id: event for event in self.exchange.ledger.journal(connection=connection)}
-        audit = []
+        # Reconcile both directions: a missing receipt must not hide its
+        # retained confirmation event. Index once rather than rescan all audit
+        # rows for each historical match.
+        audit = {"SPOT_MATCH_CONFIRMED": {}, "SPOT_TRADE_CONFIRMED": {}}
         for row in connection.execute("SELECT event_type,account_id,payload FROM uta_events WHERE event_type IN ('SPOT_MATCH_CONFIRMED','SPOT_TRADE_CONFIRMED')"):
             try:
                 payload = json.loads(row["payload"])
             except (ValueError, TypeError) as exc:
                 raise ServiceError("spot_corrupt", "spot audit payload is invalid", 503) from exc
-            audit.append((row["event_type"], row["account_id"], payload))
+            if (not isinstance(payload, dict) or not isinstance(payload.get("trade_id"), str)
+                    or not payload["trade_id"]):
+                raise ServiceError("spot_corrupt", "spot confirmation event has no valid trade identity", 503)
+            audit[row["event_type"]].setdefault(payload["trade_id"], []).append((row["account_id"], payload))
         matches = connection.execute("SELECT * FROM uta_spot_matches ORDER BY sequence").fetchall()
+        trade_ids = {row["trade_id"] for row in matches}
+        if any(set(events) != trade_ids for events in audit.values()):
+            raise ServiceError("spot_corrupt", "spot confirmation events and receipts do not resolve in both directions", 503)
+        fills_by_trade, fills_by_order = {}, {}
+        for fill in connection.execute("SELECT * FROM uta_spot_fills"):
+            if fill["trade_id"] not in trade_ids:
+                raise ServiceError("spot_corrupt", "spot fill has no confirmed receipt", 503)
+            fills_by_trade.setdefault(fill["trade_id"], []).append(fill)
+            fills_by_order.setdefault((fill["account_id"], fill["order_id"]), []).append(fill)
         for trade in matches:
             quantity, notional = Decimal(trade["quantity"]), Decimal(trade["notional"])
             if quantity <= 0 or Decimal(trade["price"]) <= 0 or min(Decimal(trade["buy_fee"]), Decimal(trade["sell_fee"])) < 0:
                 raise ServiceError("spot_corrupt", "invalid spot receipt amounts", 503)
             if Fraction(quantity) * Fraction(Decimal(trade["price"])) != Fraction(notional):
                 raise ServiceError("spot_corrupt", "receipt notional does not match actual quantity and price", 503)
-            fills = connection.execute("SELECT * FROM uta_spot_fills WHERE trade_id=?", (trade["trade_id"],)).fetchall()
+            fills = fills_by_trade.get(trade["trade_id"], [])
             expected = {
                 trade["buy_account_id"]: (trade["buy_order_id"], quantity, Decimal(trade["buy_fee"])),
                 trade["sell_account_id"]: (trade["sell_order_id"], quantity.copy_negate(), Decimal(trade["sell_fee"]))}
@@ -447,26 +462,30 @@ class SpotExchange:
             key = lambda posting: (posting.account, posting.asset, Fraction(posting.amount))
             if event is None or sorted(event.postings, key=key) != sorted(expected_postings, key=key):
                 raise ServiceError("spot_corrupt", "spot receipt does not match its balanced settlement journal", 503)
-            global_events = [payload for kind, account, payload in audit if kind == "SPOT_MATCH_CONFIRMED"
-                             and account is None and payload.get("trade_id") == trade["trade_id"]]
-            private_events = [(account, payload) for kind, account, payload in audit if kind == "SPOT_TRADE_CONFIRMED"
-                              and payload.get("trade_id") == trade["trade_id"]]
-            if global_events != [dict(trade)] or len(private_events) != 2:
+            global_events = audit["SPOT_MATCH_CONFIRMED"][trade["trade_id"]]
+            private_events = audit["SPOT_TRADE_CONFIRMED"][trade["trade_id"]]
+            if (len(global_events) != 1 or global_events[0][0] is not None
+                    or _json(global_events[0][1]) != _json(dict(trade)) or len(private_events) != 2
+                    or {account for account, _ in private_events} != set(expected)):
                 raise ServiceError("spot_corrupt", "spot confirmation events differ from committed receipt", 503)
             for account, payload in private_events:
                 own = expected.get(account)
-                if (own is None or payload.get("order_id") != own[0]
-                        or payload.get("quantity") != _text(own[1]) or payload.get("fee") != _text(own[2])
-                        or payload.get("price") != trade["price"] or payload.get("symbol") != trade["symbol"]):
+                expected_payload = {"trade_id": trade["trade_id"], "symbol": trade["symbol"],
+                    "order_id": own[0], "quantity": _text(own[1]), "price": trade["price"],
+                    "fee": _text(own[2]), "market_version": trade["market_version"],
+                    "catalog_version": trade["catalog_version"]}
+                if _json(payload) != _json(expected_payload):
                     raise ServiceError("spot_corrupt", "private spot event differs from confirmed side", 503)
         orders = connection.execute("SELECT * FROM uta_spot_orders").fetchall()
+        if not set(fills_by_order) <= {(row["account_id"], row["order_id"]) for row in orders}:
+            raise ServiceError("spot_corrupt", "spot fill has no original order", 503)
         for order in orders:
             product = self.catalog.products.get(order["symbol"])
             if (product is None or product.kind not in (ProductKind.SPOT, ProductKind.SPOT_MARGIN)
                     or (order["base_asset"], order["quote_asset"]) != (product.underlying, product.quote_asset)
                     or order["status"] not in (*_LIVE, "FILLED", "CANCELLED")):
                 raise ServiceError("spot_corrupt", "spot order product metadata or status differs", 503)
-            fills = connection.execute("SELECT * FROM uta_spot_fills WHERE account_id=? AND order_id=?", (order["account_id"], order["order_id"])).fetchall()
+            fills = fills_by_order.get((order["account_id"], order["order_id"]), [])
             quantity = sum((Fraction(Decimal(fill["quantity"])) for fill in fills), Fraction(0))
             notional = sum((Fraction(Decimal(fill["notional"])) for fill in fills), Fraction(0))
             fee = sum((Fraction(Decimal(fill["fee"])) for fill in fills), Fraction(0))

@@ -109,6 +109,38 @@ review before claiming large-history availability. No heavy test was started.
 
 ## Reproduction and raw result
 
+## Integration correction awaiting independent recheck
+
+The integration now requires each global and private execution-confirmation
+trade ID to resolve to an existing receipt, and each receipt to have exactly one
+global confirmation and two distinct customer sides. The complete global row and
+eight-field private payload use typed canonical JSON comparison, including the
+historical market/catalog references; Python's `True == 1` is not accepted as a
+version match. Malformed confirmation objects fail with `503 spot_corrupt`.
+Unfilled/cancelled order lifecycle events remain outside the execution join.
+
+The verifier builds audit, fill-by-trade and fill-by-order maps once per read
+snapshot. This removes the repeated confirmation-list and per-order fill scans
+described above, with additional in-memory fill indexes. Full ledger verification,
+journal materialization and complete lifecycle scans remain; no large-history
+latency, bounded-memory or capacity claim follows from this change.
+
+The original four independent cases first reproduced two failures on integrated
+`327d5fc` (1.200s). After correction, those cases, 15 migration cases, 19 spot cases
+and seven typed/customer-side corruption cases passed: **45 tests, 9.603s** on
+Python 3.12.14 / SQLite 3.53.1. Raw integration red/green evidence is retained in
+`evidence/runs/migration-reverse-audit/`. These are targeted results; independent
+recheck, final source freezing, full-suite/package checks and the managed long run
+are still required. Historical red artifacts above remain unchanged.
+
+Deployment uses a new fixed artifact in a separate synthetic authority, or stops
+writers before inspecting an existing source. Rejected history stays unsealed
+and HALTED with its original records; resolve corruption through a separately
+reviewed source-recovery process. This correction creates no tables or financial
+entries and does not recover lost receipts. Roll back code only while preserving
+authority state and the source gate; an older verifier's acceptance cannot be
+used to override the new corruption rejection or enable real funds.
+
 ```sh
 /usr/bin/python3.13 -m unittest tests.test_migration_reverse_evidence -v
 ```
