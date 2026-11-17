@@ -94,6 +94,9 @@ class _OwnedStartup:
         if database.path != self.path or database.writer_token != self.token:
             raise StartupError("startup_token_conflict", "initializer authority, generation or nonce differs")
         self.check()
+        self._check_identity(database)
+
+    def _check_identity(self, database):
         info = os.stat(self.path, follow_symlinks=False)
         database._validate_private_info(info)
         if (info.st_dev, info.st_ino) != self.identity:
@@ -102,12 +105,14 @@ class _OwnedStartup:
     def _renew(self):
         from .writer_fence import WriterFence
         self.check()
+        self._check_identity(self.database)
         started = monotonic()
         # Copy preserves bound-shard identity checks and the token. This role
         # permits lease-control writes only, never financial data or DDL.
         keeper_database = copy(self.database)
         keeper_database.timeout = min(self.database.timeout, self.lease_seconds / 12, .1)
         WriterFence(keeper_database).renew(self.token, self.lease_seconds)
+        self._check_identity(self.database)
         with self._lock:
             self.last_renew_started = started
 
