@@ -32,9 +32,12 @@ def observations():
 
 
 class ExtractionTests(unittest.TestCase):
-    def test_complete_metadata_only_requests_review_never_grants_pass(self):
+    def test_complete_local_metadata_never_grants_candidate_or_pass(self):
         result = module.summarize(records(), observations())
-        self.assertTrue(result["candidate_for_independent_terminal_review"])
+        self.assertTrue(result["local_metadata_predicates_observed"])
+        self.assertIs(result["candidate_for_independent_terminal_review"], False)
+        self.assertEqual(result["terminal_binding_status"], "NOT_IMPLEMENTED_FAIL_CLOSED")
+        self.assertEqual(result["terminal_bindings_unverified"], list(module.UNVERIFIED_TERMINAL_BINDINGS))
         for name in ("financial_6h_passed", "continuous_6h_stability_passed",
                      "continuous_24h_stability_passed", "full_risk_engine_reexecution_passed",
                      "whole_business_event_reexecution_passed", "capacity_10000_per_s_passed", "production_approved"):
@@ -49,13 +52,17 @@ class ExtractionTests(unittest.TestCase):
                 with self.subTest(record=record, field=field):
                     value = copy.deepcopy(baseline)
                     del value[record][field]
-                    self.assertFalse(module.summarize(value, observations())["candidate_for_independent_terminal_review"])
+                    result = module.summarize(value, observations())
+                    self.assertFalse(result["local_metadata_predicates_observed"])
+                    self.assertFalse(result["candidate_for_independent_terminal_review"])
 
     def test_no_clock_epsilon_or_observer_wait_credit(self):
         for elapsed in (21599.999999, -1, True, float("nan"), float("inf")):
             value = records()
             value["progress"]["elapsed_seconds"] = elapsed
-            self.assertFalse(module.summarize(value, observations())["candidate_for_independent_terminal_review"])
+            result = module.summarize(value, observations())
+            self.assertFalse(result["local_metadata_predicates_observed"])
+            self.assertFalse(result["candidate_for_independent_terminal_review"])
 
     def test_wrong_source_resume_or_boolean_counts_never_qualify(self):
         for field, value in (("controller_sessions", 2), ("unresolved_steps", False),
@@ -64,7 +71,9 @@ class ExtractionTests(unittest.TestCase):
                              ("validation_evidence", {"code_commit": "old-source"})):
             data = records()
             data["progress"][field] = value
-            self.assertFalse(module.summarize(data, observations())["candidate_for_independent_terminal_review"])
+            result = module.summarize(data, observations())
+            self.assertFalse(result["local_metadata_predicates_observed"])
+            self.assertFalse(result["candidate_for_independent_terminal_review"])
 
     def test_each_missing_required_record_blocks_review_candidate(self):
         for label in module.FILES:
@@ -72,7 +81,26 @@ class ExtractionTests(unittest.TestCase):
                 continue
             seen = observations()
             seen[label] = {"state": "MISSING"}
-            self.assertFalse(module.summarize(records(), seen)["candidate_for_independent_terminal_review"])
+            result = module.summarize(records(), seen)
+            self.assertFalse(result["local_metadata_predicates_observed"])
+            self.assertFalse(result["candidate_for_independent_terminal_review"])
+
+    def test_schema_shaped_child_receipts_do_not_activate_unimplemented_binding(self):
+        # Field names match frozen Pipes.result; this is synthetic metadata,
+        # not proof that any child ran, a digest matches, or a chain is valid.
+        value = records()
+        identity = {"pid": 123, "birth": "456", "started_wall_ns": 1000,
+                    "started_boottime_ns": 2000}
+        for label in ("producer", "cold"):
+            value[label] = {"synthetic": True, "exit_code": 0, "identity": identity,
+                            "ended_wall_ns": 3000, "stdout_sha256": "a" * 64,
+                            "stdout_complete": True, "stderr_present": False,
+                            "stderr_sha256": "b" * 64, "response": {}}
+        result = module.summarize(value, observations())
+        self.assertTrue(result["local_metadata_predicates_observed"])
+        self.assertFalse(result["candidate_for_independent_terminal_review"])
+        self.assertIn("cold_audit_digest_runtime_scope_and_receipt_binding",
+                      result["terminal_bindings_unverified"])
 
     def test_supervisor_failure_unreadable_is_not_absent(self):
         for state in ("OBSERVED", "UNREADABLE", "INVALID_JSON", "OVERSIZE"):

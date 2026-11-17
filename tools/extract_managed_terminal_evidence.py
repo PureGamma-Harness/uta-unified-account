@@ -15,6 +15,17 @@ import stat
 from pathlib import Path
 
 SOURCE = "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+# Presence and local booleans cannot authenticate or bind a terminal chain.
+# Keep this list fixed until a separately reviewed binding implementation exists.
+UNVERIFIED_TERMINAL_BINDINGS = (
+    "producer_and_cold_child_successful_exit_complete_stdout_and_original_identity",
+    "original_job_boot_start_deadline_source_and_contract_binding",
+    "final_before_after_process_identity_and_collection_order",
+    "same_checkpoint_business_and_ledger_watermark_across_cold_reopen",
+    "cold_audit_digest_runtime_scope_and_receipt_binding",
+    "summary_progress_fault_counts_and_coverage_cross_consistency",
+    "raw_event_matching_position_and_per_currency_ledger_reconciliation",
+)
 FILES = {
     "progress": ("job/progress.json", 131072),
     "final": ("control/final-summary.json", 1048576),
@@ -111,7 +122,14 @@ def summarize(records, observations):
         "producer_error_present": errors is not None if "error" in p else None,
         "record_observations": observations,
         "gates_observed": gates,
-        "candidate_for_independent_terminal_review": all(gates.values()),
+        # Independent counterexamples showed empty/failed child receipts and
+        # contradictory snapshot metadata could pass all local gates. There is
+        # deliberately no code path which grants candidate status. A future
+        # terminal-chain binder needs its own schema-bound review and evidence.
+        "local_metadata_predicates_observed": all(gates.values()),
+        "terminal_binding_status": "NOT_IMPLEMENTED_FAIL_CLOSED",
+        "terminal_bindings_unverified": list(UNVERIFIED_TERMINAL_BINDINGS),
+        "candidate_for_independent_terminal_review": False,
         "financial_6h_passed": False,
         "continuous_6h_stability_passed": False,
         "continuous_24h_stability_passed": False,
