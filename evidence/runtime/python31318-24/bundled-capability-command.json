@@ -1,0 +1,19 @@
+{
+  "started_at": "2026-11-17T14:59:06.111800+00:00",
+  "finished_at": "2026-11-17T14:59:06.155920+00:00",
+  "argv": [
+    "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+    "-B",
+    "-c",
+    "import json,sys,sysconfig,platform,sqlite3,ssl,subprocess,os\nchild=subprocess.run([sys.executable,'--version'],capture_output=True,text=True,timeout=10)\nprint(json.dumps({'python':sys.version,'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'platform':platform.platform(),'libc':platform.libc_ver(),'sqlite_version':sqlite3.sqlite_version,'sqlite_module_path':sqlite3.__file__,'openssl':ssl.OPENSSL_VERSION,'config_args':sysconfig.get_config_var('CONFIG_ARGS'),'compiler':sysconfig.get_config_var('CC'),'py_enable_shared':sysconfig.get_config_var('Py_ENABLE_SHARED'),'gil_disabled':sysconfig.get_config_var('Py_GIL_DISABLED'),'library':sysconfig.get_config_var('LDLIBRARY'),'libdir':sysconfig.get_config_var('LIBDIR'),'child_version':{'returncode':child.returncode,'stdout':child.stdout,'stderr':child.stderr},'sql_connections_created':False,'financial_workload_executed':False},indent=2))\nraise SystemExit(child.returncode)\n"
+  ],
+  "returncode": 0,
+  "environment_overrides": {
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "same_ci_environment": false,
+  "production_approved": false
+}
