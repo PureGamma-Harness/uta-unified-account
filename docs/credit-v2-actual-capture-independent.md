@@ -73,3 +73,15 @@ No actual observation, SQL, native scope or service was involved. All source
 hashes, exact command and original stdout/stderr are retained in
 `evidence/reviews/credit-actual-capture-independent/`. The actual gate remains
 PENDING; these mapping controls do not upgrade it.
+
+
+The later content extension `e3e9c75` additionally checks original pool-funding
+capital/pool legs, funding receipt identities, funded capital against gross
+pool plus principal, local opening allocation/funding claims, immutable static
+certificate/capability identities and artifact source/loaded-code map digests.
+A balanced forged capital leg is rejected even after recomputing its self hash.
+These are retained-content checks, not an assertion of source authenticity or
+that archived executable code matches a live binary. The extension's first
+pure batch ran 2026-11-17T14:43:50.659670–50.781143 UTC on CPU4/Python3.12,
+10 tests passed in wall0.121470 seconds; original earlier8-test raw is retained.
+Actual capture, SQL origin and native/COMMIT/restart evidence remain pending.
