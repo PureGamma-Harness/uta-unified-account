@@ -254,7 +254,9 @@ def _persisted_policy(connection):
 
 def verify_stored_policy(connection):
     """A load/acquire cannot accept an absent or extra dedicated risk archive."""
+    from .decision_audit import DecisionAudit
     verify_schema(connection)
+    DecisionAudit.validate(connection)
     policy = _persisted_policy(connection)
     payload = canonical(policy)
     identity = "credit-risk-policy:"+sha256(payload.encode()).hexdigest()

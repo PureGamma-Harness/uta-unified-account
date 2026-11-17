@@ -34,3 +34,10 @@ rebuild history. Positive execution, strict reopen/restart, actual old-binary
 inventory refusal and the independent integer oracle must all pass in a later
 slice before this internal synthetic scope can be accepted. HMAC first source,
 lending distress/insurance/ADL and real-funds approval remain outside this slice.
+
+The dedicated policy loader also validates the mandatory original base audit
+capability/guard inventory. A complete dedicated policy archive cannot mask a
+removed base market-history guard. An actual temporary-database negative and
+complete-archive control passed in 0.124s; see
+`evidence/runs/credit-v2-base-audit-dependency`. This is an additional V2 load
+dependency, not a change to any frozen M2 tree.

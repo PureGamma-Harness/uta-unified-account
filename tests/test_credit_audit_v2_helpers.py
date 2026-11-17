@@ -145,6 +145,22 @@ class CreditAuditV2HelperTests(unittest.TestCase):
             self.assertEqual((actual["risk_equity"], actual["open_order_margin"], actual["available_margin"],
                               actual["borrowable"]["BTC"]), ("92", "80", "4", "0.03"))
 
+    def test_dedicated_policy_never_masks_a_missing_base_audit_guard(self):
+        QueueStore(self.service.database, initialize=True)
+        with self.service.database.transaction() as connection:
+            for definition in OBJECT_SQL.values():
+                connection.execute(definition)
+            payload = canonical(audit_policy(self.service, connection))
+            identity = "credit-risk-policy:"+sha256(payload.encode()).hexdigest()
+            connection.execute("INSERT INTO uta_credit_risk_policies VALUES(?,?)", (identity, payload))
+            connection.execute("DROP TRIGGER audit_uta_market_history_no_delete")
+        with self.service.database.read_transaction() as connection:
+            before = list(connection.execute("SELECT name,sql FROM sqlite_master ORDER BY name"))
+            with self.assertRaises(StorageError) as error:
+                verify_stored_policy(connection)
+            self.assertEqual(error.exception.code, "audit_schema_corrupt")
+            self.assertEqual(before, list(connection.execute("SELECT name,sql FROM sqlite_master ORDER BY name")))
+
     def test_recorded_freshness_and_future_equalities_use_original_clock(self):
         with self.service._transaction() as connection:
             policy = audit_policy(self.service, connection)
