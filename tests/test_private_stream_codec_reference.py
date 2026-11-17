@@ -53,4 +53,138 @@ class MutableHeaderReferenceTests(unittest.TestCase):
         self.assertEqual(value['sent_wire_hex'],'810178')
 
 
+
+class IndependentLiteralAndBufferTests(unittest.TestCase):
+    def test_canonical_key_rfc_accept_and_alias_fail_closed(self):
+        from uta.private_stream_codec import validate_handshake_key,HandshakeReject
+        value=validate_handshake_key('dGhlIHNhbXBsZSBub25jZQ==','7468652073616d706c65206e6f6e6365')
+        self.assertEqual(value.accept,'s3pPLMBiTxaQ9kYGzzhZRbK+xOo=')
+        for bad in ['dGhlIHNhbXBsZSBub25jZR==','dGhlIHNhbXBsZSBub25jZQ== ',True]:
+            with self.assertRaises(HandshakeReject):validate_handshake_key(bad,'7468652073616d706c65206e6f6e6365')
+
+    def test_invalid_header_rejected_before_payload_or_custom_equality(self):
+        class NoTouch:
+            def __eq__(self,other):raise AssertionError('must not compare untyped header')
+            def __len__(self):raise AssertionError('must not measure untyped header')
+        for bad in [NoTouch(),bytearray(b'\x81\x01'),memoryview(b'\x81\x01')]:
+            with self.assertRaises(EncodeReject) as caught:WireFrame(1,bad,NoTouch())
+            self.assertEqual(caught.exception.code,'invalid_frame_header')
+
+    def test_large_feed_uses_bounded_prefix_without_input_copy(self):
+        import tracemalloc
+        from uta.private_stream_codec import FrameParser
+        literal=bytes.fromhex('8981010203047b')
+        large=literal*150000
+        parser=FrameParser()
+        tracemalloc.start()
+        batch=parser.feed(large,now_ms=0)
+        _,peak=tracemalloc.get_traced_memory();tracemalloc.stop()
+        self.assertEqual((batch.consumed,len(batch.events),batch.turn_exhausted),(56,8,True))
+        self.assertEqual([(e.kind,e.payload) for e in batch.events],[('ping',b'z')]*8)
+        self.assertLessEqual(parser.maximum_buffered_bytes,139)
+        self.assertLess(peak,65536) # Bounds this call's Python copies, not RSS/upstream input.
+        remaining=parser.feed(memoryview(large)[batch.consumed:batch.consumed+7],now_ms=1)
+        self.assertEqual([(e.kind,e.payload) for e in remaining.events],[('ping',b'z')])
+
+    def test_all_split_points_keep_the_ninth_control_for_next_turn(self):
+        from uta.private_stream_codec import FrameParser
+        # Nine independent masked pings carry bytes0..8; no production encoder.
+        frames=[bytes([0x89,0x81,1,2,3,4,value^1]) for value in range(9)]
+        raw=b''.join(frames)
+        for split in range(len(raw)+1):
+            parser=FrameParser();events=[]
+            for block in [raw[:split],raw[split:]]:
+                offset=0
+                while offset<len(block):
+                    result=parser.feed(memoryview(block)[offset:],now_ms=1)
+                    self.assertGreater(result.consumed,0)
+                    events.extend(result.events);offset+=result.consumed
+            self.assertEqual([e.payload for e in events],[bytes([v]) for v in range(9)])
+
+    def test_literal_close_direction_utf8_and_protocol_precedence(self):
+        from uta.private_stream_codec import FrameParser,FrameReject,encode_close
+        for raw,expected in [('88820102030402ee',1002),('88830102030402eafc',1007),('81ff800000000000000001020304',1002),('098001020304',1002),('018001020304',1008)]:
+            with self.assertRaises(FrameReject) as caught:FrameParser().feed(bytes.fromhex(raw),now_ms=0)
+            self.assertEqual(caught.exception.close_code,expected)
+        event=FrameParser().feed(bytes.fromhex('88820102030402f0'),now_ms=0).events[0]
+        self.assertEqual((event.close_code,event.reply_close_code),(1010,1000))
+        with self.assertRaises(EncodeReject):encode_close(1010)
+        self.assertEqual(encode_close(1000).to_bytes(),bytes.fromhex('880203e8'))
+
+    def test_exact_absolute_model_boundaries_and_unsolicited_pong(self):
+        from uta.private_stream_codec import FrameParser,FrameReject,PingTracker
+        parser=FrameParser();parser.feed(b'\x89',now_ms=0);parser.feed(b'\x81',now_ms=499)
+        with self.assertRaises(FrameReject) as caught:parser.feed(b'\x01',now_ms=500)
+        self.assertEqual(caught.exception.close_code,1008)
+        parser=FrameParser();parser.feed(bytes.fromhex('898201020304'),now_ms=0)
+        parser.feed(b'i',now_ms=999)
+        with self.assertRaises(FrameReject):parser.feed(b'k',now_ms=1000)
+        ping=PingTracker(timeout_ms=100);ping.sent_ping(b'hi',now_ms=0)
+        self.assertFalse(ping.received_pong(b'',now_ms=99));self.assertEqual(ping.deadline_ms,100)
+        with self.assertRaises(FrameReject) as caught:ping.received_pong(b'hi',now_ms=100)
+        self.assertEqual(caught.exception.close_code,1001)
+
+    def test_whole_payload_stays_accounted_after_most_bytes_sent(self):
+        from uta.private_stream_codec import encode_text,encode_close
+        frame=encode_text(b'a'*262134)
+        self.assertEqual(frame.header,bytes.fromhex('817f000000000003fff6'))
+        self.assertEqual(frame.wire_size,262144)
+        queue=OutboundBuffer();queue.enqueue_application(frame,now_ms=0)
+        queue.enqueue_application(frame,now_ms=0)
+        self.assertEqual(queue.application_wire_bytes,524288)
+        while queue._active is None or queue._active.offset<frame.wire_size-1:
+            offset=0 if queue._active is None else queue._active.offset
+            chunk=queue.peek(now_ms=1,maximum=min(65536,frame.wire_size-1-offset))
+            queue.advance(chunk,len(chunk.data),now_ms=1)
+        self.assertEqual(queue.application_wire_bytes,524288)
+        queue.begin_close(1000,now_ms=2)
+        self.assertEqual(queue.application_wire_bytes,262144)
+        final=queue.peek(now_ms=3);self.assertEqual(final.data.tobytes(),b'a')
+        queue.advance(final,1,now_ms=3);self.assertEqual(queue.application_wire_bytes,0)
+        head=queue.peek(now_ms=3);self.assertEqual(head.data.tobytes(),b'\x88\x02')
+        queue.advance(head,2,now_ms=3);body=queue.peek(now_ms=3)
+        self.assertEqual(body.data.tobytes(),b'\x03\xe8')
+        queue.advance(body,2,now_ms=3);self.assertIsNone(queue.peek(now_ms=3))
+        self.assertEqual(queue.control_wire_bytes,0)
+
+    def test_stale_and_replayed_output_tokens_cannot_advance_wire(self):
+        from uta.private_stream_codec import encode_text,SendChunk
+        queue=OutboundBuffer();queue.enqueue_application(encode_text(b'x'),now_ms=0)
+        old=queue.peek(now_ms=0,maximum=1);current=queue.peek(now_ms=0,maximum=1)
+        for invalid in [old,SendChunk(current.identity,current.offset,current.data)]:
+            with self.assertRaises(ValueError):queue.advance(invalid,1,now_ms=0)
+        queue.advance(current,1,now_ms=0)
+        with self.assertRaises(ValueError):queue.advance(current,1,now_ms=0)
+        next_chunk=queue.peek(now_ms=0);self.assertEqual(next_chunk.offset,1)
+        self.assertEqual(next_chunk.data.tobytes(),b'\x01')
+        queue.advance(next_chunk,1,now_ms=0)
+        payload=queue.peek(now_ms=0);self.assertEqual(payload.data.tobytes(),b'x')
+        queue.advance(payload,1,now_ms=0);self.assertIsNone(queue.peek(now_ms=0))
+        self.assertEqual(queue.application_wire_bytes,0)
+
+    def test_full_buffer_does_not_even_request_a_chunk_and_giant_chunk_is_not_copied(self):
+        import tracemalloc
+        from uta.private_stream_codec import encode_text,encode_text_chunks,BufferFull
+        queue=OutboundBuffer()
+        queue.enqueue_application(encode_text(b'a'),now_ms=0);queue.enqueue_application(encode_text(b'b'),now_ms=0)
+        class NeverIterate:
+            def __iter__(self):raise AssertionError('full buffer must not touch serializer')
+        with self.assertRaises(BufferFull):queue.enqueue_text_chunks(NeverIterate(),now_ms=0)
+        giant=bytearray(b'a'*1048576)
+        tracemalloc.start()
+        with self.assertRaises(EncodeReject):encode_text_chunks([memoryview(giant)])
+        _,peak=tracemalloc.get_traced_memory();tracemalloc.stop()
+        self.assertLess(peak,65536)
+
+    def test_control_reserve_is_independent_of_full_application_budget(self):
+        from uta.private_stream_codec import encode_text,encode_control,BufferFull
+        frame=encode_text(b'a'*262134);queue=OutboundBuffer()
+        queue.enqueue_application(frame,now_ms=0);queue.enqueue_application(frame,now_ms=0)
+        queue.enqueue_control(encode_control('ping',b'x'*125),now_ms=0)
+        queue.enqueue_control(encode_control('pong',b'y'*125),now_ms=0)
+        self.assertEqual((queue.application_wire_bytes,queue.control_wire_bytes),(524288,254))
+        with self.assertRaises(BufferFull):queue.enqueue_control(encode_control('ping'),now_ms=0)
+        chunk=queue.peek(now_ms=0);self.assertEqual(chunk.data.tobytes(),bytes.fromhex('897d'))
+
+
 if __name__=='__main__':unittest.main()

@@ -1,0 +1,27 @@
+{
+  "runtime_source_commit": "24337ede7b07083c13c16736cb78628d6a01a7ec",
+  "runtime_sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2",
+  "peer_test_sha256": "8ef9fe5e5e0098a7d5d226e6cbebe08890ec5904441e434d65702188921da12c",
+  "author_test_sha256": "c2c7b90562ecfdac18a189c80f4f7c700e81134b982ddf759486ff3ea2103543",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_private_stream_codec*.py",
+    "-v"
+  ],
+  "started_utc": "2026-11-17T11:51:26.236059+00:00",
+  "finished_utc": "2026-11-17T11:51:26.350808+00:00",
+  "wall_seconds": 0.11475481500383466,
+  "exit_code": 0,
+  "new_peer_test_not_yet_committed": true,
+  "test_scope": "pure author28 plus independent13; traced copy measurements not RSS",
+  "no_socket_SQL_service": true,
+  "production_approved": false
+}

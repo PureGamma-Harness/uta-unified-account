@@ -1,0 +1,91 @@
+{
+  "runtime_source_commit": "24337ede7b07083c13c16736cb78628d6a01a7ec",
+  "review_checkout_before_report": "9774c820638df5fa805dd7de5713c195f35a8a93",
+  "new_peer_test_not_yet_committed": true,
+  "runtime_sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2",
+  "peer_test_sha256": "a6e415dc6b97b0dfe10d3297357ff0f98579cc67d5321505eead9fdf384c23e2",
+  "author_test_sha256": "c2c7b90562ecfdac18a189c80f4f7c700e81134b982ddf759486ff3ea2103543",
+  "records": [
+    {
+      "label": "python310",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec*.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:53:20.053733+00:00",
+      "finished_at": "2026-11-17T11:53:20.168334+00:00",
+      "wall_seconds": 0.11461110899836058,
+      "exit_code": 0,
+      "raw_log_sha256": "22cf274d9a3160dbf15642adca091ea867de3336991e9eb532cd0a79ee559fe7"
+    },
+    {
+      "label": "python312",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec*.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:53:20.168658+00:00",
+      "finished_at": "2026-11-17T11:53:20.283295+00:00",
+      "wall_seconds": 0.11465120399952866,
+      "exit_code": 0,
+      "raw_log_sha256": "22d948d824d7f16728222c7f6c3aacec3ae35b65621d1810c3d0590f8c8842e5"
+    },
+    {
+      "label": "python313",
+      "command": [
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_private_stream_codec*.py",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:53:20.283605+00:00",
+      "finished_at": "2026-11-17T11:53:20.398419+00:00",
+      "wall_seconds": 0.11482820400124183,
+      "exit_code": 0,
+      "raw_log_sha256": "939ba30bddbdf8fb14d2b8461e255ba3731810c173d0ccd1df9c2d76053ce263"
+    }
+  ],
+  "source_unchanged": true,
+  "scope": "41 pure cases per runtime; author28 + independent13, no network/SQL/deadline performance proof",
+  "new_socket_SQL_service": false,
+  "production_approved": false,
+  "static_imports": [
+    "__future__",
+    "base64",
+    "codecs",
+    "collections",
+    "dataclasses",
+    "hashlib",
+    "re",
+    "struct"
+  ],
+  "existing_uta_runtime_diffs": [
+    "uta/private_stream_codec.py"
+  ],
+  "existing_services_import_codec": false
+}
