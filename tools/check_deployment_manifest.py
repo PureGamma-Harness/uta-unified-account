@@ -38,6 +38,7 @@ def _pairs(items):
 
 def load_manifest(path):
     need(path.is_absolute(), 'manifest_absolute_path_required')
+    path = declared_path(str(path))
     details = path.lstat()
     need(stat.S_ISREG(details.st_mode) and details.st_size <= 32768, 'manifest_regular_bounded_file_required')
     raw = path.read_bytes()
@@ -45,7 +46,9 @@ def load_manifest(path):
     try:
         return json.loads(raw, object_pairs_hook=_pairs,
                           parse_constant=lambda _: (_ for _ in ()).throw(ManifestError('nonfinite_json')))
-    except (UnicodeDecodeError, json.JSONDecodeError, RecursionError) as error:
+    except ManifestError:
+        raise
+    except (UnicodeDecodeError, ValueError, RecursionError) as error:
         raise ManifestError('manifest_json_invalid') from error
 
 

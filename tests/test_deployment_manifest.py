@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import sys
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
@@ -192,6 +193,48 @@ class DeploymentManifestTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertNotIn(private_marker, capture.getvalue())
         self.assertEqual(json.loads(capture.getvalue())['code'], 'manifest_json_invalid')
+
+    def test_decoder_value_error_returns_stable_refusal(self):
+        p = self.root / 'manifest.json'
+        p.write_text('{}')
+        capture = io.StringIO()
+        with patch.object(CHECK.json, 'loads', side_effect=ValueError('private decoder detail')), redirect_stdout(capture):
+            code = CHECK.main(['--manifest', str(p)])
+        result = json.loads(capture.getvalue())
+        self.assertEqual((code, result['status'], result['code']), (2, 'REFUSED', 'manifest_json_invalid'))
+        self.assertNotIn('private decoder detail', capture.getvalue())
+
+    def test_real_large_integer_is_refused_without_echo(self):
+        p = self.root / 'manifest.json'
+        p.write_text('{"format":' + '9' * 4501 + '}')
+        capture = io.StringIO()
+        with redirect_stdout(capture):
+            code = CHECK.main(['--manifest', str(p)])
+        result = json.loads(capture.getvalue())
+        self.assertEqual((code, result['status']), (2, 'REFUSED'))
+        digit_limit = getattr(sys, 'get_int_max_str_digits', lambda: 0)()
+        expected = 'manifest_json_invalid' if 0 < digit_limit < 4501 else 'manifest_fields'
+        self.assertEqual(result['code'], expected)
+        self.assertNotIn('9' * 32, capture.getvalue())
+
+    def test_manifest_argument_encoding_is_typed_before_io(self):
+        for path, expected in (('/bad\x00manifest', 'path_nul_refused'),
+                               ('/bad\ud800manifest', 'path_utf8_required')):
+            capture = io.StringIO()
+            with patch.object(Path, 'lstat', side_effect=AssertionError('metadata forbidden')), \
+                 patch.object(Path, 'read_bytes', side_effect=AssertionError('contents forbidden')), redirect_stdout(capture):
+                code = CHECK.main(['--manifest', path])
+            self.assertEqual((code, json.loads(capture.getvalue())['code']), (2, expected))
+
+    def test_json_policy_errors_keep_their_specific_codes(self):
+        p = self.root / 'manifest.json'
+        for text, expected in (('{"format":1,"format":1}', 'duplicate_json_field'),
+                               ('{"format":NaN}', 'nonfinite_json')):
+            p.write_text(text)
+            capture = io.StringIO()
+            with redirect_stdout(capture):
+                code = CHECK.main(['--manifest', str(p)])
+            self.assertEqual((code, json.loads(capture.getvalue())['code']), (2, expected))
 
 
 if __name__ == '__main__':
