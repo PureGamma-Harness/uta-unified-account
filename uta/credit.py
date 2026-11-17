@@ -44,13 +44,15 @@ class CreditService:
             if type(_startup) is not _OwnedStartup:
                 raise ServiceError("invalid_configuration", "invalid internal startup context")
             _startup.require_ledger(exchange)
-        with exchange._transaction() as connection:
-            self._schema(connection)
-            if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_liabilities'").fetchone() is None:
-                raise ServiceError("credit_integration_missing", "exchange schema must include gross principal and interest liabilities", 503)
-            if _startup is None:
+        if _startup is None:
+            with exchange._transaction() as connection:
+                self._schema(connection)
+                if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_liabilities'").fetchone() is None:
+                    raise ServiceError("credit_integration_missing", "exchange schema must include gross principal and interest liabilities", 503)
                 self._verify(connection)
-        if _startup is not None:
+        else:
+            # All fixed schemas were prepared before the ledger RO snapshot;
+            # post-freeze construction executes verification only, never DDL.
             _startup.verify_credit(self)
 
     @staticmethod

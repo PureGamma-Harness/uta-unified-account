@@ -769,8 +769,12 @@ class ShardWorkerView:
                 else:
                     self._exchange = ExchangeService(self.database, self._control.layout["scales"], _startup=_startup, **options)
                     self._exchange.credit = CreditService(self._exchange, _startup=_startup)
-                self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
-                                                  matches_per_symbol=matches_per_symbol)
+                if _startup is None:
+                    self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
+                                                      matches_per_symbol=matches_per_symbol)
+                else:
+                    self._background = _startup.take_worker(self._exchange, account_batch=account_batch,
+                                                            matches_per_symbol=matches_per_symbol)
         except ServiceError as exc:
             if exc.code in _INTEGRITY_FAULTS:
                 self._freeze(exc.code)

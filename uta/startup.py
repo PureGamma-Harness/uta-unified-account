@@ -72,6 +72,7 @@ class _OwnedStartup:
         self._keeper = None
         self._exchange = self._credit = self._ledger = None
         self._prepared_worker = None
+        self._worker_taken = False
         self._ledger_verified = False
         self._verified_schema = None
         self.last_renew_started = None
@@ -222,6 +223,18 @@ class _OwnedStartup:
         # Source-defined constructor only: initializes matcher/scheduler metadata,
         # creates an Event, but never starts, supervises, matches or moves cash.
         self._prepared_worker = ExchangeWorker(exchange)
+
+    def take_worker(self, exchange, *, account_batch, matches_per_symbol):
+        self.require_ledger(exchange)
+        if self._credit is None or self._worker_taken or self._prepared_worker is None:
+            raise StartupError("startup_not_verified", "prepared worker is single-use after complete credit verification")
+        if (type(account_batch) is not int or not 1 <= account_batch <= 1000
+                or type(matches_per_symbol) is not int or not 1 <= matches_per_symbol <= 1000):
+            raise ValueError("worker scheduling bounds require integers in 1..1000")
+        worker = self._prepared_worker
+        worker.account_batch, worker.matches_per_symbol = account_batch, matches_per_symbol
+        self._worker_taken = True
+        return worker
 
     def verify_ledger(self, exchange):
         from .writer_fence import WriterFence
