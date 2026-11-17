@@ -1,0 +1,199 @@
+{
+  "status": "EXACT_V2_COMMANDS_REVIEWED_NO_PHASE_GO",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "profile_sha256": "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+  "fresh_snapshot_for_each_phase_required": true,
+  "all_smoke_observations_phase": "smoke-observe",
+  "stage_record_and_command_sha256_distinguish_observations": true,
+  "outer_smoke_seconds": 150,
+  "produce_must_be_separate_captured_session_for_live_observations": true,
+  "minimum_remaining_validity_before_presenting_phase_snapshot_to_root_seconds": 5,
+  "prefer_original_latest_age_seconds_at_most": [
+    10,
+    15
+  ],
+  "no_ttl_extension_or_clock_rewrite": true,
+  "stages": [
+    {
+      "stage": "produce",
+      "phase": "smoke-produce",
+      "record": "producer.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-produce",
+        "--record",
+        "producer.json"
+      ],
+      "command_sha256": "e789af86971a7a3bbcc422ac8d0770e36d56e12861b168d850f8b3e817d9d7aa",
+      "root_GO_given": false
+    },
+    {
+      "stage": "startup",
+      "phase": "smoke-observe",
+      "record": "startup-001.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-observe",
+        "--record",
+        "startup-001.json"
+      ],
+      "command_sha256": "01ee5675028f081843196c3e645603af0973f44294affa48cb45008b39d5691d",
+      "root_GO_given": false
+    },
+    {
+      "stage": "normal-active",
+      "phase": "smoke-observe",
+      "record": "normal-active-001.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-observe",
+        "--record",
+        "normal-active-001.json"
+      ],
+      "command_sha256": "000c1281016928d3e447f1bde629b27283e6fa22b786f84476d345fc0864a14f",
+      "root_GO_given": false
+    },
+    {
+      "stage": "planned-fault",
+      "phase": "smoke-observe",
+      "record": "planned-fault-001.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-observe",
+        "--record",
+        "planned-fault-001.json"
+      ],
+      "command_sha256": "6db06e1a325b64d089784c84d44eac05d433c07e7a515aaa81d3509f90dbf545",
+      "root_GO_given": false
+    },
+    {
+      "stage": "final",
+      "phase": "smoke-observe",
+      "record": "final-001.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-observe",
+        "--record",
+        "final-001.json"
+      ],
+      "command_sha256": "cc3e2e47cd97f45b1a06f8e3661aecbd0cf8ca5efed626c19fed013cbca7bc9a",
+      "root_GO_given": false
+    },
+    {
+      "stage": "cold",
+      "phase": "smoke-cold",
+      "record": "cold-001.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-cold",
+        "--record",
+        "cold-001.json"
+      ],
+      "command_sha256": "b75c6982be0ebf99c5df132f51157426374919a1bb14c40147845bea60806bd5",
+      "root_GO_given": false
+    },
+    {
+      "stage": "strict-negative",
+      "phase": "smoke-strict-negative",
+      "record": "strict-long-negative.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "smoke-strict-negative",
+        "--record",
+        "strict-long-negative.json"
+      ],
+      "command_sha256": "9c8127c53dce19bbf999a5ad2cc26870bf93a091329b24bed09d07df30ae61b4",
+      "root_GO_given": false
+    },
+    {
+      "stage": "long-preflight",
+      "phase": "long-preflight",
+      "record": "unused.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "long-preflight",
+        "--record",
+        "unused.json"
+      ],
+      "command_sha256": "ad9c694fade307551ce60d4c76e5d2703b5915862b8fee8d6a1e5c80decc012b",
+      "root_GO_given": false
+    },
+    {
+      "stage": "long-start",
+      "phase": "long-start",
+      "record": "unused.json",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+        "--root-go-profile-sha256",
+        "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+        "--invoke",
+        "long-start",
+        "--record",
+        "unused.json"
+      ],
+      "command_sha256": "f22f1dc7ce72710f02fa49a315bbfa5606d9ada5b4db7bb17dfda088995308e8",
+      "root_GO_given": false
+    }
+  ],
+  "execution_authorized": false
+}
