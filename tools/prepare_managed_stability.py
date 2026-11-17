@@ -18,6 +18,11 @@ import subprocess
 import sys
 import time
 
+try:
+    from tools.managed_output_budget import explicit_output_budget, output_budget_bytes
+except ModuleNotFoundError:
+    from managed_output_budget import explicit_output_budget, output_budget_bytes
+
 FLAGS = dict(continuous_6h_stability_passed=False, continuous_24h_stability_passed=False,
              capacity_10000_per_s_passed=False, production_approved=False)
 PHASES = ('smoke-produce', 'smoke-observe', 'smoke-cold', 'smoke-strict-negative',
@@ -55,6 +60,7 @@ def profile(path):
     if any(path == source or path.is_relative_to(source) for path in targets) or targets[0] == targets[1]:
         raise ValueError('new_separate_external_scratch_targets_required')
     plan, amendment = load(value['plan']), load(value['amendment'])
+    output_budget_bytes(plan)
     if (fingerprint(value['plan']) != value['plan_sha256']
             or fingerprint(value['amendment']) != value['amendment_sha256']
             or amendment['original_plan_sha256'] != value['plan_sha256']):
@@ -247,7 +253,8 @@ def prepare(path):
     observed = None if report is None else {key: report.get(key) for key in
         ('code_commit', 'tests_run', 'failures', 'errors', 'skipped', 'passed')}
     plan = load(value['plan'])
-    reserve = plan['producer']['source_budget_bytes'] + 6 * 1024**3 + plan['observer']['max_private_clone_bytes'] + plan['observer']['clone_headroom_bytes']
+    output_budget = output_budget_bytes(plan)
+    reserve = plan['producer']['source_budget_bytes'] + output_budget + plan['observer']['max_private_clone_bytes'] + plan['observer']['clone_headroom_bytes']
     return dict(status='PREP_ONLY_NO_EXECUTION', prepared_at_utc=datetime.now(timezone.utc).isoformat(),
         profile_sha256=fingerprint(path), source_commit=head, qualification=value['qualification'],
         matching_312_report_observed=observed, observed_report_sha256=fingerprint(report_path) if report else None,
@@ -259,10 +266,13 @@ def prepare(path):
                   actual_supported_cli_interval=61, financial_and_live_coverage_separate=True),
         disk=dict(observed_free_bytes=shutil.disk_usage(Path(value['long_scratch']).parent).free,
                   long_conservative_required_bytes=reserve,
-                  source_bytes=plan['producer']['source_budget_bytes'], observer_bytes=6 * 1024**3,
+                  source_bytes=plan['producer']['source_budget_bytes'], observer_bytes=output_budget,
+                  observer_measurement_scope=('control_and_observer_except_validated_private_clones'
+                    if explicit_output_budget(plan) else 'historical_timeline_latest_baseline_only'),
+                  observer_output_physical_hard_quota_enforced=False,
                   private_clone_admission_estimate_bytes=plan['observer']['max_private_clone_bytes'],
                   actual_private_clone_peak_hard_quota_enforced=False,
-                  headroom_bytes=1024**3, reservation_created=False, must_recheck_actual_preflight=True),
+                  headroom_bytes=plan['observer']['clone_headroom_bytes'], reservation_created=False, must_recheck_actual_preflight=True),
         cohost=cohost_budget(reserve),
         source_job_sql_executed=False, service_started=False, execution_authorized=False, **FLAGS)
 
@@ -322,7 +332,7 @@ def invoke(path, phase, root_go, *, record='observation-001.json'):
     if phase in PHASES:
         plan = load(value['plan'])
         clone_limit = plan['observer']['max_private_clone_bytes'] if phase.startswith('long-') else 256 * 1024**2
-        reserve = plan['producer']['source_budget_bytes'] + 6 * 1024**3 + clone_limit + plan['observer']['clone_headroom_bytes']
+        reserve = plan['producer']['source_budget_bytes'] + output_budget_bytes(plan) + clone_limit + plan['observer']['clone_headroom_bytes']
         budget = cohost_budget(reserve)
         if value.get('resource_review', {}).get('old_observer_floor_approved') is not True:
             raise ValueError('unbounded_old_observer_floor_not_independently_reviewed')

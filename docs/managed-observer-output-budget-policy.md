@@ -17,9 +17,11 @@ drain. This remains the legacy missing-field behavior; it is not a complete
 output-tree budget. The explicit-field policy will measure all regular files in
 `control` and `observer`, including classifications, receipts, atomic temporary
 files and any other outputs. Only actual direct
-`observer/private-audit/private-full-clone-*` directories are excluded from the
-output sum: complete private clones have a separate admission estimate and
-headroom. The excluded subtree must contain no symlinks or special files;
+`observer/private-audit/private-full-clone-[a-z0-9_]{8}` directories are excluded from the
+output sum: this is the current helper's direct temporary-clone naming layout;
+unrecognized names are counted. Complete private clones have a separate
+admission estimate and headroom. The private parent and clone must be owned by
+the current UID with mode 0700. The excluded subtree must contain no symlinks or special files;
 unknown siblings are counted, not silently excluded. Measurement errors,
 permission failures, disappeared entries or invalid types are unknown, never
 zero. Neither policy deletes logs or lowers sampling.
@@ -32,7 +34,8 @@ action, not evidence of financial corruption. Existing protected-PID/birth
 checks remain in force. Other coverage/telemetry errors retain their existing
 policy. No restart, resume, automatic next job or financial PASS is introduced.
 
-The supervisor checks approximately every 30 seconds. This is a periodic
+The supervisor checks on a 30-second eligibility interval in its collection
+loop; synchronous final helpers can delay a recheck. This is a periodic
 measurement threshold, not an OS quota, an allocated reservation, or a physical
 hard cap. Growth between checks and work after drain/final audit can overshoot;
 the overshoot has no guaranteed bound. The private clone limit is separately an
