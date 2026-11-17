@@ -1,9 +1,12 @@
 # Managed initialization without a historical-replay writer lock
 
-Status: implementation-risk review, not an approved or implemented optimization.
+Status: implementation-risk design and isolated runtime candidate; independent
+runtime validation and scaling acceptance remain open.
 Base source: `28493d4`. Reviewed evidence: recovery-scaling `ae0f88f`, including
-its original analysis and per-phase observations. No runtime or stored authority
-has been changed by this review. Capacity, HA and production gates remain false.
+its original analysis and per-phase observations. The archived runtime and
+existing authorities remain unchanged; candidate runtime work and small synthetic
+fixtures are isolated to this branch. Capacity, HA and production gates remain
+false.
 
 ## What the evidence establishes
 
@@ -68,8 +71,16 @@ configuration file can supply a verification result or skip flag.
    Its SQLite wait is bounded below the lease budget. Any renewal exception,
    including a COMMIT outcome unknown to the caller, irrevocably poisons this
    initialization attempt. It is not washed into success by querying afterward.
-4. Short, ordinary fenced writer transactions validate/create permitted runtime
-   schemas. They retain current persistent guard installation and COMMIT checks.
+4. First require an already supported trading schema (3 for required audit,
+   2 for explicit development) and existing cumulative-fee columns; do not
+   perform a historical upgrade. Validate every existing credit/matcher/scheduler
+   object's exact fixed type, target and SQL before its `IF NOT EXISTS` helpers
+   can run. A partial or weakened module is rejected without repair. Only wholly
+   absent modules may receive their source-defined fixed initialization.
+   Short fenced writer transactions prepare all those schemas before replay.
+   The original unstarted `ExchangeWorker` constructor initializes matcher and
+   scheduler metadata, a default cursor and an Event. It does not call start,
+   run, supervision, matching or a cash command. Retain that prepared worker.
    Long existing-state verification then uses existing-only `read_transaction`:
    exact reference ledger replay; credit receipt/debt verification; shard account
    and funding reconciliation. The same actual verifiers run, with no cached
@@ -80,10 +91,16 @@ configuration file can supply a verification result or skip flag.
    attempt-bound, single-use and not serializable. A forged, expired, reused or
    mismatched scope is rejected. This is lifecycle coordination, not financial
    authorization: the SQL writer fence remains authoritative for every mutation.
-6. Close all read verification transactions before final binding. A long read
+6. Freeze complete sorted `sqlite_master(type,name,tbl_name,sql)` rows in the
+   actual ledger verification snapshot. Credit verification and final binding
+   require full equality, including new objects and names in different
+   namespaces; they never enlarge the accepted baseline. Private credit
+   construction performs only its original verifier after preparation, and the
+   worker view reuses the prepared worker. No post-freeze DDL is executed.
+   Close all read verification transactions before final binding. A long read
    snapshot contains the **old** lease row even when the keeper has renewed it;
    checking expiry on that snapshot can falsely reject a healthy owner. Open a
-   new short financial transaction, validate the exact current schema/guard
+   new short financial transaction, validate the frozen schema and current fence
    manifest and authority identity, check that the file inode is unchanged,
    assert the current PID/boot/generation/live lease, and check that the keeper
    and initialization deadline have not failed. COMMIT must successfully return.
@@ -126,6 +143,11 @@ plus stop/parent-death checks. Otherwise a stuck verifier could renew forever
 without being ready. For the first implementation, deadline selection must be
 an explicit bounded startup policy, not an automatic TTL enlargement. The
 deadline is a fail-closed work budget; it is not a measured universal RTO.
+The candidate uses a fixed 60-second managed initialization budget (the private
+test context accepts a smaller budget). It does not alter the configured lease
+TTL. Cancellation stops renewal; a verifier that fails to return is then subject
+to the existing supervisor's expiry/termination path, rather than receiving an
+unbounded renewal. This is not an OS-level hard timeout for blocked I/O.
 
 ## Minimal code boundaries proposed for review
 
@@ -162,3 +184,74 @@ First tests must run on one CPU with small histories. No 50k+ cohort or prolonge
 run is authorized by this review. After independent correctness review, request
 a coordinated same-source scaling experiment with original artifacts retained.
 The 250k result is motivation, not performance evidence for a future patch.
+
+## Candidate, validation and rollback
+
+Design commit: `0aec584`. Final runtime candidate: `d9afd46` (including preceding
+owned-startup commits). The registry
+is keyed by device/inode, with canonical path and the complete authority/token
+(including nonce) checked as well; nested or reused contexts are rejected. Both
+the initial writer barrier and final binding perform a no-op trading-version
+UPDATE to require the ordinary transaction-end token check. They do not change
+the stored schema version or a financial projection. Renewal checks inode
+identity before and after its actual lease-control transaction.
+
+Frozen SQL rows prove continuity from verification to handoff, not that every
+initially installed business definition was official. This candidate explicitly
+validates credit/matcher/scheduler definitions against their shared source
+literals; it does not duplicate the separate native-ledger guard fix. The base
+ledger verifier checks its seven guard names, which does not establish official
+SQL for an initially weakened same-name ledger guard. Integration must include
+the independent official-ledger-definition fix before claiming that broader
+guard-corruption gate. A schema snapshot cannot erase that gap.
+
+Small targeted tests hold the real RO verification transaction across multiple
+unchanged TTLs and observe committed lease renewal rows. They run original
+reference verification, assert the exact configured TTL, reject same-PID thread
+reuse and wrong/nested contexts, and inject real deferred-FK COMMIT failure,
+post-COMMIT lost renewal response, materialized balance corruption, gross debt
+corruption, stop and deadline expiry. The old past-expiry startup fixture now
+stalls only its test child's keeper, so it still tests an **actually expired
+current lease**, no READY, no revival and zero successful renewals. Sleeping
+past the initial acquired expiry while a healthy keeper renews is no longer an
+expiry fixture. Legacy archived sources and their tests are not modified.
+
+The final runtime candidate plus the existing official publication fixture
+dependency (`880d307`, copied as `f4d8b10`; already integrated upstream) passed
+91 selected tests on one CPU in each of CPython 3.12.14 / SQLite 3.53.1 and
+CPython 3.13.5 / SQLite 3.46.1. This includes 16 owned-initialization cases,
+original expiry/credit/storage/fencing tests, actual managed process lifecycle,
+partial liquidation and the complete current spot suite. The slowest observed
+individual case was 5.730 seconds. These are small correctness fixtures, not
+large-history recovery or throughput measurements.
+
+Exact commands, runtime/test hashes, actual environment, UTC times and original
+combined stdout/stderr are retained locally in
+`/tmp/uta-owned-startup-d9afd46-final/{manifest.json,py312-lifecycle.txt,py313-lifecycle.txt}`;
+the runner is `/tmp/uta-owned-startup-final-check.py`. Re-run from this worktree:
+
+```bash
+taskset -c 0 python -m unittest tests.test_owned_startup tests.test_worker_startup_lease tests.test_credit_joined tests.test_storage tests.test_writer_fence tests.test_durable_process tests.test_managed_liquidation tests.test_spot -v --durations 0
+```
+
+The earlier candidate's original red output remains at
+`/tmp/uta-owned-startup-d9afd46-py312-managed.txt` (38 tests, one failure): an
+outdated fixture expected shard-0 publication within 250 ms of cold process
+start. The final test imports the existing official synchronization fix without
+changing the .25-second publication timeout, .1-second activation timeout, lease
+TTL or financial assertions; it retries the same snapshot/command IDs while
+renewing the shard-1 blocker and observing actual shard-0 progress. This evidence
+is distinct from the separate original intermediate 50-test logs retained in
+`/tmp/uta-owned-startup-94ef45b/`. None of these results includes the subsequent
+official-ledger-guard patch or a new 250k cohort; integration gates stay open.
+
+Deploy only as a reviewed new immutable release, gracefully stopping the prior
+coordinator and preserving inbox IDs, canonical paths and existing authority
+files. There is no schema/data migration or durable verification receipt.
+Rollback to the previous compatible source uses its original complete writer
+verification again; large histories can therefore reproduce the known startup
+expiry. Keep the publication/activation gate halted until actual ownership and
+financial readiness are re-established. Do not disable verification or increase
+TTL as an automatic rollback action. A coordinated 250k replay and independent
+corruption/interleaving review are still required; current small tests establish
+neither large-history RTO nor production approval.
