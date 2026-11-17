@@ -1,0 +1,690 @@
+{
+  "document_kind": "credit-v2-hmac-integration-plan-v1",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "created_at": "2026-11-17T16:56:30.587162+00:00",
+  "base_source_commit": "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b",
+  "pr18_source_commit": "01c332375d9a5463ca95d8e743ff5083b121982e",
+  "inputs_sha256": {
+    "uta/request_signing.py": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd",
+    "uta/durable_gateway.py": "d6fa69661436a0ee9a168bdefe05aabf3a1f354fc02a0a3ab4455f12a2cb03c7",
+    "uta/gateway.py": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7",
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+    "uta/existing_services.py": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+    "uta/credit_v2_payload_contract.py": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7",
+    "docs/credit-authority-upgrade-boundary-addendum.md": "3904b5fd5b09a5e2695ab8418e8781d9a7348a09fd5b3353d67a2af8e18f7d65"
+  },
+  "pr18_inputs_sha256": {
+    "uta/credit_hmac_source.py": "6cdc6ffe9bc155089b95705920487a62733c2d12a528e538f081e68c4e64c624",
+    "docs/credit-hmac-source-contract.md": "26868290f55faebdc4e5af7f2a42e70a72e1f23cf56e7e9c05e0c2863725001e",
+    "docs/credit-hmac-source-independent-review.md": "184745ad7b1c26b9fcc53a3800b05135770b1a5631efad6919db2b7512190ed3"
+  },
+  "actual_authorization_this_task": {
+    "source_reading": true,
+    "documentation_and_pure_memory_contract_validation": true,
+    "product_import": false,
+    "database_open_or_sql": false,
+    "native_execution": false,
+    "listener_or_tls_execution": false,
+    "build_install_or_whole_qa": false,
+    "push": false,
+    "modify_current_candidate": false,
+    "spawn_child": false
+  },
+  "implemented_connection": false,
+  "production_approved": false,
+  "public_borrow_enabled": false,
+  "general_trading_ready": false,
+  "actual_current_pr18_fields_missing": [
+    "auth_audit_sequence",
+    "accepted_profile_revision",
+    "credential_epoch",
+    "durable first-CID uniqueness",
+    "cross-database revocation barrier"
+  ],
+  "proposed_fresh_scope": {
+    "authority_format": "HMAC_CREDIT3 (name reserved by this proposal only)",
+    "source_format": 3,
+    "source_kind": "hmac_authenticated_v1",
+    "existing_v2_source_kind_accepted": false,
+    "fresh_authority_only": true,
+    "automatic_upgrade_or_downgrade": false,
+    "tenant_count": 1,
+    "account_count": 1,
+    "shard_count": 1,
+    "borrow_asset": "BTC",
+    "risk_quote_asset": "USD",
+    "asset_scale": 8,
+    "zero_interest_policy": true,
+    "supported_modes": [
+      "phase1_cross synthetic reference scope only"
+    ],
+    "supported_operations": [
+      "BORROW",
+      "REPAY",
+      "authorized original-CID query"
+    ],
+    "orders_or_liquidation_in_scope": false
+  },
+  "permission_policy": {
+    "source_role": "funding",
+    "required_exact_grant_dimensions": [
+      "key_id",
+      "account_id",
+      "asset",
+      "operation",
+      "grant_epoch"
+    ],
+    "borrow_operation": "credit.borrow",
+    "repay_operation": "credit.repay",
+    "query_operation": "credit.read",
+    "query_roles": [
+      "reader",
+      "funding"
+    ],
+    "admin_or_risk_implicit_bypass": false,
+    "prior_signature_is_execution_permission": false,
+    "revoked_original_credential_can_query": false,
+    "repayment_requires_original_borrow_grant": false
+  },
+  "canonical_business_key": [
+    "domain_id",
+    "tenant_namespace",
+    "account_id",
+    "business_CID"
+  ],
+  "first_source_definition": "first actual financial producer COMMIT of original source plus PENDING; AuthDB acceptance is earlier and distinct",
+  "transactions": [
+    {
+      "id": "T_A",
+      "database": "fresh versioned NonceStore AuthDB",
+      "atomic_rows": [
+        "nonce hash",
+        "nonce audit with actual sequence/revision/key identity",
+        "current grant decision/epoch",
+        "accepted credit authentication receipt when permitted",
+        "immutable first business reservation or prior reservation reference"
+      ],
+      "meaning": "authentication acceptance only; COMMIT reply loss is UNKNOWN"
+    },
+    {
+      "id": "T_P",
+      "database": "fresh HMAC3 financial authority",
+      "atomic_rows": [
+        "original authenticated source",
+        "original PENDING inbox"
+      ],
+      "meaning": "producer acceptance only; no risk acceptance or loan"
+    },
+    {
+      "id": "T_E_AUTH",
+      "database": "NonceStore AuthDB",
+      "begin": "BEGIN IMMEDIATE",
+      "holding_period": "acquire before financial BEGIN; hold through complete financial COMMIT or rollback; release only after its actual return or executor death",
+      "meaning": "serializes all key/grant revocation COMMITs with the same-process financial execution"
+    },
+    {
+      "id": "T_F",
+      "database": "same financial authority",
+      "atomic_rows": [
+        "native source-bound intent and expected legs",
+        "cash and gross debt",
+        "sealed journal",
+        "full borrow decision or repayment evidence",
+        "immutable credit receipt",
+        "original CID terminal"
+      ],
+      "meaning": "financial execution COMMIT; original query resolves reply loss"
+    },
+    {
+      "id": "T_O",
+      "database": "NonceStore AuthDB",
+      "atomic_rows": [
+        "append-only observed financial outcome reference when known"
+      ],
+      "meaning": "optional reconciliation observation in held auth transaction or later recovery; not a second financial effect and not a distributed atomic COMMIT"
+    }
+  ],
+  "revocation_ordering": {
+    "required_lock_order": [
+      "NonceStore AuthDB",
+      "financial authority"
+    ],
+    "same_executor_process_and_thread_required": true,
+    "remote_async_financial_worker_allowed": false,
+    "reverse_lock_order_allowed": false,
+    "revocation_linearization_point": "revocation AuthDB COMMIT",
+    "financial_linearization_point": "financial COMMIT",
+    "clock_time_used_to_prove_order": false,
+    "permission_recheck_without_lock_sufficient": false,
+    "global_auth_lock_through_financial_commit_capacity_qualified": false,
+    "never_acquire_authenticator_profile_lock_while_holding_auth_db": true,
+    "never_reauthenticate_or_consume_nonce_during_financial_execution": true,
+    "read_current_key_metadata_from_same_held_auth_connection": true,
+    "unrelated_profile_revision_increment_revokes_unchanged_key": false
+  },
+  "proposed_auth_receipt_fields": [
+    "format",
+    "auth_authority_id",
+    "tenant_id",
+    "audience",
+    "producer_binding",
+    "request_hash",
+    "body_hash",
+    "nonce_hash",
+    "key_id",
+    "key_identity",
+    "role",
+    "account_id",
+    "command_id",
+    "kind",
+    "command_payload",
+    "payload_hash",
+    "auth_audit_sequence",
+    "accepted_profile_revision",
+    "grant_id",
+    "grant_epoch",
+    "domain_epoch",
+    "auth_checked_server_ms",
+    "first_acceptance_id",
+    "business_reservation_id",
+    "denial_code_or_null"
+  ],
+  "proposed_financial_source_extra_fields": [
+    "auth_acceptance_id",
+    "auth_authority_id",
+    "auth_audit_sequence",
+    "grant_id",
+    "accepted_grant_epoch",
+    "domain_epoch",
+    "first_acceptance_id"
+  ],
+  "physical_commit_time_fields": "null; auth_checked_server_ms and producer accepted_at are separately named actual checkpoints, not physical COMMIT timestamps",
+  "unknown_protocol": [
+    "never infer absence from timeout/error/empty successor table",
+    "new nonce and independently current query permission",
+    "query original logical business key and actual original financial CID",
+    "terminal original bytes are immutable",
+    "only confirmed complete absence permits new reservation and original source creation",
+    "unknown/delivered/reserved identities do not expire into absent or release budget",
+    "different payload/kind for an existing logical key conflicts"
+  ],
+  "deferred_blockers": [
+    "real cross-epoch directory/retirement-aware reader not implemented",
+    "all old binaries must be proven unable to own/write new authority before activation",
+    "full HMAC3 source/native/audit/replay/factory/permission contract not implemented",
+    "multi-account physical global-CID mapping not specified by this slice",
+    "AuthDB global serialization capacity not qualified",
+    "single-host WAL/FULL is not replicated HA or RPO-zero across storage loss",
+    "customer loan liquidation, interest scheduler, insurance fund and ADL remain outside this synthetic slice"
+  ],
+  "phases": [
+    {
+      "id": "H0",
+      "implementation_proposed": true,
+      "execution_authorized": false,
+      "scope": "fresh AuthDB accepted receipt and durable exact operation grants; financial dispatch remains denied",
+      "production_files": [
+        "uta/request_signing.py",
+        "uta/credit_hmac_ingress.py (new)"
+      ],
+      "new_financial_source": false,
+      "http_listener": false,
+      "limits": {
+        "cpu_affinity": "root to allocate CPU3 or CPU4",
+        "batch_wall_seconds_max": 30,
+        "synthetic_only": true,
+        "fresh_private_auth_database_only": true
+      },
+      "required_case_ids": [
+        "HC-01",
+        "HC-03",
+        "HC-04",
+        "HC-05",
+        "HC-06",
+        "HC-07",
+        "HC-08",
+        "HC-09"
+      ]
+    },
+    {
+      "id": "H1",
+      "implementation_proposed": true,
+      "execution_authorized": false,
+      "scope": "fresh HMAC3 financial authority, authenticated source plus PENDING producer transaction and original-CID directory; no financial execution",
+      "production_files": [
+        "uta/credit_hmac_native.py (new)",
+        "uta/credit_hmac_fifo.py (new)",
+        "uta/writer_fence.py",
+        "uta/existing_services.py"
+      ],
+      "new_financial_source": true,
+      "http_listener": false,
+      "limits": {
+        "batch_wall_seconds_max": 60,
+        "fresh_private_financial_database_only": true
+      },
+      "required_case_ids": [
+        "HC-10",
+        "HC-11",
+        "HC-12",
+        "HC-13",
+        "HC-25",
+        "HC-26",
+        "HC-28"
+      ]
+    },
+    {
+      "id": "H2",
+      "implementation_proposed": true,
+      "execution_authorized": false,
+      "scope": "same-process AuthDB lock and native financial COMMIT barrier; BORROW and independent current-grant REPAY; real response-loss/reopen",
+      "production_files": [
+        "uta/credit_hmac_native.py (new)",
+        "uta/credit_hmac_fifo.py (new)",
+        "uta/credit_hmac_audit.py (new)",
+        "uta/credit_hmac_replay.py (new)",
+        "uta/credit_artifact.py"
+      ],
+      "http_listener": false,
+      "limits": {
+        "batch_wall_seconds_max": 60,
+        "tenant_count": 1,
+        "account_count": 1,
+        "shard_count": 1,
+        "borrow_asset": "BTC",
+        "risk_quote_asset": "USD",
+        "scale": 8,
+        "rate": "0",
+        "fee_rate": "0",
+        "batch_size": 0,
+        "reserve_cache_size": 0,
+        "market_cache_size": 0
+      },
+      "required_case_ids": [
+        "HC-14",
+        "HC-15",
+        "HC-16",
+        "HC-17",
+        "HC-18",
+        "HC-19",
+        "HC-20",
+        "HC-21",
+        "HC-22",
+        "HC-24",
+        "HC-27",
+        "HC-29"
+      ]
+    },
+    {
+      "id": "H3",
+      "implementation_proposed": true,
+      "execution_authorized": false,
+      "scope": "explicit isolated loopback TLS server adapter with one real authentication per HTTP request; public default stays unsupported",
+      "production_files": [
+        "uta/credit_hmac_gateway.py (new)",
+        "uta/durable_gateway.py only bounded reusable framing/authentication extraction"
+      ],
+      "http_listener": true,
+      "limits": {
+        "batch_wall_seconds_max": 60,
+        "host": "127.0.0.1",
+        "port": "OS-assigned ephemeral",
+        "tls_minimum": "TLSv1.2",
+        "private_fresh_keys_and_certificate": true,
+        "ordinary_gateway_default_borrow_status": 501
+      },
+      "required_case_ids": [
+        "HC-01",
+        "HC-02",
+        "HC-03",
+        "HC-04",
+        "HC-05",
+        "HC-06",
+        "HC-23",
+        "HC-30"
+      ]
+    },
+    {
+      "id": "H4",
+      "implementation_proposed": true,
+      "execution_authorized": false,
+      "scope": "independent exact reference, all supported Python CI, installed package, fault recovery and separately registered load/stability acceptance",
+      "production_files": [],
+      "http_listener": "only explicitly registered qualification jobs",
+      "limits": {
+        "performance_claims": false,
+        "capacity_10000_per_second_passed": false,
+        "ha_passed": false,
+        "main_merge_approved": false
+      },
+      "required_case_ids": [
+        "HC-01",
+        "HC-02",
+        "HC-03",
+        "HC-04",
+        "HC-05",
+        "HC-06",
+        "HC-07",
+        "HC-08",
+        "HC-09",
+        "HC-10",
+        "HC-11",
+        "HC-12",
+        "HC-13",
+        "HC-14",
+        "HC-15",
+        "HC-16",
+        "HC-17",
+        "HC-18",
+        "HC-19",
+        "HC-20",
+        "HC-21",
+        "HC-22",
+        "HC-23",
+        "HC-24",
+        "HC-25",
+        "HC-26",
+        "HC-27",
+        "HC-28",
+        "HC-29",
+        "HC-30"
+      ]
+    }
+  ],
+  "test_plan": [
+    {
+      "id": "HC-01",
+      "concern": "default disabled",
+      "trigger": "constructor/server without HMAC3 explicit local capability",
+      "expected_proposed_behavior": "501; no AuthDB or financial schema creation",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-02",
+      "concern": "real one-time authentication",
+      "trigger": "real TLS exact body/path and fresh nonce",
+      "expected_proposed_behavior": "one nonce/audit acceptance; one opaque handle; no second authentication",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-03",
+      "concern": "signature integrity",
+      "trigger": "wrong MAC/body/path/tenant/audience or duplicate authentication headers",
+      "expected_proposed_behavior": "401; no source/PENDING or financial changes",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-04",
+      "concern": "role and grant",
+      "trigger": "admin/risk/trader/reader or funding without exact operation/account/asset grant",
+      "expected_proposed_behavior": "403; valid-auth nonce may be consumed; no first source",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-05",
+      "concern": "scope",
+      "trigger": "other account/tenant/shard or unsupported asset/product",
+      "expected_proposed_behavior": "403 or typed409 unsupported scope; no money changes",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-06",
+      "concern": "strict input",
+      "trigger": "duplicate/unknown JSON keys, bool/float/Unicode/exponent/overflow amount, zero",
+      "expected_proposed_behavior": "400; no accepted business reservation; nonce policy explicitly audited",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-07",
+      "concern": "authenticated rejection",
+      "trigger": "valid signature but body/role/grant refusal",
+      "expected_proposed_behavior": "nonce plus denial audit commit; no accepted receipt or business source",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-08",
+      "concern": "auth COMMIT reply loss",
+      "trigger": "real nonce+audit+accepted receipt COMMIT then response lost",
+      "expected_proposed_behavior": "503 UNKNOWN; no opaque success fabricated; new-nonce original-CID lookup resolves durable state",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-09",
+      "concern": "local handle identity",
+      "trigger": "JSON/copy/forged instance/foreign issuer/thread/fork/restart",
+      "expected_proposed_behavior": "deny before producer source or financial scope",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-10",
+      "concern": "persistent first source",
+      "trigger": "same business CID, new nonce, source+PENDING COMMIT response loss",
+      "expected_proposed_behavior": "same original source and pending/terminal; no replacement ID",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-11",
+      "concern": "conflicting CID",
+      "trigger": "same logical CID with changed kind/amount/account mapping",
+      "expected_proposed_behavior": "409; original source/receipt bytes unchanged",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-12",
+      "concern": "unknown is not absence",
+      "trigger": "source/directory lookup unavailable or outcome unknown",
+      "expected_proposed_behavior": "503 UNKNOWN; no fresh source or directory release",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-13",
+      "concern": "legacy missing source",
+      "trigger": "old receipt or inbox without authenticated original source",
+      "expected_proposed_behavior": "return permitted original receipt or typed reject; never backfill HMAC evidence",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-14",
+      "concern": "revoke wins",
+      "trigger": "revocation/grant removal AuthDB COMMIT before execution lock",
+      "expected_proposed_behavior": "REJECTED403 with original source; zero financial effect",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-15",
+      "concern": "execution wins",
+      "trigger": "executor holds AuthDB write transaction; separate process attempts revoke",
+      "expected_proposed_behavior": "revoke cannot COMMIT before financial COMMIT/rollback; actual blocking/timestamps recorded",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-16",
+      "concern": "pre-COMMIT late check",
+      "trigger": "key expiry/clock regression/grant epoch mismatch before native closing check",
+      "expected_proposed_behavior": "deny and rollback effects; no physical-COMMIT cutoff claim",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-17",
+      "concern": "guard removal",
+      "trigger": "actual AuthDB guard closed/replaced/thread-moved before financial COMMIT",
+      "expected_proposed_behavior": "native failure poisons transaction even if caught; no COMMIT",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-18",
+      "concern": "auth unavailable",
+      "trigger": "cannot acquire auth lock/read current epoch/validate private DB identity",
+      "expected_proposed_behavior": "PENDING/UNKNOWN; no effects and no unsafe permission fallback",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-19",
+      "concern": "financial reply loss",
+      "trigger": "financial COMMIT succeeds; response or AuthDB observation update lost",
+      "expected_proposed_behavior": "original financial CID queried before retry; exactly one loan/journal",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-20",
+      "concern": "process crash windows",
+      "trigger": "crash before source, after source, before financial COMMIT, after financial COMMIT before auth observation",
+      "expected_proposed_behavior": "reopen original AuthDB and finance; no lease/TTL recycling of unresolved request",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-21",
+      "concern": "actual loan and repayment",
+      "trigger": "BORROW .4 BTC then REPAY .1 BTC; interest-first nonzero opening-interest case separately",
+      "expected_proposed_behavior": "four borrow legs; correct four/seven repay legs; p/i and pool conserved",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-22",
+      "concern": "repay independence",
+      "trigger": "original borrow key/grant revoked, new permitted repay key during halt/stale market",
+      "expected_proposed_behavior": "REPAY uses current independent repay grant and no borrow quote/market dependency",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-23",
+      "concern": "read authorization",
+      "trigger": "revoked source credential queries original CID",
+      "expected_proposed_behavior": "deny; independently current credit.read credential may receive original same-account receipt",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-24",
+      "concern": "FIFO/concurrency",
+      "trigger": "same-account borrow/repay with duplicate delivery and partial response loss",
+      "expected_proposed_behavior": "per-account ordering; no double source/debt or synthetic-route bypass",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-25",
+      "concern": "old binary refusal",
+      "trigger": "all retained old positive controls reopen fresh HMAC3 authority",
+      "expected_proposed_behavior": "old positive database writable as expected; HMAC3 denies owner and financial writes",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-26",
+      "concern": "source tamper",
+      "trigger": "missing/wrong auth audit ID, receipt hash, grant epoch, original key binding or authority",
+      "expected_proposed_behavior": "typed fail closed before financial writes and during replay",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-27",
+      "concern": "canonical source and audit",
+      "trigger": "real reopened original rows joined across auth/source/inbox/intent/decision/credit/journal/terminal",
+      "expected_proposed_behavior": "every duplicated identity and amount matches; independent oracle does not import production core",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-28",
+      "concern": "single-authority scope",
+      "trigger": "second tenant/account/physical authority or remote asynchronous worker",
+      "expected_proposed_behavior": "explicit unsupported; never silently rename business CID or release auth lock ahead of execution",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-29",
+      "concern": "upgrade boundary",
+      "trigger": "nonce accepted but undelivered/unknown when upgrade is attempted",
+      "expected_proposed_behavior": "cut blocked; no cross-epoch execution or marker deletion",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    },
+    {
+      "id": "HC-30",
+      "concern": "transport and publication",
+      "trigger": "insecure/no TLS, bearer fallback, raw nonce/signature/keys/private DB/TLS leakage",
+      "expected_proposed_behavior": "reject transport/fallback; publish allowlisted synthetic counts/hashes and original raw test status only",
+      "execution_status": "NOT_RUN",
+      "requires_separate_root_phase_go": true
+    }
+  ],
+  "publication_allowlist": [
+    "synthetic test IDs and statuses",
+    "commands with private arguments redacted by explicit safe schema",
+    "actual timestamps and CPU/runtime/source hashes",
+    "nonsecret counts and relation checks",
+    "raw failure/unknown status without live credentials or signed request contents"
+  ],
+  "never_publish": [
+    "secret or keyfile",
+    "raw live nonce or signature",
+    "private auth or financial database",
+    "TLS private key or certificate authority secret",
+    "signed transport download URLs",
+    "raw original accepted HMAC headers or bodies"
+  ],
+  "design_validation": {
+    "json_syntax_checked": true,
+    "test_ids_unique": true,
+    "planned_cases": 30,
+    "all_acceptance_cases_not_run": true,
+    "runtime_unchanged_checked": true,
+    "runtime_git_blobs_checked": 62,
+    "staged_paths_exactly_two_documentation_files": true,
+    "base_freeze_tracked_clean": true,
+    "input_hashes_rechecked_unchanged": true,
+    "validated_at": "2026-11-17T17:02:54.116432+00:00",
+    "product_imports": 0,
+    "sql_or_database_opens": 0,
+    "service_or_native_execution": 0,
+    "whole_qa_or_package_runs": 0,
+    "note": "standard-library JSON/hash/Git byte comparison only; not implementation acceptance"
+  },
+  "proposed_fresh_auth_key_metadata": [
+    "key_id",
+    "identity",
+    "role",
+    "account_id",
+    "not_before_ms",
+    "expires_at_ms",
+    "revoked"
+  ],
+  "directory_outcomes": {
+    "ABSENT": "atomic reserve only after complete authoritative absence",
+    "AUTH_RESERVED": "deliver only original accepted request when producer absence is confirmed; unknown producer means query/reconcile original delivery",
+    "SOURCE_PENDING": "same original source/CID status, no replacement",
+    "TERMINAL": "original immutable permitted receipt",
+    "CONFLICT": "409",
+    "UNKNOWN": "503 and no release/replacement"
+  },
+  "legacy_refusal_requirement": "fresh financial control schema/version and compiled new DML/DDL/native guards must make every retained old binary fail closed; marker presence alone is insufficient"
+}
