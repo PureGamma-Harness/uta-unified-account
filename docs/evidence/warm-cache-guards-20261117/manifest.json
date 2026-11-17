@@ -1,0 +1,2676 @@
+{
+  "generated_at_utc": "2026-11-17T05:49:36.753641+00:00",
+  "synthetic_data_only": true,
+  "financial_database_files_included": false,
+  "owned_runtime_changes": false,
+  "root_base": "e033c43142d4ca70dc1076de68683a40990fa385",
+  "dependency_commits": [
+    "190aa9ba8e99da2306a6dec3d1cc62e2cb93b9d8",
+    "cb85d6896ada7319c81bebd3a67db72da2cd10d8"
+  ],
+  "dependency_worktree_head": "c745dad91dc558db6e4f32f626285f718ac38d1f",
+  "owned_test_sha256": "5ef406050f8606002b987d58136b0f0a755a001d83fd07a4c61461381d50a77e",
+  "scope": "single SQL-managed authority, independent spawned PID, deterministic pipe; no process-router capacity claim",
+  "stages": [
+    "first-py312",
+    "green-py310",
+    "green-py312",
+    "green-py313",
+    "final-py310",
+    "final-py312",
+    "final-py313",
+    "peerfinal-py310",
+    "peerfinal-py312",
+    "peerfinal-py313"
+  ],
+  "final_runtime_results": {
+    "py310": "2.032",
+    "py312": "2.477",
+    "py313": "2.296"
+  },
+  "records": 659,
+  "uncompressed_bytes": 25159702,
+  "archive": {
+    "file": "raw-evidence.jsonl.xz",
+    "bytes": 267920,
+    "sha256": "562d0511bf5f04608b44781e951bd1bdfaf65898a6c8c823658e27db47c2fe64"
+  },
+  "files": {
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104152,
+      "sha256": "e07448e84945ed3c519c7580db08f088515566c6231695a065ada09ac9da3886"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "95b1e101d810beaac7dce1989c1a672ae0786bfb4694ee771b8c528286a5d3b7"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "05145cf8d0f4588564c8fe6dd1d83afb4d7cea4559a0e39c8b4ee9091a868eb4"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "e07b5983ade749061ae252f333d9170b85f9691a05042245ce37ac924dc1bfd7"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "fe1aefdf7cb17ddbff1bfed6a27439f177d3e1ea1b0a0f5f27c39a9e55d4d954"
+    },
+    "first-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "2ca104d4f9fa72cd9d1d863dc9b93e3089c621deab26839d278c07a4b2fcafb0"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "f7723fe3283057fe2cf79c679c5fca3ac2a3037c6e0d795fab0a098bef2e590b"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "864961961587d02e23f6aa8ebbfe340be600ac58dc198ddcc155bc9513017a60"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106423,
+      "sha256": "ebc0c2fb69ece0f251b956f0b6ba8ce4637c2ef890ef333e650cc6ecce6b26aa"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "first-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103722,
+      "sha256": "adf88f11961039411c0a0b796655a3cf8a195161c5998a94b5bcfbb9d53ed93b"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "24c03e460ff5519acca38c4e261caad11b80a54c21f4e3b5e442a0592e765026"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106426,
+      "sha256": "b9215d1b2272398f9492f3859513105737357abf7ddee43d6d4bec750f534923"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104040,
+      "sha256": "e5d93b38a644931696138a44e50497bc9c2f0a026fbc5e22bbf32547d9907387"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "d67876fb71c92084b8e94dcbe81ecf0714eb1a1076870215e872a1b80b86685a"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106756,
+      "sha256": "be2ba7312cb826951a7795612707fb5ffdbf14f4b0c0cf0a43ed32e59a26e8ce"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "first-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "first-py312/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103847,
+      "sha256": "101f7668644fa0f948cfbafa2e09d12622c083b3a23a4436bf9745daa8f9fa8a"
+    },
+    "first-py312/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "12f243c0ff2997d28817a27af37b17799bd045fcf039678009952506687a4c83"
+    },
+    "first-py312/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106431,
+      "sha256": "3cd7b1bfb02faf9b8cbbf385ae968694309b55b12b62e1dc1b5fa7fa1eda19e3"
+    },
+    "first-py312/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "first-py312/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104022,
+      "sha256": "41f64f47bcbf7f1b98f5fa2b69fc7307d777d5d0b9ab2cf4465b7d41edd23ba8"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104127,
+      "sha256": "637ac790dc9aaa848c0478bf4811aa2c129d825328be0d0b2c2f91ac2b90b89c"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "b231cb76a18d48dc0910decd709b909e6b586013256ccf970bbb61ec5c1d5871"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 191,
+      "sha256": "fb5bbbc2208ea58766cce00eda86813e8667c856a3799fd9ceed2c04143615f5"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "48b8561c949f2b08379fdce02d0681916dbfbc43d89a00ee4343898f7f2b51d2"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "d4059c9efac73b55ead097b6a1c67ee41ad04a3efdffd378db84545e522cb279"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 192,
+      "sha256": "e63ef5d04e4457b6bf673a8059cfeed70533bfc1fdc514fc9b0cf8e7d2f6ac5a"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "0550971461e2132f63a50d6d43e3271e990b5c609b7f84d0650d012dae7f7630"
+    },
+    "first-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "f77179cf0f8de5189066836e216c3b2363be2c67686e80b85aaf0326854c048e"
+    },
+    "first-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "1b9739cb37a9e0f1d0a4f7826564caa5ee5324c45fbc5407b0f90e5a5ab06ced"
+    },
+    "first-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 215,
+      "sha256": "25cf573804bf2d0e7a74fbfd691db01aab6c57e68f34b688e88ed7fce9763aab"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 104127,
+      "sha256": "3eb8c55d1e50c3f67f82b38b68a4500748739458d2a17c14a7391ee9db0d70d8"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 216,
+      "sha256": "d9d61a4ed69945450806fb8442ead082c3421ac4128f752c18072b5d4492f094"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "first-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 215,
+      "sha256": "2df9daa3d07df2b1d0e12f991a066c29a80b3929e30b95f02bbd3a02c3e89129"
+    },
+    "first-py312/test-output.log": {
+      "bytes": 3756,
+      "sha256": "70e7a615ba28d10c9484f2c407cdf3c795c5f4ece26ef5b27a6bcf0523767bd1"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "39b064cb4b6407d658e3b76237d8415ed748ee5d5125fc69cdedbb494cbbd51f"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "3ac4964979c4fdb5c81866d6f9800af1b45a36f610f6cdcd0633519f579d9674"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "cd7f3c4afc4b3dec8ff89f4b342a53245fffc26436d82db91acef84e48126462"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "f347e1bba4e14106c38eef2c2b10218ad33e0cfceea949513a13321bc2b550c4"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "3a2fde5909fb0f432dd4d3a757f09c50d70bef988803d54d70680c4c4534f8c6"
+    },
+    "green-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "bf8de390da3ee3a460e4b95fe1a02dd939e7ac4385d2580ae66989e9a85ca172"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "3af61b166883f62c1d28bf889adc8435672a1ecc1c4bd4a6c4289b4cf05b0ef1"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "c3c0cc28b5c58db11b21b641b31cb1d4771c639d4c13268d2dfae5c6b5f1411f"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "b8f422525c98650db3932111e0f3dfc8a1d2fe6506cd64a182312a4d5a812c94"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "5653d81030c3e91debaf0080b286c847e5c9ed4e36662a27dd6422bdacb4e76b"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "60b7ec5f36f4bcdaa599dc20d34a847f7b8d232bf6e685df738def18bb305a18"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "122f70faa699f10620e1edcefb258b3c3b9827d895b1b6dd4364e46e5bcd519d"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "47b93f6843911e3c082383b21fba22433a5852dfbca4150366d52c1309d89121"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "3068fac0eb97d870fd8074f8d26ef111a372803f31df075af8441825c1522b62"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "6d067dbcd6c4e21cb01076b9eceac7d5c5ae90ce49fc83b3ddfbd1419da16010"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py310/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "a5fa3c57084f0b0607b47c5bf2e111864ae7bcdb84180f90c043a8a9f9477126"
+    },
+    "green-py310/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "7c03266c6f4b901f50e8b08b6526738e58a1fadf01e7d1c82b1b749e334ba5dd"
+    },
+    "green-py310/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "a9155ca32c3fb958bb658dddc6b5535ed40e5ae9f74674a059cab5bb75f3daf8"
+    },
+    "green-py310/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py310/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "d97491376d2a3027aefdf97df8474663202c07e1b97581e41663f94f69bba4c1"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "b5c39a28981fe4817cd82dc5575f5587706b039c81d5387902c19073d59ac753"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "09399f39ca1c0e35f5d76eac85c1bba9133d3598ea7ac387b8d2d7db7cfef9c3"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 191,
+      "sha256": "fb5bbbc2208ea58766cce00eda86813e8667c856a3799fd9ceed2c04143615f5"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "490e7ea300a0479e7109f18f3f93d05d4f84235ba9eff35c63f7adad48b64c67"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "2bfa4495b513fd9dd84bf260799ce488fcda64b3d85b6be38ffa6f4c0ef0578b"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 192,
+      "sha256": "e63ef5d04e4457b6bf673a8059cfeed70533bfc1fdc514fc9b0cf8e7d2f6ac5a"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "17ea075f57b381287339777209c5ce0b3446ff0b49cf95352cfae98c40031860"
+    },
+    "green-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "92d631b557e11f2ca226c763bb5f5cb8791a0b8816b6812f672a0bdd64f29b42"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "f3efa096b850e7a07a44f4f5704737637b3c93a1b0d9e79405d5850e2fb06185"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "9cd305190b7a03fda5325ccd4abf6b585a8642d508051ea9c279b1c7851738d2"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "09a0c4187a1cf4dee4e5b35e26e7ccd3aa94dfd5d8b024f1c23c2e224364726a"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "3854d4d95a3889ba15812cbab3bab496e77c7706bc32ceac66d976b63b561df4"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "9669fa8add471b9e2a00cb05c54e9f9a8394ef54cb9bb20d2733af64c23e485b"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "c99880765079712e1a86cf2b08faa3f0337dd84f6bf42357aa0b7f072cc55e86"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "23b85bc09ab9c00b360e916eddcc74a7f4f27abb127abfff89cf5c4a91dc11aa"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 193,
+      "sha256": "a151aabcb8c73ab884e1b200fc87d2b3e8661f87f8f10f2d5838e77f8a65d2fc"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "b30f7c5e96d39da34d330d68b0ddb80dc4f00727f9c8971abda1829d4ab4174f"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "0f28c3f8d496634708d38ff0b7503c36c6c2ac3915fc7e2c30420c912852fabf"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 216,
+      "sha256": "d9d61a4ed69945450806fb8442ead082c3421ac4128f752c18072b5d4492f094"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py310/test-output.log": {
+      "bytes": 1356,
+      "sha256": "bcf46eb6e7803398015dfd557af6244b7911fe5dfd837184c7ab3040ef0edd44"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "ff9b57b1b62e4d7b6066477610146ce7120d913052c962b17c1a6b5625fd8662"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "99ce6bed876232df979a1eb14a5ec9ac4677f094652aba3481786ff42153dd58"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "6034c76a6aadbfe1ddf1321a3217b155544f3fb34887dbf0b650cdc005cea27a"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "42e2bdf47e4dae5c3420a0851d5a0642be88eb9b24424a5fdd22a4d9b8ef91ef"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "572148bfd905ca43f16b23b051f9ca3a48d6bab1d748d3eac30203c299d94de3"
+    },
+    "green-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "4e0c1dd714799cd3b9575d246518437ade689edb5d8ec10c196eee19b9ed7b51"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "fc6535ebd3e065f0eff5d619cf62eea0cdffb64cba567b3c40b0d91a769419c8"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "33ece7744a13b8ea0902e52e23cf1497a92fad573215f470bd48140f7c497746"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "8ffab1e6d0135fac5f5974edb86297dd90356cac7524e9ce728be3186a794f79"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "9f94aecc9047e42e8f87d9e77b966dbdc71b7b841264642e4fc5516e11c9d7f6"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "e086cc286ec53cdad4fe15cc6248a6f29561658436dbd9c7765d11cc0b523252"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "78f96b8a13109a6ba16a49a2c116af9cf6ad8a7de35626ea29cda729dc54c4a3"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "1b1fbe50084b07249084531387e61ec9fc040eb074f09fcb4c120d4f5f41963a"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "1f1da580849700a070837b3ddfa57e404cb050d04db385a392da0185f59ad601"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "c97f075197b7c67ecf83168c7ddaaba873b8346f85cbe0910ebf747d31c4ddeb"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py312/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "21002fad3bf449d6ea56618825847ae60f03beea6ee59c40c4c5deb67f0c87a4"
+    },
+    "green-py312/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "ad6c579d57cbb0cc2aaa33f97aaff1a9c4262d18ce97bef6a4217f128ea0936b"
+    },
+    "green-py312/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "7892d7e26fe169afb685eccb4efdec920de9fd9a4e894b48bb47b3790f7b366e"
+    },
+    "green-py312/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py312/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "eb23479c742b0fddaf69ab737a9b1b6a03d8abb72d4d5c82364e921cd45a7cf4"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "acea28018315265e082cccc339f3109d496bc68c6f56a279d85e2e1fc3e7d93e"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "ace835741c7b6f3d65f5f68a880cd35f6975af9832c852f10aa49c13646aaadb"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 191,
+      "sha256": "fb5bbbc2208ea58766cce00eda86813e8667c856a3799fd9ceed2c04143615f5"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "6091fb89a0794a0a92aebcd82a3996e49788a1081d350808303924e3b95b6170"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "117ec6155d694f11502b9d14ad90d935f086b5d3c870e5bc60ebf841d8121096"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 192,
+      "sha256": "e63ef5d04e4457b6bf673a8059cfeed70533bfc1fdc514fc9b0cf8e7d2f6ac5a"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "6ec57477d985c4846144c6b232b21cb09c31c47e8719cf46a85bdec6c75dd564"
+    },
+    "green-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "3e5dedb9f140f47107c159ec09ec5df8e626e92a9dc321a6e71cbdea0112fa93"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "7956a3d5c41b6074d249cb1c23125471aa5db7e35b20b1a52047056d6b368620"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "695f87eecd44d79c3a86b6a30d56496fb3f1435e425c6a2f881373df0bf12b03"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "f3f2e7c483386ee6afa10db881b846c0507893a86a9d4b5b906c3af96efb9f36"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "72e22145899e11c091aeb414fd71f1d49aadb16679c8bfb7e368f0d324dd9d0b"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "edd3e9352a7888ad52b12fdb0bd865015f67fc7fa987db48c1886e44280e1a92"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "aa31f1946018ee6079c524feeadc6fae701a740d77c42077f6d386dc6309f449"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "5a28e28118db33bf4f36e32ad821dc3a0bb9c784804ca4c8357991984cac6077"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 193,
+      "sha256": "a151aabcb8c73ab884e1b200fc87d2b3e8661f87f8f10f2d5838e77f8a65d2fc"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "ff60ef29586a33ae8dfb1549ff18d0c0348f22fd61cf2870e9e89b09bcca9e3e"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "61fc252a0540cb2b0e5755354e25f4d6128af427789a29218f8677c0d1a5763f"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 216,
+      "sha256": "d9d61a4ed69945450806fb8442ead082c3421ac4128f752c18072b5d4492f094"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py312/test-output.log": {
+      "bytes": 1877,
+      "sha256": "3332944febf88a86eced91cf032250255db92f2c3aeed06d1ef50aec6c1af39b"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 106370,
+      "sha256": "d828e14921f4118d74d509c08881f357bc1fba2df3c88e88e8a81514f94bcee8"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "5588c8204faa2ba1976967509d5a3aee1a5ddb72293514bd33b209859ddef067"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "b200f90a69f410d51a2e0a90c3315ed2f6819355b9b0a4b133abe08f592c6085"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "a19b82505721b19888f8f996a022bbf71cc71465aebb330617012ba381217acd"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "9881f62ee8d15aefd5f873b55d1baf1a3c06ca476d3f3b1ffa952f3afb813934"
+    },
+    "green-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "7fb7462c52b4e1317d4e55bb4cc4578869b5abc436c90771c11d6f6fdf160c35"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 106061,
+      "sha256": "d1df0f8e24d8121369525e8011a6650e42eaea75fbde7ad4bf294507d2122baa"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "d7abda3d7723447cb9d270ee9ff36218bd5128b332125cc86e052732f9aec8b7"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 108641,
+      "sha256": "83e25218127bcee3532c54aacef5dd0934dd583cfb185b98fd391c99c30444bf"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 224,
+      "sha256": "beaa725bf62a329ea86aa31b9212987125ddabd3b806d124386bbcc5e57ffe53"
+    },
+    "green-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 105940,
+      "sha256": "53d57638ffb79327d0781da670429f8b93bfbb6e3ae1cfeaabf2f8e7000b848c"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "fbbf045fda49431ef98af5131dbe1d18fc7b5c0f90a9c4a9396fe70cd5738b02"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 108644,
+      "sha256": "e7d1bc0e54ae7353bb915969d8e36048b8ca914bd639c3efded89fd48b8aa0b2"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 106258,
+      "sha256": "e6e8ad23a466be099fc5cd672cf946bc966cc03bbd9421bbb2a2cc409b4fc52a"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "ccec56a13329c6e704dbf3fd25167ecbc486f3bd38a1f6ccfc86cb9815c42e66"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 108974,
+      "sha256": "2e6a31e19765d99616093d6cd066f0f82e543c555a6e7d9cf7ed11444705faf6"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 222,
+      "sha256": "a8c53f85c7e13083fd808ce4817b9cac4a803954c571e6a8b314bbddd6a12790"
+    },
+    "green-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "green-py313/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 106065,
+      "sha256": "0ca8a339624a0be7573088290fa950172c329b75d7a393e4aaa3cf92813c61b6"
+    },
+    "green-py313/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "18ad45bcbbadd9874ccd5bdca286fb499454f4065143d823ecce4f68f45185e8"
+    },
+    "green-py313/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 108649,
+      "sha256": "74e32662dadd36f56a5319589405f2b002f285135193aba965902fcbded6f733"
+    },
+    "green-py313/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py313/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 225,
+      "sha256": "ac2fcb97740c8db5328e8f817b72b944710dfefde2810123e305a9d410d6c2c9"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 106240,
+      "sha256": "3beb67bc065ab9f5a4961ef00362652097e30d5839dfacb1dccd5dca60d3de91"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 106345,
+      "sha256": "7a0f82d0b385b6c7cc58ba97de8457913264ed3d91058b59490ab587e2f99fc5"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "fac7b0163dba1690732d5b5ec088df4f8c38934bf69a0c1a3fe97c8446f8b4bc"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 191,
+      "sha256": "fb5bbbc2208ea58766cce00eda86813e8667c856a3799fd9ceed2c04143615f5"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "a3ea90ae1f1899bb0ca02f1a39b00cd1bb804fd164bf1ccea7c5e4c10b38e433"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "32876c64c9b7aef047f88647cb0bdf546a2e77b5d29601a11361816a3cf65533"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 192,
+      "sha256": "e63ef5d04e4457b6bf673a8059cfeed70533bfc1fdc514fc9b0cf8e7d2f6ac5a"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "eb9bf51f491d925f2466befc8d5224338b16e0d5560b5fdf75e19dc549a46bae"
+    },
+    "green-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "6faf419e71d93b02a587f05b23e662465e05124adde7ee487a36b6e755d05edd"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 110985,
+      "sha256": "0d0009b26530b53b8f0d1afd3cc688ddc277c2173c7efba14954bf7defb3df5e"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "b7d43a87c0761fc0008cb5197df2337c132c319d29c51af591e7e2b45c7c1b5c"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 111859,
+      "sha256": "4d1280c0f2cfc6d369557d58c6cb571ba103693f6b610764a003a15b9b259622"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "b5206130424240cde7d33f6d2eeb5a5794e754465559b69ba341da35820ca29d"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "35e293eba802de201196ca0cc81425a42e6ea009b6370b31aa4415ddb1d948fd"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "ace94fad96dcffba2681e096f0e44782603b5827813edbeca8199afb84ec033a"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "bbad4222fa96641939a4c5727f34ff506ce1b4b02596241c1909347f8ed55705"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 216,
+      "sha256": "4b8b298592f66b852336df361b193251ba18739ccbdc67920ed11485e082bceb"
+    },
+    "green-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 193,
+      "sha256": "a151aabcb8c73ab884e1b200fc87d2b3e8661f87f8f10f2d5838e77f8a65d2fc"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 106577,
+      "sha256": "1a70c1092619b6498410d6e474912f734c0a53e9d78f54100dc26217e11a5732"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "5af035d0cf6975602c63eb3cb16d9d6a4dba78e39b083f3e02540f54fda167f4"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 216,
+      "sha256": "d9d61a4ed69945450806fb8442ead082c3421ac4128f752c18072b5d4492f094"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 216,
+      "sha256": "ab35ed158e813f27066b109d484f94aa20af0cc8c2cba292f097559918fa3785"
+    },
+    "green-py313/test-output.log": {
+      "bytes": 1873,
+      "sha256": "b69e0632b542d12559f146acf467314d7e290197b9a993aa317d2da064a895a6"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "f4ccdd9286406671d7c6046bb5050063712d48ec807847e452e1b60c5f0e0b12"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "ca710110576bc038da8c6e33433895a0138f21ba8d1eeffd312d0e0b0c1095a1"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "1afbbf5135a3d8c83977dedeed7ceffb79647aae52ed53150e6d5f59dd402886"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "e1ff240bd6bbe618c954828471360df75084e2e4fdc005adba14b9a8f9e75ae5"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "ca92df97e8f33d1fb2c592e3103a8cc1cb30950876d036742982eb5ef5b669a5"
+    },
+    "final-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "752f09374118bdd00ac5a9e25a62ef497c116668fed60340304f15148946c873"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "f8bd7d03be256505632e13e22ee585c761bc85d54fc253e5b688bda9dcdb8eed"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "1237640e7fad03ef6ffb6a511cf6384211b7bb2657643875aa78904abaf698af"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "64ed084a48d6ac65852fb609e88675e99b8d4daa32a89e774aeace5f493a9295"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "764b2a460d72eaff4fa32ecac471aee929be80650203d043980615d2557124ec"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "d1c881a3f959f7e03a447d54569253f13c6f16cf179d10763ef34697d544da6a"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "7820b040a906d7a985818dc3578c67b7ec2b92265d569ee27bfea72b0f2a4551"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "e962dca9ba36e0ca28ed32c90cd8eca0669e2d4c9f6b5b95f34dcd35aa4a6526"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "5f76194a41ee66f782961d3f75a58e59b5d71ae291428b5144148597b55409ce"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "5a056962d36c3c116a03fada3dfe5920d3fb3bd62d51ba6ccfd1c8602e700ad4"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py310/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "e9756ec112441dcf5e7338294e3e8184e6b6929023300a05b62ae8bdeaea56f6"
+    },
+    "final-py310/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "6a8e2b11d948994adf120810393c753bd5742e813041d195b5abac03e7caf5b9"
+    },
+    "final-py310/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "8e2883ab094cc202526ac9e4e84f3a300c5b8d2ec3c33042fb3293267edf755d"
+    },
+    "final-py310/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py310/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "12ef0bfe513a7e65ce7a6f3b38fff8e5140755c03e30ca0f8a69647cb83d5caf"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "ea6b4b4a9c8197910eacaf0809ac360b16b7e76ea0c545297df00009a6a28cb0"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "3c4dd7d0e65b59723aa68e067bb2bdd8162d0973cda83c1f2d6813567aa98e85"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 299,
+      "sha256": "342e8059b7ada1820f2662b4edabd06bffa0d40db835d7abd0616f5094985489"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "973e8bea6cc4d1c6e69999f330e4bd1e722055bedc656acf134fcd1857b4c626"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "fa34dd082487dbc4b32bb50a5508ca403b22479fd118c3e90b148b45d8d62f7b"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "246eb199ab4826cc13b193cde1a136331d3bdce29d4e57e28e473b997f737a9d"
+    },
+    "final-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "b06095df843333abc08078b44c25d1c0d29ac08dcf0531d6130ab1af088dc57c"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "4537c264c66e5b4a8c43191df3c99a5176588337909df266337f1bf5aba26faa"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "6da22f99bcf30323b4913305408e541042671b8522a4fbcb787dab6ce1590641"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "bae41c17bc3d36550cd0f5ee66f79c75ec6c280e29e685f05b77fb9b82f182f3"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "fff16871725d7dfe5bbe15ae1e01b5c9c9c9190a05a357a2f1178c881fbee4e7"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "7c0179c98324f93353ac2dadfbb874bf58c3ef68aa4a500fd91a9b738071df5f"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "8fcc4641ca3db89832e8383b2a23b77f99f394d4001d74dde7a93aec279cd296"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "bcd9f770874d056946fcb777e167395b15e7c9d0295cf0573e69dbe99bc00c65"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 309,
+      "sha256": "ef039040ebef8e5a5c31406439bf153d16e3a7d3f2cc3717c79e91f7066e9a62"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "22a8580e804809402796d10170bf6c2a128557acfdcef89176d4071a24c66181"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "bd072b749145f84787f92987c1bd0bfcbd7a3db3e0330a8ebe8887b8ef343ccd"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py310/test-output.log": {
+      "bytes": 1356,
+      "sha256": "1f92e0200c5d5eed1372b99352722c55158cfe4e8dce3bc0f2f887679291415c"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "4af599e10d801d913897052fa42aa939e14ae709201a2fa8deeabee6af54e8f2"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "52e83c516b93f09e20bc5f7332aef36b8e280938453249ec74f166beb1e318a6"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "3be7615872f009c5ffdfcd9190888807793182b604f5b1d604daea2e01e6784e"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "76f6ebfe5ccf2fb78670329a6c3452ab7de92b2a740b0a5861a944b384389cbc"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "8996598d73d9bc6eefdf9f1656b6a211249bd0c44a79b24c062d926d886ea603"
+    },
+    "final-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "08c3443d25827bfff0a2e9283d787c320e3c53ea477e3e4680e0dc0f53061f8e"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "06b7665073c18e13070a8433cf69022f90694b97697b075226c8dafa2f08a65c"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "8b18521e9465f848cd26269ba49d332beb943352459fc9600d9ddf9a1c07b53b"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "811d8d79aabb40c74fa9bf13e1f29cbbca3e5d49f43737c4b6b27e00231e7ba2"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "3aabe8097da26952fe9f0be85870c83d68e448d3b276d010c5a3722529f5da99"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "3fc72f2e36069632bf29e410bece1d4e99257285fa4c86efaf542dd4367a7169"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "d8d4f455b00ebeb9b6816e44b9963b7461e56a9f8fe129d177c58baed9ca0547"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "d105d936480c8a58c9d27fb84af7f5922946e9c4aebeadd2b8280fe61f514c00"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "fbbd6bd15519ea2b71c9489945b008e84ec453623259c8d7f9eee53b53fcac7c"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "43c3b318991d011ca0cc8828d3cb930520079a9f42b3113e66d18592f712817b"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py312/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "2d13e83a6a37ada4b479ac5927e01ae39c2e613f00431bbba0206422dba806fb"
+    },
+    "final-py312/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "74c1102de9cf24f480f8be8128726bea6ddf0346237be2a0b73245d17a4a7f77"
+    },
+    "final-py312/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "f0b142ed38c098240656805400d51b6079d12340b7429c60cd8f2727ca99fd68"
+    },
+    "final-py312/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py312/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "110aa565f33428161f4a5ae5da47286967d4c8eb23e81e75c8fac966f52b1e1c"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "4f554e0dc8c89ba5af6c10828046f8f88dac9103b13f718169b231b3d5d42867"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "95ae0de03fa40df8c13e13dfd98699522f3374b85e81a1de76087a4ae9c933f7"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 324,
+      "sha256": "acf46a31d312c8d59a94b63f5c2cfea6ad6256e624be79c142b610c3c7195754"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "a5dfa499906467c457b37bc2a7141017afd1e84a5eb282a8ffca51336337a8b9"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "1eb9644c887f87a713a58981868e4fe52868cd5d1de0141c125841056e838766"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "57943d602b184332ed4bbddaf38d37eb95e3c5d7071ca6d4b71b7027c110d625"
+    },
+    "final-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "d3372f51c7175f1351d8bda53729c91fbaa60eabbc3a004a14d59b144325a72c"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "f514cbbcfb73f7540d3faf6b0df26fb41ab79de0b4f0f26593a052afa2b319d2"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "3fd8bdca7043d65e1457c950b99119507f886685ea07dba4b6e368b6cb407a3f"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "e3486a0d69499ad76deaf9c53a15e28c5c26253a9033fd7eb6df257e0652aef3"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "05a6ea7c10098e2683ded7ad052f439d73c6bb06457297a0ba3e35112ee2f54d"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "0a4a0aef6f346db8bf1ca042212ddf9e92cd09ae702409ae68c8252216d194ab"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "ab7433f1eb000d0ecc434346fa3455b4861e975e3265fba47f4f0f01d073a9c9"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "1f585cc838c4a3b7af6be3dfa607a1c1f80104d825528ec879098bc21fe52e78"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 316,
+      "sha256": "4005f7fcf025cd1edc2b4ace668a0e51063d9563d6845af192a47a13606c5106"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "4431c85ad7723600013ec7e8f76bba7e8493d4fea984d28887bfc30b9c86ea01"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "59e2ef8925b12cbce32f2bed3229290fced3c023e9be748a1f0dd2484858ddbe"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py312/test-output.log": {
+      "bytes": 1877,
+      "sha256": "8fd5440017f5f8fb681162cefaab03554e2c647f9b826bc55597b4fc0e2752bf"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 106370,
+      "sha256": "8766a6cec88efa030b8c7896067a72abde877def0d56ea328c12a09f5c01787d"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "d61f2aa1c443518223af010c1b578764cd3da71650c7ebce0aa0d3018137230a"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "4ba7a395c724122a98bfb8a5a1e1ba56079c5a0dc1d893d7841dc082569b41c9"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "07ec505907c8bd5c2d359db9417a33d184e395dcd176bcc12c91cd74826fbc20"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "bda55c1fc855794a79d18c5eb86547fc0bc578c6d82e8cd7864d25b1ef3b5d43"
+    },
+    "final-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "97d00fd798c6beb1d9cf604c05ce4e804dee775304fcec24fcbf017219801cb8"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 106061,
+      "sha256": "36455ebbc6eac25c9dc711ed54d0752c90511bb6667744b6959569f45ed42060"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "dbd2674d109527f07db5080f29e2f14799c0511f8750f73cb02a200c67b151fb"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 108641,
+      "sha256": "75233c94ea3932216219a8e5cba589c22189435086ebd02616adcb918182d16b"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "final-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 105940,
+      "sha256": "b5ab6dfed717011a9b948173bca7541cacfe94f98158ff4191cf5f0d927badea"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "e552fe0d5e9df173e978415f3d49457f3ad29433b7740d9553b8dcee304e6970"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 108644,
+      "sha256": "9fd89430dfc6ad883df1cc987841970ec5db9ac51af3a216aa5d010a08bab89b"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 106258,
+      "sha256": "18a7382b0b1e6453b79de360ba2748d22ac4abfc32b1e6d3501a1099684726fd"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "374dec7b71637ce61020b76d3095b8da2aa0c92e48394983e9029332cd140bd8"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 108974,
+      "sha256": "dbf1f57a97e6b1479a9735b39c262f76b8ab7cdcb28eb1e59aa71eec109e256a"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "final-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "final-py313/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 106065,
+      "sha256": "596251391297aed5df5012c0572c8af198b20b6e006cdd485f903243567e92d1"
+    },
+    "final-py313/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "8c90fcd854e0553f359f2d0c8d6ad0ba15a54baf14928b1e00867892652cf1d7"
+    },
+    "final-py313/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 108649,
+      "sha256": "53d5b89dd67418642b8435d52e94c35ea9c445d449aa70c7c64db24b4f97ca6f"
+    },
+    "final-py313/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py313/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 106240,
+      "sha256": "3d279148add825d623ff09f66b607317a5ac40cee024ea6e77d2d01339134e13"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 106345,
+      "sha256": "96d976552010886caf9a25de859ceab83196636fda893a1a9a120b9407a7ca48"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "efea06887518ee1cdbc8a2f1351d33b07b4089fc4fcca446245169fc3b4248f8"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 324,
+      "sha256": "acf46a31d312c8d59a94b63f5c2cfea6ad6256e624be79c142b610c3c7195754"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "dd2cf580daccadc8dfb69e79315343eee8c66a62aaa0f7d7878625b6e82abc62"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "1720f6bd6b8ee877fba0708a710723d22de5be3a579fd32a20a80e96b1e8bd88"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "a51aed62492600486bbf84c808935ac87f0cad4239cd59cc32e84a969aea9484"
+    },
+    "final-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "c1f2b6852ba1e99353b95b78cc00dd07f3cdf89f481200495358fa645b1aea4b"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 110985,
+      "sha256": "023d610af3043eed7be1d048579e7eed3a9c0cd4d643332c78a357ade687184f"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "bc622b2ff0707cb87818c74304238ffe024a278f467d5ab6c4ae7ac55cf6cb65"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 111859,
+      "sha256": "9d0cd6086cd9f2816fc8fc581aec749ca1f995b0d366a060f8b0526ce4eaa56d"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "52635c769128d3dd9f0c30e31d75f86b06fe86c7ddf955123aa2532bb9ed63a6"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "e433b64f3e9025a0da95980340264f375b585aae214566de92720856b5fe344c"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "742589aad6e12231b3fe4241fdebb489a10ce633f24eaf31fde0eaa9f1cb48ea"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "a197c1c96198b1a128ef3b9ad1a73bd09f03b7de09250b18e87931113ba5276d"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "final-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 316,
+      "sha256": "4005f7fcf025cd1edc2b4ace668a0e51063d9563d6845af192a47a13606c5106"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 106577,
+      "sha256": "7e23846e3fbffe3ba48d25feda04fe1fbfc3d514b588460d670b99cb62f149ae"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "7fdb5a21f2cd76590b2ac4e8d7de6f990a48ae1f433c2b43e98d21f4170ac61b"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "final-py313/test-output.log": {
+      "bytes": 1873,
+      "sha256": "8e99dd2d9569405a7c03561ad1e8621b1c2d356e2a260152d3a404290deb1810"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "43b846e5585a6668c19f0199cbaebca391df2a756a337a112f12cd1c18394982"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "8851dc03c5a2933b3e5a758d795b37fe5055e9cfca426989e56f1e08c8743aa6"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "0e75da15ab9117a251009e624a9f8d1edeb6a0d3bd98ffe4316ff36badc10284"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "dd1075a5402e394c46511b32a273b4ad2f0e77dde56379a9659910cdc9db9b48"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "22100155afc608304a7063b1170c45e61904e1dd335486052c80e3d6c2d53835"
+    },
+    "peerfinal-py310/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "72ef77edd39ff619ce876e821406165a92c63ab37170c135163f4e69ba738b63"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "543d696324363ba33fae9eb6bdb6208494a4f616eef6b705de9e65675bf0113b"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "2e66029706a2f5aaa53bb1c8e2389d92196edf94506b35c49436fc711b7a2e14"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "0af9ac5236a9f9ff99b6ac9c10db5e1d93ef2171402ace2c92dbd65e939dd506"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "09e0d33c3fcae7c08773b46be55f52ea04672e7f18d3dfcccbd48427fed732a7"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "28418d38109b083baf4e261dabb9d2569b519b954bd2ecaadf920a4b9ff5540e"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "489ffdd529b058e0db2e26c3b02ddeffc2ccad773bf85a787c5652731821c1f1"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "bebc8bd1bc45b8ae87831063a1d0d26597cc1d3050fd71356ff18d831d1575bb"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "0e94a646ec398a99514269ab6fbc27e2a7ceff7e385937add08254b70aade787"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "5a744bae68ac09bf3ad04a52215c1d7cdd5d85cfae6fb5588bde59047ca5c2d3"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py310/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py310/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "3975144f902696415eca11f9d41924755e1290d2f2e3d7f6ad608223ab9e4593"
+    },
+    "peerfinal-py310/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "8ca8370c785a4324b673eb1ace4c599ecfe88e90e4c157c39d792af4c354c402"
+    },
+    "peerfinal-py310/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "4425f6a10caa71da11ed0fd4db7c31898838fec9d933126e6fabbf3dad58e157"
+    },
+    "peerfinal-py310/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py310/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "95b400f4d24c4e45bff58b8c2adece75800c03f96e9c7a661b1ae74faac5c005"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "7edad73159d260b5a78609aed2b1c941f27f7027f2a2061221f9d9d9e3f8c86f"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "455e535680221d5928e05cf4ab164125473f43de3821f496c29e888c237ddc16"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 299,
+      "sha256": "342e8059b7ada1820f2662b4edabd06bffa0d40db835d7abd0616f5094985489"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "2d99f72f05c36f135707dd7f8724c4f076d5805c1790eab1322c652f4cc93c85"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "04c47a3ec54ee803dea5977dc850db22d593d315e35fda578d71b62ffcf88fa0"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "c627134eb46b10e8f0282ea34496b268051c1b6170f6e715c936877c7d1df0db"
+    },
+    "peerfinal-py310/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "0aaa43894ac82cc55223b6087a8a3889f322dde95cc417413c0debc9cd2e0288"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "6a666ae1346ffd0ac5843bb64efae80b8ebe8c56f98336490d86184b3f2f4f15"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "0c1ab211600ed7c18795764505646299a70f369065aede255c39e24944eb8156"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "554c6e7853ca0f244be9862ab75a4d7e4f7a22be4370b2db2f9b792f9efc56b4"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "ab436f90aea5f1697997cb05937a7d9434f7c916a438af6bf574205ff599fd7d"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "cbb9c4100488ed455851cb63a5fb25b6ae3cef21f42087da503a7cc0fda73c4a"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "dfb695feccf0c31a3401fe95aa27c2514fa18e0531308aaac477ca9affabe834"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "68e4bc2423f98dcff3bdb57381856bf6a9236cd4b0300c448f06c307bad380d4"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py310/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 309,
+      "sha256": "ef039040ebef8e5a5c31406439bf153d16e3a7d3f2cc3717c79e91f7066e9a62"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "38625502bc42d381e13e8505458fa346cc28f5eae61eb7a02e16c2482fcce8df"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "e0d4df0e0de5ed563f57286cdf5737b2c1d5e4e398ea5fab96e66fe0e64fbed5"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py310/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py310/test-output.log": {
+      "bytes": 1356,
+      "sha256": "7068d809027b746a8acba37adf1dff8d7749ef962769e2f4435426f210c586bc"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 104148,
+      "sha256": "304d2a6d0c4c27da33ed84f04a3a7594f90b9d920889b9456a89280154e38a90"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "c4effcdd8585f6e2a0cdbe9635d67d8832d2cfd42ea72fa750bfa20f911879c4"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "85fded0a4cb4dd35d8fcc3085c73842ba229c4344fe4b82e0e93955533d710a8"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "d7ffc1868cd1bfb859794fa787235a6b92725a9c2eae2ca8e7a2aceab34d987b"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "710d8e1071f875f6b3469c37146b9ce5c97186511f61babd6309c4a3d1698e7b"
+    },
+    "peerfinal-py312/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "760d191fce7e938d4155a55a4b0884c7bf28554b9d7d69e56739f201665bbbea"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 103839,
+      "sha256": "04fcf748806bcc0a52b4230503981761e4a6d3ca333a2d8146a3aab50c9f3626"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "d27fb62feaedf7ee4dc8d4efcda4984834bc415260d87771da5240475958224b"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 106419,
+      "sha256": "f19e5cdd4c381285fe3b4337047257411df2b0c7969acd4810bd4c6b30a8b015"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 103718,
+      "sha256": "d91d6fd12921ede410a9ce0b54c344b5b1adbfc212de650139dc37500126c337"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "89be71fd99578b37e30a99dbb1d17e1743695d832f75ac17e64b8c715ed77451"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 106422,
+      "sha256": "c63bc7e64c111047f187c48ac68ef564136a4e1fc8a1e3408894457b32f9d950"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 104036,
+      "sha256": "2cb93f03566c5fa0bbd1252823bd8350f36cd9a0b66f0b65ca93bb732fbc92ec"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "1755a877f4ced06bf3a28d6eb1b70e8e178474796f4b93996134364fee11aabd"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 106752,
+      "sha256": "6be6bb9cd9cceb6610f4ab15a738dd69a9cb4f7e04369c984a5ed566bce805f6"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py312/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py312/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 103843,
+      "sha256": "6a145976dd69db0e0daf2732f34069937a4250e7f6d5e6d8bce5ee32100fc8a3"
+    },
+    "peerfinal-py312/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "1b3d48495612ec6ee17108932f993dfb123a713e1bb8c705b4038f8e64184b68"
+    },
+    "peerfinal-py312/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 106427,
+      "sha256": "ef44e057ce746ad911d71925b0ac0e6b48dddd5de7635c8d1972625a5abd53b7"
+    },
+    "peerfinal-py312/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py312/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 104018,
+      "sha256": "818e59e97401aa1300569018a8f0ded97696b20d3a00c981713b01ae7b1fd29e"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 104123,
+      "sha256": "93ced389bddcef5755ee23c52b6aa0d485db09f5078fcb341cc2c96be5793c0d"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "bac5f3fa1da66e6cfca6d00657af03723d1542109bec3c613df327b4846b0a87"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 324,
+      "sha256": "acf46a31d312c8d59a94b63f5c2cfea6ad6256e624be79c142b610c3c7195754"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "66c40c23daf597847dbc8d38c2f7b8a97746ade593424396f137f99a087ef022"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "42d78daa6346369774e2b9d36e97a79c6dbcb66b012e6ee10a2400c2aada62eb"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "6435e085537e9c226bdaabdefff45d8fe325ffd98c18abbe5898a90c84f62e18"
+    },
+    "peerfinal-py312/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "22a842d76ec69e38e8129e4fda99662e1fdd56723187696ade4c2eef0eedc5fe"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 108763,
+      "sha256": "70caba883a491739644a9505fefc76e685cfc595ff0e4e99ff8da6bf036ee0d9"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "c6650e29c802ffd26c5916a00f783370b768972f015df910546157e25f21573f"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 109637,
+      "sha256": "2b5ed6aee560117e51fceaae31050d8d09aa19acad372ca06e23ee39339f0276"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "703e8222698c994beabab4d91c03774161a81d41ee8c1ead3aa9f6e7c550e113"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "e458b51e078035df5c96a0556193d76a01bab020ab63ada31944d0cd951e5071"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "aa92fc741aa56e95fc9ef2a4f2c47f59b07e622f9e6f09ff516db56db0b1010c"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "66ed1fc2d9bd32850d83c380cd35131c29ee8fcf80d2371505662186877d8d38"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py312/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 316,
+      "sha256": "4005f7fcf025cd1edc2b4ace668a0e51063d9563d6845af192a47a13606c5106"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 104355,
+      "sha256": "0a007bacbd19f578122380a434973ecdc7e9170509810aa7be758c69064d8f6a"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 107884,
+      "sha256": "2dd90b9eda1ec5cf2f53e025bcec1adb834b989c9bbad2fe16875a3709b2b307"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py312/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py312/test-output.log": {
+      "bytes": 1877,
+      "sha256": "e31a99329c90d56f2d394169e4a43d35ad173cb17108093e5a96d958063de1f1"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/after-metadata-probes.json": {
+      "bytes": 106370,
+      "sha256": "02b1cd82d342fd280dae3f9b5b4437dc18cddaffb5b1fba4d04678829300922b"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "a4c2699d271384131681a454db3680209a20443f9eeabd34cccdee0fda4c5015"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-000-risk_revision.json": {
+      "bytes": 180,
+      "sha256": "edcae8fa8d1ba9ff3493ff097464c5db54177aa0788b3b305ec3aea3b88146ba"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "b90a4a12624e927adb1969565b5fc120e2e0d30096da42d427762569837d3cb4"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "59231e2cea3c2af3ea6829588a5c60d6c371d3e693b987b591a0be90068fdade"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-003-table_definition.json": {
+      "bytes": 180,
+      "sha256": "3bc3bc3e4ce0c766beaea48b628da2b735869f7461ae69cc35183706e4fb189c"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "c1a35a82bc36a3ddb394dd9f06dc38c74dd2823cada6fa21c59b9207026b1a3c"
+    },
+    "peerfinal-py313/test_full_risk_row_and_model_table_definition_invalidate_without_account_version/request-005-round.json": {
+      "bytes": 649,
+      "sha256": "8ef9a21a78102b0c1f400364655455ed7d632e9d5433b8bfe2b325f5c1f404d5"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/after-fault.json": {
+      "bytes": 106061,
+      "sha256": "e987c6fa09567ec1215061f52a9dda7af84a96b9c33b004b1ba0fb59166ec6fc"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "9108225d73c5e695f39c55fb4fc0d8dd4057c5990ecff798c35d1ec58c35b404"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/injected-corruption.json": {
+      "bytes": 108641,
+      "sha256": "188cf92db43e21061234cab04868f0b644cc59654b595aacb7fb749842e561ee"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-000-round.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-001-submit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-002-deposit.json": {
+      "bytes": 387,
+      "sha256": "44a760d32033e5b3b76c6456d9a9b27bcf8d2aaf984b53344f1fca6d94306057"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_fence_control_guard_corruption/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/after-fault.json": {
+      "bytes": 105940,
+      "sha256": "3402cc16b3c3901bc25125c9e91a62caeb9db9b8df3b62d026e9e0f4f5f617a7"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "00e41f17b2f5ee4308534c4b15d03f26a8f2633df42ab5cb9c17debde71b8411"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/injected-corruption.json": {
+      "bytes": 108644,
+      "sha256": "20ffff20fb247f436db26e486fc7649334da3bb369d51945fc96368dbd4ff078"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_missing_persistent_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/after-fault.json": {
+      "bytes": 106258,
+      "sha256": "45c26ee4f961a3efb65d296e993484616c4d22659a4374298be8e735fef4a3cc"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "6609d04fcb358c75118b4a845d2a2a8a9c66eb335651016d72a1aebebbbae670"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/injected-corruption.json": {
+      "bytes": 108974,
+      "sha256": "78d9d2b2bb8d8d382fd6a3a52ec8aaedf826992b5f0f42863896825d35f3b8e1"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-000-round.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-001-submit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-002-deposit.json": {
+      "bytes": 380,
+      "sha256": "421c8685d4d7d1c759aa4af218ebe02d5c0dfe73ff5f6150bbe50d40417dfe33"
+    },
+    "peerfinal-py313/test_warm_hit_does_not_mask_weakened_same_name_financial_guard/request-003-background_failure.json": {
+      "bytes": 254,
+      "sha256": "62cc0c1e1bbeb67c68dd4934efaf5222bb2763d7a7b5dda0c87ce92e8bd541e5"
+    },
+    "peerfinal-py313/test_warm_hit_still_validates_required_audit_guards/after-fault.json": {
+      "bytes": 106065,
+      "sha256": "fb1e3ae95c11d410be4535d94b5e35843e4b19664cc87ac1989c22d1660a3d36"
+    },
+    "peerfinal-py313/test_warm_hit_still_validates_required_audit_guards/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "5ad345199bcf509c2899678a1c38e59be116bbe5f461774a4eeb1e12203ff2cb"
+    },
+    "peerfinal-py313/test_warm_hit_still_validates_required_audit_guards/injected-corruption.json": {
+      "bytes": 108649,
+      "sha256": "6f7b1022a626f391400ff6e7896f3b346394ded3ac124cf7c56692795414cc19"
+    },
+    "peerfinal-py313/test_warm_hit_still_validates_required_audit_guards/request-000-round.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py313/test_warm_hit_still_validates_required_audit_guards/request-001-submit.json": {
+      "bytes": 378,
+      "sha256": "ab905a2b8d12d2a2f81556ffe56abca690011a85d57f7b4a3730ccfaf3554afc"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-deferred_constraint.json": {
+      "bytes": 106240,
+      "sha256": "8f02b8133b0e4aa6f782f3186120d8107280ad3b8ff29e580938504284eabca2"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/after-response_lost.json": {
+      "bytes": 106345,
+      "sha256": "2299df3e90bb5c48f73dbc1c01ee1809c012e1623249c0d943dd9570cff29646"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "d84676c5df7a9ef2ca95a69dd92cd14b20917b8c56ead4fa919569b81c5186d2"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-000-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "749b7c09a033f8154c2d5f7b1db547fc3640f5074a81bd4fbdfe15cbfc9971d2"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-001-arm_proof_fault.json": {
+      "bytes": 195,
+      "sha256": "fcdd20dfab10161a65dc583fbdc260a1a179f27f2d64807ff2478dff78579544"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-002-round.json": {
+      "bytes": 324,
+      "sha256": "acf46a31d312c8d59a94b63f5c2cfea6ad6256e624be79c142b610c3c7195754"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-003-round.json": {
+      "bytes": 649,
+      "sha256": "53a46d6ba26222d120cd373aa971ac3ed0b6aa3c1f08e6968c86205f62a3d059"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-004-round.json": {
+      "bytes": 649,
+      "sha256": "8421eba5eed5960cf330ee1657a9720e3d5edd23c8f16dfaf076ff881ca41a02"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-005-delete_risk_row.json": {
+      "bytes": 180,
+      "sha256": "b64ed4796370e2d8b398ed84709a2301e5d899e07eb469be2f494706483e59ef"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-006-arm_proof_fault.json": {
+      "bytes": 189,
+      "sha256": "a304fa57768e1e68a00dd7c9d1f06cbaa9b5427d5649a411349644ce755b4206"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-007-round.json": {
+      "bytes": 320,
+      "sha256": "1d10255f601e148b1e4635b179d2ee70dd764e964451f48981dee3794370eeee"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-008-round.json": {
+      "bytes": 649,
+      "sha256": "ac2130415b2bf0f02965c82e6bf61b326d3053a08dda0d9a1b057dabb338c523"
+    },
+    "peerfinal-py313/test_warm_miss_with_failed_or_unknown_commit_cannot_publish_new_proof/request-009-round.json": {
+      "bytes": 649,
+      "sha256": "1dd639dd2a7850439f83909336a59874be4a081ec0ec673618cb338741c37dd4"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/after-fault.json": {
+      "bytes": 110985,
+      "sha256": "99c3c5627fad6f67f7ba97b1836266e64784724c9a2a761155a1e5c37ef0d9f3"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "bd416ac2f6ee0a0128bfcefdb46b0709b88926a69c7a31093447845141a94146"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/new-owner-positive-control.json": {
+      "bytes": 111859,
+      "sha256": "593b22f89452f957606779592c5a7df7207e3f1404b07c6582c71900a3cc8e0d"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-000-submit.json": {
+      "bytes": 729,
+      "sha256": "8432881bccbf30648d2d8749a0c73d65dfce1f57fc57866e8ad58d671cd42307"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-001-round.json": {
+      "bytes": 649,
+      "sha256": "67a7ddc92cb097f77c71756f3abe5e331a890ad94d11164acfc8699c50503f62"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-002-round.json": {
+      "bytes": 649,
+      "sha256": "3d54b0bbbcc4dd249d1385010a015231d4cb2dce3a90fc2c5f7422c1949fab6f"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-003-release.json": {
+      "bytes": 554,
+      "sha256": "ae4182d945d13960f7224397ae77d81b6bb57d1dce0ce0837bb676fef10dc8ee"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-004-round.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-005-deposit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-006-submit.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-007-renew.json": {
+      "bytes": 368,
+      "sha256": "f0bebec8693c81c3122f13609d79929b63b595bd6836ff64e29c7b45d3bfcac8"
+    },
+    "peerfinal-py313/test_warm_old_owner_cannot_write_after_release_and_new_pid_takeover/request-008-raw_update.json": {
+      "bytes": 316,
+      "sha256": "4005f7fcf025cd1edc2b4ace668a0e51063d9563d6845af192a47a13606c5106"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/after-fault.json": {
+      "bytes": 106577,
+      "sha256": "cd1d32eca968d290e1569fbc9b5002a8ce004af4accaf9218c61713ce5b01739"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/before-manifest.json": {
+      "bytes": 110106,
+      "sha256": "c2953803647f4cf56b692e59c76046a93f658fda2c56cdfd6c29a87ae75e0487"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-000-renew.json": {
+      "bytes": 180,
+      "sha256": "382cbb3728aa87e9d044b1dfcc2c4c4f8fb07222dcb5a00a2033ce0e051e89bc"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-001-renew.json": {
+      "bytes": 339,
+      "sha256": "c0cb7a298547d149d58f8f2be3f77b4b670a9e103d6edc9d9cf48e94fb2fff89"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-002-round.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-003-deposit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py313/test_warm_proof_cannot_renew_an_actually_expired_lease_or_commit/request-004-submit.json": {
+      "bytes": 339,
+      "sha256": "559e967944ba8038d2b590d209322ee31c54426d9dd8f1c46cb27a1d6dd36131"
+    },
+    "peerfinal-py313/test-output.log": {
+      "bytes": 1873,
+      "sha256": "d43806175f4105b69b807e42f0118f68f781093cb0cab5760125bd3f43736e3e"
+    }
+  }
+}
