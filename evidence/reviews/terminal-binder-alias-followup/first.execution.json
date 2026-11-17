@@ -1,0 +1,38 @@
+{
+  "schema": "uta.terminal_binder_alias_first_execution.v1",
+  "mutation_commit": "c7bb01f5d68b57e29c939a4b7a8e3df3e6b9de52",
+  "source_commit": "15b61fd90ee0af6ee28cbba42a79a8484910d2d7",
+  "argv": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python3",
+    "-B",
+    "evidence/reviews/terminal-binder-alias-followup/first_challenge.py"
+  ],
+  "started_utc": "2026-11-17T23:46:42.929052+00:00",
+  "finished_utc": "2026-11-17T23:46:43.045319+00:00",
+  "elapsed_ns": 116251434,
+  "exit_code": 1,
+  "source_sha256_before": {
+    "tools/bind_managed_terminal_evidence.py": "d82936254765f2372ac9ecdbd0f0c19a1d12fb4cd70a52e0864d7ec4b2465a1f",
+    "tools/extract_managed_terminal_evidence.py": "691c6df2e91d0a980eebe78fe41e169e1fbd9d3e194b441723be42138e7607d6",
+    "tests/test_managed_terminal_binding.py": "c867a8fd80d345f1c51a3ebe1375930ab3fda3efd5af5df0a5025374b125fd6f"
+  },
+  "source_sha256_after": {
+    "tools/bind_managed_terminal_evidence.py": "d82936254765f2372ac9ecdbd0f0c19a1d12fb4cd70a52e0864d7ec4b2465a1f",
+    "tools/extract_managed_terminal_evidence.py": "691c6df2e91d0a980eebe78fe41e169e1fbd9d3e194b441723be42138e7607d6",
+    "tests/test_managed_terminal_binding.py": "c867a8fd80d345f1c51a3ebe1375930ab3fda3efd5af5df0a5025374b125fd6f"
+  },
+  "source_unchanged": true,
+  "stdout_bytes": 7301,
+  "stdout_sha256": "df90d11aeb52884cfc2aa81b33be83460e72469f2a75c6cdc3811d3717a5dbe7",
+  "stderr_bytes": 0,
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "original18_rerun": false,
+  "actual_task_directory_sql_observer_audit_signals": "NOT_RUN",
+  "production_approved": false
+}
