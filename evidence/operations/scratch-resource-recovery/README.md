@@ -1,0 +1,5 @@
+# Reversible scratch resource recovery
+
+Only 24 derived build/unpacked/venv directories and 16 clean completed nonfrozen component worktrees were removed. Every selected worktree had no dirty/untracked source and only ignored Python bytecode. All Git branches, commit IDs and tree IDs remain unchanged and can restore the worktrees with the provided commands. Every one of 49 retained original wheel/sdist/source/negative archives was hashed before and after and remains byte-identical. No frozen source, running or stopped job, authority database, private clone, original raw result or source clock was removed or modified.
+
+Observed free bytes changed from 20,116,750,336 to 21,929,705,472. These observations are not a reservation, storage expansion or production capacity result. Any later job must recheck the complete cohost budget against actual free space; the stricter 1GiB private-clone parameter is only an estimated-input admission limit, not a physical peak quota. The proposed new long run remains unstarted/NO_GO.
