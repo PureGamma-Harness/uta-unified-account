@@ -258,7 +258,7 @@ def worker(output):
         os.close(fd)
     emit('original_case_end', passed=result.wasSuccessful())
     stream.close()
-    (output/'result.json').write_text(json.dumps({'base_source':BASE,'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
+    (output/'result.json').write_text(json.dumps({'base_source':BASE,'runtime':{'python':sys.version,'executable':sys.executable,'sqlite':__import__('sqlite3').sqlite_version},'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
         'tests_run':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),
         'case_passed':result.wasSuccessful(),'test_failure_observed':not result.wasSuccessful(),
         'historical_original_assertion_reproduced':any('original bound PID did not exit within the unchanged five-second recovery horizon' in trace for _,trace in result.failures),
@@ -271,6 +271,8 @@ def worker(output):
 
 
 def launch(output):
+    beginning=monotonic()
+    started=datetime.now(timezone.utc).isoformat()
     # Reap only adopted descendants of this new reproduction process.
     import ctypes
     assert ctypes.CDLL(None).prctl(36,1,0,0,0)==0
@@ -280,7 +282,6 @@ def launch(output):
     if not before['all_266_match_original']:
         raise SystemExit('source guard mismatch; no native run')
     command=['taskset','-c','2',sys.executable,str(Path(__file__).resolve()),'--worker',str(output/'worker')]
-    started=datetime.now(timezone.utc).isoformat();beginning=monotonic()
     with (output/'unittest.txt').open('x') as log:
         process=subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
         identity=birth(process.pid);pidfd=os.pidfd_open(process.pid)
