@@ -107,8 +107,6 @@ to announce an expired token ready; it does not make a large scan bounded or
 guarantee operational startup/activation latency. This cost requires separate
 review before claiming large-history availability. No heavy test was started.
 
-## Reproduction and raw result
-
 ## Integration correction awaiting independent recheck
 
 The integration now requires each global and private execution-confirmation
@@ -141,6 +139,8 @@ entries and does not recover lost receipts. Roll back code only while preserving
 authority state and the source gate; an older verifier's acceptance cannot be
 used to override the new corruption rejection or enable real funds.
 
+## Historical reproduction and raw result
+
 ```sh
 /usr/bin/python3.13 -m unittest tests.test_migration_reverse_evidence -v
 ```
@@ -153,5 +153,7 @@ passed in **1.095 seconds**. See the [raw red result](../evidence/runs/migration
 [scope controls](../evidence/runs/migration-reverse-audit/scope-controls-py313.txt)
 and [digest manifest](../evidence/runs/migration-reverse-audit/manifest.json).
 
-Runtime repair and rerunning these same assertions are outstanding. This review
-does not approve migration or production use and cannot qualify a long run.
+At that original review, runtime correction was outstanding. The integration
+correction above subsequently passed the same assertions; independent recheck
+and full release qualification remain pending. This review does not approve
+migration or production use and cannot qualify a long run.
