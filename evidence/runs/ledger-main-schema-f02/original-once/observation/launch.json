@@ -1,0 +1,42 @@
+{
+  "started_at": "2026-11-17T15:44:52.955773+00:00",
+  "finished_at": "2026-11-17T15:44:54.160774+00:00",
+  "whole_seconds": 1.2050207900028909,
+  "whole_budget_met": true,
+  "source_checkout": "0d0ca6aee9cbd3c788f2492c27c83e638e33f59f",
+  "driver_sha256": "7f147c8bfcbe7009a85cdedd209b05164a4069a0b4e167b4e58767cdfd4c4bb1",
+  "records": [
+    {
+      "label": "baseline",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-ledger-main-schema-gap/evidence/runs/ledger-main-schema-f02/observe_main_shadow.py",
+        "--worker",
+        "baseline",
+        "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/baseline"
+      ],
+      "worker_pid": 242541,
+      "exit_code": 0,
+      "timed_out": false,
+      "forced_cleanup": false
+    },
+    {
+      "label": "f01_candidate",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-ledger-main-schema-gap/evidence/runs/ledger-main-schema-f02/observe_main_shadow.py",
+        "--worker",
+        "f01_candidate",
+        "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/f01_candidate"
+      ],
+      "worker_pid": 242770,
+      "exit_code": 0,
+      "timed_out": false,
+      "forced_cleanup": false
+    }
+  ],
+  "observations_complete": true,
+  "all_four_reproduced": true,
+  "interpretation": "The original results are retained independently of reproduction. No fix or production acceptance is implemented.",
+  "production_approved": false
+}
