@@ -1,0 +1,35 @@
+test_actual_borrow_only_preserves_original_db_for_independent_observation (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation) ... ERROR
+
+======================================================================
+ERROR: test_actual_borrow_only_preserves_original_db_for_independent_observation (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/uta/credit_native.py", line 78, in _verify_financial_source
+    DurableLedger.verify(ledger, connection=connection)
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 513, in verify
+    self._verify_postings_definition(current)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: '_LedgerVerificationView' object has no attribute '_verify_postings_definition'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/tests/test_credit_v2_runtime_chain.py", line 26, in test_actual_borrow_only_preserves_original_db_for_independent_observation
+    fixture = self.authority()
+              ^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/tests/test_credit_v2_runtime_chain.py", line 23, in authority
+    return fixture.install_and_open()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/tests/credit_v2_runtime_fixture.py", line 87, in install_and_open
+    self.installed = install_internal_credit_v2(self.db, self.bootstrap, self.bootstrap_credit, self.envelope)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/credit_native_v2.py", line 218, in install_internal_credit_v2
+    _verify_financial_source(database, con, scales)
+  File "/workspace/uta-credit-internal-v2/uta/credit_native.py", line 81, in _verify_financial_source
+    raise CreditNativeError("credit_financial_source_invalid", "complete existing financial verification failed before credit preparation") from error
+uta.credit_native.CreditNativeError: complete existing financial verification failed before credit preparation
+
+----------------------------------------------------------------------
+Ran 1 test in 0.218s
+
+FAILED (errors=1)
