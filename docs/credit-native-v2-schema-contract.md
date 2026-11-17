@@ -153,7 +153,10 @@ commit REJECTED against the original accepted source, without an intent/effect.
 
 The context and immutable intent share `pre_state_payload` and `pre_state_hash`.
 Their canonical object is `{account,credit,limits,selected_at,market_snapshot_id,risk,
-quote_units,quantity_step_units}`. `account` is the actual complete
+quote_units,quantity_step_units,journal_head}`. `journal_head` is the actual last
+sealed ledger `{sequence,event_hash}` (empty genesis is sequence0/hash64zeroes).
+The new event must have exactly head sequence plus one and that prior hash.
+`account` is the actual complete
 `ExchangeService._audit_state`; `credit` is the exact existing transition
 `SNAPSHOT_FIELDS` in integer units with integer version; `limits` is the exact
 `LIMIT_FIELDS` for BORROW and NULL for REPAY. Repayment does not require a new
@@ -204,6 +207,11 @@ market/storage/unknown outcomes are technical failures, leaving original
 PENDING/source rather than inventing a new CID or releasing an unknown effect.
 V2 denies financial DDL immediately and checks exact schemas without automatic
 repair. Original Database transaction ownership and final lease checks remain.
+Do not run original `DurableLedger.verify` while a legitimately staged intent
+still lacks its deferred journal/decision/terminal parents: its full
+`foreign_key_check` must reject incomplete obligations. Run full original
+ledger/credit verification before intent staging and after all real terminal
+obligations close; use actual local checks during the operation.
 
 These controls validate the supported application path on the trusted host.
 They are not an OS-owner boundary, generic SQL proof of portfolio math, global
@@ -248,3 +256,40 @@ that positive APIs are absent. It does not execute SQL or verify FK/trigger
 semantics. The original early catalog check is retained separately; subsequent
 capability/static-descriptor identity separation is checked in the final raw
 with its actual source hash. Neither output is a financial or runtime pass.
+
+## First real source/data primitives, without an active authority
+
+The next code slice implements `validate_envelope`, `source_receipt`,
+`parse_source` and `read_source`. Their frozen outputs remain declarations or
+evidence, not permissions. The source constructor records UTC with six
+microsecond digits and `+00:00`; the strict parser requires those exact canonical
+bytes. `read_source` reads actual source and inbox rows and compares every
+duplicated identity with the full canonical receipt and the expected authority.
+No archived field chooses an import, filename or executable symbol. Unknown
+scope, bool-as-format, noncanonical numbers, duplicate keys and unknown fields
+fail typed closed. There is still no installer, native owner, active operation
+scope, intake scope, successful authorization UDF or positive borrower.
+
+Seven actual component tests passed on Python3.12 in 0.173s, actual process
+window 2026-11-17 12:46:38.669179 through 12:46:39.008421 UTC (0.339435691s),
+CPU4, ResourceWarning errors enabled. The self-created private temporary SQLite
+fixtures reuse real core ledger/credit/inbox/base-audit parents. Their explicit
+raw component connection isolates schema/reader behavior; it does not claim a
+native owner or runtime authorization. No successful permission callback exists.
+Source followed by its matching PENDING row actually commits and reopens. A
+source without its deferred inbox parent fails actual COMMIT with native code
+787 and leaves no source/inbox after rollback/reopen. Three independent UNIQUE
+REPLACE identities are blocked with native 1811 under recursive_triggers OFF.
+
+The component deliberately retains a remaining boundary: without the future
+native intake UDF, raw component SQL can commit a structurally valid source row
+whose actor column differs from its receipt; the real reader rejects it typed.
+This is not a valid source or positive permission test. Runtime source/effect
+gates, exact writer inventory, complete audit/FIFO validation and all NV2 gates
+remain pending. No loan, dedicated decision, financial native effect or owner
+was produced. Exact hashes, command, first unchanged output and begin/end are
+in `evidence/runs/credit-native-v2-primitives/`.
+
+```sh
+taskset -c 4 timeout 30s python3 -W error::ResourceWarning -m unittest tests.test_credit_native_v2_primitives -v
+```
