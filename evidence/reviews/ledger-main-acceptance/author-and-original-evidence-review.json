@@ -1,0 +1,52 @@
+{
+  "status": "AUTHOR_AND_ORIGINAL_EVIDENCE_READ_ONLY_VERIFIED",
+  "raw_copy_groups": [
+    {
+      "group": "original-once",
+      "safe_raw_byte_identical_files": 15
+    },
+    {
+      "group": "fixed-once",
+      "safe_raw_byte_identical_files": 36
+    }
+  ],
+  "original_four_strong_cases": [
+    {
+      "source": "baseline",
+      "case": "event_hash",
+      "direct_error": "journal event hash changed",
+      "joined_false_certificate": 2,
+      "original_db_unchanged": true
+    },
+    {
+      "source": "baseline",
+      "case": "balance",
+      "direct_error": "materialized balances differ from journal replay",
+      "joined_false_certificate": 2,
+      "original_db_unchanged": true
+    },
+    {
+      "source": "f01_candidate",
+      "case": "event_hash",
+      "direct_error": "journal event hash changed",
+      "joined_false_certificate": 2,
+      "original_db_unchanged": true
+    },
+    {
+      "source": "f01_candidate",
+      "case": "balance",
+      "direct_error": "materialized balances differ from journal replay",
+      "joined_false_certificate": 2,
+      "original_db_unchanged": true
+    }
+  ],
+  "four_original_F02_db_hashes_unchanged": true,
+  "fixed_private_DB_hashes_verified": 30,
+  "F01_original_db_unchanged": true,
+  "fixed_source52_identical_and_matches_independent_tree": true,
+  "author_runtime_tests_passed": 41,
+  "author_ms002_no_temp_permission_and_all_reads_main": true,
+  "independent_sql_executed": false,
+  "original_DB_opened_with_sqlite": false,
+  "production_approved": false
+}

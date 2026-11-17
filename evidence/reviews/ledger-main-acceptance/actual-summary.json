@@ -1,0 +1,169 @@
+{
+  "verdict": "ACCEPT_NARROW_MAIN_VERIFY_IDENTITY_AND_ORIGINAL_MANAGED_BOUNDARIES",
+  "preregistered_head": "d9495b407e69feffa81d00f974a120deae6e06ab",
+  "candidate": "e7ca619b219812f9377ec98cf0a98caacca0da61",
+  "implementation": "5924336a94688fccd5bd55c29a0b428914591f52",
+  "author_evidence": "e44a8fc25a473f007578360181ef0eefa856352c",
+  "storage_sha256": "8b4ba2f95c73fd288aef8bd20d8fbb166cd540ab3e9f0bebb0ef8afe9111d88c",
+  "actual_start": "2026-11-17T16:15:06.354798+00:00",
+  "actual_end_after_driver_return": "2026-11-17T16:15:06.734156+00:00",
+  "outer_whole_seconds": 0.379384336003568,
+  "worker_seconds": 0.21656661700399127,
+  "unittest_seconds": 0.187,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+  "sqlite": "3.53.1",
+  "cpu_affinity": [
+    4
+  ],
+  "tests": 14,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "native_batches": 1,
+  "retries": 0,
+  "watchdog_or_force_cleanup": false,
+  "source52_and_test_driver_unchanged": true,
+  "cpu4_released": true,
+  "owned_processes_reaped_and_absent": true,
+  "raw_safe_copies": 29,
+  "private_fixture_DBs": 16,
+  "original_F02_DB_hashes_unchanged": {
+    "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/baseline/balance/main.sqlite3": "1ad389c0461057edb528d0be6ca870b23ba1a5b283998ef6865c6c15351b4904",
+    "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/baseline/event_hash/main.sqlite3": "a4cf824c572f3f66680a6476b2b3eb5f62c2c5303db9ad17297dbf553d316627",
+    "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/f01_candidate/balance/main.sqlite3": "1ad389c0461057edb528d0be6ca870b23ba1a5b283998ef6865c6c15351b4904",
+    "/tmp/uta-ledger-main-shadow-0d-once-20261117/observation/f01_candidate/event_hash/main.sqlite3": "a4cf824c572f3f66680a6476b2b3eb5f62c2c5303db9ad17297dbf553d316627"
+  },
+  "original_F01_DB_hash_unchanged": "d77b0f8cc1797ac9376d10574927e609e1e93abf9b081bddeb5632639f87bb8a",
+  "author_30_private_DB_hashes_still_unchanged": true,
+  "raw_join_observations": [
+    {
+      "case": "test_01_bad_main_hash_refuses_despite_genuine_good_temp",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "journal event hash changed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_02_bad_main_balance_refuses_despite_genuine_good_temp",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "materialized balances differ from journal replay"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission",
+      "observed": {
+        "events": 2
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "journal postings table definition changed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_05_main_version_error_precedes_hash_and_balance_errors",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "ledger schema version changed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_06_main_scales_error_precedes_hash_error",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "ledger asset scales changed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_07_main_trigger_error_precedes_hash_error",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "journal protection trigger is missing"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_08_query_only_verification_preserves_uncommitted_callers_marker",
+      "observed": {
+        "events": 2
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_12_read_method_alias_protocol_uses_original_main_checkers",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "journal event hash changed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    },
+    {
+      "case": "test_14_main_foreign_key_failure_precedes_version_and_hash_errors",
+      "observed": {
+        "error_type": "LedgerError",
+        "message": "database foreign-key check failed"
+      },
+      "all_actual_READ_databases": [
+        "main"
+      ],
+      "denied_temp_reads": [],
+      "states_and_caller_transaction_unchanged": true
+    }
+  ],
+  "M3_alias_test_scope": "READ_METHOD_PROTOCOL_ONLY; ACTUAL_M3_INTEGRATION_SEPARATE",
+  "exclusions": [
+    "other ledger methods",
+    "arbitrary raw connection provenance",
+    "custom row factories or Database subclasses",
+    "full partial catalogue closure",
+    "ordered API integration",
+    "full-source supported-Python/CI/package acceptance"
+  ],
+  "production_approved": false
+}
