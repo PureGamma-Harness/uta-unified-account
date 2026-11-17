@@ -24,6 +24,15 @@ STREAMS=('driver.stdout','driver.stderr','case-owner.stdout','case-owner.stderr'
 CAP=32*1024**2
 HEADER_CAP=4096
 
+# Narrow DER profile emitted by the reviewed OpenSSL command. These are ASN.1
+# OID value octets / AlgorithmIdentifier DER, not a search through cipher bytes.
+OID_AUTH=bytes.fromhex('2a864886f70d0109100117')
+OID_DATA=bytes.fromhex('2a864886f70d010701')
+OID_OAEP=bytes.fromhex('2a864886f70d010107')
+OID_GCM=bytes.fromhex('60864801650304012e')
+SHA256_ALGORITHM=bytes.fromhex('300b0609608648016503040201')
+MGF1_SHA256_ALGORITHM=bytes.fromhex('301806092a864886f70d010108300b0609608648016503040201')
+
 class EscrowError(Exception):pass
 
 def need(value,code):
@@ -44,6 +53,89 @@ def digest_file(path):
     with Path(path).open('rb') as stream:
         while block:=stream.read(65536):h.update(block)
     return h.hexdigest()
+
+class _DER:
+    """Bounded definite-length reader for this one CMS profile, not a codec.
+
+    Ciphertext is skipped by offset. Only <=16KiB structural values are read;
+    shared node/depth limits and every nested exact-end prevent hidden fields.
+    """
+    def __init__(self,stream,start,end,state=None,depth=0):
+        self.stream=stream;self.pos=start;self.end=end;self.state=state if state is not None else [0,0];self.depth=depth
+        need(depth<=16,'cms_der_depth')
+    def done(self):need(self.pos==self.end,'cms_unexpected_field')
+    def take(self,tag):
+        self.state[0]+=1;need(self.state[0]<=256 and self.pos<self.end,'cms_der_node_or_truncated')
+        self.stream.seek(self.pos);raw=self.stream.read(2)
+        need(len(raw)==2 and raw[0]==tag and tag&31!=31,'cms_der_tag')
+        first=raw[1];header=2
+        if first<128:length=first
+        else:
+            count=first&127;need(1<=count<=4,'cms_der_indefinite_or_length_width')
+            encoded=self.stream.read(count);need(len(encoded)==count and encoded[0]!=0,'cms_der_length')
+            length=int.from_bytes(encoded,'big');need(length>=128,'cms_der_nonminimal_length');header+=count
+        start=self.pos+header;end=start+length
+        need(end<=self.end,'cms_der_bounds');self.pos=end
+        return _DER(self.stream,start,end,self.state,self.depth+1)
+    def value(self,limit=4096):
+        size=self.end-self.pos;need(size<=limit,'cms_der_value_cap')
+        self.state[1]+=size;need(self.state[1]<=16384,'cms_der_metadata_cap')
+        self.stream.seek(self.pos);raw=self.stream.read(size);need(len(raw)==size,'cms_der_value_truncated');self.pos=self.end
+        return raw
+    def exact(self,tag,value):
+        need(self.take(tag).value(128)==value,'cms_protocol_parameter')
+
+def _issuer_name(reader):
+    name=reader.take(0x30);need(name.end-name.pos<=4096,'cms_issuer_cap')
+    rdns=0
+    while name.pos<name.end:
+        group=name.take(0x31);rdns+=1;need(group.pos<group.end,'cms_empty_rdn')
+        encodings=[]
+        while group.pos<group.end:
+            begin=group.pos;attribute=group.take(0x30)
+            oid=attribute.take(0x06).value(64)
+            need(oid and oid[-1]&128==0 and not any(b==128 and (i==0 or oid[i-1]&128==0) for i,b in enumerate(oid)),'cms_issuer_oid')
+            attribute.stream.seek(attribute.pos);tag=attribute.stream.read(1)
+            need(tag and tag[0] in (0x0c,0x12,0x13,0x14,0x16,0x1c,0x1e),'cms_issuer_string_type')
+            attribute.take(tag[0]).value(1024);attribute.done()
+            group.stream.seek(begin);encodings.append(group.stream.read(group.pos-begin))
+        group.done();need(encodings==sorted(encodings),'cms_noncanonical_rdn_set')
+    name.done();need(rdns>0,'cms_empty_issuer')
+
+def validate_cms_protocol(path):
+    """Require the exact GCM/OAEP-SHA256 profile before decrypt or publication.
+
+    No generic cms -decrypt result or printed string implies authentication.
+    OAEP SHA256 AlgorithmIdentifiers use the reviewed OID-only encoding; NULL,
+    defaults, pSource, attributes and alternate equivalent profiles are refused.
+    OpenSSL still performs every cryptographic operation and authentication.
+    """
+    fd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC)
+    with os.fdopen(fd,'rb') as stream:
+        info=os.fstat(stream.fileno());need(stat.S_ISREG(info.st_mode) and 1<=info.st_size<=CAP+65536,'cms_cipher_file_cap')
+        top=_DER(stream,0,info.st_size);content=top.take(0x30);top.done()
+        content.exact(0x06,OID_AUTH);explicit=content.take(0xa0);content.done()
+        auth=explicit.take(0x30);explicit.done();auth.exact(0x02,b'\0')
+        recipients=auth.take(0x31);recipient=recipients.take(0x30);recipients.done();recipient.exact(0x02,b'\0')
+        rid=recipient.take(0x30);_issuer_name(rid)
+        serial=rid.take(0x02).value(33)
+        need(serial and serial[0]<128 and (len(serial)==1 or serial[0]!=0 or serial[1]>=128),'cms_serial_encoding');rid.done()
+        algorithm=recipient.take(0x30);algorithm.exact(0x06,OID_OAEP)
+        parameters=algorithm.take(0x30);algorithm.done()
+        need(parameters.take(0xa0).value(128)==SHA256_ALGORITHM,'cms_oaep_sha256_required')
+        need(parameters.take(0xa1).value(128)==MGF1_SHA256_ALGORITHM,'cms_mgf1_sha256_required');parameters.done()
+        encrypted_key=recipient.take(0x04)
+        need(256<=encrypted_key.end-encrypted_key.pos<=1024 and (encrypted_key.end-encrypted_key.pos)%128==0,'cms_rsa_encrypted_key_size')
+        recipient.done()
+        encrypted=auth.take(0x30);encrypted.exact(0x06,OID_DATA)
+        cipher=encrypted.take(0x30);cipher.exact(0x06,OID_GCM)
+        gcm=cipher.take(0x30);cipher.done()
+        need(len(gcm.take(0x04).value(12))==12,'cms_gcm_nonce_size');gcm.exact(0x02,b'\x10');gcm.done()
+        ciphertext=encrypted.take(0x80);encrypted.done()
+        need(len(MAGIC)+5<=ciphertext.end-ciphertext.pos<=CAP+HEADER_CAP+len(MAGIC)+4,'cms_encrypted_content_size')
+        need(len(auth.take(0x04).value(16))==16,'cms_gcm_tag_size');auth.done()
+    return {'protocol_verified':True,'format':'CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256_MGF1_SHA256',
+        'canonical_definite_DER':True,'nonce_bytes':12,'tag_bytes':16,'recipient_count':1,'attributes_allowed':False}
 
 def validate_binding(value):
     need(set(value)=={'format','source_commit','control_commit','controller_sha256','run_id','run_attempt','case','stream','recipient_spki_sha256','capture_complete'},'binding_fields')
@@ -136,9 +228,7 @@ def encrypt_closed_stream(path,output,certificate,binding):
         after=os.fstat(source.fileno())
         need(identity==(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns) and seen==before.st_size and copied.digest()==digest.digest(),'stream_changed_during_encrypt')
     need(output.stat().st_size<=before.st_size+65536,'cipher_overhead_cap')
-    # Parse DER without printing ciphertext, private paths or original contents.
-    checked=subprocess.run(['openssl','cms','-cmsout','-inform','DER','-in',str(output),'-noout'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,timeout=3)
-    need(checked.returncode==0,'cms_der_invalid')
+    validate_cms_protocol(output)
     return {'name':output.name,'bytes':output.stat().st_size,'sha256':digest_file(output),
         'recipient_spki_sha256':binding['recipient_spki_sha256'],'algorithm':'CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256',
         'origin_authenticated_by_recipient_encryption':False}
@@ -149,6 +239,7 @@ def decrypt_authenticated(ciphertext,certificate,private_key,quarantine,expected
     Key ownership remains with the offline caller. Runner code never calls this
     function and never receives the actual workspace private recipient key.
     """
+    protocol=validate_cms_protocol(ciphertext)
     need(quarantine.is_absolute() and not quarantine.exists() and quarantine.parent.is_dir(),'new_private_quarantine')
     quarantine.mkdir(mode=0o700);plain=quarantine/'unaccepted-container.bin'
     fd=os.open(plain,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
@@ -158,7 +249,7 @@ def decrypt_authenticated(ciphertext,certificate,private_key,quarantine,expected
         target.flush();os.fsync(target.fileno())
     need(observed.returncode==0,'authenticated_decrypt_failed_do_not_parse')
     verified=validate_decrypted_container(plain,expected)
-    return dict(verified,authenticated_decrypt_exit_zero=True,quarantine=str(quarantine),original_contents_not_published=True)
+    return dict(verified,authenticated_decrypt_exit_zero=True,protocol=protocol,quarantine=str(quarantine),original_contents_not_published=True)
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
@@ -176,10 +267,9 @@ def main(argv=None):
         binding={'format':1,'source_commit':SOURCE,'control_commit':'0'*40,'controller_sha256':'0'*64,
             'run_id':'1','run_attempt':'1','case':'B','stream':'driver.stdout','recipient_spki_sha256':SPKI_SHA,'capture_complete':False}
         cipher=directory/'synthetic.cms';encrypt_closed_stream(raw,cipher,certificate,binding)
-        printed=subprocess.run(['openssl','cms','-cmsout','-inform','DER','-in',str(cipher),'-print'],capture_output=True,check=True,timeout=3).stdout
-        need(all(label in printed for label in (b'id-smime-ct-authEnvelopedData',b'aes-256-gcm',b'rsaesOaep',b'sha256')),'requested_crypto_protocol_not_observed')
+        protocol=validate_cms_protocol(cipher)
         print(json.dumps(dict(identity,status='PUBLIC_RECIPIENT_CAPABILITY_VERIFIED',synthetic_only=True,private_key_read=False,
-            crypto_protocol='CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256',no_protocol_fallback=True)))
+            crypto_protocol='CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256',protocol=protocol,no_protocol_fallback=True)))
         return 0
     if args.encrypt_case is None:
         print(json.dumps({'status':'PREP_ONLY','execution_authorized':False}));return 0

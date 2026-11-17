@@ -19,6 +19,22 @@ def load(name,path):
 e=load('pure_escrow',ROOT/'tools/m0_stream_escrow.py')
 c=load('pure_escrow_controller',ROOT/'tools/independent_m0_controller.py')
 
+def tlv(tag,value):
+    length=len(value)
+    encoded=bytes([length]) if length<128 else bytes([128+(length.bit_length()+7)//8])+length.to_bytes((length.bit_length()+7)//8,'big')
+    return bytes([tag])+encoded+value
+
+def protocol_shape(oaep_hash=e.SHA256_ALGORITHM,mgf=e.MGF1_SHA256_ALGORITHM,nonce=b'n'*12,tag=b't'*16,extra=b'',outer_oid=e.OID_AUTH):
+    # Structural canary only, no valid encrypted key/MAC and no crypto claims.
+    name=tlv(0x30,tlv(0x31,tlv(0x30,tlv(6,bytes.fromhex('550403'))+tlv(12,b'synthetic'))))
+    rid=tlv(0x30,name+tlv(2,b'\x01'))
+    algorithm=tlv(0x30,tlv(6,e.OID_OAEP)+tlv(0x30,tlv(0xa0,oaep_hash)+tlv(0xa1,mgf)))
+    recipient=tlv(0x30,tlv(2,b'\0')+rid+algorithm+tlv(4,b'k'*256))
+    cipher=tlv(0x30,tlv(6,e.OID_GCM)+tlv(0x30,tlv(4,nonce)+tlv(2,b'\x10')))
+    encrypted=tlv(0x30,tlv(6,e.OID_DATA)+cipher+tlv(0x80,b'c'*16))
+    auth=tlv(0x30,tlv(2,b'\0')+tlv(0x31,recipient)+encrypted+tlv(4,tag)+extra)
+    return tlv(0x30,tlv(6,outer_oid)+tlv(0xa0,auth))
+
 class EscrowContract(unittest.TestCase):
     def setUp(self):
         self.tmp=TemporaryDirectory(prefix='m0-pure-escrow-');self.addCleanup(self.tmp.cleanup)
@@ -56,6 +72,7 @@ class EscrowContract(unittest.TestCase):
                 with self.assertRaises(e.EscrowError):e.container_header(binding,0,sha256(b'').hexdigest())
     def test_failed_authentication_never_parses_partial_plaintext(self):
         quarantine=self.root/'quarantine'
+        (self.root/'dummy.cms').write_bytes(protocol_shape())
         def failed(argv,**kwargs):
             kwargs['stdout'].write(b'UNAUTHENTICATED-PARTIAL')
             return SimpleNamespace(returncode=4)
@@ -130,11 +147,46 @@ class EscrowContract(unittest.TestCase):
         self.assertEqual(result['status'],'UNKNOWN');self.assertEqual(result['error_code'],'closed_case_producers_unproven')
     def test_ciphertext_manifest_allows_only_fixed_stream_names(self):
         public=self.root/'public-manifest';public.mkdir()
-        folder=public/'escrow-B-safe';folder.mkdir();cipher=folder/'driver.stdout.cms';cipher.write_bytes(b'synthetic')
+        folder=public/'escrow-B-safe';folder.mkdir();cipher=folder/'driver.stdout.cms';cipher.write_bytes(protocol_shape())
         record=dict(name='escrow-B-safe/driver.stdout.cms',bytes=cipher.stat().st_size,sha256=e.digest_file(cipher))
         c.public_write(public,'manifest.json',dict(files=[record],source_commit=c.SOURCE,private_authorities_requests_keys_nonces_signatures_streams_not_uploaded=True))
         self.assertTrue(c.verify_public(public))
         (folder/'private.sqlite.cms').write_bytes(b'synthetic')
         with self.assertRaises(c.GateError):c.verify_public(public)
+    def test_exact_der_profile_positive(self):
+        path=self.root/'shape.cms';path.write_bytes(protocol_shape())
+        self.assertTrue(e.validate_cms_protocol(path)['protocol_verified'])
+    def test_der_profile_rejects_unapproved_active_algorithms(self):
+        variants=[protocol_shape(outer_oid=bytes.fromhex('2a864886f70d010703')),
+            protocol_shape(oaep_hash=bytes.fromhex('300906052b0e03021a0500')),
+            protocol_shape(mgf=bytes.fromhex('301606092a864886f70d010108300906052b0e03021a0500')),
+            protocol_shape(oaep_hash=bytes.fromhex('300d06096086480165030402010500'))]
+        for n,data in enumerate(variants):
+            with self.subTest(n=n):
+                path=self.root/f'bad-{n}.cms';path.write_bytes(data)
+                with self.assertRaises(e.EscrowError):e.validate_cms_protocol(path)
+    def test_der_profile_rejects_nonce_tag_attributes_and_trailing(self):
+        variants=[protocol_shape(nonce=b'n'*8),protocol_shape(tag=b't'*12),
+            protocol_shape(extra=tlv(0xa2,tlv(4,e.SHA256_ALGORITHM+e.MGF1_SHA256_ALGORITHM))),protocol_shape()+b'\0']
+        for n,data in enumerate(variants):
+            with self.subTest(n=n):
+                path=self.root/f'bad-{n}.cms';path.write_bytes(data)
+                with self.assertRaises(e.EscrowError):e.validate_cms_protocol(path)
+    def test_der_rejects_ber_indefinite_and_nonminimal_length(self):
+        for data in (b'\x30\x80\0\0',b'\x30\x81\x01\0',b'\x30\x82\0\x80'+b'\0'*128):
+            path=self.root/'bad.cms';path.write_bytes(data)
+            with self.assertRaises(e.EscrowError):e.validate_cms_protocol(path)
+    def test_protocol_rejected_before_openssl_decrypt_and_plaintext_creation(self):
+        path=self.root/'bad.cms';path.write_bytes(protocol_shape(outer_oid=bytes.fromhex('2a864886f70d010703')))
+        quarantine=self.root/'must-not-exist'
+        with patch.object(e.subprocess,'run',side_effect=AssertionError('must reject protocol first')):
+            with self.assertRaises(e.EscrowError):e.decrypt_authenticated(path,self.root/'pub',self.root/'toykey',quarantine,self.binding)
+        self.assertFalse(quarantine.exists())
+    def test_public_manifest_rejects_protocol_even_with_correct_cipher_hash(self):
+        public=self.root/'public-protocol';public.mkdir();folder=public/'escrow-B-safe';folder.mkdir()
+        cipher=folder/'driver.stdout.cms';cipher.write_bytes(protocol_shape(outer_oid=bytes.fromhex('2a864886f70d010703')))
+        record=dict(name='escrow-B-safe/driver.stdout.cms',bytes=cipher.stat().st_size,sha256=e.digest_file(cipher))
+        c.public_write(public,'manifest.json',dict(files=[record],source_commit=c.SOURCE,private_authorities_requests_keys_nonces_signatures_streams_not_uploaded=True))
+        with self.assertRaisesRegex(c.GateError,'public_cipher_protocol'):c.verify_public(public)
 
 if __name__=='__main__':unittest.main()

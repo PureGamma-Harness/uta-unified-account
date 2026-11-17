@@ -526,6 +526,11 @@ def verify_public(root):
         path=root/name;info=path.lstat()
         need(not path.parent.is_symlink(),'public_parent_symlink')
         need(stat.S_ISREG(info.st_mode) and info.st_size==item['bytes'] and digest(path)==item['sha256'],'public_manifest_mismatch')
+        if safe_cipher is not None:
+            spec=importlib.util.spec_from_file_location('m0_public_cipher_protocol',Path(__file__).resolve().with_name('m0_stream_escrow.py'))
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+            try:module.validate_cms_protocol(path)
+            except module.EscrowError:raise GateError('public_cipher_protocol') from None
         names.append(name)
     actual=set()
     for path in root.rglob('*'):

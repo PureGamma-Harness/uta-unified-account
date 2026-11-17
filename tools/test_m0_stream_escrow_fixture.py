@@ -44,15 +44,28 @@ def main():
         cipher=directory/'synthetic.cms';metadata=e.encrypt_closed_stream(raw,cipher,toy_cert,binding)
         result=e.decrypt_authenticated(cipher,toy_cert,toy_key,directory/'quarantine-valid',binding)
         report['checks'].append({'case':'authenticated_roundtrip_exact_binary','passed':result['bytes']==len(payload) and result['sha256']==sha256(payload).hexdigest()})
-        printed=command('cms-structure',['openssl','cms','-cmsout','-inform','DER','-in',str(cipher),'-print']).decode('ascii')
         report['checks'].append({'case':'actual_AuthEnvelopedData_AES256GCM_RSAOAEP_SHA256',
-            'passed':all(token in printed for token in ('id-smime-ct-authEnvelopedData','aes-256-gcm','rsaesOaep','sha256'))})
+            'passed':e.validate_cms_protocol(cipher)['protocol_verified']})
+        container=directory/'synthetic-container.bin'
+        container.write_bytes(e.container_header(binding,len(payload),sha256(payload).hexdigest())+payload)
+        for label,options in [('CBC-PKCS1v15',['-aes-256-cbc']),
+            ('GCM-OAEP-SHA1',['-aes-256-gcm','-keyopt','rsa_padding_mode:oaep','-keyopt','rsa_oaep_md:sha1','-keyopt','rsa_mgf1_md:sha1']),
+            ('GCM-MGF1-SHA1',['-aes-256-gcm','-keyopt','rsa_padding_mode:oaep','-keyopt','rsa_oaep_md:sha256','-keyopt','rsa_mgf1_md:sha1'])]:
+            rejected=directory/(label+'.cms')
+            command(label,['openssl','cms','-encrypt','-binary','-outform','DER','-recip',str(toy_cert),*options,'-in',str(container),'-out',str(rejected)])
+            try:e.decrypt_authenticated(rejected,toy_cert,toy_key,directory/('quarantine-'+label),binding)
+            except e.EscrowError:
+                report['checks'].append({'case':label,'passed':True,'protocol_rejected_before_plaintext':not (directory/('quarantine-'+label)).exists()})
+            else:raise e.EscrowError('unapproved_protocol_accepted')
         for label,data in [('tampered-tag',cipher.read_bytes()[:-1]+bytes([cipher.read_bytes()[-1]^1])),('truncated',cipher.read_bytes()[:-9])]:
             damaged=directory/(label+'.cms');damaged.write_bytes(data)
             try:e.decrypt_authenticated(damaged,toy_cert,toy_key,directory/('quarantine-'+label),binding)
             except e.EscrowError as error:
-                report['checks'].append({'case':label,'passed':str(error)=='authenticated_decrypt_failed_do_not_parse',
-                    'private_unaccepted_output_bytes':(directory/('quarantine-'+label)/'unaccepted-container.bin').stat().st_size,
+                partial=directory/('quarantine-'+label)/'unaccepted-container.bin'
+                early=label=='truncated' and str(error)=='cms_der_bounds' and not partial.parent.exists()
+                report['checks'].append({'case':label,'passed':str(error)=='authenticated_decrypt_failed_do_not_parse' or early,
+                    'rejected_before_plaintext_creation':early,
+                    'private_unaccepted_output_bytes':partial.stat().st_size if partial.exists() else 0,
                     'plaintext_parsed_or_published':False})
             else:raise e.EscrowError('tamper_was_accepted')
         try:e.decrypt_authenticated(cipher,toy_cert,toy_key,directory/'quarantine-wrong-binding',dict(binding,run_id='999'))
