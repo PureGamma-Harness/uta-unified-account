@@ -1,0 +1,252 @@
+{
+  "plan_id": "managed-variants-same-source-same-capability-20261117",
+  "created_utc": "2026-11-17T10:31:20.499722+00:00",
+  "status": "PLANNED_NOT_RUN",
+  "execution_authorized": false,
+  "frozen_commit": null,
+  "tool_parent_commit": "e9ec23bf0a54f732b51b91df1bad571dd186dba3",
+  "required_before_go": [
+    "final source including helper frozen and clean",
+    "three runtime full qualification",
+    "four CI versions and installed-package qualification",
+    "integration owner quiet-window GO",
+    "read-only cohost stability heartbeat check"
+  ],
+  "fixed_configuration": {
+    "duration_seconds": 10,
+    "offered_rate_per_second": 20,
+    "offered_arrivals": 200,
+    "accounts": 100,
+    "shards": 2,
+    "cpu_affinity_limit": 2,
+    "dispatchers": 2,
+    "local_outstanding": 256,
+    "durable_inbox_per_shard": 128,
+    "reject_every": 10,
+    "feed_interval_seconds": 2,
+    "market_max_age_seconds": 5,
+    "worker_poll_interval_seconds": 0.02,
+    "background_interval_seconds": 0.1,
+    "background_account_batch": 25,
+    "matches_per_symbol": 10,
+    "lease_seconds": 5,
+    "control_timeout_seconds": 3,
+    "soft_response_deadline_ms": 1000,
+    "drain_seconds": 10,
+    "sqlite_busy_timeout_seconds": 10,
+    "decision_audit_required": true,
+    "sql_fencing_required": true,
+    "native_writer_proof_required": true,
+    "profile": false,
+    "successful_orders_remain_open": true,
+    "fills_expected": 0,
+    "replication": false,
+    "reserve_cache_size": 0,
+    "market_cache_size": 0
+  },
+  "baseline": {
+    "variant_id": "A",
+    "durable_batches": true,
+    "financial_batch_size": 0,
+    "normal_cache_size": 0,
+    "command_template": [
+      "python",
+      "benchmarks/run_managed_benchmark.py",
+      "--output",
+      "<unique-private-output-after-GO>",
+      "--duration",
+      "10",
+      "--rate",
+      "20",
+      "--accounts",
+      "100",
+      "--shards",
+      "2",
+      "--cpu-limit",
+      "2",
+      "--durable-batches",
+      "--financial-batch-size",
+      "0",
+      "--normal-cache-size",
+      "0"
+    ]
+  },
+  "variants": [
+    {
+      "variant_id": "B3",
+      "durable_batches": true,
+      "financial_batch_size": 3,
+      "normal_cache_size": 0,
+      "command_template": [
+        "python",
+        "benchmarks/run_managed_benchmark.py",
+        "--output",
+        "<unique-private-output-after-GO>",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "2",
+        "--durable-batches",
+        "--financial-batch-size",
+        "3",
+        "--normal-cache-size",
+        "0"
+      ]
+    },
+    {
+      "variant_id": "B8",
+      "durable_batches": true,
+      "financial_batch_size": 8,
+      "normal_cache_size": 0,
+      "command_template": [
+        "python",
+        "benchmarks/run_managed_benchmark.py",
+        "--output",
+        "<unique-private-output-after-GO>",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "2",
+        "--durable-batches",
+        "--financial-batch-size",
+        "8",
+        "--normal-cache-size",
+        "0"
+      ]
+    },
+    {
+      "variant_id": "C8",
+      "durable_batches": true,
+      "financial_batch_size": 0,
+      "normal_cache_size": 8,
+      "command_template": [
+        "python",
+        "benchmarks/run_managed_benchmark.py",
+        "--output",
+        "<unique-private-output-after-GO>",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "2",
+        "--durable-batches",
+        "--financial-batch-size",
+        "0",
+        "--normal-cache-size",
+        "8"
+      ]
+    },
+    {
+      "variant_id": "C100",
+      "durable_batches": true,
+      "financial_batch_size": 0,
+      "normal_cache_size": 100,
+      "command_template": [
+        "python",
+        "benchmarks/run_managed_benchmark.py",
+        "--output",
+        "<unique-private-output-after-GO>",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "2",
+        "--durable-batches",
+        "--financial-batch-size",
+        "0",
+        "--normal-cache-size",
+        "100"
+      ]
+    }
+  ],
+  "per_variant_pair_order": [
+    [
+      "A",
+      "variant"
+    ],
+    [
+      "variant",
+      "A"
+    ],
+    [
+      "A",
+      "variant"
+    ]
+  ],
+  "pair_protocol": {
+    "new_authority_each_run": true,
+    "same_final_source_and_schedule": true,
+    "cold_service_cache_each_run": true,
+    "same_capability_every_arm": true,
+    "default_capability_false_is_gain_baseline": false,
+    "do_not_compare_different_batch_and_cache_settings_as_single_factor_gain": true,
+    "original_ids_preserved": true
+  },
+  "soft_budget": {
+    "loaded_method": "uta.durable_batches.BatchStore.process",
+    "parameter": "soft_budget_seconds",
+    "default_seconds": 0.005,
+    "checked_between_commands_after_first_execution": true,
+    "hard_transaction_or_commit_deadline": false,
+    "can_execute_zero_or_one_selected_members": true,
+    "prepare_and_commit_not_bounded_by_budget": true
+  },
+  "reporting": [
+    "every planned arrival and original CID",
+    "durable enqueue ACK distinct from post-COMMIT financial success",
+    "all/financial-success/ACK P50 P95 P99 P99.9 N and max from original planned times",
+    "drain and close separately",
+    "business/control rejection distinct from technical retry/last_error/unknown/timeout",
+    "batch selected/executed membership and unique CIDs; executed includes rejections",
+    "actual router and received spawned-worker settings",
+    "fresh market versions/age and control CIDs",
+    "read-only capability/order/reserve/account-version/audit/ledger reconciliation",
+    "physical COMMIT counts not inferred from metadata records",
+    "configured cache capacity is not hit evidence; native managed IPC has no hit telemetry"
+  ],
+  "stop_remaining_cases_on": [
+    "any non-passing probe_qualification",
+    "any internal attempts/last_error/control failure",
+    "any batch failure/recovered/unresolved attempt",
+    "I/O error or lost ACK or unknown result",
+    "financial/audit/reconciliation failure",
+    "source/config drift or cohost heartbeat problem",
+    "resource budget breach"
+  ],
+  "resource_budget": {
+    "cohosted_not_dedicated": true,
+    "max_case_output_bytes": 262144000,
+    "min_free_disk_bytes": 2147483648,
+    "stability_jobs_untouched": true
+  },
+  "historical_baselines_excluded": [
+    "unsafe IO-error source7a06",
+    "720 S1 with internal technical retry and late-success failure"
+  ],
+  "transport": "local Python SDK/durable inbox/independent native PID; not REST/TLS/matching/liquidation",
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false,
+  "stability_passed": false
+}

@@ -16,6 +16,7 @@ from fractions import Fraction
 import gzip
 from hashlib import sha256
 import io
+import inspect
 import json
 import math
 import os
@@ -34,11 +35,24 @@ from benchmarks.run_group_benchmark import _environment, _policy
 from uta import durable_process as process_module
 from uta.decision_audit import DecisionAudit
 from uta.durable_process import DurableProcessRouter
+from uta.durable_batches import BatchStore
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
 
 ORIGINAL_WORKER = process_module._run_worker
 TERMINAL = {"SUCCEEDED", "REJECTED", "QUARANTINED"}
+
+
+def observed_worker(*args):
+    """Record actual spawn inputs before calling the unchanged native worker."""
+    directory = Path(os.environ["UTA_MANAGED_WORKER_RUNTIME_DIRECTORY"])
+    path = directory / f"worker-{os.getpid()}.json"
+    path.write_text(json.dumps({"pid": os.getpid(), "received_settings": args[2],
+        "observed_utc": datetime.now(timezone.utc).isoformat(),
+        "financial_owner_ready": False, "settings_are_not_admission_receipts": True}, indent=2) + "\n")
+    if os.environ.get("UTA_MANAGED_WORKER_PROFILE_ENABLED") == "1":
+        return profile_worker(*args)
+    return ORIGINAL_WORKER(*args)
 
 
 def profile_worker(*args):
@@ -68,6 +82,9 @@ class Configuration:
     poll_interval: float = .02
     background_interval: float = .1
     profile: bool = False
+    normal_cache_size: int = 0
+    financial_batch_size: int = 0
+    durable_batches: bool = False
 
     def validate(self):
         for name, lower, upper in (("duration", .05, 10), ("rate", .1, 200),
@@ -87,6 +104,14 @@ class Configuration:
             raise ValueError("short diagnostic requires 1..2000 arrivals, shards<=accounts, <=900 orders/account")
         if type(self.profile) is not bool:
             raise ValueError("profile must be boolean")
+        if type(self.normal_cache_size) is not int or not 0 <= self.normal_cache_size <= 65536:
+            raise ValueError("normal_cache_size must be an integer in 0..65536")
+        if type(self.financial_batch_size) is not int or self.financial_batch_size not in (0, 3, 4, 5, 6, 7, 8):
+            raise ValueError("financial_batch_size must be zero or an integer in 3..8")
+        if type(self.durable_batches) is not bool:
+            raise ValueError("durable_batches must be boolean")
+        if self.financial_batch_size and not self.durable_batches:
+            raise ValueError("nonzero financial_batch_size requires durable_batches=True")
 
 
 @contextmanager
@@ -165,8 +190,11 @@ def batch_dispatch_diagnostics(connection):
     """Independent RO record counts; these are not observed COMMIT counts."""
     result = {"prepared_batches": 0, "committed_batches": 0, "recovered_batches": 0,
               "unresolved_batches": 0, "selected_commands": 0, "executed_commands": 0,
+              "unique_selected_commands": 0, "unique_executed_commands": 0,
               "zero_executed_batches": 0, "partial_prefix_batches": 0,
               "failure_events": 0, "record_counts_are_not_commit_counts": True}
+    phases = ("prepare", "membership", "execute", "between_commands", "freshness", "disposition", "commit")
+    result.update({phase + "_failure_events": 0 for phase in phases})
     events = connection.execute("SELECT payload FROM uta_events WHERE event_type='COMMAND_BATCH_EXECUTION_FAILED' AND account_id IS NULL").fetchall()
     for row in events:
         value = json.loads(row[0])
@@ -174,6 +202,7 @@ def batch_dispatch_diagnostics(connection):
                 or type(value.get("recording_generation")) is not int or value["recording_generation"] < 1
                 or value.get("phase") not in {"prepare", "membership", "execute", "between_commands", "freshness", "disposition", "commit"}):
             raise RuntimeError("invalid stored batch failure diagnostic")
+        result[value["phase"] + "_failure_events"] += 1
     result["failure_events"] = len(events)
     names = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table' AND name IN ('uta_command_batch_manifests','uta_command_batch_outcomes','writer_fence_batch_capability')")}
     if not names:
@@ -194,7 +223,9 @@ def batch_dispatch_diagnostics(connection):
         manifests[row[0]] = ids
         result["selected_commands"] += len(ids)
     result["prepared_batches"] = len(manifests)
+    result["unique_selected_commands"] = len({cid for ids in manifests.values() for cid in ids})
     resolved = set()
+    actual_executed = set()
     for row in connection.execute("SELECT attempt_id,disposition,content FROM uta_command_batch_outcomes"):
         if row[0] not in manifests or row[0] in resolved:
             raise RuntimeError("batch disposition lacks unique immutable membership")
@@ -205,6 +236,11 @@ def batch_dispatch_diagnostics(connection):
                 or not set(executed) <= set(manifests[row[0]])):
             raise RuntimeError("invalid batch executed prefix in reopened probe")
         if row[1] == "COMMITTED":
+            for cid in executed:
+                command = connection.execute("SELECT kind,state FROM uta_command_inbox WHERE command_id=?", (cid,)).fetchone()
+                if command is None or command[0] in ("PUBLISH_MARKET", "SET_HALT") or command[1] not in TERMINAL:
+                    raise RuntimeError("batch execution diagnostic lacks a terminal financial command")
+            actual_executed.update(executed)
             result["committed_batches"] += 1
             result["executed_commands"] += len(executed)
             result["zero_executed_batches"] += not executed
@@ -214,7 +250,35 @@ def batch_dispatch_diagnostics(connection):
         else:
             raise RuntimeError("invalid batch disposition in reopened probe")
     result["unresolved_batches"] = len(set(manifests) - resolved)
+    result["unique_executed_commands"] = len(actual_executed)
     return result
+
+
+def runtime_report(router, configuration):
+    settings = dict(router._settings)
+    if (settings["normal_cache_size"] != configuration.normal_cache_size
+            or settings["financial_batch_size"] != configuration.financial_batch_size
+            or router.durable_batches is not configuration.durable_batches):
+        raise RuntimeError("requested runtime/capability did not reach the actual router")
+    budget = inspect.signature(BatchStore.process).parameters["soft_budget_seconds"].default
+    return {"router_settings": settings, "durable_batches_capability": router.durable_batches,
+        "decision_audit_required": router.decision_audit_required,
+        "financial_batch_soft_budget_seconds": budget,
+        "soft_budget_is_not_a_latency_or_commit_deadline": True,
+        "transport": "local Python SDK -> durable inbox -> independent spawned owner; no REST/TLS",
+        "physical_commit_counts_measured": False,
+        "record_counts_are_not_physical_commit_counts": True}
+
+
+def worker_runtime_diagnostics(directory, expected_settings):
+    records = [json.loads(path.read_text()) for path in sorted(directory.glob("worker-*.json"))]
+    if not records or len({row["pid"] for row in records}) != len(records):
+        raise RuntimeError("actual spawned worker settings were not uniquely recorded")
+    for row in records:
+        if (type(row["pid"]) is not int or row["pid"] <= 0 or row["pid"] == os.getpid()
+                or row["received_settings"] != expected_settings):
+            raise RuntimeError("actual spawned worker settings differ from the requested runtime")
+    return records
 
 
 def probe_qualification(summary):
@@ -385,13 +449,18 @@ def verify_ledger(connection):
     return len(rows)
 
 
-def verify(paths, rows, account_shards):
+def verify(paths, rows, account_shards, *, durable_batches=None):
     """Reopen every store RO after workers stop; verify all original IDs."""
     by_id = {row["command_id"]: row for row in rows}
     committed, pending, stored_commands, reports, all_cid_facts = set(), set(), set(), [], []
     batch_facts = []
     for shard, path in enumerate(paths):
         with readonly(path) as connection:
+            marker = connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='writer_fence_batch_capability'").fetchone() is not None
+            if durable_batches is not None and marker is not durable_batches:
+                raise RuntimeError("reopened shard batch capability differs from the requested fresh layout")
+            if marker and [tuple(row) for row in connection.execute("SELECT singleton,format FROM writer_fence_batch_capability")] != [(1, 1)]:
+                raise RuntimeError("reopened shard batch capability marker is invalid")
             if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok" or connection.execute("PRAGMA foreign_key_check").fetchone() is not None:
                 raise RuntimeError("storage integrity or foreign key failure")
             if connection.execute("PRAGMA journal_mode").fetchone()[0] != "wal":
@@ -454,11 +523,13 @@ def verify(paths, rows, account_shards):
                 actual = sum((Fraction(D(accepted[key]["reserved_margin"])) for key in orders if key[0] == account), Fraction(0))
                 if actual != reserves[account]:
                     raise RuntimeError("live reserve projection does not reconcile")
-            if connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0] or connection.execute("SELECT COUNT(*) FROM uta_fills").fetchone()[0]:
+            matches = connection.execute("SELECT COUNT(*) FROM uta_matches").fetchone()[0]
+            if connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0] or connection.execute("SELECT COUNT(*) FROM uta_fills").fetchone()[0] or matches:
                 raise RuntimeError("one-sided admission probe unexpectedly produced an execution")
             ledger_events = verify_ledger(connection)
             committed.update(success_ids)
             reports.append({"shard": shard, "commands": len(commands), "unique_orders": len(orders),
+                "durable_batches_capability": marker, "confirmed_matches": matches,
                 "ledger_events": ledger_events, "audit_required": True, "independent_reserve_account_version_ledger_verified": True})
     observed = {row["command_id"] for row in rows if row["outcome"] == "financial_succeeded"}
     acknowledged = {row["command_id"] for row in rows if row["enqueue_ack_ns"] is not None}
@@ -496,10 +567,16 @@ def run(configuration, directory):
     directory.mkdir(parents=True, exist_ok=False)
     profiles = directory / "profiles"
     profiles.mkdir()
+    workers = directory / "workers"
+    workers.mkdir()
     environment = _environment(directory)
     environment.update(generator_sha256=sha256(Path(__file__).read_bytes()).hexdigest(),
         scope="local independent spawned managed PID owners, WAL/FULL, audit required, no replication; cohosted",
-        sqlite_busy_timeout_seconds=10, market_max_age_seconds=5, profile=configuration.profile)
+        sqlite_busy_timeout_seconds=10, market_max_age_seconds=5, profile=configuration.profile,
+        requested_runtime={"normal_cache_size": configuration.normal_cache_size,
+                           "financial_batch_size": configuration.financial_batch_size,
+                           "durable_batches": configuration.durable_batches},
+        evidence_kind="functional wiring only; not performance evidence" if configuration.duration <= .2 else "short local admission diagnostic; not capacity qualification")
     (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
     accounts = [f"managed-probe-{index}" for index in range(configuration.accounts)]
     def bootstrap(router):
@@ -509,13 +586,22 @@ def run(configuration, directory):
     router = DurableProcessRouter.initialize(directory / "authority", configuration.shards, {"USD": 8},
         managed=True, bootstrap=bootstrap, **_policy("configured_cross"), max_price_age=timedelta(seconds=5),
         queue_capacity=configuration.inbox_capacity, decision_audit=True,
-        background_interval=configuration.background_interval)
+        background_interval=configuration.background_interval,
+        normal_cache_size=configuration.normal_cache_size,
+        financial_batch_size=configuration.financial_batch_size, durable_batches=configuration.durable_batches)
+    actual_runtime = runtime_report(router, configuration)
+    environment["actual_runtime"] = actual_runtime
+    (directory / "environment.json").write_text(json.dumps(environment, indent=2) + "\n")
     paths = [router._control._path(shard) for shard in range(configuration.shards)]
     account_shards = {account: router.shard_for(account) for account in accounts}
-    old_worker, old_profile_env = process_module._run_worker, os.environ.get("UTA_MANAGED_PROFILE_DIRECTORY")
+    old_worker = process_module._run_worker
+    old_environ = {key: os.environ.get(key) for key in
+        ("UTA_MANAGED_PROFILE_DIRECTORY", "UTA_MANAGED_WORKER_RUNTIME_DIRECTORY", "UTA_MANAGED_WORKER_PROFILE_ENABLED")}
+    os.environ["UTA_MANAGED_WORKER_RUNTIME_DIRECTORY"] = str(workers.absolute())
+    os.environ["UTA_MANAGED_WORKER_PROFILE_ENABLED"] = "1" if configuration.profile else "0"
+    process_module._run_worker = observed_worker
     if configuration.profile:
         os.environ["UTA_MANAGED_PROFILE_DIRECTORY"] = str(profiles.absolute())
-        process_module._run_worker = profile_worker
     feed_stop, dispatched = Event(), Event()
     feed_rows, poll_errors, telemetry, telemetry_at = [], [], [], {}
     lock, slots = Lock(), BoundedSemaphore(configuration.outstanding)
@@ -671,14 +757,16 @@ def run(configuration, directory):
         router.close()
         close_seconds = (time.monotonic_ns() - close_started) / 1e9
         process_module._run_worker = old_worker
-        if old_profile_env is None:
-            os.environ.pop("UTA_MANAGED_PROFILE_DIRECTORY", None)
-        else:
-            os.environ["UTA_MANAGED_PROFILE_DIRECTORY"] = old_profile_env
+        for key, value in old_environ.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
         raw.close()
     if len(results) != offered or len({row["command_id"] for row in results}) != offered:
         raise RuntimeError("offered command IDs were lost or duplicated")
-    checks = verify(paths, results, account_shards)
+    checks = verify(paths, results, account_shards, durable_batches=configuration.durable_batches)
+    worker_inputs = worker_runtime_diagnostics(workers, actual_runtime["router_settings"])
     counts = dict(Counter(row["outcome"] for row in results))
     outcome_counts = dict(counts)  # Exactly one terminal/local outcome per arrival.
     counts["durably_enqueued"] = sum(row["enqueue_ack_ns"] is not None for row in results)
@@ -693,6 +781,8 @@ def run(configuration, directory):
             histograms["enqueue_ack"].observe(row["enqueue_ack_ns"] - row["planned_ns"])
     elapsed = max(configuration.duration, (settled - started) / 1e9)
     summary = {"configuration": asdict(configuration), "offered": offered, "counts": counts,
+        "actual_runtime": actual_runtime, "actual_spawned_worker_inputs": worker_inputs,
+        "evidence_kind": environment["evidence_kind"],
         "outcome_counts": outcome_counts,
         "duration_including_terminal_observation_drain": elapsed, "drain_seconds": max(0, elapsed - configuration.duration),
         "close_seconds_excluded": close_seconds, "startup_seconds_excluded": setup_seconds,
@@ -707,6 +797,19 @@ def run(configuration, directory):
         "profile": profile_report(profiles), "environment": environment,
         "production_approved": False, "capacity_10000_per_s_passed": False,
         "scope": "<=10s managed local process inbox admission diagnostic; all successful orders OPEN, no simulated or real fills, no replication; profiling includes instrumentation overhead"}
+    summary["execution_classification"] = {
+        "durable_metadata_enqueue_acknowledgements": counts["durably_enqueued"],
+        "observed_financial_admission_committed_receipts": counts.get("financial_succeeded", 0),
+        "business_rejected": counts.get("business_rejected", 0),
+        "control_or_market_rejected": counts.get("control_or_market_rejected", 0),
+        "control_cids": {kind: checks["command_technical_diagnostics"]["commands_by_kind"].get(kind, 0)
+                         for kind in ("PUBLISH_MARKET", "SET_HALT")},
+        "batch_selected_memberships": checks["batch_dispatch_diagnostics"]["selected_commands"],
+        "batch_executed_memberships_including_rejections": checks["batch_dispatch_diagnostics"]["executed_commands"],
+        "internal_command_execution_attempts": checks["command_technical_diagnostics"]["internal_execution_attempts"],
+        "batch_failure_events_by_phase": {phase: checks["batch_dispatch_diagnostics"][phase + "_failure_events"]
+            for phase in ("prepare", "membership", "execute", "between_commands", "freshness", "disposition", "commit")},
+        "physical_metadata_and_financial_commit_counts_measured": False}
     summary["probe_qualification"] = probe_qualification(summary)
     (directory / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     for name, data in (("arrivals", (directory / "arrivals.jsonl").read_bytes()),
@@ -715,7 +818,7 @@ def run(configuration, directory):
     (directory / "arrivals.jsonl").unlink()
     (directory / "manifest.json").write_text(json.dumps({"database_files_included": False, "files": {
         str(path.relative_to(directory)): {"bytes": path.stat().st_size, "sha256": sha256(path.read_bytes()).hexdigest()}
-        for path in directory.rglob("*") if path.is_file() and (path.parent == profiles or path.name in ("summary.json", "environment.json", "arrival-window.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz", "startup-readiness.jsonl"))}}, indent=2) + "\n")
+        for path in directory.rglob("*") if path.is_file() and (path.parent in (profiles, workers) or path.name in ("summary.json", "environment.json", "arrival-window.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz", "startup-readiness.jsonl"))}}, indent=2) + "\n")
     return summary
 
 
@@ -727,13 +830,22 @@ def main(argv=None):
     parser.add_argument("--accounts", type=int, default=100)
     parser.add_argument("--shards", type=int, default=2)
     parser.add_argument("--profile", action="store_true")
+    parser.add_argument("--normal-cache-size", type=int, default=0)
+    parser.add_argument("--financial-batch-size", type=int, default=0)
+    parser.add_argument("--durable-batches", action="store_true")
     parser.add_argument("--cpu-limit", type=int, default=2)
     args = parser.parse_args(argv)
     if not 1 <= args.cpu_limit <= 4:
         parser.error("cpu-limit must be 1..4")
+    configuration = Configuration(duration=args.duration, rate=args.rate, accounts=args.accounts,
+        shards=args.shards, profile=args.profile, normal_cache_size=args.normal_cache_size,
+        financial_batch_size=args.financial_batch_size, durable_batches=args.durable_batches)
+    try:
+        configuration.validate()
+    except ValueError as error:
+        parser.error(str(error))
     os.sched_setaffinity(0, sorted(os.sched_getaffinity(0))[:args.cpu_limit])
-    result = run(Configuration(duration=args.duration, rate=args.rate, accounts=args.accounts,
-        shards=args.shards, profile=args.profile), args.output)
+    result = run(configuration, args.output)
     print(json.dumps(result, indent=2))
     return 0 if result["probe_qualification"]["passed"] else 2
 
