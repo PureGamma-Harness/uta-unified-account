@@ -1,0 +1,249 @@
+python 3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0] sqlite 3.46.1
+test_duplicate_signature_headers_and_corrupt_store_are_rejected (test_request_signing.SigningStoreTests.test_duplicate_signature_headers_and_corrupt_store_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.030s
+
+OK
+CASE test_request_signing.SigningStoreTests.test_duplicate_signature_headers_and_corrupt_store_are_rejected unittest_success True resource_warnings 1
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e84a5eb60> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_request_signing.py", line 213
+    with sqlite3.connect(self.root / "auth.sqlite3") as connection:
+test_copy_to_another_path_cannot_reuse_managed_authority (test_writer_fence.WriterFenceTests.test_copy_to_another_path_cannot_reuse_managed_authority) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.187s
+
+OK
+CASE test_writer_fence.WriterFenceTests.test_copy_to_another_path_cannot_reuse_managed_authority unittest_success True resource_warnings 2
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847df2e0> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 287
+    with sqlite3.connect(self.path) as source, sqlite3.connect(cloned) as target:
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847df010> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 287
+    with sqlite3.connect(self.path) as source, sqlite3.connect(cloned) as target:
+test_unknown_control_trigger_is_corruption_without_automatic_repair (test_writer_fence.WriterFenceTests.test_unknown_control_trigger_is_corruption_without_automatic_repair) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.190s
+
+OK
+CASE test_writer_fence.WriterFenceTests.test_unknown_control_trigger_is_corruption_without_automatic_repair unittest_success True resource_warnings 2
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e84a5eb60> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 348
+    with sqlite3.connect(self.path) as raw:
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847df4c0> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 353
+    with sqlite3.connect(self.path) as raw:
+test_changed_control_trigger_definition_is_corruption (test_writer_fence.WriterFenceTests.test_changed_control_trigger_definition_is_corruption) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.141s
+
+OK
+CASE test_writer_fence.WriterFenceTests.test_changed_control_trigger_definition_is_corruption unittest_success True resource_warnings 2
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847def20> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 358
+    with sqlite3.connect(self.path) as raw:
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847df5b0> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence.py", line 363
+    with sqlite3.connect(self.path) as raw:
+test_missing_guard_is_rejected_without_startup_or_upgrade_repair (test_writer_fence_legacy.LegacyBinaryFenceTests.test_missing_guard_is_rejected_without_startup_or_upgrade_repair) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.370s
+
+OK
+CASE test_writer_fence_legacy.LegacyBinaryFenceTests.test_missing_guard_is_rejected_without_startup_or_upgrade_repair unittest_success True resource_warnings 2
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847dfc40> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence_legacy.py", line 183
+    with sqlite3.connect(self.database.path) as raw:
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847dfd30> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence_legacy.py", line 191
+    with sqlite3.connect(self.database.path) as raw:
+test_all_guard_metadata_disappearing_cannot_be_misidentified_as_old_format (test_writer_fence_legacy.LegacyBinaryFenceTests.test_all_guard_metadata_disappearing_cannot_be_misidentified_as_old_format) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.279s
+
+OK
+CASE test_writer_fence_legacy.LegacyBinaryFenceTests.test_all_guard_metadata_disappearing_cannot_be_misidentified_as_old_format unittest_success True resource_warnings 1
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e845694e0> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence_legacy.py", line 197
+    with sqlite3.connect(self.database.path) as raw:
+test_python_only_managed_format_requires_explicit_offline_upgrade (test_writer_fence_legacy.LegacyBinaryFenceTests.test_python_only_managed_format_requires_explicit_offline_upgrade) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.592s
+
+OK
+CASE test_writer_fence_legacy.LegacyBinaryFenceTests.test_python_only_managed_format_requires_explicit_offline_upgrade unittest_success True resource_warnings 1
+CAPTURED ResourceWarning unclosed database in <sqlite3.Connection object at 0x7f6e847dfc40> emitted_at /tmp/uta-sqlite-fixture-probe.py 33
+ALLOCATION
+  File "/tmp/uta-sqlite-fixture-probe.py", line 32
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+  File "/usr/lib/python3.13/unittest/runner.py", line 240
+    test(result)
+  File "/usr/lib/python3.13/unittest/suite.py", line 84
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/suite.py", line 122
+    test(result)
+  File "/usr/lib/python3.13/unittest/case.py", line 707
+    return self.run(*args, **kwds)
+  File "/usr/lib/python3.13/unittest/case.py", line 651
+    self._callTestMethod(testMethod)
+  File "/usr/lib/python3.13/unittest/case.py", line 606
+    if method() is not None:
+  File "/workspace/uta-sqlite-fixture-cleanup/tests/test_writer_fence_legacy.py", line 227
+    with sqlite3.connect(self.database.path) as raw:
+TOTAL unittest_success True resource_warnings 11

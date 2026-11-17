@@ -1,0 +1,174 @@
+{
+  "observed_utc": "2026-11-16T22:37:01.700342+00:00",
+  "observed_ns": 1794868621700342065,
+  "producer_source_commit": "88755a9f2ba3bb672ca5d354b3037796f00c6611",
+  "producer_source": "/workspace/uta-soak-source-88755a9",
+  "job_directory": "/workspace/uta-soak-runs/formal-20261116T213613Z-88755a9",
+  "job_definition_sha256": "6f710cd1cbf15054a935fd6ffdb9c126f7900807c755eaf5485c883b67a41465",
+  "producer_status_command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-soak-source-88755a9/benchmarks/run_soak.py",
+    "status",
+    "--directory",
+    "/workspace/uta-soak-runs/formal-20261116T213613Z-88755a9"
+  ],
+  "producer_status_call_ns": {
+    "started": 1794868621582137018,
+    "finished": 1794868621695052941
+  },
+  "producer_status": {
+    "status": "running",
+    "stored_status": "running",
+    "process_alive": true,
+    "heartbeat_age_seconds": 1.030957889,
+    "source_commit": "88755a9f2ba3bb672ca5d354b3037796f00c6611",
+    "started_utc": "2026-11-16T21:36:13.820942+00:00",
+    "original_started_ns": 1794864973820942405,
+    "deadline_ns": 1794951373820942405,
+    "observed_ns": 1794868621681566628,
+    "planned_rounds": 21600,
+    "counts": {
+      "done": 912
+    },
+    "financial_counts": {
+      "uta_orders": 3830,
+      "uta_fills": 3648,
+      "uta_matches": 1824,
+      "ledger_events": 3701,
+      "soak_evidence": 18364,
+      "cancelled_orders": 274,
+      "partial_cancelled_orders": 92,
+      "live_orders": 0,
+      "positions": 0,
+      "credit_commands": {
+        "borrowed": 16,
+        "interest_accrued": 16,
+        "pool_funded": 1,
+        "repaid": 16
+      }
+    },
+    "golden_for_completed_rounds": {
+      "matches": 1824,
+      "fill_legs": 3648,
+      "orders": 3830,
+      "cancelled_orders": 274,
+      "partial_cancelled_orders": 92,
+      "borrow_interest_repay_cycles": 16
+    },
+    "completed_round_golden_matches_financial_state": true,
+    "logs_verified": false,
+    "configured_workload_completed": false,
+    "sessions": [
+      {
+        "id": "32adb2827ad246c096da107615bac7f3",
+        "pid": 4471,
+        "started_ns": 1794864973825199889,
+        "heartbeat_ns": 1794868620650598774,
+        "ended_ns": null,
+        "active_ns": 3646825026247,
+        "status": "running",
+        "process_identity": "210004"
+      }
+    ],
+    "confirmed_active_seconds": 3646.825026247,
+    "wall_seconds_since_original_start": 3647.860629181,
+    "market_version": 3618,
+    "market_age_seconds": 0.992551,
+    "roundtrip_latency_ms": {
+      "p50": 100.211162,
+      "p95": 143.179802,
+      "p99": 170.718031,
+      "p99_9": 228.347332
+    },
+    "directory_bytes": 20212984,
+    "free_disk_bytes": 30597402624,
+    "stability_target_passed": false,
+    "production_approved": false,
+    "capacity_10000_per_s_passed": false,
+    "cohosted": true
+  },
+  "read_only_database_snapshot": {
+    "counts": {
+      "done": 912
+    },
+    "sessions": [
+      {
+        "id": "32adb2827ad246c096da107615bac7f3",
+        "pid": 4471,
+        "started_ns": 1794864973825199889,
+        "heartbeat_ns": 1794868620650598774,
+        "ended_ns": null,
+        "active_ns": 3646825026247,
+        "status": "running",
+        "process_identity": "210004"
+      }
+    ],
+    "stored_status": "running",
+    "logs_verified": false,
+    "financial_counts": {
+      "uta_orders": 3830,
+      "uta_matches": 1824,
+      "uta_fills": 3648,
+      "uta_positions": 0,
+      "cancelled_orders": 274,
+      "live_orders": 0,
+      "partial_cancelled_orders": 92,
+      "credit": {
+        "borrowed": 16,
+        "interest_accrued": 16,
+        "pool_funded": 1,
+        "repaid": 16
+      }
+    },
+    "inflight": 0,
+    "expected_for_completed_rounds": {
+      "uta_matches": 1824,
+      "uta_fills": 3648,
+      "uta_orders": 3830,
+      "uta_positions": 0,
+      "cancelled_orders": 274,
+      "partial_cancelled_orders": 92,
+      "live_orders": 0
+    },
+    "golden_matches": true,
+    "round_errors": 0,
+    "export_cursor": 18142,
+    "last_evidence_sequence": 18364,
+    "latest_full_verification": {
+      "sequence": 18199,
+      "at_ns": 1794868586633095075,
+      "payload": "{\"counts\":{\"independent_reconciliation\":{\"accounts\":3,\"active_imports\":0,\"fills\":3616,\"ledger_events\":3669,\"matches\":1808,\"matching_only\":true,\"nonzero_liabilities\":0,\"orders\":3796,\"paired_fills\":3616,\"positions\":0,\"status\":\"passed\",\"unpaired_fills\":0},\"ledger_events\":3669,\"uta_fills\":3616,\"uta_matches\":1808,\"uta_orders\":3796},\"elapsed_ns\":734276982,\"full\":true,\"read_only_reopen\":true}"
+    },
+    "market": {
+      "version": 3618,
+      "observed_at": "2026-11-16T22:37:00.688884+00:00"
+    }
+  },
+  "assessment": {
+    "observer_state": "observing_pending",
+    "alerts": [],
+    "process": {
+      "pid": 4471,
+      "present": true,
+      "state": "S",
+      "birth": "210004",
+      "birth_matches": true,
+      "alive": true
+    },
+    "heartbeat_age_seconds": 1.049743291,
+    "heartbeat_threshold_seconds": 30,
+    "golden_state": "quiescent_matches",
+    "actual_wall_seconds": 3647.87939966,
+    "confirmed_active_seconds": 3646.825026247,
+    "original_start_ns": 1794864973820942405,
+    "original_deadline_ns": 1794951373820942405,
+    "actual_24h_elapsed": false,
+    "final_audit": null,
+    "final_independent_replay_covers_financial_state": false,
+    "eligible_for_independent_final_review": false,
+    "stability_24h_approved": false,
+    "production_approved": false,
+    "capacity_10000_approved": false
+  },
+  "observer_script_sha256": "5329bcdb2668eda44635558f4153305306be608cb3803099c61e50dbc26e2efd"
+}

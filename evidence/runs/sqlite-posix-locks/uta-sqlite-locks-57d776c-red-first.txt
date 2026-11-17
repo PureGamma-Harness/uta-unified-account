@@ -1,0 +1,187 @@
+test_bounded_concurrent_dml_and_ddl_conserve_balances_and_reopen_cleanly (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_bounded_concurrent_dml_and_ddl_conserve_balances_and_reopen_cleanly) ... ok
+test_existing_public_or_symlink_database_is_rejected_without_modifying_its_bytes (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_existing_public_or_symlink_database_is_rejected_without_modifying_its_bytes) ... ok
+test_missing_read_only_targets_never_create_main_database_or_sidecars (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_missing_read_only_targets_never_create_main_database_or_sidecars) ... 
+  test_missing_read_only_targets_never_create_main_database_or_sidecars (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_missing_read_only_targets_never_create_main_database_or_sidecars) (database='Database') ... FAIL
+test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) ... 
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='Database', writer=False) ... FAIL
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='Database', writer=True) ... FAIL
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_ExistingAuthDatabase', writer=False) ... FAIL
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_ExistingAuthDatabase', writer=True) ... FAIL
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_BoundShardDatabase', writer=False) ... FAIL
+  test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_BoundShardDatabase', writer=True) ... FAIL
+test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) ... 
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='Database', writer=False) ... FAIL
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='Database', writer=True) ... FAIL
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_ExistingAuthDatabase', writer=False) ... FAIL
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_ExistingAuthDatabase', writer=True) ... FAIL
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_BoundShardDatabase', writer=False) ... FAIL
+  test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_BoundShardDatabase', writer=True) ... FAIL
+test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) ... 
+  test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='Database') ... FAIL
+  test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='_ExistingAuthDatabase') ... FAIL
+  test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='_BoundShardDatabase') ... FAIL
+test_separate_pid_sqlite_writer_stays_busy_until_original_writer_releases (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_separate_pid_sqlite_writer_stays_busy_until_original_writer_releases) ... ok
+test_shard_identity_and_managed_writer_fencing_remain_mandatory (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_shard_identity_and_managed_writer_fencing_remain_mandatory) ... ok
+
+======================================================================
+FAIL: test_missing_read_only_targets_never_create_main_database_or_sidecars (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_missing_read_only_targets_never_create_main_database_or_sidecars) (database='Database')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 198, in test_missing_read_only_targets_never_create_main_database_or_sidecars
+    self.fail("missing read-only database reached a transaction body")
+AssertionError: missing read-only database reached a transaction body
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='Database', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='Database', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_ExistingAuthDatabase', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_ExistingAuthDatabase', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_BoundShardDatabase', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_normal_second_read_transaction_cannot_release_a_live_main_file_lock (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_normal_second_read_transaction_cannot_release_a_live_main_file_lock) (database='_BoundShardDatabase', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 138, in test_normal_second_read_transaction_cannot_release_a_live_main_file_lock
+    self.hold_and_probe(database, writer=writer, action=read)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='Database', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='Database', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_ExistingAuthDatabase', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_ExistingAuthDatabase', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_BoundShardDatabase', writer=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks) (database='_BoundShardDatabase', writer=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 128, in test_private_checks_cannot_release_another_threads_actual_sqlite_read_or_write_locks
+    self.hold_and_probe(database, writer=writer, action=other._private_file)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='Database')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 150, in test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit
+    self.hold_and_probe(database, writer=True, action=rejected_writer)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='_ExistingAuthDatabase')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 150, in test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit
+    self.hold_and_probe(database, writer=True, action=rejected_writer)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+======================================================================
+FAIL: test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit (test_sqlite_lock_ownership.SQLiteLockOwnershipTests.test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit) (database='_BoundShardDatabase')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 150, in test_rejected_second_writer_preserves_existing_kernel_lock_and_holder_commit
+    self.hold_and_probe(database, writer=True, action=rejected_writer)
+  File "/workspace/uta-lock-faults/tests/test_sqlite_lock_ownership.py", line 119, in hold_and_probe
+    self.assertFalse(self.probe(database)["exclusive"],
+AssertionError: True is not false : a second thread's ordinary database access released process A's SQLite main-file lock
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.730s
+
+FAILED (failures=16)

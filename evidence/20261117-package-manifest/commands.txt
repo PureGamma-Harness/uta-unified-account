@@ -1,0 +1,52 @@
+Working directory: /workspace/uta-package-final
+No release package was built by this check.
+
+python - > evidence/20261117-package-manifest/selection.stdout.txt 2> evidence/20261117-package-manifest/selection.stderr.txt <<'PY'
+from pathlib import Path
+from setuptools._distutils.filelist import FileList
+import hashlib, json, platform, subprocess
+import setuptools
+
+root = Path.cwd()
+commit = 'd08ab2623bf992ee2a8e923531caea3b0d37b579'
+paths = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', commit], cwd=root, text=True).splitlines()
+original = subprocess.check_output(['git', 'show', commit + ':MANIFEST.in'], cwd=root, text=True)
+current = (root / 'MANIFEST.in').read_text()
+
+def selected(template):
+    listing = FileList()
+    listing.allfiles = paths
+    for line in template.splitlines():
+        listing.process_template_line(line)
+    return set(listing.files)
+
+expected = {path for path in paths if path.startswith(('docs/', 'evidence/'))}
+before = sorted(expected - selected(original))
+after = sorted(expected - selected(current))
+assert len(before) == 9, before
+assert 'docs/readiness-sampling-observations.json' in before
+assert 'evidence/runs/durable-recorder/README.md' in before
+assert 'evidence/runs/durable-ci-preflight/README.md' in before
+assert after == [], after
+special = sorted(path for path in expected if path.endswith(('.jsonl', '.log')))
+report = {
+    'source_commit': commit,
+    'python': platform.python_version(),
+    'setuptools': setuptools.__version__,
+    'scope': 'MANIFEST.in file selection only; no archive build or installed/runtime tests executed',
+    'tracked_docs_and_evidence_files': len(expected),
+    'before_missing': before,
+    'after_missing': after,
+    'tracked_docs_evidence_jsonl_or_log': special,
+    'manifest_sha256': hashlib.sha256(current.encode()).hexdigest(),
+    'passed': not after,
+    'artifacts_built': 0,
+    'functional_tests_executed': 0,
+    'production_approved': False,
+}
+text = json.dumps(report, indent=2, sort_keys=True) + '\n'
+(root / 'evidence/20261117-package-manifest/selection.json').write_text(text)
+print(text, end='')
+PY
+
+Observed exit code: 0.

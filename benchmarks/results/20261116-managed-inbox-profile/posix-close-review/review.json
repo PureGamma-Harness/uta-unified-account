@@ -1,0 +1,65 @@
+{
+  "reviewed_utc": "2026-11-17T04:20:53.280934+00:00",
+  "historical_probe_source_commit": "7a06c0532ba510653b1feccd7e80030d3cb19f8a",
+  "historical_evidence_commit": "99d461a39efca2d600ed8ce41497fe705bce088e",
+  "historical_event": {
+    "sqlite_errorcode": 522,
+    "sqlite_errorname": "SQLITE_IOERR_SHORT_READ",
+    "arrival_offset_seconds": 0.725336092,
+    "raw_event_unchanged": true,
+    "original_financial_successes": 171,
+    "original_durable_enqueue_acknowledgements": 200
+  },
+  "official_source": {
+    "url": "https://sqlite.org/howtocorrupt.html#posix_close_bug",
+    "section": "2.2 Posix advisory locks canceled by a separate thread doing close()",
+    "raw_html_bytes": 46737,
+    "raw_html_sha256": "e00709e3f37e95332d8e6df243510665e9cab1d7938d4fd85cbf5f47648a50bf",
+    "source_provenance": "Reuse the first-party page already retrieved by the integration/independent validation team; original local path /tmp/uta-sqlite-official-corruption.html. This file was not re-fetched or changed during this review.",
+    "excerpt_method": "HTMLParser text extraction, whitespace normalized; full original bytes separately retained as gzip."
+  },
+  "independent_mechanism_evidence": {
+    "source_commit": "39c7f6e",
+    "report_sha256": "233b5b04623411bad25e31cbd40c2608ad8ba3e59ed74f481361da70f7a21e26",
+    "baseline": "57d776ced8d9b304b651925d8c13f5e7e7ad6272",
+    "test_source_sha256": "8d1cbff2b857e91fc907e5f327ba49a9446ab0c59866005e10fda447212c1cda",
+    "mechanism_confirmed": true,
+    "scope": "Independent PID kernel POSIX lock probes remain blocked before a second same-process preflight; old raw-close preflight releases that protection despite SQLite in_transaction. Fixed existing-only/no-published-inode-close candidates pass these bounded tests.",
+    "sqlite_versions_observed": [
+      "3.53.1",
+      "3.46.1"
+    ],
+    "not_a_performance_test": true
+  },
+  "candidate_repair_evidence": {
+    "implementation_notes_head": "d2f9e6e339cba6e4cb3d3b008bd320194bb1f654",
+    "independent_validation_head": "39c7f6e2f2ca44e8eeb7ce62d8f8b7b5942efcad",
+    "notes_sha256": "612f4e971249aaf08f4da7e5fff940626fb67f1b9402453e2758bae8733a4535",
+    "implementation_storage_candidate": "dabbeeb",
+    "existing_only_read_followup": "99e347b",
+    "distinct_startup_lease_fix": "97b7967",
+    "integration_into_this_benchmark": "Not applied. Do not run paired performance until the integration owner freezes the corrected candidate and the identical benchmark configuration."
+  },
+  "causal_boundary": {
+    "unsafe_application_mechanism_independently_reproduced": true,
+    "specific_historical_522_event_attribution_proven": false,
+    "missing_historical_evidence": [
+      "affected shard",
+      "SQLite file-descriptor/syscall trace",
+      "database/WAL inode and lifecycle at the observed error"
+    ],
+    "not_justified": [
+      "SQLite version downgrade as the fix",
+      "RO reconciliation implies no transient lock loss",
+      "no-error or stability-green claim for the first probe",
+      "fixed candidate throughput improvement inferred without rerun"
+    ]
+  },
+  "release_readiness": {
+    "historical_probe_is_stability_green": false,
+    "production_approved": false,
+    "capacity_10000_per_s_passed": false,
+    "status": "NO-GO for production or stability acceptance; retain the first probe as a failed/limited diagnostic observation"
+  },
+  "active_soak_policy": "No changes to producer887, observerf96, running PIDs4471/8784, their source checkouts, databases or original timing."
+}

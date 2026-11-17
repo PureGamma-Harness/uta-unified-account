@@ -10,7 +10,7 @@
 
 当前入口对**已存在的数据库**仅执行 `os.stat(..., follow_symlinks=False)`，核对普通文件、所有者及私有权限；SQLite 打开后再次比较设备号与 inode。分片和认证库缺失时继续拒绝，不自动重建。
 
-普通数据库首次创建仍以 `O_CREAT | O_EXCL`、0600 权限建立文件；认证库只允许显式 `NonceStore.initialize` 创建。创建和所有入口的文件检查共用进程内 `RLock`，保证创建描述符关闭前，同进程的另一入口不能通过检查并打开 SQLite。它只协调文件检查，不代替 SQLite 的事务锁、writer token 或跨进程 fencing。数据库所在目录与服务 OS 用户仍属于可信边界。
+首次创建先在同目录建立 0600 临时 inode、同步并关闭其描述符，再以排他 hard link 原子发布目标路径；已存在目标不被覆盖。认证库只允许显式 `NonceStore.initialize` 创建。目标可见前创建描述符已关闭，同进程其他 SQLite 连接不会观察到一个仍可能被应用 raw close 的已发布 inode。该文件发布方式不代替 SQLite 事务锁、writer token 或跨进程 fencing。只读连接使用 `mode=ro`，不隐式建库或切换 journal；金融写连接继续使用 WAL/FULL。数据库目录与服务 OS 用户仍属于可信边界。
 
 该变更不做数据迁移或历史修复。已经出现回执缺失或保护清单不一致的 authority 应保留停机，保存完整数据库及 WAL，并核对 inbox、订单、账本与审计事实；升级代码本身不能证明原有 ACK 对应的历史仍完整。
 
@@ -23,11 +23,15 @@ sequenceDiagram
     participant F as 文件系统元数据
     participant S as SQLite Unix VFS
     A->>S: BEGIN + SELECT，持有 SQLite 文件锁
-    C->>F: 在进程内锁下 stat，不跟随末级符号链接
+    C->>F: stat，不跟随末级符号链接
     F-->>C: 文件类型、权限、所有者、设备号与 inode
     C->>S: sqlite3.connect
     C->>F: 再次 stat，核对设备号与 inode
-    C->>S: 配置 WAL/FULL，开始对应角色事务
+    alt 只读连接
+        C->>S: mode=ro、query_only，BEGIN
+    else 金融写连接
+        C->>S: mode=rw、WAL/FULL，BEGIN IMMEDIATE
+    end
     Note over A,S: 检查已有文件不额外 open/close，原事务继续持锁
     C->>S: COMMIT，再由 SQLite 关闭新连接
     A->>S: COMMIT，再由 SQLite 关闭原连接

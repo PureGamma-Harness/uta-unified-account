@@ -1,5 +1,6 @@
 """Real pre-fencing source compatibility; no git history is needed in CI."""
 from datetime import datetime, timezone
+from contextlib import closing
 from decimal import Decimal as D
 from hashlib import sha256
 import json
@@ -180,7 +181,7 @@ except BaseException as error:
         fence = WriterFence(self.database)
         fence.enable('missing-guard')
         token = fence.acquire('worker',10)
-        with sqlite3.connect(self.database.path) as raw:
+        with closing(sqlite3.connect(self.database.path)) as raw, raw:
             name = raw.execute("SELECT name FROM sqlite_master WHERE type='trigger' AND name LIKE 'writer_fence_data_%' LIMIT 1").fetchone()[0]
             raw.execute('DROP TRIGGER "'+name+'"')
         for operation in (fence.status,lambda:fence.enable('missing-guard'),fence.upgrade_guards,
@@ -188,13 +189,13 @@ except BaseException as error:
             with self.assertRaises(WriterFenceError) as caught:
                 operation()
             self.assertEqual(caught.exception.code,'fence_guard_corrupt')
-        with sqlite3.connect(self.database.path) as raw:
+        with closing(sqlite3.connect(self.database.path)) as raw, raw:
             self.assertIsNone(raw.execute('SELECT name FROM sqlite_master WHERE name=?',(name,)).fetchone())
 
     def test_all_guard_metadata_disappearing_cannot_be_misidentified_as_old_format(self):
         fence = WriterFence(self.database)
         fence.enable('missing-metadata')
-        with sqlite3.connect(self.database.path) as raw:
+        with closing(sqlite3.connect(self.database.path)) as raw, raw:
             raw.execute('DROP TABLE writer_fence_guard_config')
             raw.execute('DROP TABLE writer_fence_guard_tables')
         for operation in (fence.status,fence.upgrade_guards):
@@ -224,7 +225,7 @@ except BaseException as error:
         base = Database(self.database.path,fence_clock_ns=lambda:now,fence_boot_id='old-managed-boot')
         # Exact first-version metadata columns; this fixture deliberately has
         # no SQL data guards, matching the first managed deployment format.
-        with sqlite3.connect(self.database.path) as raw:
+        with closing(sqlite3.connect(self.database.path)) as raw, raw:
             raw.execute('CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)')
             raw.execute('CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)')
             raw.execute('CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)')

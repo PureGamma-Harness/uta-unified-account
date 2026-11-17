@@ -1,5 +1,6 @@
 """Synthetic HMAC keys, durable nonce races and actual HTTP/TLS requests."""
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import closing
 from dataclasses import replace
 from datetime import datetime, timezone
 from decimal import Decimal as D
@@ -210,7 +211,7 @@ class SigningStoreTests(unittest.TestCase):
             duplicate[name] = value
         duplicate["X-UTA-Nonce"] = headers["X-UTA-Nonce"]
         self.code("signature_required", duplicate)
-        with sqlite3.connect(self.root / "auth.sqlite3") as connection:
+        with closing(sqlite3.connect(self.root / "auth.sqlite3")) as connection, connection:
             connection.execute("ALTER TABLE auth_audit RENAME COLUMN event TO unsupported_event")
         self.code("signing_store_unavailable", self.signed())
 

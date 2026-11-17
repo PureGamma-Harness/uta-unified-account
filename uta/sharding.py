@@ -25,7 +25,7 @@ from .ledger import Ledger
 from .market import MarketSnapshot
 from .matching import Matcher
 from .service import ExchangeService, ServiceError, _name, _text
-from .storage import Database, _FILE_CHECK_LOCK
+from .storage import Database
 
 
 HASH_VERSION = "sha256-utf8-big-endian-mod-v1"
@@ -48,17 +48,16 @@ class _BoundShardDatabase(Database):
         self._bootstrap = bootstrap
 
     def _private_file(self):
-        with _FILE_CHECK_LOCK:
-            if self._bootstrap and not os.path.lexists(self.path):
-                return super()._private_file()
-            try:
-                details = os.stat(self.path, follow_symlinks=False)
-            except OSError as exc:
-                raise ServiceError("shard_unavailable", "persisted shard cannot be safely opened; automatic creation is forbidden", 503) from exc
-            if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or
-                details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):
-                raise ServiceError("shard_unavailable", "persisted shard is missing, empty or unsafe", 503)
-            return details.st_dev, details.st_ino
+        if self._bootstrap and not os.path.lexists(self.path):
+            return super()._private_file()
+        try:
+            details = os.stat(self.path, follow_symlinks=False)
+        except OSError as exc:
+            raise ServiceError("shard_unavailable", "persisted shard cannot be safely opened; automatic creation is forbidden", 503) from exc
+        if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or
+            details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):
+            raise ServiceError("shard_unavailable", "persisted shard is missing, empty or unsafe", 503)
+        return details.st_dev, details.st_ino
 
     @contextmanager
     def transaction(self):

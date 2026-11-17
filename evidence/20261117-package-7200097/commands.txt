@@ -1,0 +1,76 @@
+Frozen source: 7200097ce9f92fa678907bee9a99933f60d65bc3
+Frozen checkout: /workspace/uta-durable-final-7200097
+Report worktree: /workspace/uta-package-final
+External work: /tmp/uta-release-7200097-K7DuS0
+Each command selected the stated working directory explicitly. Use new empty external directories when repeating this work; retain earlier artifacts and evidence.
+
+At the report worktree:
+mktemp -d /tmp/uta-release-7200097-XXXXXX
+Observed directory: /tmp/uta-release-7200097-K7DuS0
+python -m venv /tmp/uta-release-7200097-K7DuS0/venv
+mkdir /tmp/uta-release-7200097-K7DuS0/artifacts /tmp/uta-release-7200097-K7DuS0/build-source /tmp/uta-release-7200097-K7DuS0/external /tmp/uta-release-7200097-K7DuS0/sdist-unpacked
+
+At the frozen checkout:
+git rev-parse HEAD
+git status --short
+git archive --format=tar --output=/tmp/uta-release-7200097-K7DuS0/frozen-source.tar HEAD
+HEAD was the stated exact SHA and status was clean. Its final repeated raw commit/status outputs are retained in frozen-source-*.stdout.txt.
+
+At the report worktree:
+tar -xf /tmp/uta-release-7200097-K7DuS0/frozen-source.tar -C /tmp/uta-release-7200097-K7DuS0/build-source
+
+At the external build-source directory (without .git):
+python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-7200097-K7DuS0/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-7200097-K7DuS0/artifacts"))'
+Exit 0. Raw stdout/stderr are build.*.txt. Build environment and source archive hash are in environment.json.
+
+At the report worktree:
+python /workspace/uta-durable-final-7200097/tools/verify_release_archives.py --source /workspace/uta-durable-final-7200097 --commit 7200097ce9f92fa678907bee9a99933f60d65bc3 --wheel /tmp/uta-release-7200097-K7DuS0/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-7200097-K7DuS0/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-7200097-K7DuS0/artifact-manifest.json
+Exit 0. All 862 tracked source/evidence files and 47 runtime files are exact. Raw stdout/stderr are verify-archives.*.txt.
+
+At the external directory:
+/tmp/uta-release-7200097-K7DuS0/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-7200097-K7DuS0/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+env -u PYTHONPATH /tmp/uta-release-7200097-K7DuS0/venv/bin/python -I /workspace/uta-durable-final-7200097/tools/validate_installed_release.py --source /workspace/uta-durable-final-7200097 --artifact-manifest /tmp/uta-release-7200097-K7DuS0/artifact-manifest.json --output /tmp/uta-release-7200097-K7DuS0/external/installed
+Both exit 0. The actual eight tests pass in 7.678s, zero skips; eight actual console commands exit zero. All individual command stdout/stderr files, test log and installed report are retained.
+
+At the report worktree:
+tar -xzf /tmp/uta-release-7200097-K7DuS0/artifacts/uta_reference_exchange-0.4.0a1.tar.gz -C /tmp/uta-release-7200097-K7DuS0/sdist-unpacked
+
+At /tmp/uta-release-7200097-K7DuS0/sdist-unpacked/uta_reference_exchange-0.4.0a1 (without .git):
+env -u PYTHONPATH /tmp/uta-release-7200097-K7DuS0/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+env -u PYTHONPATH /tmp/uta-release-7200097-K7DuS0/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+env -u PYTHONPATH /tmp/uta-release-7200097-K7DuS0/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+Each exits 0. Respectively 7, 1 and 4 tests pass, zero skips. All separate stdout/stderr logs are retained.
+
+Actual final-artifact missing-probe negative control, run at the report worktree:
+python - <<'PY'
+from pathlib import Path
+from hashlib import sha256
+import json, subprocess, sys, tarfile
+work = Path('/tmp/uta-release-7200097-K7DuS0')
+root = Path('/workspace/uta-durable-final-7200097')
+original = work / 'artifacts/uta_reference_exchange-0.4.0a1.tar.gz'
+negative = work / 'negative-missing-probe.tar.gz'
+missing = 'evidence/runs/sqlite-fixture-resourcewarning/allocation-probe.py'
+with tarfile.open(original) as source, tarfile.open(negative, 'w:gz') as target:
+    prefix = source.getmembers()[0].name.split('/')[0] + '/'
+    removed = 0
+    for item in source.getmembers():
+        if item.name == prefix + missing:
+            removed += 1
+            continue
+        target.addfile(item, source.extractfile(item) if item.isfile() else None)
+assert removed == 1
+argv = [sys.executable, str(root / 'tools/verify_release_archives.py'), '--source', str(root), '--commit', '7200097ce9f92fa678907bee9a99933f60d65bc3', '--wheel', str(work / 'artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl'), '--sdist', str(negative), '--output', str(work / 'negative-missing-probe-report.json')]
+result = subprocess.run(argv, cwd=Path('/workspace/uta-package-final'), capture_output=True, text=True)
+(work / 'negative-missing-probe.stdout.txt').write_text(result.stdout)
+(work / 'negative-missing-probe.stderr.txt').write_text(result.stderr)
+report = json.loads((work / 'negative-missing-probe-report.json').read_text())
+passed = result.returncode == 1 and report['passed'] is False and report['sdist_missing'] == [missing]
+control = {'case': 'actual_final_sdist_missing_probe_rejected', 'source_commit': '7200097ce9f92fa678907bee9a99933f60d65bc3', 'construction': 'copy actual complete final sdist; omit exactly one existing tracked allocation-probe.py member', 'original_sdist_sha256': sha256(original.read_bytes()).hexdigest(), 'negative_sdist_sha256': sha256(negative.read_bytes()).hexdigest(), 'argv': argv, 'cwd': '/workspace/uta-package-final', 'returncode': result.returncode, 'sdist_missing': report['sdist_missing'], 'passed': passed, 'production_approved': False}
+(work / 'negative-controls.json').write_text(json.dumps(control, indent=2, sort_keys=True) + '\n')
+print(json.dumps(control, indent=2, sort_keys=True))
+assert passed
+PY
+The control harness exits 0 only after the actual verifier exits 1 for exactly the removed member. Its actual stdout/stderr, complete report and control result are retained. This deliberately incomplete control artifact is outside the original artifacts directory.
+
+No full repository suite, systemd deployment or capacity benchmark is attributed to this package exercise. No financial/auth database, signing profile or TLS private key is committed.

@@ -1120,14 +1120,27 @@ class ManagedProcessFaultTests(unittest.TestCase):
         self.assertFalse(result["publishing"])
         result = self.router.set_kill_switch(False, timeout=10)
         self.assertFalse(result["halted"])
-        # Control receipts can commit before the monitor collects the child's
-        # ready handshake. Observe the real predicate instead of racing its poll.
-        deadline = monotonic() + 10
-        report = self.router.diagnostics()
-        while not report["ready"] and monotonic() < deadline:
-            sleep(.01)
-            report = self.router.diagnostics()
-        self.assertTrue(report["ready"], report)
+        # Control commits can precede the parent's next READY-pipe observation.
+        # Retry only explained observation transients, never stale/partial or
+        # another failed financial condition. Business waits and leases above
+        # retain their existing limits.
+        deadline, observation = monotonic() + 10, None
+        while True:
+            remaining = deadline - monotonic()
+            if remaining <= 0:
+                break
+            observation = self.router.diagnostics(timeout=min(1, remaining))
+            if observation["ready"]:
+                break
+            if observation.get("reason") not in {"worker_unready", "diagnostic_timeout"}:
+                self.fail("non-transient readiness failure: " + json.dumps(observation, sort_keys=True))
+            sleep(min(.01, max(0, deadline - monotonic())))
+        message = json.dumps(observation, sort_keys=True)
+        self.assertIsNotNone(observation, message)
+        self.assertTrue(observation["ready"], message)
+        self.assertTrue(observation["financial_ready"], message)
+        self.assertTrue(all(row["owner_ready"] and row["market_ready"]
+                            for row in observation["workers"]), message)
 
     def submit(self, command, order=None, shard=0):
         return self.router.submit_order(self.accounts[shard], command, order or command,

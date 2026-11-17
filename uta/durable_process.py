@@ -7,6 +7,7 @@ on a parent process, shared manager, Future, or in-memory transport surviving.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from contextlib import contextmanager
 from decimal import Decimal
 import fcntl
 from hashlib import sha256
@@ -24,16 +25,168 @@ from time import monotonic, sleep
 from uuid import uuid4
 
 from .durable_commands import CommandExecutionError, QueueStore
-from .market import MarketSnapshot
+from .market import MAX_JSON_BYTES, MarketSnapshot
+from .ledger import Ledger
+from .models import RiskInputError
 from .portfolio import PortfolioRules
 from .products import ProductCatalog
 from .service import ServiceError, _name, _text
 from .sharding import (_BoundShardDatabase, ShardRouter, ShardWorkerView,
                        _json, _open_router_control)
-from .writer_fence import WriterFence, WriterFenceError
+from .writer_fence import (WriterFence, WriterFenceError,
+                           _load as _load_writer_lease, _observed as _observe_writer_clock)
+from .storage import Database, StorageError
 
 
 _TERMINAL = frozenset({"SUCCEEDED", "REJECTED", "QUARANTINED"})
+
+
+def _diagnostic_remaining(deadline):
+    remaining = deadline - monotonic()
+    if remaining <= 0:
+        raise ServiceError("diagnostic_timeout", "diagnostic read budget expired", 503)
+    return remaining
+
+
+def _diagnostic_code(error, fallback="diagnostic_unavailable"):
+    code = error if isinstance(error, str) else getattr(error, "code", None)
+    if isinstance(code, str) and code.isascii() and len(code) <= 80 and code.replace("_", "").isalnum():
+        return code
+    return fallback
+
+
+class _DiagnosticDatabase(Database):
+    """Existing-file, mode=ro reads with a shared overall SQL/guard deadline."""
+    def __init__(self, source, deadline):
+        super().__init__(source.path, timeout=_diagnostic_remaining(deadline))
+        self._deadline = deadline
+        self._identity_check = getattr(source, "_check_read_identity", None)
+
+    def _connect(self):
+        _diagnostic_remaining(self._deadline)
+        # A raw close of this published inode would release other SQLite
+        # connections' POSIX locks in this process. Inspect metadata only.
+        before = os.stat(self.path, follow_symlinks=False)
+        if (not stat.S_ISREG(before.st_mode) or before.st_size == 0 or
+                before.st_uid != os.geteuid() or stat.S_IMODE(before.st_mode) & 0o077):
+            raise StorageError("diagnostics require an existing private regular database")
+        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=ro", uri=True,
+                                     timeout=_diagnostic_remaining(self._deadline), isolation_level=None)
+        try:
+            after = os.stat(self.path, follow_symlinks=False)
+            if ((before.st_dev, before.st_ino) != (after.st_dev, after.st_ino)
+                    or not stat.S_ISREG(after.st_mode) or after.st_size == 0
+                    or after.st_uid != os.geteuid() or stat.S_IMODE(after.st_mode) & 0o077):
+                raise StorageError("database changed during diagnostic open")
+            connection.row_factory = sqlite3.Row
+            # Install before Database's persistent-guard validation, not merely
+            # after yielding a connection. Many small guard queries are bounded.
+            connection.set_progress_handler(lambda: int(monotonic() >= self._deadline), 1)
+            connection.execute("PRAGMA query_only=ON")
+            connection.execute("PRAGMA foreign_keys=ON")
+            # SQLite busy handlers are per-statement; a short contention cap
+            # prevents many late statements from each waiting the full budget.
+            connection.execute(f"PRAGMA busy_timeout={min(20, int(_diagnostic_remaining(self._deadline) * 1000))}")
+            return connection
+        except BaseException:
+            connection.close()
+            raise
+
+    @contextmanager
+    def read_transaction(self):
+        with super().read_transaction() as connection:
+            if self._identity_check is not None:
+                self._identity_check(connection)
+            _diagnostic_remaining(self._deadline)
+            yield connection
+            _diagnostic_remaining(self._deadline)
+
+
+def _diagnostic_state(connection, descriptor, shard_count):
+    if [tuple(row) for row in connection.execute("SELECT singleton,kind FROM uta_authority")] != [(1, "router_control")]:
+        raise ServiceError("wrong_authority", "diagnostic control authority is invalid", 503)
+    row = connection.execute("SELECT descriptor,payload FROM router_layout JOIN router_state USING(singleton) WHERE singleton=1").fetchone()
+    if row is None or row[0] != descriptor or len(row[1]) > MAX_JSON_BYTES:
+        raise ServiceError("layout_corruption", "diagnostic control descriptor is invalid", 503)
+    state = json.loads(row[1])
+    if (not isinstance(state, dict) or _json(state) != row[1]
+            or type(state.get("halted")) is not bool or type(state.get("publishing")) is not bool
+            or type(state.get("epoch")) is not int or state["epoch"] < 0
+            or not isinstance(state.get("watermarks"), dict)):
+        raise ServiceError("control_corruption", "diagnostic control flags are invalid", 503)
+    version, digest = state.get("market_version"), state.get("market_digest")
+    if (version is None and digest is not None or version is not None and (
+            type(version) is not int or not 0 <= version < 2**63
+            or not isinstance(digest, str) or len(digest) != 64 or any(ch not in "0123456789abcdef" for ch in digest))):
+        raise ServiceError("control_corruption", "diagnostic market generation is invalid", 503)
+    indices = {str(index) for index in range(shard_count)}
+    if any(key not in indices or type(value) is not int or not 0 <= value < 2**63
+           for key, value in state["watermarks"].items()):
+        raise ServiceError("control_corruption", "diagnostic watermarks are invalid", 503)
+    complete = (version is not None and not state["publishing"]
+                and set(state["watermarks"]) == indices
+                and all(type(value) is int and value == version for value in state["watermarks"].values()))
+    return state, complete
+
+
+def _diagnostic_claims(connection, control, deadline):
+    claims, codec = {}, Ledger(control.layout["scales"])
+    # Read lengths before texts: legitimate canonical funding commands are tiny;
+    # malformed large registry values must not bypass the overall read budget.
+    for row in connection.execute("SELECT rowid,length(source_reference),length(command) FROM router_pool_sources"):
+        _diagnostic_remaining(deadline)
+        if row[1] is None or not 1 <= row[1] <= 128 or row[2] is None or not 1 <= row[2] <= 1024:
+            raise ServiceError("funding_registry_conflict", "funding registry command is invalid", 503)
+        reference, encoded = connection.execute("SELECT source_reference,command FROM router_pool_sources WHERE rowid=?", (row[0],)).fetchone()
+        try:
+            _name(reference, "source_reference")
+            command = json.loads(encoded)
+            if not isinstance(command, list) or len(command) != 4 or type(command[0]) is not int:
+                raise ValueError("invalid funding command")
+            control._index(command[0])
+            _name(command[1], "command_id")
+            _name(command[2], "asset")
+            if (not isinstance(command[3], str) or codec._units(command[2], Decimal(command[3])) <= 0
+                    or encoded != _json(command)):
+                raise ValueError("invalid funding command")
+        except (ValueError, TypeError, ArithmeticError) as exc:
+            raise ServiceError("funding_registry_conflict", "funding registry command is invalid", 503) from exc
+        claims[reference] = encoded
+    return claims
+
+
+def _diagnostic_market(connection, state, deadline):
+    row = connection.execute("SELECT typeof(payload),length(CAST(payload AS BLOB)) FROM uta_market WHERE singleton=1").fetchone()
+    if row is None:
+        raise ServiceError("market_missing", "shard market is absent", 503)
+    if row[0] != "text" or not 0 < row[1] <= MAX_JSON_BYTES:
+        raise ServiceError("market_invalid", "shard market has invalid encoding or size", 503)
+    payload = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()[0]
+    try:
+        snapshot = MarketSnapshot.from_json(payload)
+    except (RiskInputError, TypeError, UnicodeError) as exc:
+        raise ServiceError("market_invalid", "shard market cannot be decoded", 503) from exc
+    _diagnostic_remaining(deadline)
+    digest = sha256(payload.encode()).hexdigest()
+    if (snapshot.version != state["market_version"] or digest != state["market_digest"]
+            or sha256(snapshot.to_json().encode()).hexdigest() != digest):
+        raise ServiceError("market_barrier_mismatch", "shard market differs from publication", 503)
+    usd = snapshot.assets.get("USD")
+    if (usd is None or usd.price != 1 or usd.collateral_factor != 1
+            or any(spec.initial_margin_rate <= 0 or spec.maintenance_margin_rate <= 0
+                   for spec in snapshot.instruments.values())):
+        raise ServiceError("market_incomplete", "shard market lacks settlement or margin inputs", 503)
+    for symbol, in connection.execute("SELECT DISTINCT symbol FROM uta_positions UNION SELECT DISTINCT symbol FROM uta_orders WHERE status IN ('OPEN','PARTIALLY_FILLED')"):
+        if symbol not in snapshot.instruments:
+            raise ServiceError("market_incomplete", "live instrument has no market input", 503)
+    for asset, units in connection.execute("SELECT asset,units FROM ledger_balances WHERE account LIKE 'customer:%'"):
+        if int(units) and asset not in snapshot.assets:
+            raise ServiceError("market_incomplete", "funded asset has no market input", 503)
+    for asset, principal, interest in connection.execute("SELECT asset,principal,interest FROM uta_liabilities"):
+        if (Decimal(principal) != 0 or Decimal(interest) != 0) and asset not in snapshot.assets:
+            raise ServiceError("market_incomplete", "liability has no market input", 503)
+    _diagnostic_remaining(deadline)
+    return snapshot, digest
 
 
 def _options(encoded):
@@ -181,13 +334,22 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
         view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
                                account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"])
         store = parent._queue(shard)
+        # Initialization consumes the acquired lease. Renew the same still-live
+        # token before advertising readiness; an expired initializer must fail,
+        # never revive its generation or publish a misleading READY receipt.
+        renew_at = monotonic() + settings["lease_seconds"] / 3
+        fence.renew(token, settings["lease_seconds"])
+        with database.read_transaction() as connection:
+            fence.assert_writer(connection, token)
         ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
-        renew_at, background_at = monotonic() + settings["lease_seconds"] / 3, monotonic()
+        background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:
             now = monotonic()
             if now >= renew_at:
+                # Anchor to the start of renewal, not time spent waiting for
+                # the database/COMMIT. Slow storage cannot postpone the deadline.
+                renew_at = now + settings["lease_seconds"] / 3
                 fence.renew(token, settings["lease_seconds"])
-                renew_at = monotonic() + settings["lease_seconds"] / 3
             worked = False
             try:
                 receipt = view.process_one(store)
@@ -818,23 +980,137 @@ class DurableProcessRouter:
             process.kill()
             process.join(timeout=5)
 
-    def diagnostics(self):
-        state = self._control._state()
-        rows = []
-        with self._mutex:
-            for shard in range(self.layout["shard_count"]):
-                lease = WriterFence(self._database(shard)).status()
-                rows.append({"shard": shard, "pid": self.worker_pid(shard), "lease_active": lease["active"],
-                             "owner_pid": lease.get("owner_pid"), "generation": lease.get("generation"),
-                             "report": dict(self._reports.get(shard, {}))})
-        return {"state": state, "workers": rows, "managed": True,
-                "decision_audit_required": self.decision_audit_required,
-                "profile": "managed_audit_required" if self.decision_audit_required else "managed_development_legacy_gap",
-                "recovered_orphans": [{key: row[key] for key in ("shard", "pid", "start_ticks", "generation")} for row in self._recovered_orphans],
-                "ready": not state["halted"] and not state["publishing"] and all(
-                    row["pid"] is not None and row["pid"] == row["owner_pid"] and row["lease_active"]
-                    and row["report"].get("state") == "ready" and row["report"].get("pid") == row["pid"]
-                    for row in rows)}
+    def diagnostics(self, *, timeout=1.0):
+        """Bounded, read-only readiness observation; never financial permission.
+
+        The shared gate covers control/claims and each shard's same-transaction
+        lease plus complete market payload. Freshness is rechecked at the end
+        using the original observation time. A failed read never means ready.
+        """
+        if (isinstance(timeout, bool) or not isinstance(timeout, (int, float))
+                or not math.isfinite(timeout) or not 0 < timeout <= 5):
+            raise ValueError("diagnostic timeout requires seconds in (0,5]")
+        deadline = monotonic() + timeout
+        rows = [{"shard": shard, "pid": None, "alive": False, "lease_active": False,
+                 "owner_pid": None, "generation": None, "report": {}, "market_ready": False,
+                 "owner_ready": False, "locally_active": False,
+                 "funding_registry_ready": False, "reason": "not_observed"}
+                for shard in range(self.layout["shard_count"])]
+        result = {"state": None, "state_observed": False, "workers": rows, "managed": True,
+                  "decision_audit_required": self.decision_audit_required,
+                  "profile": "managed_audit_required" if self.decision_audit_required else "managed_development_legacy_gap",
+                  "recovered_orphans": [], "workers_alive": False,
+                  "financial_ready": False, "ready": False, "reason": "diagnostic_unavailable"}
+        acquired = False
+        try:
+            # Match start/close's mutex-before-router-gate ordering. Both waits
+            # consume the same budget, including a concurrent supervisor close.
+            acquired = self._mutex.acquire(timeout=_diagnostic_remaining(deadline))
+            if not acquired:
+                raise ServiceError("diagnostic_timeout", "supervisor observation timed out", 503)
+            result["recovered_orphans"] = [
+                {key: row[key] for key in ("shard", "pid", "start_ticks", "generation")}
+                for row in self._recovered_orphans]
+            for row in rows:
+                worker = self._workers.get(row["shard"])
+                row["alive"] = worker is not None and worker[0].is_alive()
+                row["pid"] = worker[0].pid if row["alive"] else None
+                report = self._reports.get(row["shard"], {})
+                row["report"] = {key: report[key] for key in ("shard", "pid", "generation")
+                                 if type(report.get(key)) is int}
+                if report.get("state") in {"ready", "failed"}:
+                    row["report"]["state"] = report["state"]
+                if "code" in report:
+                    # Reports are diagnostics only; never expose exception text.
+                    row["report"]["code"] = _diagnostic_code(report["code"])
+            result["workers_alive"] = all(row["alive"] for row in rows)
+            with self._control._lock(timeout=_diagnostic_remaining(deadline)):
+                control_reader = _DiagnosticDatabase(self._control.control, deadline)
+                with control_reader.read_transaction() as connection:
+                    state, complete = _diagnostic_state(connection, self._control._descriptor, len(rows))
+                    result["state"] = {key: state[key] for key in (
+                        "halted", "publishing", "epoch", "market_version", "market_digest", "watermarks")}
+                    result["state"]["error"] = None if state.get("error") is None else _diagnostic_code(state["error"])
+                    result["state_observed"] = True
+                    claims = _diagnostic_claims(connection, self._control, deadline)
+                observed = []
+                for row in rows:
+                    shard = row["shard"]
+                    try:
+                        reader = _DiagnosticDatabase(self._database(shard), deadline)
+                        with reader.read_transaction() as connection:
+                            lease = _load_writer_lease(connection)
+                            if (lease is None or lease["authority_id"] != _authority(self._control._descriptor, shard)
+                                    or lease["guard_format"] != 1):
+                                raise ServiceError("managed_authority_conflict", "shard writer authority is invalid", 503)
+                            now_ns, boot = _observe_writer_clock(reader, lease)
+                            row.update(owner_pid=lease["owner_pid"], generation=lease["generation"],
+                                       lease_active=lease["owner_nonce"] is not None and boot == lease["boot_id"]
+                                       and now_ns < lease["expires_ns"])
+                            flag = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+                            row["locally_active"] = flag is not None and flag[0] == "false"
+                            if self.decision_audit_required:
+                                schema = connection.execute("SELECT version FROM uta_schema").fetchone()
+                                audit = connection.execute("SELECT format FROM uta_audit_capability WHERE singleton=1").fetchone()
+                                if schema is None or schema[0] != 3 or audit is None or audit[0] != 1:
+                                    raise ServiceError("decision_audit_capability_mismatch", "required shard audit capability is unavailable", 503)
+                            self._control._batch_reconcile_shard(connection, shard, claims)
+                            snapshot, digest = _diagnostic_market(connection, state, deadline)
+                            row.update(market_version=snapshot.version, market_digest=digest,
+                                       market_observed_at=snapshot.observed_at.isoformat())
+                        # Guard verification at read-transaction exit must also
+                        # succeed before this observation can become ready.
+                        row["funding_registry_ready"] = True
+                        observed.append((row, reader, lease, snapshot))
+                        row["reason"] = "observed"
+                    except Exception as exc:
+                        row["reason"] = ("diagnostic_timeout" if monotonic() >= deadline
+                                         else _diagnostic_code(exc, "shard_unavailable"))
+                # Slow guard/claim checks cannot leave an early-shard quote or
+                # lease marked fresh after it expires during this observation.
+                for row, reader, lease, snapshot in observed:
+                    now_ns, boot = _observe_writer_clock(reader, lease)
+                    row["lease_active"] = (row["lease_active"] and boot == lease["boot_id"]
+                                           and now_ns < lease["expires_ns"])
+                for row in rows:
+                    worker = self._workers.get(row["shard"])
+                    row["alive"] = row["alive"] and worker is not None and worker[0].is_alive()
+                    row["owner_ready"] = (row["alive"] and row["pid"] == row["owner_pid"]
+                                          and row["lease_active"] and row["report"].get("state") == "ready"
+                                          and row["report"].get("pid") == row["pid"]
+                                          and row["report"].get("generation") == row["generation"])
+                now = datetime.now(timezone.utc)
+                max_age = timedelta(microseconds=self._config["service"]["max_price_age_us"])
+                for row, reader, lease, snapshot in observed:
+                    try:
+                        snapshot.validate(now=now, max_age=max_age)
+                    except RiskInputError:
+                        row["reason"] = "market_stale" if now - snapshot.observed_at > max_age else "market_future"
+                    else:
+                        row["market_ready"] = True
+                        row["reason"] = "ready"
+                result["workers_alive"] = all(row["alive"] for row in rows)
+                _diagnostic_remaining(deadline)
+                financial_ready = (complete and not state["halted"] and all(
+                    row["owner_ready"] and row["market_ready"] and row.get("locally_active", False)
+                    and row["funding_registry_ready"] for row in rows))
+                result.update(financial_ready=financial_ready, ready=financial_ready)
+                if state["publishing"] or not complete:
+                    result["reason"] = "publication_incomplete"
+                elif state["halted"]:
+                    result["reason"] = "router_halted"
+                elif financial_ready:
+                    result["reason"] = "ready"
+                else:
+                    result["reason"] = next((row["reason"] for row in rows if not row["market_ready"]),
+                                            "worker_unready" if not all(row["owner_ready"] for row in rows) else "local_halt")
+        except Exception as exc:
+            result.update(financial_ready=False, ready=False,
+                          reason="diagnostic_timeout" if monotonic() >= deadline else _diagnostic_code(exc))
+        finally:
+            if acquired:
+                self._mutex.release()
+        return result
 
     def _receipts(self, commands, timeout):
         deadline = monotonic() + timeout

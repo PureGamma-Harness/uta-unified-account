@@ -112,13 +112,42 @@ class _RouterProducer:
 
     def diagnostics(self):
         report = self.router.diagnostics()
-        state = report["state"]
-        workers = [{key: worker.get(key) for key in ("shard", "pid", "owner_pid", "lease_active", "generation")}
-                   for worker in report["workers"]]
-        return {"mode": "process_router", "managed": report["managed"],
-                "control": {key: state.get(key) for key in ("halted", "publishing", "epoch", "market_version", "error")},
-                "workers": workers, "dispatch_available": bool(report["ready"]),
-                "qualification": "process and control observation; not a risk acceptance or trading readiness result"}
+        if not isinstance(report, dict) or not isinstance(report.get("workers"), list) or any(not isinstance(worker, dict) for worker in report["workers"]):
+            raise ServiceError("diagnostic_unavailable", "router diagnostic observation is malformed", 503)
+        state = report.get("state")
+        state_observed = (isinstance(state, dict) and report.get("state_observed", True) is True
+                          and type(state.get("halted")) is bool and type(state.get("publishing")) is bool
+                          and type(state.get("epoch")) is int and state["epoch"] >= 0
+                          and (state.get("market_version") is None or
+                               type(state.get("market_version")) is int and state["market_version"] >= 0))
+        def code(value):
+            return value if isinstance(value, str) and 1 <= len(value) <= 80 and value.isascii() and value.replace("_", "").isalnum() else "diagnostic_unavailable"
+        control = None
+        if state_observed:
+            control = {key: state.get(key) for key in ("halted", "publishing", "epoch", "market_version")}
+            control["error"] = None if state.get("error") is None else code(state["error"])
+        workers = []
+        for worker in report["workers"]:
+            observed = {key: worker.get(key) for key in ("shard", "pid", "owner_pid", "lease_active", "generation")}
+            for key in ("alive", "owner_ready", "locally_active", "market_ready", "funding_registry_ready"):
+                if key in worker:
+                    observed[key] = worker[key] is True
+            for key in ("market_version", "market_digest", "market_observed_at"):
+                if key in worker:
+                    observed[key] = worker[key]
+            if "reason" in worker:
+                observed["reason"] = code(worker["reason"])
+            workers.append(observed)
+        dispatch_available = (state_observed and not state["halted"] and not state["publishing"]
+                              and report.get("ready") is True)
+        financial_ready = dispatch_available and report.get("financial_ready") is True
+        return {"mode": "process_router", "managed": report.get("managed") is True,
+                "state_observed": state_observed, "control_observed": state_observed, "control": control, "workers": workers,
+                "workers_alive": report.get("workers_alive") is True,
+                "dispatch_available": dispatch_available, "ready": financial_ready, "financial_ready": financial_ready,
+                "readiness_source": "persistent_market_and_owner" if "financial_ready" in report else "legacy_process_control_only",
+                "reason": code(report.get("reason")),
+                "qualification": "bounded process/control/market observation; not an individual account risk acceptance or execution permission"}
 
 
 class DurableCommandAPI:

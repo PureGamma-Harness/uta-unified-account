@@ -1,4 +1,5 @@
 from dataclasses import asdict, replace
+from contextlib import closing
 from datetime import datetime, timezone
 from decimal import Decimal as D
 import json
@@ -284,7 +285,7 @@ except WriterFenceError as error:
         token = self.fence.acquire("one", 1)
         cloned = Path(self.temporary.name) / "clone.sqlite3"
         # SQLite backup produces a complete copy, including the lease history.
-        with sqlite3.connect(self.path) as source, sqlite3.connect(cloned) as target:
+        with closing(sqlite3.connect(self.path)) as source, closing(sqlite3.connect(cloned)) as target, source, target:
             source.backup(target)
         cloned.chmod(0o600)
         self.code("authority_path_conflict", WriterFence(Database(cloned)).status)
@@ -345,22 +346,22 @@ except WriterFenceError as error:
     def test_unknown_control_trigger_is_corruption_without_automatic_repair(self):
         self.enable()
         token = self.fence.acquire("worker", 1)
-        with sqlite3.connect(self.path) as raw:
+        with closing(sqlite3.connect(self.path)) as raw, raw:
             raw.execute("CREATE TRIGGER unexpected_lease_observer AFTER UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
         for operation in (self.fence.status, lambda: self.fence.renew(token, 1),
                           lambda: self.fence.enable("authority:one"), self.fence.upgrade_guards):
             self.code("fence_control_corrupt", operation)
-        with sqlite3.connect(self.path) as raw:
+        with closing(sqlite3.connect(self.path)) as raw, raw:
             self.assertIsNotNone(raw.execute("SELECT name FROM sqlite_master WHERE name='unexpected_lease_observer'").fetchone())
 
     def test_changed_control_trigger_definition_is_corruption(self):
         self.enable()
-        with sqlite3.connect(self.path) as raw:
+        with closing(sqlite3.connect(self.path)) as raw, raw:
             raw.execute("DROP TRIGGER writer_fence_lease_monotonic")
             raw.execute("CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease BEGIN SELECT 1; END")
         self.code("fence_control_corrupt", self.fence.status)
         self.code("fence_control_corrupt", self.fence.upgrade_guards)
-        with sqlite3.connect(self.path) as raw:
+        with closing(sqlite3.connect(self.path)) as raw, raw:
             self.assertNotIn("NEW.generation<OLD.generation", raw.execute("SELECT sql FROM sqlite_master WHERE name='writer_fence_lease_monotonic'").fetchone()[0])
 
 

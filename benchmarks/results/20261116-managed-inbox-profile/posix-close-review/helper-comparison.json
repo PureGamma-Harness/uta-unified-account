@@ -1,0 +1,38 @@
+{
+  "comparison": "historical measured probe7a06 versus independently tested red57d776c; AST excludes line numbers/comments only",
+  "methods": [
+    {
+      "path": "uta/storage.py",
+      "class": "Database",
+      "method": "_private_file",
+      "same_normalized_method_ast": true,
+      "sources": {
+        "7a06c0532ba510653b1feccd7e80030d3cb19f8a": {
+          "normalized_ast_sha256": "804dd08fa1660bfe1645eab2d94c8c297feada9cfc9ecccada87e7c66af1a2ff",
+          "source_excerpt": "def _private_file(self) -> tuple[int, int]:\n        \"\"\"Create private state independently of umask and reject unsafe reuse.\n\n        State must be kept in an operator-controlled directory. File checks\n        protect accidental exposure/replacement; the service OS user is trusted.\n        \"\"\"\n        flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK\n        try:\n            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)\n        except FileExistsError:\n            descriptor = os.open(self.path, flags)\n        except OSError as exc:\n            raise StorageError(\"database path cannot be opened safely\") from exc\n        try:\n            info = os.fstat(descriptor)\n            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()\n                    or stat.S_IMODE(info.st_mode) & 0o077):\n                raise StorageError(\"database must be a private regular file owned by the service user\")\n            return info.st_dev, info.st_ino\n        finally:\n            os.close(descriptor)"
+        },
+        "57d776ced8d9b304b651925d8c13f5e7e7ad6272": {
+          "normalized_ast_sha256": "804dd08fa1660bfe1645eab2d94c8c297feada9cfc9ecccada87e7c66af1a2ff",
+          "source_excerpt": "def _private_file(self) -> tuple[int, int]:\n        \"\"\"Create private state independently of umask and reject unsafe reuse.\n\n        State must be kept in an operator-controlled directory. File checks\n        protect accidental exposure/replacement; the service OS user is trusted.\n        \"\"\"\n        flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK\n        try:\n            descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)\n        except FileExistsError:\n            descriptor = os.open(self.path, flags)\n        except OSError as exc:\n            raise StorageError(\"database path cannot be opened safely\") from exc\n        try:\n            info = os.fstat(descriptor)\n            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()\n                    or stat.S_IMODE(info.st_mode) & 0o077):\n                raise StorageError(\"database must be a private regular file owned by the service user\")\n            return info.st_dev, info.st_ino\n        finally:\n            os.close(descriptor)"
+        }
+      }
+    },
+    {
+      "path": "uta/sharding.py",
+      "class": "_BoundShardDatabase",
+      "method": "_private_file",
+      "same_normalized_method_ast": true,
+      "sources": {
+        "7a06c0532ba510653b1feccd7e80030d3cb19f8a": {
+          "normalized_ast_sha256": "65cf6de26ded9f125a123a89bdb1dee1ee38220315826444cc35423f99e4f10c",
+          "source_excerpt": "def _private_file(self):\n        if self._bootstrap and not os.path.lexists(self.path):\n            return super()._private_file()\n        try:\n            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)\n        except OSError as exc:\n            raise ServiceError(\"shard_unavailable\", \"persisted shard cannot be safely opened; automatic creation is forbidden\", 503) from exc\n        try:\n            details = os.fstat(descriptor)\n            if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or\n                details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):\n                raise ServiceError(\"shard_unavailable\", \"persisted shard is missing, empty or unsafe\", 503)\n            return details.st_dev, details.st_ino\n        finally:\n            os.close(descriptor)"
+        },
+        "57d776ced8d9b304b651925d8c13f5e7e7ad6272": {
+          "normalized_ast_sha256": "65cf6de26ded9f125a123a89bdb1dee1ee38220315826444cc35423f99e4f10c",
+          "source_excerpt": "def _private_file(self):\n        if self._bootstrap and not os.path.lexists(self.path):\n            return super()._private_file()\n        try:\n            descriptor = os.open(self.path, os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)\n        except OSError as exc:\n            raise ServiceError(\"shard_unavailable\", \"persisted shard cannot be safely opened; automatic creation is forbidden\", 503) from exc\n        try:\n            details = os.fstat(descriptor)\n            if (not stat.S_ISREG(details.st_mode) or details.st_size == 0 or\n                details.st_uid != os.geteuid() or stat.S_IMODE(details.st_mode) & 0o077):\n                raise ServiceError(\"shard_unavailable\", \"persisted shard is missing, empty or unsafe\", 503)\n            return details.st_dev, details.st_ino\n        finally:\n            os.close(descriptor)"
+        }
+      }
+    }
+  ],
+  "specific_io_event_causality_claimed": false
+}

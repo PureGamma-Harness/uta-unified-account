@@ -8,6 +8,7 @@ trusted; journal hashes detect accidental edits but are not external audit seals
 from __future__ import annotations
 
 from contextlib import contextmanager, nullcontext
+from contextvars import ContextVar
 from copy import copy
 from decimal import Decimal
 from hashlib import sha256
@@ -17,7 +18,7 @@ import os
 from pathlib import Path
 import sqlite3
 import stat
-from threading import RLock
+import tempfile
 from types import MappingProxyType
 from typing import Iterator, Mapping, Sequence
 from uuid import uuid4
@@ -25,13 +26,31 @@ from uuid import uuid4
 from .ledger import JournalEvent, Ledger, LedgerError, Posting
 
 
-# Serialize first-file creation with other in-process path checks. Once a file
-# is visible, no peer may open SQLite before its creation descriptor is closed.
-_FILE_CHECK_LOCK = RLock()
+_EXISTING_ONLY_OPEN = ContextVar("uta_existing_only_database_open", default=False)
 
 
 class StorageError(RuntimeError):
     """The persistent store cannot satisfy its transaction contract."""
+
+
+def _publish_private_database(path):
+    """Publish a closed private inode; never raw-close a published SQLite DB.
+
+    POSIX close() on any descriptor for an inode drops this process's other
+    fcntl locks on it. SQLite manages that internally; application preflight
+    must not open/close the target while another connection may be active.
+    """
+    descriptor, temporary = tempfile.mkstemp(prefix=".uta-create-", dir=str(Path(path).parent))
+    try:
+        try:
+            os.fchmod(descriptor, 0o600)
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        # EEXIST must not replace another initializer's published database.
+        os.link(temporary, path, follow_symlinks=False)
+    finally:
+        os.unlink(temporary)
 
 
 class Database:
@@ -86,44 +105,49 @@ class Database:
         State must be kept in an operator-controlled directory. File checks
         protect accidental exposure/replacement; the service OS user is trusted.
         """
-        with _FILE_CHECK_LOCK:
+        try:
             try:
                 info = os.stat(self.path, follow_symlinks=False)
-            except FileNotFoundError:
-                flags = os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK
+            except FileNotFoundError as exc:
+                if _EXISTING_ONLY_OPEN.get():
+                    raise StorageError("read-only database is missing; automatic creation is forbidden") from exc
                 try:
-                    descriptor = os.open(self.path, flags | os.O_CREAT | os.O_EXCL, 0o600)
+                    _publish_private_database(self.path)
                 except FileExistsError:
-                    info = os.stat(self.path, follow_symlinks=False)
-                except OSError as exc:
-                    raise StorageError("database path cannot be opened safely") from exc
-                else:
-                    try:
-                        info = os.fstat(descriptor)
-                    finally:
-                        os.close(descriptor)
-            # Never open/close an existing SQLite file outside SQLite. POSIX
-            # close() drops every record lock held by this process on that file,
-            # including locks owned by another live Database connection.
-            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
-                    or stat.S_IMODE(info.st_mode) & 0o077):
-                raise StorageError("database must be a private regular file owned by the service user")
-            return info.st_dev, info.st_ino
+                    pass
+                info = os.stat(self.path, follow_symlinks=False)
+        except OSError as exc:
+            raise StorageError("database path cannot be opened safely") from exc
+        self._validate_private_info(info)
+        return info.st_dev, info.st_ino
+
+    @staticmethod
+    def _validate_private_info(info):
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or stat.S_IMODE(info.st_mode) & 0o077):
+            raise StorageError("database must be a private regular file owned by the service user")
 
     def _connect(self) -> sqlite3.Connection:
         identity = self._private_file()
-        connection = sqlite3.connect(self.path, timeout=self.timeout, isolation_level=None)
+        # Never recreate a path removed after identity validation. URI encoding
+        # also preserves literal '?' and '#' in a filesystem path.
+        read_only = _EXISTING_ONLY_OPEN.get()
+        mode = "ro" if read_only else "rw"
+        connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=" + mode, uri=True,
+                                     timeout=self.timeout, isolation_level=None)
         try:
             info = os.stat(self.path, follow_symlinks=False)
             if (info.st_dev, info.st_ino) != identity or not stat.S_ISREG(info.st_mode):
                 raise StorageError("database path changed while opening")
+            self._validate_private_info(info)
             connection.row_factory = sqlite3.Row
             connection.execute("PRAGMA foreign_keys = ON")
             connection.execute(f"PRAGMA busy_timeout = {int(self.timeout * 1000)}")
-            mode = connection.execute("PRAGMA journal_mode = WAL").fetchone()[0]
-            if mode.lower() != "wal":
-                raise StorageError("the database filesystem does not support WAL mode")
-            connection.execute("PRAGMA synchronous = FULL")
+            if not read_only:
+                journal = connection.execute("PRAGMA journal_mode = WAL").fetchone()[0]
+                if journal.lower() != "wal":
+                    raise StorageError("the database filesystem does not support WAL mode")
+                connection.execute("PRAGMA synchronous = FULL")
             return connection
         except BaseException:
             connection.close()
@@ -156,7 +180,13 @@ class Database:
     @contextmanager
     def _role_transaction(self, role) -> Iterator[sqlite3.Connection]:
         from .writer_fence import _TransactionGuard, WriterFenceError
-        connection = self._connect()
+        # Scope creation policy to this connection attempt, retaining existing
+        # no-argument subclass hooks without mutating a shared Database object.
+        policy = _EXISTING_ONLY_OPEN.set(role == "read")
+        try:
+            connection = self._connect()
+        finally:
+            _EXISTING_ONLY_OPEN.reset(policy)
         guard = None
         try:
             if role == "read":

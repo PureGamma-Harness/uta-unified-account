@@ -1,0 +1,5 @@
+# Retained development selfcheck failure
+
+This note transcribes the tool-visible output of the initial uncommitted tool selfcheck; it is not presented as an original subprocess log or an immutable-source performance result. Concurrent dispatcher cProfile instances on this Python3.12 runtime produced `ValueError: Another profiling tool is already active`, then the empty dispatcher1 .prof caused `TypeError: Cannot create or construct ... pstats.Stats`. The final7a06 tool selects only one parent cProfile owner and each separate worker PID. Four real-spawn tests then passed.
+
+The formal probe still shows parent-process mixed-thread frames and five internal>cumulative anomalies. The original parent .prof and text are retained without alteration and excluded from precise stage attribution. Both single-worker PID profiles have zero such anomalies and are used descriptively. All financial success rates/latencies are derived from actual raw post-COMMIT terminal observation, independent of these profile tables.
