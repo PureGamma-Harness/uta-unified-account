@@ -1,0 +1,174 @@
+{
+  "reference_format": 1,
+  "status": "HAND_DERIVED_DRAFT_NOT_EXECUTED_RUNTIME_NOT_QUALIFIED",
+  "base_commit": "899c91d0a032d88cc4cb8c73ffb09cb2d1bd7236",
+  "production_approved": false,
+  "runtime_observations": null,
+  "scope": {
+    "execution": "future fresh internal synthetic V2 only",
+    "source_kind": "synthetic_local",
+    "is_hmac": false,
+    "batch_size": 0,
+    "cache_size": 0,
+    "borrow_asset_in_these_manual_cases": "BTC",
+    "currencies": ["USD", "BTC"],
+    "new_interest_rate": "0",
+    "new_borrow_fee_rate": "0",
+    "public_and_cli_new_borrow": "501 remains",
+    "prepared_v1": "never promote or unlock"
+  },
+  "assumptions": {
+    "scales": {"USD": 8, "BTC": 8},
+    "prices_USD": {"USD": "1", "BTC": "100"},
+    "collateral_factor": {"USD": "1", "BTC": "0.8"},
+    "loan_to_value": {"USD": "0.5", "BTC": "0.5"},
+    "BTC_borrow_IM": "0.2",
+    "BTC_borrow_MM": "0.1",
+    "BTC_borrow_step_units": "1000000",
+    "linear_multiplier": "1",
+    "linear_IM": "0.1",
+    "linear_MM": "0.05",
+    "account_principal_limit_BTC": "10",
+    "account_gross_credit_limit_BTC": "10",
+    "account_total_debt_limit_USD": "10000",
+    "local_asset_limit_BTC": "100",
+    "global_budget_units_BTC": "100000000",
+    "static_shard_allocations_units_BTC": {"0": "50000000", "1": "50000000"},
+    "budget_scope": "native principal plus interest only; cash deficits still enter USD risk debt",
+    "snapshots": "each case is independent; no file-order accumulation",
+    "timing_example_only": {
+      "observed_at": "2026-11-17T00:00:00+00:00",
+      "selected_at": "2026-11-17T00:00:01+00:00",
+      "last_checked_at": "2026-11-17T00:00:02+00:00",
+      "max_age_seconds": 5,
+      "same_original_SID_required_in_first_profile": true,
+      "physical_commit_time": null
+    }
+  },
+  "cases": [
+    {
+      "id": "REF-V2-BORROW-BASE-040",
+      "request": {"account_id": "alice", "CID": "reference-borrow-040", "asset": "BTC", "amount_units": "40000000"},
+      "before": {
+        "version": 1, "cash": {"USD": "100", "BTC": "0"},
+        "principal_BTC": "0", "interest_BTC": "0", "pool_BTC": "1",
+        "principal_receivable_BTC": "0", "interest_receivable_BTC": "0",
+        "shard_principal_BTC": "0", "shard_interest_BTC": "0",
+        "frozen_assets": {}, "positions": {}, "open_orders": []
+      },
+      "hand_expected": {
+        "before_portfolio_quote_BTC": "0.5", "before_authorized_quantity_BTC": "0.5",
+        "after_version": 2, "after_cash": {"USD": "100", "BTC": "0.4"},
+        "after_principal_BTC": "0.4", "after_interest_BTC": "0", "after_pool_BTC": "0.6",
+        "after_principal_receivable_BTC": "0.4", "after_interest_receivable_BTC": "0",
+        "after_accounting_equity_USD": "100", "after_collateral_USD": "132", "after_loan_value_USD": "66",
+        "after_debt_USD": "40", "after_risk_equity_USD": "92", "after_IM_USD": "8", "after_MM_USD": "4",
+        "after_order_reserve_USD": "0", "after_available_USD": "84",
+        "after_allocation_headroom_BTC": "0.1", "next_portfolio_quote_BTC": "0.26", "next_authorized_quantity_BTC": "0.1"
+      },
+      "ordered_postings_units": [
+        {"ordinal": 0, "account": "customer:alice", "asset": "BTC", "units": "40000000"},
+        {"ordinal": 1, "account": "liability:principal:alice", "asset": "BTC", "units": "-40000000"},
+        {"ordinal": 2, "account": "system:credit-pool", "asset": "BTC", "units": "-40000000"},
+        {"ordinal": 3, "account": "system:credit-principal-receivable", "asset": "BTC", "units": "40000000"}
+      ]
+    },
+    {
+      "id": "REF-V2-BORROW-ORDER-003",
+      "request": {"account_id": "alice", "CID": "reference-borrow-order-003", "asset": "BTC", "amount_units": "3000000"},
+      "before": {
+        "version": 3, "cash": {"USD": "100", "BTC": "0.4"},
+        "principal_BTC": "0.4", "interest_BTC": "0", "pool_BTC": "0.6",
+        "principal_receivable_BTC": "0.4", "interest_receivable_BTC": "0",
+        "shard_principal_BTC": "0.4", "shard_interest_BTC": "0",
+        "frozen_assets": {}, "positions": {},
+        "open_orders": [{"order_id": "reference-linear-eight", "symbol": "BTC-PERP", "quantity": "8", "filled_quantity": "0", "limit_price": "100", "mark": "100", "multiplier": "1", "reduce_only": false, "fee_rate": "0", "status": "OPEN"}]
+      },
+      "hand_expected": {
+        "before_order_reserve_USD": "80", "before_available_USD": "4",
+        "before_portfolio_quote_BTC": "0.03", "before_authorized_quantity_BTC": "0.03",
+        "alternative_0_04_rejected_even_if_post_available_positive": true,
+        "after_version": 4, "after_cash_BTC": "0.43", "after_principal_BTC": "0.43", "after_interest_BTC": "0",
+        "after_pool_BTC": "0.57", "after_principal_receivable_BTC": "0.43",
+        "after_collateral_USD": "134.4", "after_loan_value_USD": "67.2", "after_debt_USD": "43",
+        "after_accounting_equity_USD": "100", "after_risk_equity_USD": "91.4",
+        "after_IM_USD": "8.6", "after_MM_USD": "4.3", "after_order_reserve_USD": "80", "after_available_USD": "2.8"
+      }
+    },
+    {
+      "id": "REF-V2-BORROW-CASHDEF-010",
+      "request": {"account_id": "alice", "CID": "reference-borrow-cashdef-010", "asset": "BTC", "amount_units": "10000000"},
+      "before": {
+        "version": 7, "cash": {"USD": "-1", "BTC": "1"},
+        "principal_BTC": "0.1", "interest_BTC": "0.01", "pool_BTC": "0.9",
+        "principal_receivable_BTC": "0.1", "interest_receivable_BTC": "0.01",
+        "shard_principal_BTC": "0.1", "shard_interest_BTC": "0.01",
+        "frozen_assets": {}, "positions": {}, "open_orders": []
+      },
+      "source_blueprint_not_yet_executed": [
+        "preseal deposit BTC .9 -> account version1",
+        "preseal funded borrow BTC .1 -> version2 and cashBTC1/pool.9",
+        "confirm opening interest BTC .01 -> version3",
+        "zero-fee linear buy1@100 order/fill -> versions4,5",
+        "publish mark99; zero-fee linear sell1@99 order/fill -> versions6,7 and realized USD-1; flat position",
+        "initialize new V2 only after real full source verification; no promotion of prepared v1"
+      ],
+      "hand_expected": {
+        "before_cash_deficit_USD": "1", "before_total_debt_USD": "12", "before_collateral_USD": "80",
+        "before_accounting_equity_USD": "88", "before_risk_equity_USD": "68", "before_IM_USD": "2.2", "before_MM_USD": "1.1", "before_available_USD": "65.8",
+        "before_portfolio_quote_BTC": "0.28", "before_authorized_quantity_BTC": "0.28",
+        "after_version": 8, "after_cash": {"USD": "-1", "BTC": "1.1"},
+        "after_principal_BTC": "0.2", "after_interest_BTC": "0.01", "after_pool_BTC": "0.8",
+        "after_principal_receivable_BTC": "0.2", "after_interest_receivable_BTC": "0.01",
+        "after_cash_deficit_USD": "1", "after_total_debt_USD": "22", "after_collateral_USD": "88", "after_loan_value_USD": "44",
+        "after_accounting_equity_USD": "88", "after_risk_equity_USD": "66", "after_IM_USD": "4.2", "after_MM_USD": "2.1", "after_available_USD": "61.8"
+      }
+    },
+    {
+      "id": "REF-V2-BORROW-OPENING-INTEREST-005",
+      "request": {"account_id": "alice", "CID": "reference-borrow-opening-interest-005", "asset": "BTC", "amount_units": "5000000"},
+      "before": {
+        "version": 3, "cash": {"USD": "100", "BTC": "0.4"},
+        "principal_BTC": "0.4", "interest_BTC": "0.05", "pool_BTC": "0.6",
+        "principal_receivable_BTC": "0.4", "interest_receivable_BTC": "0.05",
+        "shard_principal_BTC": "0.4", "shard_interest_BTC": "0.05",
+        "frozen_assets": {}, "positions": {}, "open_orders": []
+      },
+      "hand_expected": {
+        "before_risk_equity_USD": "87", "before_IM_USD": "9", "before_MM_USD": "4.5", "before_available_USD": "78",
+        "before_portfolio_quote_BTC": "0.21", "before_authorized_quantity_BTC": "0.05",
+        "after_version": 4, "after_cash_BTC": "0.45", "after_principal_BTC": "0.45", "after_interest_BTC": "0.05", "after_pool_BTC": "0.55",
+        "after_principal_receivable_BTC": "0.45", "after_interest_receivable_BTC": "0.05",
+        "after_collateral_USD": "136", "after_debt_USD": "50", "after_accounting_equity_USD": "95",
+        "after_risk_equity_USD": "86", "after_IM_USD": "10", "after_MM_USD": "5", "after_available_USD": "76", "after_allocation_headroom_BTC": "0"
+      }
+    },
+    {
+      "id": "REF-V2-REPAY-OPENING-INTEREST-010",
+      "request": {"account_id": "alice", "CID": "reference-repay-opening-interest-010", "asset": "BTC", "amount_units": "10000000"},
+      "before": {
+        "version": 4, "cash": {"USD": "100", "BTC": "0.5"},
+        "principal_BTC": "0.4", "interest_BTC": "0.05", "pool_BTC": "0.6", "interest_cash_BTC": "0",
+        "principal_receivable_BTC": "0.4", "interest_receivable_BTC": "0.05",
+        "shard_principal_BTC": "0.4", "shard_interest_BTC": "0.05",
+        "frozen_assets": {}, "positions": {}, "open_orders": []
+      },
+      "hand_expected": {
+        "after_version": 5, "interest_repaid_BTC": "0.05", "principal_repaid_BTC": "0.05",
+        "after_cash_BTC": "0.4", "after_principal_BTC": "0.35", "after_interest_BTC": "0", "after_pool_BTC": "0.65", "after_interest_cash_BTC": "0.05",
+        "after_principal_receivable_BTC": "0.35", "after_interest_receivable_BTC": "0",
+        "budget_released_BTC": "0.1", "pool_increase_BTC": "0.05", "canonical_posting_count": 7,
+        "market_dependency": "NONE", "new_CREDIT_BORROWED_decision_count": 0
+      }
+    }
+  ],
+  "unfilled_actual_evidence_slots": [
+    "real_V2_authority_descriptor_and_native_guard_binding",
+    "real_original_inbox_CID_and_immutable_first_source",
+    "real_market_SID_payload_and_two_observed_check_times",
+    "actual_source_and_loaded_code_credit_artifact",
+    "actual_before_after_snapshots_limits_pool_and_allocation",
+    "actual_intent_sealed_journal_credit_decision_terminal_tuple",
+    "actual_COMMIT_or_ROLLBACK_trace_and_reopened_durable_state"
+  ]
+}
