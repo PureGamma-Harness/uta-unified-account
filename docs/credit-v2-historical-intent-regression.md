@@ -29,3 +29,33 @@ digest, amount, leg, or identity must still fail. This report does not approve
 the V2 capability for production or real funds.
 
 Raw: `evidence/runs/credit-v2-historical-intent/attempt-01/`.
+
+## Minimum correction and actual retest
+
+Commit `704a7a32106f3c5cd522dbc6bb35437f3634c01a` changes only a
+non-current CID candidate to return zero before validating current operation
+rows. The current CID's digest, trusted expected rows, actual staged-intent SQL
+predicate, closing validation, and final denying trigger remain enforced.
+
+CPU4 retest ran on new disposable databases at 14:56:16.975427–14:56:35.558977
+UTC, process 18.586 seconds, three unittest cases passed. The original observer
+now shows historical candidate zero returns without a guard exception. Actual
+repayment commits principal `0.3`, two intents, four journals, both original
+commands `SUCCEEDED`, and no foreign-key errors. Another real chain commits
+two Alice loans and a Bob loan with three dedicated decisions and full ledger
+verification. Bob was created and funded through actual public bootstrap before
+fencing; the fixture extension changes no existing fixture default.
+
+Five actual negative subcases attempt financial transactions and catch their
+inner error: no operation scope, actual SAVEPOINT rollback removing the intent,
+wrong current account version, a direct current-CID/wrong-digest gate call, and
+immediate DROP TRIGGER. Each outer transaction still raises at physical COMMIT,
+the full selected financial tables equal the pre-attempt snapshot, and the
+original source command remains `PENDING`. The direct wrong-digest call is a
+negative scalar gate test; it is not represented as a successful financial row
+mutation or a granted permission. No simulated successful UDF/context is used.
+
+Retest raw is in `attempt-02/`; the original `attempt-01/` exit-1 evidence is
+unchanged. These checks establish this specific runtime correction and its
+negative boundaries. Broader fault/restart coverage and independent financial
+acceptance remain separate gates; production and real funds remain disabled.
