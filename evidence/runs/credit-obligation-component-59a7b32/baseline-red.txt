@@ -1,0 +1,150 @@
+{
+  "candidate": false,
+  "missing": "decision",
+  "late_stale": false,
+  "caller_rollback_to": false,
+  "before": {
+    "ledger_events": 2,
+    "borrow_rows": 0,
+    "decisions": 0,
+    "accounts": [
+      [
+        "alice",
+        1
+      ],
+      [
+        "bob",
+        0
+      ]
+    ],
+    "liabilities": [],
+    "balances": [
+      [
+        "customer:alice",
+        "USD",
+        "10000000000"
+      ],
+      [
+        "system:credit-capital",
+        "BTC",
+        "-100000000"
+      ],
+      [
+        "system:credit-pool",
+        "BTC",
+        "100000000"
+      ],
+      [
+        "system:custody",
+        "USD",
+        "-10000000000"
+      ]
+    ],
+    "inbox": "PENDING",
+    "loan_legs": [],
+    "intents": null
+  },
+  "statement_errors": [],
+  "outer_commit_requested": true,
+  "committed": true,
+  "fk_violations_before_commit": [],
+  "in_transaction_before_exit": true,
+  "after_reopen": {
+    "ledger_events": 3,
+    "borrow_rows": 1,
+    "decisions": 0,
+    "accounts": [
+      [
+        "alice",
+        2
+      ],
+      [
+        "bob",
+        0
+      ]
+    ],
+    "liabilities": [
+      [
+        "alice",
+        "BTC",
+        "0.4",
+        "0"
+      ]
+    ],
+    "balances": [
+      [
+        "customer:alice",
+        "BTC",
+        "40000000"
+      ],
+      [
+        "customer:alice",
+        "USD",
+        "10000000000"
+      ],
+      [
+        "liability:principal:alice",
+        "BTC",
+        "-40000000"
+      ],
+      [
+        "system:credit-capital",
+        "BTC",
+        "-100000000"
+      ],
+      [
+        "system:credit-pool",
+        "BTC",
+        "60000000"
+      ],
+      [
+        "system:credit-principal-receivable",
+        "BTC",
+        "40000000"
+      ],
+      [
+        "system:custody",
+        "USD",
+        "-10000000000"
+      ]
+    ],
+    "inbox": "SUCCEEDED",
+    "loan_legs": [
+      [
+        "customer:alice",
+        "BTC",
+        "40000000"
+      ],
+      [
+        "liability:principal:alice",
+        "BTC",
+        "-40000000"
+      ],
+      [
+        "system:credit-pool",
+        "BTC",
+        "-40000000"
+      ],
+      [
+        "system:credit-principal-receivable",
+        "BTC",
+        "40000000"
+      ]
+    ],
+    "intents": null
+  },
+  "native_commit_attempted": true,
+  "native_rollback_observed": false,
+  "financial_unchanged": false,
+  "core_ledger_verified_events": 3,
+  "core_credit_nonzero_liabilities": 1,
+  "production_approved": false,
+  "credit_runtime_integrated": false,
+  "credit_context_or_ddl_authorizer_implemented": false,
+  "temporary_authority_removed": true
+}
+Traceback (most recent call last):
+  File "/workspace/uta-managed-credit-sql-probe/tools/credit_obligation_probe.py", line 392, in <module>
+    assert observation["financial_unchanged"], "baseline trusted-owner manual future loan COMMIT lacks new obligation/audit gates"
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: baseline trusted-owner manual future loan COMMIT lacks new obligation/audit gates

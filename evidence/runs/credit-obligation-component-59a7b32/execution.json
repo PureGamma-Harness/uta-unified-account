@@ -1,0 +1,41 @@
+{
+  "component_source_commit": "59a7b32f69bf4797d64c1584b79523657a2974c9",
+  "affinity": [
+    3
+  ],
+  "cumulative_seconds": 3.9718003629968734,
+  "runs": [
+    {
+      "label": "baseline-red",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "tools/credit_obligation_probe.py",
+        "--baseline-red"
+      ],
+      "started_utc": "2026-11-17T10:46:52.989589+00:00",
+      "finished_utc": "2026-11-17T10:46:53.356262+00:00",
+      "duration_seconds": 0.3666958500034525,
+      "exit_code": 1,
+      "log": "baseline-red.txt",
+      "log_sha256": "3b20a406a434fee9523ac9bd7151fe36ce49f4e15068d5d73fd2d78260a7f4c6"
+    },
+    {
+      "label": "candidate-microtests",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "tests.test_credit_obligation_probe",
+        "evidence/runs/credit-obligation-component-59a7b32/observations.json",
+        "-v"
+      ],
+      "started_utc": "2026-11-17T10:46:53.356774+00:00",
+      "finished_utc": "2026-11-17T10:46:56.961173+00:00",
+      "duration_seconds": 3.6044800449963077,
+      "exit_code": 0,
+      "log": "candidate-microtests.txt",
+      "log_sha256": "6367af7b5d2491715819a19826210a7cbbcfd0617c88763548923bff41e5b19f"
+    }
+  ],
+  "production_approved": false,
+  "credit_runtime_integrated": false
+}
