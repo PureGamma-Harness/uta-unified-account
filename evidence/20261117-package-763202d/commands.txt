@@ -1,0 +1,60 @@
+Frozen source: 763202df9cb3ce089721e5281371aff3eab58089
+Frozen checkout: /workspace/uta-operations-freeze-763202d (unchanged)
+Report worktree: /workspace/uta-package-763202d
+New external work: /tmp/uta-release-763202d-0AyiOQ
+All commands explicitly selected their stated working directory. Choose new empty build/install/output directories to repeat; preserve the original positive and negative records.
+
+At /workspace/uta-next-integration:
+git worktree add -b test/package-763202d /workspace/uta-package-763202d 763202df9cb3ce089721e5281371aff3eab58089
+
+At the report worktree:
+mktemp -d /tmp/uta-release-763202d-XXXXXX
+Observed directory: /tmp/uta-release-763202d-0AyiOQ
+taskset -c 0 python -m venv /tmp/uta-release-763202d-0AyiOQ/venv
+mkdir /tmp/uta-release-763202d-0AyiOQ/artifacts /tmp/uta-release-763202d-0AyiOQ/build-source /tmp/uta-release-763202d-0AyiOQ/external /tmp/uta-release-763202d-0AyiOQ/sdist-unpacked
+
+At the frozen checkout:
+git rev-parse HEAD
+git status --short
+git archive --format=tar --output=/tmp/uta-release-763202d-0AyiOQ/frozen-source.tar HEAD
+Final repeated raw commit/status are frozen-source-*.stdout.txt; HEAD is exact and status is clean. CPU 0 was allowed here; choose an allowed CPU if reproducing elsewhere.
+
+At the report worktree:
+tar -xf /tmp/uta-release-763202d-0AyiOQ/frozen-source.tar -C /tmp/uta-release-763202d-0AyiOQ/build-source
+
+At the external build-source directory (no .git):
+taskset -c 0 python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-763202d-0AyiOQ/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-763202d-0AyiOQ/artifacts"))'
+Exit 0; full raw stdout/stderr are build.*.txt.
+
+At the report worktree:
+taskset -c 0 python /workspace/uta-operations-freeze-763202d/tools/verify_release_archives.py --source /workspace/uta-operations-freeze-763202d --commit 763202df9cb3ce089721e5281371aff3eab58089 --wheel /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-763202d-0AyiOQ/artifact-manifest.json
+Exit 0. All 1475 tracked files, including the original CI ZIP, and the dynamic 50 runtime files are exact.
+
+At the new external directory:
+taskset -c 0 /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -I /workspace/uta-operations-freeze-763202d/tools/validate_installed_release.py --source /workspace/uta-operations-freeze-763202d --artifact-manifest /tmp/uta-release-763202d-0AyiOQ/artifact-manifest.json --output /tmp/uta-release-763202d-0AyiOQ/external/installed
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -I /workspace/uta-operations-freeze-763202d/evidence/20261117-package-13e6924/validate_installed_views.py --source /workspace/uta-operations-freeze-763202d --artifact-manifest /tmp/uta-release-763202d-0AyiOQ/artifact-manifest.json --output /tmp/uta-release-763202d-0AyiOQ/external/installed-views
+All exit 0. Actual CLI/protocol tests 8/8 in 9.360s, eight console commands zero; view smoke 3/3 in 0.533s. Both helpers are freshly bound to 763 Git bytes and copied hashes; financial imports come only from this venv. The view script's old directory name is part of its current frozen source path, not an old result input.
+
+At the report worktree:
+tar -xzf /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1.tar.gz -C /tmp/uta-release-763202d-0AyiOQ/sdist-unpacked
+
+At /tmp/uta-release-763202d-0AyiOQ/sdist-unpacked/uta_reference_exchange-0.4.0a1 (no .git):
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-763202d-0AyiOQ/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+Each exits 0; 7, 1 and 4 cases respectively, zero skips. Separate complete stdout/stderr logs are retained.
+
+At the report worktree, actual runtime omission controls:
+taskset -c 0 python /workspace/uta-operations-freeze-763202d/evidence/20261117-package-4608ffe/runtime_omission_controls.py --source /workspace/uta-operations-freeze-763202d --manifest /tmp/uta-release-763202d-0AyiOQ/artifact-manifest.json --wheel /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-763202d-0AyiOQ/runtime-omission-controls
+The current frozen generic control code copies the new archives and removes failure_diagnostics.py, one copy of each archive. Both primary verifier children actually exit 1 for the expected mismatch. Their actual argv, hash, complete report and output are retained with runtime-negative prefixes. No negative archive is installed.
+
+At the report worktree, actual ZIP inclusion and omission check:
+taskset -c 0 python evidence/20261117-package-763202d/verify_ci_zip.py --source /workspace/uta-operations-freeze-763202d --manifest /tmp/uta-release-763202d-0AyiOQ/artifact-manifest.json --wheel /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-763202d-0AyiOQ/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --unpacked-source /tmp/uta-release-763202d-0AyiOQ/sdist-unpacked/uta_reference_exchange-0.4.0a1 --output /tmp/uta-release-763202d-0AyiOQ/ci-zip-checks
+Harness exit 0 after proving the exact original CI ZIP bytes in source/sdist/unpacked and an actual primary-gate exit 1 when only that ZIP is omitted. Both runtime maps remain exact in this ZIP-only negative; the full tracked-source gate is false. The complete tested code is retained and all outputs have ci- prefixes.
+
+The ZIP's original CI code_commit remains PRmerge bd8e5b452166477bb15adeb5807f2c1b98b782ab, 1110 tests / 1 error / passedfalse. Its recorded source hashes are checked against 7ae94eb8a783f8e134ac90c11a713df7bb02d5f1 in memory. It is not relabelled as the new package HEAD or QA PASS. No signed URL/download metadata is fetched or copied.
+
+A separate read-only Git archive of 7ae's uta/ computes all runtime hashes and confirms byte-map identity with the new manifest; runtime-comparison-7ae94eb.json records this. New runs are still executed, and no old PASS or helper hash is reused.
+
+No pressure load, six-hour run, new benchmark, deployment or full repository suite is attributed to this package exercise. Prior red/error evidence, original ZIP, frozen source and live jobs remain unchanged. No authority/auth database, private TLS key or signing profile is committed by the report.
