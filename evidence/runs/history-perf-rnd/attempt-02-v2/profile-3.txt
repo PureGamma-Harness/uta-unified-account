@@ -1,0 +1,43 @@
+         84864 function calls (84845 primitive calls) in 0.045 seconds
+
+   Ordered by: cumulative time
+   List reduced from 108 to 35 due to restriction <35>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.006    0.006    0.045    0.045 /workspace/uta-history-perf-stream-v2/uta/storage.py:480(verify)
+     2069    0.005    0.000    0.014    0.000 /workspace/uta-history-perf-stream-v2/evidence/runs/history-perf-rnd/run_component_v2.py:134(counted)
+     3074    0.003    0.000    0.013    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py:183(dumps)
+1550/1540    0.002    0.000    0.012    0.000 {built-in method builtins.next}
+     3074    0.005    0.000    0.010    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:183(encode)
+      512    0.003    0.000    0.008    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:351(_normalize)
+      512    0.001    0.000    0.005    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:373(_fingerprint)
+        1    0.001    0.001    0.005    0.005 {method 'fetchall' of 'sqlite3.Cursor' objects}
+     3074    0.004    0.000    0.004    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:205(iterencode)
+     1024    0.001    0.000    0.004    0.000 /workspace/uta-history-perf-stream-v2/uta/ledger.py:64(_units)
+      512    0.000    0.000    0.003    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:377(_hash)
+     1024    0.002    0.000    0.002    0.000 /workspace/uta-history-perf-stream-v2/uta/ledger.py:85(_amount)
+     1536    0.000    0.000    0.002    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:539(<genexpr>)
+     4099    0.001    0.000    0.001    0.000 {method 'join' of 'str' objects}
+     1026    0.001    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:391(_stored_units)
+    12301    0.001    0.000    0.001    0.000 {built-in method builtins.isinstance}
+       16    0.001    0.000    0.001    0.000 {method 'execute' of 'sqlite3.Connection' objects}
+    11359    0.001    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/evidence/runs/history-perf-rnd/run_component_v2.py:135(<genexpr>)
+     1024    0.000    0.000    0.001    0.000 {method 'as_tuple' of 'decimal.Decimal' objects}
+     5141    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}
+     6664    0.001    0.000    0.001    0.000 {built-in method builtins.len}
+     1024    0.001    0.000    0.001    0.000 {method 'hexdigest' of '_hashlib.HASH' objects}
+        2    0.000    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:231(_using)
+        2    0.000    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:156(transaction)
+        2    0.000    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:186(_role_transaction)
+        2    0.000    0.000    0.001    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:195(_role_transaction_body)
+     3074    0.001    0.000    0.001    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/encoder.py:105(__init__)
+     1024    0.000    0.000    0.000    0.000 <string>:2(__init__)
+     3076    0.000    0.000    0.000    0.000 {method 'encode' of 'str' objects}
+      6/2    0.000    0.000    0.000    0.000 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:132(__enter__)
+     2048    0.000    0.000    0.000    0.000 /workspace/uta-history-perf-stream-v2/uta/ledger.py:87(<genexpr>)
+     1024    0.000    0.000    0.000    0.000 <string>:1(<lambda>)
+        1    0.000    0.000    0.000    0.000 /workspace/uta-history-perf-stream-v2/evidence/runs/history-perf-rnd/run_component_v2.py:130(_connect)
+        1    0.000    0.000    0.000    0.000 /workspace/uta-history-perf-stream-v2/tests/test_history_postings_stream.py:45(_connect)
+        1    0.000    0.000    0.000    0.000 /workspace/uta-history-perf-stream-v2/uta/storage.py:130(_connect)
+
+
