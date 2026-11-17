@@ -1,8 +1,8 @@
 # 持久命令、单主机分片进程与历史决策审计：进行中
 
-本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
+本轮以 `ad3f5b894f96ed6857a061b71290047ae1d4d0e7`（PR #6）为基线，工程包版本 `0.4.0a1`，交付 [Draft PR #9](https://github.com/PureGamma-Harness/uta-unified-account/pull/9) 及保留并行作者历史的 [集成 PR #10](https://github.com/PureGamma-Harness/uta-unified-account/pull/10)。当前为 Draft 集成评审，**生产 NO-GO**。所有账户、借款、行情、对手深度及密钥样本均为合成数据；金融、模型、SRE 与真实资金审批均未完成。各工作组实际提交保留在 Git 历史，本文不充当签字。
 
-**当前整合阻断：** `e6e3afd` 的远端四版本 CI 各执行 845 项并失败，涉及 worker 回执等待超时、一次读 guard inventory 异常及短 soak fixture。完整[原始日志与失败台账](../evidence/runs/durable-ci-preflight/README.md)已保留；其后已独立复现并修复应用层 POSIX 锁破坏和启动续约调度缺陷；新诊断子类的同型问题也已覆盖。完整整合/远端复验尚未完成，不用较早本地通过或局部修复覆盖。之后的 CI 会在测试前记录实际 SQLite 构建、运行时及 checked-out SHA，避免把环境差异当作未经验证的原因。
+**当前整合阻断：** 新增启动观测、orphan 故障夹具和发布包修复后的最终候选仍需完整本地与远端复验。历史 `e6e3afd` 四版本 845 项失败的[完整台账](../evidence/runs/durable-ci-preflight/README.md)保留；其后已独立复现并修复应用层 POSIX 锁破坏、启动续约及只读连接缺陷。固定 `89bd349` 在两种 SQLite、三个 Python 上各 894 项通过；`8eeab43` 的 PR CI 四版本各 899 项通过，但本地一次完整验证及同提交 push CI 的两个 job 仍失败，后者分别暴露即时 READY 假设和历史 PID 注入竞争，不能只引用成功的一次。各次原始结果与局部调查见[预检归档](../evidence/runs/durable-final-preflight/README.md)。当前修复不改变生产 readiness、租约、业务等待或风险准入，未使用重跑成功来抹去失败；原未记录完整 observation 的失败，其唯一根因仍缺证。3.13 成功日志中的连接 ResourceWarning 也在独立追踪。
 
 ## 交付范围与明确拒绝
 
