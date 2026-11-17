@@ -62,3 +62,23 @@ Detailed contracts: [managed observer](managed-observer.md),
 
 Independent code/component reviews are included. Full-candidate acceptance and
 the new long run are pending; no financial-rule or live-launch sign-off is implied.
+
+## First combined candidate: retained NO_GO
+
+The first combined immutable source `bb34b5f` completed all three local suites:
+Python3.12 and Python3.13 passed 1411 tests each; Python3.10 retained one ERROR.
+Remote push 44082854090 and PR 44082861767 completed six successful jobs and
+two Python3.10 jobs with the same ERROR. The test referenced a SQLite module
+constant absent from Python3.10; the diagnostic runtime already handled missing
+native exception metadata. Original reports and failed ZIPs are retained.
+
+The new test-only compatibility repair checks actual native exception fields
+when available and null when absent, without relying on module constants.
+It adds real exception and module-proxy call-through controls. Independent
+short tests passed nine cases on each of three runtimes; integration independently
+passed the same nine on Python3.10. Diagnostic and financial runtime bytes are
+unchanged. The repaired source still needs new complete QA/CI/package gates.
+
+The bb34 package independently passed its limited exact-artifact scope (2536
+tracked files, 52 runtime files and eight actual omission controls). This package
+result neither cancels bb34's QA failures nor qualifies the next source commit.
