@@ -59,23 +59,25 @@ def normalized_method(text):
         and node.name == "test_cli_explicit_automation_starts_with_synthetic_policy_and_stops_cleanly"))
     result = []
     for node in method.body:
-        if isinstance(node, ast.FunctionDef) and node.name == "cleanup":
-            continue
-        if isinstance(node, ast.ImportFrom) and node.module == "tests.cli_sigterm_failure_evidence":
-            continue
-        if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == "evidence" for target in node.targets):
-            continue
-        if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call):
-            call = node.value
-            if isinstance(call.func, ast.Attribute) and call.func.attr == "addCleanup":
-                continue
         parts = node.body if isinstance(node, ast.Try) else [node]
         for item in parts:
-            if (isinstance(item, ast.Expr) and isinstance(item.value, ast.Call)
-                    and isinstance(item.value.func, ast.Attribute)
-                    and isinstance(item.value.func.value, ast.Name)
-                    and item.value.func.value.id == "evidence"):
+            if isinstance(item, ast.FunctionDef) and item.name == "cleanup":
                 continue
+            if isinstance(item, ast.ImportFrom) and item.module == "tests.cli_sigterm_failure_evidence":
+                continue
+            if isinstance(item, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"evidence", "primary_error"} for target in item.targets):
+                continue
+            if isinstance(item, ast.Expr) and isinstance(item.value, ast.Call):
+                call = item.value
+                if (isinstance(call.func, ast.Attribute) and isinstance(call.func.value, ast.Name)
+                        and call.func.value.id == "evidence"):
+                    continue
+                if isinstance(call.func, ast.Attribute) and call.func.attr == "addCleanup":
+                    allowed = (len(call.args) == 1 and ((isinstance(call.args[0], ast.Name) and call.args[0].id == "cleanup")
+                               or (isinstance(call.args[0], ast.Attribute) and isinstance(call.args[0].value, ast.Name)
+                                   and call.args[0].value.id == "evidence" and call.args[0].attr == "cleanup")))
+                    if allowed:
+                        continue
             result.append(item)
     method.body = result
     for node in ast.walk(method):
@@ -204,6 +206,87 @@ class CliFailureEvidencePureTests(unittest.TestCase):
                      and isinstance(node.func, ast.Attribute) and node.func.attr == "Popen")
         self.assertNotIn("text", {item.arg for item in popen.keywords})
         self.assertEqual(next(item.value.value for item in popen.keywords if item.arg == "bufsize"), 0)
+
+
+class CliIdentityBoundaryPureTests(unittest.TestCase):
+    @staticmethod
+    def valid(pid):
+        return {"observed": True, "pid": pid, "start_ticks": 101,
+                "boot_id": "11111111-2222-3333-4444-555555555555", "uid": 123,
+                "parent": 456, "state": "S"}
+
+    def test_complete_strict_tuple_is_required_and_extras_are_dropped(self):
+        process = FakeProcess()
+        valid = self.valid(process.pid)
+        invalid = [None, [], 1, {"observed": True, "pid": process.pid},
+                   {**valid, "observed": 1}, {**valid, "pid": True},
+                   {**valid, "pid": str(process.pid)}, {**valid, "pid": process.pid + 1},
+                   {**valid, "start_ticks": True}, {**valid, "start_ticks": 0},
+                   {**valid, "boot_id": "private-invalid-boot"}, {**valid, "uid": True},
+                   {**valid, "uid": -1}]
+        for value in invalid:
+            capture = helper.CliFailureEvidence(process, clock=Tick(), identity_reader=lambda _pid: value)
+            self.assertFalse(capture.packet()["child_binding"]["observed"])
+            self.assertFalse(any(row["same_child_birth"] for row in capture.packet()["phases"]))
+        capture = helper.CliFailureEvidence(process, clock=Tick(), identity_reader=lambda pid: {
+            **self.valid(pid), "nonce": "PRIVATE_MARKER", "path": "PRIVATE_MARKER",
+            "auth_header": "PRIVATE_MARKER", "unknown": "PRIVATE_MARKER"})
+        row = capture.packet()
+        self.assertTrue(row["child_binding"]["observed"])
+        self.assertTrue(row["phases"][0]["same_child_birth"])
+        self.assertEqual(set(row["child_binding"]), {"observed", "pid", "start_ticks", "boot_id", "uid", "parent", "state"})
+        self.assertNotIn("PRIVATE_MARKER", json.dumps(row))
+
+    def test_throwing_reader_cannot_escape_observer_construction(self):
+        class PrivateError(RuntimeError):
+            @property
+            def timeout(self):
+                raise AssertionError("a diagnostic must not execute this property")
+        def broken(_pid):
+            raise PrivateError("PRIVATE_MARKER")
+        capture = helper.CliFailureEvidence(FakeProcess(), clock=Tick(), identity_reader=broken)
+        self.assertFalse(capture.packet()["child_binding"]["observed"])
+        self.assertFalse(capture.packet()["phases"][0]["same_child_birth"])
+        self.assertNotIn("PRIVATE_MARKER", json.dumps(capture.packet()))
+
+    def test_actual_case_registers_fallback_before_failed_constructor(self):
+        tree = ast.parse((ROOT / "tests/test_runtime_review.py").read_text())
+        method = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
+                      and node.name == "test_cli_explicit_automation_starts_with_synthetic_policy_and_stops_cleanly")
+        assignments = [deepcopy(node) for node in method.body if isinstance(node, ast.Assign)
+                       and any(isinstance(target, ast.Name) and target.id in {"evidence", "primary_error"} for target in node.targets)]
+        cleanup = deepcopy(next(node for node in method.body if isinstance(node, ast.FunctionDef) and node.name == "cleanup"))
+        registration = deepcopy(next(node for node in method.body if isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute)
+            and node.value.func.attr == "addCleanup"))
+        block = deepcopy(next(node for node in method.body if isinstance(node, ast.Try)))
+        block.body = [block.body[0]]  # Actual constructor statement; no business/SQL body is run.
+        function = deepcopy(method)
+        function.name = "after_popen"
+        function.args = ast.arguments(posonlyargs=[], args=[ast.arg(arg="self"), ast.arg(arg="process")],
+                                      kwonlyargs=[], kw_defaults=[], defaults=[])
+        function.body = [*assignments, cleanup, registration, block]
+        function.decorator_list = []
+        callbacks, process = [], FakeProcess()
+        case = type("FakeCase", (), {"addCleanup": lambda self, callback: callbacks.append(callback)})()
+        original = RuntimeError("PRIVATE_CONSTRUCTOR_MARKER")
+        def fail_constructor(_process):
+            self.assertEqual(len(callbacks), 1)
+            raise original
+        namespace = {"CliFailureEvidence": fail_constructor}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[function], type_ignores=[])), "<actual-registration-only>", "exec"), namespace)
+        with patch.object(process, "communicate", side_effect=OSError("PRIVATE_CLEANUP_MARKER")) as communicate:
+            try:
+                try:
+                    namespace["after_popen"](case, process)
+                finally:
+                    for callback in callbacks:
+                        callback()
+            except RuntimeError as observed:
+                self.assertIs(observed, original)
+        communicate.assert_called_once_with(timeout=5)
+        self.assertEqual(process.kills, 1)
+        self.assertIsNone(process.returncode)
 
 
 if __name__ == "__main__":

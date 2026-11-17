@@ -151,6 +151,9 @@ class RuntimeReviewTests(unittest.TestCase):
         catalog, rules = synthetic_policy()
         catalog_path.write_text(catalog.to_json(), encoding="utf-8")
         rules_path.write_text(rules.to_json(), encoding="utf-8")
+        from tests.cli_sigterm_failure_evidence import CliFailureEvidence
+        evidence = None
+        primary_error = None
         process = subprocess.Popen(
             [sys.executable, "-m", "uta", "exchange", "--database", str(root / "automated.sqlite3"),
              "--credentials", str(credentials), "--catalog", str(catalog_path), "--risk-rules", str(rules_path),
@@ -158,10 +161,20 @@ class RuntimeReviewTests(unittest.TestCase):
             cwd=root, env={**os.environ, "PYTHONPATH": str(SOURCE)},
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
 
-        from tests.cli_sigterm_failure_evidence import CliFailureEvidence
-        evidence = CliFailureEvidence(process)
-        self.addCleanup(evidence.cleanup)
+        def cleanup():
+            if evidence is not None:
+                return evidence.cleanup()
+            try:
+                if process.poll() is None:
+                    process.kill()
+                process.communicate(timeout=5)
+            except BaseException:
+                if primary_error is None:
+                    raise
+        # Registered before any observer construction can fail.
+        self.addCleanup(cleanup)
         try:
+            evidence = CliFailureEvidence(process)
             evidence.event("startup_wait_before")
             with selectors.DefaultSelector() as selector:
                 selector.register(process.stdout, selectors.EVENT_READ)
@@ -188,8 +201,10 @@ class RuntimeReviewTests(unittest.TestCase):
             self.assertFalse(reopened.readiness()["ready"], "the explicit policy must not generate funds or prices")
             evidence.event("post_exit_assertions_return")
         except BaseException as primary:
+            primary_error = primary
             try:
-                evidence.primary_failure(primary)
+                if evidence is not None:
+                    evidence.primary_failure(primary)
             except BaseException:
                 pass
             raise

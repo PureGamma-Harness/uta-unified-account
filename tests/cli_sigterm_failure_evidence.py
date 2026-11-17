@@ -11,6 +11,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -47,10 +48,31 @@ def process_identity(pid):
 def _error(error):
     name = type(error).__name__
     result = {"type": name if name in _ERRORS else "<unlisted>"}
-    timeout = getattr(error, "timeout", None)
+    timeout = BaseException.__getattribute__(error, "__dict__").get("timeout")
     if type(timeout) in (int, float) and math.isfinite(timeout) and 0 <= timeout <= 3600:
         result["timeout_seconds"] = timeout
     return result  # No message, args, notes, locals or credential values.
+
+
+def project_identity(value, expected_pid):
+    """A reader is an observation hook, never a source of trusted raw fields."""
+    unknown = {"observed": False, "pid": expected_pid if type(expected_pid) is int else None,
+               "error_type": "invalid_identity"}
+    if type(value) is not dict or value.get("observed") is not True:
+        return unknown
+    pid, ticks, boot, uid = (value.get(key) for key in ("pid", "start_ticks", "boot_id", "uid"))
+    if not (type(expected_pid) is int and type(pid) is int and 0 < pid < 2**31 and pid == expected_pid
+            and type(ticks) is int and 0 < ticks < 2**63
+            and type(boot) is str and re.fullmatch(r"[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}", boot)
+            and type(uid) is int and 0 <= uid < 2**32):
+        return unknown
+    result = {"observed": True, "pid": pid, "start_ticks": ticks, "boot_id": boot, "uid": uid}
+    parent, state = value.get("parent"), value.get("state")
+    if type(parent) is int and 0 <= parent < 2**31:
+        result["parent"] = parent
+    if type(state) is str and state in {"R", "S", "D", "Z", "T", "t", "X", "x", "K", "W", "P", "I"}:
+        result["state"] = state
+    return result  # Unknown/extra fields, including paths and nonces, are dropped.
 
 
 class CliFailureEvidence:
@@ -90,7 +112,7 @@ class CliFailureEvidence:
 
     def _observe(self, pid):
         try:
-            return self._identity(pid)
+            return project_identity(self._identity(pid), pid)
         except BaseException as error:
             return {"observed": False, "pid": pid, "error_type": _error(error)["type"]}
 

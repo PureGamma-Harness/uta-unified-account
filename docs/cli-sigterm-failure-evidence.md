@@ -98,3 +98,30 @@ remove the new helper/model/reference files. No schema, API, stored funds,
 runtime configuration or financial state changes. Keep all original failure
 archives and any future private evidence. Disabling the helper restores the old
 test's discarded cleanup output; it does not resolve the underlying shutdown.
+
+## Identity hook correction after independent first red
+
+Independent original commit5d3d539 (locally preserved ase7e540f) recorded its
+first eight fake controls: three RED and five PASS. Missing birth fields could
+have matched as None==None, extra hook fields could enter the public notice,
+and a None hook return could escape construction. These were injectable-hook
+counterexamples, not observations of a default /proc leak or the old CLI cause.
+Their script and original raw results remain unchanged.
+
+The correction projects an exact typed allowlist. Only observed=true plus a
+matching positive integer PID, positive integer start ticks, canonical boot UUID
+and integer UID establishes observed identity; boolean integers are rejected.
+Parent/state are optional typed fields; all extras are dropped. Non-dicts,
+missing/malformed values and throwing readers remain explicitly unobserved and
+cannot produce same_child_birth=true. Exception timeout observation reads only
+the exception's stored attributes, not a hook-supplied property.
+
+The test now imports the helper before Popen and registers its original bounded
+fallback cleanup before observer construction. A constructor failure therefore
+cannot bypass owned-child poll/kill/communicate cleanup. That fallback preserves
+the primary exception if cleanup is also unknown; it does not claim a complete
+archive when no observer exists. The original business/timeout/assertion AST
+still hashes to a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128.
+Only a new once-authorized pure batch is planned: the original eight controls
+with its helper SHA pin updated, plus strict identity/fallback and AST cases.
+No real native operation or prior test rerun is authorized by this correction.
