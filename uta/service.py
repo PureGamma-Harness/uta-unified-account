@@ -1263,6 +1263,11 @@ class ExchangeService:
     def readiness(self) -> dict:
         try:
             with self._transaction() as connection:
+                from .writer_fence import _load
+                state = _load(connection)
+                if state is not None and state.get("credit_format") == 2:
+                    return {"ready": False, "reason": "internal_credit_authority_not_trading",
+                            **self._policy_versions()}
                 halted = self._halted(connection)
                 market = self._market(connection)
                 return {"ready": not halted, "halted": halted, "market_version": market.version,

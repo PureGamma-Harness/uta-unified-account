@@ -49,3 +49,11 @@ Opening orders/positions/debt may be valued if their exact supported original
 rows pass full verification, but that is not permission for new execution of
 those operations under V2. This restriction must not be presented as a
 production trading account or used to migrate real customer accounts.
+
+`ExchangeService.readiness()` additionally reads the actual persisted native
+format and returns `ready:false` with reason
+`internal_credit_authority_not_trading` for format2. A real internal financial
+lease therefore cannot be misreported as generic trading readiness. The no-cap
+ready/halt result was separately checked on an actual temporary database in
+`evidence/runs/credit-v2-readiness-boundary`; the actual format2 branch remains
+part of the full native positive-chain acceptance, not that default-path test.
