@@ -174,3 +174,37 @@ single-command/fence/startup behavior, diagnostic stop gates and original native
 TLS CLI checks. [Commands, source manifests and actual raw outputs](../evidence/20261117-durable-batches-runtime/targeted-ebf8459/manifest.json)
 are retained. This is a focused matrix, not a complete release run, packaging,
 capacity test, independent approval or permission to enable real funds.
+
+Additional financial cases use manual amounts and real SQLite effects: under
+halted/stale pricing, cancel and USD repay succeed while new risk is rejected;
+USD cash is exactly 20.08 + 2 - .5 = 21.58 and principal debt is 1.5, retained
+separately. Replaying the original batch does not repay again. A real paired
+opening trade creates a 1.5 position; two staged reduce-only orders of -1 cause
+the second to reject rather than reserve a reversal. Conflicting order IDs
+produce one effect. A deliberately slow first command produces a real 1/3
+executed prefix, with the remaining two original CIDs still pending.
+
+The first credit-case fixture had four incorrect assumptions, all retained as
+failed raw evidence: missing asset-wide credit limit, expected halt rejection
+before the actual stale-market check, wrong liability table name, and treating
+the debt's decimal string as minor units. Corrected exact assertions check the
+existing documented schema/validation order; runtime was unchanged. This does
+not reclassify those earlier runs as passing.
+
+At exact `8ce91d6`, the four new financial cases plus the updated parent external
+BUSY fixture pass **5/5 on each** of the same three runtimes, with unchanged
+sources and no ResourceWarning/ignored exceptions. Their actual raw outputs and
+commands are retained under `targeted-8ce91d6`. The following test-only integration
+adaptation moves loan seeding to an explicit pre-seal bootstrap callback, keeping
+the original pool/borrow CIDs and all cash, gross debt and six-entry assertions.
+This supports credit A2's managed new-borrow rejection; it does not enable managed
+borrowing or alter production runtime.
+
+The pre-seal adapter is additionally verified against the integration lead's
+credit A2 runtime `5dc19ee43e49d133cfbdcf0be3e8875467ca3190` (runtime bytes equal
+`6730f44`), using this branch's `d5b4001` test file explicitly. All **4/4 cases
+pass on each** of the three runtimes. The external harness asserts both runtime
+and test import locations, records both source identities and hashes, and sees
+unchanged sources with no ResourceWarning/ignored exceptions. [Raw mixed-source
+adapter evidence](../evidence/20261117-durable-batches-runtime/credit-a2-fixture-adapter/manifest.json)
+is separate from release qualification; no root or frozen worktree was edited.

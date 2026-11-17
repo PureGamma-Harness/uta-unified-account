@@ -1,6 +1,6 @@
 """Real SQLite batch effects, original CID semantics and restricted metadata."""
 from contextlib import contextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
 from hashlib import sha256
 from pathlib import Path
@@ -12,6 +12,7 @@ import subprocess
 import sys
 import tarfile
 import shutil
+from time import sleep
 import unittest
 from unittest.mock import patch
 
@@ -22,6 +23,23 @@ from uta.models import AssetSpec, InstrumentSpec
 from uta.service import ExchangeService, ServiceError
 from uta.storage import Database, StorageError
 from uta.writer_fence import WriterFence, WriterFenceError
+
+
+def _preseal_bootstrap(callback):
+    def decorate(test):
+        test._preseal_bootstrap = callback
+        return test
+    return decorate
+
+
+def _seed_existing_loan(exchange):
+    """Explicit offline fixture funding, before this authority is sealed."""
+    from uta.credit import CreditService
+    credit = CreditService(exchange)
+    credit.fund_pool("pool", "USD", D(30), source_reference="synthetic-owned-batch-pool")
+    credit.configure_asset_limit("USD", D(30))
+    credit.configure_limit("alice", "USD", D(2))
+    credit.borrow("alice", "borrow", "USD", D(2))
 
 
 class DurableBatchTests(unittest.TestCase):
@@ -37,6 +55,9 @@ class DurableBatchTests(unittest.TestCase):
         legacy.publish_market(MarketSnapshot(1, self.now, {"USD": AssetSpec(D(1), D(1))},
             {"BTC-PERP": InstrumentSpec(D(100), D(".1"), D(".05"))}))
         legacy.set_kill_switch(False)
+        callback = getattr(getattr(self, self._testMethodName), "_preseal_bootstrap", None)
+        if callback is not None:
+            callback(legacy)
         self.queue = QueueStore(self.database, initialize=True, clock=lambda: self.now)
         BatchStore.initialize(self.database)
         self.fence = WriterFence(self.database)
@@ -355,3 +376,72 @@ print(json.dumps({"pid":os.getpid(),"storage_sha256":sha256(Path(uta.storage.__f
         self.assertEqual((counts["prepared_batches"], counts["selected_commands"], counts["executed_commands"]), (1, 3, 0))
         self.assertEqual((counts["failure_events"], counts["recovered_batches"], counts["unresolved_batches"]), (1, 1, 0))
         self.assertTrue(counts["record_counts_are_not_commit_counts"])
+
+    @_preseal_bootstrap(_seed_existing_loan)
+    def test_cancel_and_same_currency_repay_commit_under_halt_and_stale_quote(self):
+        from uta.credit import CreditService
+        credit = CreditService(self.exchange)
+        self.exchange.submit_order("alice", "resting", "BTC-PERP", D(1), D(100))
+        self.exchange.set_kill_switch(True)
+        self.now += timedelta(days=1)
+        self.queue.enqueue_cancel("alice", "cancel", "resting")
+        self.queue.enqueue_repay("alice", "repay", "USD", D(".5"))
+        self.submit("bob", "new-risk")
+        attempt = self.batch.prepare()
+        result = {r["command_id"]: r for r in self.batch.process(self.exchange, attempt, credit=credit, soft_budget_seconds=.1)}
+        self.assertEqual(result["cancel"]["state"], "SUCCEEDED")
+        self.assertEqual(result["repay"]["state"], "SUCCEEDED")
+        self.assertEqual(result["new-risk"]["error"]["code"], "market_unavailable")
+        self.assertEqual(self.exchange.account("alice")["open_order_margin"], "0")
+        self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D("21.58"))
+        with self.database.read_transaction() as connection:
+            self.assertEqual(tuple(connection.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id='alice' AND asset='USD'").fetchone()), ("1.5", "0"))
+        self.batch.process(self.exchange, attempt, credit=credit, soft_budget_seconds=.1)
+        self.assertEqual(self.exchange.ledger.balance("customer:alice", "USD"), D("21.58"))
+        self.assertEqual(self.exchange.ledger.verify(), 6)
+
+    def test_reduce_only_limits_include_the_earlier_staged_order(self):
+        from uta.matching import Matcher
+        self.exchange.submit_order("alice", "open-long", "BTC-PERP", D("1.5"), D(100))
+        self.exchange.submit_order("carol", "open-short", "BTC-PERP", D("-1.5"), D(100))
+        match = Matcher(self.exchange).match_once("BTC-PERP")
+        self.assertIsNotNone(match)
+        self.queue.enqueue_submit("alice", "reduce1", "reduce1", "BTC-PERP", D(-1), D(100), reduce_only=True)
+        self.queue.enqueue_submit("alice", "reduce2", "reduce2", "BTC-PERP", D(-1), D(100), reduce_only=True)
+        self.submit("bob", "normal")
+        result = {r["command_id"]: r for r in self.batch.process(self.exchange, self.batch.prepare(), soft_budget_seconds=.1)}
+        self.assertEqual(result["reduce1"]["state"], "SUCCEEDED")
+        self.assertEqual(result["reduce2"]["error"]["code"], "reduce_only_violation")
+        self.assertEqual(result["normal"]["state"], "SUCCEEDED")
+        with self.database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT quantity FROM uta_positions WHERE account_id='alice'").fetchone()[0], "1.5")
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_orders WHERE account_id='alice' AND status='OPEN' AND reduce_only=1").fetchone()[0], 1)
+
+    def test_conflicting_order_id_in_same_batch_has_no_second_effect(self):
+        self.submit("alice", "first", "same", quantity="1")
+        self.submit("alice", "conflict", "same", quantity="2")
+        self.submit("bob", "third")
+        result = {r["command_id"]: r for r in self.batch.process(self.exchange, self.batch.prepare(), soft_budget_seconds=.1)}
+        self.assertEqual(result["first"]["state"], "SUCCEEDED")
+        self.assertEqual(result["conflict"]["error"]["code"], "idempotency_conflict")
+        self.assertEqual(self.exchange.account("alice")["open_order_margin"], "10.04")
+        self.assertEqual(len(self.exchange.orders("alice")), 1)
+
+    def test_slow_first_command_seals_actual_prefix_without_claiming_remaining_effects(self):
+        from benchmarks.run_managed_benchmark import batch_dispatch_diagnostics
+        attempt = self.three()
+        original = self.exchange._admit_order
+        def slow(connection, account, *args, **kwargs):
+            result = original(connection, account, *args, **kwargs)
+            sleep(.01)
+            return result
+        with patch.object(self.exchange, "_admit_order", slow):
+            result = self.batch.process(self.exchange, attempt, soft_budget_seconds=.005)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(self.queue.status("submit:alice")["state"], "SUCCEEDED")
+        self.assertEqual([self.queue.status("submit:" + a)["state"] for a in ("bob", "carol")], ["PENDING", "PENDING"])
+        with self.database.read_transaction() as connection:
+            counts = batch_dispatch_diagnostics(connection)
+        self.assertEqual((counts["prepared_batches"], counts["selected_commands"], counts["executed_commands"], counts["partial_prefix_batches"]), (1, 3, 1, 1))
+        self.assertEqual(self.batch.unresolved(), [])
+        self.assertEqual([self.queue.process_one(self.exchange)["state"] for _ in range(2)], ["SUCCEEDED"] * 2)
