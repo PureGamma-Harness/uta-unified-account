@@ -31,6 +31,13 @@ financial/exchange provider in this process test remains the static synthetic
 fixture. Actual UTC freshness is tested separately in
 `credit-v2-realtime-freshness-checkpoint.md`.
 
+The subsequent test-only correction estimates the wait with the same real
+CLOCK_BOOTTIME as the native lease, avoiding assumptions about a host's earlier
+suspend history. It changes no runtime or financial rule. The original passed
+raw and its exact preregistered test hash remain unchanged; the corrected harness
+will run in the final integrated matrix rather than repeat a21-second green
+case solely for a one-line observer correction.
+
 This proves the specific after-COMMIT/before-reply crash boundary and real
 cross-process original-CID recovery. It does not establish a crash during
 financial COMMIT, power loss durability, database corruption recovery, replica

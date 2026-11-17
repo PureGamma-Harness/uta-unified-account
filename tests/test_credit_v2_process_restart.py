@@ -32,7 +32,7 @@ class ActualCreditProcessRecoveryTests(unittest.TestCase):
                               "uta_accounts", "uta_liabilities", "ledger_events", "ledger_postings", "ledger_balances", "uta_events")}
             expires = connection.execute("SELECT expires_ns FROM writer_fence_lease WHERE singleton=1").fetchone()[0]
             self.assertEqual(connection.execute("SELECT generation FROM writer_fence_lease WHERE singleton=1").fetchone()[0], 1)
-        remaining = max(0, (expires-time.monotonic_ns())/1_000_000_000+0.03)
+        remaining = max(0, (expires-time.clock_gettime_ns(time.CLOCK_BOOTTIME))/1_000_000_000+0.03)
         self.assertLessEqual(remaining, 15.1)
         if remaining:
             time.sleep(remaining)  # Real bootclock lease expiry; no fake time/token.
