@@ -138,10 +138,39 @@ class D1Contract(unittest.TestCase):
         with patch.object(m.os,'fsync',side_effect=OSError(errno.EIO,'SECONDARY')),patch.object(m.os,'rename',side_effect=PermissionError('SECONDARY')),patch.object(Path,'unlink',side_effect=PermissionError('SECONDARY')):
             failure,original=self.run_missing(self.private/'first.tmp')
         self.assertIs(failure.primary_error.__context__,original)
-        path=self.public/'resource-diagnostic-CASE_B.json';path.write_bytes(b'{partial')
-        records=[];self.assertEqual(m.collect_resource_diagnostics(self.public,records),'UNAVAILABLE')
+        path=self.private/'resource-diagnostic-incomplete-CASE_B.json'
+        m.validate_resource_diagnostic(json.loads(path.read_bytes()))
+        self.assertFalse((self.public/'resource-diagnostic-CASE_B.json').exists())
+        records=[];self.assertEqual(m.collect_resource_diagnostics(self.public,records),'COMPLETE')
         self.assertEqual(records,[]);self.assertEqual(str(failure),'resource_missing_non_aux')
+        self.assertEqual(failure.diagnostic_status,'UNAVAILABLE')
         m.public_write(self.public,'manifest.json',dict(files=records,source_commit=m.SOURCE,private_authorities_requests_keys_nonces_signatures_streams_not_uploaded=True))
-        with self.assertRaises(m.GateError):m.verify_public(self.public)
+        self.assertTrue(m.verify_public(self.public))
+    def test_link_failure_keeps_full_staging_private(self):
+        with patch.object(m.os,'link',side_effect=PermissionError('SECONDARY')):
+            failure,original=self.run_missing(self.private/'first.tmp')
+        self.assertIs(failure.primary_error.__context__,original);self.assertEqual(failure.diagnostic_status,'UNAVAILABLE')
+        self.assertFalse(list(self.public.iterdir()))
+        m.validate_resource_diagnostic(json.loads((self.private/'resource-diagnostic-incomplete-CASE_B.json').read_bytes()))
+    def test_close_failure_cannot_publish_full_staging(self):
+        fdopen=m.os.fdopen
+        class CloseFailure:
+            def __init__(self,*a,**k):self.stream=fdopen(*a,**k)
+            def __enter__(self):return self.stream.__enter__()
+            def __exit__(self,*a):self.stream.__exit__(*a);raise OSError(errno.EIO,'SECONDARY_CLOSE')
+        with patch.object(m.os,'fdopen',CloseFailure):failure,original=self.run_missing(self.private/'first.tmp')
+        self.assertIs(failure.primary_error.__context__,original);self.assertEqual(failure.diagnostic_status,'UNAVAILABLE')
+        self.assertFalse(list(self.public.iterdir()))
+    def test_committed_record_survives_private_alias_cleanup_failure(self):
+        with patch.object(Path,'unlink',side_effect=PermissionError('SECONDARY')):failure,original=self.run_missing(self.private/'first.tmp')
+        self.assertEqual(failure.diagnostic_status,'RECORDED');records=[]
+        self.assertEqual(m.collect_resource_diagnostics(self.public,records),'COMPLETE');self.assertEqual(len(records),1)
+        size=(self.public/'resource-diagnostic-CASE_B.json').stat().st_size
+        self.assertEqual(m.resource_usage(self.private,self.public),dict(normal=0,escrow=0,cleanup=2*size,total=2*size))
+    def test_single_alias_headroom_cannot_fund_two_alias_publication(self):
+        raw=(json.dumps(self.value(),sort_keys=True,separators=(',',':'))+'\n').encode()
+        with patch.object(m,'_diagnostic_cleanup_bytes',return_value=m.CLEANUP_RESERVE-len(raw)):
+            with self.assertRaisesRegex(m.GateError,'diagnostic_cleanup_cap'):m.write_resource_diagnostic(self.private,self.public,self.value())
+        self.assertFalse(list(self.public.iterdir()));self.assertFalse(list(self.private.iterdir()))
 
 if __name__=='__main__':unittest.main()

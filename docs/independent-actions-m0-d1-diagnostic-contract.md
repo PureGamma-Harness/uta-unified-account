@@ -1,5 +1,7 @@
 # D1：不改变资源准入的安全首失败诊断
 
+> 此页保留 3e586 初始 D1 的规格与首验收范围。其 public-first 写入方案被独立首反例 f605b96 否决；当前提交/发布契约及关闭证据见 [D1 prefix commit 修复](independent-actions-m0-d1-prefix-commit-fix.md)。旧 154 PASS 不代表该缺陷已关闭。
+
 本候选只增加诊断控制面。基线是 ab933bec61d5c4be3e40c1a337f8ce55705ba48d；金融源码仍是 909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0。M03 原 B UNKNOWN、P NOT_RUN、仅三条 available cipher 的事实保持不变；其具体 missing path 没有记录，根因尚未定位。本次纯文件/假对象测试不能补回该证据。
 
 ## 事件发生点与覆盖边界

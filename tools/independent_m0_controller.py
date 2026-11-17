@@ -206,24 +206,26 @@ def _diagnostic_cleanup_bytes(private,public):
 def write_resource_diagnostic(private,public,value):
     validate_resource_diagnostic(value)
     raw=(json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)+'\n').encode();need(len(raw)<=4096,'diagnostic_record_cap')
-    info=public.lstat();need(stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid() and stat.S_IMODE(info.st_mode)&0o077==0,'diagnostic_public_directory')
-    need(_diagnostic_cleanup_bytes(private,public)+len(raw)<=CLEANUP_RESERVE,'diagnostic_cleanup_cap')
+    for root in (private,public):
+        info=root.lstat();need(stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid() and stat.S_IMODE(info.st_mode)&0o077==0,'diagnostic_public_directory')
+    # A successful link briefly has two names; cleanup may retain both aliases.
+    need(_diagnostic_cleanup_bytes(private,public)+2*len(raw)<=CLEANUP_RESERVE,'diagnostic_cleanup_cap')
     path=public/f"resource-diagnostic-{value['phase']}.json"
     incomplete=private/f"resource-diagnostic-incomplete-{value['phase']}.json"
-    if incomplete.exists():return 'UNAVAILABLE'
-    try:fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
+    try:path.lstat()
+    except FileNotFoundError:pass
+    else:return 'ALREADY_RECORDED'
+    try:fd=os.open(incomplete,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
+    except FileExistsError:return 'UNAVAILABLE'
+    # The incomplete file remains private on every write/fsync/close failure.
+    # Only a fully closed successful file is linked into the public namespace.
+    with os.fdopen(fd,'wb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+    try:os.link(incomplete,path,follow_symlinks=False)
     except FileExistsError:return 'ALREADY_RECORDED'
-    try:
-        with os.fdopen(fd,'wb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
-    except BaseException:
-        # Keep a failed prefix privately, never publish it as a valid record.
-        try:
-            if not incomplete.exists():os.rename(path,incomplete)
-        except BaseException:
-            # Only this new O_EXCL optional prefix, never an original stream.
-            try:path.unlink()
-            except BaseException:pass
-        raise
+    # Publication already committed; failure to remove the private alias cannot
+    # revoke it. Both aliases remain charged by the existing cleanup meter.
+    try:incomplete.unlink()
+    except OSError:pass
     return 'RECORDED'
 
 class ResourceHealthFailure(GateError):
