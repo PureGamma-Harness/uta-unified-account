@@ -21,7 +21,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-CONTROL_COMMIT = "b02a4e45ec0132e43d0c94fb7c7ab3490d9edea3"
+CONTROL_COMMIT = "ff814d4bcaee079b0e0503ea8072c24e3563c443"
 BASE = "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
 PROTECTED = {4471, 8784, 310035, 310039, 310266, 310269}
 STATE = {"instrumented_diagnostic": True, "original_ci_cause_proven": False,

@@ -47,6 +47,8 @@ Attempts are unlimited at this bounded rate; there is no finite-attempt budget.
 Other failures block this shard. The monitor rechecks shutdown after obtaining
 its mutex and before retrying. Unrelated unexpected monitor errors are not
 silently converted to readiness.
+Resolving a previously unknown cleanup does not clear a terminal registration
+error; that object remains blocked even after all resources have been closed.
 
 Diagnostics expose a fixed typed failure record and `supervisor_alive` through
 the router and managed gateway adapter. They contain no raw exception message,
@@ -63,7 +65,7 @@ proven cause of the original timeout.
 
 ## Model evidence already collected
 
-`python -B tests/test_spawn_registration_recovery.py` defaults to eight pure
+`PYTHONPATH=. python -B tests/test_spawn_registration_recovery.py` defaults to pure
 model cases. Its wrapper rejects real SQLite connections, real process starts
 and `os.kill`. The first fixed run passed 8/8 in 0.027s. The same test bytes
 against a fresh source-e439 runtime archive failed six assertions and raised
@@ -82,7 +84,7 @@ prepare result are retained under
 ## Exact bounded native diagnostic plan: requires separate execution GO
 
 `tests/stopped_gate_recovery_probe.py` is prepare-only by default. It checks all
-runtime blobs against `b02a4e45ec0132e43d0c94fb7c7ab3490d9edea3`, and byte-pins
+runtime blobs against `ff814d4bcaee079b0e0503ea8072c24e3563c443`, and byte-pins
 the unchanged source-e439 `owned_run`, orphan-reaper and kernel-lock helpers.
 It reports its own and the new test module's SHA256. The static preparation
 performed no SQLite connection, worker start or signal operation.
@@ -128,6 +130,12 @@ change scheduling: every output is labeled instrumented diagnostic, not the
 original CI reproduction, capacity result, SLA or production approval. The
 first failure, timeout or unknown is preserved and escalated; no repeat-until-
 green or widening of publication/lease timeouts is authorized.
+
+An additional delayed-cleanup/terminal-error regression passed with all nine
+model cases in 0.024s on fixed runtime `ff814d4`. A first direct file invocation
+omitted `PYTHONPATH=.` and failed at import with `ModuleNotFoundError`; that
+original harness error is preserved alongside the corrected command's output.
+It did not run a model case, SQL, worker or signal operation.
 
 ## Candidate rollout and rollback
 
