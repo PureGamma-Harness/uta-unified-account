@@ -7,7 +7,7 @@ import struct
 import unittest
 
 from uta.private_stream_codec import (BufferFull, EncodeReject, FrameParser,
-    FrameReject, HandshakeReject, OutboundBuffer, PingTracker, encode_close,
+    FrameReject, HandshakeReject, OutboundBuffer, PingTracker, SendChunk, encode_close,
     encode_control, encode_text, encode_text_chunks, validate_handshake_key)
 
 
@@ -278,6 +278,55 @@ class EncodeAndBufferTests(unittest.TestCase):
         frame = encode_text(raw)
         self.assertEqual(bytes(frame.payload), raw)
         self.assertEqual(json.loads(bytes(frame.payload))["sequence"], 9007199254740993)
+
+    def test_chunk_payload_is_immutable_even_through_public_view_owner(self):
+        frame = encode_text_chunks([b"payload"])
+        self.assertIsInstance(frame.payload.obj, bytes)
+        with self.assertRaises(TypeError):
+            frame.payload.obj[0] = 0
+
+    def test_full_queue_does_not_consume_encoder_upstream(self):
+        buffer = OutboundBuffer()
+        buffer.enqueue_application(encode_text(b"one"), now_ms=0)
+        buffer.enqueue_application(encode_text(b"two"), now_ms=0)
+        visited = []
+        def chunks():
+            visited.append(True)
+            yield b"must-not-be-read"
+        with self.assertRaises(BufferFull):
+            buffer.enqueue_text_chunks(chunks(), now_ms=1)
+        self.assertEqual(visited, [])
+
+    def test_close_deadline_starts_on_entering_close_not_first_write(self):
+        buffer = OutboundBuffer()
+        buffer.begin_close(1000, now_ms=0)
+        self.assertEqual(buffer.close_deadline_ms, 2000)
+        buffer.check_deadlines(now_ms=1999)
+        with self.assertRaises(FrameReject) as caught:
+            buffer.check_deadlines(now_ms=2000)
+        self.assertEqual((caught.exception.code, caught.exception.abort_transport), ("close_handshake_timeout", True))
+
+    def test_forged_or_superseded_partial_output_token_cannot_skip_wire(self):
+        buffer = OutboundBuffer()
+        buffer.enqueue_application(encode_text(b"hello"), now_ms=0)
+        first = buffer.peek(now_ms=0)
+        forged = SendChunk(first.identity, first.offset, memoryview(b"x" * 1000))
+        with self.assertRaises(ValueError):
+            buffer.advance(forged, 1000, now_ms=0)
+        current = buffer.peek(now_ms=0)
+        with self.assertRaises(ValueError):
+            buffer.advance(first, 1, now_ms=0)
+        buffer.advance(current, len(current.data), now_ms=0)
+        self.assertEqual(buffer.application_wire_bytes, 7)
+
+    def test_text_subclasses_cannot_override_encoder_allocation(self):
+        class UntrustedText(str):
+            def encode(self, *args, **kwargs):
+                raise AssertionError("must reject before custom encoding")
+        with self.assertRaises(EncodeReject):
+            encode_close(1000, UntrustedText("x" * 124))
+        with self.assertRaises(HandshakeReject):
+            validate_handshake_key(UntrustedText("dGhlIHNhbXBsZSBub25jZQ=="), "7468652073616d706c65206e6f6e6365")
 
 
 if __name__ == "__main__":
