@@ -28,7 +28,8 @@ class PassiveControlFixture(ManagedSoak):
         self.stages, self.observed_connections = [], []
         self.start_error = self.drain_error = None
         self.meta = {'validation_evidence': None, 'file_identities': {str(path): [path.stat().st_dev, path.stat().st_ino]
-            for path in [root / relative for relative, _ in WARM_READS] + [root / 'private/auth.sqlite3']}}
+            for path in [Path(self.checkpoint.path), root / 'managed/router.sqlite3',
+                         root / 'managed/shard-0000.sqlite3', root / 'private/auth.sqlite3']}}
 
     def _start_server(self):
         self.stages.append('start_stub')
@@ -56,10 +57,11 @@ class PassiveControlFixture(ManagedSoak):
 
 
 class ManagedReadHolderLifecycleTests(unittest.TestCase):
-    def make(self):
+    def make(self, *, alias=None):
         temporary = TemporaryDirectory(prefix='uta-holder-lifecycle-')
         self.addCleanup(temporary.cleanup)
-        root = Path(temporary.name)
+        root = Path(temporary.name) / 'job'
+        root.mkdir(mode=0o700)
         for relative, schema in [
             ('checkpoint.sqlite3', '''CREATE TABLE state(key TEXT PRIMARY KEY,value TEXT);
                 CREATE TABLE rounds(sequence INTEGER PRIMARY KEY,planned_ns INTEGER,state TEXT,completed_ns INTEGER);
@@ -80,6 +82,12 @@ class ManagedReadHolderLifecycleTests(unittest.TestCase):
                 connection.executescript(schema)
             finally:
                 connection.close()
+        if alias == 'dotdot':
+            (root.parent / 'step').mkdir(mode=0o700)
+            root = root.parent / 'step' / '..' / 'job'
+        elif alias == 'parent_alias':
+            (root.parent / 'parent-alias').symlink_to(root.parent, target_is_directory=True)
+            root = root.parent / 'parent-alias' / 'job'
         fixture = PassiveControlFixture(root)
         self.addCleanup(fixture.close)
         return fixture
