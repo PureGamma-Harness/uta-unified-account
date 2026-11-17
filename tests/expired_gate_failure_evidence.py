@@ -156,9 +156,16 @@ def _threads(router, publisher, drops):
         if not isinstance(thread, threading.Thread):
             result[role] = {'alive': None, 'frames': []}
             continue
-        result[role] = {'alive': threading.Thread.is_alive(thread),
-                        'frames': _frames(frames.get(thread.ident), drops)}
-    result['monitor_stop'] = stop.is_set() if type(stop) is threading.Event else None
+        alive = threading.Thread.is_alive(thread)
+        if type(alive) is not bool:
+            alive = None
+            drops['values'] += 1
+        result[role] = {'alive': alive, 'frames': _frames(frames.get(thread.ident), drops)}
+    stopped = stop.is_set() if type(stop) is threading.Event else None
+    if stopped is not None and type(stopped) is not bool:
+        stopped = None
+        drops['values'] += 1
+    result['monitor_stop'] = stopped
     return result
 
 
@@ -166,9 +173,14 @@ def build_failure_diagnostic(observation, publisher_errors, primary_error, route
     drops = {key: 0 for key in ('fields', 'values', 'items', 'frames_at_least', 'chain_links_at_least', 'payload_items')}
     errors = publisher_errors if type(publisher_errors) is list else []
     drops['items'] += max(0, len(errors) - 8)
+    clocks = {'monotonic_ns': time.monotonic_ns(),
+              'boottime_ns': time.clock_gettime_ns(time.CLOCK_BOOTTIME), 'utc_ns': time.time_ns()}
+    for key, value in clocks.items():
+        if type(value) is not int or not 0 <= value < 2**63:
+            clocks[key] = None
+            drops['values'] += 1
     return {'event': 'uta.expired_gate_failure.v1', 'phase': 'before_original_cleanup',
-            'monotonic_ns': time.monotonic_ns(), 'boottime_ns': time.clock_gettime_ns(time.CLOCK_BOOTTIME),
-            'utc_ns': time.time_ns(), 'observation': _observation(observation, drops),
+            **clocks, 'observation': _observation(observation, drops),
             'primary': _exception(primary_error, drops),
             'publisher_errors': [_exception(error, drops) for error in errors[:8]],
             'threads': _threads(router, publisher, drops), 'drop_counts': drops,

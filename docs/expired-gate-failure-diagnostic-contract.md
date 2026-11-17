@@ -93,3 +93,14 @@ this corrected candidate. All172 existing test files are inventoried:171 are
 byte-identical to5a; the only existing-file difference is the exact six-line
 failure hook in test_durable_faults.py. Existing test_failure_diagnostics.py is
 restored byte-for-byte; the added suite has a new unique name.
+
+
+A subsequent static privacy review found another output boundary to validate:
+Thread/Event state or a clock scalar must not bypass the whitelist merely because
+it came from a normally trusted standard-library object. Final scalar checks now
+accept only actual booleans for thread/Event state and bounded actual integers
+for the three clock values; malformed data becomes null with a drop count. One
+new secret-negative pure vector covers those boundaries. The first11-test run
+above remains evidence only for exact315a; this subsequent small refinement was
+not rerun locally. Its12-test final suite requires the already planned independent
+review/full matrix, rather than retrofitting the earlier PASS record.

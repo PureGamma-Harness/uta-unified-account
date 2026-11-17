@@ -138,6 +138,21 @@ class FailureDiagnosticTests(unittest.TestCase):
         self.assertIsInstance(data['boottime_ns'], int)
         self.assertIsInstance(data['utc_ns'], int)
 
+    def test_malformed_thread_event_and_clock_scalars_cannot_bypass_redaction(self):
+        instance = router()
+        instance._stop._flag = SECRET
+        stream = io.StringIO()
+        with patch.object(threading.Thread, 'is_alive', return_value=SECRET), \
+             patch.object(diagnostic.time, 'monotonic_ns', return_value=SECRET):
+            self.assertIs(diagnostic.emit_expired_gate_failure({}, [], None, instance, threading.current_thread(), stream=stream), True)
+        text = stream.getvalue()
+        self.assertNotIn(SECRET, text)
+        data = json.loads(text[len(diagnostic.PREFIX):])
+        self.assertIsNone(data['monotonic_ns'])
+        self.assertIsNone(data['threads']['monitor_stop'])
+        self.assertTrue(all(data['threads'][role]['alive'] is None for role in ('main', 'monitor', 'publisher')))
+        self.assertGreaterEqual(data['drop_counts']['values'], 5)
+
     def test_collections_frames_and_total_output_are_bounded_without_input_mutation(self):
         first, second = recursive_error(), recursive_error()
         second.__cause__ = first
