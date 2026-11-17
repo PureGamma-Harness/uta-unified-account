@@ -1,0 +1,49 @@
+Release packaging source: 89bd349429db3207b61caf1bf2212f6a96c4b76c
+Report worktree: /workspace/uta-release-packaging-89bd349
+External work: /tmp/uta-release-89bd349
+All commands explicitly selected the indicated working directory.
+No command used the root integration working tree.
+
+1. At /workspace/uta-release-packaging-89bd349:
+git rev-parse HEAD
+git status --short --branch
+git archive --format=tar --output=/tmp/uta-release-89bd349/frozen-source.tar HEAD
+
+2. At the report worktree:
+mkdir -p /tmp/uta-release-89bd349/artifacts /tmp/uta-release-89bd349/build-source /tmp/uta-release-89bd349/external
+tar -xf /tmp/uta-release-89bd349/frozen-source.tar -C /tmp/uta-release-89bd349/build-source
+
+3. At /tmp/uta-release-89bd349/build-source (no .git):
+python -c 'import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-89bd349/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-89bd349/artifacts"))'
+stdout+stderr -> build.txt; exit 0.
+
+4. At the report worktree:
+python tools/verify_release_archives.py --source /workspace/uta-release-packaging-89bd349 --commit 89bd349 --wheel /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-89bd349/artifact-manifest.json
+exit 1: one missing tracked formal results JSON; full checks in artifact-manifest.json.
+
+5. At /tmp/uta-release-89bd349/external:
+python -m venv /tmp/uta-release-89bd349/venv
+/tmp/uta-release-89bd349/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+stdout+stderr -> install.txt; exit 0.
+
+6. At /tmp/uta-release-89bd349/external, first verifier attempt:
+env -u PYTHONPATH /tmp/uta-release-89bd349/venv/bin/python -I /workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py --source /workspace/uta-release-packaging-89bd349 --output /tmp/uta-release-89bd349/external
+exit 1: seven original tests passed; independent extra fixture erroneously SELECTed nonexistent reserved_margin column. Initial logs/report retained. No runtime changed. Corrected fixture uses durable terminal result's reserved_margin and raw quantity/filled_quantity/status rows; spelling CANCELLED and table uta_risk_decisions match the existing schema.
+
+7. At /tmp/uta-release-89bd349/external, corrected verifier:
+env -u PYTHONPATH /tmp/uta-release-89bd349/venv/bin/python -I /workspace/uta-release-packaging-89bd349/tools/validate_installed_release.py --source /workspace/uta-release-packaging-89bd349 --output /tmp/uta-release-89bd349/external/run-2
+exit 0: 8 tests, 0 failures/errors/skips; installed-report.json records every imported uta module path, copied helper SHA and all console commands/return codes. Helper ROOT override affects subprocess cwd only. Complete console stdout/stderr files retained.
+
+8. At the report worktree:
+mkdir -p /tmp/uta-release-89bd349/sdist-unpacked
+tar -xzf /tmp/uta-release-89bd349/artifacts/uta_reference_exchange-0.4.0a1.tar.gz -C /tmp/uta-release-89bd349/sdist-unpacked
+
+9. At /tmp/uta-release-89bd349/sdist-unpacked/uta_reference_exchange-0.4.0a1 (no .git):
+env -u PYTHONPATH /tmp/uta-release-89bd349/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+stdout+stderr -> sdist-legacy-tests.txt; exit 0, 7 tests, no skips.
+
+10. At the same unpacked sdist directory:
+env -u PYTHONPATH /tmp/uta-release-89bd349/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+stdout+stderr -> sdist-archival-tests.txt; exit 0, 1 selected archived-data test.
+
+No generated financial/auth database, TLS private key, signing profile or artifact binary is committed. External artifacts remain in the stated /tmp directory for integration review. This check did not install or start a systemd unit.
