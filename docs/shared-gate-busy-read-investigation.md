@@ -39,6 +39,16 @@ child cleanup is explicitly recorded and makes a component NO-GO. If cleanup
 itself fails, append safe details to observations while preserving any primary
 test exception. An otherwise successful body cannot hide a cleanup error.
 
+The concrete candidate records the unavailable/skipped resume observation as
+`observed=false` before `undo_owned_test_stop`. That helper accepts only this
+pidfd's still-matching PID/birth/boot/UID. It has no SQL or renewal call and its
+record explicitly grants no financial authority. A known invalid owner,
+generation or inactive state cannot use the normal resume path. The case then
+waits only for genuine kernel progress (no longer stopped and no bound SH),
+performs one fresh .1-second native read, and requires the original owner and
+generation active before another attempt. Failure of that single read is not
+retried. The original eight-attempt/five-second capture budget is unchanged.
+
 Successful captures followed by an unexpected unknown native read still fail.
 No production supervision, lease, timeout, schema guard or financial formula
 is changed. The original .1-second reader budget is not enlarged.
@@ -52,12 +62,24 @@ lock; no financial DML is required. Record its pidfd/birth, inject only its
 SIGSTOP, and demonstrate the original native `WriterFence.status` genuinely
 returns BUSY through `_load(sqlite_master)`.
 
-Apply the new non-financial undo helper to that exact child, release the real
-lock on its resumed control path, and take one native fresh same-owner/generation
-read before allowing any further capture. Check no token/expiry/data mutation,
-no unobserved-as-active value, and no masked primary error in cleanup. This
-intentional EXCLUSIVE scratch lock is a compatible BUSY mechanism, not proof
-that the historical worker's exact WAL operation was the same.
+Use an importable scratch-child target with two explicit barriers. First the
+child acquires its own five-second native token and actual private router SH;
+the parent takes a genuine fresh owner/gen/expiry observation. On the second
+barrier the child acquires its SQLite EXCLUSIVE transaction and reports the
+real lock operation complete. Only then does the parent stop that exact own
+pidfd and call the real .1-second `WriterFence.status`, requiring actual BUSY.
+
+Apply the new non-financial undo helper to that exact child, allow the child to
+ROLLBACK/close its existing SQLite transaction and release its own SH, and take
+one native fresh same-owner/generation read. The child stays alive on a final
+barrier so process exit cannot stand in for a genuine active lease. Do not
+renew/reacquire its token. Compare the expiry and financial rows to the first
+fresh observation; then let the child release its own authority and exit
+normally. The parent must preserve the actual BUSY exception if cleanup is
+entered under that primary exception; the helper performs zero lease reads.
+No unobserved-as-active value is accepted. This intentional EXCLUSIVE scratch
+lock is a compatible BUSY mechanism, not proof that the historical worker's
+exact WAL operation was the same.
 
 The proposed microcomponent must use an external <=30-second whole watchdog,
 own-group pidfd cleanup and new private output. All forced cleanup, logger

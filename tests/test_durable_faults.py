@@ -131,6 +131,48 @@ def router_writer_available_without_dml(path):
                 "native_errorcode": None}
 
 
+def undo_owned_test_stop(pid, pidfd, identity, observation, *, reason,
+                         known_lease=None, expected_generation=None, cleanup=False):
+    """Undo only this fixture's injected stop, never establish risk authority.
+
+    In particular, no lease read is attempted while the stopped child may hold
+    the SQLite lock that made that observation unavailable.
+    """
+    from uta.durable_process import _process_identity
+    record = {"reason": reason, "pid": pid, "lease_observed": False,
+              "financial_authority_granted": False, "cleanup": cleanup,
+              "action": "not_signalled"}
+    observation.setdefault("injection_undos", []).append(record)
+    poller = select.poll()
+    poller.register(pidfd, select.POLLIN)
+    if poller.poll(0):
+        record["action"] = "already_exited"
+        return False
+    try:
+        current = _process_identity(pid)
+    except FileNotFoundError:
+        record["action"] = "exited_during_identity_observation"
+        return False
+    if any(current[key] != identity[key] for key in ("pid", "start_ticks", "boot_id", "uid")):
+        raise AssertionError("cannot undo a stop on a different process binding")
+    known_invalid = known_lease is not None and (
+        known_lease["active"] is False or known_lease["owner_pid"] != pid
+        or expected_generation is not None and known_lease["generation"] != expected_generation)
+    if known_invalid and not cleanup:
+        record["action"] = "known_inactive_or_changed_rejected"
+        raise AssertionError("known inactive or changed ownership cannot reenter capture")
+    action = signal.SIGKILL if known_invalid else signal.SIGCONT
+    if action == signal.SIGKILL:
+        observation["cleanup_forced_kill"] = True
+    try:
+        signal.pidfd_send_signal(pidfd, action)
+    except ProcessLookupError:
+        record["action"] = "exited_during_undo"
+        return False
+    record["action"] = "SIGKILL_cleanup" if action == signal.SIGKILL else "SIGCONT_undo_own_injection"
+    return action == signal.SIGCONT
+
+
 class DurableFaultFixture(unittest.TestCase):
     def setUp(self):
         temporary = TemporaryDirectory()
@@ -1293,11 +1335,21 @@ class ManagedProcessFaultTests(unittest.TestCase):
         versions = schema_versions()
         observer = self.router._database(0)
         observer.timeout = .1
-        def lease():
-            value = WriterFence(observer).status()
+        last_native_lease, bound_generation = None, None
+        def lease(phase="native_lease_observation"):
+            nonlocal last_native_lease
+            try:
+                value = WriterFence(observer).status()
+            except BaseException as error:
+                observation["lease_reads"].append({"phase": phase, "observed": False,
+                                                    "error_type": type(error).__name__})
+                raise
             # Retain no raw nonce/token material in test observations.
-            return {key: value[key] for key in
-                    ("owner_pid", "generation", "active", "expires_ns", "now_ns")}
+            last_native_lease = {key: value[key] for key in
+                                 ("owner_pid", "generation", "active", "expires_ns", "now_ns")}
+            observation["lease_reads"].append({"phase": phase, "observed": True,
+                                                "value": last_native_lease})
+            return last_native_lease
         with self.router._mutex:
             process = self.router._workers[0][0]
             self.assertTrue(process.is_alive())
@@ -1313,7 +1365,8 @@ class ManagedProcessFaultTests(unittest.TestCase):
             "selected_binding": identity, "fixture_lease_seconds": 5,
             "capture_horizon_seconds": 5, "recovery_horizon_seconds": 5,
             "api_phase_timeout_seconds": 5, "publication_lifecycle_watchdog_seconds": 15,
-            "capture_attempts": [], "cleanup_forced_kill": False}
+            "capture_attempts": [], "cleanup_forced_kill": False,
+            "lease_reads": [], "injection_undos": [], "cleanup_errors": []}
         stopped, captured, thread = False, False, None
         done, gate_entered, results, errors = Event(), Event(), [], []
         publication_started = None
@@ -1327,6 +1380,9 @@ class ManagedProcessFaultTests(unittest.TestCase):
                     current = lease()
                     self.assertEqual(current["owner_pid"], pid)
                     self.assertTrue(current["active"], "selected owner expired during SH capture")
+                    if bound_generation is None:
+                        bound_generation = current["generation"]
+                    self.assertEqual(current["generation"], bound_generation)
                     candidate = bound_router_shared_flocks(pid, identity, lock_path, file_identity)
                     if candidate:
                         break
@@ -1364,12 +1420,31 @@ class ManagedProcessFaultTests(unittest.TestCase):
                     if captured:
                         observation["captured_at"] = monotonic()
                         break
-                current = lease()
-                self.assertTrue(current["active"] and current["owner_pid"] == pid,
-                                "lost capture cannot resume an expired or different owner")
-                self.assertFalse(exited.poll(0))
-                signal.pidfd_send_signal(pidfd, signal.SIGCONT)
+                # The failed capture may have paused a SQLite writer/schema
+                # holder. Do not read its lease through that same blocked DB.
+                observation["capture_attempts"][-1]["resume_lease_observation"] = {
+                    "observed": False, "reason": "undo_own_stop_before_fresh_authority_read"}
+                self.assertTrue(undo_owned_test_stop(
+                    pid, pidfd, identity, observation, reason="unsatisfied_capture",
+                    known_lease=last_native_lease, expected_generation=bound_generation))
                 stopped = False
+                # Require actual kernel progress before the one fresh native
+                # read. This is not a lease-until-green retry loop.
+                while monotonic() < capture_deadline:
+                    self.assertFalse(exited.poll(0), "selected binding exited during capture undo")
+                    current_identity = _process_identity(pid)
+                    self.assertTrue(all(current_identity[key] == identity[key]
+                                        for key in ("pid", "start_ticks", "boot_id", "uid")))
+                    if (current_identity["state"] not in ("T", "t", "Z", "X")
+                            and not bound_router_shared_flocks(pid, identity, lock_path, file_identity)):
+                        break
+                    sleep(.001)
+                else:
+                    self.fail("bound child did not leave SH after undo within original capture horizon")
+                recovered = lease("once_after_own_stop_undo")
+                self.assertTrue(recovered["active"] and recovered["owner_pid"] == pid,
+                                "unknown/inactive observation cannot reenter capture")
+                self.assertEqual(recovered["generation"], bound_generation)
             self.assertTrue(captured, "read/stop races exhausted the bounded SH capture attempts")
             old = lease()
             old_generation = old["generation"]
@@ -1492,16 +1567,28 @@ class ManagedProcessFaultTests(unittest.TestCase):
                                       "ledger_and_debt_unchanged": True, "schema_versions": versions,
                                       "cache_configuration": cache_configuration}
         finally:
-            if thread is not None and thread.is_alive():
-                if not exited.poll(0):
-                    observation["cleanup_forced_kill"] = True
-                    signal.pidfd_send_signal(pidfd, signal.SIGKILL)
-                thread.join(8)
-            elif stopped and not exited.poll(0):
-                current = lease()
-                if current["active"] and current["owner_pid"] == pid:
-                    signal.pidfd_send_signal(pidfd, signal.SIGCONT)
-            os.close(pidfd)
+            primary_error = sys.exc_info()[1]
+            try:
+                if thread is not None and thread.is_alive():
+                    if not exited.poll(0):
+                        observation["cleanup_forced_kill"] = True
+                        signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+                    thread.join(8)
+                elif stopped and not exited.poll(0):
+                    undo_owned_test_stop(pid, pidfd, identity, observation,
+                        reason="cleanup_own_injected_stop", known_lease=last_native_lease,
+                        expected_generation=bound_generation, cleanup=True)
+            except BaseException as error:
+                observation["cleanup_errors"].append({"phase": "undo_or_join", "error_type": type(error).__name__})
+                if primary_error is None:
+                    raise
+            finally:
+                try:
+                    os.close(pidfd)
+                except BaseException as error:
+                    observation["cleanup_errors"].append({"phase": "close_pidfd", "error_type": type(error).__name__})
+                    if primary_error is None:
+                        raise
 
     def test_partial_publication_stays_halted_until_exact_publication_replay_completes(self):
         self.active()
