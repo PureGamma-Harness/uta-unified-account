@@ -1,0 +1,12 @@
+{
+  "scope": "independent arithmetic checker instrumentation only; not an original contract failure",
+  "source_sha256": "eae65dac3d26356b8e8bad53cc92f496985a637157cb2568f609a05a06243395",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "evidence/runs/private-stream-independent-review/reference_vectors.py",
+    "evidence/runs/private-stream-independent-review/not-produced-initial.json"
+  ],
+  "returncode": 1,
+  "error": "dict.get evaluates default struct.pack(None) even when reply_hex exists",
+  "socket_or_sql_operations": 0
+}
