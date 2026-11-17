@@ -1,0 +1,375 @@
+{
+  "frozen_utc": "2026-11-17T23:23:51.245301+00:00",
+  "basis": "Independent hand arithmetic; expected terms explicitly entered before execution. No author cases copied.",
+  "production_approved": false,
+  "cases": [
+    {
+      "name": "buy_adverse",
+      "inputs": {
+        "quantity": "2",
+        "filled_quantity": "0",
+        "limit_price": "110",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "2",
+        "margin": "22",
+        "adverse": "20",
+        "fee_target": ".22",
+        "unpaid": ".22",
+        "total": "42.22"
+      }
+    },
+    {
+      "name": "buy_favorable",
+      "inputs": {
+        "quantity": "2",
+        "filled_quantity": "0",
+        "limit_price": "90",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "2",
+        "margin": "20",
+        "adverse": "0",
+        "fee_target": ".18",
+        "unpaid": ".18",
+        "total": "20.18"
+      }
+    },
+    {
+      "name": "sell_adverse",
+      "inputs": {
+        "quantity": "-2",
+        "filled_quantity": "0",
+        "limit_price": "90",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "-2",
+        "margin": "20",
+        "adverse": "20",
+        "fee_target": ".18",
+        "unpaid": ".18",
+        "total": "40.18"
+      }
+    },
+    {
+      "name": "sell_favorable",
+      "inputs": {
+        "quantity": "-2",
+        "filled_quantity": "0",
+        "limit_price": "110",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "-2",
+        "margin": "22",
+        "adverse": "0",
+        "fee_target": ".22",
+        "unpaid": ".22",
+        "total": "22.22"
+      }
+    },
+    {
+      "name": "reduce_only_keeps_loss_and_fee",
+      "inputs": {
+        "quantity": "-2",
+        "filled_quantity": "0",
+        "limit_price": "90",
+        "mark_price": "100",
+        "reduce_only": true,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "-2",
+        "margin": "0",
+        "adverse": "20",
+        "fee_target": ".18",
+        "unpaid": ".18",
+        "total": "20.18"
+      }
+    },
+    {
+      "name": "partial_buy_with_cumulative_fee",
+      "inputs": {
+        "quantity": "2",
+        "filled_quantity": ".5",
+        "limit_price": "120",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "60",
+        "charged_fee": ".06",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1.5",
+        "margin": "18",
+        "adverse": "30",
+        "fee_target": ".24",
+        "unpaid": ".18",
+        "total": "48.18"
+      }
+    },
+    {
+      "name": "partial_sell_with_cumulative_fee",
+      "inputs": {
+        "quantity": "-2",
+        "filled_quantity": "-.5",
+        "limit_price": "80",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "40",
+        "charged_fee": ".04",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "-1.5",
+        "margin": "15",
+        "adverse": "30",
+        "fee_target": ".16",
+        "unpaid": ".12",
+        "total": "45.12"
+      }
+    },
+    {
+      "name": "cumulative_fee_avoids_second_cent",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": ".25",
+        "limit_price": "3",
+        "mark_price": "3",
+        "reduce_only": true,
+        "initial_margin_rate": ".1",
+        "fee_notional": ".75",
+        "charged_fee": ".01",
+        "fee_rate": ".003",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": ".75",
+        "margin": "0",
+        "adverse": "0",
+        "fee_target": ".01",
+        "unpaid": "0",
+        "total": "0"
+      }
+    },
+    {
+      "name": "overcharged_fee_stays_negative_for_compatibility",
+      "inputs": {
+        "quantity": "0",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "1",
+        "charged_fee": ".02",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "0",
+        "margin": "0",
+        "adverse": "0",
+        "fee_target": ".01",
+        "unpaid": "-.01",
+        "total": "-.01"
+      }
+    },
+    {
+      "name": "negative_fee_rate_exact_cent",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": "-.0001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1",
+        "margin": "10",
+        "adverse": "0",
+        "fee_target": "-.01",
+        "unpaid": "-.01",
+        "total": "9.99"
+      }
+    },
+    {
+      "name": "negative_fee_rounds_up_toward_zero",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "0",
+        "limit_price": "3",
+        "mark_price": "3",
+        "reduce_only": true,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": "-.001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1",
+        "margin": "0",
+        "adverse": "0",
+        "fee_target": "0",
+        "unpaid": "0",
+        "total": "0"
+      }
+    },
+    {
+      "name": "filled_order_keeps_cumulative_target",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "1",
+        "limit_price": "110",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "105",
+        "charged_fee": ".11",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "0",
+        "margin": "0",
+        "adverse": "0",
+        "fee_target": ".11",
+        "unpaid": "0",
+        "total": "0"
+      }
+    },
+    {
+      "name": "overfilled_quantity_is_signed_compatibility",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "2",
+        "limit_price": "90",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "-1",
+        "margin": "10",
+        "adverse": "10",
+        "fee_target": ".09",
+        "unpaid": ".09",
+        "total": "20.09"
+      }
+    },
+    {
+      "name": "negative_prices_not_admission_approval",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "0",
+        "limit_price": "-90",
+        "mark_price": "-100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1",
+        "margin": "-9",
+        "adverse": "10",
+        "fee_target": "-.09",
+        "unpaid": "-.09",
+        "total": ".91"
+      }
+    },
+    {
+      "name": "negative_margin_rate_not_admission_approval",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": "-.1",
+        "fee_notional": "0",
+        "charged_fee": "0",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1",
+        "margin": "-10",
+        "adverse": "0",
+        "fee_target": ".1",
+        "unpaid": ".1",
+        "total": "-9.9"
+      }
+    },
+    {
+      "name": "negative_previously_charged_fee",
+      "inputs": {
+        "quantity": "1",
+        "filled_quantity": "0",
+        "limit_price": "100",
+        "mark_price": "100",
+        "reduce_only": false,
+        "initial_margin_rate": ".1",
+        "fee_notional": "0",
+        "charged_fee": "-.02",
+        "fee_rate": ".001",
+        "usd_scale": 2
+      },
+      "manual_terms": {
+        "remaining": "1",
+        "margin": "10",
+        "adverse": "0",
+        "fee_target": ".1",
+        "unpaid": ".12",
+        "total": "10.12"
+      }
+    }
+  ]
+}
