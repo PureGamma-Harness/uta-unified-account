@@ -29,3 +29,22 @@ Fault injection sets actual registered guard references to `None` only for
 negative cases. No successful UDF, invented context, grant, or decision was
 supplied. All data came from a new disposable synthetic database, with temporary
 directory cleanup registered. Retained oracle/live databases were not opened.
+
+## Narrow harness correction and rerun
+
+Test-only commit `943d8b74ed0f93d49680a0cd1c882b07549e8a6c` retains the
+original exception and checks its exact code. Losing the operation reference
+has its own case; the four previously passing subcases remain a separate case.
+No `uta/` runtime file changed. Only the new orphan-intent case was rerun.
+
+CPU4 ran that one case at 15:00:06.780643–15:00:10.482456 UTC (3.704 seconds),
+exit 0. It observed the actual `credit_v2_context_invalid` first-latched failure
+at physical COMMIT after full real financial staging. All selected financial
+tables equalled their original snapshot, and the original command was still
+`PENDING`. The other four subcases were not repeated or relabeled as one
+combined new green run. Their first-run evidence and the original first-run
+exit 1 remain unchanged. New raw is under `attempt-02/`.
+
+This is native failure containment evidence for synthetic internal credit.
+It neither tests live-UTC freshness nor approves production trading, HTTP/CLI
+enablement, real funds, interest scheduling, or dynamic cross-shard budgets.
