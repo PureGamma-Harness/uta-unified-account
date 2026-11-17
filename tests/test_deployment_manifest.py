@@ -174,6 +174,10 @@ class DeploymentManifestTests(unittest.TestCase):
             value = deepcopy(self.value)
             value['paths']['financial_directory'] = str(self.root) + suffix
             self.refused(value, 'normalized_absolute_path_required')
+        for suffix, code in (('/bad\x00name', 'path_nul_refused'), ('/bad\ud800name', 'path_utf8_required')):
+            value = deepcopy(self.value)
+            value['paths']['financial_directory'] = str(self.root) + suffix
+            self.refused(value, code)
 
     def test_duplicate_json_key_and_unknown_error_output_do_not_echo_content(self):
         p = self.root / 'manifest.json'

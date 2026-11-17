@@ -51,6 +51,11 @@ def load_manifest(path):
 
 def declared_path(value):
     need(type(value) is str and 0 < len(value) <= 4096, 'path_string_required')
+    need('\x00' not in value, 'path_nul_refused')
+    try:
+        value.encode('utf-8')
+    except UnicodeEncodeError as error:
+        raise ManifestError('path_utf8_required') from error
     path = Path(value)
     need(path.is_absolute() and '..' not in path.parts and str(path) == value,
          'normalized_absolute_path_required')
