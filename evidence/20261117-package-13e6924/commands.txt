@@ -1,0 +1,59 @@
+Frozen source: 13e6924377f031bb3da7ec94aa88df25ed7612ec
+Frozen checkout: /workspace/uta-operations-freeze-13e6924 (unchanged)
+Independent report worktree: /workspace/uta-package-13e6924
+External work: /tmp/uta-release-13e6924-yHMFC2
+All commands explicitly selected their stated working directory. Use new empty build/install/output directories to repeat this work; preserve the recorded artifacts and original red logs.
+
+At /workspace/uta-next-integration:
+git worktree add -b test/package-13e6924 /workspace/uta-package-13e6924 13e6924377f031bb3da7ec94aa88df25ed7612ec
+
+At the report worktree:
+mktemp -d /tmp/uta-release-13e6924-XXXXXX
+Observed directory: /tmp/uta-release-13e6924-yHMFC2
+python -m venv /tmp/uta-release-13e6924-yHMFC2/venv
+mkdir /tmp/uta-release-13e6924-yHMFC2/artifacts /tmp/uta-release-13e6924-yHMFC2/build-source /tmp/uta-release-13e6924-yHMFC2/external /tmp/uta-release-13e6924-yHMFC2/sdist-unpacked
+
+At the frozen checkout:
+git rev-parse HEAD
+git status --short
+git archive --format=tar --output=/tmp/uta-release-13e6924-yHMFC2/frozen-source.tar HEAD
+Final repeated raw commit/status outputs are in frozen-source-*.stdout.txt; HEAD is exact and status is clean.
+
+At the report worktree:
+tar -xf /tmp/uta-release-13e6924-yHMFC2/frozen-source.tar -C /tmp/uta-release-13e6924-yHMFC2/build-source
+
+At the external build-source directory (without .git):
+python -c 'import os; os.sched_setaffinity(0,{min(os.sched_getaffinity(0))}); import setuptools.build_meta as b; print("WHEEL", b.build_wheel("/tmp/uta-release-13e6924-yHMFC2/artifacts")); print("SDIST", b.build_sdist("/tmp/uta-release-13e6924-yHMFC2/artifacts"))'
+Exit 0; complete stdout/stderr are build.*.txt.
+
+At the report worktree:
+python /workspace/uta-operations-freeze-13e6924/tools/verify_release_archives.py --source /workspace/uta-operations-freeze-13e6924 --commit 13e6924377f031bb3da7ec94aa88df25ed7612ec --wheel /tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl --sdist /tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1.tar.gz --output /tmp/uta-release-13e6924-yHMFC2/artifact-manifest.json
+Exit 0; 1171 tracked files and dynamic 49 runtime files are exact. Raw stdout/stderr are verify-archives.*.txt.
+
+At the external directory:
+/tmp/uta-release-13e6924-yHMFC2/venv/bin/python -m pip install --no-deps --no-index /tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1-py3-none-any.whl
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-13e6924-yHMFC2/venv/bin/python -I /workspace/uta-operations-freeze-13e6924/tools/validate_installed_release.py --source /workspace/uta-operations-freeze-13e6924 --artifact-manifest /tmp/uta-release-13e6924-yHMFC2/artifact-manifest.json --output /tmp/uta-release-13e6924-yHMFC2/external/installed
+Both exit 0. Eight tests pass in 9.161s; all eight recorded console commands exit zero. The complete test log, command outputs and installed module paths are retained. CPU 0 was the smallest available CPU in this environment; choose an allowed CPU when reproducing elsewhere.
+
+Additional installed read-view smoke, at the external directory:
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-13e6924-yHMFC2/venv/bin/python -I /workspace/uta-package-13e6924/evidence/20261117-package-13e6924/validate_installed_views.py --source /workspace/uta-operations-freeze-13e6924 --artifact-manifest /tmp/uta-release-13e6924-yHMFC2/artifact-manifest.json --output /tmp/uta-release-13e6924-yHMFC2/external/installed-views-final
+Exit 0; three unchanged frozen tests pass in 0.658s. Helper bytes and all financial module locations are checked against the frozen source/installed runtime. Read-phase constructor tripwires, synthetic setup writes and the localhost HTTP HMAC transport are explicitly recorded in the report.
+
+The initial invocation used the retained initial-validate-installed-views.py source and output external/installed-views. It exited 1 during suite construction because the router method belongs to RouterReadTests, not DurableViewTests. No test or financial fixture executed. Raw stdout/stderr and the initial source hash are retained. The corrected class mapping ran in external/installed-views-corrected; after clarifying its docstring the final committed script ran in the separate external/installed-views-final directory. Both successes are retained; counts are three distinct selected view cases, not six.
+
+At the report worktree:
+tar -xzf /tmp/uta-release-13e6924-yHMFC2/artifacts/uta_reference_exchange-0.4.0a1.tar.gz -C /tmp/uta-release-13e6924-yHMFC2/sdist-unpacked
+
+At /tmp/uta-release-13e6924-yHMFC2/sdist-unpacked/uta_reference_exchange-0.4.0a1 (without .git):
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-13e6924-yHMFC2/venv/bin/python -m unittest discover -s tests -p test_writer_fence_legacy.py -v
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-13e6924-yHMFC2/venv/bin/python -c 'from pathlib import Path; import sys,unittest; assert not Path(".git").exists(); sys.path.insert(0,"tests"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests("test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())'
+taskset -c 0 env -u PYTHONPATH /tmp/uta-release-13e6924-yHMFC2/venv/bin/python -m unittest discover -s tests -p test_release_archives.py -v
+All exit 0; respectively 7, 1 and 4 tests, zero skips. Separate stdout/stderr logs are retained.
+
+Actual new-runtime omission controls, run at the report worktree under taskset -c 0:
+1. Copy each ZIP entry of the actual new wheel to negative-missing-startup.whl, omitting exactly uta/startup.py. Do not install this archive.
+2. Copy each tar member of the actual new sdist to negative-missing-durable_views.tar.gz, retaining its root prefix and omitting exactly uta/durable_views.py. Do not install this archive.
+The actual Python construction uses zipfile.ZipFile(...).infolist()/writestr(item, original.read(item.filename)) and tarfile.open(...).getmembers()/addfile(item, original.extractfile(item) if item.isfile() else None). In each loop assert exactly one member was removed. These archives are outside the original artifacts directory.
+Each complete verifier invocation, cwd, observed exit 1, expected check failure, negative artifact hash and exact missing source member is recorded in negative-controls.json. The paired complete reports are negative-wheel-report.json and negative-sdist-report.json, with all raw stdout/stderr retained. Both controls execute the same frozen verify_release_archives.py used for the positive artifacts.
+
+No benchmark, six-hour recovery run, systemd deployment or full repository suite is attributed to these package checks. No old package pass or long-run result is reused for this new runtime. No financial/auth database, TLS private key or signing profile is committed.
