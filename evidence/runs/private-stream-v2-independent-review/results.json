@@ -1,0 +1,288 @@
+{
+  "checked_at": "2026-11-17T11:38:30.038676+00:00",
+  "reviewed_amendment": "5348ab36d9aa254428c032e7523aa77ae8bed2d2",
+  "original_design": "c68aabe82ce78ab10a3c886894ce8dc9952302d1",
+  "original_independent_review": "f7a86b5a7a53476fb277272b0d5cb7c679d73540",
+  "original_five_files_byte_identical": true,
+  "original_five_file_sha256": {
+    "docs/evidence/private-stream-contract/check_contract.py": "7d8b4416c0141bd41f6657860c444a27d35f81e51f8a41693a17eaf9c9327dc0",
+    "docs/evidence/private-stream-contract/rfc6455-metadata.json": "b7e2659eaab74eefd1014b79966b801232d987c126e38534971240feb2ddb873",
+    "docs/evidence/private-stream-contract/static-checks.json": "4f978825fa19353e93ad30f2206cccf6385d3272a95059d65c1c2d91d9497f03",
+    "docs/managed-private-stream-design.md": "9c746fe91e324044ef42989f654f8623582732e665dfd7118ef003448075dfea",
+    "tests/fixtures/managed_private_stream_v1_contract.json": "7a1414699352980b1d6eaa3bbddec4004f325a50a54eff9e3d37862a65e0b55a"
+  },
+  "v2_five_file_sha256": {
+    "docs/evidence/private-stream-contract-v2/check_amendment.py": "9da4752c7d00f4ecf5d2cc7364f4451855c5da62c1b4ddb9371e39106aaad98c",
+    "docs/evidence/private-stream-contract-v2/iana-close-codes.json": "e3587bb2e21aa94d3741c010446e335862839eeea88fac25a83f68228679ca65",
+    "docs/evidence/private-stream-contract-v2/static-checks.json": "b1d65b1f670b3dbb1b184f874dda20cb16320f1fa70b284cdb2371876572b7f0",
+    "docs/managed-private-stream-design-v2.md": "b39cd36877d533b2ba906fed8ce63ddf20a49b1e58b7993db162aca414665965",
+    "tests/fixtures/managed_private_stream_v2_contract.json": "4817e800e7d0b8abc934ee881a7c34424effc611b9a3cacf05090d0a72083360"
+  },
+  "original_requirements_unchanged": 30,
+  "new_requirement_vectors": 28,
+  "literal_arithmetic_results": [
+    {
+      "case": "WS-V2-C031",
+      "calculated": {
+        "characters": 2000008,
+        "UTF8_bytes": 6000008
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C032",
+      "calculated": {
+        "declared_length_over_cap": true,
+        "no_SQL_executed": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C033",
+      "calculated": {
+        "declared_length_over_cap": true,
+        "no_SQL_executed": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C034",
+      "calculated": {
+        "declared_length_over_cap": true,
+        "no_SQL_executed": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C035",
+      "calculated": {
+        "non_TEXT_not_coerced": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C036",
+      "calculated": {
+        "canonical_key_reencoding_unique": true,
+        "same_decoded_alias_rejected_by_contract": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C037",
+      "calculated": {
+        "incoming_close": 1004,
+        "client_profile_accepts": false,
+        "server_encoder_accepts": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C038",
+      "calculated": {
+        "incoming_close": 1010,
+        "client_profile_accepts": true,
+        "server_encoder_accepts": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C039",
+      "calculated": {
+        "server_1010_not_encoded": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C040",
+      "calculated": {
+        "one_byte_close_invalid": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C041",
+      "calculated": {
+        "declared_control_length": 126,
+        "early_protocol_reject": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C042",
+      "calculated": {
+        "uint64_high_bit_invalid": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C043",
+      "calculated": {
+        "payload": 125,
+        "header": 2,
+        "wire_bytes": 127,
+        "fits": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C044",
+      "calculated": {
+        "payload": 126,
+        "header": 4,
+        "wire_bytes": 130,
+        "fits": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C045",
+      "calculated": {
+        "payload": 65535,
+        "header": 4,
+        "wire_bytes": 65539,
+        "fits": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C046",
+      "calculated": {
+        "payload": 65536,
+        "header": 10,
+        "wire_bytes": 65546,
+        "fits": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C047",
+      "calculated": {
+        "payload": 262134,
+        "header": 10,
+        "wire_bytes": 262144,
+        "fits": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C048",
+      "calculated": {
+        "payload": 262135,
+        "header": 10,
+        "wire_bytes": 262145,
+        "fits": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C049",
+      "calculated": {
+        "application_pending": 524288,
+        "application_three_buffers": 786432,
+        "plus_control_reserve": 786686,
+        "RSS_proven": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C050",
+      "calculated": {
+        "bytes_and_count_overflow_rejected": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C051",
+      "calculated": {
+        "fixed_deadline_ms": 500,
+        "real_scheduling_measured": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C052",
+      "calculated": {
+        "fixed_deadline_ms": 1000,
+        "real_scheduling_measured": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C053",
+      "calculated": {
+        "fixed_deadline_ms": 3000,
+        "real_scheduling_measured": false
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C054",
+      "calculated": {
+        "auth_absolute_result_deadline_ms": 350,
+        "late_result_does_not_reauthorize": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C055",
+      "calculated": {
+        "pong_deadline_not_extended": 800
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C056",
+      "calculated": {
+        "original_write_deadline_ms": 600,
+        "no_close_interleave": true
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C057",
+      "calculated": {
+        "empty_and_private_close_profile_valid": true,
+        "server_response_code": 1000
+      },
+      "runtime_verified": false
+    },
+    {
+      "case": "WS-V2-C058",
+      "calculated": {
+        "client_codes": [
+          1000,
+          1007,
+          1010,
+          1011,
+          1012,
+          1013,
+          1014,
+          3000,
+          3003,
+          3008,
+          4000,
+          4999
+        ],
+        "server_codes": [
+          1000,
+          1007,
+          1011,
+          1012,
+          1013,
+          1014,
+          3000,
+          3003,
+          3008,
+          4000,
+          4999
+        ]
+      },
+      "runtime_verified": false
+    }
+  ],
+  "R1_R5_design_conditions": "CLOSED for the stated narrow policy only; implementation gates remain open",
+  "SQL_socket_or_network_operations": 0,
+  "production_approved": false,
+  "runtime_deadline_or_memory_proven": false
+}
