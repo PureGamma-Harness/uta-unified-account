@@ -277,7 +277,7 @@ def main(argv=None):
                     executable = shutil.which("bwrap")
                     if executable is None:
                         raise ValueError("short_audit_readonly_mount_required")
-                    invocation = [executable, "--ro-bind", "/", "/", "--bind", str(args.audit_output), str(args.audit_output),
+                    invocation = [executable, "--ro-bind", "/", "/", "--dev", "/dev", "--bind", str(args.audit_output), str(args.audit_output),
                                   "--", sys.executable, "-B", str(Path(__file__).resolve()), *(sys.argv[1:] if argv is None else argv)]
                     run = subprocess.run(invocation, cwd=Path(__file__).resolve().parents[1], stdin=subprocess.DEVNULL,
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, timeout=45)
@@ -291,6 +291,10 @@ def main(argv=None):
                 result = short_cold(args, report, launch)
                 print(ro.canonical(result))
                 return 0
+            executable = shutil.which("bwrap")
+            if executable is None:
+                raise ValueError("observer_outer_readonly_mount_required")
+            command = [executable, "--ro-bind", "/", "/", "--dev", "/dev", "--bind", str(args.output), str(args.output), "--", *command]
             result = captured(command, cwd=Path(__file__).resolve().parents[1])
         ro.atomic_json(args.output / record, result)
         print(ro.canonical(result))

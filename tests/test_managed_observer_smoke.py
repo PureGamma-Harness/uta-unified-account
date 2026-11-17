@@ -4,7 +4,10 @@ from contextlib import redirect_stdout
 from hashlib import sha256
 import io
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
 import tempfile
 from types import SimpleNamespace
@@ -15,6 +18,31 @@ from tools import managed_observer_smoke as smoke
 
 
 class PipeAndShortGateTests(unittest.TestCase):
+    def test_outer_device_mount_preserves_readonly_paths_and_allows_devnull_child(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            writable = root / "output"
+            writable.mkdir(mode=0o700)
+            sentinel = root / "readonly-sentinel"
+            sentinel.write_text("synthetic")
+            script = """import json,os,pathlib,stat,subprocess,sys
+p=pathlib.Path(sys.argv[1]); out=pathlib.Path(sys.argv[2]); denied=False
+try:
+ p.open('w').close()
+except OSError:
+ denied=True
+child=subprocess.run(['git','--version'],stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,close_fds=True)
+print(json.dumps({'sentinel_readonly':bool(os.statvfs(p).f_flag & os.ST_RDONLY),'output_writable':not bool(os.statvfs(out).f_flag & os.ST_RDONLY),'write_denied':denied,'null_character_device':stat.S_ISCHR(os.stat('/dev/null').st_mode),'devnull_child_exit':child.returncode}))
+"""
+            result = subprocess.run([shutil.which("bwrap"), "--ro-bind", "/", "/", "--dev", "/dev",
+                "--bind", str(writable), str(writable), "--", sys.executable, "-B", "-c", script,
+                str(sentinel), str(writable)], stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, close_fds=True, check=True)
+            value = json.loads(result.stdout)
+            self.assertEqual(value, {"sentinel_readonly": True, "output_writable": True, "write_denied": True,
+                "null_character_device": True, "devnull_child_exit": 0})
+            self.assertEqual(sentinel.read_text(), "synthetic")
+
     def test_real_pipe_capture_drops_unknown_stdout_and_never_copies_stderr(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

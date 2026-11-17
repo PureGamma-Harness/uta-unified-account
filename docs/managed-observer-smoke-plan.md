@@ -139,3 +139,28 @@ That file explicitly says smoke-only, `long_run_receipt_issued=false`,
 Preparation verification executed 50 one-CPU tiny tests in 1.490 seconds, OK.
 They exercised short ordinary Python PIPE children and synthetic gate fixtures,
 not the real minute service. Actual service evidence is a later execution record.
+
+## First execution outcome and launcher correction
+
+The first actual job is preserved in
+[the smoke-01 evidence](evidence/managed-observer-763202d-smoke-01/README.md).
+Its financial 15/15 rounds and final independent/cold reconciliation passed
+within 145.108215243 seconds of actual launch. Normal live/fault-period observer
+coverage is **INCOMPLETE**: retain the original PermissionError/unknown record.
+Do not promote that result into a complete observer smoke pass.
+
+The trusted outer namespace now includes Bubblewrap `--dev /dev` in addition to
+the read-only root and only the selected output bind. This supplies fresh
+standard devices required for DEVNULL subprocess handling; it is not a writable
+bind of the host's arbitrary device tree. Real job/source mount flags and an
+ordinary temporary read-only file probe confirm the path protections remain.
+The frozen f6f observer core remains byte-identical. The corrected tiny suite
+passed 51 one-CPU tests in 1.379 seconds.
+
+A second 60-second job remains **not started, awaiting separate root GO**. It
+will use a new scratch root and the same exact 763/312 inputs, capture startup
+plus a normal observation while the driver is active, an actual fault-period
+inflight/unknown degradation, and final independent/cold reconciliation. It
+must preserve unknown rather than invent a successful financial-ready result.
+The same 150-second outer limit and unchanged long-receipt rejection apply.
+There is no automatic second smoke and no automatic six-hour launch.
