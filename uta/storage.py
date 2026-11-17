@@ -315,6 +315,7 @@ class DurableLedger:
                     version = connection.execute("SELECT version FROM ledger_schema WHERE singleton=1").fetchone()
                     if version is not None and version[0] != _SCHEMA_VERSION:
                         raise StorageError(f"unsupported ledger schema version: {version[0]}")
+                self._verify_postings_definition(connection)
                 # An existing authority must retain its original protection.
                 # Do not silently install a missing guard before checking it.
                 self._verify_protection(connection)
@@ -330,6 +331,24 @@ class DurableLedger:
                 connection.executemany("INSERT INTO ledger_assets VALUES (?, ?)", sorted(self.scales.items()))
             elif stored != self.scales:
                 raise LedgerError("configured asset scales differ from the persistent ledger")
+
+    @staticmethod
+    def _verify_postings_definition(connection):
+        """Require the original columns, PK, CHECK and both foreign keys.
+
+        foreign_key_check validates declared constraints, not their presence.
+        Requiring this canonical definition also rejects hidden columns and
+        views without repairing a malformed existing catalogue.
+        """
+        statement = next(sql for sql in _SCHEMA if sql.startswith(
+            "CREATE TABLE IF NOT EXISTS ledger_postings "))
+        expected = statement.replace("CREATE TABLE IF NOT EXISTS ", "CREATE TABLE ", 1)
+        installed = connection.execute(
+            "SELECT type,tbl_name,sql FROM main.sqlite_master WHERE name='ledger_postings'").fetchone()
+        if installed is None:
+            raise LedgerError("journal postings table is missing")
+        if tuple(installed) != ("table", "ledger_postings", expected):
+            raise LedgerError("journal postings table definition changed")
 
     @staticmethod
     def _verify_protection(connection):
@@ -484,6 +503,7 @@ class DurableLedger:
         Verification holds a transaction, so it sees one consistent state.
         """
         with self.database._using(connection) as current:
+            self._verify_postings_definition(current)
             if [row[0] for row in current.execute("PRAGMA integrity_check")] != ["ok"]:
                 raise LedgerError("database integrity check failed")
             if current.execute("PRAGMA foreign_key_check").fetchone() is not None:
