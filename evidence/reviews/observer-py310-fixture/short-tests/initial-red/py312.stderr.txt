@@ -1,0 +1,34 @@
+test_diagnostic_cannot_set_financial_or_capacity_eligibility (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_diagnostic_cannot_set_financial_or_capacity_eligibility) ... ok
+test_fresh_output_is_never_reused (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_fresh_output_is_never_reused) ... ok
+test_live_output_rejected_before_any_source_directory_is_created (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_live_output_rejected_before_any_source_directory_is_created) ... ok
+test_native_error_callthrough_with_no_exported_sqlite_constants (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_native_error_callthrough_with_no_exported_sqlite_constants) ... ERROR
+test_outer_entry_error_is_redacted_and_never_reaches_traceback_output (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_outer_entry_error_is_redacted_and_never_reaches_traceback_output) ... ok
+test_python_sqlite_error_without_native_metadata_is_null (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_python_sqlite_error_without_native_metadata_is_null) ... ok
+test_regular_standard_descriptor_rejected_before_output_or_mutation (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_regular_standard_descriptor_rejected_before_output_or_mutation) ... ok
+test_sidecar_inspection_only_stats_metadata (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_sidecar_inspection_only_stats_metadata) ... ok
+test_sqlite_native_metadata_has_no_message_or_paths (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_sqlite_native_metadata_has_no_message_or_paths) ... ok
+
+======================================================================
+ERROR: test_native_error_callthrough_with_no_exported_sqlite_constants (test_observer_read_diagnostic.ObserverReadDiagnosticTests.test_native_error_callthrough_with_no_exported_sqlite_constants)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-observer-py310-fixture-fix/tests/test_observer_read_diagnostic.py", line 20, in test_sqlite_native_metadata_has_no_message_or_paths
+    connection.execute("SELECT value FROM facts")
+sqlite3.OperationalError: no such table: facts
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/uta-observer-py310-fixture-fix/tests/test_observer_read_diagnostic.py", line 57, in test_native_error_callthrough_with_no_exported_sqlite_constants
+    self.test_sqlite_native_metadata_has_no_message_or_paths()
+  File "/workspace/uta-observer-py310-fixture-fix/tests/test_observer_read_diagnostic.py", line 24, in test_sqlite_native_metadata_has_no_message_or_paths
+    self.assertEqual(result["sqlite_errorcode"], sqlite3.SQLITE_ERROR)
+                                                 ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-observer-py310-fixture-fix/tests/test_observer_read_diagnostic.py", line 53, in __getattr__
+    raise AttributeError("sqlite constant is not exported")
+AttributeError: sqlite constant is not exported
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.005s
+
+FAILED (errors=1)

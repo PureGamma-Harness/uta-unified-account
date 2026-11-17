@@ -748,6 +748,11 @@ def run(configuration, directory):
         dispatched.set()
         collector.join()
         settled = time.monotonic_ns()
+        (directory / "measurement-footer.json").write_text(json.dumps({
+            "timing_contract_version": 1, "started_monotonic_ns": started,
+            "terminal_observation_finished_monotonic_ns": settled,
+            "planned_duration_ns": int(configuration.duration * 1e9),
+            "setup_and_close_excluded": True}, indent=2) + "\n")
         feed_stop.set()
         feeder.join()
         final_diagnostics = router.diagnostics()
@@ -818,7 +823,7 @@ def run(configuration, directory):
     (directory / "arrivals.jsonl").unlink()
     (directory / "manifest.json").write_text(json.dumps({"database_files_included": False, "files": {
         str(path.relative_to(directory)): {"bytes": path.stat().st_size, "sha256": sha256(path.read_bytes()).hexdigest()}
-        for path in directory.rglob("*") if path.is_file() and (path.parent in (profiles, workers) or path.name in ("summary.json", "environment.json", "arrival-window.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz", "startup-readiness.jsonl"))}}, indent=2) + "\n")
+        for path in directory.rglob("*") if path.is_file() and (path.parent in (profiles, workers) or path.name in ("summary.json", "environment.json", "arrival-window.json", "measurement-footer.json", "arrivals.jsonl.gz", "telemetry.jsonl.gz", "startup-readiness.jsonl"))}}, indent=2) + "\n")
     return summary
 
 

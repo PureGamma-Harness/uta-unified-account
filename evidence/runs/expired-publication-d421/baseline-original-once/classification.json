@@ -1,0 +1,85 @@
+{
+  "classification": "NO_REPRO_FOR_ORIGINAL_LINE1252",
+  "actual_failure": "line1228 shared-gate setup was not observed",
+  "original_publication_v2_started": false,
+  "original_done_wait5_reached": false,
+  "whole_wall_seconds": 3.1297194229991874,
+  "watchdog_triggered": false,
+  "original_source_inputs_unchanged": true,
+  "input_count": 252,
+  "old_child_pids": [
+    196100,
+    196101
+  ],
+  "replacement_spawn_pids": [
+    196106,
+    196107
+  ],
+  "pidfd_exit_observations": [
+    {
+      "identity": {
+        "pgid": 196097,
+        "pid": 196100,
+        "start_ticks": "5767049",
+        "state": "Z"
+      },
+      "kind": "kernel_pidfd_exit",
+      "monotonic_ns": 57672698158687,
+      "pid": 196100,
+      "thread": "independent-pidfd-observer",
+      "relative_seconds": 2.531483239
+    },
+    {
+      "identity": {
+        "pid": 196101,
+        "present": false
+      },
+      "kind": "kernel_pidfd_exit",
+      "monotonic_ns": 57672722377470,
+      "pid": 196101,
+      "thread": "independent-pidfd-observer",
+      "relative_seconds": 2.555702022
+    },
+    {
+      "identity": {
+        "pid": 196106,
+        "present": false
+      },
+      "kind": "kernel_pidfd_exit",
+      "monotonic_ns": 57673006537453,
+      "pid": 196106,
+      "thread": "independent-pidfd-observer",
+      "relative_seconds": 2.839862005
+    }
+  ],
+  "finance_observations": [
+    {
+      "accepted": 0,
+      "generation": 1,
+      "kind": "own_finance_before_cleanup",
+      "monotonic_ns": 57672776556281,
+      "orders": 0,
+      "owner_pid": 196100,
+      "shard": 0,
+      "thread": "MainThread"
+    },
+    {
+      "accepted": 0,
+      "generation": 1,
+      "kind": "own_finance_before_cleanup",
+      "monotonic_ns": 57672799978871,
+      "orders": 0,
+      "owner_pid": 196101,
+      "shard": 1,
+      "thread": "MainThread"
+    }
+  ],
+  "generation_increase_in_persistent_fence": "NOT_OBSERVED before cleanup; replacement spawn alone does not prove acquisition",
+  "shared_gate_recovery": "NOT_ESTABLISHED because held-SH setup failed",
+  "all_own_children_absent_after_cleanup": true,
+  "forced_cleanup_used": false,
+  "original_worker_result_annotation": "historical_failure_reproduced=true in the original helper means any testcase failure and is overly broad; this derived record corrects its interpretation without editing the original bytes",
+  "historical_unique_cause": "UNKNOWN",
+  "runtime_defect_established": false,
+  "production_approved": false
+}

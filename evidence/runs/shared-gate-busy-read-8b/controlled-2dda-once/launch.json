@@ -1,0 +1,47 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "2",
+    "/usr/bin/python3.13",
+    "/workspace/uta-shared-gate-busy-read-review/evidence/runs/shared-gate-busy-read-8b/controlled_lease_busy.py",
+    "--worker",
+    "/tmp/uta-shared-gate-2dda-once/worker"
+  ],
+  "started_at": "2026-11-17T14:28:13.434799+00:00",
+  "finished_at": "2026-11-17T14:28:14.151294+00:00",
+  "wall_seconds": 0.7164887289982289,
+  "worker_identity": {
+    "pid": 214271,
+    "state": "R",
+    "start_ticks": "6281991",
+    "pgid": 214271
+  },
+  "exit_code": 0,
+  "watchdog_seconds": 27,
+  "whole_budget_seconds": 30,
+  "timed_out": false,
+  "own_process_group_only": true,
+  "owned_children": [
+    {
+      "original": {
+        "pgid": 214271,
+        "pid": 214273,
+        "start_ticks": "6282014",
+        "state": "R"
+      },
+      "current": {
+        "pid": 214273,
+        "present": false
+      },
+      "forced_cleanup": false
+    }
+  ],
+  "final_owned_identities": [
+    {
+      "pid": 214273,
+      "present": false
+    }
+  ],
+  "production_approved": false
+}

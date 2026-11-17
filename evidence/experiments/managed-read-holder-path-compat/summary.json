@@ -1,0 +1,88 @@
+{
+  "started_at": "2026-11-17T12:02:02.791706+00:00",
+  "finished_at": "2026-11-17T12:02:04.997736+00:00",
+  "duration_seconds": 2.206042169003922,
+  "shared_hard_child_budget_seconds": 29,
+  "authorized_total_ceiling_seconds": 30,
+  "runs": [
+    {
+      "name": "python310",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-read-holders-integration/evidence/experiments/managed-read-holder-path-compat/run.py",
+        "--worker",
+        "python310"
+      ],
+      "started_at": "2026-11-17T12:02:02.791749+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T12:02:03.663311+00:00"
+    },
+    {
+      "name": "python312",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-read-holders-integration/evidence/experiments/managed-read-holder-path-compat/run.py",
+        "--worker",
+        "python312"
+      ],
+      "started_at": "2026-11-17T12:02:03.664369+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T12:02:04.331154+00:00"
+    },
+    {
+      "name": "python313",
+      "argv": [
+        "taskset",
+        "-c",
+        "2",
+        "/usr/bin/python3.13",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-managed-read-holders-integration/evidence/experiments/managed-read-holder-path-compat/run.py",
+        "--worker",
+        "python313"
+      ],
+      "started_at": "2026-11-17T12:02:04.331363+00:00",
+      "timed_out": false,
+      "exit_code": 0,
+      "finished_at": "2026-11-17T12:02:04.997367+00:00"
+    }
+  ],
+  "source_before": {
+    "benchmarks/managed_read_holders.py": "0336091857dbceac8a82d8e5b5643ae5c556c4b5b9283c8c89a2b9cfb8896f4d",
+    "benchmarks/run_managed_soak.py": "52060c28c7e6a1c10b13bea0c4742501924ef5c329ac5fd82b5786558ab136ed",
+    "tests/test_managed_read_holders.py": "7467302fa3a3d32cd75a18259ecbce7bf3efb200a91c4dfeb8c7c2d3bd3afc28",
+    "tests/test_managed_read_holder_lifecycle.py": "71aba37105a203a3051cd2576feca0a881d9204f34bebfabc595ed10443effb2",
+    "tests/test_managed_read_holder_paths.py": "15ff72fe6821b6636f440bf65c148e419e41761be076e509c36271b030f19826"
+  },
+  "source_after": {
+    "benchmarks/managed_read_holders.py": "0336091857dbceac8a82d8e5b5643ae5c556c4b5b9283c8c89a2b9cfb8896f4d",
+    "benchmarks/run_managed_soak.py": "52060c28c7e6a1c10b13bea0c4742501924ef5c329ac5fd82b5786558ab136ed",
+    "tests/test_managed_read_holders.py": "7467302fa3a3d32cd75a18259ecbce7bf3efb200a91c4dfeb8c7c2d3bd3afc28",
+    "tests/test_managed_read_holder_lifecycle.py": "71aba37105a203a3051cd2576feca0a881d9204f34bebfabc595ed10443effb2",
+    "tests/test_managed_read_holder_paths.py": "15ff72fe6821b6636f440bf65c148e419e41761be076e509c36271b030f19826"
+  },
+  "source_unchanged": true,
+  "all_three_runtime_experiments_passed": true,
+  "candidate_service_lifecycle_wired": true,
+  "service_started": false,
+  "original_job_or_source_sql": false,
+  "original_historical_error_cause_proven": false,
+  "production_approved": false,
+  "continuous_6h_stability_passed": false
+}

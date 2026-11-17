@@ -1,0 +1,155 @@
+{
+  "stage": "initial-red",
+  "records": [
+    {
+      "runtime": "py310",
+      "command": [
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,json,os,sqlite3,sys,unittest\nsys.path.insert(0, 'tests')\nimport test_observer_read_diagnostic as tests\nnative = None\nconnection = sqlite3.connect(':memory:')\ntry:\n    connection.execute('SELECT value FROM facts')\nexcept sqlite3.Error as error:\n    native = {'type':type(error).__name__, 'has_code':hasattr(error,'sqlite_errorcode'), 'code':getattr(error,'sqlite_errorcode',None), 'has_name':hasattr(error,'sqlite_errorname'), 'name':getattr(error,'sqlite_errorname',None)}\nfinally:\n    connection.close()\nfallback = sqlite3.OperationalError('private fallback detail')\nresult = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(tests.ObserverReadDiagnosticTests))\ngc.collect()\nprint(json.dumps({'python':sys.version,'cpu_ids':sorted(os.sched_getaffinity(0)),'module_exports_SQLITE_ERROR':hasattr(sqlite3,'SQLITE_ERROR'),'actual_native_exception':native,'actual_python_exception':{'has_code':hasattr(fallback,'sqlite_errorcode'),'has_name':hasattr(fallback,'sqlite_errorname')},'tests_run':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'passed':result.wasSuccessful(),'scope':'small fixture tests; fresh :memory: only; no job DB/service/benchmark'}))\nraise SystemExit(not result.wasSuccessful())\n"
+      ],
+      "started_utc": "2026-11-17T12:36:24.613438+00:00",
+      "finished_utc": "2026-11-17T12:36:24.748994+00:00",
+      "wall_seconds": 0.13555807199736591,
+      "returncode": 1,
+      "before_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "after_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "observed": {
+        "python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]",
+        "cpu_ids": [
+          2
+        ],
+        "module_exports_SQLITE_ERROR": false,
+        "actual_native_exception": {
+          "type": "OperationalError",
+          "has_code": false,
+          "code": null,
+          "has_name": false,
+          "name": null
+        },
+        "actual_python_exception": {
+          "has_code": false,
+          "has_name": false
+        },
+        "tests_run": 9,
+        "failures": 0,
+        "errors": 2,
+        "skipped": 0,
+        "passed": false,
+        "scope": "small fixture tests; fresh :memory: only; no job DB/service/benchmark"
+      }
+    },
+    {
+      "runtime": "py312",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,json,os,sqlite3,sys,unittest\nsys.path.insert(0, 'tests')\nimport test_observer_read_diagnostic as tests\nnative = None\nconnection = sqlite3.connect(':memory:')\ntry:\n    connection.execute('SELECT value FROM facts')\nexcept sqlite3.Error as error:\n    native = {'type':type(error).__name__, 'has_code':hasattr(error,'sqlite_errorcode'), 'code':getattr(error,'sqlite_errorcode',None), 'has_name':hasattr(error,'sqlite_errorname'), 'name':getattr(error,'sqlite_errorname',None)}\nfinally:\n    connection.close()\nfallback = sqlite3.OperationalError('private fallback detail')\nresult = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(tests.ObserverReadDiagnosticTests))\ngc.collect()\nprint(json.dumps({'python':sys.version,'cpu_ids':sorted(os.sched_getaffinity(0)),'module_exports_SQLITE_ERROR':hasattr(sqlite3,'SQLITE_ERROR'),'actual_native_exception':native,'actual_python_exception':{'has_code':hasattr(fallback,'sqlite_errorcode'),'has_name':hasattr(fallback,'sqlite_errorname')},'tests_run':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'passed':result.wasSuccessful(),'scope':'small fixture tests; fresh :memory: only; no job DB/service/benchmark'}))\nraise SystemExit(not result.wasSuccessful())\n"
+      ],
+      "started_utc": "2026-11-17T12:36:24.749206+00:00",
+      "finished_utc": "2026-11-17T12:36:24.896842+00:00",
+      "wall_seconds": 0.14775871799793094,
+      "returncode": 1,
+      "before_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "after_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "observed": {
+        "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+        "cpu_ids": [
+          2
+        ],
+        "module_exports_SQLITE_ERROR": true,
+        "actual_native_exception": {
+          "type": "OperationalError",
+          "has_code": true,
+          "code": 1,
+          "has_name": true,
+          "name": "SQLITE_ERROR"
+        },
+        "actual_python_exception": {
+          "has_code": false,
+          "has_name": false
+        },
+        "tests_run": 9,
+        "failures": 0,
+        "errors": 1,
+        "skipped": 0,
+        "passed": false,
+        "scope": "small fixture tests; fresh :memory: only; no job DB/service/benchmark"
+      }
+    },
+    {
+      "runtime": "py313",
+      "command": [
+        "/usr/bin/python3.13",
+        "-B",
+        "-W",
+        "error::ResourceWarning",
+        "-c",
+        "import gc,json,os,sqlite3,sys,unittest\nsys.path.insert(0, 'tests')\nimport test_observer_read_diagnostic as tests\nnative = None\nconnection = sqlite3.connect(':memory:')\ntry:\n    connection.execute('SELECT value FROM facts')\nexcept sqlite3.Error as error:\n    native = {'type':type(error).__name__, 'has_code':hasattr(error,'sqlite_errorcode'), 'code':getattr(error,'sqlite_errorcode',None), 'has_name':hasattr(error,'sqlite_errorname'), 'name':getattr(error,'sqlite_errorname',None)}\nfinally:\n    connection.close()\nfallback = sqlite3.OperationalError('private fallback detail')\nresult = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(tests.ObserverReadDiagnosticTests))\ngc.collect()\nprint(json.dumps({'python':sys.version,'cpu_ids':sorted(os.sched_getaffinity(0)),'module_exports_SQLITE_ERROR':hasattr(sqlite3,'SQLITE_ERROR'),'actual_native_exception':native,'actual_python_exception':{'has_code':hasattr(fallback,'sqlite_errorcode'),'has_name':hasattr(fallback,'sqlite_errorname')},'tests_run':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),'passed':result.wasSuccessful(),'scope':'small fixture tests; fresh :memory: only; no job DB/service/benchmark'}))\nraise SystemExit(not result.wasSuccessful())\n"
+      ],
+      "started_utc": "2026-11-17T12:36:24.897422+00:00",
+      "finished_utc": "2026-11-17T12:36:25.015390+00:00",
+      "wall_seconds": 0.1179750149967731,
+      "returncode": 1,
+      "before_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "after_sha256": {
+        "tests/test_observer_read_diagnostic.py": "57097cbe1b88136bb5b91865e6554cf56231254e33d26ef23b7e7033e964e709",
+        "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+        "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+      },
+      "observed": {
+        "python": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+        "cpu_ids": [
+          2
+        ],
+        "module_exports_SQLITE_ERROR": true,
+        "actual_native_exception": {
+          "type": "OperationalError",
+          "has_code": true,
+          "code": 1,
+          "has_name": true,
+          "name": "SQLITE_ERROR"
+        },
+        "actual_python_exception": {
+          "has_code": false,
+          "has_name": false
+        },
+        "tests_run": 9,
+        "failures": 0,
+        "errors": 1,
+        "skipped": 0,
+        "passed": false,
+        "scope": "small fixture tests; fresh :memory: only; no job DB/service/benchmark"
+      }
+    }
+  ],
+  "actual_30s_total_limit": true,
+  "runtime_module_edited": false,
+  "no_existing_job_database_opened": true
+}

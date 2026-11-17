@@ -1,0 +1,32 @@
+{
+  "cpu_ids": [
+    3
+  ],
+  "identity": {
+    "birth_ticks": 5460258,
+    "group": 168993,
+    "parent": 168990,
+    "pid": 168993,
+    "session": 168993,
+    "state": "R"
+  },
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import os,sys; os.sched_setaffinity(0,{3}); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import signal,time; signal.signal(signal.SIGTERM,signal.SIG_IGN); time.sleep(20)"
+  ],
+  "observed_child_cpu_ids": [
+    3
+  ],
+  "observed_utc": "2026-11-17T12:11:16.103400+00:00",
+  "owned_session": true,
+  "pidfd_used": true,
+  "protected_pids": [
+    4471,
+    8784,
+    168990
+  ]
+}

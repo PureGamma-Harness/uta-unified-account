@@ -11,6 +11,8 @@ from time import monotonic, sleep
 import unittest
 from unittest.mock import patch
 
+import test_readiness_sampling as readiness_fixtures
+
 from uta import durable_process
 from uta.durable_process import DurableProcessRouter
 from uta.market import MarketSnapshot
@@ -57,13 +59,21 @@ class ProcessReadinessTests(unittest.TestCase):
             sleep(.02)
         self.fail("real process readiness did not reach the expected state")
 
+    def wait_ready(self):
+        return readiness_fixtures.ReadinessSamplingTests.wait_ready(self, self.router)
+
+    def observe_market_rejection(self, reason):
+        return readiness_fixtures.ReadinessSamplingTests.observe_market_rejection(self, self.router, reason)
+
     def activate(self, snapshot=None):
-        snapshot = snapshot or self.market()
         if self.router._monitor is None:
             self.router.start()
+        # Explicit snapshots retain their exact SID/time/content; only a new
+        # default quote is created after the real worker start call.
+        snapshot = snapshot or self.market()
         self.assertFalse(self.router.publish_market(snapshot, timeout=8)["publishing"])
         self.assertFalse(self.router.set_kill_switch(False, timeout=8)["halted"])
-        self.eventually(lambda: self.router.diagnostics()["financial_ready"])
+        self.wait_ready()
         return snapshot
 
     def payload(self, shard):
@@ -107,14 +117,14 @@ class ProcessReadinessTests(unittest.TestCase):
         snapshot = self.activate()
         wait = (snapshot.observed_at + timedelta(seconds=2) - datetime.now(timezone.utc)).total_seconds()
         sleep(max(0, wait) + .04)
-        result = self.router.diagnostics()
+        result = self.observe_market_rejection("market_stale")
         self.assertTrue(result["workers_alive"], result)
-        self.assertFalse(result["financial_ready"], result)
-        self.assertEqual(result["ready"], result["financial_ready"])
+        self.assertIs(result["financial_ready"], False, result)
+        self.assertIs(result["ready"], False, result)
         self.assertEqual([row["reason"] for row in result["workers"]], ["market_stale"] * 2)
-        self.assertEqual(self.payload(0), snapshot.to_json())
+        self.assertEqual([self.payload(shard) for shard in range(2)], [snapshot.to_json()] * 2)
         self.activate(self.market(2, mark="101"))
-        self.assertTrue(self.router.diagnostics()["ready"])
+        self.assertIs(self.wait_ready()["ready"], True)
 
     def test_clock_rollback_detects_future_without_relabeling_prices(self):
         snapshot = self.activate()
@@ -123,12 +133,16 @@ class ProcessReadinessTests(unittest.TestCase):
             def now(cls, tz=None):
                 return snapshot.observed_at - timedelta(seconds=2)
         with patch.object(durable_process, "datetime", EarlierClock):
-            result = self.router.diagnostics()
+            result = self.observe_market_rejection("market_future")
+            self.assertEqual([self.payload(shard) for shard in range(2)], [snapshot.to_json()] * 2)
         self.assertTrue(result["workers_alive"], result)
-        self.assertFalse(result["ready"], result)
+        self.assertIs(result["ready"], False, result)
         self.assertEqual([row["reason"] for row in result["workers"]], ["market_future"] * 2)
-        self.assertEqual(self.payload(0), snapshot.to_json())
-        self.assertTrue(self.router.diagnostics()["ready"])
+        self.assertEqual([self.payload(shard) for shard in range(2)], [snapshot.to_json()] * 2)
+        # The original quote may age during a real bounded observation. Keep
+        # its bytes intact, then recover with a distinct current generation.
+        self.activate(self.market(snapshot.version + 1))
+        self.assertIs(self.wait_ready()["ready"], True)
 
     def test_same_version_changed_persistent_content_is_not_reused(self):
         self.development_fault_profile()

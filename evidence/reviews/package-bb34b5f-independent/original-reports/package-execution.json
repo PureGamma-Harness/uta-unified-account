@@ -1,0 +1,372 @@
+{
+  "source_commit": "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+  "work_directory": "/tmp/uta-release-bb34b5f-09yvddlh",
+  "cohosted": true,
+  "cpu_isolation": "per-process affinity CPU2 only; no cpuset or exclusive-host guarantee",
+  "runs": [
+    {
+      "name": "frozen-source-commit",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/uta-observer-freeze-bb34b5f",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:48.795473+00:00",
+      "finished_utc": "2026-11-17T12:25:48.798051+00:00",
+      "seconds": 0.0025748810003278777,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "frozen-source-status",
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/workspace/uta-observer-freeze-bb34b5f",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:48.798305+00:00",
+      "finished_utc": "2026-11-17T12:25:48.808655+00:00",
+      "seconds": 0.010354222999012563,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "venv",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-m",
+        "venv",
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv"
+      ],
+      "cwd": "/workspace/uta-package-bb34b5f/raw",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:48.808941+00:00",
+      "finished_utc": "2026-11-17T12:25:50.944389+00:00",
+      "seconds": 2.135462190002727,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "git-archive",
+      "argv": [
+        "git",
+        "archive",
+        "--format=tar",
+        "--output=/tmp/uta-release-bb34b5f-09yvddlh/frozen-source.tar",
+        "HEAD"
+      ],
+      "cwd": "/workspace/uta-observer-freeze-bb34b5f",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:50.945061+00:00",
+      "finished_utc": "2026-11-17T12:25:51.185628+00:00",
+      "seconds": 0.24057624600391136,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "build",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-c",
+        "import setuptools.build_meta as b; print(\"WHEEL\", b.build_wheel('/tmp/uta-release-bb34b5f-09yvddlh/artifacts')); print(\"SDIST\", b.build_sdist('/tmp/uta-release-bb34b5f-09yvddlh/artifacts'))"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/build-source",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:51.595962+00:00",
+      "finished_utc": "2026-11-17T12:25:55.599068+00:00",
+      "seconds": 4.003107942000497,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "verify-archives",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-bb34b5f/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-observer-freeze-bb34b5f",
+        "--commit",
+        "bb34b5fb4397f485c04fe440557b24bb28d1cae2",
+        "--wheel",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifact-manifest.json"
+      ],
+      "cwd": "/workspace/uta-package-bb34b5f/raw",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:25:55.599452+00:00",
+      "finished_utc": "2026-11-17T12:26:00.274765+00:00",
+      "seconds": 4.67532679100259,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "install",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--no-index",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/external",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:00.275335+00:00",
+      "finished_utc": "2026-11-17T12:26:00.765729+00:00",
+      "seconds": 0.4904076380043989,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "installed-run",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-I",
+        "/workspace/uta-observer-freeze-bb34b5f/tools/validate_installed_release.py",
+        "--source",
+        "/workspace/uta-observer-freeze-bb34b5f",
+        "--artifact-manifest",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifact-manifest.json",
+        "--output",
+        "/tmp/uta-release-bb34b5f-09yvddlh/external/installed"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/external",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:00.766234+00:00",
+      "finished_utc": "2026-11-17T12:26:11.625530+00:00",
+      "seconds": 10.859306974998617,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "installed-views-run",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-I",
+        "/workspace/uta-observer-freeze-bb34b5f/evidence/20261117-package-13e6924/validate_installed_views.py",
+        "--source",
+        "/workspace/uta-observer-freeze-bb34b5f",
+        "--artifact-manifest",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifact-manifest.json",
+        "--output",
+        "/tmp/uta-release-bb34b5f-09yvddlh/external/installed-views"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/external",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:11.626257+00:00",
+      "finished_utc": "2026-11-17T12:26:12.330884+00:00",
+      "seconds": 0.70463604300312,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "sdist-legacy-tests",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_writer_fence_legacy.py",
+        "-v"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:13.440217+00:00",
+      "finished_utc": "2026-11-17T12:26:14.287042+00:00",
+      "seconds": 0.8468340390027151,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "sdist-archival-tests",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-c",
+        "from pathlib import Path; import sys,unittest; assert not Path(\".git\").exists(); sys.path.insert(0,\"tests\"); from test_managed_benchmark import ManagedBenchmarkTests; suite=unittest.TestSuite([ManagedBenchmarkTests(\"test_archived_real_probe_preserves_all_arrivals_and_known_profile_limits\")]); result=unittest.TextTestRunner(verbosity=2).run(suite); raise SystemExit(not result.wasSuccessful())"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:14.287704+00:00",
+      "finished_utc": "2026-11-17T12:26:14.531482+00:00",
+      "seconds": 0.24378798499674303,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "sdist-release-verifier-tests",
+      "argv": [
+        "/tmp/uta-release-bb34b5f-09yvddlh/venv/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_release_archives.py",
+        "-v"
+      ],
+      "cwd": "/tmp/uta-release-bb34b5f-09yvddlh/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:14.532072+00:00",
+      "finished_utc": "2026-11-17T12:26:18.648402+00:00",
+      "seconds": 4.116342972003622,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "runtime-negative-controls",
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "/workspace/uta-observer-freeze-bb34b5f/evidence/20261117-package-4608ffe/runtime_omission_controls.py",
+        "--source",
+        "/workspace/uta-observer-freeze-bb34b5f",
+        "--manifest",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifact-manifest.json",
+        "--wheel",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/tmp/uta-release-bb34b5f-09yvddlh/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+        "--output",
+        "/tmp/uta-release-bb34b5f-09yvddlh/runtime-omission-controls"
+      ],
+      "cwd": "/workspace/uta-package-bb34b5f/raw",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:18.649375+00:00",
+      "finished_utc": "2026-11-17T12:26:30.764870+00:00",
+      "seconds": 12.115504005996627,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "frozen-source-final-commit",
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/workspace/uta-observer-freeze-bb34b5f",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:30.765624+00:00",
+      "finished_utc": "2026-11-17T12:26:30.769081+00:00",
+      "seconds": 0.003443860994593706,
+      "returncode": 0,
+      "expected_returncode": 0
+    },
+    {
+      "name": "frozen-source-final-status",
+      "argv": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "cwd": "/workspace/uta-observer-freeze-bb34b5f",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "affinity": [
+        2
+      ],
+      "started_utc": "2026-11-17T12:26:30.769663+00:00",
+      "finished_utc": "2026-11-17T12:26:30.781970+00:00",
+      "seconds": 0.012314101004449185,
+      "returncode": 0,
+      "expected_returncode": 0
+    }
+  ]
+}

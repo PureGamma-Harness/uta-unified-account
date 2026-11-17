@@ -1,0 +1,38 @@
+{
+  "scope": "exact2dda one real schema-BUSY conformance, not full native publication/production/HA",
+  "checks": {
+    "raw_and_source_hashes_match": true,
+    "exact_source2dda": true,
+    "all11_component_predicates_literal_true": true,
+    "actual_native_busy5": true,
+    "once_fresh_same_active_owner_gen_expiry": true,
+    "undo_is_unobserved_nonfinancial": true,
+    "whole_at_most30_no_watchdog": true,
+    "no_forced_logger_or_cleanup_error": true,
+    "no_residual_owned_process_or_session": true
+  },
+  "component_passed": true,
+  "actual_worker_predicates": {
+    "actual_busy_primary_preserved": true,
+    "fresh_original_owner_generation_active": true,
+    "expiry_not_changed_or_renewed": true,
+    "cleanup_performs_zero_lease_reads": true,
+    "unobserved_is_not_authority": true,
+    "exact_three_parent_native_reads": true,
+    "native_child_normal_exit": true,
+    "financial_rows_unchanged": true,
+    "integer_cash_oracle": true,
+    "no_forced_or_residual_cleanup": true,
+    "logger_and_cleanup_errors_absent": true
+  },
+  "whole_seconds": 0.7164887289982289,
+  "worker_seconds": 0.4417303680020268,
+  "actual_child_pid": 214273,
+  "native_generation": 1,
+  "unchanged_native_expiry_ns": 62825414160711,
+  "cash1000_evidence": "actual bound driver equality assertion and financial snapshot comparison, not independent DB reopen",
+  "native_protocol15_reproduced": false,
+  "pure_exception_vectors_executed": false,
+  "full_source_qualified": false,
+  "production_approved": false
+}

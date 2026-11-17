@@ -1,0 +1,80 @@
+{
+  "source_commit": "3af589415ccfdb65ed84a952184a77030319a3df",
+  "source_sha256": "03d48b5d34348a617c0a8cfee69abd9f3449a0c8e95a83020d26b14d70ab3105",
+  "helper_AST_sha256": "fbada7f741d89a20eb4167d4d42679d39bd7d619c08e235fa6c68b8c2c0f6d69",
+  "passed": true,
+  "vectors": [
+    {
+      "label": "exact-full-file-read",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "label": "tabs-and-newline",
+      "expected": 1,
+      "actual": 1
+    },
+    {
+      "label": "different-owner",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "write-lock",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "posix-lock",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "blocked-lock-record",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "partial-start",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "finite-end",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "extra-token",
+      "expected": 0,
+      "actual": 0
+    },
+    {
+      "label": "wrong-device",
+      "expected": "AssertionError",
+      "actual": "AssertionError"
+    },
+    {
+      "label": "wrong-inode",
+      "expected": "AssertionError",
+      "actual": "AssertionError"
+    },
+    {
+      "label": "invalid-inode",
+      "expected": "ValueError",
+      "actual": "ValueError"
+    },
+    {
+      "label": "changed-birth-at-postcheck",
+      "expected": "AssertionError",
+      "actual": "AssertionError"
+    }
+  ],
+  "wall_seconds": 0.004364574000646826,
+  "cpu_ids": [
+    3
+  ],
+  "scope": "temporary fdinfo text + synthetic identity only; no live proc/SQL/service/native case",
+  "native_holder_proven": false,
+  "production_approved": false
+}

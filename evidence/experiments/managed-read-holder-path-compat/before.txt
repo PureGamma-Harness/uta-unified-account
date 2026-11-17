@@ -1,0 +1,129 @@
+test_canonical_key_collision_rejects_even_identical_identity_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_canonical_key_collision_rejects_even_identical_identity_before_sqlite) ... 
+  test_canonical_key_collision_rejects_even_identical_identity_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_canonical_key_collision_rejects_even_identical_identity_before_sqlite) (same_identity=True) ... FAIL
+  test_canonical_key_collision_rejects_even_identical_identity_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_canonical_key_collision_rejects_even_identical_identity_before_sqlite) (same_identity=False) ... FAIL
+test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle) ... 
+  test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle) (alias='dotdot') ... FAIL
+  test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle) (alias='parent_alias') ... FAIL
+test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) ... 
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=0) ... FAIL
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=1) ... ERROR
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=2) ... ERROR
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=3) ... ERROR
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=13) ... FAIL
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=14) ... FAIL
+  test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=15) ... FAIL
+test_parent_alias_does_not_resolve_final_main_symlink (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_parent_alias_does_not_resolve_final_main_symlink) ... ok
+
+======================================================================
+ERROR: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 71, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    IdleReadHolders(fixture.directory, expected_identities=metadata)
+  File "/workspace/uta-managed-read-holders-integration/benchmarks/managed_read_holders.py", line 42, in __init__
+    and list(identity) != expected_identities[str(path)]):
+                          ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+TypeError: list indices must be integers or slices, not str
+
+======================================================================
+ERROR: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 71, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    IdleReadHolders(fixture.directory, expected_identities=metadata)
+  File "/workspace/uta-managed-read-holders-integration/benchmarks/managed_read_holders.py", line 42, in __init__
+    and list(identity) != expected_identities[str(path)]):
+                          ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+TypeError: string indices must be integers, not 'str'
+
+======================================================================
+ERROR: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 71, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    IdleReadHolders(fixture.directory, expected_identities=metadata)
+  File "/workspace/uta-managed-read-holders-integration/benchmarks/managed_read_holders.py", line 42, in __init__
+    and list(identity) != expected_identities[str(path)]):
+                          ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+KeyError: '/tmp/uta-holder-lifecycle-rv5oddam/job/checkpoint.sqlite3'
+
+======================================================================
+FAIL: test_canonical_key_collision_rejects_even_identical_identity_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_canonical_key_collision_rejects_even_identical_identity_before_sqlite) (same_identity=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 47, in test_canonical_key_collision_rejects_even_identical_identity_before_sqlite
+    with self.assertRaisesRegex(ValueError, 'ambiguous'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_canonical_key_collision_rejects_even_identical_identity_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_canonical_key_collision_rejects_even_identical_identity_before_sqlite) (same_identity=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 47, in test_canonical_key_collision_rejects_even_identical_identity_before_sqlite
+    with self.assertRaisesRegex(ValueError, 'ambiguous'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle) (alias='dotdot')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 29, in test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle
+    self.assertEqual(report['status'], 'paused', report['error'])
+AssertionError: 'failed' != 'paused'
+- failed
++ paused
+ : {'type': 'KeyError', 'message': "'/tmp/uta-holder-lifecycle-y04e0ccn/step/../job/checkpoint.sqlite3'"}
+
+======================================================================
+FAIL: test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle) (alias='parent_alias')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 29, in test_dotdot_and_parent_alias_keep_original_mixed_metadata_and_lifecycle
+    self.assertEqual(report['status'], 'paused', report['error'])
+AssertionError: 'failed' != 'paused'
+- failed
++ paused
+ : {'type': 'KeyError', 'message': "'/tmp/uta-holder-lifecycle-cqetvg7z/parent-alias/job/checkpoint.sqlite3'"}
+
+======================================================================
+FAIL: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 70, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=13)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 70, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=14)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 70, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite (tests.test_managed_read_holder_paths.ManagedReadHolderPathTests.test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite) (case=15)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-read-holders-integration/tests/test_managed_read_holder_paths.py", line 70, in test_missing_or_invalid_original_identity_metadata_is_typed_failure_before_sqlite
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.230s
+
+FAILED (failures=8, errors=3)

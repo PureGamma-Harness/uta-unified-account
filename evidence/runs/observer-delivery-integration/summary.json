@@ -1,0 +1,43 @@
+{
+  "source_commit": "1a2517f3289fa81b4127dfdd70da889672b57c9b",
+  "started_at": "2026-11-17T10:39:34.487472+00:00",
+  "finished_at": "2026-11-17T10:39:35.919576+00:00",
+  "wall_seconds": 1.4321103769980255,
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "-v",
+    "test_managed_observer_coverage",
+    "test_managed_observer_finance",
+    "test_managed_observer_smoke",
+    "test_managed_long",
+    "test_managed_soak_observer",
+    "test_observer_read_diagnostic"
+  ],
+  "exit_code": 0,
+  "inputs_sha256": {
+    "tests/test_managed_long.py": "2f41997ff8f4bbb77a41d6fb182481b589afe43ae309da706d7a66a8dcc64d3d",
+    "tests/test_managed_observer_coverage.py": "680c4a0bea6e6aae04eba51a2ed51255790252255cb2a98320d0067c444cff86",
+    "tests/test_managed_observer_finance.py": "fdffa1f178bc50293634e5c082097b9425ae4cfa2aa49464907da2e62fcf9437",
+    "tests/test_managed_observer_smoke.py": "fe84205d461a3271624e281d811e33ee444ac100ddd18b0be8d2685d2cb4d870",
+    "tests/test_managed_soak_observer.py": "9a8e6028594b3a28620b3cb547c501e9b5641bf81d9fd60fb50ddad921589d0e",
+    "tests/test_observer_read_diagnostic.py": "24c267dc459fcf5b28c3e271fab4f01618a9301fe71ff42152584f33af4d8010",
+    "tools/diagnose_observer_read.py": "7ddf9e1ffecb36fc00e65029096f1afaacf78dd547a3ae70754700f98bf3ef11",
+    "tools/managed_observer_coverage.py": "15e4f97c1d3541c2ee076e618b19ce5442f42290b3ffefd63e29985942485699",
+    "tools/managed_observer_finance.py": "bf9138431c1d691b5a423a22ecd43683dfcf258402813c264cf31de612295dd7",
+    "tools/managed_observer_smoke.py": "0833dafdd4838733c94cdede51dca1d27f23f90761bf175e60c7a43d04837b89",
+    "tools/managed_soak_observer.py": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1",
+    "tools/run_managed_long.py": "aaf549d69eab7b1bd7d1965b591ae3d2a47edba721ee0e5a00d77ae9f6fc6130"
+  },
+  "source_unchanged": true,
+  "raw_log_sha256": "207143b6afd3669b7a70f13a13fe92a7d39f38590508c4e115a94865dcbe5724",
+  "full_repository_validation": false,
+  "production_approved": false,
+  "live_job_sampled": false
+}

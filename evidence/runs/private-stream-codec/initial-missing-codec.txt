@@ -1,0 +1,21 @@
+test_private_stream_codec (unittest.loader._FailedTest.test_private_stream_codec) ... ERROR
+
+======================================================================
+ERROR: test_private_stream_codec (unittest.loader._FailedTest.test_private_stream_codec)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_private_stream_codec
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "/workspace/uta-private-stream-codec/tests/test_private_stream_codec.py", line 9, in <module>
+    from uta.private_stream_codec import (BufferFull, EncodeReject, FrameParser,
+ModuleNotFoundError: No module named 'uta.private_stream_codec'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

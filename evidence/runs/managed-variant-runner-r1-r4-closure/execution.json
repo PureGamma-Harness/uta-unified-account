@@ -1,0 +1,77 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,unittest,gc;os.sched_setaffinity(0,{3,4});print({\"actual_parent_cpu_ids\":sorted(os.sched_getaffinity(0)),\"scope\":\"pure data + owned print-only CPU binding dummy; no financial workload\"},flush=True);sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests,RunnerDummyTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests,RunnerAffinityClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerDummyTests,RunnerRedDataClosureTests,RunnerAffinityClosureTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "source_before": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "started_utc": "2026-11-17T12:34:50.415073+00:00",
+    "finished_utc": "2026-11-17T12:34:51.437749+00:00",
+    "wall_seconds": 1.0226758849967155,
+    "returncode": 0,
+    "dummy_processes": true,
+    "no_financial_workload": true
+  },
+  {
+    "argv": [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,unittest,gc;os.sched_setaffinity(0,{3,4});print({\"actual_parent_cpu_ids\":sorted(os.sched_getaffinity(0)),\"scope\":\"pure data + owned print-only CPU binding dummy; no financial workload\"},flush=True);sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "source_before": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "started_utc": "2026-11-17T12:34:51.438192+00:00",
+    "finished_utc": "2026-11-17T12:34:51.676463+00:00",
+    "wall_seconds": 0.23827963099756744,
+    "returncode": 0,
+    "dummy_processes": false,
+    "no_financial_workload": true
+  },
+  {
+    "argv": [
+      "/usr/bin/python3.13",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import os,sys,unittest,gc;os.sched_setaffinity(0,{3,4});print({\"actual_parent_cpu_ids\":sorted(os.sched_getaffinity(0)),\"scope\":\"pure data + owned print-only CPU binding dummy; no financial workload\"},flush=True);sys.path.insert(0,\"tests\");from test_managed_variant_runner import RunnerPureTests;from test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "source_before": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "f19a5f0748f2b9a2620758502a29c189097d1f021ef59a92fcaf6f2dc38b2fa8",
+      "tests/test_managed_variant_runner.py": "c7821f164d364970b5ffcc21ad8c0007a9358c56567de4950ab13eb6af44dc79",
+      "tests/test_managed_variant_runner_red_closure.py": "77529c0b7c18974f1c8ffb1683ce925b421b57321f9bee5fa409609cbf7b9d9e"
+    },
+    "started_utc": "2026-11-17T12:34:51.676916+00:00",
+    "finished_utc": "2026-11-17T12:34:51.897121+00:00",
+    "wall_seconds": 0.22021388900611782,
+    "returncode": 0,
+    "dummy_processes": false,
+    "no_financial_workload": true
+  }
+]

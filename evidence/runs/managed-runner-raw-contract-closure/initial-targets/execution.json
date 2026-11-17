@@ -1,0 +1,80 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import unittest,gc;from tests.test_managed_variant_runner import RunnerPureTests;from tests.test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from tests.test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;from tests.test_managed_variant_runner_raw_contract import RunnerRawContractTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests,RunnerRawContractTests)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T13:22:46.293953+00:00",
+    "finished_utc": "2026-11-17T13:22:47.241058+00:00",
+    "returncode": 0,
+    "seconds": 0.9471146799987764,
+    "source_before": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "pure_data_only": true,
+    "dummy_SQL_service_collector_build_install_or_benchmark_executed": false
+  },
+  {
+    "argv": [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import unittest,gc;from tests.test_managed_variant_runner import RunnerPureTests;from tests.test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from tests.test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;from tests.test_managed_variant_runner_raw_contract import RunnerRawContractTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests,RunnerRawContractTests)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T13:22:47.241519+00:00",
+    "finished_utc": "2026-11-17T13:22:48.171176+00:00",
+    "returncode": 0,
+    "seconds": 0.9296716090029804,
+    "source_before": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "pure_data_only": true,
+    "dummy_SQL_service_collector_build_install_or_benchmark_executed": false
+  },
+  {
+    "argv": [
+      "/usr/bin/python3.13",
+      "-W",
+      "error::ResourceWarning",
+      "-c",
+      "import unittest,gc;from tests.test_managed_variant_runner import RunnerPureTests;from tests.test_managed_variant_runner_red_closure import RunnerRedDataClosureTests;from tests.test_managed_variant_runner_package_closure import RunnerPackageOmissionClosureTests;from tests.test_managed_variant_runner_raw_contract import RunnerRawContractTests;suite=unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromTestCase(c) for c in (RunnerPureTests,RunnerRedDataClosureTests,RunnerPackageOmissionClosureTests,RunnerRawContractTests)]);result=unittest.TextTestRunner(verbosity=2).run(suite);gc.collect();raise SystemExit(not result.wasSuccessful())"
+    ],
+    "started_utc": "2026-11-17T13:22:48.171824+00:00",
+    "finished_utc": "2026-11-17T13:22:49.075488+00:00",
+    "returncode": 0,
+    "seconds": 0.9036775219938136,
+    "source_before": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "source_after": {
+      "tools/run_managed_variants.py": "c0a57dfdd007be9c347eb6b8fec14e41ee93234311b87aae9754fe0d6995b142",
+      "tests/test_managed_variant_runner_raw_contract.py": "e3e174a6138798310e7191ae7179828a04dab9c66be1e720f037a5552c783b41"
+    },
+    "cpu_ids": [
+      3
+    ],
+    "pure_data_only": true,
+    "dummy_SQL_service_collector_build_install_or_benchmark_executed": false
+  }
+]

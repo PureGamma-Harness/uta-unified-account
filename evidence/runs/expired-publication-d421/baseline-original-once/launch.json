@@ -1,0 +1,98 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "2",
+    "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+    "/tmp/uta-expired-publication-d421/trace_original.py",
+    "--worker",
+    "/tmp/uta-expired-publication-d421/baseline-original-once/worker"
+  ],
+  "started_at": "2026-11-17T13:02:23.444322+00:00",
+  "finished_at": "2026-11-17T13:02:26.574080+00:00",
+  "wall_seconds": 3.1297194229991874,
+  "worker_identity": {
+    "pid": 196097,
+    "state": "R",
+    "start_ticks": "5766992",
+    "pgid": 196097
+  },
+  "exit_code": 1,
+  "watchdog_seconds": 27,
+  "whole_budget_seconds": 30,
+  "timed_out": false,
+  "own_process_group_only": true,
+  "owned_children": [
+    {
+      "original": {
+        "pgid": 196097,
+        "pid": 196100,
+        "start_ticks": "5767049",
+        "state": "R"
+      },
+      "current": {
+        "pid": 196100,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 196097,
+        "pid": 196101,
+        "start_ticks": "5767051",
+        "state": "R"
+      },
+      "current": {
+        "pid": 196101,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 196097,
+        "pid": 196106,
+        "start_ticks": "5767269",
+        "state": "R"
+      },
+      "current": {
+        "pid": 196106,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 196097,
+        "pid": 196107,
+        "start_ticks": "5767271",
+        "state": "R"
+      },
+      "current": {
+        "pid": 196107,
+        "present": false
+      },
+      "forced_cleanup": false
+    }
+  ],
+  "final_owned_identities": [
+    {
+      "pid": 196100,
+      "present": false
+    },
+    {
+      "pid": 196101,
+      "present": false
+    },
+    {
+      "pid": 196106,
+      "present": false
+    },
+    {
+      "pid": 196107,
+      "present": false
+    }
+  ],
+  "production_approved": false
+}

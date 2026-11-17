@@ -1,0 +1,7 @@
+# bb34 CI: NO_GO
+
+Exact source `bb34b5fb4397f485c04fe440557b24bb28d1cae2`; push run 44082854090 and PR run 44082861767. Six full jobs passed; both Python 3.10 jobs recorded 1411 tests, zero failures, one ERROR and zero skips. The failing test directly referenced a sqlite3 module constant not exported by GitHub Python 3.10. Original raw reports are unchanged. The actual PR test commit was `ff279680ef869954c1ddbfad81a82562190d9c06`, with full Git tree `67792ee2d64578c2c418079c4a95de254b53cfdb`, identical to the frozen head. A later PR base retarget changed its displayed merge commit; it does not change this run provenance.
+
+Fourteen original downloaded artifacts (eight unit, six package) were verified against provider ZIP hashes and sizes. Their 138 members are retained, including 252 exact source input hashes in each unit report. Six installed package reports each cover all 2536 tracked files, 52 runtime files and eight functional tests. Original downloaded ZIPs remain in `/workspace/uta-ci-bb34`; the two failed ZIP originals are separately retained by the compatibility repair author. No failed job has been rerun into green. The archived results do not qualify another commit or a long run.
+
+The report-only collector first used incorrect installed-report key names. That separate collector error and original script are retained; no product or CI outcome was changed. Production, real funds, HA and 10k/s remain blocked.

@@ -1,0 +1,62 @@
+{
+  "parent_cpu_ids": [
+    3,
+    4
+  ],
+  "requested_cpu_ids": [
+    3
+  ],
+  "parent_birth_unchanged": true,
+  "child": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-c",
+      "import json,os;print(json.dumps(sorted(os.sched_getaffinity(0))))"
+    ],
+    "launcher_argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-c",
+      "import json,os,sys; os.sched_setaffinity(0,{3}); os.write(4,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(4); os.execv(sys.argv[1],sys.argv[1:])",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-c",
+      "import json,os;print(json.dumps(sorted(os.sched_getaffinity(0))))"
+    ],
+    "identity": {
+      "pid": 179266,
+      "state": "R",
+      "parent": 179261,
+      "group": 179266,
+      "session": 179266,
+      "birth_ticks": 5601777
+    },
+    "pidfd_used": true,
+    "cpu_ids": [
+      3
+    ],
+    "observed_child_cpu_ids": [
+      3
+    ],
+    "launcher_affinity_acknowledged": true,
+    "wall_seconds": 0.11461711800075136,
+    "returncode": 0,
+    "watchdog_reason": null,
+    "outcome": "EXITED",
+    "stdout_stderr_complete": true,
+    "leader_reaped": true,
+    "streams": [
+      {
+        "path": "/tmp/tmpixiqo2kq/affinity.stdout",
+        "bytes": 4,
+        "observed_bytes": 4,
+        "sha256": "b130d086e945005dccde9902a4f20b8c7c70a680a2d019523a5102dd7d031dfa"
+      },
+      {
+        "path": "/tmp/tmpixiqo2kq/affinity.stderr",
+        "bytes": 0,
+        "observed_bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "scope": "owned print-only dummy; no financial runtime"
+}

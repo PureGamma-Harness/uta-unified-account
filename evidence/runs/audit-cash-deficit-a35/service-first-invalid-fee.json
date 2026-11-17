@@ -1,0 +1,23 @@
+{
+  "actual_error": "fee_rate must be between zero and 0.01",
+  "actual_error_code": "invalid_configuration",
+  "actual_exception_type": "uta.service.ServiceError",
+  "actual_financial_path_completed": false,
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python",
+    "scripts/probe_audit_cash_deficit_reference.py",
+    "--phase",
+    "service",
+    "--output",
+    "evidence/runs/audit-cash-deficit-a35/service.json"
+  ],
+  "configured_fee_rate": "0.1",
+  "exit_code": 1,
+  "failure_stage": "ExchangeService constructor before bootstrap/loan/order/fill/audit calls",
+  "probe_source_sha256": "e430bf25f3cace2d3ee55190f61194e4c364e112f207b0c54c76c33c201b04ec",
+  "status": "FIXTURE_CONFIGURATION_REJECTION_NOT_PRODUCTION_BUG_OR_REACHABILITY_EVIDENCE",
+  "temp_directory_cleanup": "TemporaryDirectory __exit__ on exception"
+}
