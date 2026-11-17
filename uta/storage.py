@@ -503,24 +503,37 @@ class DurableLedger:
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
                                    "FROM ledger_events ORDER BY sequence").fetchall()
-            posting_cursor = (current.execute("SELECT sequence, ordinal, account, asset, units "
-                                             "FROM ledger_postings ORDER BY sequence, ordinal")
-                              if ordered_postings else None)
-            following = next(posting_cursor, None) if posting_cursor is not None else None
+            group_cursor = (current.execute("SELECT sequence,COUNT(*) FROM ledger_postings "
+                                           "GROUP BY sequence ORDER BY sequence")
+                            if ordered_postings else None)
+            following_group = next(group_cursor, None) if group_cursor is not None else None
+            posting_cursor = None
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                if posting_cursor is None:
+                if not ordered_postings:
                     postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
                                                "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
                 else:
                     postings = []
-                    while following is not None and following[0] == sequence:
-                        postings.append(tuple(following)[1:])
-                        following = next(posting_cursor, None)
-                    if following is not None and following[0] < sequence:
+                    if following_group is not None and following_group[0] < sequence:
                         raise LedgerError("journal posting sequence is broken")
+                    if following_group is not None and following_group[0] == sequence:
+                        if posting_cursor is None:
+                            posting_cursor = current.execute("SELECT sequence, ordinal, account, asset, units "
+                                                             "FROM ledger_postings ORDER BY sequence, ordinal")
+                        count = following_group[1]
+                        if type(count) is not int or count < 1:
+                            raise LedgerError("journal posting sequence is broken")
+                        # Read exactly this group, never a future payload row:
+                        # SQLite text decoding itself can raise before hashes.
+                        for _ in range(count):
+                            posting = next(posting_cursor, None)
+                            if posting is None or posting[0] != sequence:
+                                raise LedgerError("journal posting sequence is broken")
+                            postings.append(tuple(posting)[1:])
+                        following_group = next(group_cursor, None)
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")
                 canonical = tuple((posting[1], posting[2], self._stored_units(posting[3])) for posting in postings)
@@ -539,7 +552,8 @@ class DurableLedger:
                     if abs(projected[key]) >= Ledger._LIMIT:
                         raise LedgerError("replayed balance exceeds supported range")
                 previous_hash = event_hash
-            if following is not None:
+            if (following_group is not None or
+                    posting_cursor is not None and next(posting_cursor, None) is not None):
                 raise LedgerError("journal posting sequence is broken")
             stored = {(row[0], row[1]): self._stored_units(row[2]) for row in current.execute(
                 "SELECT account, asset, units FROM ledger_balances")}
