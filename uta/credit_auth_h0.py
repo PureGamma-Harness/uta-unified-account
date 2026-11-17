@@ -202,7 +202,97 @@ class CreditNonceStoreV2:
             "producer_binding", "domain_id", "domain_epoch", "account_id"))
         if self._scope is not None and self._scope != scope:
             raise StorageError("authentication logical authority changed")
+        self._verify_grant_data(connection, config)
         return config
+
+    @staticmethod
+    def _verify_grant_data(connection, config):
+        """Check retained descriptors against actual immutable control history.
+
+        Structured columns alone are not the whole persisted grant contract.
+        This runs on every supported load/use before any request/control DML.
+        It neither repairs old rows nor infers historical evidence from a key's
+        currently loaded profile.
+        """
+        expected_sequences = set()
+        profiles = tuple(connection.execute(
+            "SELECT sequence,revision FROM main.auth_audit WHERE event='profile_configured' AND outcome='CONTROL' AND request_kind='CONTROL'"))
+        previous_epoch = previous_sequence = 0
+        for row in connection.execute("SELECT * FROM main.auth_credit_grants ORDER BY grant_epoch"):
+            expected = {name: row[name] for name in row.keys() if name != "payload"}
+            try:
+                document = _document(row["payload"])
+            except StorageError as cause:
+                raise StorageError("retained authentication grant payload is not canonical") from cause
+            if (set(document) != set(expected) or any(type(document[name]) is not type(value)
+                    or document[name] != value for name, value in expected.items())):
+                raise StorageError("retained authentication grant payload differs from columns")
+            if (any(type(row[name]) is not str or not _ID.fullmatch(row[name])
+                    for name in ("grant_id", "key_id", "account_id"))
+                    or row["account_id"] != config["account_id"] or row["asset"] != "BTC"
+                    or row["operation"] not in ("credit.borrow", "credit.repay", "credit.read")
+                    or not previous_epoch < row["grant_epoch"] <= config["grant_revision"]
+                    or not previous_sequence < row["audit_sequence"] <= _MAX_INT):
+                raise StorageError("retained authentication grant identity is inconsistent")
+            key = connection.execute("SELECT * FROM main.auth_keys WHERE key_id=?", (row["key_id"],)).fetchone()
+            audit = connection.execute("SELECT * FROM main.auth_audit WHERE sequence=?", (row["audit_sequence"],)).fetchone()
+            allowed_roles = ("reader", "funding") if row["operation"] == "credit.read" else ("funding",)
+            if (key is None or key["account_id"] != row["account_id"] or key["role"] not in allowed_roles
+                    or audit is None or audit["event"] != "grant_created" or audit["outcome"] != "CONTROL"
+                    or audit["request_kind"] != "CONTROL" or audit["grant_id"] != row["grant_id"]
+                    or audit["key_id"] != row["key_id"] or audit["key_identity"] != key["identity"]
+                    or audit["grant_revision"] != row["grant_epoch"]
+                    or not 1 <= audit["revision"] <= config["revision"]
+                    or not any(p[0] < audit["sequence"] and p[1] == audit["revision"] for p in profiles)
+                    or type(audit["server_ms"]) is not int
+                    or not key["not_before_ms"] <= audit["server_ms"] < key["expires_at_ms"]
+                    or audit["server_ms"] > config["highwater"]
+                    or any(audit[name] is not None for name in
+                        ("nonce_hash", "request_hash", "request_ms", "business_key", "original_acceptance_id"))):
+                raise StorageError("retained authentication grant differs from original control audit")
+            expected_sequences.add(row["audit_sequence"])
+            previous_epoch, previous_sequence = row["grant_epoch"], row["audit_sequence"]
+        actual_sequences = {row[0] for row in connection.execute(
+            "SELECT sequence FROM main.auth_audit WHERE event='grant_created'")}
+        if actual_sequences != expected_sequences:
+            raise StorageError("retained authentication grant audit has missing or orphan evidence")
+        revocation_sequences = set()
+        epochs = [row[0] for row in connection.execute(
+            "SELECT grant_epoch FROM main.auth_credit_grants")]
+        for row in connection.execute("SELECT * FROM main.auth_credit_grant_revocations ORDER BY revocation_revision"):
+            expected = {name: row[name] for name in row.keys() if name != "payload"}
+            try:
+                document = _document(row["payload"])
+            except StorageError as cause:
+                raise StorageError("retained authentication revocation payload is not canonical") from cause
+            if (set(document) != set(expected) or any(type(document[name]) is not type(value)
+                    or document[name] != value for name, value in expected.items())):
+                raise StorageError("retained authentication revocation payload differs from columns")
+            grant = connection.execute("SELECT * FROM main.auth_credit_grants WHERE grant_id=?", (row["grant_id"],)).fetchone()
+            audit = connection.execute("SELECT * FROM main.auth_audit WHERE sequence=?", (row["audit_sequence"],)).fetchone()
+            original = (connection.execute("SELECT server_ms FROM main.auth_audit WHERE sequence=?",
+                (grant["audit_sequence"],)).fetchone() if grant is not None else None)
+            if (grant is None or not grant["grant_epoch"] < row["revocation_revision"] <= config["grant_revision"]
+                    or not grant["audit_sequence"] < row["audit_sequence"] <= _MAX_INT
+                    or audit is None or audit["event"] != "grant_revoked" or audit["outcome"] != "CONTROL"
+                    or audit["request_kind"] != "CONTROL" or audit["grant_id"] != row["grant_id"]
+                    or audit["grant_revision"] != row["revocation_revision"]
+                    or not 1 <= audit["revision"] <= config["revision"]
+                    or not any(p[0] < audit["sequence"] and p[1] == audit["revision"] for p in profiles)
+                    or original is None or type(audit["server_ms"]) is not int
+                    or not original[0] <= audit["server_ms"] <= config["highwater"]
+                    or any(audit[name] is not None for name in
+                        ("key_id", "key_identity", "nonce_hash", "request_hash", "request_ms",
+                         "business_key", "original_acceptance_id"))):
+                raise StorageError("retained authentication revocation differs from original control audit")
+            revocation_sequences.add(row["audit_sequence"])
+            epochs.append(row["revocation_revision"])
+        actual_revocations = {row[0] for row in connection.execute(
+            "SELECT sequence FROM main.auth_audit WHERE event='grant_revoked'")}
+        if actual_revocations != revocation_sequences:
+            raise StorageError("retained authentication revocation audit has missing or orphan evidence")
+        if sorted(epochs) != list(range(1, len(epochs)+1)) or config["grant_revision"] != len(epochs):
+            raise StorageError("retained authentication grant revision differs from complete history")
 
     @staticmethod
     def _stamp(connection, config):

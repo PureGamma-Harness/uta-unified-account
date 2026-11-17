@@ -92,6 +92,14 @@ class CreditAuthH0Tests(unittest.TestCase):
                 sort_keys=True, separators=(",", ":")).encode()
         headers = sign_headers(profile, key, timestamp_ms=time.time_ns()//1000000,
             nonce=secrets.token_urlsafe(24), method=method, request_target=target, body=body)
+        # Exact actual requests are private test evidence, never public stdout.
+        # Original072 observations did not retain every header; new batches do.
+        import base64
+        private = self.root/("private-request-"+secrets.token_hex(12)+".json")
+        descriptor = os.open(private, os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "w") as stream:
+            json.dump({"headers": headers, "method": method, "request_target": target,
+                "body_base64": base64.b64encode(body).decode()}, stream)
         return headers, {"method": method, "request_target": target, "body": body}
 
     def capture(self, cid="cid-a", *, issuer=None, **options):
