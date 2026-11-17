@@ -116,7 +116,13 @@ class ExchangeService:
                  portfolio_rules: PortfolioRules | None = None,
                  reserve_cache_size: int = 0,
                  market_cache_size: int = 0,
-                 decision_audit: bool = False):
+                 decision_audit: bool = False,
+                 _startup=None):
+        if _startup is not None:
+            from .startup import _OwnedStartup
+            if not isinstance(_startup, _OwnedStartup):
+                raise ServiceError("invalid_configuration", "invalid internal startup context")
+            _startup.require_database(database)
         if type(decision_audit) is not bool:
             raise ServiceError("invalid_configuration", "decision_audit must be a bool")
         if type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= MAX_RESERVE_CACHE_CAPACITY:
@@ -152,11 +158,20 @@ class ExchangeService:
         self.ledger = DurableLedger(database, scales)
         self.max_price_age, self.fee_rate = max_price_age, fee_rate
         self.clock = clock or (lambda: datetime.now(timezone.utc))
+        if _startup is not None:
+            # Private managed initialization has exclusive financial actor
+            # ownership. Short schema writes finish before full RO replay, so
+            # lease-control renewal is not blocked by historical verification.
+            with database.transaction() as connection:
+                self._schema(connection, audit_required=decision_audit)
+            _startup.verify_ledger(self)
         with database.transaction() as connection:
-            self._schema(connection, audit_required=decision_audit)
-            # Verify before admitting any command after startup. Checking only
-            # SQLite pages would miss a corrupted balance projection.
-            self.ledger.verify(connection=connection)
+            if _startup is None:
+                self._schema(connection, audit_required=decision_audit)
+                # Public/reference startup retains complete atomic verification.
+                self.ledger.verify(connection=connection)
+            else:
+                _startup.require_ledger(self)
             policy = _json({"fee_rate": _text(fee_rate), "usd_scale": scales["USD"],
                             "max_price_age_us": max_price_age // timedelta(microseconds=1),
                             "order_precision": 8})

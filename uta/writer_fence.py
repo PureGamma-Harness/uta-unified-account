@@ -403,6 +403,9 @@ class WriterFence:
 
 class _TransactionGuard:
     def __init__(self, database, connection, role):
+        if role == "financial":
+            from .startup import _assert_initialization_actor
+            _assert_initialization_actor(database)
         self.database, self.connection, self.role = database, connection, role
         self.state = _load(connection)
         self.internal = False

@@ -423,24 +423,27 @@ def _run_worker(directory, shard, settings, stop, ready, parent_pid, start_gate,
                 stop.wait(min(settings["poll_interval"], .1))
         if token is None:
             return
-        _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
-                        _process_identity(os.getpid()), coordinator)
-        view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
-                               account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"])
-        store = parent._queue(shard)
-        # Initialization consumes the acquired lease. Renew the same still-live
-        # token before advertising readiness; an expired initializer must fail,
-        # never revive its generation or publish a misleading READY receipt.
-        renew_at = monotonic() + settings["lease_seconds"] / 3
-        fence.renew(token, settings["lease_seconds"])
-        with database.read_transaction() as connection:
-            fence.assert_writer(connection, token)
-            _verify_managed_spot_source(connection, database, parent.layout["scales"])
-            fence.assert_writer(connection, token)
-        # Historical verification can consume a small lease. Renew only the
-        # still-live token after inspection; expired generations cannot go READY.
-        fence.renew(token, settings["lease_seconds"])
-        renew_at = monotonic() + settings["lease_seconds"] / 3
+        from .startup import _OwnedStartup
+        with _OwnedStartup(database.for_writer(token), lease_seconds=settings["lease_seconds"],
+                           stop=stop, parent_pid=parent_pid) as initialization:
+            _record_process(parent._control, "OWNED", shard, owner_nonce, token.generation,
+                            _process_identity(os.getpid()), coordinator)
+            view = ShardWorkerView(directory, shard, token, service_options=_options(parent._config["service"]),
+                                   account_batch=settings["account_batch"], matches_per_symbol=settings["matches_per_symbol"],
+                                   _startup=initialization)
+            store = parent._queue(shard)
+            with initialization.database.read_transaction() as connection:
+                fence.assert_writer(connection, token)
+                _verify_managed_spot_source(connection, initialization.database, parent.layout["scales"])
+            # A long read sees the original lease row, while the keeper renews
+            # the current one. Validate current lifecycle after closing it; the
+            # final fresh fenced COMMIT below checks actual ownership/expiry.
+            initialization.check()
+            initialization.finish()
+        # Transfer the actual last renewal start, not the end of slow startup.
+        renew_at = initialization.last_renew_started + settings["lease_seconds"] / 3
+        if stop.is_set() or os.getppid() != parent_pid:
+            return
         ready.send({"state": "ready", "shard": shard, "pid": os.getpid(), "generation": token.generation})
         background_at = monotonic()
         while not stop.is_set() and os.getppid() == parent_pid:

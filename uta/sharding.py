@@ -743,7 +743,7 @@ class ShardWorkerView:
     """
 
     def __init__(self, directory, shard, token, *, service_options=None,
-                 account_batch=25, matches_per_symbol=10):
+                 account_batch=25, matches_per_symbol=10, _startup=None):
         from .supervisor import ExchangeWorker
 
         self._control = _open_router_control(directory)
@@ -751,15 +751,24 @@ class ShardWorkerView:
         database = _BoundShardDatabase(self._control._path(shard), shard,
                                        sha256(self._control._descriptor.encode()).hexdigest())
         self.database = database.for_writer(token)
+        if _startup is not None:
+            from .startup import _OwnedStartup
+            if not isinstance(_startup, _OwnedStartup):
+                raise ServiceError("invalid_configuration", "invalid internal startup context")
+            _startup.require_database(self.database)
         options = dict(service_options or {})
         try:
             with self._control._lock():
                 self._control._state()
                 claims = self._control._batch_funding_claims()
-                with self.database.transaction() as connection:
+                with (self.database.read_transaction() if _startup is not None else self.database.transaction()) as connection:
                     self._reconcile(connection, claims)
-                self._exchange = ExchangeService(self.database, self._control.layout["scales"], **options)
-                self._exchange.credit = CreditService(self._exchange)
+                if _startup is None:
+                    self._exchange = ExchangeService(self.database, self._control.layout["scales"], **options)
+                    self._exchange.credit = CreditService(self._exchange)
+                else:
+                    self._exchange = ExchangeService(self.database, self._control.layout["scales"], _startup=_startup, **options)
+                    self._exchange.credit = CreditService(self._exchange, _startup=_startup)
                 self._background = ExchangeWorker(self._exchange, account_batch=account_batch,
                                                   matches_per_symbol=matches_per_symbol)
         except ServiceError as exc:

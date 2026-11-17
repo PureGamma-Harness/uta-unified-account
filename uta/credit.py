@@ -32,18 +32,26 @@ class CreditService:
     paying interest before principal, and is available during halts/price outages.
     """
 
-    def __init__(self, exchange: ExchangeService):
+    def __init__(self, exchange: ExchangeService, *, _startup=None):
         if not isinstance(exchange, ExchangeService):
             raise ServiceError("invalid_configuration", "exchange must be an ExchangeService")
         self.exchange = exchange
         self.database = exchange.database
         self.ledger = exchange.ledger
         self._codec = Ledger(exchange.scales)
+        if _startup is not None:
+            from .startup import _OwnedStartup
+            if not isinstance(_startup, _OwnedStartup):
+                raise ServiceError("invalid_configuration", "invalid internal startup context")
+            _startup.require_ledger(exchange)
         with exchange._transaction() as connection:
             self._schema(connection)
             if connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='uta_liabilities'").fetchone() is None:
                 raise ServiceError("credit_integration_missing", "exchange schema must include gross principal and interest liabilities", 503)
-            self._verify(connection)
+            if _startup is None:
+                self._verify(connection)
+        if _startup is not None:
+            _startup.verify_credit(self)
 
     @staticmethod
     def principal_account(account_id: str) -> str:
