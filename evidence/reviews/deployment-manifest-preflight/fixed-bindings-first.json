@@ -1,0 +1,55 @@
+{
+  "all_checks": true,
+  "author_first_original_hashes": {
+    "plan.json": {
+      "bytes": 737,
+      "sha256": "5d224c47779b29bd3e755ccb8c4b021eea777683cddf2034e52c8c326be2ce28"
+    },
+    "result.json": {
+      "bytes": 409,
+      "sha256": "3cbf4804ed92a79fc784e31060f17dbb7dbc202fc87d482ee5848ffbfa4fbccb"
+    },
+    "run_fixed.py": {
+      "bytes": 3434,
+      "sha256": "6219a4d5dead40998f4e4afd1a962fd8c8da9ea46a7085342497ad2fac113a25"
+    },
+    "source-proof.json": {
+      "bytes": 824,
+      "sha256": "45b8f15342c321e22f58a5556df6b28a913ff235eb260d237cca968090bb487a"
+    },
+    "stderr.txt": {
+      "bytes": 3468,
+      "sha256": "114f3cfe22049103894d45643d4d5d68e09c6142af8d5008624736f10dd063bb"
+    },
+    "stdout.txt": {
+      "bytes": 381,
+      "sha256": "109fe50c283f763daaefb0b1b78fcb83ca162251144d71acd3ee9cf354f1b2f3"
+    }
+  },
+  "author_measured_test_interval_ns": 23842343,
+  "checks": {
+    "actual_default_integer_limit_observed": true,
+    "actual_import_paths_and_cpu_match": true,
+    "driver_hash_exact": true,
+    "fixed_original_result_is_21_pass": true,
+    "fixed_tool_hash_exact": true,
+    "manifest_path_checked_before_lstat": true,
+    "manifest_reads_are_bounded_and_fixed_result_not_production": true,
+    "no_forbidden_api_or_referenced_body_read_reported": true,
+    "no_product_runtime_or_service_unit_changed": true,
+    "only_load_manifest_function_changed": true,
+    "raw_stderr_confirms_21_pass": true,
+    "same_process_source_identity_and_plan_hash": true,
+    "specific_manifest_errors_preserved_before_generic_valueerror": true,
+    "tool_and_tests_match_exact_fixed_git_blobs": true
+  },
+  "first_red_retained": "679320943d8186260f07a4225afae0b2c2bee31c",
+  "limits": [
+    "No actual deployment, artifact digest, storage setting or approval authenticity validated.",
+    "Original independent red has exception type/arguments but no captured full traceback.",
+    "Patch denial is for listed known API calls, not a general capability sandbox."
+  ],
+  "production_approved": false,
+  "reviewed_fixed_source": "fb54a5aa0907e9113e1ead75bba93b05e9ad8899",
+  "scope": "Read original first fixed-source result/proof/driver and Git/AST. Reviewer did not execute fixed tests."
+}

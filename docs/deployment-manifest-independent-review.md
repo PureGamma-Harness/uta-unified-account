@@ -51,3 +51,30 @@ snapshot or a guarantee against concurrent malicious replacement. No runtime,
 systemd unit, database, deployment or real-funds path was exercised. The finding
 above should be fixed before treating the documented error contract as met;
 the tool still cannot constitute production acceptance after that fix.
+
+## Fixed-source limited closure
+
+Fixed source `fb54a5aa0907e9113e1ead75bba93b05e9ad8899`, tool SHA-256
+`522899317db7b7d4a1a3369621cbf690a9ff553b45a908121f5ed55c64f63753`,
+preserves ManifestError before catching ordinary decoder ValueError and checks
+the manifest argument's path encoding before filesystem access. All other
+tool functions are AST-identical. There is no remaining specific static
+blocker in this refusal-contract change.
+
+The author's separately authorized first fixed-source batch reports 21 tests,
+zero failures/errors/skips, unchanged source, CPU 2 / Python 3.12.14 and the
+actual 4,300-digit conversion limit. Its measured test interval before result
+serialization is 23,842,343ns. It covers the real 4,501-digit input, generic
+ValueError, retained duplicate/nonfinite codes, and manifest/declared path
+encoding. Six synthetic manifests were read, at most 4,512 bytes; listed
+SQL/process/signal APIs were mocked and no forbidden call was recorded.
+
+The independent `verify_fixed_bindings.py` first read passed all 14 Git/AST/
+original-evidence checks. It bound the same-process proof, plan, test/tool
+Git blobs, fixed driver and raw 21-pass log. The reviewer did not execute that
+fixed suite. Original metadata was read with O_NOATIME and unchanged stat
+fields were checked. API mocking is not claimed to be a capability sandbox.
+The original independent RED, its missing-full-traceback limitation, and the
+older f406/c690/b88/ebe9 result scopes remain unchanged. This limited closure
+establishes no actual release, storage or approval authenticity and enables
+neither activation nor production.
