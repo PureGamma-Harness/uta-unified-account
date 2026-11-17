@@ -1,0 +1,77 @@
+{
+  "actual_exit": 0,
+  "additional_controls": [
+    "real_stdlib_repr_at_borrow_is_not_excluded",
+    "actual_dataclass_repr_memo_is_excluded",
+    "live_nonce_not_archived",
+    "unknown_archive_zero_import",
+    "four_malformed_archives_typed"
+  ],
+  "command": "taskset -c 4 timeout 5s python3 -W error::ResourceWarning evidence/reviews/credit-artifact-fc63938/probe.py",
+  "complete_credit_audit_approved": false,
+  "cpu_affinity": [
+    4
+  ],
+  "database_created": false,
+  "decision": "CA01_CA02_CA03_CLOSED_FOR_EXACT_SOURCE_ONLY",
+  "elapsed_seconds": 0.789423196001735,
+  "ended_at": "2026-11-17T12:02:15.293999+00:00",
+  "evidence_sha256": {
+    "probe-raw.txt": "67d539a1c48177380c2f1dc2995c3eb96a4b496eeddcfdf98205f51a968bd0ea",
+    "probe.py": "2e9dbab1e89a24ee512e2d25450c46c43e354aedb5bd9604c76af5a1ec04d403"
+  },
+  "original_counterexamples_closed": [
+    "CA01",
+    "CA02",
+    "CA03"
+  ],
+  "original_evidence_preservation": {
+    "docs/credit-artifact-848274e-independent-review.md": {
+      "current_sha256": "09c97922ff047a3e483b5fa32ba6ea2956f85a4f292c236a325e4b59957c16a3",
+      "original_sha256": "09c97922ff047a3e483b5fa32ba6ea2956f85a4f292c236a325e4b59957c16a3",
+      "unchanged": true
+    },
+    "evidence/reviews/credit-artifact-848274e/manifest.json": {
+      "current_sha256": "2abf6ded9434df6ffaf5f5fd89c91e3e7059284e480bbe14bea3d028957089cc",
+      "original_sha256": "2abf6ded9434df6ffaf5f5fd89c91e3e7059284e480bbe14bea3d028957089cc",
+      "unchanged": true
+    },
+    "evidence/reviews/credit-artifact-848274e/probe-raw.txt": {
+      "current_sha256": "4cf369e6f6918ddc8e703bdd078e4ac1f4686c2ca00311587ee7027d0521fb0b",
+      "original_sha256": "4cf369e6f6918ddc8e703bdd078e4ac1f4686c2ca00311587ee7027d0521fb0b",
+      "unchanged": true
+    },
+    "evidence/reviews/credit-artifact-848274e/probe.py": {
+      "current_sha256": "2a42f8a106b1b0d9d224ad0004171eb45ac988816411c37c83f842671947736d",
+      "original_sha256": "2a42f8a106b1b0d9d224ad0004171eb45ac988816411c37c83f842671947736d",
+      "unchanged": true
+    },
+    "evidence/reviews/credit-artifact-848274e/repr-probe.py": {
+      "current_sha256": "04ac83b5720f2e3844e8ad6857bf7b0b933f95e6cf5b8f957ac084660b0ceedb",
+      "original_sha256": "04ac83b5720f2e3844e8ad6857bf7b0b933f95e6cf5b8f957ac084660b0ceedb",
+      "unchanged": true
+    },
+    "evidence/reviews/credit-artifact-848274e/repr-raw.txt": {
+      "current_sha256": "b92d1c38da1de4591c637f662dbd727e571830576d4f71c1389cd19e1b1bea40",
+      "original_sha256": "b92d1c38da1de4591c637f662dbd727e571830576d4f71c1389cd19e1b1bea40",
+      "unchanged": true
+    }
+  },
+  "original_review_commit": "1950f60e8bcc6ab7cde56676aa2b368b96eb4628",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_approved": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "recorded_at": "2026-11-17T12:03:42.634480+00:00",
+  "reviewed_commit": "fc63938018213a96de12ed5423842ec2e57ef746",
+  "runtime_files_modified": [],
+  "service_started": false,
+  "source_sha256": {
+    "docs/credit-code-artifact.md": "ee3e5485073fdf462846edfdafe9185be0ec56c735928436c23c009d713fdb67",
+    "tests/test_credit_artifact.py": "72358505faf46f06ab0dba0f82522b24d6bde687c7e1fcb2c6b5c6bd8a5fe5f7",
+    "uta/credit_artifact.py": "d2d3be7c63216bb31a74b13289a5bb63c8e925023c34c1c926a9995f2d397adf",
+    "uta/credit_native.py": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+    "uta/credit_transition.py": "8423116055adc885077ac920d0ca135dffeb8738197a059d61fe53c2ef1728e0"
+  },
+  "sql_used": false,
+  "started_at": "2026-11-17T12:02:14.504577+00:00"
+}

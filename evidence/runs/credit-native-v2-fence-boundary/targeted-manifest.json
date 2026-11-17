@@ -1,0 +1,36 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_fence_boundary",
+    "tests.test_borrow_joined",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T13:11:39.119787+00:00",
+  "exit_code": 1,
+  "financial_v2_borrow": false,
+  "native_v2_owner": false,
+  "old_binary_positive_is_base_format_only": true,
+  "process_seconds": 1.3430180540017318,
+  "raw_marker_is_prototype_not_native_install": true,
+  "raw_sha256": "b537e79de4ba7d1f3b9ce88ca47fc22450555baf8125816f9284df87ac2dc3cd",
+  "reason": "Corrected only old harness for_writer method and actual joined-module command. Runtime unchanged from first raw; original79 green cases not rerun.",
+  "services": false,
+  "source_sha256": {
+    "tests/fixtures/legacy_credit_899c91d_uta.tar.gz": "72eb5fb4836a5dbede429679baf00a436719a9bff5831fb142300ece8e8d51bd",
+    "tests/test_borrow_joined.py": "a4fe8347d2e7f7fe52c3ac9d77d7286ac9ba23d92034d7ca08b516def3b102de",
+    "tests/test_credit_native_v2_fence_boundary.py": "eaae98342e66966598168f49352be854b9ebb28065ba3ad9b9db5f354bdf0882",
+    "uta/credit_native_v2.py": "0edecbefd67f0fffd1a7ac1888248489c1a9d05069371f5922613c9b58f5c4ff",
+    "uta/writer_fence.py": "4d2f7f29f4c16be12d595e78a3b82b066a7746774a4db9d25419d2f5dd5bcb74"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T13:11:37.777163+00:00"
+}

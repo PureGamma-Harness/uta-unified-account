@@ -1,0 +1,2347 @@
+{
+  "case_count": 157,
+  "file_sha256": {
+    "docs/managed-credit-m3-independent-test-plan.md": "6adaed86d369e00cc44f46334daeccc4d978cc85018e8f50a6014a05cf4ab99b",
+    "scripts/build_credit_descriptor_reference_cases.py": "d622e16a626aee72b077c0fd43d912de126ffe9c90777be02fd97b487cfb5f37",
+    "tests/credit_descriptor_reference.py": "b83aba118ae7f38d6d560941ddc65648ef9746e2b22fdcf61cdba569ff86eaf9",
+    "tests/fixtures/credit_descriptor_reference_v1.json": "41c74d3bc7822c98b45f5528ce77d5e796568eaec221729b8c15a9b3fa567c41",
+    "tests/test_credit_descriptor_reference.py": "4e094ef86fb7a515c369ccdf1bf8385d1f26fa537334db00e7f1c935c911cb09"
+  },
+  "mismatches": 0,
+  "python": "3.12.14",
+  "records": [
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "valid_two_assets_complete_certificate",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:ac5b6992543345b2845cb4cfa70c68dbca67f64e39aa1aebe6336f9d50a27535\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "a2b6cb02546f90555b1b3fecb9bdf223f6482517779249c8a2195541dbbb6823",
+        "certificate_id": "credit-budget:ac5b6992543345b2845cb4cfa70c68dbca67f64e39aa1aebe6336f9d50a27535",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "unassigned_budget_is_allowed",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 200000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"200000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:215f5c21cd4fa388b572d340776412db8023673ccb312ddd9530a1d007f06703\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "d8e6e48a3a5340e54744f9c08e69362ebef166f531e1e5bb00953e26a27eb54a",
+        "certificate_id": "credit-budget:215f5c21cd4fa388b572d340776412db8023673ccb312ddd9530a1d007f06703",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "opening_interest_boundary",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 1,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 49999999
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 50000000,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"1\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"49999999\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:58908d8851d20a0ffefba144c316e824ad79fa67e0825e5e21997dbf4563d387\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "fe1fdc8a74bbdae58925433a19332f54c37ade7e70473834cc15865c68a4d0a8",
+        "certificate_id": "credit-budget:58908d8851d20a0ffefba144c316e824ad79fa67e0825e5e21997dbf4563d387",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "empty_claims_zero_pool_permitted",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 0,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 0,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 100000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"0\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:07f18a5bbbec68b43c4a01edb8d9d8d33236c35054aba724a13fcda2dccaf20f\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "5e9c6257e86692548d52b500ad4a1573000268cfc48450c6bab1086829384dfc",
+        "certificate_id": "credit-budget:07f18a5bbbec68b43c4a01edb8d9d8d33236c35054aba724a13fcda2dccaf20f",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "zero_allocation_shard_is_not_omitted",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 50000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:838b668bc111515d96b508c005ec96a6603a53f5406ff34438326ac3c987227d\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "707cb2e8d349d05140a603f50bb811899eb6fbd00a2b85f08673af10e7bd1101",
+        "certificate_id": "credit-budget:838b668bc111515d96b508c005ec96a6603a53f5406ff34438326ac3c987227d",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "zero_global_all_allocations_zero",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 0,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 0,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"0\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:30e27e04e6736e9ebc0d8bdfe79a62014a7b3cc8745af876854623a9aff0f617\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "268ec125710670b4bcad9c2ed3e48a0307dd68e8abd402bc4ebc0dae928ff767",
+        "certificate_id": "credit-budget:30e27e04e6736e9ebc0d8bdfe79a62014a7b3cc8745af876854623a9aff0f617",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "certificate_version_i64max",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":9223372036854775807},\"certificate_id\":\"credit-budget:4a44fa80ef8d5b5cbdcddc1c8ca5b5405a5a037ddb50c2e2d5616812ac71ee80\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "ef22fd3e91a23a0178e0bd7cdfd4fa627a96c02b9795bcab8315e53474750546",
+        "certificate_id": "credit-budget:4a44fa80ef8d5b5cbdcddc1c8ca5b5405a5a037ddb50c2e2d5616812ac71ee80",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_9007199254740991",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 9007199254740991,
+            "allocations": {
+              "0": {
+                "funded_units": 9007199254740991,
+                "interest_units": 0,
+                "limit_units": 9007199254740991,
+                "pool_units": 9007199254740991,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 9007199254740991,
+            "opening_gross_units": 0,
+            "pool_units": 9007199354740991,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"9007199254740991\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"9007199254740991\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"9007199254740991\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"9007199254740991\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:0115e76f167c47e35ca39cc20ff7fee023b9ffc72b1f73810e53f426ef5abb38\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "c93c5e413609204ee4ad6a0f4eabe9565c06a4c71453cdd33516c9626525475d",
+        "certificate_id": "credit-budget:0115e76f167c47e35ca39cc20ff7fee023b9ffc72b1f73810e53f426ef5abb38",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_9007199254740993",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 9007199254740993,
+            "allocations": {
+              "0": {
+                "funded_units": 9007199254740993,
+                "interest_units": 0,
+                "limit_units": 9007199254740993,
+                "pool_units": 9007199254740993,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 9007199254740993,
+            "opening_gross_units": 0,
+            "pool_units": 9007199354740993,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"9007199254740993\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"9007199254740993\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"9007199254740993\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"9007199254740993\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:1a6821be8a84b9a9c80bd1a59ae06be21d0ab164804078f5440a8f7ed12d59a8\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "708b12cf55937eb297e9aa7a2fba87ecad1429f0b87e9fd9aa86a92d46f12124",
+        "certificate_id": "credit-budget:1a6821be8a84b9a9c80bd1a59ae06be21d0ab164804078f5440a8f7ed12d59a8",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_9223372036854775807",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 9223372036854775807,
+            "allocations": {
+              "0": {
+                "funded_units": 9223372036854775807,
+                "interest_units": 0,
+                "limit_units": 9223372036854775807,
+                "pool_units": 9223372036854775807,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 9223372036854775807,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036954775807,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"9223372036854775807\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"9223372036854775807\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"9223372036854775807\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"9223372036854775807\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:8112283be1b2eae31529486b3832cad5867c0191d032e9102ceea03dd967f452\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "9600bbdac29d0de5473109ff78969d2fa4b8f959eef8b7c14ba747c400a064ee",
+        "certificate_id": "credit-budget:8112283be1b2eae31529486b3832cad5867c0191d032e9102ceea03dd967f452",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_9223372036854775808",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 9223372036854775808,
+            "allocations": {
+              "0": {
+                "funded_units": 9223372036854775808,
+                "interest_units": 0,
+                "limit_units": 9223372036854775808,
+                "pool_units": 9223372036854775808,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 9223372036854775808,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036954775808,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"9223372036854775808\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"9223372036854775808\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"9223372036854775808\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"9223372036854775808\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:dda2d5428d9de35372827adffe5caf4ff0190fbf527d4799976e668579df48f0\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "d880b3bb96b7a09cfb5ca5deaee48e98eaa733c67a7a5a26d8a636bf53947d64",
+        "certificate_id": "credit-budget:dda2d5428d9de35372827adffe5caf4ff0190fbf527d4799976e668579df48f0",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_9223372036854775809",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 9223372036854775809,
+            "allocations": {
+              "0": {
+                "funded_units": 9223372036854775809,
+                "interest_units": 0,
+                "limit_units": 9223372036854775809,
+                "pool_units": 9223372036854775809,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 9223372036854775809,
+            "opening_gross_units": 0,
+            "pool_units": 9223372036954775809,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"9223372036854775809\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"9223372036854775809\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"9223372036854775809\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"9223372036854775809\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:239249a47bac684055dd71b930a33986be51a767a52ee733fbc1a95f18dc59b1\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "da79ddb636849ae602010020365641decfcb8904238f44e49bc200309ce29d02",
+        "certificate_id": "credit-budget:239249a47bac684055dd71b930a33986be51a767a52ee733fbc1a95f18dc59b1",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive_large_units",
+      "error": null,
+      "expected_valid": true,
+      "id": "large_exact_99999999999999999999999999999999999999",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 99999999999999999999999999999999999999,
+            "allocations": {
+              "0": {
+                "funded_units": 99999999999999999999999999999999999999,
+                "interest_units": 0,
+                "limit_units": 99999999999999999999999999999999999999,
+                "pool_units": 99999999999999999999999999999999999999,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 99999999999999999999999999999999999999,
+            "opening_gross_units": 0,
+            "pool_units": 100000000000000000000000000000099999999,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"99999999999999999999999999999999999999\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"99999999999999999999999999999999999999\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"99999999999999999999999999999999999999\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"99999999999999999999999999999999999999\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:b7d83e37512babdd26e78bc37dd151bc715cdf90fb96f1af9b374af240f61c47\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "8aec5f66265898c7efe2e39d1348ef858e53b6031051c303b8c7d37b07db2d38",
+        "certificate_id": "credit-budget:b7d83e37512babdd26e78bc37dd151bc715cdf90fb96f1af9b374af240f61c47",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "positive",
+      "error": null,
+      "expected_valid": true,
+      "id": "same_command_id_on_different_shards_is_allowed",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:cdc9369e4508ba3f6544042af01e5fd14f49035bf725b127365d45702f873969\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "3cd51e1768612cea61e3f5eda111abf154527c7555a25146c63d81dd11340c88",
+        "certificate_id": "credit-budget:cdc9369e4508ba3f6544042af01e5fd14f49035bf725b127365d45702f873969",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "wire_order_pending",
+      "error": null,
+      "expected_valid": true,
+      "id": "allocations_order_not_semantic_identity",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1},{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:2bc2eea48708f355148628ea0dab1d0b281d6e230d35a406cd39eb524d25418a\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "3f43aad6e2b83f6e10763bdf4fc6e3836891035019c3d2c9b1b69b40640da212",
+        "certificate_id": "credit-budget:2bc2eea48708f355148628ea0dab1d0b281d6e230d35a406cd39eb524d25418a",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "descriptor_format_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_format_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "descriptor_format_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_format_1.0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "descriptor_format_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_format_'1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "prepared_stage_only",
+      "expected_valid": false,
+      "id": "descriptor_bad_stage_'READY'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "prepared_stage_only",
+      "expected_valid": false,
+      "id": "descriptor_bad_stage_'ACTIVE'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "prepared_stage_only",
+      "expected_valid": false,
+      "id": "descriptor_bad_stage_None",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "synthetic_only",
+      "expected_valid": false,
+      "id": "descriptor_bad_synthetic_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "synthetic_only",
+      "expected_valid": false,
+      "id": "descriptor_bad_synthetic_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "local_shard_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_shard_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "local_shard_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_shard_0.0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "local_shard_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_shard_'0'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "local_shard_integer",
+      "expected_valid": false,
+      "id": "descriptor_bad_shard_-1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "local_authority",
+      "expected_valid": false,
+      "id": "descriptor_bad_shard_2",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "layout_hash",
+      "expected_valid": false,
+      "id": "descriptor_bad_layout_hash_'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "layout_hash",
+      "expected_valid": false,
+      "id": "descriptor_bad_layout_hash_'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "descriptor_type_identity",
+      "error": "authority_identity",
+      "expected_valid": false,
+      "id": "descriptor_bad_authority_id_''",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_format",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_shard",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_stage",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_synthetic",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_authority_id",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_missing_layout_hash",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "descriptor_shape",
+      "expected_valid": false,
+      "id": "descriptor_extra_field",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_format_integer",
+      "expected_valid": false,
+      "id": "policy_bad_format_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_version_integer",
+      "expected_valid": false,
+      "id": "policy_bad_version_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_version_integer",
+      "expected_valid": false,
+      "id": "policy_bad_version_2",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_name",
+      "expected_valid": false,
+      "id": "policy_bad_name_'OTHER'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "zero_interest",
+      "expected_valid": false,
+      "id": "policy_bad_new_interest_rate_0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "zero_interest",
+      "expected_valid": false,
+      "id": "policy_bad_new_interest_rate_'0.1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "zero_fee",
+      "expected_valid": false,
+      "id": "policy_bad_new_borrow_fee_rate_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "zero_fee",
+      "expected_valid": false,
+      "id": "policy_bad_new_borrow_fee_rate_'0.01'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_permissions",
+      "expected_valid": false,
+      "id": "policy_bad_require_managed_inbox_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_permissions",
+      "expected_valid": false,
+      "id": "policy_bad_require_managed_inbox_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "batch_size_integer",
+      "expected_valid": false,
+      "id": "policy_bad_borrow_batch_size_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "batch_size_integer",
+      "expected_valid": false,
+      "id": "policy_bad_borrow_batch_size_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_permissions",
+      "expected_valid": false,
+      "id": "policy_bad_production_approved_0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_permissions",
+      "expected_valid": false,
+      "id": "policy_bad_production_approved_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_assets_sorted_unique",
+      "expected_valid": false,
+      "id": "policy_bad_credit_assets_['USD', 'BTC']",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_assets_sorted_unique",
+      "expected_valid": false,
+      "id": "policy_bad_credit_assets_['BTC', 'BTC']",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_assets_type",
+      "expected_valid": false,
+      "id": "policy_bad_credit_assets_[]",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "policy_invariants",
+      "error": "policy_assets_type",
+      "expected_valid": false,
+      "id": "policy_bad_credit_assets_'BTC'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_format_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_format_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_version_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_version_0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_version_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_version_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_version_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_version_1.0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_version_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_version_'1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_version_integer",
+      "expected_valid": false,
+      "id": "certificate_bad_version_9223372036854775808",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "budget_identity",
+      "expected_valid": false,
+      "id": "certificate_bad_budget_id_''",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "certificate_identity",
+      "error": "certificate_layout",
+      "expected_valid": false,
+      "id": "certificate_bad_layout_hash_'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "certificate_shape",
+      "expected_valid": false,
+      "id": "certificate_missing_budget_id",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "certificate_shape",
+      "expected_valid": false,
+      "id": "certificate_missing_assets",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "certificate_shape",
+      "expected_valid": false,
+      "id": "certificate_missing_authorities",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_shapes",
+      "error": "certificate_shape",
+      "expected_valid": false,
+      "id": "certificate_extra_field",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_None",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_1.0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_[]",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "global_units_bad_{}",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_''",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'-1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'+1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'01'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'1.0'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'1e2'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_' 1'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'1 '",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'1_0'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'١'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'１２'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "global_units_bad_'NaN'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "global_units_bad_'100000000000000000000000000000000000000'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "global_units_bad_'99999999999999999999999999999999999999999999999999999999999999999999999999999999'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "limit_units_bad_bool",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "limit_units_bad_float",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "limit_units_bad_negative",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "limit_units_bad_fractional",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "limit_units_bad_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_bool",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_float",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_negative",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_fractional",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "opening_principal_units_bad_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_bool",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_float",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_negative",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_fractional",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "opening_interest_units_bad_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_pool_units_bad_bool",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "opening_pool_units_bad_float",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_pool_units_bad_negative",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "opening_pool_units_bad_fractional",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_units",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "opening_pool_units_bad_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_BTC_-1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_BTC_19",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_BTC_True",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_BTC_8.0",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_USD_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_USD_9",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "precision",
+      "error": "scale_integer",
+      "expected_valid": false,
+      "id": "scale_bad_USD_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_asset_scale",
+      "expected_valid": false,
+      "id": "asset_scale_rehashed_but_external_context_differs",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "asset_set",
+      "error": "policy_certificate_asset_set",
+      "expected_valid": false,
+      "id": "asset_set_certificate_does_not_match_policy",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "global_cap",
+      "error": "global_budget_exceeded",
+      "expected_valid": false,
+      "id": "allocation_sum_exceeded",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "global_cap",
+      "error": "global_budget_exceeded",
+      "expected_valid": false,
+      "id": "allocation_sum_no_i64_or_decimal_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "opening_gross",
+      "error": "opening_gross_exceeds_allocation",
+      "expected_valid": false,
+      "id": "interest_makes_opening_gross_exceed",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "opening_gross",
+      "error": "opening_gross_exceeds_allocation",
+      "expected_valid": false,
+      "id": "opening_gross_addition_cannot_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "full_certificate",
+      "error": "authorities_count",
+      "expected_valid": false,
+      "id": "authorities_none",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "full_certificate",
+      "error": "all_shards_required",
+      "expected_valid": false,
+      "id": "authorities_missing",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "full_certificate",
+      "error": "authorities_contiguous",
+      "expected_valid": false,
+      "id": "authorities_duplicate",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "full_certificate",
+      "error": "authorities_contiguous",
+      "expected_valid": false,
+      "id": "authorities_gap",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "strict_types",
+      "error": "authority_shard_integer",
+      "expected_valid": false,
+      "id": "authorities_bool_shard",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "duplicate_identity",
+      "error": "authority_duplicate",
+      "expected_valid": false,
+      "id": "authorities_duplicate_identity",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "full_certificate",
+      "error": "all_shards_required",
+      "expected_valid": false,
+      "id": "allocations_missing_other_shard",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "duplicate_identity",
+      "error": "duplicate_allocation",
+      "expected_valid": false,
+      "id": "allocations_duplicate_shard",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "allocation_authority",
+      "expected_valid": false,
+      "id": "allocation_wrong_authority",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_uniqueness",
+      "error": "source_reference_global_unique",
+      "expected_valid": false,
+      "id": "duplicate_source_across_shards",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_uniqueness",
+      "error": "source_reference_global_unique",
+      "expected_valid": false,
+      "id": "duplicate_source_across_assets",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_uniqueness",
+      "error": "funding_command_cross_asset_unique",
+      "expected_valid": false,
+      "id": "duplicate_command_same_shard_cross_asset",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "funded_positive",
+      "expected_valid": false,
+      "id": "funded_units_bad_zero",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "funded_units_bad_bool",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "units_type",
+      "expected_valid": false,
+      "id": "funded_units_bad_float",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "units_syntax",
+      "expected_valid": false,
+      "id": "funded_units_bad_negative",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "units_range",
+      "expected_valid": false,
+      "id": "funded_units_bad_overflow",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "opening_pool_exceeds_funded",
+      "expected_valid": false,
+      "id": "pool_exceeds_actual_claim_sum",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_quantity",
+      "error": "funded_sum_range",
+      "expected_valid": false,
+      "id": "claims_sum_exceeds_quantity_bound",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "funding_order",
+      "error": "funding_claims_sorted",
+      "expected_valid": false,
+      "id": "claims_unsorted",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "content_hash",
+      "error": "certificate_content_id",
+      "expected_valid": false,
+      "id": "hash_certificate_wrong",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "content_hash",
+      "error": "policy_content_id",
+      "expected_valid": false,
+      "id": "hash_policy_wrong",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "content_hash",
+      "error": "certificate_policy",
+      "expected_valid": false,
+      "id": "hash_policy_reference_wrong",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_authority_id",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_authority_id_'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_layout_hash",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_layout_hash_'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_shard",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_shard_1",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_shard",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_shard_False",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_credit_policy_id",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_policy_id_'credit-policy:0000000000000000000000000000000000000000000000000000000000000000'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_certificate_id",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_certificate_id_'credit-budget:0000000000000000000000000000000000000000000000000000000000000000'",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_asset_scale",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_asset_scales_{'BTC': 7, 'USD': 2}",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "expected_scale_integer",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_asset_scales_{'BTC': True, 'USD': 2}",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "external_binding",
+      "error": "external_authorities",
+      "expected_valid": false,
+      "id": "external_expected_mismatch_expected_authorities_[{'shard': 1, 'authority_id': 'e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041'}, {'shard': 0, 'authority_id': '279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5'}]",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "static_history_boundary",
+      "error": null,
+      "expected_valid": true,
+      "id": "alternative_partition_static_only",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 0,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 100000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"0\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"100000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:8356b8040df182ae00ddd284c89a22173ee669b4fbdb15c011fc02d51706a9d3\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "bcced125d46749291dbd61ad2cdf5f2cfa78647091bf0c630a37a238c9655c10",
+        "certificate_id": "credit-budget:8356b8040df182ae00ddd284c89a22173ee669b4fbdb15c011fc02d51706a9d3",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    },
+    {
+      "category": "static_history_boundary",
+      "error": "external_certificate_id",
+      "expected_valid": false,
+      "id": "unknown_must_not_reallocate_sealed_certificate",
+      "matches": true,
+      "result": null,
+      "valid": false
+    },
+    {
+      "category": "static_history_boundary",
+      "error": null,
+      "expected_valid": true,
+      "id": "sealed_same_certificate_replay",
+      "matches": true,
+      "result": {
+        "assets": {
+          "BTC": {
+            "allocated_units": 100000000,
+            "allocations": {
+              "0": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 100000000,
+                "interest_units": 0,
+                "limit_units": 50000000,
+                "pool_units": 100000000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 100000000,
+            "opening_gross_units": 0,
+            "pool_units": 200000000,
+            "scale": 8
+          },
+          "USD": {
+            "allocated_units": 10000,
+            "allocations": {
+              "0": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              },
+              "1": {
+                "funded_units": 10000,
+                "interest_units": 0,
+                "limit_units": 5000,
+                "pool_units": 10000,
+                "principal_units": 0
+              }
+            },
+            "global_units": 10000,
+            "opening_gross_units": 0,
+            "pool_units": 20000,
+            "scale": 2
+          }
+        },
+        "canonical_payload": "{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"certificate\":{\"assets\":{\"BTC\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-BTC-0\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:0\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-BTC-1\",\"funded_units\":\"100000000\",\"source_reference\":\"reference:BTC:source:1\"}],\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"100000000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"100000000\",\"scale\":8},\"USD\":{\"allocations\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"funding_claims\":[{\"command_id\":\"pool-USD-0\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:0\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"funding_claims\":[{\"command_id\":\"pool-USD-1\",\"funded_units\":\"10000\",\"source_reference\":\"reference:USD:source:1\"}],\"limit_units\":\"5000\",\"opening_interest_units\":\"0\",\"opening_pool_units\":\"10000\",\"opening_principal_units\":\"0\",\"shard\":1}],\"global_limit_units\":\"10000\",\"scale\":2}},\"authorities\":[{\"authority_id\":\"279d9bf5507777c493ef2aa77335befd54c57e514cc39f27342b6e9253928bf5\",\"shard\":0},{\"authority_id\":\"e2911662cf76164425e439d5ef30ce69595d2ea6246a2ce1109fcb55701b6041\",\"shard\":1}],\"budget_id\":\"independent-reference-budget-1\",\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"version\":1},\"certificate_id\":\"credit-budget:ac5b6992543345b2845cb4cfa70c68dbca67f64e39aa1aebe6336f9d50a27535\",\"credit_policy\":{\"borrow_batch_size\":0,\"credit_assets\":[\"BTC\",\"USD\"],\"format\":1,\"name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"production_approved\":false,\"require_managed_inbox\":true,\"version\":1},\"credit_policy_id\":\"credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf\",\"format\":1,\"layout_hash\":\"3d230969ba69453b5084f052fe61e5ac1451db55c211c7cc7c2cde6273fc2af9\",\"shard\":0,\"stage\":\"NATIVE_PREPARED\",\"synthetic\":true}",
+        "canonical_payload_sha256": "a2b6cb02546f90555b1b3fecb9bdf223f6482517779249c8a2195541dbbb6823",
+        "certificate_id": "credit-budget:ac5b6992543345b2845cb4cfa70c68dbca67f64e39aa1aebe6336f9d50a27535",
+        "policy_id": "credit-policy:3a30a6bb24aec1af402facac2c3abc8e831a4e0a473c083e35b7cc04cb9856bf"
+      },
+      "valid": true
+    }
+  ],
+  "status": "INDEPENDENT_PUBLISHED_DESCRIPTOR_CONTRACT_REFERENCE_ONLY_NO_PRODUCTION_IMPLEMENTATION_READ_NO_NATIVE_EXECUTION",
+  "test_run": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_credit_descriptor_reference.py",
+      "-v"
+    ],
+    "cwd": "/workspace/uta-credit-certificate-reference",
+    "elapsed_seconds": 0.110737,
+    "exit_code": 0,
+    "stderr": "test_independently_labelled_published_contract_cases (test_credit_descriptor_reference.DescriptorReferenceTests.test_independently_labelled_published_contract_cases) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.025s\n\nOK\n",
+    "stdout": ""
+  }
+}

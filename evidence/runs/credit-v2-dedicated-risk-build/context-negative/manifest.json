@@ -1,0 +1,70 @@
+{
+  "scope": "actual initialized nocap context rejects capture and forged capture, no source/decision/loan; positive V2 remains untested",
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "941f07657b5407b160bec98504fb639479defedc58e098aef0351748c1bcf61b",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "tests/test_credit_audit_v2_helpers.py": "18a51101ebd03358bd4498705d213129d9542b136f3e0b3223d45a7aaaee7bdf"
+  },
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_capture_requires_actual_native_context_and_creates_no_effect",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_reconstructed_capture_is_not_a_financial_grant",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:17:48.996140+00:00",
+      "end": "2026-11-17T14:17:49.385756+00:00",
+      "elapsed_seconds": 0.3896214369960944,
+      "exit_code": 0,
+      "raw_sha256": "66e0814b86f39f657c9ddbe022b49e6bdceeba4921c07ca526ea00a7eca424cd"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_capture_requires_actual_native_context_and_creates_no_effect",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_reconstructed_capture_is_not_a_financial_grant",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:17:49.386085+00:00",
+      "end": "2026-11-17T14:17:49.662087+00:00",
+      "elapsed_seconds": 0.2760120469974936,
+      "exit_code": 0,
+      "raw_sha256": "c3c3bb4a4e9469afe46852644183b442c2d1dd345e2a01803445e2e9283dc52b"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_capture_requires_actual_native_context_and_creates_no_effect",
+        "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_reconstructed_capture_is_not_a_financial_grant",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:17:49.662427+00:00",
+      "end": "2026-11-17T14:17:49.983968+00:00",
+      "elapsed_seconds": 0.3215489249996608,
+      "exit_code": 0,
+      "raw_sha256": "ed71c7550d695f8ec5231bd1a97e482fa9da29b39081d3b182ab3e43f3ff976b"
+    }
+  ]
+}

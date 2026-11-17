@@ -1,0 +1,30 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "15s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_existing_read_joinable",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T13:53:36.486139+00:00",
+  "exit_code": 0,
+  "financial_permission_granted": false,
+  "native_v2_owner": false,
+  "process_seconds": 0.14020064500073204,
+  "raw_sha256": "3c78ff779ccc8c7e5bcb0775cf6110e4910553b8a259b893be27eaff507be042",
+  "scope": "Actual read/control snapshot constructor join; no role elevation or startup context fabricated.",
+  "services": false,
+  "source_sha256": {
+    "tests/test_existing_read_joinable.py": "1c66dcd92ace1f95fc8a37c4bbe7f08fe1443b8534b33d0aedaa19ba68da4b11",
+    "uta/writer_fence.py": "d77cbc65d668ca5941ebdcb5876941f85a4145d846d4d22189e38ca1ac8badb0"
+  },
+  "started_at": "2026-11-17T13:53:36.346081+00:00",
+  "synthetic_local_fence_clock_only": true
+}

@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/lib/python3.13/unittest/__main__.py", line 18, in <module>
+    main(module=None)
+    ~~~~^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/unittest/main.py", line 103, in __init__
+    self.parseArgs(argv)
+    ~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/unittest/main.py", line 142, in parseArgs
+    self.createTests()
+    ~~~~~~~~~~~~~~~~^^
+  File "/usr/lib/python3.13/unittest/main.py", line 153, in createTests
+    self.test = self.testLoader.loadTestsFromNames(self.testNames,
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+                                                   self.module)
+                                                   ^^^^^^^^^^^^
+  File "/usr/lib/python3.13/unittest/loader.py", line 207, in loadTestsFromNames
+    suites = [self.loadTestsFromName(name, module) for name in names]
+              ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+  File "/workspace/uta-credit-native-integration/tests/test_credit_artifact.py", line 14, in <module>
+    from uta.credit_artifact import (CreditArtifactError, _json, _loaded_modules,
+        assert_current_credit_artifact, credit_artifact_id, credit_code_artifact, parse_credit_artifact)
+  File "/workspace/uta-credit-native-integration/uta/credit_artifact.py", line 50, in <module>
+    _DATACLASS_REPR_CODE = dataclasses._recursive_repr(lambda value: "").__code__
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'dataclasses' has no attribute '_recursive_repr'. Did you mean: 'recursive_repr'?

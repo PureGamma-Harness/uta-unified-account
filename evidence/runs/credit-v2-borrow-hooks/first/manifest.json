@@ -1,0 +1,27 @@
+{
+  "scope": "actual extended loaded-code artifact and unchanged public/no-cap/replay/caller SAVEPOINT boundaries; no V2 positive owner",
+  "source_sha256": {
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "uta/existing_services.py": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_artifact.CreditArtifactTests.test_complete_actual_engine_includes_credit_native_and_static_sql",
+    "tests.test_borrow_joined",
+    "tests.test_managed_borrow_boundary",
+    "-v"
+  ],
+  "begin": "2026-11-17T14:24:40.116214+00:00",
+  "end": "2026-11-17T14:24:42.519189+00:00",
+  "elapsed_seconds": 2.4029762580030365,
+  "exit_code": 0,
+  "raw_sha256": "aaf28a2bc1dd4a7649d085d7146c83144c2c76262876dbd06149d8879d3600c4"
+}

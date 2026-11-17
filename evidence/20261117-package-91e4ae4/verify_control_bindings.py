@@ -1,0 +1,227 @@
+"""Independently inspect actual artifacts and prior primary-gate executions.
+
+Read only: this script never builds, installs, alters an archive, runs financial
+code or reruns a collector. It requires every check, not a truthy subset.
+"""
+import argparse
+from hashlib import sha256
+import json
+from pathlib import Path
+import subprocess
+import tarfile
+import zipfile
+
+COMMIT = "91e4ae40b5e9b884c54026406299df5000c9c100"
+CHECKS = {"version", "wheel_runtime_exact", "sdist_runtime_exact",
+          "sdist_required_files_exact", "legacy_fixture_pinned",
+          "legacy_fixture_licensed", "entry_points"}
+
+
+def require(value, message):
+    if not value:
+        raise AssertionError(message)
+
+
+def digest(data):
+    return sha256(data).hexdigest()
+
+
+def canonical(data):
+    return json.dumps(data, sort_keys=True, separators=(",", ":")).encode()
+
+
+def identity(path):
+    return {"sha256": digest(path.read_bytes()), "bytes": path.stat().st_size}
+
+
+def read_json(path):
+    return json.loads(path.read_text())
+
+
+def tar_index(path):
+    result = {}
+    with tarfile.open(path) as archive:
+        for item in archive.getmembers():
+            require(item.name not in result, "duplicate tar member")
+            require(item.isfile() or item.isdir(), "nonregular tar member")
+            metadata = item.get_info()
+            metadata["type"] = metadata["type"].hex()
+            result[item.name] = {"metadata": metadata, "pax_headers": item.pax_headers,
+                                 "sha256": digest(archive.extractfile(item).read()) if item.isfile() else None}
+    return result
+
+
+def zip_index(path):
+    result = {}
+    # Offsets change when a preceding member is removed; retain every stable
+    # member property and its uncompressed bytes, including RECORD unchanged.
+    attributes = ("filename", "date_time", "compress_type", "comment", "extra",
+                  "create_system", "create_version", "extract_version", "reserved",
+                  "flag_bits", "volume", "internal_attr", "external_attr",
+                  "CRC", "file_size", "compress_size")
+    with zipfile.ZipFile(path) as archive:
+        for item in archive.infolist():
+            require(item.filename not in result, "duplicate ZIP member")
+            metadata = {key: getattr(item, key) for key in attributes}
+            for key in ("comment", "extra"):
+                metadata[key] = metadata[key].hex()
+            result[item.filename] = {"metadata": metadata, "sha256": digest(archive.read(item))}
+    return result
+
+
+def pure_omission(positive, negative, target):
+    removed = sorted(positive.keys() - negative.keys())
+    added = sorted(negative.keys() - positive.keys())
+    changed = sorted(key for key in positive.keys() & negative.keys() if positive[key] != negative[key])
+    require(removed == [target] and not added and not changed, "negative archive is not a pure target omission")
+    require(list(negative) == [key for key in positive if key != target], "negative archive member order changed")
+    return {"removed": removed, "added": added, "changed": changed,
+            "unchanged_member_count": len(negative),
+            "positive_index_sha256": digest(canonical(positive)),
+            "negative_index_sha256": digest(canonical(negative)),
+            "stable_member_metadata_and_bytes_exact": True, "member_order_preserved": True}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    for name in ("source", "work", "records", "provenance", "output"):
+        parser.add_argument("--" + name, type=Path, required=True)
+    args = parser.parse_args()
+    source, work = args.source.resolve(), args.work.resolve()
+    def git(*command):
+        return subprocess.check_output(["git", *command], cwd=source, text=True).strip()
+    require(git("rev-parse", "HEAD") == COMMIT, "wrong source HEAD")
+    require(not git("status", "--porcelain", "--untracked-files=all"), "dirty source")
+    tracked = git("ls-tree", "-r", "--name-only", COMMIT).splitlines()
+    require(len(tracked) == 3633, "wrong source inventory")
+    source_hashes = {name: digest((source / name).read_bytes()) for name in tracked}
+    runtime = {name: value for name, value in source_hashes.items()
+               if name.startswith("uta/") and name.endswith((".py", ".html"))}
+    require(len(runtime) == 52, "wrong dynamic runtime inventory")
+    manifest_path = work / "artifact-manifest.json"
+    manifest = read_json(manifest_path)
+    require(manifest["source_commit"] == COMMIT, "wrong manifest source")
+    require(manifest["passed"] is True and manifest["production_approved"] is False, "wrong positive verdict")
+    require(set(manifest["checks"]) == CHECKS and all(value is True for value in manifest["checks"].values()),
+            "positive manifest must contain all seven passing checks")
+    require(manifest["sdist_required_files"] == tracked and manifest["runtime_files"] == runtime,
+            "manifest source/runtime maps differ")
+    require(manifest["runtime_tree_sha256"] == digest(canonical(runtime)), "runtime tree digest differs")
+    require(manifest["sdist_missing"] == [] and manifest["sdist_mismatched"] == [], "incomplete positive source")
+    wheel = work / "artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl"
+    sdist = work / "artifacts/uta_reference_exchange-0.5.0a1.tar.gz"
+    artifacts = {path.name: identity(path) for path in (wheel, sdist)}
+    require(manifest["artifacts"] == artifacts, "positive bytes/SHA not bound to manifest")
+    wheel_index, sdist_index = zip_index(wheel), tar_index(sdist)
+    prefix = next(iter(sdist_index)).split("/")[0] + "/"
+    require({name: wheel_index[name]["sha256"] for name in runtime} == runtime, "positive wheel runtime differs")
+    require({name: sdist_index[prefix + name]["sha256"] for name in tracked} == source_hashes,
+            "positive sdist tracked bytes differ")
+    archive_index = tar_index(work / "frozen-source.tar")
+    require(set(archive_index) >= set(tracked), "Git source archive incomplete")
+    require({name: archive_index[name]["sha256"] for name in tracked} == source_hashes, "Git archive differs")
+    require(all(not (path / ".git").exists() for path in
+                (work / "build-source", work / "sdist-unpacked/uta_reference_exchange-0.5.0a1")), "unexpected .git")
+    execution = read_json(args.records / "raw/execution.json")
+    require(execution["source_commit"] == COMMIT and all(item["returncode"] == 0 for item in execution["runs"]),
+            "core execution failed")
+    require(read_json(args.records / "tracked-zip-execution.json")["returncode"] == 0, "ZIP collector execution failed")
+    for relative, count in (("external/installed/installed-report.json", 8),
+                            ("external/installed-views/installed-views-report.json", 3)):
+        installed = read_json(work / relative)
+        require(installed["source_commit"] == COMMIT and installed["runtime_tree_sha256"] == manifest["runtime_tree_sha256"],
+                "installed source/runtime identity differs")
+        require(installed["artifacts"] == artifacts and installed["isolated"] is True
+                and installed["pythonpath"] is None and installed["passed"] is True, "installed acceptance not isolated/pass")
+        require(installed["tests"] == {"run": count, "failures": 0, "errors": 0, "skipped": 0}, "wrong installed test counts")
+        require(installed["helper_sha256"] == installed["copied_helper_sha256"], "copied helper differs")
+        site = Path(installed["installed_site"])
+        require(all(Path(path).is_relative_to(site) for path in installed["modules"].values()), "source module import")
+        if count == 8:
+            require(len(installed["commands"]) == 8 and all(item["returncode"] == 0 for item in installed["commands"]),
+                    "console commands incomplete/failed")
+    provenance = read_json(args.provenance)
+    tracked_zips = sorted(name for name in tracked if name.endswith(".zip"))
+    require(len(tracked_zips) == 11 and sorted(provenance) == tracked_zips, "eleven tracked ZIPs need explicit provenance")
+    zip_records = read_json(work / "tracked-ci-zip-checks/tracked-ci-zips.json")
+    runtime_records = read_json(work / "runtime-omission-controls/controls.json")
+    require(len(zip_records["inclusions"]) == len(zip_records["omission_controls"]) == 11, "ZIP record count differs")
+    require(len(runtime_records["cases"]) == 2, "runtime control count differs")
+    cases = []
+    descriptions = []
+    for kind in ("wheel", "sdist"):
+        directory = work / "runtime-omission-controls"
+        negative = directory / ("missing-failure-diagnostics.whl" if kind == "wheel" else "missing-failure-diagnostics.tar.gz")
+        false = {"wheel_runtime_exact"} if kind == "wheel" else {"sdist_runtime_exact", "sdist_required_files_exact"}
+        record = next(item for item in runtime_records["cases"] if item["case"].startswith(kind + "_"))
+        descriptions.append((kind, "uta/failure_diagnostics.py", negative, directory / (kind + "-report.json"), false, record))
+    for index, target in enumerate(tracked_zips):
+        directory = work / "tracked-ci-zip-checks"
+        record = zip_records["omission_controls"][index]
+        require(record["removed_member"] == target, "ZIP ordering/target differs")
+        descriptions.append(("sdist", target, directory / ("zip-" + str(index) + "-omitted.tar.gz"),
+                             directory / ("zip-" + str(index) + "-report.json"), {"sdist_required_files_exact"}, record))
+    for kind, target, negative, report_path, false, record in descriptions:
+        result = read_json(report_path)
+        require(record["returncode"] == 1 and record["passed"] is True and record["removed_count"] == 1,
+                "primary negative execution did not reject exactly one omission")
+        require(result["source_commit"] == COMMIT and result["passed"] is False
+                and result["production_approved"] is False, "negative source/verdict differs")
+        expected_checks = {key: key not in false for key in CHECKS}
+        require(result["checks"] == expected_checks and record["checks"] == expected_checks,
+                "negative must contain exactly seven checks with only expected checks false")
+        require(result["runtime_files"] == runtime and result["runtime_tree_sha256"] == manifest["runtime_tree_sha256"],
+                "negative reference runtime map changed")
+        require(result["version"] == manifest["version"] and result["metadata_versions"] == manifest["metadata_versions"]
+                and result["cli_helper_sha256"] == manifest["cli_helper_sha256"], "negative frozen version/helper differs")
+        require(result["sdist_required_files"] == tracked and result["sdist_mismatched"] == [], "negative source contract changed")
+        require(result["sdist_missing"] == ([] if kind == "wheel" else [target]), "negative missing set differs")
+        untouched = sdist if kind == "wheel" else wheel
+        expected_artifacts = {negative.name: identity(negative), untouched.name: artifacts[untouched.name]}
+        require(result["artifacts"] == expected_artifacts, "negative SHA/bytes or unchanged other positive not bound")
+        require(identity(untouched) == artifacts[untouched.name], "other positive artifact changed")
+        require(record["negative_archive_sha256"] == identity(negative)["sha256"], "collector negative SHA differs")
+        argv = record["argv"]
+        require(Path(argv[1]).resolve() == source / "tools/verify_release_archives.py", "wrong primary gate")
+        require(argv[argv.index("--commit") + 1] == COMMIT and Path(argv[argv.index("--source") + 1]).resolve() == source,
+                "negative primary gate source differs")
+        require(Path(argv[argv.index("--" + kind) + 1]).resolve() == negative, "negative gate target differs")
+        other_kind = "sdist" if kind == "wheel" else "wheel"
+        require(Path(argv[argv.index("--" + other_kind) + 1]).resolve() == untouched, "other positive command input differs")
+        require(Path(argv[argv.index("--output") + 1]).resolve() == report_path, "primary report output differs")
+        stdout_path = report_path.with_name(report_path.name.removesuffix("-report.json") + ".stdout.txt")
+        stdout = read_json(stdout_path)
+        require(stdout == {key: result[key] for key in
+                          ("source_commit", "runtime_tree_sha256", "checks", "sdist_missing", "passed")},
+                "primary stdout and report differ")
+        actual_index = zip_index(negative) if kind == "wheel" else tar_index(negative)
+        if kind == "wheel":
+            with zipfile.ZipFile(wheel) as original, zipfile.ZipFile(negative) as changed:
+                require(original.comment == changed.comment, "ZIP archive comment changed")
+        delta = pure_omission(wheel_index if kind == "wheel" else sdist_index, actual_index,
+                              target if kind == "wheel" else prefix + target)
+        cases.append({"kind": kind, "removed_target": target, "negative_archive": str(negative),
+                      "negative_identity": identity(negative), "unchanged_other_positive": {untouched.name: identity(untouched)},
+                      "primary_returncode": record["returncode"], "complete_seven_checks": result["checks"],
+                      "expected_false_checks": sorted(false), "primary_report": str(report_path),
+                      "primary_report_identity": identity(report_path), "member_difference": delta, "passed": True})
+    require({path.name: identity(path) for path in (wheel, sdist)} == artifacts, "positive artifacts changed during inspection")
+    source_proof = {"source_commit": COMMIT, "tracked_file_count": len(tracked), "tracked_file_sha256": source_hashes,
+                    "runtime_file_count": len(runtime), "runtime_tree_sha256": manifest["runtime_tree_sha256"],
+                    "frozen_git_archive": identity(work / "frozen-source.tar"), "clean_HEAD_and_worktree": True,
+                    "source_archive_sdist_tracked_bytes_exact": True, "build_and_unpacked_source_have_no_git": True}
+    source_path = args.output.parent / "source-proof.json"
+    source_path.write_text(json.dumps(source_proof, indent=2, sort_keys=True) + "\n")
+    report = {"source_commit": COMMIT, "scope": "independent report-only inspection of actual package and primary negative executions",
+              "positive_artifacts": artifacts, "positive_manifest": identity(manifest_path), "positive_complete_seven_checks": manifest["checks"],
+              "source_proof": identity(source_path), "controls": cases, "actual_runtime_omissions": 2,
+              "actual_tracked_zip_omissions": len(tracked_zips), "historical_ci_results_are_current_qualification": False,
+              "negative_artifacts_installed": False, "collector_sources_modified": False,
+              "report_checker": identity(Path(__file__)), "passed": True, "production_approved": False}
+    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
+    print(json.dumps({"source_commit": COMMIT, "runtime_controls": 2, "tracked_zip_controls": len(tracked_zips), "passed": True,
+                      "positive_artifacts": artifacts}, sort_keys=True))
+
+
+if __name__ == "__main__":
+    main()

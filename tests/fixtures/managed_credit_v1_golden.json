@@ -1,0 +1,121 @@
+{
+  "fixture_format": 1,
+  "status": "HAND_CALCULATED_DESIGN_NOT_EXECUTED",
+  "policy_id": "SYNTHETIC-CREDIT-ZERO-v1",
+  "production_approved": false,
+  "assumptions": {
+    "currency_scale": {"USD": 8, "BTC": 8},
+    "reporting_settlement": "synthetic USD",
+    "prices": {"USD": "1", "BTC": "100"},
+    "collateral_factor": {"USD": "1", "BTC": "0.8"},
+    "loan_to_value": {"USD": "0.5", "BTC": "0.5"},
+    "borrow_initial_margin_rate_BTC": "0.2",
+    "borrow_maintenance_margin_rate_BTC": "0.1",
+    "borrow_quantity_step_BTC": "0.01",
+    "linear_initial_margin_rate": "0.1",
+    "linear_maintenance_margin_rate": "0.05",
+    "fee_rate": "0",
+    "interest_rate": "0",
+    "account_principal_limit_BTC": "10",
+    "account_total_debt_limit_USD": "10000",
+    "local_credit_asset_limit_BTC": "100",
+    "global_budget_BTC": "1",
+    "shard_allocations_BTC": {"0": "0.5", "1": "0.5"},
+    "baseline_customer_cash": {"USD": "100", "BTC": "0"},
+    "baseline_customer_principal": {"BTC": "0"},
+    "baseline_customer_interest": {"BTC": "0"},
+    "baseline_shard_pool_cash_BTC": "1",
+    "baseline_positions_and_orders": "empty",
+    "independence_note": "Decimal strings and integers below were specified without invoking production functions. No execution or calibration claimed."
+  },
+  "cases": [
+    {
+      "id": "CREDIT-MANUAL-001",
+      "request": {"borrow_asset": "BTC", "amount": "0.4"},
+      "expected": {
+        "outcome": "SUCCEEDED_ONLY_IF_ALL_NATIVE_AND_AUDIT_GATES_PASS",
+        "borrow_units": "40000000",
+        "cash": {"USD": "100", "BTC": "0.4"},
+        "principal_BTC": "0.4",
+        "interest_BTC": "0",
+        "pool_cash_BTC": "0.6",
+        "principal_receivable_BTC": "0.4",
+        "principal_liability_ledger_BTC": "-0.4",
+        "accounting_equity_USD": "100",
+        "collateral_value_USD": "132",
+        "loan_value_USD": "66",
+        "debt_value_USD": "40",
+        "risk_equity_USD": "92",
+        "initial_margin_USD": "8",
+        "maintenance_margin_USD": "4",
+        "available_margin_USD": "84",
+        "new_order_margin_USD": "0",
+        "shard_budget_headroom_BTC": "0.1",
+        "next_portfolio_quote_BTC": "0.26",
+        "next_authorized_quote_including_budget_BTC": "0.1"
+      }
+    },
+    {
+      "id": "CREDIT-MANUAL-002",
+      "starting_after": "CREDIT-MANUAL-001",
+      "request": {"borrow_asset": "BTC", "amount": "0.11"},
+      "expected": {"outcome": "REJECTED", "reason": "shard_budget_exceeded", "no_financial_effect": true},
+      "calculation": "0.4+0.11=0.51 > shard0 allocation0.5; portfolio quote0.26 does not authorize global headroom reuse"
+    },
+    {
+      "id": "CREDIT-MANUAL-003",
+      "starting_after": "CREDIT-MANUAL-001",
+      "request": {"borrow_asset": "BTC", "amount": "0.1"},
+      "expected": {
+        "principal_BTC": "0.5", "cash_BTC": "0.5", "pool_cash_BTC": "0.5",
+        "risk_equity_USD": "90", "initial_margin_USD": "10", "maintenance_margin_USD": "5",
+        "available_margin_USD": "80", "shard_budget_headroom_BTC": "0"
+      }
+    },
+    {
+      "id": "CREDIT-MANUAL-004",
+      "starting_after": "CREDIT-MANUAL-001",
+      "extra_state": {"linear_limit_order_quantity": "8", "linear_mark_and_limit": "100", "reserved_margin_USD": "80"},
+      "expected": {"available_margin_USD": "4", "next_conservative_borrow_quote_BTC": "0.03"},
+      "requests": [
+        {"amount_BTC": "0.04", "outcome": "REJECTED", "reason": "borrow_quote_exceeded", "no_financial_effect": true},
+        {"amount_BTC": "0.03", "outcome": "ELIGIBLE_SUBJECT_TO_OTHER_GATES", "post_principal_BTC": "0.43", "post_risk_equity_USD": "91.4", "post_IM_USD": "8.6", "post_available_margin_USD": "2.8"}
+      ],
+      "calculation": "floor_to_.01(4/(100*(1+.2)))=.03; borrowed proceeds are conservatively excluded from the quote"
+    },
+    {
+      "id": "CREDIT-MANUAL-005",
+      "scenario": "two funded accounts in one shard each request BTC0.3 against shared allocation0.5",
+      "expected": {"first_loan_BTC": "0.3", "second_request_BTC": "0.3", "second_outcome": "REJECTED", "shard_used_BTC": "0.3", "pool_cash_BTC": "0.7", "alternative_second_maximum_BTC": "0.2"}
+    },
+    {
+      "id": "CREDIT-MANUAL-006",
+      "scenario": "shard0 used0.5, shard1 used0 against allocations0.5 each",
+      "request": {"shard": 0, "amount_BTC": "0.01"},
+      "expected": {"outcome": "REJECTED", "reason": "shard_budget_exceeded", "unused_other_shard_budget_is_transferable": false}
+    },
+    {
+      "id": "CREDIT-MANUAL-007",
+      "starting_after": "CREDIT-MANUAL-001",
+      "request": {"repay_BTC": "0.1", "market": "unavailable", "halted": true},
+      "expected": {"principal_BTC": "0.3", "customer_cash_BTC": "0.3", "pool_cash_BTC": "0.7", "interest_repaid_BTC": "0", "principal_repaid_BTC": "0.1", "market_dependency": "NONE", "new_borrow_decision_created": false}
+    },
+    {
+      "id": "CREDIT-MANUAL-008",
+      "scenario": "actual loan postings attempted then decision or terminal receipt missing",
+      "expected": {"uncommitted_intent_present": true, "commit_allowed": false, "durable_loan_or_debt_or_pool_change": false, "recover_using_original_CID": true},
+      "note": "Requires actual native deferred FK/trigger and real COMMIT test; fixture itself does not prove this property"
+    },
+    {
+      "id": "CREDIT-MANUAL-009",
+      "starting_after": "CREDIT-MANUAL-001",
+      "scenario": "lost actual COMMIT reply, retry original account/CID/asset/amount with fresh authentication nonce",
+      "expected": {"additional_loan_count": 0, "principal_BTC": "0.4", "pool_cash_BTC": "0.6", "original_receipt_reused": true, "first_source_record_overwritten": false}
+    },
+    {
+      "id": "CREDIT-MANUAL-010",
+      "request": {"borrow_asset": "BTC", "amount": "0.00000001"},
+      "expected": {"outcome": "REJECTED", "reason": "quantity_step", "amount_rounded_up_or_down": false, "no_financial_effect": true}
+    }
+  ]
+}

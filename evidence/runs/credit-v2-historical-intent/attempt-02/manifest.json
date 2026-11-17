@@ -1,0 +1,20 @@
+{
+  "begin": "2026-11-17T14:56:16.975427+00:00",
+  "cleanup": "all three fixture TemporaryDirectories registered with unittest cleanup",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.probe_credit_v2_historical_intent",
+    "tests.test_credit_v2_native_history_boundary"
+  ],
+  "elapsed_seconds": 18.585791032004636,
+  "end": "2026-11-17T14:56:35.558977+00:00",
+  "exit_code": 0,
+  "scope": "actual disposable synthetic native loan/repayment/history and failed effects with caught exceptions and physical COMMIT; CPU4; no retained/live DB",
+  "source_commit": "704a7a32106f3c5cd522dbc6bb35437f3634c01a"
+}

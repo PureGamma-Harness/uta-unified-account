@@ -1,0 +1,72 @@
+{
+  "parent_commit": "2227877f81a9024ef306adde6cc3dbd15cb7e6e6",
+  "source_sha256": {
+    "uta/credit_artifact.py": "0d6c611838df11db7e08880338fa46a5f116eba5c252079a813a14093232e0a4",
+    "tests/test_credit_artifact.py": "4f5b3fd97d7ff85aff0476796c3cf5b4571a393cefb590ce38a7df423a8a9433",
+    "uta/credit_transition.py": "8423116055adc885077ac920d0ca135dffeb8738197a059d61fe53c2ef1728e0",
+    "tests/test_credit_transition.py": "dc6e00fa4a069f5bb9500a1f9e20791fd20f538b276676ec8580a0cbd146530b"
+  },
+  "scope": "unwired code identity and exact accounting; 17 pure artifact + 11 transition with one tempDB; no service/listener/load",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:56:39.322490+00:00",
+      "completed_at": "2026-11-17T11:56:41.003507+00:00",
+      "elapsed_seconds": 1.6808223080006428,
+      "exit_code": 0,
+      "raw_sha256": "155f03355412f8901b05e2a8a66fd7217e2b8291df334b79a9165d0a644bf0b9"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:56:41.003575+00:00",
+      "completed_at": "2026-11-17T11:56:42.882784+00:00",
+      "elapsed_seconds": 1.8789943519950612,
+      "exit_code": 0,
+      "raw_sha256": "41759b3f57ab574681179bfe9ccb803aa038df83cb8899555ceb2d0eecefc732"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:56:42.882840+00:00",
+      "completed_at": "2026-11-17T11:56:42.996843+00:00",
+      "elapsed_seconds": 0.11377427299885312,
+      "exit_code": 1,
+      "raw_sha256": "3dcfe69dab7229f8d406a279193eca26f91cacd5b178bcc7d19d183d2298be09"
+    }
+  ]
+}

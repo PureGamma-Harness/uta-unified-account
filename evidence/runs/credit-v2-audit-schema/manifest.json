@@ -1,0 +1,23 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_audit_v2_schema",
+    "-v"
+  ],
+  "begin": "2026-11-17T12:26:00.061735+00:00",
+  "end": "2026-11-17T12:26:00.408302+00:00",
+  "elapsed_seconds": 0.3465693050020491,
+  "exit_code": 0,
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "c613f1698354b75057df45790a0421872959f71645851499d543945741f9b8e7",
+    "tests/test_credit_audit_v2_schema.py": "ef1a73b811cff8188f0a2e707ca1a4474a77b9d32d6fda5560131bc8519e74dc"
+  },
+  "scope": "actual temp catalog only; zero credit decisions inserted, no native-v2 activation or service"
+}

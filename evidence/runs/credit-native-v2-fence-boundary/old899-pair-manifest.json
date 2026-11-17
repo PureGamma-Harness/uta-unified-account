@@ -1,0 +1,34 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "15s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_fence_boundary.CreditNativeV2FenceBoundaryTests.test_actual_old_899_base_positive_vs_new_marker_negative",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T13:13:19.652605+00:00",
+  "exit_code": 0,
+  "financial_v2_borrow": false,
+  "native_v2_owner": false,
+  "old_binary_positive_is_base_format_only": true,
+  "process_seconds": 0.48902060499676736,
+  "raw_marker_is_prototype_not_native_install": true,
+  "raw_sha256": "6819d4e86cdb86018f41ef426dc335dd35cc4fe41cbb495f0ecd7353bafb90df",
+  "reason": "Only old899 pair rerun after test asserts actual before_version+delta. Prior15/79 green not rerun. Source additionally latches non-null context/token mismatches; that positive V2 branch remains unexecutable/untested.",
+  "services": false,
+  "source_sha256": {
+    "tests/fixtures/legacy_credit_899c91d_uta.tar.gz": "72eb5fb4836a5dbede429679baf00a436719a9bff5831fb142300ece8e8d51bd",
+    "tests/test_credit_native_v2_fence_boundary.py": "0c67f740e62e453dbc43d99b4832a0e8f5fb9dfdd2a971ad01039787f8a5d5f8",
+    "uta/credit_native_v2.py": "3acb158ff1ea19b00a75e05f5b4275ad26f12ffaba6f845e354c67946b2fd56f",
+    "uta/writer_fence.py": "4d2f7f29f4c16be12d595e78a3b82b066a7746774a4db9d25419d2f5dd5bcb74"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T13:13:19.163766+00:00"
+}

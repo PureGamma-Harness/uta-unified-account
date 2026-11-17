@@ -1,0 +1,62 @@
+{
+  "SQL_selected_without_production_exporter": true,
+  "actual_interest_cash_unchanged_units": "0",
+  "actual_post_gross_ledger_and_liabilities_equal_retained_poststate": true,
+  "actual_prehead_gross_ledger_equals_retained_prestate": true,
+  "content": {
+    "SQL_COMMIT_native_restart_provenance": "PENDING_SEPARATE_EXECUTION_AND_REOPEN_EVIDENCE",
+    "authorized_before_units": "50000000",
+    "command_id": "loan-1",
+    "decision_id": "credit-decision:21a3c850afcab7418a84bae596b0d2026d021c3cc3a738844ee04aa19986e197",
+    "expected_postings_used_as_oracle": false,
+    "gross_after": {
+      "assets": {
+        "BTC": "0.4",
+        "USD": "100"
+      },
+      "cash_deficits": {},
+      "interest": {},
+      "principal": {
+        "BTC": "0.4"
+      }
+    },
+    "gross_before": {
+      "assets": {
+        "USD": "100"
+      },
+      "cash_deficits": {},
+      "interest": {},
+      "principal": {}
+    },
+    "independent_financial_content_passed": true,
+    "interest_cash_balance_observed": false,
+    "journal_event_id": "credit:8bd0d8378cab978f1ffeb0bc589352b85138f08e8298f76b12fc52fd203099bb",
+    "market_snapshot_id": "market:aadb61c76f910a7294b88a0d0130baddf45cce83ebae8f2dd4d2615855d44899",
+    "observed_borrow_journal_legs": 4,
+    "original_funded_capital_units": "100000000",
+    "production_approved": false,
+    "source_id": "credit-source:374f34e1aff578736ef5277b71238490f360c39f629b31f6ab2f3141d063fde7"
+  },
+  "database_path": "/tmp/uta-credit-v2-independent-actual-n1x3o3xs/actual-credit-v2-ckkl8xqy/synthetic.sqlite3",
+  "finished_at": "2026-11-17T14:48:21.993923+00:00",
+  "independent_original_SQL_reopen_passed": true,
+  "journal": {
+    "currencies": [
+      "BTC",
+      "USD"
+    ],
+    "events": 3,
+    "every_event_balanced_per_currency": true,
+    "journal_head": "f82b763a31c39b424b39a6912b6e986d7765259b513e64065baab68ef843759e",
+    "replayed_all_actual_balances_equal": true
+  },
+  "logical_changes": 0,
+  "original_file_identity": {
+    "device": 27,
+    "inode": 800275
+  },
+  "producer_COMMIT_native_owner_FIFO_crash_and_replication_provenance": "PENDING_SEPARATE_EXECUTION_EVIDENCE",
+  "production_approved": false,
+  "read_policy": "mode=ro + query_only + select-only authorizer + one read snapshot",
+  "started_at": "2026-11-17T14:48:21.981427+00:00"
+}

@@ -1,0 +1,29 @@
+{
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "cfc854218a4a1e4c0a8e03ac36fb4f8dc5abec14c65442b50db99d3c6e37659a",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "tests/test_credit_audit_v2_helpers.py": "ce66af4e6a7596135cb22f49d0ac529e68d912567a82d84900c90355cb636379"
+  },
+  "scope": "actual preseal full-risk/order-reserve equivalence and dedicated helper validation; complete V2 capture remains unavailable; zero V2loan/owner/decision",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_audit_v2_helpers",
+        "-v"
+      ],
+      "begin": "2026-11-17T13:30:20.089696+00:00",
+      "end": "2026-11-17T13:30:20.768957+00:00",
+      "elapsed_seconds": 0.6790412780028419,
+      "exit_code": 1,
+      "raw_sha256": "705dada128d475138624b41d367481067f431105141bfea45c5e4485a70528bd"
+    }
+  ]
+}

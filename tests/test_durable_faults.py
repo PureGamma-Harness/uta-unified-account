@@ -1581,6 +1581,12 @@ class ManagedProcessFaultTests(unittest.TestCase):
                                       "cache_configuration": cache_configuration}
         finally:
             primary_error = sys.exc_info()[1]
+            if primary_error is not None:
+                try:
+                    from tests.expired_gate_failure_evidence import emit_expired_gate_failure
+                    emit_expired_gate_failure(observation, errors, primary_error, self.router, thread)
+                except BaseException:
+                    pass  # Evidence must never replace the primary failure or cleanup.
             try:
                 if thread is not None and thread.is_alive():
                     if not exited.poll(0):

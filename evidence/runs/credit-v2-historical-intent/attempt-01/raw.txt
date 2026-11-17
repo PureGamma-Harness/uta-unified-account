@@ -1,0 +1,46 @@
+{"observations": [{"arguments": ["loan-first", "credit-intent:4936f10ab073c58ed198ca79f743d2c645b4eca3ba3f7a4ba23bdb0a7f553862", 4, 0, "customer:alice", "BTC", "-10000000"], "code": "credit_v2_state_invalid", "event": "exception", "message": "protected row differs from actual native command inputs", "phase": "POSTING", "type": "CreditV2Error"}, {"arguments": ["loan-first", "credit-intent:4936f10ab073c58ed198ca79f743d2c645b4eca3ba3f7a4ba23bdb0a7f553862", 4, 0, "customer:alice", "BTC", "-10000000"], "event": "refused_candidate", "phase": "POSTING"}, {"arguments": ["repay-second", "credit-intent:3052750adecba2bad94943a496afb218040fafff8c21581f9d02ff908fa3b399", 4, 0, "customer:alice", "BTC", "-10000000"], "code": "credit_v2_context_invalid", "event": "exception", "message": "no live actual native scope for protected mutation", "phase": "POSTING", "type": "CreditV2Error"}, {"arguments": ["repay-second", "credit-intent:3052750adecba2bad94943a496afb218040fafff8c21581f9d02ff908fa3b399", 4, 0, "customer:alice", "BTC", "-10000000"], "event": "refused_candidate", "phase": "POSTING"}], "post_commit_or_rollback_proof": {"debt": [{"asset": "BTC", "interest": "0", "principal": "0.4"}], "foreign_key_check": [], "inbox": [{"command_id": "loan-first", "state": "SUCCEEDED"}, {"command_id": "repay-second", "state": "PENDING"}], "intents": 1, "journals": 3}, "probe": "actual native scopes; trace observer only; disposable DB"}
+test_later_real_repayment_ignores_nonmatching_historical_intent (tests.probe_credit_v2_historical_intent.HistoricalIntentProbe.test_later_real_repayment_ignores_nonmatching_historical_intent) ... ERROR
+
+======================================================================
+ERROR: test_later_real_repayment_ignores_nonmatching_historical_intent (tests.probe_credit_v2_historical_intent.HistoricalIntentProbe.test_later_real_repayment_ignores_nonmatching_historical_intent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_native_v2.py", line 1491, in operation_scope
+    yield view
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_fifo_v2.py", line 249, in process_one
+    result = action(connection, source.account_id, command_id, payload["asset"], Decimal(payload["amount"]))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-native-v2/uta/credit.py", line 435, in _repay
+    self.ledger.post(event_id, postings, connection=connection)
+  File "/workspace/uta-credit-internal-native-v2/uta/storage.py", line 449, in post
+    current.executemany("INSERT INTO ledger_postings VALUES (?, ?, ?, ?, ?)",
+sqlite3.IntegrityError: actual native credit scope and staged obligation required
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_fifo_v2.py", line 247, in process_one
+    with operation_scope(self.credit, connection, command_id=command_id):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_native_v2.py", line 1501, in operation_scope
+    raise _poison(guard, "internal financial operation failed", cause=cause) from cause
+uta.writer_fence.WriterFenceError: internal financial operation failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-native-v2/tests/probe_credit_v2_historical_intent.py", line 58, in test_later_real_repayment_ignores_nonmatching_historical_intent
+    raise failure
+  File "/workspace/uta-credit-internal-native-v2/tests/probe_credit_v2_historical_intent.py", line 43, in test_later_real_repayment_ignores_nonmatching_historical_intent
+    receipt = fifo.process_one()
+              ^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_fifo_v2.py", line 261, in process_one
+    raise CommandExecutionError(command_id, sequence, error, attempt=attempt) from error
+uta.durable_commands.CommandExecutionError: command execution receipt unavailable; query the original command ID
+
+----------------------------------------------------------------------
+Ran 1 test in 5.636s
+
+FAILED (errors=1)

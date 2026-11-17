@@ -1,0 +1,31 @@
+{
+  "status": "NOT_RUN_FIX_NOT_IMPLEMENTED",
+  "manual_source": "two declared USD scale2 events / four original postings / balances -1250,950,300",
+  "canonical_postings": {
+    "columns": [["sequence", "INTEGER", true, 1], ["ordinal", "INTEGER", true, 2], ["account", "TEXT", true, 0], ["asset", "TEXT", true, 0], ["units", "TEXT", true, 0]],
+    "foreign_keys": [["sequence", "ledger_events", "sequence", "NO ACTION", "NO ACTION", "NONE"], ["asset", "ledger_assets", "asset", "NO ACTION", "NO ACTION", "NONE"]],
+    "ordinal_check": "ordinal >= 0",
+    "hidden_columns": 0,
+    "table_kind": "table"
+  },
+  "controls": [
+    {"id": "LC-001", "mutation": "none: original public ctor, posts, joined verify, reopen", "expected": "2 events; original hashes and balances; unchanged logical state"},
+    {"id": "LC-002", "mutation": "remove event FK only; retain asset FK/PK/columns/all original triggers; add orphan99", "expected": "LedgerError journal postings table definition changed; original data retained"},
+    {"id": "LC-003", "mutation": "remove asset FK only", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-004", "mutation": "retarget event FK to a different existing relation", "expected": "LedgerError journal postings table definition changed before foreign_key_check"},
+    {"id": "LC-005", "mutation": "remove composite PK", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-006", "mutation": "reverse PK sequence/ordinal order", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-007", "mutation": "account nullable", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-008", "mutation": "units INTEGER instead of TEXT", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-009", "mutation": "ordinal CHECK removed or weakened", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-010", "mutation": "extra ordinary column", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-011", "mutation": "extra generated/hidden column", "expected": "LedgerError journal postings table definition changed"},
+    {"id": "LC-012", "mutation": "replace postings table with a view; former posting triggers cannot remain installed", "expected": "LedgerError journal postings table definition changed before trigger or FK access"},
+    {"id": "LC-013", "mutation": "remove postings table from an existing ledger", "expected": "LedgerError journal postings table is missing; no repair"},
+    {"id": "LC-014", "mutation": "canonical table but original trigger missing", "expected": "original journal protection trigger is missing error remains"},
+    {"id": "LC-015", "mutation": "canonical table but original trigger altered", "expected": "original journal protection trigger definition changed error remains"},
+    {"id": "LC-016", "mutation": "canonical table plus legitimate managed/audit extension guards", "expected": "existing native authority checks still govern them; no new prefix allowance/rejection"}
+  ],
+  "scope_exclusions": ["other four base-table catalogue changes", "complete partial-repair prevention", "alternate semantically equivalent DDL compatibility", "production or migration approval"],
+  "default_fix_sql_runs": 0
+}

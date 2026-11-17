@@ -1,0 +1,23 @@
+{
+  "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "facts": {
+    "supervision_loop_is_independent_of_publication": true,
+    "supervision_status_failure_becomes_none": true,
+    "supervision_pipe_poll_and_recv_are_separate_calls": true,
+    "supervision_mutex_covers_status_and_spawn": true,
+    "spawn_does_not_poll_or_recv_ready": true,
+    "record_process_has_no_router_flock_call": true,
+    "publisher_records_error_in_local_list": true,
+    "publisher_has_fresh_lease_assert_before_api": true
+  },
+  "source_sha256": {
+    "uta/durable_process.py": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70",
+    "uta/writer_fence.py": "a56766a6b63e04102337966d7a172459c94ec2cef6a8f9bd69036934f2e44a9c",
+    "uta/storage.py": "9eee296159d0b0347feac3fd2f2b99b3216e8247e579e159e5adda8cbcb08a08",
+    "tests/test_durable_faults.py": "389ab057ab0e12fc0eb73d9f990a084c82565e2cb76dd0e8ac8c2fe8325309f6"
+  },
+  "sql_or_native_run": false,
+  "historical_cause": "UNPROVEN",
+  "five_second_recovery_approved": false,
+  "production_approved": false
+}

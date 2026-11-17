@@ -1,0 +1,44 @@
+{
+  "baseline": "143fe601f2058b87f9a9dfb431954c2efc174e0f",
+  "candidate_implementation": "a339c1c2b3b731387259839e1562c2c272d56140",
+  "method": "Independent exact AST comparison; no test-author compatibility script reused",
+  "results": {
+    "DurableLedger.default_constructor": {
+      "equivalent_after_removing_only_new_parameter_and_existing_branches": true,
+      "removed_conditions": [
+        "_existing_connection is not None"
+      ]
+    },
+    "ExchangeService.default_constructor": {
+      "equivalent_after_removing_only_new_parameter_and_existing_branches": true,
+      "removed_conditions": [
+        "_startup is not None and _existing_connection is not None",
+        "_existing_connection is not None"
+      ]
+    },
+    "CreditService.default_constructor": {
+      "equivalent_after_removing_only_new_parameter_and_existing_branches": true,
+      "removed_conditions": [
+        "_existing_connection is not None"
+      ]
+    },
+    "CreditService._repay": {
+      "ast_unchanged": true
+    },
+    "CreditService.repay": {
+      "ast_unchanged": true
+    },
+    "CreditService._record": {
+      "ast_unchanged": true
+    },
+    "CreditService._prepare": {
+      "ast_unchanged": true
+    },
+    "CreditService._borrow.financial_tail": {
+      "unchanged_except_dedicated_audit_completion": true
+    }
+  },
+  "all_checks_passed": true,
+  "native_v2_restart_approved": false,
+  "production_approved": false
+}

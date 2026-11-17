@@ -1,0 +1,69 @@
+{
+  "started_at": "2026-11-17T14:59:57.302036+00:00",
+  "finished_at": "2026-11-17T14:59:57.362846+00:00",
+  "archive": "/tmp/uta-python31318-24-20261117/python-3.13.18-linux-24.04-x64.tar.gz",
+  "archive_sha256": "683005a1465d94d40045f6a1a6eb316885b5f08d3360f7922b44ef58a14a9eed",
+  "archive_bytes": 102778317,
+  "member_count": 9345,
+  "safe_member_validation": true,
+  "relative_internal_links": [
+    {
+      "name": "./share/man/man1/python3.1",
+      "target": "python3.13.1"
+    },
+    {
+      "name": "./lib/libpython3.13.so",
+      "target": "libpython3.13.so.1.0"
+    },
+    {
+      "name": "./lib/pkgconfig/python3-embed.pc",
+      "target": "python-3.13-embed.pc"
+    },
+    {
+      "name": "./lib/pkgconfig/python3.pc",
+      "target": "python-3.13.pc"
+    },
+    {
+      "name": "./bin/python3-config",
+      "target": "python3.13-config"
+    },
+    {
+      "name": "./bin/idle3",
+      "target": "idle3.13"
+    },
+    {
+      "name": "./bin/pydoc3",
+      "target": "pydoc3.13"
+    },
+    {
+      "name": "./bin/python3",
+      "target": "python3.13"
+    }
+  ],
+  "exact_extracted_python_and_libpython_member_bytes": true,
+  "prefix": "/tmp/uta-python31318-24-20261117/runtime",
+  "actual_prefix_mode": "0o700",
+  "environment_overrides": {
+    "PYTHONPATH": null,
+    "PYTHONHOME": null,
+    "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "command": [
+    "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+    "-B",
+    "-c",
+    "import json,os,platform,sqlite3,ssl,subprocess,sys,sysconfig\nfrom pathlib import Path\nchild=subprocess.run([sys.executable,'--version'],capture_output=True,text=True,timeout=10)\nlibraries=sorted({line.split()[-1] for line in Path('/proc/self/maps').read_text().splitlines() if '/' in line and any(name in line for name in ('libpython3.13','libsqlite3','libssl.so','libcrypto.so','ld-linux'))})\nresult={'python':sys.version,'executable':sys.executable,'prefix':sys.prefix,'base_prefix':sys.base_prefix,'platform':platform.platform(),'libc':platform.libc_ver(),'sqlite_version':sqlite3.sqlite_version,'sqlite_module_path':sqlite3.__file__,'openssl':ssl.OPENSSL_VERSION,'config_args':sysconfig.get_config_var('CONFIG_ARGS'),'compiler':sysconfig.get_config_var('CC'),'py_enable_shared':sysconfig.get_config_var('Py_ENABLE_SHARED'),'gil_disabled':sysconfig.get_config_var('Py_GIL_DISABLED'),'library':sysconfig.get_config_var('LDLIBRARY'),'compiled_libdir':sysconfig.get_config_var('LIBDIR'),'actually_mapped_libraries':libraries,'child_version':{'returncode':child.returncode,'stdout':child.stdout,'stderr':child.stderr},'sql_connections_created':False,'financial_workload_executed':False}\nassert result['python'].startswith('3.13.18 ')\nassert child.returncode==0 and child.stdout=='Python 3.13.18\\n'\nassert str(Path(sys.prefix)/'lib/libpython3.13.so.1.0') in libraries\nprint(json.dumps(result,indent=2))\n"
+  ],
+  "returncode": 0,
+  "archive_and_prefix_logical_regular_bytes": 433724195,
+  "free_after": 18289790976,
+  "install_script_executed": false,
+  "runtime_usable_for_future_separately_authorized_diagnosis": true,
+  "same_ci_environment": false,
+  "same_ci_binary_claimed": false,
+  "sql_connections_created": false,
+  "financial_workload_executed": false,
+  "existing_runtimes_or_jobs_modified": false,
+  "production_approved": false
+}

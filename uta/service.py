@@ -117,7 +117,10 @@ class ExchangeService:
                  reserve_cache_size: int = 0,
                  market_cache_size: int = 0,
                  decision_audit: bool = False,
-                 _startup=None):
+                 _startup=None,
+                 _existing_connection=None):
+        if _startup is not None and _existing_connection is not None:
+            raise ServiceError("invalid_configuration", "existing construction cannot join owned startup")
         if _startup is not None:
             from .startup import _OwnedStartup
             if type(_startup) is not _OwnedStartup:
@@ -153,6 +156,22 @@ class ExchangeService:
         self._market_decode_cache = MarketDecodeCache(market_cache_size)
         self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
         self.scales = dict(scales)
+        if _existing_connection is not None:
+            from .writer_fence import _assert_existing_read_joinable
+            from .existing_services import _verify_exchange_schema, _verify_exchange_configuration
+            _assert_existing_read_joinable(database, _existing_connection)
+            self.ledger = DurableLedger(database, scales, _existing_connection=_existing_connection)
+            self.max_price_age, self.fee_rate = max_price_age, fee_rate
+            self.clock = clock or (lambda: datetime.now(timezone.utc))
+            _verify_exchange_schema(_existing_connection, self._schema_statements(), decision_audit)
+            policy = _json({"fee_rate": _text(fee_rate), "usd_scale": scales["USD"],
+                            "max_price_age_us": max_price_age // timedelta(microseconds=1), "order_precision": 8})
+            risk_policy = _json({"mode": "legacy_reference"} if product_catalog is None else {
+                "mode": "phase1_cross", "catalog": json.loads(product_catalog.to_json()),
+                "rules": json.loads(portfolio_rules.to_json()),
+            })
+            _verify_exchange_configuration(self, _existing_connection, policy, risk_policy)
+            return
         # The research simulator uses different uta_accounts/uta_events schemas.
         # Claim compatible storage before DurableLedger can create any tables.
         with database.transaction() as connection:
@@ -219,8 +238,8 @@ class ExchangeService:
             connection.execute("INSERT INTO uta_authority VALUES (1,'exchange')")
 
     @staticmethod
-    def _schema(connection: sqlite3.Connection, *, audit_required: bool = False) -> None:
-        statements = (
+    def _schema_statements() -> tuple[str, ...]:
+        return (
             "CREATE TABLE IF NOT EXISTS uta_schema (version INTEGER NOT NULL)",
             "CREATE TABLE IF NOT EXISTS uta_config (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
             "CREATE TABLE IF NOT EXISTS uta_accounts (account_id TEXT PRIMARY KEY, version INTEGER NOT NULL CHECK(version >= 0))",
@@ -259,7 +278,10 @@ class ExchangeService:
             "CREATE TRIGGER IF NOT EXISTS uta_events_no_update BEFORE UPDATE ON uta_events BEGIN SELECT RAISE(ABORT,'events are immutable'); END",
             "CREATE TRIGGER IF NOT EXISTS uta_events_no_delete BEFORE DELETE ON uta_events BEGIN SELECT RAISE(ABORT,'events are immutable'); END",
         )
-        for statement in statements:
+
+    @staticmethod
+    def _schema(connection: sqlite3.Connection, *, audit_required: bool = False) -> None:
+        for statement in ExchangeService._schema_statements():
             connection.execute(statement)
         rows = connection.execute("SELECT version FROM uta_schema").fetchall()
         if not rows:
@@ -1241,6 +1263,11 @@ class ExchangeService:
     def readiness(self) -> dict:
         try:
             with self._transaction() as connection:
+                from .writer_fence import _load
+                state = _load(connection)
+                if state is not None and state.get("credit_format") == 2:
+                    return {"ready": False, "reason": "internal_credit_authority_not_trading",
+                            **self._policy_versions()}
                 halted = self._halted(connection)
                 market = self._market(connection)
                 return {"ready": not halted, "halted": halted, "market_version": market.version,

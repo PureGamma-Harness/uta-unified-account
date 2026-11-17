@@ -1,0 +1,35 @@
+{
+  "scope": "only original two failed targets after separately committed native historical-candidate fix and observation-only harness repair; original quota green not repeated",
+  "source_commit": "2176bc012d5af3f84d68284a63ab627f6b895cb7",
+  "source_sha256": {
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "uta/credit_audit_v2_replay.py": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af",
+    "uta/credit_fifo_v2.py": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca",
+    "tests/credit_v2_runtime_fixture.py": "69d776ca98a649558047c98af8387c654f3996e66a7b12d6f88ba9ba8ffb925a",
+    "tests/test_credit_v2_runtime_chain.py": "edce0997b5866e47ed4a3bfa8de24d5230579dc4e517928f526abb4e747a4c7a",
+    "tests/sqlite_connection_observer.py": "ad60570fa0f2e46b1b91d970eb3794c31cdfc534fa10e8153ea348ff36b8376b"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 45,
+  "begin": "2026-11-17T14:58:43.171171+00:00",
+  "end": "2026-11-17T14:58:58.522930+00:00",
+  "elapsed_seconds": 15.351766619001864,
+  "exit_code": 0,
+  "raw_sha256": "db9689e8f329be717211ad34368a74033e05abfd83c6444946392b2b60092856",
+  "private_original_databases_retained": true
+}

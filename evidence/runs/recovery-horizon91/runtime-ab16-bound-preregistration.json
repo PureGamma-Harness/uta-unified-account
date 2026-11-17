@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "purpose": "causal diagnosis only; not qualification or a correction of old NO_GO",
+  "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "original_raw_commit": "07b0381eef9d6b9a03d0b62b6b7bd1ec1fc81178",
+  "prior_single_case_commit": "b5707fe319cf4f07c64e34e8a62f130e5a135803",
+  "prior_single_case_status": "NO_REPRO / strict observer evidence incomplete, unchanged",
+  "ordinary_assertion_failure_policy": "CONTINUE_FIXED_ORDER",
+  "technical_failure_policy": "STOP_AND_MARK_REMAINING_NOT_RUN",
+  "sample_count": 16,
+  "sample_order": [
+    {
+      "id": "s01-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s02-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s03-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s04-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s05-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s06-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s07-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s08-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s09-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s10-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s11-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s12-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s13-A",
+      "runtime": "A"
+    },
+    {
+      "id": "s14-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s15-B",
+      "runtime": "B"
+    },
+    {
+      "id": "s16-A",
+      "runtime": "A"
+    }
+  ],
+  "cpu": 2,
+  "worker_watchdog_seconds": 27,
+  "whole_sample_seconds": 30,
+  "runtime_probe_timeout_seconds": 2,
+  "original_windows_seconds": {
+    "fixture_lease": 5,
+    "capture": 5,
+    "recovery": 5,
+    "API_phase": 5,
+    "publication_lifecycle": 15
+  },
+  "runtimes": {
+    "A": {
+      "executable": "/usr/bin/python3.13",
+      "version_info": [
+        3,
+        13,
+        5
+      ],
+      "sqlite": "3.46.1",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONHOME": null,
+        "PYTHONSTARTUP": null,
+        "PYTHONINSPECT": null,
+        "PYTHONOPTIMIZE": null,
+        "PYTHONSAFEPATH": null,
+        "PYTHONHASHSEED": null,
+        "LD_LIBRARY_PATH": null,
+        "LD_PRELOAD": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "recorded_environment": [
+        "PYTHONPATH",
+        "PYTHONHOME",
+        "PYTHONSTARTUP",
+        "PYTHONINSPECT",
+        "PYTHONOPTIMIZE",
+        "PYTHONSAFEPATH",
+        "PYTHONHASHSEED",
+        "LD_LIBRARY_PATH",
+        "LD_PRELOAD",
+        "PYTHONDONTWRITEBYTECODE"
+      ],
+      "mapped_libpython_expected": [],
+      "files": {
+        "executable": {
+          "path": "/usr/bin/python3.13",
+          "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9"
+        },
+        "available_unmapped_system_libpython": {
+          "path": "/usr/lib/x86_64-linux-gnu/libpython3.13.so.1.0",
+          "sha256": "362412239e5c87cbcd67c720f368ebf414632bfad3e0f30d1e3e95db9cc60b55"
+        }
+      },
+      "provenance": "system installed interpreter; Python core embedded in executable (ELF NEEDED has no libpython), available libpython file is not claimed mapped"
+    },
+    "B": {
+      "executable": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+      "version_info": [
+        3,
+        13,
+        18
+      ],
+      "sqlite": "3.46.1",
+      "environment": {
+        "PYTHONPATH": null,
+        "PYTHONHOME": null,
+        "PYTHONSTARTUP": null,
+        "PYTHONINSPECT": null,
+        "PYTHONOPTIMIZE": null,
+        "PYTHONSAFEPATH": null,
+        "PYTHONHASHSEED": null,
+        "LD_LIBRARY_PATH": "/tmp/uta-python31318-24-20261117/runtime/lib",
+        "LD_PRELOAD": null,
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "recorded_environment": [
+        "PYTHONPATH",
+        "PYTHONHOME",
+        "PYTHONSTARTUP",
+        "PYTHONINSPECT",
+        "PYTHONOPTIMIZE",
+        "PYTHONSAFEPATH",
+        "PYTHONHASHSEED",
+        "LD_LIBRARY_PATH",
+        "LD_PRELOAD",
+        "PYTHONDONTWRITEBYTECODE"
+      ],
+      "mapped_libpython_expected": [
+        "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0"
+      ],
+      "files": {
+        "executable": {
+          "path": "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+          "sha256": "5d782b88e6d48cc376d3e4b890539876ccaf7235acb1a265b7880ba471432cba"
+        },
+        "libpython": {
+          "path": "/tmp/uta-python31318-24-20261117/runtime/lib/libpython3.13.so.1.0",
+          "sha256": "77777245f3e8f8cf052ddd046461360ae9243df988df51857df4d9927899a7f8"
+        },
+        "provider_archive": {
+          "path": "/tmp/uta-python31318-24-20261117/python-3.13.18-linux-24.04-x64.tar.gz",
+          "sha256": "683005a1465d94d40045f6a1a6eb316885b5f08d3360f7922b44ef58a14a9eed"
+        }
+      },
+      "provenance_commit": "98e802f6cb0c2c692bd3dfa70c91a346d87cdfc6",
+      "release_tag": "3.13.18-40336726450",
+      "provider_asset_id": 678421609,
+      "provenance": "Official actions/python-versions Ubuntu24.04 x64 build GCC13.3.0, distinct from original CI GCC15.2.0; initial wrong3.13.5-loading evidence remains preserved in98e802f"
+    }
+  },
+  "files": {
+    "trace_original91_bound.py": "63528f6f09eca23137b1b9fdba83a611583f4a6b0650c2b88998d01c3b2b0901",
+    "strict_result_contract.py": "dbd32f4db11bb6449f63839e46595f574065b03026386dc362bc63f518a05c71",
+    "strict_runtime_contract.py": "caa70274945c9fbd550403f631bd28261eaaafe0c5ce1c5dd77140857f956022",
+    "runtime_probe91.py": "cff71f4fc6779183c18aade9432cd7aa193a0c5f8d32844b0e0b6f185e8fa8e7",
+    "original_source266.json": "31d019df00f186ca7e7ba5c3446e84a0155fbfa06c9f761697d30f7019e91354",
+    "strict_event_contract.py": "bfd772751a1c35932a6394cb5e3949233bcc6d7ee3e4fb56b6010508b2752cfe"
+  },
+  "no_retry": true,
+  "production_approved": false,
+  "execution_authorized_by_prereg_alone": false,
+  "supersedes_static_proposal_commit": "7ce60c197a79f25dac887f352d35749386b812f9"
+}

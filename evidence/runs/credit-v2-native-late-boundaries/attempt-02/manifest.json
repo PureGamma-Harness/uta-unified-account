@@ -1,0 +1,19 @@
+{
+  "begin": "2026-11-17T15:00:06.780643+00:00",
+  "cleanup": "fixture TemporaryDirectory cleanup registered with unittest; other four prior passing subcases not rerun",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "python3",
+    "-m",
+    "unittest",
+    "-v",
+    "tests.test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back"
+  ],
+  "elapsed_seconds": 3.7041434130005655,
+  "end": "2026-11-17T15:00:10.482456+00:00",
+  "exit_code": 0,
+  "scope": "one actual orphan-intent negative on disposable synthetic DB; real staged audit+credit+terminal followed by loss of actual operation reference; original StorageError preserved; CPU4",
+  "source_commit": "943d8b74ed0f93d49680a0cd1c882b07549e8a6c"
+}

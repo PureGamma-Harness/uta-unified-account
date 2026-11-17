@@ -1,0 +1,32 @@
+{
+  "begin_utc": "2026-11-17T14:22:22.659362+00:00",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_existing_services_negative",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-credit-existing-readonly",
+  "elapsed_seconds": 0.607476,
+  "end_utc": "2026-11-17T14:22:23.266834+00:00",
+  "exit_code": 0,
+  "production_code_commit": "bf746b1e7f5437f20fc1f953d7023b3d59615720",
+  "source_sha256": {
+    "tests/test_existing_services_negative.py": "c90c058fc78b721b7b6e7a8cc60b671b54bdea91ba149fc15795fc6e8a4ef68d",
+    "uta/credit.py": "f5af0035b16eb47a4b6b2abcbfc4cff7ee6a8ee30d19756e1a3771b50bf967c9",
+    "uta/existing_services.py": "3ab7b0675100de06acc8f287af0ec442a3755c2d95ed97dbec791820003e1f5b",
+    "uta/service.py": "3d22095afd2ae0a37eaab95a8c8d22f88908d73a5da595bcc5b4a89307079df4",
+    "uta/storage.py": "46fc32488cf6b9ffa3c15431b785aea22f4cccceaebd381130e5ef00be4427d5",
+    "uta/writer_fence.py": "9a1204f196e9db58c57f940d254b87cdb3e70fa42ef0761880f05a0336d6abf0"
+  },
+  "status": "AUTHOR_NEGATIVE_MATRIX_NOT_INDEPENDENT_ACCEPTANCE",
+  "stderr": "test_absent_current_artifact_is_not_written_or_backfilled (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_absent_current_artifact_is_not_written_or_backfilled) ... ok\ntest_closed_read_connection_cannot_be_reused (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_closed_read_connection_cannot_be_reused) ... ok\ntest_each_public_constructor_rejects_a_real_financial_join (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_each_public_constructor_rejects_a_real_financial_join) ... ok\ntest_extra_table_constraint_is_not_silently_accepted (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_extra_table_constraint_is_not_silently_accepted) ... ok\ntest_full_credit_reconciliation_refuses_masked_account_debts (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_full_credit_reconciliation_refuses_masked_account_debts) ... ok\ntest_full_ledger_replay_refuses_corrupt_pool_projection (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_full_ledger_replay_refuses_corrupt_pool_projection) ... ok\ntest_missing_file_is_not_created (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_missing_file_is_not_created) ... ok\ntest_multiple_real_archived_execution_options_are_not_guessed (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_multiple_real_archived_execution_options_are_not_guessed) ... ok\ntest_raw_sqlite_connection_is_not_a_read_constructor_scope (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_raw_sqlite_connection_is_not_a_read_constructor_scope) ... ok\ntest_unchanged_columns_do_not_hide_removed_table_constraint (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_unchanged_columns_do_not_hide_removed_table_constraint) ... ok\ntest_unknown_extra_unique_index_is_not_an_official_constraint (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_unknown_extra_unique_index_is_not_an_official_constraint) ... ok\ntest_wholly_missing_credit_module_is_not_initialized (tests.test_existing_services_negative.ExistingServicesNegativeTests.test_wholly_missing_credit_module_is_not_initialized) ... ok\n\n----------------------------------------------------------------------\nRan 12 tests in 0.484s\n\nOK\n",
+  "stdout": "",
+  "timeout_seconds": 60
+}

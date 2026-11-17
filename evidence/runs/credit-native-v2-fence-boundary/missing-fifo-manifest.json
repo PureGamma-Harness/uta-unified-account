@@ -1,0 +1,32 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "15s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_fence_boundary.CreditNativeV2FenceBoundaryTests.test_real_control_publication_missing_runtime_rolls_back_marker_event",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T13:19:01.965377+00:00",
+  "exit_code": 0,
+  "fault": "fixed uta.credit_fifo_v2 import raises synthetic ModuleNotFoundError, never a permission success",
+  "financial_v2_borrow": false,
+  "native_v2_owner": false,
+  "process_seconds": 0.35560862599959364,
+  "raw_sha256": "5c6e91867b3d05d72130bd633765742230e33a81c4f9329f7888b62a20b3b638",
+  "reason": "Final dependency contract adds runtime_evidence/verify_staged_borrow and dedicated replay/payload identity. Explicit missing-FIFO fault validates true control COMMIT rollback and remains meaningful after real FIFO is added. No original green suite rerun.",
+  "services": false,
+  "source_sha256": {
+    "tests/test_credit_native_v2_fence_boundary.py": "6cdc575571f616cadbb36870687530f33be48e9d2acbf1a6efbce1c794c415f6",
+    "uta/credit_native_v2.py": "9d61952fa39af0cb0d3bd9a4772d36047a5862b4b6089e012683ae3f1913b01d",
+    "uta/writer_fence.py": "4d2f7f29f4c16be12d595e78a3b82b066a7746774a4db9d25419d2f5dd5bcb74"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T13:19:01.611431+00:00"
+}

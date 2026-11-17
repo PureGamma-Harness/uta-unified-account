@@ -1,0 +1,33 @@
+{
+  "scope": "first fresh-code native integration after whole independently accepted catalog baseline, preserving the expected verifier-view interface regression before any compatibility edit",
+  "source_commit": "fbfbfeabc65a05af47ad510bd600d7f1f404b064",
+  "merged_root": "5a2961134aedaef9914d4cdd0247bb8795fb9b90",
+  "source_sha256": {
+    "uta/storage.py": "19fff9b9f680ce9bf83ee8eb9d63c53a0d73ab336d0cd9e279c83b08191595fe",
+    "uta/credit_native.py": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+    "uta/credit_native_v2.py": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "tests/credit_v2_runtime_fixture.py": "69d776ca98a649558047c98af8387c654f3996e66a7b12d6f88ba9ba8ffb925a",
+    "tests/test_credit_v2_runtime_chain.py": "edce0997b5866e47ed4a3bfa8de24d5230579dc4e517928f526abb4e747a4c7a"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+    "-v"
+  ],
+  "cpu_requested": 3,
+  "timeout_seconds": 30,
+  "begin": "2026-11-17T15:35:22.649781+00:00",
+  "end": "2026-11-17T15:35:23.042360+00:00",
+  "elapsed_seconds": 0.3925820490112528,
+  "exit_code": 1,
+  "raw_sha256": "3b3d8a972a844649d498dfcfc3408bde28e979f6ea759f27faad002a30c3e230",
+  "private_new_fixture_retained": true
+}

@@ -1,0 +1,88 @@
+{
+  "actual_native_loan": false,
+  "actual_native_owner": false,
+  "actual_native_publisher_executed": false,
+  "fake_success_udf_registered": false,
+  "independent_review": "required; not author self-approval",
+  "kind": "internal synthetic native runtime candidate; not positive acceptance",
+  "original_runs": {
+    "declaration_targeted": {
+      "actual_native_borrow": false,
+      "actual_native_owner": false,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "timeout",
+        "10s",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_native_v2_primitives.CreditNativeV2PrimitiveTests.test_envelope_is_content_addressed_declaration_not_current_code_permission",
+        "-v"
+      ],
+      "ended_at": "2026-11-17T14:40:25.359941+00:00",
+      "exit_code": 0,
+      "process_seconds": 0.15852210400043987,
+      "raw_sha256": "890fcaa673b40bf6cb8c3e5c5fd11f5caebe7b6739f691a9b873fb50d073e79e",
+      "reason": "Only stale C1 API-absence assertion updated for intended implementation; declaration still has no token/ready/permission fields. Runtime unchanged; original8 green not rerun.",
+      "source_sha256": {
+        "tests/test_credit_native_v2_primitives.py": "d1850d5756d81aa6a7e4d99627625b573bed484ef692803b2448367194b6fa92",
+        "uta/credit_native_v2.py": "ae333373be9fa0ada72da23bd9e6f13a141bc9e60572f812179052d84843f3d4",
+        "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+      },
+      "sql_used": false,
+      "started_at": "2026-11-17T14:40:25.201599+00:00"
+    },
+    "first": {
+      "actual_native_borrow": false,
+      "actual_native_owner": false,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "timeout",
+        "30s",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_native_v2_sql_catalog",
+        "tests.test_credit_native_v2_primitives",
+        "-v"
+      ],
+      "ended_at": "2026-11-17T14:39:20.216030+00:00",
+      "exit_code": 1,
+      "process_seconds": 0.5021754240005976,
+      "raw_sha256": "0133635aac3ab624436929fc8d6be271696c9c74548b3b04bf2aaced4fe842c9",
+      "scope": "Actual core parent source/FK data primitives and22effectDDL compilation only; source fixture intentionally CATALOG_OBJECT_SQL and no positive native UDF callback.",
+      "source_sha256": {
+        "tests/test_credit_native_v2_primitives.py": "d9e978dc64a85ec045990f6c9986c99ae006670ec6475be8d741bc4f8fbf4a8d",
+        "tests/test_credit_native_v2_sql_catalog.py": "279036e65752223e29e281c5201097ca6d83d492e1d72bff481c0af172852001",
+        "uta/credit_native_v2.py": "ae333373be9fa0ada72da23bd9e6f13a141bc9e60572f812179052d84843f3d4",
+        "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+      },
+      "sql_used": true,
+      "started_at": "2026-11-17T14:39:19.714018+00:00"
+    }
+  },
+  "positive_financial_tests": "Parent first actual positive fixture pending immutable OWN commit",
+  "post_test_change": "Only module introductory docstring; exact tested source hash reconstructed from prior committed header and verified; AST equal after removing module docstring. Code identity differs, raw source/result not relabeled.",
+  "post_test_non_doc_ast_identical": true,
+  "production_approved": false,
+  "raw_sha256": {
+    "declaration-targeted-python312.txt": "890fcaa673b40bf6cb8c3e5c5fd11f5caebe7b6739f691a9b873fb50d073e79e",
+    "first-python312.txt": "0133635aac3ab624436929fc8d6be271696c9c74548b3b04bf2aaced4fe842c9"
+  },
+  "recorded_at": "2026-11-17T14:43:08.353570+00:00",
+  "source_sha256": {
+    "docs/credit-native-v2-runtime-candidate.md": "2856a5f99e4f57c65a4bd95334d6eda8a09860dbb0c9266ec3746d2399d0e639",
+    "tests/test_credit_native_v2_primitives.py": "d1850d5756d81aa6a7e4d99627625b573bed484ef692803b2448367194b6fa92",
+    "tests/test_credit_native_v2_sql_catalog.py": "279036e65752223e29e281c5201097ca6d83d492e1d72bff481c0af172852001",
+    "uta/credit_native_v2.py": "eabb26de248f7ead003464719e393c56bff0d5feca86c79e80cc69f56b3a63c4",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+  }
+}

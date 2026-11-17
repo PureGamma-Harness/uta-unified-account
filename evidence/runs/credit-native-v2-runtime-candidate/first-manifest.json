@@ -1,0 +1,32 @@
+{
+  "actual_native_borrow": false,
+  "actual_native_owner": false,
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_sql_catalog",
+    "tests.test_credit_native_v2_primitives",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T14:39:20.216030+00:00",
+  "exit_code": 1,
+  "process_seconds": 0.5021754240005976,
+  "raw_sha256": "0133635aac3ab624436929fc8d6be271696c9c74548b3b04bf2aaced4fe842c9",
+  "scope": "Actual core parent source/FK data primitives and22effectDDL compilation only; source fixture intentionally CATALOG_OBJECT_SQL and no positive native UDF callback.",
+  "source_sha256": {
+    "tests/test_credit_native_v2_primitives.py": "d9e978dc64a85ec045990f6c9986c99ae006670ec6475be8d741bc4f8fbf4a8d",
+    "tests/test_credit_native_v2_sql_catalog.py": "279036e65752223e29e281c5201097ca6d83d492e1d72bff481c0af172852001",
+    "uta/credit_native_v2.py": "ae333373be9fa0ada72da23bd9e6f13a141bc9e60572f812179052d84843f3d4",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T14:39:19.714018+00:00"
+}

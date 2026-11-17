@@ -1,0 +1,24 @@
+{
+  "scope": "default no-cap actual ready/halt result stays unchanged; actual V2 ready-false integration is pending native publication",
+  "source_sha256": {
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+    "tests/test_credit_v2_readiness_boundary.py": "0eaf96311b3e9104bc577feeabde960941652bfd44ca338aa8178c53cd39eb48"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_v2_readiness_boundary",
+    "-v"
+  ],
+  "begin": "2026-11-17T14:43:50.570097+00:00",
+  "end": "2026-11-17T14:43:50.772975+00:00",
+  "elapsed_seconds": 0.2028845309978351,
+  "exit_code": 0,
+  "raw_sha256": "03a416992a3fb7e26db16f73d02c3f316a89e93fb53cc78acbdb413ed81852eb"
+}

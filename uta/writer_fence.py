@@ -13,7 +13,7 @@ from pathlib import Path
 import re
 import sqlite3
 from hashlib import sha256
-from threading import RLock
+from threading import RLock, get_ident
 import time
 from types import MappingProxyType
 
@@ -38,7 +38,12 @@ _BASE_NAMES = frozenset({"writer_fence_authority", "writer_fence_lease", "writer
 _GUARD_NAMES = frozenset({"writer_fence_guard_config", "writer_fence_guard_tables"})
 _STANDARD_NAMES = _BASE_NAMES | _GUARD_NAMES
 _BATCH_NAMES = frozenset({"writer_fence_batch_capability"})
-_NAMES = _STANDARD_NAMES | _BATCH_NAMES
+_CREDIT_NAMES = frozenset({"writer_fence_credit_capability"})
+_CREDIT_V2_NAMES = frozenset({"writer_fence_credit_v2_capability"})
+_NAMES = _STANDARD_NAMES | _BATCH_NAMES | _CREDIT_NAMES | _CREDIT_V2_NAMES
+_INVENTORIES = (_BASE_NAMES, _STANDARD_NAMES, _STANDARD_NAMES | _BATCH_NAMES,
+                _STANDARD_NAMES | _CREDIT_NAMES, _STANDARD_NAMES | _BATCH_NAMES | _CREDIT_NAMES,
+                _STANDARD_NAMES | _CREDIT_V2_NAMES)
 _BATCH_TABLES = frozenset({"uta_command_batch_manifests", "uta_command_batch_outcomes"})
 _INBOX_TABLES = frozenset({"uta_command_config", "uta_command_inbox"})
 _INBOX_INDEXES = frozenset({"uta_command_pending", "uta_command_account_pending"})
@@ -68,6 +73,8 @@ _DDL = {_ACTIONS[name] for name in _ACTIONS if name.startswith(("CREATE_", "DROP
 _OK, _DENY = getattr(sqlite3, "SQLITE_OK", 0), getattr(sqlite3, "SQLITE_DENY", 1)
 
 _CONTROL_TABLE_SQL = MappingProxyType({
+    "writer_fence_credit_v2_capability": "CREATE TABLE writer_fence_credit_v2_capability(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(typeof(format)='integer' AND format=2),state TEXT NOT NULL CHECK(state='SYNTHETIC_INTERNAL'),capability_id TEXT NOT NULL,payload TEXT NOT NULL)",
+    "writer_fence_credit_capability": "CREATE TABLE writer_fence_credit_capability(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),state TEXT NOT NULL CHECK(state='NATIVE_PREPARED'),descriptor_id TEXT NOT NULL,payload TEXT NOT NULL)",
     "writer_fence_batch_capability": "CREATE TABLE writer_fence_batch_capability(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))",
     "writer_fence_authority": "CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)",
     "writer_fence_lease": "CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)",
@@ -85,10 +92,13 @@ def _control_trigger_definitions():
             definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END")
     definitions["writer_fence_lease_no_delete"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END")
     definitions["writer_fence_lease_monotonic"] = ("writer_fence_lease", "CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END")
-    for table in _GUARD_NAMES | _BATCH_NAMES:
+    for table in _GUARD_NAMES | _BATCH_NAMES | _CREDIT_NAMES | _CREDIT_V2_NAMES:
         for action in ("UPDATE", "DELETE"):
             name = f"{table}_no_{action.lower()}"
             definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE {action} ON {table} BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END")
+    for table in _CREDIT_NAMES | _CREDIT_V2_NAMES:
+        name = table + "_no_replace"
+        definitions[name] = (table, f"CREATE TRIGGER {name} BEFORE INSERT ON {table} WHEN EXISTS(SELECT 1 FROM {table} WHERE singleton=NEW.singleton) BEGIN SELECT RAISE(ABORT,'native credit capability cannot replace'); END")
     return MappingProxyType(definitions)
 
 
@@ -99,6 +109,10 @@ def _verify_control_schema(connection, state):
     names = _STANDARD_NAMES if state["guard_format"] == 1 else _BASE_NAMES
     if state.get("batch_format") == 1:
         names |= _BATCH_NAMES
+    if state.get("credit_format") == 1:
+        names |= _CREDIT_NAMES
+    if state.get("credit_format") == 2:
+        names |= _CREDIT_V2_NAMES
     rows = connection.execute("SELECT name,type,tbl_name,sql FROM sqlite_master").fetchall()
     tables = {row[0]: row[3] for row in rows if row[1] == "table" and row[0] in names}
     if tables != {name: _CONTROL_TABLE_SQL[name] for name in names}:
@@ -131,6 +145,17 @@ def _create_control_object(connection, name):
         connection.execute(sql)
 
 
+def _create_credit_object(connection, name):
+    """Offline credit installer: a compiled object name, never arbitrary SQL."""
+    from .credit_native import OBJECT_SQL
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if guard is None or guard.connection is not connection or guard.role != "control" or name not in OBJECT_SQL:
+        raise WriterFenceError("writer_fenced", "unknown or unauthorized native credit schema object")
+    with guard.privileged():
+        connection.execute(OBJECT_SQL[name])
+
+
 def _clock(database):
     clock = database._fence_clock_ns
     if clock is None:
@@ -151,13 +176,19 @@ def _clock(database):
 
 
 def _load(connection):
-    found = {row[0] for row in connection.execute(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'writer_fence_%'")}
+    objects = tuple(connection.execute("SELECT name,type FROM sqlite_master WHERE (type='table' AND name LIKE 'writer_fence_%') OR name LIKE 'credit_native_%' OR name LIKE 'credit_v2_%'"))
+    found = {row[0] for row in objects if row[1] == "table" and row[0].startswith("writer_fence_")}
+    native_objects = {row[0] for row in objects if row[0].startswith("credit_native_")}
+    native_v2_objects = {row[0] for row in objects if row[0].startswith("credit_v2_")}
     if not found:
+        if native_v2_objects:
+            raise WriterFenceError("credit_v2_partial_schema", "internal credit objects have no complete authority capability")
+        if native_objects:
+            raise WriterFenceError("credit_native_partial_schema", "native credit objects have no authority capability")
         return None
-    if _BASE_NAMES <= found and found not in (_BASE_NAMES, _STANDARD_NAMES, _NAMES):
+    if _BASE_NAMES <= found and found not in _INVENTORIES:
         raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata is incomplete; automatic repair is forbidden")
-    if found not in (_BASE_NAMES, _STANDARD_NAMES, _NAMES):
+    if found not in _INVENTORIES:
         raise WriterFenceError("fence_corrupt", "managed authority schema is incomplete")
     try:
         authority = connection.execute("SELECT singleton,format,authority_id,canonical_path FROM writer_fence_authority").fetchall()
@@ -177,6 +208,12 @@ def _load(connection):
                 or owner is not None and (not isinstance(owner, str) or not _NAME.fullmatch(owner))
                 or owner is None and pid is not None or owner is not None and (type(pid) is not int or pid <= 0)):
             raise ValueError("invalid lease")
+        # Preparation has an exact two/three-event history, so checking this
+        # fixed prefix does not scan a normal authority's renewal history.
+        credit_prefix = tuple(tuple(row) for row in connection.execute(
+            "SELECT sequence,kind,authority_id,generation,owner_nonce,owner_pid FROM writer_fence_events WHERE sequence<=3 ORDER BY sequence"))
+        credit_event = any(row[1] == "credit_native_prepared_v1" for row in credit_prefix)
+        credit_v2_event = any(row[1] == "credit_internal_enabled_v2" for row in credit_prefix)
         guard_format = 0
         if _STANDARD_NAMES <= found:
             guard = connection.execute("SELECT singleton,format FROM writer_fence_guard_config").fetchall()
@@ -186,14 +223,49 @@ def _load(connection):
         elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind IN ('enabled_guard_v1','guards_upgraded') LIMIT 1").fetchone() is not None:
             raise WriterFenceError("fence_guard_corrupt", "persistent guard metadata disappeared after activation")
         batch_format = 0
-        if found == _NAMES:
+        if _BATCH_NAMES <= found:
             rows = connection.execute("SELECT singleton,format FROM writer_fence_batch_capability").fetchall()
             if [tuple(row) for row in rows] != [(1, 1)] or guard_format != 1:
                 raise ValueError("invalid batch capability")
             batch_format = 1
         elif connection.execute("SELECT 1 FROM writer_fence_events WHERE kind='batches_enabled' LIMIT 1").fetchone() is not None:
             raise WriterFenceError("fence_guard_corrupt", "persistent batch capability disappeared")
-        return {"authority_id": authority[0][2], "guard_format": guard_format, "batch_format": batch_format,
+        credit = {}
+        if _CREDIT_NAMES <= found:
+            if native_v2_objects:
+                raise WriterFenceError("credit_v2_partial_schema", "prepared format1 cannot contain internal format2 objects")
+            from .credit_native import load_marker
+            rows = connection.execute("SELECT singleton,format,state,descriptor_id,payload FROM writer_fence_credit_capability").fetchall()
+            expected_prefix = [(1, "enabled_guard_v1", authority[0][2], 0, None, None)]
+            if batch_format:
+                expected_prefix.append((2, "batches_enabled", authority[0][2], 0, None, None))
+            prepared_sequence = len(expected_prefix) + 1
+            expected_prefix.append((prepared_sequence, "credit_native_prepared_v1", authority[0][2], 0, None, None))
+            last_event = connection.execute("SELECT COALESCE(MAX(sequence),0) FROM writer_fence_events").fetchone()[0]
+            if (len(rows) != 1 or guard_format != 1 or credit_prefix != tuple(expected_prefix) or last_event != prepared_sequence
+                    or generation != 0 or owner is not None or pid is not None):
+                raise WriterFenceError("credit_native_corrupt", "native credit preparation record/event differs")
+            record = load_marker(connection, rows[0], authority_id=authority[0][2])
+            credit = {"credit_format": 1, "credit_state": "NATIVE_PREPARED", "credit_descriptor_id": record.descriptor_id}
+        elif _CREDIT_V2_NAMES <= found:
+            from .credit_native_v2 import load_marker
+            rows = connection.execute("SELECT singleton,format,state,capability_id,payload FROM writer_fence_credit_v2_capability").fetchall()
+            expected_prefix = ((1, "enabled_guard_v1", authority[0][2], 0, None, None),
+                               (2, "credit_internal_enabled_v2", authority[0][2], 0, None, None))
+            if (len(rows) != 1 or guard_format != 1 or batch_format or native_objects
+                    or credit_prefix[:2] != expected_prefix or credit_event):
+                raise WriterFenceError("credit_v2_corrupt", "internal credit capability has no exact fresh authority prefix")
+            record = load_marker(connection, rows[0], authority_id=authority[0][2])
+            credit = {"credit_format": 2, "credit_state": "SYNTHETIC_INTERNAL",
+                "credit_capability_id": record.capability_id,
+                "credit_descriptor_id": record.static_descriptor.descriptor_id}
+        elif credit_event:
+            raise WriterFenceError("credit_native_corrupt", "irreversible native credit capability disappeared")
+        elif native_objects:
+            raise WriterFenceError("credit_native_partial_schema", "native credit objects have no prepared capability")
+        elif credit_v2_event or native_v2_objects:
+            raise WriterFenceError("credit_v2_partial_schema", "internal credit capability disappeared or is incomplete")
+        return {"authority_id": authority[0][2], "guard_format": guard_format, "batch_format": batch_format, **credit,
                 "canonical_path": authority[0][3], "generation": generation, "owner_nonce": owner,
                 "owner_pid": pid, "boot_id": boot, "expires_ns": expires, "observed_ns": observed}
     except (sqlite3.Error, ValueError, TypeError) as exc:
@@ -210,6 +282,8 @@ def _observed(database, state):
 def _assert_token(database, state, token):
     if state is None:
         raise WriterFenceError("fence_not_managed", "enable managed authority before starting a fenced writer")
+    if state.get("credit_format") == 1:
+        raise WriterFenceError("credit_not_active", "native credit preparation cannot authorize a trading writer")
     now, boot = _observed(database, state)
     if (not isinstance(token, WriterToken) or token.authority_id != state["authority_id"]
             or token.owner_nonce != state["owner_nonce"] or type(token.generation) is not int
@@ -241,7 +315,7 @@ def _data_tables(connection):
 def _guard_actions(table):
     # Producer INSERTs use the independently protected queue schema. Terminal
     # UPDATE/DELETE still require a financial token, including in old binaries.
-    return "UD" if table in _INBOX_TABLES else "IUD"
+    return "UD" if table in _INBOX_TABLES or table == "credit_v2_sources" else "IUD"
 
 
 def _guard_sql(table, action):
@@ -382,6 +456,14 @@ class WriterFence:
             (kind, state["authority_id"], state["owner_nonce"], state["generation"], state["owner_pid"], state["boot_id"], now, state["expires_ns"]))
 
     def acquire(self, owner_nonce: str, ttl_seconds: float) -> WriterToken:
+        return self._acquire(owner_nonce, ttl_seconds, required_credit_format=None)
+
+    def _acquire_internal_credit_v2(self, owner_nonce: str, ttl_seconds: float) -> WriterToken:
+        # This selects an internal API, not permission: _load still verifies the
+        # actual complete persistent capability and current loaded artifact.
+        return self._acquire(owner_nonce, ttl_seconds, required_credit_format=2)
+
+    def _acquire(self, owner_nonce, ttl_seconds, *, required_credit_format):
         if not isinstance(owner_nonce, str) or not _NAME.fullmatch(owner_nonce):
             raise ValueError("owner_nonce must be a bounded ASCII identifier")
         duration = _ttl(ttl_seconds)
@@ -390,6 +472,18 @@ class WriterFence:
             if state is None:
                 raise WriterFenceError("fence_not_managed", "enable the managed authority before acquiring a lease")
             _require_guard_format(state)
+            if state.get("credit_format") == 1:
+                raise WriterFenceError("credit_not_active", "native credit preparation cannot acquire a trading writer")
+            if state.get("credit_format") == 2 and required_credit_format != 2:
+                raise WriterFenceError("credit_v2_internal_owner_required", "internal credit requires its explicit complete native owner path")
+            if required_credit_format == 2 and state.get("credit_format") != 2:
+                raise WriterFenceError("credit_v2_not_active", "this authority has no internal credit v2 capability")
+            if required_credit_format == 2:
+                # Acquisition has no in-flight intent: unlike an admission
+                # load it may run the original complete FK/journal/debt check.
+                from .credit_native import _verify_financial_source
+                scales = dict(connection.execute("SELECT asset,scale FROM ledger_assets"))
+                _verify_financial_source(self.database, connection, scales)
             now, boot = _observed(self.database, state)
             if state["owner_nonce"] is not None and boot == state["boot_id"] and state["expires_ns"] > now:
                 raise WriterFenceError("lease_busy", "another live owner holds the authority lease")
@@ -453,10 +547,21 @@ class _TransactionGuard:
         self.token_error = None
         self.started_at = None
         self._udf_registered = False
+        self._credit_udf_registered = False
+        self._credit_v2_udf_registered = False
+        self.credit_owner_thread = get_ident()
         if self.state is not None:
             _verify_control_schema(connection, self.state)
         if self.state is not None and self.state["guard_format"] == 1:
             _verify_data_guards(connection)
+        if self.state is not None and self.state.get("credit_format") == 1:
+            if connection.execute("PRAGMA foreign_keys").fetchone()[0] != 1:
+                raise WriterFenceError("credit_foreign_keys_required", "native credit requires actual foreign-key enforcement")
+            connection.create_function("uta_credit_operation_v1", 3, self._sql_credit_operation)
+            self._credit_udf_registered = True
+        elif self.state is not None and self.state.get("credit_format") == 2:
+            from .credit_native_v2 import register_guard
+            register_guard(self)
         if role in ("financial", "batch_metadata") and (self.state is not None or database.writer_token is not None):
             try:
                 _require_guard_format(self.state)
@@ -491,6 +596,13 @@ class _TransactionGuard:
             self.denied.__cause__ = exc
             return 0
 
+    def _sql_credit_operation(self, phase, command_id, intent_digest):
+        # No positive format is implemented. This registered native operation
+        # function is a real denial and poisons a caught attempt; never a test
+        # callback which reports a synthetic successful credit authorization.
+        self._deny(WriterFenceError("credit_not_active", "native preparation has no authorized credit operation"))
+        return 0
+
     def _deny(self, error=None):
         if self.denied is None:
             self.denied = error or WriterFenceError("writer_fenced", "transaction role cannot write this protected authority object")
@@ -516,6 +628,12 @@ class _TransactionGuard:
             return self._deny()
         if self.role == "read":
             return self._deny(WriterFenceError("read_only_transaction", "read transactions cannot modify authority state"))
+        if self.state is not None and self.state.get("credit_format") == 1 and self.role != "control":
+            # In this prepared-only format all financial/metadata writers and
+            # their DDL are excluded immediately, including caught DROP/ALTER.
+            return self._deny(WriterFenceError("credit_not_active", "native preparation is not a trading or producer capability"))
+        if self.state is not None and self.state.get("credit_format") == 2 and self.role != "control" and action in _DDL:
+            return self._deny(WriterFenceError("credit_v2_ddl_forbidden", "internal credit runtime schema is immutable"))
         if self.role == "control":
             allowed = first in _NAMES
             if action in _DDL:
@@ -523,6 +641,11 @@ class _TransactionGuard:
             if action in _DML and first in {"sqlite_master", "sqlite_schema"}:
                 allowed = True
             return _OK if allowed else self._deny()
+        if self.state is not None and self.state.get("credit_format") == 2:
+            if self.token_error is not None:
+                return self._deny(self.token_error)
+            from .credit_native_v2 import authorize_write
+            return authorize_write(self, action, first)
         if self.role == "inbox":
             if action == _ACTIONS["CREATE_TABLE"]:
                 # AUTOINCREMENT creates SQLite's reserved sequence table;
@@ -577,13 +700,19 @@ class _TransactionGuard:
         state = _load(self.connection)
         if state is not None:
             _verify_control_schema(self.connection, state)
+        if self.state is not None and self.state.get("credit_format") == 2:
+            from .credit_native_v2 import verify_before_commit
+            verify_before_commit(self)
         if self.written and self.state is not None:
             with self.privileged():
                 now, boot = _assert_token(self.database, state, self.database.writer_token)
                 if self.started_at is not None and boot == self.started_at[1] and now < self.started_at[0]:
                     raise WriterFenceError("fence_clock_regressed", "lease clock regressed during a financial transaction")
-                new_tables = _verify_data_guards(self.connection, allow_new=True)
-                _install_table_guards(self.connection, new_tables)
+                if self.state.get("credit_format") == 2:
+                    _verify_data_guards(self.connection)
+                else:
+                    new_tables = _verify_data_guards(self.connection, allow_new=True)
+                    _install_table_guards(self.connection, new_tables)
                 _verify_data_guards(self.connection)
                 self.connection.execute("UPDATE writer_fence_lease SET observed_ns=? WHERE singleton=1", (now,))
         elif self.state is not None and self.state["guard_format"] == 1:
@@ -596,6 +725,11 @@ class _TransactionGuard:
             self.connection.set_authorizer(None)
         if self._udf_registered:
             self.connection.create_function("uta_writer_fence_v1", 0, None)
+        if self._credit_udf_registered:
+            self.connection.create_function("uta_credit_operation_v1", 3, None)
+        if self._credit_v2_udf_registered:
+            from .credit_native_v2 import close_guard
+            close_guard(self)
 
 
 def _assert_financial_joinable(database, connection):
@@ -612,6 +746,26 @@ def _assert_financial_joinable(database, connection):
             and guard.role == "financial"):
         return
     raise WriterFenceError("unguarded_connection", "borrowing requires the existing authority's financial transaction")
+
+
+def _assert_existing_read_joinable(database, connection):
+    """Existing-only constructors may join a real read/control snapshot.
+
+    This grants no role or writer authority. A supplied token is checked in
+    that actual snapshot; every later financial transaction still fences it.
+    """
+    with _REGISTRY_LOCK:
+        guard = _REGISTRY.get(id(connection))
+    if (guard is None or guard.connection is not connection or guard.database is not database
+            or guard.role not in ("read", "control") or guard.credit_owner_thread != get_ident()
+            or not connection.in_transaction):
+        raise WriterFenceError("unguarded_connection", "existing-only construction requires its exact guarded read snapshot")
+    if guard.denied is not None:
+        raise guard.denied
+    if database.writer_token is not None:
+        state = _load(connection)
+        _require_guard_format(state)
+        _assert_token(database, state, database.writer_token)
 
 
 def _assert_joinable(database, connection):

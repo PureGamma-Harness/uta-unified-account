@@ -1,0 +1,1223 @@
+{
+  "source_commit": "91e4ae40b5e9b884c54026406299df5000c9c100",
+  "source_tree": "aee09a50357f3c46d50910f03f722e3fcfc6af05",
+  "pr_merge_commit": "d7f23cac215ede34a4aa8e20014ecfc418912830",
+  "captured_at_utc": "2026-11-17T14:41:05.093563+00:00",
+  "qualification": "NO_GO",
+  "production_approved": false,
+  "test_reruns": false,
+  "ci_unit_artifacts": 8,
+  "ci_package_artifacts": 7,
+  "ci_wheel_artifacts": 7,
+  "missing_eighth_package": "push3.13 package/wheel steps skipped after unit FAIL; no provider artifact exists",
+  "local_status": "COMPLETE_ORIGINAL_MATRIX",
+  "artifacts": [
+    {
+      "id": 14339180986,
+      "run_id": 44104161669,
+      "name": "uta-unit-validation-python-3.12",
+      "provider_bytes": 62185,
+      "provider_sha256": "b51e48c93214e038f1d354b9d9d40b5c2308adc73daa49fc91e86cc55afb8224",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "88682ba4cda630dd8c12293e4a1fba156d16adf21e9aa036c284fda765d7db32"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 294336,
+          "sha256": "c2a6a86b733683bc21038a6a7e866ca3895fc049a6ed0f69a595a3e8bd69453c"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-unit-validation-python-3.12"
+    },
+    {
+      "id": 14339100027,
+      "run_id": 44104161669,
+      "name": "uta-package-validation-python-3.10",
+      "provider_bytes": 36236,
+      "provider_sha256": "0d1589afd96a2594ebeea20d7fffe02fdece1a032db2515085bb37f3d3488934",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "a811de18c1f3ed85a2d9f91128d1ec9b617dd06c87f886de642f6b440bf98765"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "78e8e693c9eb05e8a821b544f0799a53c0f80397437335258be7403222bf994a"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1049,
+          "sha256": "a1650b0fbad168bc4e1df2a1bac21385ecbc4d83d864fca813d31cfe633f3252"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "0c728c8787eb2dbef0c2f29422ae25b79b02326ba83b21a4d917fef16e3efdf0"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "6ce61d3c9b0ae0bb99fe8689b9afb2cf3651eca057283c653bff60349643a1b2"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-package-validation-python-3.10"
+    },
+    {
+      "id": 14338910380,
+      "run_id": 44104161669,
+      "name": "uta-unit-validation-python-3.11",
+      "provider_bytes": 62321,
+      "provider_sha256": "dfb2f830e9a565dd5ea5865f682eb4d74b7fcd6ec8c53bd919fb3d485339e6ab",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 295563,
+          "sha256": "cda6cd758108402de8c0a37bce35240bb0fb22b91ba01cc43ba617e5609d84d3"
+        },
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "a6c5885085ce830a1ff3c320e7652380f0a627eb2965c731e737b033b91c82cd"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-unit-validation-python-3.11"
+    },
+    {
+      "id": 14338665942,
+      "run_id": 44104161669,
+      "name": "uta-wheel-python-3.12",
+      "provider_bytes": 34260643,
+      "provider_sha256": "9b3e9c93fb221eca1919ec5a3a24f9ef211dc987f26aa4fec307025394c09b21",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279432,
+          "sha256": "dc9f25b1f59b7b9dfae4807fc0f2a7ec67eadef47d38f00c4e1b164c616ff603"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34067415,
+          "sha256": "d3e03c5d0512ad3a69c68465651062eef44d0b1796c24d0ea988cabbae88ca8f"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14338570971,
+      "run_id": 44104161669,
+      "name": "uta-wheel-python-3.10",
+      "provider_bytes": 34258651,
+      "provider_sha256": "e85bb98d60e13245a1bff6a1cacf11b0f4f597f2cd7ba225793f91145e07fd86",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279433,
+          "sha256": "9831c3470e80cd44cc7af68a35131a6cdee206b2688d60228b7c0d1379b33f00"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34059980,
+          "sha256": "e80d0ae6b4b65b7cbf0d4b66e8a0a39a84ae81be02355f91d9d906f00f90a4f2"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14337891661,
+      "run_id": 44104161669,
+      "name": "uta-package-validation-python-3.12",
+      "provider_bytes": 36270,
+      "provider_sha256": "b4e3a7ddcc11b9f33114ec9d7861af1081fa6dbb4b6fcaae62aeeeb24c51c657",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "656477b8fe6d6ef3e7a54fe927a694f328818d064a715520bd1a3c785756165a"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "1907e888527d68c4b0fb43f6967495d32d3ccc3c030abff8b1f21cfa6ba71bf2"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1603,
+          "sha256": "c5389ea06e0e52da6b231d3864f433cd25790c684164dcb97468da0d18cddd75"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "d1624dccc86443e3db3af12c73f409881425c1448d3d59f6c44212a772edb0c9"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "339be74f659d585af83ce6fc3045877a67a26a9bb790ea4cdf34328274945828"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-package-validation-python-3.12"
+    },
+    {
+      "id": 14337702437,
+      "run_id": 44104161669,
+      "name": "uta-unit-validation-python-3.10",
+      "provider_bytes": 54295,
+      "provider_sha256": "f96c5a64f8f7736a9a24db75b2d866f77c43954f3d010b789db72d3693be48ba",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "f8b8c496eda7e6033d8ff81bb37dddaae0f061b31522432ef321301c7c1a4508"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 198987,
+          "sha256": "7a62a9ecc6441af2a5e95601488cb3d1b91c46de1febe95f270c54ea1fb0cdc2"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-unit-validation-python-3.10"
+    },
+    {
+      "id": 14337532081,
+      "run_id": 44104161669,
+      "name": "uta-package-validation-python-3.11",
+      "provider_bytes": 36274,
+      "provider_sha256": "df51c687cdfc319038aab421617d8f3f07978db557e73c4b779dfc21ec69da60",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "a4c34193897d054be73b8e7dffb0b3f1485617e82b1ba36a0a9c6ee18802fad9"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "1237ffbd03a4dbdf567b2aa4ad24495b7fbcf5bf5c4b58e3e65c77f6a3b90276"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1603,
+          "sha256": "5a9664bd8f9dfbb4af01109b23b94769ca92dbc90a0333eacaf20cb3f44acfe8"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "fc7f83f53a71351b47e9f22390c2d4ea9083b7ffd0a33adeaeab3ceb3ea5564c"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "df570f46cd045e4fcf32ccd4cdca4f1d4962def5f2f0a6be8b80958d6298f1a7"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-package-validation-python-3.11"
+    },
+    {
+      "id": 14337237880,
+      "run_id": 44104161669,
+      "name": "uta-wheel-python-3.11",
+      "provider_bytes": 34253763,
+      "provider_sha256": "c129d879f27b2c250f77948017d2fc6395d533a7276cb06be4152a06170154f2",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279433,
+          "sha256": "9aab96b95896f83e0c0c0b25fbd35e535edeb6de00d53b4fe6dceb714e3e3517"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34062425,
+          "sha256": "a4c5b251f25968c29d818ecdf3729c0e25e8d15c7640b69fe580b94ff899de7c"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14337038689,
+      "run_id": 44104161669,
+      "name": "uta-unit-validation-python-3.13",
+      "provider_bytes": 62774,
+      "provider_sha256": "fc322033545aa56890c5ee760a22d7c3879f8ebd48ba6c055896f378b2291b40",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "summary.json",
+          "bytes": 57138,
+          "sha256": "89c1490c856720f7f846a0a9a376382fde6bdb6542e69297532cb8988a4d3d0d"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 155,
+          "sha256": "32276bd42124300fb5a51f91a715214f6ea66e1df35ed7d938a5580b0425c4ec"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 297715,
+          "sha256": "090f034c9abb12e8d5eb0001d00dc36eddd6a8c91a5f9b1cec91089625e210ba"
+        }
+      ],
+      "captured_directory": "ci/44104161669/uta-unit-validation-python-3.13"
+    },
+    {
+      "id": 14339020229,
+      "run_id": 44104172236,
+      "name": "uta-package-validation-python-3.12",
+      "provider_bytes": 36272,
+      "provider_sha256": "4e739231beb5288e8d0f09d9ab9d986f459c80e933386e087c4ee9c0dd26f43a",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "cb1e4605b9992c6c112f912db4e9854aca54cf0dbf6bf9f0abe77a4b0f8b4107"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1603,
+          "sha256": "95400748035e75340a16437e74a24394c5337b156a0ff87cfb9835b3806df12f"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "929fbb6699d6bcea68416e312acc9fbdc629052cf65ad22ef118fabf60ffd545"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "25950d7b78bcda601315980ae9ef55a7a7ead140b63d1f88d7744fa9579862f0"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "6c14d44ad7fed06a0cec6afad7b2f2cc935e0152947bb677d56890a73938d6e0"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-package-validation-python-3.12"
+    },
+    {
+      "id": 14338830257,
+      "run_id": 44104172236,
+      "name": "uta-unit-validation-python-3.13",
+      "provider_bytes": 63006,
+      "provider_sha256": "26d88b25e0c2ddc7ffbb18c622127a5a848c6fd20b3d41a97e9d6a7c2a9734a4",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 300338,
+          "sha256": "ce2ff3c8644479bcaa786d40dd0720141dd7a8bf258a4871a591880229e3fd42"
+        },
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "e28e83a0f64b88c8ff8058a22eb72a83b43bbe7c9df1dd0d3ee608a51de7859a"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-unit-validation-python-3.13"
+    },
+    {
+      "id": 14338745461,
+      "run_id": 44104172236,
+      "name": "uta-unit-validation-python-3.10",
+      "provider_bytes": 54254,
+      "provider_sha256": "f111bd1eea15a222013bdbaf041de5ee866a74ba8d04117bacf66b4079372603",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "ff2f75651923a859e25a604cbf0c806d2accd982be6e5b30915d02d5c002be39"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 197569,
+          "sha256": "2e3eb5e45dc95179470428842e6a2f77c843e605560476c4ef04b2b28c431341"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-unit-validation-python-3.10"
+    },
+    {
+      "id": 14338675814,
+      "run_id": 44104172236,
+      "name": "uta-wheel-python-3.12",
+      "provider_bytes": 34243076,
+      "provider_sha256": "e56c0b6b054504f5bde4de2e9abf24b11503a36088ab137e5b64bffb5abe7ba3",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279432,
+          "sha256": "a87c2debea240ff44f193b26d126ce914b2821bd16952b51305dc4659a0329c3"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34066870,
+          "sha256": "1f65ce3e76cc2ca71bac1a0d9ac54d8eb694f31a3715c16d83734bea657f638d"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14338545580,
+      "run_id": 44104172236,
+      "name": "uta-package-validation-python-3.13",
+      "provider_bytes": 36275,
+      "provider_sha256": "a0e84e5c1f5125934cdd8c9e579755e3253d49f60944c2c67106512a5ad4e304",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "14fe75f6a1cc2dc6161d610883999b40b260efee03ac5c6d5282b78cdca53321"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1603,
+          "sha256": "e73acd5d7a02649dc1baacbbccd6f4929d244558f752fb870703df033b7af8d1"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "653a1e5e96ce3bae619d865e518ece190d7378e0f5d333250acafc8e60b78c32"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "29ced9db5040dafd5569c75f2c147ec9a2ef9700e4fa8fe8227361f7680f7ef9"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 458,
+          "sha256": "a3757464515aeb43d3bd31b3ed5a291d19b9f6c79c0680a3ec7790f986cd21b8"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "c90ecaaabcf6519ba8a59e30490b1ceafcb8c8c0072587149d11be774a4d7d93"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-package-validation-python-3.13"
+    },
+    {
+      "id": 14338206001,
+      "run_id": 44104172236,
+      "name": "uta-wheel-python-3.13",
+      "provider_bytes": 34267509,
+      "provider_sha256": "0b12f40cec77d722b8fa0e19fedff5d5dd7d29d278e0198a5407cb4284f738e1",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279432,
+          "sha256": "5274849219a91db43924606542150f4b18f147febab4334c7956427eab682769"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34066736,
+          "sha256": "7ca41045352546f58d9f909ff372ff172b6d7bfbb380a697980c95a0f434da3c"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14338031301,
+      "run_id": 44104172236,
+      "name": "uta-unit-validation-python-3.11",
+      "provider_bytes": 62496,
+      "provider_sha256": "58c225d7adb67098d4cb120f780f2d988f0403f9fa696acb566e5cbfabdc73ac",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "summary.json",
+          "bytes": 57131,
+          "sha256": "eeaf076220549f886a0077bae5ca7459ee85724c713a937ec11a0ba621e57cc7"
+        },
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 298233,
+          "sha256": "3b3a2a0ca5f345ed7edab8a88dff7e62ca12a43cdecd2bb42b56670d45c56676"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-unit-validation-python-3.11"
+    },
+    {
+      "id": 14337616801,
+      "run_id": 44104172236,
+      "name": "uta-unit-validation-python-3.12",
+      "provider_bytes": 62776,
+      "provider_sha256": "617d55d39f8bbcd544d93a84fdd0516716c337879ad810fd2c29ff958d49947f",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "worker-result.json",
+          "bytes": 154,
+          "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+        },
+        {
+          "name": "unittest.txt",
+          "bytes": 297610,
+          "sha256": "5b553a91bee7abdce1617ef6cdd74b284fd779bf52b58607c8f5fd6277a25cf9"
+        },
+        {
+          "name": "summary.json",
+          "bytes": 57136,
+          "sha256": "afb9564d5d3f1af891509d06f05e135d73690758abb53ca7f8f62370eb027fcb"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-unit-validation-python-3.12"
+    },
+    {
+      "id": 14337607199,
+      "run_id": 44104172236,
+      "name": "uta-wheel-python-3.11",
+      "provider_bytes": 34256753,
+      "provider_sha256": "41a5e19aa756ae1a769436e32999b53507219f88a39262d20ae58ab587ed0f7e",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279433,
+          "sha256": "e88b1f8332f51cf8c37da224bf8a591b9d2ce20f2d52029d92ef0f4ab3a9f376"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34059819,
+          "sha256": "ff43cd82b93e8d4816e69d3d55271477aee86c63d1589d1ea263082ebf2b0c89"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14337208571,
+      "run_id": 44104172236,
+      "name": "uta-wheel-python-3.10",
+      "provider_bytes": 34254731,
+      "provider_sha256": "4e68c4cc99bd0206ddb3a57dacdd1a2ab2072d1963ae6f41c042a5d12132c87d",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+          "bytes": 279433,
+          "sha256": "f52fc513a3082853b7ef71995d55698c6dcccf3022a72c8ae081f072aa29639f"
+        },
+        {
+          "name": "uta_reference_exchange-0.5.0a1.tar.gz",
+          "bytes": 34059350,
+          "sha256": "3f5f27bd8e5c11b6ea488e6600183972661e31bfe41d6fbcb84c31d2891a4898"
+        }
+      ],
+      "captured_directory": null
+    },
+    {
+      "id": 14337203212,
+      "run_id": 44104172236,
+      "name": "uta-package-validation-python-3.11",
+      "provider_bytes": 36269,
+      "provider_sha256": "7acbf3ce5e38cd07c4a12d9a3b3b3c90bae1ff951920a17cf57fa35e3593078c",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1603,
+          "sha256": "77c2c3d894088de7e539cb6d9816ee7c3b80c60da0aea3cb62b6561b681d423c"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "23a0692f41b1850e85cf5865ccc46a06d0501d0d5d3df58829a87becdfbaa893"
+        },
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "bb6f3612766bfec03e0adb630e6126b0051def925fb2e14d7387b3c9382d2654"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "c48596d790bf462f4f34459b71841938c73a23bd5d8136be7d8df3c235acd9a7"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "7e2106287df755640714492da80a9a7c43cdbd65736f1aac7fb5ab4df58f40d2"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-package-validation-python-3.11"
+    },
+    {
+      "id": 14336429631,
+      "run_id": 44104172236,
+      "name": "uta-package-validation-python-3.10",
+      "provider_bytes": 36233,
+      "provider_sha256": "33716e38a8b237b39afe593687d2b7679e9d796bbeecb68623d02d5c8c8942a0",
+      "crc_passed": true,
+      "members": [
+        {
+          "name": "uta-package-artifact-manifest.json",
+          "bytes": 298800,
+          "sha256": "ac1ba730c8d75663d09f5d182a0edf009dc64791c73bd023d4c8c057e3308987"
+        },
+        {
+          "name": "uta-installed-validation/installed-cli-tests.txt",
+          "bytes": 1049,
+          "sha256": "796f2bccdf8c0508c5cef42f42af6f734c6d0403fd83e390441215128bdf8026"
+        },
+        {
+          "name": "uta-installed-validation/installed-report.json",
+          "bytes": 5671,
+          "sha256": "5f2946dc1c8fb6b930933d0841e41fe0fbe3527f87b3aa3910418e89196774d1"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-acceptance.stdout.txt",
+          "bytes": 1780,
+          "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-demo.stdout.txt",
+          "bytes": 1136,
+          "sha256": "2dacf88ac471624a6eb6423475b81d43459b2806136f814cad9a81f4cef42978"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable---help.stdout.txt",
+          "bytes": 477,
+          "sha256": "ca0ba2eebd6eb553c37543ebf7fd277575647b0c58c2108f9639132c7cc17ec5"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-init.stdout.txt",
+          "bytes": 684,
+          "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-inspect.stdout.txt",
+          "bytes": 616,
+          "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-durable-status.stdout.txt",
+          "bytes": 739,
+          "sha256": "f80ea73502add123d788040dafef31ed7d9d1bf6ddf4b6aa80ca75b7de64c9e9"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "uta-installed-validation/uta-ops---help.stdout.txt",
+          "bytes": 398,
+          "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+        },
+        {
+          "name": "uta-installed-validation/uta-scenario.stdout.txt",
+          "bytes": 6794,
+          "sha256": "5e5710c47fb4dad746a0f337286560ae839d85548b6e4fce052a711adeee2f0d"
+        }
+      ],
+      "captured_directory": "ci/44104172236/uta-package-validation-python-3.10"
+    }
+  ],
+  "local_captured_at_utc": "2026-11-17T14:47:24.155357+00:00",
+  "local_runs": [
+    {
+      "label": "python312",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 284.1081427419995
+    },
+    {
+      "label": "python310",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 291.5560251440038
+    },
+    {
+      "label": "python313-sqlite346",
+      "tests_run": 1512,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": true,
+      "worker_exit_code": 0,
+      "duration_seconds": 293.6943147150014
+    }
+  ],
+  "local_files": [
+    {
+      "path": "local/execution-driver.py",
+      "bytes": 2634,
+      "sha256": "8b40d75bb5f1569ebdc4c098bc6d5a01b5b3160a9b05a4bc34c93e6c8da93bd8"
+    },
+    {
+      "path": "local/matrix-progress.json",
+      "bytes": 1635,
+      "sha256": "d2eea60d6eaccd520f1f5209fb1dc7a801b3a4e3329898c6d8a016a1fa362e03"
+    },
+    {
+      "path": "local/matrix-summary.json",
+      "bytes": 2028,
+      "sha256": "2a324662e4813398b37c74af74aa6fb97e61ec4aed6f42ffb85f60134cf3e6d1"
+    },
+    {
+      "path": "local/python310/summary.json",
+      "bytes": 57146,
+      "sha256": "adc9d235a02d3e7c48793879f721855319db22a69750025ddf55964e3362bfd2"
+    },
+    {
+      "path": "local/python310/unittest.txt",
+      "bytes": 198287,
+      "sha256": "5ba668cf28d66a986cc6dd9280126730084cbf22b5b53d2d3f3d9d9d5cf8a27f"
+    },
+    {
+      "path": "local/python310/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python310-launcher.txt",
+      "bytes": 1024,
+      "sha256": "9b26476f6cd87253f2660fe4b6d0c5704f4f7054f22845cbb7b917ef3c3fd780"
+    },
+    {
+      "path": "local/python312/summary.json",
+      "bytes": 57152,
+      "sha256": "b0d1f74912f10faf220e72066230522e404a63e6babb2704868c5c25eb2de735"
+    },
+    {
+      "path": "local/python312/unittest.txt",
+      "bytes": 299145,
+      "sha256": "0adf4ab2c4641fa11c509d455aa18db6d61d9c2dedf6b036c8b449d99e55a473"
+    },
+    {
+      "path": "local/python312/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python312-launcher.txt",
+      "bytes": 1030,
+      "sha256": "5c4d266eb01f2dc70405a7436819dd679aef752f1bd5770d7d32fef37e5a1207"
+    },
+    {
+      "path": "local/python313-sqlite346/summary.json",
+      "bytes": 57105,
+      "sha256": "8ef1c545eaa94901d6710ea7018378e7c088a5beb30d6139b97311ff12c8b2ae"
+    },
+    {
+      "path": "local/python313-sqlite346/unittest.txt",
+      "bytes": 297742,
+      "sha256": "87430bb01fa158e4b6e9153bc5c3345f8d02c1822f152ffb23e2392328f9cd74"
+    },
+    {
+      "path": "local/python313-sqlite346/worker-result.json",
+      "bytes": 154,
+      "sha256": "5f2b29fada535d6739493b6d8b9da01b008ae846ea501d3a04c7b0958d74a431"
+    },
+    {
+      "path": "local/python313-sqlite346-launcher.txt",
+      "bytes": 983,
+      "sha256": "c5b7fc55c8efe048003f67723ca42d932a7c333093db5a1c66d86f0ee32002a5"
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "auth_fence_nonce_tables_read": false,
+  "collector_sha256": "ebe52ce1da73d7ef2a2f0765c7abf5abf80749a57a16a738ae5d437ab748809d",
+  "finished_at": "2026-11-17T14:50:02.419633+00:00",
+  "logical_changes": 0,
+  "native_execution_or_production_approval": false,
+  "scope": "original synthetic SQL rows from fixed allowlist only",
+  "started_at": "2026-11-17T14:50:02.413488+00:00",
+  "tables": {
+    "credit_account_limits": [
+      {
+        "account_id": "alice",
+        "asset": "BTC",
+        "units": "50000000"
+      }
+    ],
+    "credit_asset_limits": [
+      {
+        "asset": "BTC",
+        "units": "50000000"
+      }
+    ],
+    "ledger_assets": [
+      {
+        "asset": "BTC",
+        "scale": 8
+      },
+      {
+        "asset": "USD",
+        "scale": 8
+      }
+    ],
+    "ledger_balances": [
+      {
+        "account": "customer:alice",
+        "asset": "BTC",
+        "units": "40000000"
+      },
+      {
+        "account": "customer:alice",
+        "asset": "USD",
+        "units": "10000000000"
+      },
+      {
+        "account": "liability:principal:alice",
+        "asset": "BTC",
+        "units": "-40000000"
+      },
+      {
+        "account": "system:credit-capital",
+        "asset": "BTC",
+        "units": "-100000000"
+      },
+      {
+        "account": "system:credit-pool",
+        "asset": "BTC",
+        "units": "60000000"
+      },
+      {
+        "account": "system:credit-principal-receivable",
+        "asset": "BTC",
+        "units": "40000000"
+      },
+      {
+        "account": "system:custody",
+        "asset": "USD",
+        "units": "-10000000000"
+      }
+    ],
+    "ledger_events": [
+      {
+        "event_hash": "8943021654eaf7a66b666ddaa33cd00f7389b3e86a652db9883786b48aba43eb",
+        "event_id": "deposit:3c1ff3c91ac820c69ac5447af0f1026e519d3dbbd7e9566631036dc024a08879",
+        "fingerprint": "f0a3e9406c2072155c0b109868ddbcc4e43aa3e18fa20502faa310253bd85842",
+        "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "sealed": 1,
+        "sequence": 1
+      },
+      {
+        "event_hash": "b3bc2c15ebedff392543756b6a6a3679b6ffb1f9b1a06268d04e21b8893802d2",
+        "event_id": "credit:b89db5eec831bce642f719ad88287e65921f3da42e847c7ffc570b587d12f5e0",
+        "fingerprint": "093a386c0b140784be5b02693aaacbec9d125a6ab574d0242d6de09e21b93234",
+        "previous_hash": "8943021654eaf7a66b666ddaa33cd00f7389b3e86a652db9883786b48aba43eb",
+        "sealed": 1,
+        "sequence": 2
+      },
+      {
+        "event_hash": "f82b763a31c39b424b39a6912b6e986d7765259b513e64065baab68ef843759e",
+        "event_id": "credit:8bd0d8378cab978f1ffeb0bc589352b85138f08e8298f76b12fc52fd203099bb",
+        "fingerprint": "703e40898330bbef35a42113e943f30bacdc378f248c2e276ddb404f9ef3f7f1",
+        "previous_hash": "b3bc2c15ebedff392543756b6a6a3679b6ffb1f9b1a06268d04e21b8893802d2",
+        "sealed": 1,
+        "sequence": 3
+      }
+    ],
+    "ledger_postings": [
+      {
+        "account": "customer:alice",
+        "asset": "USD",
+        "ordinal": 0,
+        "sequence": 1,
+        "units": "10000000000"
+      },
+      {
+        "account": "system:custody",
+        "asset": "USD",
+        "ordinal": 1,
+        "sequence": 1,
+        "units": "-10000000000"
+      },
+      {
+        "account": "system:credit-capital",
+        "asset": "BTC",
+        "ordinal": 0,
+        "sequence": 2,
+        "units": "-100000000"
+      },
+      {
+        "account": "system:credit-pool",
+        "asset": "BTC",
+        "ordinal": 1,
+        "sequence": 2,
+        "units": "100000000"
+      },
+      {
+        "account": "customer:alice",
+        "asset": "BTC",
+        "ordinal": 0,
+        "sequence": 3,
+        "units": "40000000"
+      },
+      {
+        "account": "liability:principal:alice",
+        "asset": "BTC",
+        "ordinal": 1,
+        "sequence": 3,
+        "units": "-40000000"
+      },
+      {
+        "account": "system:credit-pool",
+        "asset": "BTC",
+        "ordinal": 2,
+        "sequence": 3,
+        "units": "-40000000"
+      },
+      {
+        "account": "system:credit-principal-receivable",
+        "asset": "BTC",
+        "ordinal": 3,
+        "sequence": 3,
+        "units": "40000000"
+      }
+    ],
+    "uta_accounts": [
+      {
+        "account_id": "alice",
+        "version": 2
+      }
+    ],
+    "uta_liabilities": [
+      {
+        "account_id": "alice",
+        "asset": "BTC",
+        "interest": "0",
+        "principal": "0.4"
+      }
+    ],
+    "uta_positions": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "scope": "test-only observer repair after first real sqlite handle-too-early failure; real connection constructor/SQL/profile restoration, no credit runtime change",
+  "source_sha256": {
+    "tests/sqlite_connection_observer.py": "ad60570fa0f2e46b1b91d970eb3794c31cdfc534fa10e8153ea348ff36b8376b",
+    "tests/test_sqlite_connection_observer.py": "b277fe96482bd2b5bbfa0ae980d0b7009da22a549a18a9578484faac9809aa7f",
+    "tests/test_credit_v2_runtime_chain.py": "edce0997b5866e47ed4a3bfa8de24d5230579dc4e517928f526abb4e747a4c7a"
+  },
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_sqlite_connection_observer",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:53:10.881016+00:00",
+      "end": "2026-11-17T14:53:10.956837+00:00",
+      "elapsed_seconds": 0.07581849800044438,
+      "exit_code": 0,
+      "raw_sha256": "c03daaae770e423bcf856e08e2f5560f4f06dbe3126f097b6df65364a138b98b"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_sqlite_connection_observer",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:53:10.956905+00:00",
+      "end": "2026-11-17T14:53:11.001415+00:00",
+      "elapsed_seconds": 0.04452180199587019,
+      "exit_code": 0,
+      "raw_sha256": "7ad9d8328214c21b438e7091327b69d5c5286270492f6da30c90917501125c4e"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_sqlite_connection_observer",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:53:11.001452+00:00",
+      "end": "2026-11-17T14:53:11.050495+00:00",
+      "elapsed_seconds": 0.049057107004045974,
+      "exit_code": 0,
+      "raw_sha256": "c03daaae770e423bcf856e08e2f5560f4f06dbe3126f097b6df65364a138b98b"
+    }
+  ]
+}

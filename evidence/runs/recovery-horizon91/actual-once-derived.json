@@ -1,0 +1,61 @@
+{
+  "actual_receipts": {
+    "0": {
+      "command_id": "market:3:0:db872d742a82ccc8",
+      "sequence": 4,
+      "state": "SUCCEEDED"
+    },
+    "1": {
+      "command_id": "market:3:1:db872d742a82ccc8",
+      "sequence": 3,
+      "state": "SUCCEEDED"
+    }
+  },
+  "all_observed_checks": true,
+  "classification": "NO_REPRO; original single testcase PASS",
+  "event_count": 774,
+  "historical_CI_failure_root_cause": "UNPROVEN",
+  "observed_checks": {
+    "all_own_sid_and_pgid_empty": true,
+    "all_tracked_own_children_pidfd_exited": true,
+    "cpu2": true,
+    "event_hash": true,
+    "every_original_status_has_return_or_error": true,
+    "exact_approved_driver": true,
+    "exact_bound_old_pid_kernel_exit": true,
+    "fifteen_second_publication_lifecycle": true,
+    "five_second_recovery_milestones": true,
+    "inner_budget": true,
+    "monitor_and_two_workers_observed": true,
+    "native_SH_and_real_zero_DML_probe": true,
+    "no_forced_or_fixture_cleanup_error": true,
+    "no_logger_or_sampling_unknown": true,
+    "no_original_status_error_this_run": true,
+    "no_thread_exception_printed": true,
+    "one_original_case_passed_no_historical_reproduction": true,
+    "original_financial_assertions_reached_and_conserved": true,
+    "original_test_hash": true,
+    "original_two_actual_CIDs_SUCCEEDED": true,
+    "original_unexpired_control_and_entry": true,
+    "private_output_modes": true,
+    "publisher_original_errors_empty": true,
+    "source266_unchanged": true,
+    "three_clocks_all_events": true,
+    "three_spawn_calls_balanced": true,
+    "whole_external_budget": true
+  },
+  "observer_join_positive_evidence": "UNKNOWN: source calls both join(1), but did not record post-join is_alive; worker and full SID are now gone",
+  "production_approved": false,
+  "runtime_mismatch": "CI Python3.13.18 versus local3.13.5; both SQLite3.46.1",
+  "source91_release_qualified": false,
+  "strict_component_gate": "NO_GO for missing explicit observer-thread post-join observation; no rerun",
+  "strict_observation_component_complete": false,
+  "timings": {
+    "capture_to_old_exit_seconds": 4.753877499002556,
+    "capture_to_publication_finish_seconds": 5.651935522000713,
+    "publication_start_to_EX_seconds": 0.2904528549988754,
+    "publication_start_to_finish_seconds": 1.182625740999356,
+    "publication_start_to_new_generation_seconds": 0.8578821619958035,
+    "publication_start_to_old_exit_seconds": 0.28456771800119895
+  }
+}

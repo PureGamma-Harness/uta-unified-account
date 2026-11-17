@@ -1,0 +1,474 @@
+{
+  "observed": {
+    "error_type": "LedgerError",
+    "message": "materialized balances differ from journal replay"
+  },
+  "main": {
+    "catalogue": [
+      [
+        "index",
+        "sqlite_autoindex_ledger_assets_1",
+        "ledger_assets",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_balances_1",
+        "ledger_balances",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_events_1",
+        "ledger_events",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_postings_1",
+        "ledger_postings",
+        null
+      ],
+      [
+        "table",
+        "ledger_assets",
+        "ledger_assets",
+        "CREATE TABLE ledger_assets (\n        asset TEXT PRIMARY KEY, scale INTEGER NOT NULL CHECK (scale BETWEEN 0 AND 18))"
+      ],
+      [
+        "table",
+        "ledger_balances",
+        "ledger_balances",
+        "CREATE TABLE ledger_balances (\n        account TEXT NOT NULL, asset TEXT NOT NULL REFERENCES ledger_assets(asset),\n        units TEXT NOT NULL, PRIMARY KEY (account, asset))"
+      ],
+      [
+        "table",
+        "ledger_events",
+        "ledger_events",
+        "CREATE TABLE ledger_events (\n        sequence INTEGER PRIMARY KEY, event_id TEXT NOT NULL UNIQUE,\n        fingerprint TEXT NOT NULL, previous_hash TEXT NOT NULL,\n        event_hash TEXT NOT NULL, sealed INTEGER NOT NULL CHECK (sealed IN (0, 1)))"
+      ],
+      [
+        "table",
+        "ledger_postings",
+        "ledger_postings",
+        "CREATE TABLE ledger_postings (\n        sequence INTEGER NOT NULL REFERENCES ledger_events(sequence),\n        ordinal INTEGER NOT NULL CHECK (ordinal >= 0), account TEXT NOT NULL,\n        asset TEXT NOT NULL REFERENCES ledger_assets(asset), units TEXT NOT NULL,\n        PRIMARY KEY (sequence, ordinal))"
+      ],
+      [
+        "table",
+        "ledger_schema",
+        "ledger_schema",
+        "CREATE TABLE ledger_schema (\n        singleton INTEGER PRIMARY KEY CHECK (singleton = 1),\n        version INTEGER NOT NULL)"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_delete",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_delete\n        BEFORE DELETE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_update",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_update\n        BEFORE UPDATE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_no_delete",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_no_delete\n        BEFORE DELETE ON ledger_events BEGIN SELECT RAISE(ABORT, 'journal is append-only'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_seal_only",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_seal_only\n        BEFORE UPDATE ON ledger_events\n        WHEN OLD.sealed != 0 OR NEW.sealed != 1 OR NEW.sequence != OLD.sequence\n          OR NEW.event_id != OLD.event_id OR NEW.fingerprint != OLD.fingerprint\n          OR NEW.previous_hash != OLD.previous_hash OR NEW.event_hash != OLD.event_hash\n        BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_delete",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_delete\n        BEFORE DELETE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_update",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_update\n        BEFORE UPDATE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_unsealed_only",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_unsealed_only\n        BEFORE INSERT ON ledger_postings\n        WHEN (SELECT sealed FROM ledger_events WHERE sequence = NEW.sequence) != 0\n        BEGIN SELECT RAISE(ABORT, 'journal is sealed'); END"
+      ]
+    ],
+    "rows": {
+      "ledger_schema": [
+        [
+          1,
+          1
+        ]
+      ],
+      "ledger_assets": [
+        [
+          "USD",
+          2
+        ]
+      ],
+      "ledger_events": [
+        [
+          1,
+          "ind-main:1",
+          "24ed6810769650a8ba3b42107d3f996b11a929a7af9ac21ad748a6d4a263ab33",
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          1
+        ],
+        [
+          2,
+          "ind-main:2",
+          "8fa3933a3ec7ac9c90397d6a6e21c33cb5a1a956692f6040508a3d898b348eaf",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          "1f22d6fac8b205ae1ec960b35d03a9899970df62cbeca275c76a13b8c41d6ca3",
+          1
+        ]
+      ],
+      "ledger_postings": [
+        [
+          1,
+          0,
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          1,
+          1,
+          "b",
+          "USD",
+          "900"
+        ],
+        [
+          2,
+          0,
+          "b",
+          "USD",
+          "-200"
+        ],
+        [
+          2,
+          1,
+          "c",
+          "USD",
+          "200"
+        ]
+      ],
+      "ledger_balances": [
+        [
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          "b",
+          "USD",
+          "701"
+        ],
+        [
+          "c",
+          "USD",
+          "200"
+        ]
+      ]
+    }
+  },
+  "temp": {
+    "catalogue": [
+      [
+        "table",
+        "ledger_assets",
+        "ledger_assets",
+        "CREATE TABLE ledger_assets(asset TEXT,scale INT)"
+      ],
+      [
+        "table",
+        "ledger_balances",
+        "ledger_balances",
+        "CREATE TABLE ledger_balances(\n  account TEXT,\n  asset TEXT,\n  units TEXT\n)"
+      ],
+      [
+        "table",
+        "ledger_events",
+        "ledger_events",
+        "CREATE TABLE ledger_events(\n  sequence INT,\n  event_id TEXT,\n  fingerprint TEXT,\n  previous_hash TEXT,\n  event_hash TEXT,\n  sealed INT\n)"
+      ],
+      [
+        "table",
+        "ledger_postings",
+        "ledger_postings",
+        "CREATE TABLE ledger_postings(\n  sequence INT,\n  ordinal INT,\n  account TEXT,\n  asset TEXT,\n  units TEXT\n)"
+      ],
+      [
+        "table",
+        "ledger_schema",
+        "ledger_schema",
+        "CREATE TABLE ledger_schema(singleton INT,version INT)"
+      ]
+    ],
+    "rows": {
+      "ledger_schema": [
+        [
+          1,
+          1
+        ]
+      ],
+      "ledger_assets": [
+        [
+          "USD",
+          2
+        ]
+      ],
+      "ledger_events": [
+        [
+          1,
+          "ind-main:1",
+          "24ed6810769650a8ba3b42107d3f996b11a929a7af9ac21ad748a6d4a263ab33",
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          1
+        ],
+        [
+          2,
+          "ind-main:2",
+          "8fa3933a3ec7ac9c90397d6a6e21c33cb5a1a956692f6040508a3d898b348eaf",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          "1f22d6fac8b205ae1ec960b35d03a9899970df62cbeca275c76a13b8c41d6ca3",
+          1
+        ]
+      ],
+      "ledger_postings": [
+        [
+          1,
+          0,
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          1,
+          1,
+          "b",
+          "USD",
+          "900"
+        ],
+        [
+          2,
+          0,
+          "b",
+          "USD",
+          "-200"
+        ],
+        [
+          2,
+          1,
+          "c",
+          "USD",
+          "200"
+        ]
+      ],
+      "ledger_balances": [
+        [
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          "b",
+          "USD",
+          "700"
+        ],
+        [
+          "c",
+          "USD",
+          "200"
+        ]
+      ]
+    }
+  },
+  "actual_read_database_table_column": [
+    [
+      "main",
+      "sqlite_master",
+      "name"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "type"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "name"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "type"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "tbl_name"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "sql"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "name"
+    ],
+    [
+      "main",
+      "ledger_schema",
+      "version"
+    ],
+    [
+      "main",
+      "ledger_schema",
+      "singleton"
+    ],
+    [
+      "main",
+      "ledger_assets",
+      "asset"
+    ],
+    [
+      "main",
+      "ledger_assets",
+      "scale"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "name"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "type"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "tbl_name"
+    ],
+    [
+      "main",
+      "sqlite_master",
+      "sql"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "sequence"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "event_id"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "fingerprint"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "previous_hash"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "event_hash"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "sealed"
+    ],
+    [
+      "main",
+      "ledger_events",
+      "sequence"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "ordinal"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "account"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "asset"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "units"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "sequence"
+    ],
+    [
+      "main",
+      "ledger_postings",
+      "ordinal"
+    ],
+    [
+      "main",
+      "ledger_balances",
+      "account"
+    ],
+    [
+      "main",
+      "ledger_balances",
+      "asset"
+    ],
+    [
+      "main",
+      "ledger_balances",
+      "units"
+    ]
+  ],
+  "denied_temp_reads": [],
+  "verification_trace": [
+    "PRAGMA database_list",
+    "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'writer_fence_%'",
+    "SELECT type,tbl_name,sql FROM main.sqlite_master WHERE name='ledger_postings'",
+    "PRAGMA main.integrity_check",
+    "PRAGMA main.foreign_key_check",
+    "SELECT version FROM main.ledger_schema WHERE singleton = 1",
+    "SELECT asset, scale FROM main.ledger_assets",
+    "SELECT name,type,tbl_name,sql FROM main.sqlite_master",
+    "SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed FROM main.ledger_events ORDER BY sequence",
+    "SELECT ordinal, account, asset, units FROM main.ledger_postings WHERE sequence = 1 ORDER BY ordinal",
+    "SELECT ordinal, account, asset, units FROM main.ledger_postings WHERE sequence = 2 ORDER BY ordinal",
+    "SELECT account, asset, units FROM main.ledger_balances"
+  ],
+  "query_only_unchanged": true,
+  "caller_transaction_remained_active": true,
+  "both_logical_states_unchanged": true,
+  "uncommitted_caller_marker_checked": false
+}

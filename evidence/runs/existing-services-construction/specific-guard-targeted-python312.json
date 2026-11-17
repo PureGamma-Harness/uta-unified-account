@@ -1,0 +1,31 @@
+{
+  "begin_utc": "2026-11-17T14:12:49.180197+00:00",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_existing_services.ExistingServicesTests.test_missing_existing_guard_is_rejected_without_repair",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-credit-existing-readonly",
+  "elapsed_seconds": 0.291245,
+  "end_utc": "2026-11-17T14:12:49.471434+00:00",
+  "exit_code": 0,
+  "source_sha256": {
+    "tests/test_existing_services.py": "72ab11c22c4536da9f24ef5e10cdba98fa194070b9e376ce120214e57152f2e4",
+    "uta/credit.py": "f5af0035b16eb47a4b6b2abcbfc4cff7ee6a8ee30d19756e1a3771b50bf967c9",
+    "uta/existing_services.py": "3ab7b0675100de06acc8f287af0ec442a3755c2d95ed97dbec791820003e1f5b",
+    "uta/service.py": "3d22095afd2ae0a37eaab95a8c8d22f88908d73a5da595bcc5b4a89307079df4",
+    "uta/storage.py": "46fc32488cf6b9ffa3c15431b785aea22f4cccceaebd381130e5ef00be4427d5",
+    "uta/writer_fence.py": "9a1204f196e9db58c57f940d254b87cdb3e70fa42ef0761880f05a0336d6abf0"
+  },
+  "status": "AUTHOR_SPECIFIC_GUARD_REJECTION_CONTROL_AFTER_ALTER_FIX",
+  "stderr": "test_missing_existing_guard_is_rejected_without_repair (tests.test_existing_services.ExistingServicesTests.test_missing_existing_guard_is_rejected_without_repair) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.158s\n\nOK\n",
+  "stdout": "",
+  "timeout_seconds": 60
+}

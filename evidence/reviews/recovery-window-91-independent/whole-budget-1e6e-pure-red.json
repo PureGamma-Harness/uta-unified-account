@@ -1,0 +1,52 @@
+{
+  "candidate": "1e6e7f7c35d9803b13358010d3e984b0acfc1567",
+  "controller_sha256": "2114cb40d74e9899cad8b67473192ae0c3529106e3650c0085b96aa603348202",
+  "scope": "pure extracted finalizer; synthetic hash/clock/IO only",
+  "budget_check_clock": 29.95,
+  "posthash_clock": 30.1,
+  "captured_report": {
+    "slot": {
+      "id": "synthetic",
+      "runtime": "A"
+    },
+    "finished_at": "synthetic",
+    "whole_seconds": 30.1,
+    "all_checks": true,
+    "checks": {
+      "prior-0": true,
+      "prior-1": true,
+      "prior-2": true,
+      "prior-3": true,
+      "prior-4": true,
+      "prior-5": true,
+      "prior-6": true,
+      "prior-7": true,
+      "prior-8": true,
+      "prior-9": true,
+      "prior-10": true,
+      "prior-11": true,
+      "prior-12": true,
+      "prior-13": true,
+      "prior-14": true,
+      "prior-15": true,
+      "prior-16": true,
+      "prior-17": true,
+      "prior-18": true,
+      "prior-19": true,
+      "whole_external_budget": true,
+      "all_code_still_bound": true,
+      "runtime_provider_binary_lib_posthash_bound": true
+    },
+    "technical_errors": [],
+    "forced_cleanup": [],
+    "final_sessions": {},
+    "runtime_label": "A",
+    "case_passed": false,
+    "outcome_stage": "OTHER_ASSERTION_FAILURE",
+    "status": "DIAGNOSTIC_SAMPLE_COMPLETE",
+    "production_approved": false
+  },
+  "finding": "stale pre-hash budget flag permits DIAGNOSTIC_SAMPLE_COMPLETE beyond whole30",
+  "native_or_SQL_run": false,
+  "production_approved": false
+}

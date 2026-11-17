@@ -1,0 +1,25 @@
+{
+  "scope": "actual dedicated policy archive cannot mask missing mandatory base audit guard; original complete archive positive control",
+  "source_sha256": {
+    "uta/credit_audit_v2.py": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588",
+    "tests/test_credit_audit_v2_helpers.py": "49ee7bbdb7c82d66a3fc7772ece96af9a18f746c8693d2cb2c32d26ea01803cb"
+  },
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+    "tests.test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+    "-v"
+  ],
+  "begin": "2026-11-17T14:29:12.827533+00:00",
+  "end": "2026-11-17T14:29:13.113781+00:00",
+  "elapsed_seconds": 0.2862499089969788,
+  "exit_code": 0,
+  "raw_sha256": "f0119f8b1739a74b881c3c67f2dcb210b81ff43327bd63d5a18b86ba981f87fe"
+}

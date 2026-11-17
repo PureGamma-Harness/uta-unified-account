@@ -1,0 +1,68 @@
+{
+  "scope": "actual new loaded-code role/SQL identity negatives; V2 publication and positive financial path still absent",
+  "source_sha256": {
+    "uta/credit.py": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "uta/existing_services.py": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+    "tests/test_credit_v2_code_binding.py": "23c037e093c285b33269785d25ca0c7f4cb748a953f263f52d2c09739a10ae99"
+  },
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_v2_code_binding",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:25:51.485666+00:00",
+      "end": "2026-11-17T14:25:51.813805+00:00",
+      "elapsed_seconds": 0.3281470799993258,
+      "exit_code": 0,
+      "raw_sha256": "f5a2e2ea901ccd2039903a63607d00dfe6e94ea62ec4dbb2c7bfa520b0ff0802"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_v2_code_binding",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:25:51.813871+00:00",
+      "end": "2026-11-17T14:25:52.089758+00:00",
+      "elapsed_seconds": 0.2759004890031065,
+      "exit_code": 0,
+      "raw_sha256": "f003a282eb63e4958cb1a3c71fd71be2c22992726a862a8c09fb0808454238e9"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_v2_code_binding",
+        "-v"
+      ],
+      "begin": "2026-11-17T14:25:52.089795+00:00",
+      "end": "2026-11-17T14:25:52.382295+00:00",
+      "elapsed_seconds": 0.29251317500165896,
+      "exit_code": 0,
+      "raw_sha256": "04f81adbb213e99e4a570a2df904e2504e20ff182cdb6e7cec7ac88fcac0bf1e"
+    }
+  ]
+}

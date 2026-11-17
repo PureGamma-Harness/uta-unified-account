@@ -1,0 +1,382 @@
+{
+  "events": 2,
+  "native_authorizer_retained": true,
+  "base_state": {
+    "catalogue": [
+      [
+        "index",
+        "sqlite_autoindex_ledger_assets_1",
+        "ledger_assets",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_balances_1",
+        "ledger_balances",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_events_1",
+        "ledger_events",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_ledger_postings_1",
+        "ledger_postings",
+        null
+      ],
+      [
+        "index",
+        "sqlite_autoindex_writer_fence_guard_tables_1",
+        "writer_fence_guard_tables",
+        null
+      ],
+      [
+        "table",
+        "ledger_assets",
+        "ledger_assets",
+        "CREATE TABLE ledger_assets (\n        asset TEXT PRIMARY KEY, scale INTEGER NOT NULL CHECK (scale BETWEEN 0 AND 18))"
+      ],
+      [
+        "table",
+        "ledger_balances",
+        "ledger_balances",
+        "CREATE TABLE ledger_balances (\n        account TEXT NOT NULL, asset TEXT NOT NULL REFERENCES ledger_assets(asset),\n        units TEXT NOT NULL, PRIMARY KEY (account, asset))"
+      ],
+      [
+        "table",
+        "ledger_events",
+        "ledger_events",
+        "CREATE TABLE ledger_events (\n        sequence INTEGER PRIMARY KEY, event_id TEXT NOT NULL UNIQUE,\n        fingerprint TEXT NOT NULL, previous_hash TEXT NOT NULL,\n        event_hash TEXT NOT NULL, sealed INTEGER NOT NULL CHECK (sealed IN (0, 1)))"
+      ],
+      [
+        "table",
+        "ledger_postings",
+        "ledger_postings",
+        "CREATE TABLE ledger_postings (\n        sequence INTEGER NOT NULL REFERENCES ledger_events(sequence),\n        ordinal INTEGER NOT NULL CHECK (ordinal >= 0), account TEXT NOT NULL,\n        asset TEXT NOT NULL REFERENCES ledger_assets(asset), units TEXT NOT NULL,\n        PRIMARY KEY (sequence, ordinal))"
+      ],
+      [
+        "table",
+        "ledger_schema",
+        "ledger_schema",
+        "CREATE TABLE ledger_schema (\n        singleton INTEGER PRIMARY KEY CHECK (singleton = 1),\n        version INTEGER NOT NULL)"
+      ],
+      [
+        "table",
+        "writer_fence_authority",
+        "writer_fence_authority",
+        "CREATE TABLE writer_fence_authority (singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1),authority_id TEXT NOT NULL,canonical_path TEXT NOT NULL)"
+      ],
+      [
+        "table",
+        "writer_fence_events",
+        "writer_fence_events",
+        "CREATE TABLE writer_fence_events (sequence INTEGER PRIMARY KEY,kind TEXT NOT NULL,authority_id TEXT NOT NULL,owner_nonce TEXT,generation INTEGER NOT NULL,owner_pid INTEGER,boot_id TEXT NOT NULL,observed_ns INTEGER NOT NULL,expires_ns INTEGER NOT NULL)"
+      ],
+      [
+        "table",
+        "writer_fence_guard_config",
+        "writer_fence_guard_config",
+        "CREATE TABLE writer_fence_guard_config(singleton INTEGER PRIMARY KEY CHECK(singleton=1),format INTEGER NOT NULL CHECK(format=1))"
+      ],
+      [
+        "table",
+        "writer_fence_guard_tables",
+        "writer_fence_guard_tables",
+        "CREATE TABLE writer_fence_guard_tables(name TEXT PRIMARY KEY,actions TEXT NOT NULL)"
+      ],
+      [
+        "table",
+        "writer_fence_lease",
+        "writer_fence_lease",
+        "CREATE TABLE writer_fence_lease (singleton INTEGER PRIMARY KEY CHECK(singleton=1),generation INTEGER NOT NULL CHECK(generation>=0),owner_nonce TEXT,owner_pid INTEGER,boot_id TEXT NOT NULL,expires_ns INTEGER NOT NULL,observed_ns INTEGER NOT NULL)"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_delete",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_delete\n        BEFORE DELETE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_assets_no_update",
+        "ledger_assets",
+        "CREATE TRIGGER ledger_assets_no_update\n        BEFORE UPDATE ON ledger_assets BEGIN SELECT RAISE(ABORT, 'asset scales are immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_no_delete",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_no_delete\n        BEFORE DELETE ON ledger_events BEGIN SELECT RAISE(ABORT, 'journal is append-only'); END"
+      ],
+      [
+        "trigger",
+        "ledger_events_seal_only",
+        "ledger_events",
+        "CREATE TRIGGER ledger_events_seal_only\n        BEFORE UPDATE ON ledger_events\n        WHEN OLD.sealed != 0 OR NEW.sealed != 1 OR NEW.sequence != OLD.sequence\n          OR NEW.event_id != OLD.event_id OR NEW.fingerprint != OLD.fingerprint\n          OR NEW.previous_hash != OLD.previous_hash OR NEW.event_hash != OLD.event_hash\n        BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_delete",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_delete\n        BEFORE DELETE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_no_update",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_no_update\n        BEFORE UPDATE ON ledger_postings BEGIN SELECT RAISE(ABORT, 'journal is immutable'); END"
+      ],
+      [
+        "trigger",
+        "ledger_postings_unsealed_only",
+        "ledger_postings",
+        "CREATE TRIGGER ledger_postings_unsealed_only\n        BEFORE INSERT ON ledger_postings\n        WHEN (SELECT sealed FROM ledger_events WHERE sequence = NEW.sequence) != 0\n        BEGIN SELECT RAISE(ABORT, 'journal is sealed'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_authority_no_delete",
+        "writer_fence_authority",
+        "CREATE TRIGGER writer_fence_authority_no_delete BEFORE DELETE ON writer_fence_authority BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_authority_no_update",
+        "writer_fence_authority",
+        "CREATE TRIGGER writer_fence_authority_no_update BEFORE UPDATE ON writer_fence_authority BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_d",
+        "ledger_schema",
+        "CREATE TRIGGER \"writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_d\" BEFORE DELETE ON \"ledger_schema\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_i",
+        "ledger_schema",
+        "CREATE TRIGGER \"writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_i\" BEFORE INSERT ON \"ledger_schema\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_u",
+        "ledger_schema",
+        "CREATE TRIGGER \"writer_fence_data_48076a99bede7e0dc283bea48e896a3d0b6c888bc377aba0b58f22f888019541_u\" BEFORE UPDATE ON \"ledger_schema\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_d",
+        "ledger_balances",
+        "CREATE TRIGGER \"writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_d\" BEFORE DELETE ON \"ledger_balances\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_i",
+        "ledger_balances",
+        "CREATE TRIGGER \"writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_i\" BEFORE INSERT ON \"ledger_balances\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_u",
+        "ledger_balances",
+        "CREATE TRIGGER \"writer_fence_data_ac9b5412c69049a4f3d198e8909f8dade3c0815726e8ada72742df725d17ccf4_u\" BEFORE UPDATE ON \"ledger_balances\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_d",
+        "ledger_events",
+        "CREATE TRIGGER \"writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_d\" BEFORE DELETE ON \"ledger_events\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_i",
+        "ledger_events",
+        "CREATE TRIGGER \"writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_i\" BEFORE INSERT ON \"ledger_events\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_u",
+        "ledger_events",
+        "CREATE TRIGGER \"writer_fence_data_bd57dc48b55011538fc5bc861bb1319756d40dc1e5f970a4c67c5dbc2f541b8e_u\" BEFORE UPDATE ON \"ledger_events\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_d",
+        "ledger_assets",
+        "CREATE TRIGGER \"writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_d\" BEFORE DELETE ON \"ledger_assets\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_i",
+        "ledger_assets",
+        "CREATE TRIGGER \"writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_i\" BEFORE INSERT ON \"ledger_assets\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_u",
+        "ledger_assets",
+        "CREATE TRIGGER \"writer_fence_data_e1dd1694c538a7aed345f5cd2344c9cd41b8054207d9c4ba2e81e7cb7b7820a1_u\" BEFORE UPDATE ON \"ledger_assets\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_d",
+        "ledger_postings",
+        "CREATE TRIGGER \"writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_d\" BEFORE DELETE ON \"ledger_postings\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_i",
+        "ledger_postings",
+        "CREATE TRIGGER \"writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_i\" BEFORE INSERT ON \"ledger_postings\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_u",
+        "ledger_postings",
+        "CREATE TRIGGER \"writer_fence_data_fec3eaa2519e7989fd5ab94bd4ff7fca901d28245f943f7b0dd9ce6bd4ca8bec_u\" BEFORE UPDATE ON \"ledger_postings\" BEGIN SELECT CASE WHEN uta_writer_fence_v1()!=1 THEN RAISE(ABORT,'current writer lease required') END; END"
+      ],
+      [
+        "trigger",
+        "writer_fence_events_no_delete",
+        "writer_fence_events",
+        "CREATE TRIGGER writer_fence_events_no_delete BEFORE DELETE ON writer_fence_events BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_events_no_update",
+        "writer_fence_events",
+        "CREATE TRIGGER writer_fence_events_no_update BEFORE UPDATE ON writer_fence_events BEGIN SELECT RAISE(ABORT,'fence authority and audit are immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_guard_config_no_delete",
+        "writer_fence_guard_config",
+        "CREATE TRIGGER writer_fence_guard_config_no_delete BEFORE DELETE ON writer_fence_guard_config BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_guard_config_no_update",
+        "writer_fence_guard_config",
+        "CREATE TRIGGER writer_fence_guard_config_no_update BEFORE UPDATE ON writer_fence_guard_config BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_guard_tables_no_delete",
+        "writer_fence_guard_tables",
+        "CREATE TRIGGER writer_fence_guard_tables_no_delete BEFORE DELETE ON writer_fence_guard_tables BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_guard_tables_no_update",
+        "writer_fence_guard_tables",
+        "CREATE TRIGGER writer_fence_guard_tables_no_update BEFORE UPDATE ON writer_fence_guard_tables BEGIN SELECT RAISE(ABORT,'persistent guard metadata is immutable'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_lease_monotonic",
+        "writer_fence_lease",
+        "CREATE TRIGGER writer_fence_lease_monotonic BEFORE UPDATE ON writer_fence_lease WHEN NEW.generation<OLD.generation BEGIN SELECT RAISE(ABORT,'fence generation cannot regress'); END"
+      ],
+      [
+        "trigger",
+        "writer_fence_lease_no_delete",
+        "writer_fence_lease",
+        "CREATE TRIGGER writer_fence_lease_no_delete BEFORE DELETE ON writer_fence_lease BEGIN SELECT RAISE(ABORT,'managed lease cannot be deleted'); END"
+      ]
+    ],
+    "rows": {
+      "ledger_schema": [
+        [
+          1,
+          1
+        ]
+      ],
+      "ledger_assets": [
+        [
+          "USD",
+          2
+        ]
+      ],
+      "ledger_events": [
+        [
+          1,
+          "ind-main:1",
+          "24ed6810769650a8ba3b42107d3f996b11a929a7af9ac21ad748a6d4a263ab33",
+          "0000000000000000000000000000000000000000000000000000000000000000",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          1
+        ],
+        [
+          2,
+          "ind-main:2",
+          "8fa3933a3ec7ac9c90397d6a6e21c33cb5a1a956692f6040508a3d898b348eaf",
+          "8af30997944c3b1b1568f918adaabee47cf426fd5e52397fabf75803a6bb3e6b",
+          "1f22d6fac8b205ae1ec960b35d03a9899970df62cbeca275c76a13b8c41d6ca3",
+          1
+        ]
+      ],
+      "ledger_postings": [
+        [
+          1,
+          0,
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          1,
+          1,
+          "b",
+          "USD",
+          "900"
+        ],
+        [
+          2,
+          0,
+          "b",
+          "USD",
+          "-200"
+        ],
+        [
+          2,
+          1,
+          "c",
+          "USD",
+          "200"
+        ]
+      ],
+      "ledger_balances": [
+        [
+          "a",
+          "USD",
+          "-900"
+        ],
+        [
+          "b",
+          "USD",
+          "700"
+        ],
+        [
+          "c",
+          "USD",
+          "200"
+        ]
+      ]
+    }
+  },
+  "trace": [
+    "PRAGMA database_list",
+    "SELECT type,tbl_name,sql FROM main.sqlite_master WHERE name='ledger_postings'",
+    "PRAGMA main.integrity_check",
+    "PRAGMA main.foreign_key_check",
+    "SELECT version FROM main.ledger_schema WHERE singleton = 1",
+    "SELECT asset, scale FROM main.ledger_assets",
+    "SELECT name,type,tbl_name,sql FROM main.sqlite_master",
+    "SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed FROM main.ledger_events ORDER BY sequence",
+    "SELECT ordinal, account, asset, units FROM main.ledger_postings WHERE sequence = 1 ORDER BY ordinal",
+    "SELECT ordinal, account, asset, units FROM main.ledger_postings WHERE sequence = 2 ORDER BY ordinal",
+    "SELECT account, asset, units FROM main.ledger_balances"
+  ]
+}

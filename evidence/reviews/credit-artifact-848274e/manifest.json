@@ -1,0 +1,50 @@
+{
+  "artifact_grants_permission": false,
+  "artifact_source_identical_across_worktrees": true,
+  "compatibility_commit": "a4d4facc3235a324afbc0fdb19635bf0bbc86a75",
+  "compatibility_native_sha256": "903ab01e0a7a5b4956b0bfb6ef00eac5cb4a946f376876eec70597f2d827950f",
+  "cpu_affinity": [
+    4
+  ],
+  "database_created": false,
+  "decision": "CHANGES_REQUESTED_COMPLETE_CREDIT_ENGINE_IDENTITY",
+  "evidence_sha256": {
+    "probe-raw.txt": "4cf369e6f6918ddc8e703bdd078e4ac1f4686c2ca00311587ee7027d0521fb0b",
+    "probe.py": "2a42f8a106b1b0d9d224ad0004171eb45ac988816411c37c83f842671947736d",
+    "repr-probe.py": "04ac83b5720f2e3844e8ad6857bf7b0b933f95e6cf5b8f957ac084660b0ceedb",
+    "repr-raw.txt": "b92d1c38da1de4591c637f662dbd727e571830576d4f71c1389cd19e1b1bea40"
+  },
+  "kind": "independent-read-only-credit-artifact-review",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "production_files_modified": [],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "recorded_at": "2026-11-17T11:55:46.586654+00:00",
+  "reviewed_commit": "848274ee7f774cd5780efb694bfc3f088944d482",
+  "reviewed_source_sha256": {
+    "docs/credit-code-artifact.md": "3453284958495f39a8157ee11773ebb76adfd3871a243e40e8858d5dfed57174",
+    "tests/test_credit_artifact.py": "d57bca86f4abdbefb8b18d150b365e44e0f29a2406983e049d4b9fe21690c1a0",
+    "uta/credit_artifact.py": "303495ede1a39d45a48180fc1a67e551bd452adc5a88ca09bdda2e69f1efc3f5"
+  },
+  "runs": [
+    {
+      "actual_exit": 1,
+      "elapsed_seconds": 0.6273464850019081,
+      "ended_at": "2026-11-17T11:53:07.490094+00:00",
+      "expected_exit": 1,
+      "identity_red_cases": 2,
+      "program": "probe.py",
+      "started_at": "2026-11-17T11:53:06.862754+00:00"
+    },
+    {
+      "actual_exit": 1,
+      "elapsed_seconds": 0.12630373400315875,
+      "ended_at": "2026-11-17T11:53:52.576719+00:00",
+      "expected_exit": 1,
+      "identity_red_cases": 1,
+      "program": "repr-probe.py",
+      "started_at": "2026-11-17T11:53:52.450413+00:00"
+    }
+  ],
+  "service_started": false,
+  "sql_used": false
+}

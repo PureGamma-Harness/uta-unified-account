@@ -1,0 +1,7 @@
+test_crash_after_actual_commits_loses_replies_then_new_process_replays_once (tests.test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 21.107s
+
+OK
+{"actual": {"counts": {"credit_v2_intents": 2, "credit_v2_sources": 2, "ledger_events": 4, "uta_credit_decisions": 1}, "customer_btc_units": "30000000", "debt": ["0.3", "0"], "foreign_key_check": [], "pool_btc_units": "70000000"}, "actual_distinct_worker_pids": [233467, 233507], "actual_lease_wait_seconds": 10.265185992, "crashed_process_exit": 73, "financial_rows_unchanged_on_recovery": true, "native_generation": 2, "scope": "actual process exit after financial COMMIT/reply loss; real lease expiry/new process recovery, not mid-COMMIT power loss or replication"}

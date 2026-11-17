@@ -1,0 +1,67 @@
+{
+  "parent_commit": "8e3837c8c2549451b96e5d5d1b149be2a937e38b",
+  "source_sha256": {
+    "uta/credit_transition.py": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99",
+    "tests/test_credit_transition.py": "bfa352b8f3f3afaa7cc77d53a9613ef9b789419ae626d48294ee1d9b4b6c1676"
+  },
+  "scope": "unwired arithmetic contracts only; actual preseal tempDB control, no managed loan or service",
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T12:10:09.162176+00:00",
+      "completed_at": "2026-11-17T12:10:09.342252+00:00",
+      "elapsed_seconds": 0.1798989620001521,
+      "exit_code": 0,
+      "raw_sha256": "141cd979d43288a44fb037717b612a35f9b52a146f77f06098ff158e12b32af0"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T12:10:09.342311+00:00",
+      "completed_at": "2026-11-17T12:10:09.535032+00:00",
+      "elapsed_seconds": 0.1925207570020575,
+      "exit_code": 0,
+      "raw_sha256": "38fb32ea35bad3f63eba28b264aa73937ce14453ebb620c9971aead919453a2e"
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_transition",
+        "-v"
+      ],
+      "started_at": "2026-11-17T12:10:09.535099+00:00",
+      "completed_at": "2026-11-17T12:10:09.717167+00:00",
+      "elapsed_seconds": 0.18188761299825273,
+      "exit_code": 0,
+      "raw_sha256": "b2aabf71dabf9ffe168e0b9acbf56cc4b728233ac6534005b57f0fb8fdf567fa"
+    }
+  ]
+}

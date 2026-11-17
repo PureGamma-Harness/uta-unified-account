@@ -1,0 +1,71 @@
+{
+  "status": "PURE_FILE_AST_REVIEW_NOT_RUN",
+  "author_evidence_commit": "e44a8fc25a473f007578360181ef0eefa856352c",
+  "runtime_candidate": "e7ca619b219812f9377ec98cf0a98caacca0da61",
+  "implementation": "5924336a94688fccd5bd55c29a0b428914591f52",
+  "exact_literal_changes": [
+    {
+      "qualified": "SELECT name,type,tbl_name,sql FROM main.sqlite_master",
+      "original": "SELECT name,type,tbl_name,sql FROM sqlite_master"
+    },
+    {
+      "qualified": "PRAGMA main.integrity_check",
+      "original": "PRAGMA integrity_check"
+    },
+    {
+      "qualified": "PRAGMA main.foreign_key_check",
+      "original": "PRAGMA foreign_key_check"
+    },
+    {
+      "qualified": "SELECT version FROM main.ledger_schema WHERE singleton = 1",
+      "original": "SELECT version FROM ledger_schema WHERE singleton = 1"
+    },
+    {
+      "qualified": "SELECT asset, scale FROM main.ledger_assets",
+      "original": "SELECT asset, scale FROM ledger_assets"
+    },
+    {
+      "qualified": "SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed FROM main.ledger_events ORDER BY sequence",
+      "original": "SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed FROM ledger_events ORDER BY sequence"
+    },
+    {
+      "qualified": "SELECT ordinal, account, asset, units FROM main.ledger_postings WHERE sequence = ? ORDER BY ordinal",
+      "original": "SELECT ordinal, account, asset, units FROM ledger_postings WHERE sequence = ? ORDER BY ordinal"
+    },
+    {
+      "qualified": "SELECT account, asset, units FROM main.ledger_balances",
+      "original": "SELECT account, asset, units FROM ledger_balances"
+    }
+  ],
+  "eight_qualifiers_undone_recovers_full_F01_AST": true,
+  "methods_changed": [
+    "DurableLedger.verify",
+    "DurableLedger._verify_protection"
+  ],
+  "new_temp_catalogue_queries": 0,
+  "native_permission_changes": false,
+  "tests": [
+    "test_01_bad_main_hash_refuses_despite_genuine_good_temp",
+    "test_02_bad_main_balance_refuses_despite_genuine_good_temp",
+    "test_03_healthy_main_ignores_malformed_temp_views_without_temp_read_permission",
+    "test_04_f01_bad_main_definition_with_orphan_still_refuses_before_repair",
+    "test_05_main_version_error_precedes_hash_and_balance_errors",
+    "test_06_main_scales_error_precedes_hash_error",
+    "test_07_main_trigger_error_precedes_hash_error",
+    "test_08_query_only_verification_preserves_uncommitted_callers_marker",
+    "test_09_real_managed_bound_constructor_and_native_read_role",
+    "test_10_read_only_schema_helpers_grant_no_managed_join_or_write_authority",
+    "test_11_other_main_path_still_refuses_before_any_ledger_lookup",
+    "test_12_read_method_alias_protocol_uses_original_main_checkers",
+    "test_13_supported_real_sqlite_backup_preserves_canonical_ledger",
+    "test_14_main_foreign_key_failure_precedes_version_and_hash_errors"
+  ],
+  "files": {
+    "uta/storage.py": "8b4ba2f95c73fd288aef8bd20d8fbb166cd540ab3e9f0bebb0ef8afe9111d88c",
+    "tests/test_ledger_main_acceptance.py": "8b5760ae626075ded67d21c14250ea91503e837cc41f7262ae37c5f5c3a4675f",
+    "evidence/reviews/ledger-main-acceptance/run_acceptance.py": "8f15f7f817e89273cb3e0a71bc057a15456cd98eed0f7350f5a1380e457e90a9"
+  },
+  "sql_executed": false,
+  "product_imports": false,
+  "production_approved": false
+}

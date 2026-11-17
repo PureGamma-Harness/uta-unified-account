@@ -1,0 +1,23 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_transition",
+    "-v"
+  ],
+  "started_at": "2026-11-17T11:56:04.920925+00:00",
+  "completed_at": "2026-11-17T11:56:05.069756+00:00",
+  "elapsed_seconds": 0.14883451999776298,
+  "exit_code": 0,
+  "source_sha256": {
+    "uta/credit_transition.py": "8423116055adc885077ac920d0ca135dffeb8738197a059d61fe53c2ef1728e0",
+    "tests/test_credit_transition.py": "dc6e00fa4a069f5bb9500a1f9e20791fd20f538b276676ec8580a0cbd146530b"
+  },
+  "scope": "pure math plus one actual synthetic preseal temporary DB; no managed capability, no listener or throughput"
+}

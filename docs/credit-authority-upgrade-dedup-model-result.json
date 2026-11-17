@@ -1,0 +1,31 @@
+{
+  "CPU_budget_seconds": 3,
+  "assumptions": [
+    "directory input is authoritative and complete",
+    "tenant/account mapping is trusted and stable",
+    "auth/nonce/epoch input is authoritative",
+    "real consistency, CAS and source-delivery protocol are NOT modeled"
+  ],
+  "auth_cut_scenarios": 12,
+  "command": "timeout 3s taskset -c 3 python3 -W error::ResourceWarning scripts/model_credit_epoch_dedup_boundary.py",
+  "cpu_affinity": [
+    3
+  ],
+  "directory_scenarios": 16,
+  "end_utc": "2026-11-17T15:49:53.286481+00:00",
+  "model": "credit-epoch-dedup-auth-boundary-v1",
+  "negative_control": {
+    "correct_total_effects": 1,
+    "detected": true,
+    "mutated_total_effects": 2,
+    "name": "successor-local-only-lookup",
+    "old_effects": 1
+  },
+  "process_cpu_seconds": 1.5e-05,
+  "production_approval": false,
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "scope": "Separate pure design check; no runtime, SQL, HMAC or actual binary acceptance",
+  "source_sha256": "0ce7c0d5504fa995399d561a9ae2689ba6a7d672e0680860642b2424e9876a5f",
+  "start_utc": "2026-11-17T15:49:53.286357+00:00",
+  "status": "passed"
+}

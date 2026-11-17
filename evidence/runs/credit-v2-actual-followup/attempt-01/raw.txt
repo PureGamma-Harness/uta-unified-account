@@ -1,0 +1,93 @@
+test_actual_borrow_commit_and_reopen_have_complete_original_evidence (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence) ... ERROR
+test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue) ... ok
+test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market) ... ERROR
+
+======================================================================
+ERROR: test_actual_borrow_commit_and_reopen_have_complete_original_evidence (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/uta/credit_native_v2.py", line 1491, in operation_scope
+    yield view
+  File "/workspace/uta-credit-internal-v2/uta/credit_fifo_v2.py", line 249, in process_one
+    result = action(connection, source.account_id, command_id, payload["asset"], Decimal(payload["amount"]))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/credit.py", line 435, in _repay
+    self.ledger.post(event_id, postings, connection=connection)
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 449, in post
+    current.executemany("INSERT INTO ledger_postings VALUES (?, ?, ?, ?, ?)",
+sqlite3.IntegrityError: actual native credit scope and staged obligation required
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/uta/credit_fifo_v2.py", line 247, in process_one
+    with operation_scope(self.credit, connection, command_id=command_id):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/uta-credit-internal-v2/uta/credit_native_v2.py", line 1501, in operation_scope
+    raise _poison(guard, "internal financial operation failed", cause=cause) from cause
+uta.writer_fence.WriterFenceError: internal financial operation failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/tests/test_credit_v2_runtime_chain.py", line 99, in test_actual_borrow_commit_and_reopen_have_complete_original_evidence
+    repayment = fifo.process_one()
+                ^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/credit_fifo_v2.py", line 261, in process_one
+    raise CommandExecutionError(command_id, sequence, error, attempt=attempt) from error
+uta.durable_commands.CommandExecutionError: command execution receipt unavailable; query the original command ID
+
+======================================================================
+ERROR: test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market (tests.test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/uta/credit_fifo_v2.py", line 230, in process_one
+    with self.exchange._transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/service.py", line 310, in _transaction
+    with self.database.transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 159, in transaction
+    with self._role_transaction("financial") as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 192, in _role_transaction
+    with self._role_transaction_body(role) as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 202, in _role_transaction_body
+    connection = self._connect()
+                 ^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/storage.py", line 136, in _connect
+    connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=" + mode, uri=True,
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/tests/test_credit_v2_runtime_chain.py", line 162, in observe
+    arguments[0].set_trace_callback(statements.append)
+sqlite3.ProgrammingError: Base Connection.__init__ not called.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-v2/tests/test_credit_v2_runtime_chain.py", line 167, in test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market
+    receipt = fifo.process_one()
+              ^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-credit-internal-v2/uta/credit_fifo_v2.py", line 261, in process_one
+    raise CommandExecutionError(command_id, sequence, error, attempt=attempt) from error
+uta.durable_commands.CommandExecutionError: command execution receipt unavailable; query the original command ID
+
+----------------------------------------------------------------------
+Ran 3 tests in 15.501s
+
+FAILED (errors=2)

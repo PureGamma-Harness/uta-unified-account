@@ -1,0 +1,2287 @@
+[
+  {
+    "test": "test_actual_old_binary_base_batch_positive_credit_markers_negative",
+    "old_binary": [
+      {
+        "acquired_and_wrote": true,
+        "rejected": false,
+        "batch": false,
+        "prototype_credit_marker": false,
+        "exit_code": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "archived_source_commit": "45818c0fb1712b3d1daec1323bba9cf35e532992",
+        "source_archive_sha256": "64ea070654980f228efcba28182a21d9cb1a14cec08bac0c4ff2623527e6a172",
+        "actual_ledger_events": 2
+      },
+      {
+        "acquired_and_wrote": true,
+        "rejected": false,
+        "batch": true,
+        "prototype_credit_marker": false,
+        "exit_code": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "archived_source_commit": "45818c0fb1712b3d1daec1323bba9cf35e532992",
+        "source_archive_sha256": "64ea070654980f228efcba28182a21d9cb1a14cec08bac0c4ff2623527e6a172",
+        "actual_ledger_events": 2
+      },
+      {
+        "acquired_and_wrote": false,
+        "rejected": true,
+        "type": "WriterFenceError",
+        "code": "fence_guard_corrupt",
+        "batch": false,
+        "prototype_credit_marker": true,
+        "exit_code": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "archived_source_commit": "45818c0fb1712b3d1daec1323bba9cf35e532992",
+        "source_archive_sha256": "64ea070654980f228efcba28182a21d9cb1a14cec08bac0c4ff2623527e6a172",
+        "actual_ledger_events": 1
+      },
+      {
+        "acquired_and_wrote": false,
+        "rejected": true,
+        "type": "WriterFenceError",
+        "code": "fence_guard_corrupt",
+        "batch": true,
+        "prototype_credit_marker": true,
+        "exit_code": 0,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "archived_source_commit": "45818c0fb1712b3d1daec1323bba9cf35e532992",
+        "source_archive_sha256": "64ea070654980f228efcba28182a21d9cb1a14cec08bac0c4ff2623527e6a172",
+        "actual_ledger_events": 1
+      }
+    ]
+  },
+  {
+    "test": "test_closing_gate_rejects_balanced_wrong_customer_even_without_posting_gate",
+    "options": {
+      "legs": [
+        [
+          "customer:dummy",
+          "BTC",
+          "40000000"
+        ],
+        [
+          "liability:principal:alice",
+          "BTC",
+          "-40000000"
+        ],
+        [
+          "system:credit-pool",
+          "BTC",
+          "-40000000"
+        ],
+        [
+          "system:credit-principal-receivable",
+          "BTC",
+          "40000000"
+        ]
+      ],
+      "posting_gate": false
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [
+        {
+          "type": "IntegrityError",
+          "code": null,
+          "sqlite_errorcode": 1811,
+          "sqlite_errorname": "SQLITE_CONSTRAINT_TRIGGER"
+        }
+      ],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "credit_commands",
+          5
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_complete_candidate_tuple_really_commits_four_legs",
+    "options": {},
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": true,
+      "fk_violations_before_commit": [],
+      "in_transaction_before_exit": true,
+      "after_reopen": {
+        "ledger_events": 3,
+        "borrow_rows": 1,
+        "decisions": 1,
+        "accounts": [
+          [
+            "alice",
+            2
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [
+          [
+            "alice",
+            "BTC",
+            "0.4",
+            "0"
+          ]
+        ],
+        "balances": [
+          [
+            "customer:alice",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "liability:principal:alice",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "60000000"
+          ],
+          [
+            "system:credit-principal-receivable",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "SUCCEEDED",
+        "loan_legs": [
+          [
+            "customer:alice",
+            "BTC",
+            "40000000"
+          ],
+          [
+            "liability:principal:alice",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "-40000000"
+          ],
+          [
+            "system:credit-principal-receivable",
+            "BTC",
+            "40000000"
+          ]
+        ],
+        "intents": 1
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": false,
+      "financial_unchanged": false,
+      "core_ledger_verified_events": 3,
+      "core_credit_nonzero_liabilities": 1,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_customer_counterparty_substitution_fails_posting_gate",
+    "options": {
+      "legs": [
+        [
+          "customer:dummy",
+          "BTC",
+          "40000000"
+        ],
+        [
+          "liability:principal:alice",
+          "BTC",
+          "-40000000"
+        ],
+        [
+          "system:credit-pool",
+          "BTC",
+          "-40000000"
+        ],
+        [
+          "system:credit-principal-receivable",
+          "BTC",
+          "40000000"
+        ]
+      ]
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 1811,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_TRIGGER"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_effect_without_staged_intent_is_rejected_by_actual_trigger",
+    "options": {
+      "missing": "intent"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "intent",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 1811,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_TRIGGER"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_full_tuple_caught_late_freshness_failure_rechecked_before_commit",
+    "options": {
+      "late_stale": true
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": true,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "caught_late_error": {
+        "type": "ServiceError",
+        "code": "market_unavailable",
+        "sqlite_errorcode": null,
+        "sqlite_errorname": null
+      },
+      "fk_violations_before_commit": [],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "ServiceError",
+        "code": "market_unavailable",
+        "sqlite_errorcode": null,
+        "sqlite_errorname": null
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "decision"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "decision",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "uta_risk_decisions",
+          4
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "terminal"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "terminal",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "uta_command_inbox",
+          6
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "credit"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "credit",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "credit_commands",
+          5
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "journal"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "journal",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [
+        {
+          "type": "IntegrityError",
+          "code": null,
+          "sqlite_errorcode": 1811,
+          "sqlite_errorname": "SQLITE_CONSTRAINT_TRIGGER"
+        }
+      ],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "ledger_events",
+          3
+        ],
+        [
+          "probe_intents",
+          1,
+          "credit_commands",
+          5
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "source"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "source",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "probe_source",
+          0
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "allocation"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "allocation",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "probe_allocation",
+          2
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_missing_parent_tuples_fail_real_deferred_commit",
+    "options": {
+      "missing": "policy"
+    },
+    "result": {
+      "candidate": true,
+      "missing": "policy",
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "probe_policy",
+          1
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_null_and_check_bypasses_are_not_fk_safety_passes",
+    "options": {
+      "overrides": {
+        "12": null
+      }
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 1299,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_NOTNULL"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_null_and_check_bypasses_are_not_fk_safety_passes",
+    "options": {
+      "overrides": {
+        "4": "REJECTED"
+      }
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 275,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_CHECK"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_null_and_check_bypasses_are_not_fk_safety_passes",
+    "options": {
+      "overrides": {
+        "8": "-1"
+      }
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 275,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_CHECK"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_null_and_check_bypasses_are_not_fk_safety_passes",
+    "options": {
+      "overrides": {
+        "11": 0
+      }
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": false,
+      "committed": false,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 275,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_CHECK"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": false,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_real_caller_savepoint_removes_obligations_and_commits_rejection",
+    "options": {
+      "late_stale": true,
+      "rollback_to": true
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": true,
+      "caller_rollback_to": true,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": true,
+      "caught_late_error": {
+        "type": "ServiceError",
+        "code": "market_unavailable",
+        "sqlite_errorcode": null,
+        "sqlite_errorname": null
+      },
+      "fk_violations_before_commit": [],
+      "in_transaction_before_exit": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "REJECTED",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": false,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  },
+  {
+    "test": "test_wrong_decision_identity_cannot_satisfy_composite_fk",
+    "options": {
+      "wrong_decision": true
+    },
+    "result": {
+      "candidate": true,
+      "missing": null,
+      "late_stale": false,
+      "caller_rollback_to": false,
+      "before": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "statement_errors": [],
+      "outer_commit_requested": true,
+      "committed": false,
+      "fk_violations_before_commit": [
+        [
+          "probe_intents",
+          1,
+          "uta_risk_decisions",
+          4
+        ]
+      ],
+      "in_transaction_before_exit": true,
+      "error": {
+        "type": "IntegrityError",
+        "code": null,
+        "sqlite_errorcode": 787,
+        "sqlite_errorname": "SQLITE_CONSTRAINT_FOREIGNKEY"
+      },
+      "connection_closed_after_error": true,
+      "after_reopen": {
+        "ledger_events": 2,
+        "borrow_rows": 0,
+        "decisions": 0,
+        "accounts": [
+          [
+            "alice",
+            1
+          ],
+          [
+            "bob",
+            0
+          ]
+        ],
+        "liabilities": [],
+        "balances": [
+          [
+            "customer:alice",
+            "USD",
+            "10000000000"
+          ],
+          [
+            "system:credit-capital",
+            "BTC",
+            "-100000000"
+          ],
+          [
+            "system:credit-pool",
+            "BTC",
+            "100000000"
+          ],
+          [
+            "system:custody",
+            "USD",
+            "-10000000000"
+          ]
+        ],
+        "inbox": "PENDING",
+        "loan_legs": [],
+        "intents": 0
+      },
+      "native_commit_attempted": true,
+      "native_rollback_observed": true,
+      "financial_unchanged": true,
+      "core_ledger_verified_events": 2,
+      "core_credit_nonzero_liabilities": 0,
+      "production_approved": false,
+      "credit_runtime_integrated": false,
+      "credit_context_or_ddl_authorizer_implemented": false,
+      "temporary_authority_removed": true
+    }
+  }
+]

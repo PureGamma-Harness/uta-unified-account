@@ -1,0 +1,33 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_context_boundary",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T13:00:34.340537+00:00",
+  "exit_code": 0,
+  "financial_borrow": false,
+  "native_owner": false,
+  "no_context_or_cap_simulated": true,
+  "process_seconds": 0.21632463800051482,
+  "raw_sha256": "dc174e8ed69d5e929ade75b7636fab1ed41470895689bae71a1c385195f9639d",
+  "reason_for_final_run": "Source added exact view-to-staged-intent/source/static-descriptor bindings after initial four negative controls; original source/raw retained. No positive context path exists yet.",
+  "services": false,
+  "source_sha256": {
+    "tests/test_credit_native_v2_context_boundary.py": "9036b08fde5b4126959f4db7fc3a8e5272212fe605ddddc95a8c913f3df6c95c",
+    "uta/credit_audit_v2.py": "fb8eacc84b59961c055fb889b3afff6f96fcafb590268927a8160e6cddf6c931",
+    "uta/credit_native_v2.py": "98eea358d182349161c07a1f0dc2fef51f5132eef3803737d55cd2bbcc4c9f1d",
+    "uta/writer_fence.py": "dec38cb73956a0db26924fe3c1685644197c54b9abda3ce02026e70ce3f0a3c6"
+  },
+  "sql_used": true,
+  "started_at": "2026-11-17T13:00:34.124545+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "actual_native_borrow": false,
+  "actual_native_owner": false,
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "10s",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-W",
+    "error::ResourceWarning",
+    "-m",
+    "unittest",
+    "tests.test_credit_native_v2_primitives.CreditNativeV2PrimitiveTests.test_envelope_is_content_addressed_declaration_not_current_code_permission",
+    "-v"
+  ],
+  "ended_at": "2026-11-17T14:40:25.359941+00:00",
+  "exit_code": 0,
+  "process_seconds": 0.15852210400043987,
+  "raw_sha256": "890fcaa673b40bf6cb8c3e5c5fd11f5caebe7b6739f691a9b873fb50d073e79e",
+  "reason": "Only stale C1 API-absence assertion updated for intended implementation; declaration still has no token/ready/permission fields. Runtime unchanged; original8 green not rerun.",
+  "source_sha256": {
+    "tests/test_credit_native_v2_primitives.py": "d1850d5756d81aa6a7e4d99627625b573bed484ef692803b2448367194b6fa92",
+    "uta/credit_native_v2.py": "ae333373be9fa0ada72da23bd9e6f13a141bc9e60572f812179052d84843f3d4",
+    "uta/writer_fence.py": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+  },
+  "sql_used": false,
+  "started_at": "2026-11-17T14:40:25.201599+00:00"
+}

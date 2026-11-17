@@ -298,7 +298,7 @@ class DurableLedger:
     back its own savepoint without discarding the caller's other changes.
     """
 
-    def __init__(self, database: Database, scales: Mapping[str, int]):
+    def __init__(self, database: Database, scales: Mapping[str, int], *, _existing_connection=None):
         if not isinstance(database, Database):
             raise StorageError("database must be a Database")
         # The existing ledger is the common codec/range validator. Its private
@@ -306,6 +306,13 @@ class DurableLedger:
         self._codec = Ledger(scales)
         self.database = database
         self.scales = MappingProxyType(dict(scales))
+        if _existing_connection is not None:
+            from .writer_fence import _assert_existing_read_joinable
+            from .existing_services import _verify_fixed_schema
+            _assert_existing_read_joinable(database, _existing_connection)
+            _verify_fixed_schema(_existing_connection, _SCHEMA)
+            self.verify(connection=_existing_connection)
+            return
         with database.transaction() as connection:
             existing = {row[0] for row in connection.execute(
                 "SELECT name FROM sqlite_master WHERE name IN "
@@ -315,6 +322,7 @@ class DurableLedger:
                     version = connection.execute("SELECT version FROM ledger_schema WHERE singleton=1").fetchone()
                     if version is not None and version[0] != _SCHEMA_VERSION:
                         raise StorageError(f"unsupported ledger schema version: {version[0]}")
+                self._verify_postings_definition(connection)
                 # An existing authority must retain its original protection.
                 # Do not silently install a missing guard before checking it.
                 self._verify_protection(connection)
@@ -332,6 +340,24 @@ class DurableLedger:
                 raise LedgerError("configured asset scales differ from the persistent ledger")
 
     @staticmethod
+    def _verify_postings_definition(connection):
+        """Require the original columns, PK, CHECK and both foreign keys.
+
+        foreign_key_check validates declared constraints, not their presence.
+        Requiring this canonical definition also rejects hidden columns and
+        views without repairing a malformed existing catalogue.
+        """
+        statement = next(sql for sql in _SCHEMA if sql.startswith(
+            "CREATE TABLE IF NOT EXISTS ledger_postings "))
+        expected = statement.replace("CREATE TABLE IF NOT EXISTS ", "CREATE TABLE ", 1)
+        installed = connection.execute(
+            "SELECT type,tbl_name,sql FROM main.sqlite_master WHERE name='ledger_postings'").fetchone()
+        if installed is None:
+            raise LedgerError("journal postings table is missing")
+        if tuple(installed) != ("table", "ledger_postings", expected):
+            raise LedgerError("journal postings table definition changed")
+
+    @staticmethod
     def _verify_protection(connection):
         expected = {}
         for statement in _SCHEMA:
@@ -341,7 +367,7 @@ class DurableLedger:
                 table = definition.split(" ON ", 1)[1].split()[0]
                 expected[name] = ("trigger", table, definition)
         installed = {row[0]: tuple(row[1:]) for row in connection.execute(
-            "SELECT name,type,tbl_name,sql FROM sqlite_master")}
+            "SELECT name,type,tbl_name,sql FROM main.sqlite_master")}
         for name, definition in expected.items():
             if name not in installed:
                 raise LedgerError("journal protection trigger is missing")
@@ -484,25 +510,26 @@ class DurableLedger:
         Verification holds a transaction, so it sees one consistent state.
         """
         with self.database._using(connection) as current:
-            if [row[0] for row in current.execute("PRAGMA integrity_check")] != ["ok"]:
+            self._verify_postings_definition(current)
+            if [row[0] for row in current.execute("PRAGMA main.integrity_check")] != ["ok"]:
                 raise LedgerError("database integrity check failed")
-            if current.execute("PRAGMA foreign_key_check").fetchone() is not None:
+            if current.execute("PRAGMA main.foreign_key_check").fetchone() is not None:
                 raise LedgerError("database foreign-key check failed")
-            version = current.execute("SELECT version FROM ledger_schema WHERE singleton = 1").fetchone()
+            version = current.execute("SELECT version FROM main.ledger_schema WHERE singleton = 1").fetchone()
             if version is None or version[0] != _SCHEMA_VERSION:
                 raise LedgerError("ledger schema version changed")
-            if dict(current.execute("SELECT asset, scale FROM ledger_assets")) != self.scales:
+            if dict(current.execute("SELECT asset, scale FROM main.ledger_assets")) != self.scales:
                 raise LedgerError("ledger asset scales changed")
             self._verify_protection(current)
             projected: dict[tuple[str, str], int] = {}
             previous_hash = _GENESIS
             rows = current.execute("SELECT sequence, event_id, fingerprint, previous_hash, event_hash, sealed "
-                                   "FROM ledger_events ORDER BY sequence").fetchall()
+                                   "FROM main.ledger_events ORDER BY sequence").fetchall()
             for expected_sequence, row in enumerate(rows, 1):
                 sequence, event_id, fingerprint, prior, event_hash, sealed = tuple(row)
                 if sequence != expected_sequence or sealed != 1 or prior != previous_hash:
                     raise LedgerError("journal sequence or hash chain is broken")
-                postings = current.execute("SELECT ordinal, account, asset, units FROM ledger_postings "
+                postings = current.execute("SELECT ordinal, account, asset, units FROM main.ledger_postings "
                                            "WHERE sequence = ? ORDER BY ordinal", (sequence,)).fetchall()
                 if [posting[0] for posting in postings] != list(range(len(postings))):
                     raise LedgerError("journal posting sequence is broken")
@@ -523,7 +550,7 @@ class DurableLedger:
                         raise LedgerError("replayed balance exceeds supported range")
                 previous_hash = event_hash
             stored = {(row[0], row[1]): self._stored_units(row[2]) for row in current.execute(
-                "SELECT account, asset, units FROM ledger_balances")}
+                "SELECT account, asset, units FROM main.ledger_balances")}
             if stored != projected:
                 raise LedgerError("materialized balances differ from journal replay")
             return len(rows)

@@ -1,0 +1,131 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "2",
+    "/tmp/uta-python31318-24-20261117/runtime/bin/python3.13",
+    "/workspace/uta-recovery-horizon-91-review/evidence/runs/recovery-horizon91/trace_original91_bound.py",
+    "--worker",
+    "/workspace/uta-recovery-horizon91-ab16-final-20261117-01/s03-B/attempt/worker"
+  ],
+  "started_at": "2026-11-17T15:31:19.973633+00:00",
+  "finished_at": "2026-11-17T15:31:27.164143+00:00",
+  "wall_seconds": 7.190530615000171,
+  "worker_identity": {
+    "pid": 238073,
+    "state": "R",
+    "start_ticks": "6660646",
+    "pgid": 238073
+  },
+  "exit_code": 0,
+  "watchdog_seconds": 27,
+  "whole_budget_seconds": 30,
+  "timed_out": false,
+  "own_process_group_only": true,
+  "owned_children": [
+    {
+      "original": {
+        "pgid": 238073,
+        "pid": 238077,
+        "start_ticks": "6660685",
+        "state": "R"
+      },
+      "current": {
+        "pid": 238077,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 238073,
+        "pid": 238078,
+        "start_ticks": "6660686",
+        "state": "R"
+      },
+      "current": {
+        "pid": 238078,
+        "present": false
+      },
+      "forced_cleanup": false
+    },
+    {
+      "original": {
+        "pgid": 238073,
+        "pid": 238098,
+        "start_ticks": "6661263",
+        "state": "R"
+      },
+      "current": {
+        "pid": 238098,
+        "present": false
+      },
+      "forced_cleanup": false
+    }
+  ],
+  "final_owned_identities": [
+    {
+      "pid": 238077,
+      "present": false
+    },
+    {
+      "pid": 238078,
+      "present": false
+    },
+    {
+      "pid": 238098,
+      "present": false
+    }
+  ],
+  "source_unchanged": true,
+  "all_266_match_original": true,
+  "whole_budget_met": true,
+  "source_error": null,
+  "worker_result_error": null,
+  "session_scan_error": null,
+  "new_own_session_members": [],
+  "spawn_calls_balanced": true,
+  "observation_unknown": false,
+  "event_read_error": null,
+  "event_hash_valid": true,
+  "unittest_errors": 0,
+  "native_case_started": true,
+  "worker_observation_complete": true,
+  "result_contract": {
+    "valid": true,
+    "errors": [],
+    "safe_to_continue": true,
+    "original_case_passed": true,
+    "outcome_stage": "PASS"
+  },
+  "evidence_flags": {
+    "observer_post_join": {
+      "pidfd": {
+        "is_alive": false,
+        "lifecycle": {
+          "started": true,
+          "ended": true,
+          "error": null
+        }
+      },
+      "code_stack": {
+        "is_alive": false,
+        "lifecycle": {
+          "started": true,
+          "ended": true,
+          "error": null
+        }
+      }
+    },
+    "both_observers_joined": true,
+    "observer_failures": [],
+    "sampling_failures": [],
+    "logger_failures": [],
+    "fixture_forced_cleanup": false,
+    "fixture_cleanup_error": false
+  },
+  "production_approved": false,
+  "strict_observation_complete": true,
+  "technical_stop_required": false,
+  "external_whole_budget_and_runtime_identity_still_required": true
+}

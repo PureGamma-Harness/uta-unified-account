@@ -1,0 +1,52 @@
+{
+  "stage": "synthetic default-off code-identity only; not full borrow replay or activation",
+  "parent_commit": "9e8d4ea0406db80ee93c94eb0bbfecd7b5058bfc",
+  "source_sha256": {
+    "uta/credit_artifact.py": "303495ede1a39d45a48180fc1a67e551bd452adc5a88ca09bdda2e69f1efc3f5",
+    "tests/test_credit_artifact.py": "d57bca86f4abdbefb8b18d150b365e44e0f29a2406983e049d4b9fe21690c1a0"
+  },
+  "runs": [
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:45:30.071421+00:00",
+      "completed_at": "2026-11-17T11:45:30.785514+00:00",
+      "elapsed_seconds": 0.7138689720013645,
+      "exit_code": 0,
+      "output_sha256": "2b2060a55169060327c587c8f19eb8d7689a0365f7b02c525c0fc39d40e129cd",
+      "database_created": false,
+      "listener_started": false
+    },
+    {
+      "command": [
+        "taskset",
+        "-c",
+        "3",
+        "/usr/bin/python3.13",
+        "-W",
+        "error::ResourceWarning",
+        "-m",
+        "unittest",
+        "tests.test_credit_artifact",
+        "-v"
+      ],
+      "started_at": "2026-11-17T11:45:30.785577+00:00",
+      "completed_at": "2026-11-17T11:45:31.539750+00:00",
+      "elapsed_seconds": 0.7539994710023166,
+      "exit_code": 0,
+      "output_sha256": "0a0ce1bcc50e961a90db2ce772abfd6fb8b1f461f7bd884fa055fcc3a69399f0",
+      "database_created": false,
+      "listener_started": false
+    }
+  ]
+}
