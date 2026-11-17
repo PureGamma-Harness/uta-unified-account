@@ -1,0 +1,144 @@
+{
+  "summary": {
+    "tests_run": 1804,
+    "failures": 0,
+    "errors": 16,
+    "skipped": 0,
+    "passed": false,
+    "duration_seconds": 409.9681561909965,
+    "source_unchanged": true,
+    "tracked_source_clean_before": true,
+    "tracked_source_clean_after": true,
+    "python": "3.10.22 (main, Oct  9 2026, 15:21:30) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1"
+  },
+  "worker": {
+    "tests_run": 1804,
+    "failures": 0,
+    "errors": 16,
+    "skipped": 0,
+    "expected_failures": 0,
+    "unexpected_successes": 0,
+    "unittest_passed": false
+  },
+  "outer": {
+    "outcome": "FAIL",
+    "exit_code": 1,
+    "watchdog_reason": null,
+    "leader_reaped": true,
+    "source_and_binary_unchanged": true,
+    "elapsed_seconds": 410.71772542099643
+  },
+  "actual_SUP_exit": {
+    "pid": 462713,
+    "birth_ticks": 8733529,
+    "state": "Z",
+    "parent": 1,
+    "boot_id": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "linux_encoded_exit_status": 256,
+    "observed_monotonic_ns": 87870659210561,
+    "matches_saved_birth_boot": true,
+    "exit_code": 1
+  },
+  "runtime312_started": false,
+  "runtime313_started": false,
+  "error_sections": [
+    {
+      "test": "ERROR: test_capacity_review_data_reference (unittest.loader._FailedTest)",
+      "FileNotFoundError_lines": [
+        "ImportError: Failed to import test module: test_capacity_review_data_reference",
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/runs/capacity-independent-review/recompute.py'"
+      ]
+    },
+    {
+      "test": "ERROR: test_bool_sequence_and_declared_count_are_not_native_integers (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_frozen_cash_blocks_payment_despite_debt_and_complete_rehash (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_market_quote_limits_and_borrow_decision_cannot_enter_repayment (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_materialized_pool_tamper_cannot_replace_original_postings (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_original_receipt_pays_interest_before_principal (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_rehashed_balanced_principal_first_financial_forgery_still_refuses (test_credit_v2_repayment_reference.IndependentRepaymentReferenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/credit-repayment-independent/original-actual-repayment-observations.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_complete_original_ast_is_preserved_except_exact_failure_hook (test_expired_gate_failure_evidence.FailureDiagnosticTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/reviews/expired-gate-failure-5a/original-ast.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_full_published_computation_and_admission_scales_are_preserved (test_main_baseline_evidence.PublishedMainEvidenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/compute-eight-workers.stdout.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_original_outputs_and_invocations_have_integrity_and_no_technical_errors (test_main_baseline_evidence.PublishedMainEvidenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/manifest.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_simulated_liquidations_and_paced_overload_are_never_conflated (test_main_baseline_evidence.PublishedMainEvidenceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/evidence/main-baseline-20261114/wal-four-shards.stdout.json'"
+      ]
+    },
+    {
+      "test": "ERROR: test_constructor_failure_never_opens_holders_before_initialization (test_managed_read_holder_lifecycle.ManagedReadHolderLifecycleTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'"
+      ]
+    },
+    {
+      "test": "ERROR: test_financial_commit_checkpoint_gap_queries_original_id_and_does_not_skip_partial_history (test_managed_soak.ManagedSoakTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'"
+      ]
+    },
+    {
+      "test": "ERROR: test_real_tls_cli_matching_debt_and_both_process_faults (test_managed_soak.ManagedSoakTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'"
+      ]
+    },
+    {
+      "test": "ERROR: test_initialization_failure_is_preserved_before_required_databases_exist (test_managed_soak_resources.ManagedSoakResourceTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/managed-soak-golden.md'"
+      ]
+    },
+    {
+      "test": "ERROR: test_old_raw_has_no_new_timing_footer_and_is_never_upgraded (test_managed_variant_runner.RunnerPureTests)",
+      "FileNotFoundError_lines": [
+        "FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-stopped-owner-gate/docs/evidence/managed-variant-wiring-20261117/raw/py312/default/manifest.json'"
+      ]
+    }
+  ]
+}
