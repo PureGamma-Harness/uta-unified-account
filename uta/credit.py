@@ -338,37 +338,46 @@ class CreditService:
         reduction cannot lower equity or margin surplus. It therefore needs no
         current price and remains available during a trading halt.
         """
-        units, amount_text, scope = self._prepare(account_id, command_id, asset, amount)
+        self._prepare(account_id, command_id, asset, amount)
         with self.exchange._transaction() as connection:
-            self.exchange._require_account(connection, account_id)
-            previous = self._replay(connection, scope, command_id, "repaid", asset, amount_text)
-            if previous is not None:
-                return previous
-            principal, interest = self._debt(connection, account_id, asset)
-            if units > principal + interest:
-                raise ServiceError("repayment_exceeds_debt", "repayment exceeds outstanding principal and interest", 409)
-            available = self.exchange._available_asset(connection, account_id, asset)
-            if self._codec._units(asset, available) < units:
-                raise ServiceError("insufficient_cash", "settled available cash is insufficient for repayment", 409)
-            paid_interest = min(units, interest)
-            paid_principal = units - paid_interest
-            value, event_id = self._value(asset, units), _key("credit", scope, command_id)
-            postings = [Posting(self.exchange._customer(account_id), asset, value.copy_negate())]
-            for paid, cash_account, debt_account, receivable in (
-                (paid_interest, _INTEREST_CASH, self.interest_account(account_id), _INTEREST_RECEIVABLE),
-                (paid_principal, _POOL, self.principal_account(account_id), _PRINCIPAL_RECEIVABLE)):
-                if paid:
-                    part = self._value(asset, paid)
-                    postings.extend((Posting(cash_account, asset, part), Posting(debt_account, asset, part),
-                                     Posting(receivable, asset, part.copy_negate())))
-            self.ledger.post(event_id, postings, connection=connection)
-            principal, interest = principal - paid_principal, interest - paid_interest
-            self._write_debt(connection, account_id, asset, principal, interest)
-            version = self.exchange._bump(connection, account_id)
-            result = self._result(account_id, command_id, asset, amount_text, principal, interest, version, event_id)
-            result.update({"principal_repaid": _text(self._value(asset, paid_principal)),
-                           "interest_repaid": _text(self._value(asset, paid_interest))})
-            return self._record(connection, scope, command_id, "repaid", asset, amount_text, result)
+            return self._repay(connection, account_id, command_id, asset, amount)
+
+    def _repay(self, connection, account_id: str, command_id: str, asset: str, amount: Decimal) -> dict:
+        """Join an owned financial transaction; preserve interest-first repayment.
+
+        Durable dispatch stores this result with the postings in the same COMMIT.
+        The public method validates before opening storage and uses this path too.
+        """
+        units, amount_text, scope = self._prepare(account_id, command_id, asset, amount)
+        self.exchange._require_account(connection, account_id)
+        previous = self._replay(connection, scope, command_id, "repaid", asset, amount_text)
+        if previous is not None:
+            return previous
+        principal, interest = self._debt(connection, account_id, asset)
+        if units > principal + interest:
+            raise ServiceError("repayment_exceeds_debt", "repayment exceeds outstanding principal and interest", 409)
+        available = self.exchange._available_asset(connection, account_id, asset)
+        if self._codec._units(asset, available) < units:
+            raise ServiceError("insufficient_cash", "settled available cash is insufficient for repayment", 409)
+        paid_interest = min(units, interest)
+        paid_principal = units - paid_interest
+        value, event_id = self._value(asset, units), _key("credit", scope, command_id)
+        postings = [Posting(self.exchange._customer(account_id), asset, value.copy_negate())]
+        for paid, cash_account, debt_account, receivable in (
+            (paid_interest, _INTEREST_CASH, self.interest_account(account_id), _INTEREST_RECEIVABLE),
+            (paid_principal, _POOL, self.principal_account(account_id), _PRINCIPAL_RECEIVABLE)):
+            if paid:
+                part = self._value(asset, paid)
+                postings.extend((Posting(cash_account, asset, part), Posting(debt_account, asset, part),
+                                 Posting(receivable, asset, part.copy_negate())))
+        self.ledger.post(event_id, postings, connection=connection)
+        principal, interest = principal - paid_principal, interest - paid_interest
+        self._write_debt(connection, account_id, asset, principal, interest)
+        version = self.exchange._bump(connection, account_id)
+        result = self._result(account_id, command_id, asset, amount_text, principal, interest, version, event_id)
+        result.update({"principal_repaid": _text(self._value(asset, paid_principal)),
+                       "interest_repaid": _text(self._value(asset, paid_interest))})
+        return self._record(connection, scope, command_id, "repaid", asset, amount_text, result)
 
     @staticmethod
     def _check_schema(connection) -> None:

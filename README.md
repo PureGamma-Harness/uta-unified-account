@@ -15,6 +15,17 @@
 - **清算**：持久计划、监督冻结和撤单、只减仓、本地实际部分清算成交及重启恢复。保险基金与 ADL 自动处置未启用。
 - **接口与运维**：账户隔离、reader/trader/funding/risk/admin 分权、私有事件分页、凭据轮换、健康检查、安装包、SIGTERM 排空、一致备份与离线恢复。
 
+## 入口与数据权威
+
+| 入口 | 实际执行路径 | 使用说明 |
+| --- | --- | --- |
+| `python -m uta exchange` | v1 同步 `ExchangeService`，单个认证交易数据库；响应等待金融 COMMIT | [API 契约](docs/api-contract.md)、[部署手册](docs/operations.md)；可选 `--batch-admission` 是内存有界队列的批提交，`--automate` 启动本进程后台工作 |
+| `python -m uta.durable_cli serve`，安装后为 `uta-durable serve` | v2 parent 入队/查询，独立分片 PID 持租约执行；先返回入队 ACK，再查询业务终态 | [持久 CLI](docs/durable-cli.md)、[v2 契约](docs/durable-api.md)、[进程与恢复](docs/durable-process.md)；已有 managed 布局，required 决策审计，默认 HMAC + TLS |
+| `python -m uta lab`、`python -m uta scenario`、`python -m uta replay` | `Simulator` + `Store` / `ShardedStore`，独立研究库 | [研究说明](docs/research-lab.md)、[模拟器](docs/simulator.md)；包含场景 PM 参考与事件回放 |
+| `python -m uta demo`、`python -m uta serve` | 调用者输入的无状态参考计算 | `serve` 为本机不认证演示；不持有交易账户权威 |
+
+源码入口见 [同步及研究命令](uta/__main__.py)、[managed CLI](uta/durable_cli.py) 和 [v2 HTTP factory](uta/durable_gateway.py)。`python -m uta ... --shards` 配置研究路径；managed 分片数量由显式 `uta-durable init --shards ...` 固定，不能借该研究参数改造 `exchange`。各类数据库应使用各自的私有路径和初始化流程；managed 金融写入必须由持有效 token 的 writer 完成。
+
 ## 运行与测试
 
 Python 3.10–3.13，运行时只使用标准库。
@@ -51,6 +62,8 @@ python -m uta.matching --database /var/lib/uta/exchange.sqlite3 \
 
 这条命令只撮合已接纳的对手订单，不创建资金或价格。受产品/规则配置管理的数据库必须使用相同配置打开，不能缺省降级。见 [API 契约](docs/api-contract.md) 和 [撮合结算](docs/matching-settlement.md)。
 
+上述独立撮合命令适用于非 managed 的同步 authority。managed 分片由其 worker 在 router gate 和有效租约内调用撮合，不能用这条无 writer token 的命令打开受管理分片。需要 v2 部署时，先运行 `python -m uta.durable_cli --help` 并按 [持久 CLI 手册](docs/durable-cli.md) 完成初始化、认证配置、行情发布及显式激活。
+
 原有 `python -m uta serve --port 8080` 保留为**不认证的本机纯计算演示**，接收调用者提供的参考输入，不连接持久交易账本，不应作为交易入口或公网服务。
 
 并发 main 新增的研究功能也完整保留：`python -m uta lab --db research.sqlite3` 启动本机模拟控制台，`python -m uta scenario --shards 4` 执行并重开回放，`python -m uta replay --db research.sqlite3` 验证模拟事件。研究库与认证交易库是两个不同权威，禁止混用同一路径，程序会拒绝不符的库。场景 PM 参考能力不授予生产 PM 权限；见 [研究说明](docs/research-lab.md) 和 [原口径基准复跑](docs/main-baseline-rerun.md)。
@@ -72,6 +85,8 @@ python benchmarks/run_benchmark.py --help
 后续 [分片实验报告](docs/milestone-sharding.md) 和 [分组持久准入报告](docs/milestone-grouped.md) 保留各自独立验收记录。该轮集成通过 506 项测试及 Python 3.10–3.13 CI，新增 opt-in 有界批提交、真实 HTTP、独立故障/金融验证及真实双侧清算探针。单次同配置短测为 464→744 条持久接纳/秒，所有生产容量门槛仍未通过；原始数据、适用边界和部署回退均在报告中。
 
 0.3.0a1 评审候选新增默认关闭的精确预占/行情解析缓存，以及受 router 屏障保护的分片批提交。605 项双版本完整验收之后增加真实启用缓存纵向链路及归档验证，最终 607 项复验与 CI、八个工作流的交叉审查和回退见 [内核与分片准入报告](docs/milestone-kernel.md)。同源码三次配对中位持久接纳为均匀 708→993/s、热点多样 616→856/s；30 万到达含 23.8 万过载，仍未达到生产门槛，不以短测启用真实资金。
+
+0.4.0a1 在独立评审分支增加同库持久命令、独立分片 writer 进程、真实历史二进制写入门禁、HMAC+TLS 与持久 nonce、历史行情和线性决策审计。参见 [当前交付与阻断项](docs/milestone-durable.md)。已排队不等于风险接纳；本机租约不等于跨区容灾。实际 24 小时测试独立冻结在早期源码，须等待真实时长与终态对账，不能作为本候选或万笔容量已通过的证明。
 
 ## 交付顺序
 

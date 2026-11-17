@@ -1,0 +1,44 @@
+[Unit]
+Description=UTA managed durable v2 review authority (production approval required)
+Documentation=https://github.com/PureGamma-Harness/uta-unified-account
+After=network.target
+StartLimitIntervalSec=120
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=uta
+Group=uta
+WorkingDirectory=/var/lib/uta-durable
+ExecStart=/opt/uta/venv/bin/uta-durable serve --directory /var/lib/uta-durable/managed --auth-db /var/lib/uta-durable/auth/nonces.sqlite3 --signing-profile /etc/uta-durable/signing-profile.json --tls-cert /etc/uta-durable/server-chain.pem --tls-key /etc/uta-durable/server-key.pem --host 127.0.0.1 --port 8081
+Restart=on-failure
+RestartSec=5
+# SIGTERM reaches the coordinator first, allowing HTTP drain before workers.
+# The entire service cgroup is killed only after the explicit stop deadline.
+KillMode=mixed
+TimeoutStopSec=120
+SendSIGKILL=true
+UMask=0077
+StateDirectory=uta-durable
+StateDirectoryMode=0700
+ConfigurationDirectory=uta-durable
+ConfigurationDirectoryMode=0750
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+CapabilityBoundingSet=
+AmbientCapabilities=
+LimitNOFILE=65536
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target

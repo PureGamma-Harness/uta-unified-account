@@ -27,17 +27,28 @@ python -m uta scenario --shards 4
 python formal/explore_reservation.py
 ```
 
-当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12 的独立作业中执行相同的四个检查，任一步失败会阻止该作业继续：
+上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12、3.13 的独立作业中还执行源码编译、认证交易验收、其余有界模型，以及 wheel 构建和源码目录之外的安装验证。任一步失败会阻止该作业继续：
 
 ```mermaid
-flowchart LR
-    Matrix["Python 3.10 / 3.11 / 3.12 各自运行"] --> Tests["unittest 测试"]
-    Tests --> Demo["固定费率 demo"]
+flowchart TD
+    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13 各自运行"] --> Tests["unittest 测试"]
+    Tests --> Compile["编译 uta / formal / tests"]
+    Compile --> Demo["固定费率 demo"]
     Demo --> Scenario["4 分片情景、重开与回放"]
-    Scenario --> Model["Python 有界预占枚举"]
+    Scenario --> Acceptance["认证交易 acceptance"]
+    Acceptance --> Model["预占、双侧结算、组提交、分片、持久命令有界枚举"]
+    Model --> Wheel["构建 wheel，独立目录安装与 CLI 验证"]
 ```
 
+额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 `formal/explore_settlement.py`、`formal/explore_group_commit.py`、`formal/explore_shard_admission.py`、`formal/explore_durable_commands.py` 各自的 Python 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，并初始化、inspect、status 一个新的 managed 目录；完整顺序以工作流为准。
+
 本地单一 Python 版本通过，不等于整个 CI 矩阵已通过。`scenario` 未指定数据库时使用临时目录并清理；要保存并再次回放，使用 [流程文档](workflows.md) 中带 `--db` 的命令。Python 枚举器与 TLA+ TLC 是不同工具；当前 CI 没有执行 TLC，范围见 [形式化模型说明](../formal/README.md)。
+
+## 认证链路的 SQLite 锁回归
+
+认证交易链路使用 `uta.storage.Database`，与上面的研究模拟器 Store 分开。[test_storage_locks.py](../tests/test_storage_locks.py) 对普通库、分片库与认证 nonce 库分别验证：同进程打开和关闭第二个连接时，原读事务持有的 SQLite POSIX 文件锁不能消失。独立子进程直接探测实际锁，不以线程内互斥或最终余额相等代替锁证据。原文件检查会额外打开并关闭已有数据库，三个入口均可触发该回归；实现已改为无额外描述符的文件元数据检查。
+
+时序图、运行命令、SQLite 版本差异及未验证边界见 [SQLite 文件检查与进程锁](storage-locks.md)。该项通过不等于持续容量、断电恢复或跨主机验收通过。
 
 ## 验证问题和证据
 
@@ -55,6 +66,26 @@ flowchart LR
 | API 示例和错误输入 | `tests/test_api.py` | 仅本机无认证演示；不是生产 API |
 
 尚未取得的证据包括真实交易所逐字段对账、第三方独立审计、真实行情历史回放、连续端到端压力验收、业务参数校准、进程崩溃/断电与跨主机故障恢复、形式化证明覆盖真实实现及监管适用性审查。现有有界模型只覆盖 [公开的假设与状态空间](../formal/README.md)，不能把规格文件存在、Python 枚举通过或数据库重开成功描述为这些目标已完成。
+
+## 独立日记簿的精度与回放
+
+[Ledger](../uta/ledger.py) 按币种小数位转换为整数最小单位，`unit_digits` 指定这些整数的位数上限，默认 38，可显式设为 38–60。每笔金额和累计余额的绝对值均须小于 `10 ** unit_digits` 个最小单位；该参数控制范围，金额仍须精确匹配币种小数位，不进行舍入。
+
+`JournalEvent` 不携带币种小数位或位数上限，调用方须随历史保留这两项配置。对显式使用较宽上限的日记簿，回放时提供相同 `unit_digits`；省略时仍执行默认 38 位检查。例如 USD 保留 18 位小数时，下面的金额对应 `10 ** 43` 个最小单位，需要较宽配置：
+
+```python
+from decimal import Decimal as D
+from uta.ledger import Ledger, Posting
+
+scales = {"USD": 18}
+ledger = Ledger(scales, unit_digits=60)
+ledger.post("large", [Posting("external", "USD", D("-1e25")),
+                      Posting("customer", "USD", D("1e25"))])
+restored = Ledger.replay(scales, ledger.journal(), unit_digits=60)
+assert restored.balance("customer", "USD") == D("1e25")
+```
+
+[test_ledger.py](../tests/test_ledger.py) 覆盖较宽金额与最小单位扣减的精确往返、低 Decimal 精度上下文、回放后的幂等、默认范围拒绝，以及回放后新增事件触发余额上限时不改变余额或历史。这里重建的是独立内存日记簿；SQLite 账户的逐命令回放由 [Simulator.verify_replay](../uta/simulator.py) 完成，流程见 [审计回放](workflows.md)。
 
 ## 可人工复算的基准
 

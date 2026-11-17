@@ -17,6 +17,7 @@ import re
 import sqlite3
 from typing import Callable, Mapping
 
+from .decision_audit import DecisionAudit
 from .ledger import LedgerError, Posting
 from .market import MarketSnapshot
 from .market_cache import MAX_CACHE_CAPACITY as MAX_MARKET_CACHE_CAPACITY, MarketDecodeCache
@@ -114,7 +115,10 @@ class ExchangeService:
                  product_catalog: ProductCatalog | None = None,
                  portfolio_rules: PortfolioRules | None = None,
                  reserve_cache_size: int = 0,
-                 market_cache_size: int = 0):
+                 market_cache_size: int = 0,
+                 decision_audit: bool = False):
+        if type(decision_audit) is not bool:
+            raise ServiceError("invalid_configuration", "decision_audit must be a bool")
         if type(reserve_cache_size) is not int or not 0 <= reserve_cache_size <= MAX_RESERVE_CACHE_CAPACITY:
             raise ServiceError("invalid_configuration", "reserve_cache_size must be an integer from 0 through 65536")
         if type(market_cache_size) is not int or not 0 <= market_cache_size <= MAX_MARKET_CACHE_CAPACITY:
@@ -136,6 +140,7 @@ class ExchangeService:
         if not _ZERO <= fee_rate <= Decimal("0.01"):
             raise ServiceError("invalid_configuration", "fee_rate must be between zero and 0.01")
         self.database = database
+        self.audit = DecisionAudit(database) if decision_audit else None
         self._reserve_kernel = ReserveKernel(reserve_cache_size)
         self._market_decode_cache = MarketDecodeCache(market_cache_size)
         self._product_catalog, self._portfolio_rules = product_catalog, portfolio_rules
@@ -148,7 +153,7 @@ class ExchangeService:
         self.max_price_age, self.fee_rate = max_price_age, fee_rate
         self.clock = clock or (lambda: datetime.now(timezone.utc))
         with database.transaction() as connection:
-            self._schema(connection)
+            self._schema(connection, audit_required=decision_audit)
             # Verify before admitting any command after startup. Checking only
             # SQLite pages would miss a corrupted balance projection.
             self.ledger.verify(connection=connection)
@@ -172,6 +177,8 @@ class ExchangeService:
                     raise ServiceError("configuration_conflict", "existing legacy financial state requires an explicit policy migration", 409)
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('risk_policy',?)", (risk_policy,))
             connection.execute("INSERT OR IGNORE INTO uta_config VALUES ('halted','true')")
+            if self.audit is not None:
+                self.audit.install(connection, policy=self.audit.policy(self), recorded_at=self._now().isoformat())
 
     @staticmethod
     def _claim_authority(connection: sqlite3.Connection) -> None:
@@ -194,7 +201,7 @@ class ExchangeService:
             connection.execute("INSERT INTO uta_authority VALUES (1,'exchange')")
 
     @staticmethod
-    def _schema(connection: sqlite3.Connection) -> None:
+    def _schema(connection: sqlite3.Connection, *, audit_required: bool = False) -> None:
         statements = (
             "CREATE TABLE IF NOT EXISTS uta_schema (version INTEGER NOT NULL)",
             "CREATE TABLE IF NOT EXISTS uta_config (key TEXT PRIMARY KEY, value TEXT NOT NULL)",
@@ -239,7 +246,7 @@ class ExchangeService:
         rows = connection.execute("SELECT version FROM uta_schema").fetchall()
         if not rows:
             connection.execute("INSERT INTO uta_schema VALUES (1)")
-        elif len(rows) != 1 or rows[0]["version"] not in (1, 2):
+        elif len(rows) != 1 or rows[0]["version"] not in ((1, 2, 3) if audit_required else (1, 2)):
             raise ServiceError("schema_version", "unsupported trading schema version", 503)
         columns = {row["name"] for row in connection.execute("PRAGMA table_info(uta_orders)")}
         if "fee_notional" not in columns:
@@ -254,7 +261,8 @@ class ExchangeService:
             for (account_id, order_id), (notional, charged) in totals.items():
                 connection.execute("UPDATE uta_orders SET fee_notional=?,charged_fee=? WHERE account_id=? AND order_id=?",
                                    (_text(_exact(notional)), _text(_exact(charged)), account_id, order_id))
-        connection.execute("UPDATE uta_schema SET version=2")
+        if not rows or rows[0]["version"] != 3:
+            connection.execute("UPDATE uta_schema SET version=2")
 
     @contextmanager
     def _transaction(self):
@@ -372,6 +380,8 @@ class ExchangeService:
             if fresh:
                 snapshot.validate(now=self._now(), max_age=self.max_price_age)
             self._validate_policy_market(snapshot)
+            if self.audit is not None:
+                self.audit.market_ref(connection, snapshot)
             return snapshot
         except RiskInputError as exc:
             raise ServiceError("market_unavailable", "trusted market snapshot is invalid or stale", 503) from exc
@@ -551,7 +561,22 @@ class ExchangeService:
         result["reduce_only"] = bool(row["reduce_only"])
         result["reserved_margin"] = _text(self._reserve(row, market)) if market is not None and row["status"] in _LIVE else "0"
         result.update(self._policy_versions())
+        if "admission_decision_id" in row.keys():
+            result["decision_id"] = row["admission_decision_id"]
+            result["decision_evidence"] = "recorded" if row["admission_decision_id"] else "legacy_missing"
         return result
+
+    def _audit_state(self, connection, account_id: str) -> dict:
+        """Complete valuation inputs, read in the financial transaction."""
+        state = connection.execute("SELECT * FROM uta_liquidation_accounts WHERE account_id=?", (account_id,)).fetchone()
+        return {"version": self._require_account(connection, account_id)["version"],
+                "balances": {asset: _text(self.ledger.balance(self._customer(account_id), asset, connection=connection)) for asset in self.scales},
+                "frozen_assets": {asset: _text(value) for asset, value in self._locked_assets(connection, account_id).items()},
+                "positions": {symbol: {"quantity": _text(quantity), "cost_basis": _text(cost)}
+                              for symbol, (quantity, cost) in self._positions(connection, account_id).items()},
+                "liabilities": [dict(row) for row in connection.execute("SELECT asset,principal,interest FROM uta_liabilities WHERE account_id=? ORDER BY asset", (account_id,))],
+                "orders": [dict(row) for row in self._live_orders(connection, account_id)],
+                "halted": self._halted(connection), "liquidation_state": dict(state) if state else None}
 
     def _account(self, connection, account_id: str) -> dict:
         row = self._require_account(connection, account_id)
@@ -579,7 +604,7 @@ class ExchangeService:
                 self._event(connection, "ACCOUNT_CREATED", account_id, {"account_id": account_id})
             return self._account(connection, account_id)
 
-    def publish_market(self, snapshot: MarketSnapshot) -> dict:
+    def _validate_market_command(self, snapshot: MarketSnapshot) -> str:
         if not isinstance(snapshot, MarketSnapshot):
             raise ServiceError("invalid_input", "market must be a MarketSnapshot")
         try:
@@ -593,40 +618,57 @@ class ExchangeService:
                for spec in snapshot.instruments.values()):
             raise ServiceError("invalid_market", "trading instruments require strictly positive maintenance and initial margin rates")
         self._validate_policy_market(snapshot)
-        payload = snapshot.to_json()
+        return snapshot.to_json()
+
+    def publish_market(self, snapshot: MarketSnapshot) -> dict:
+        payload = self._validate_market_command(snapshot)
         with self._transaction() as connection:
-            # A queued publisher may have waited for another writer; freshness
-            # is a commit-time admission condition, not just a parse-time one.
-            try:
-                snapshot.validate(now=self._now(), max_age=self.max_price_age)
-            except RiskInputError as exc:
-                raise ServiceError("invalid_market", str(exc)) from exc
-            previous_row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
-            if previous_row is not None:
-                previous = MarketSnapshot.from_json(previous_row["payload"])
-                if snapshot.version < previous.version or snapshot.observed_at < previous.observed_at:
-                    raise ServiceError("market_regression", "market version or timestamp regressed", 409)
-                if snapshot.version == previous.version:
-                    if payload != previous_row["payload"]:
-                        raise ServiceError("market_conflict", "market version reused with different content", 409)
-                    return {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
-            for row in connection.execute("SELECT DISTINCT symbol FROM uta_positions UNION SELECT DISTINCT symbol FROM uta_orders WHERE status IN ('OPEN','PARTIALLY_FILLED')"):
-                if row["symbol"] not in snapshot.instruments:
-                    raise ServiceError("market_incomplete", "cannot remove a live instrument specification", 409)
-            # Positive funded assets need pricing even when no positions exist.
-            for account in connection.execute("SELECT account_id FROM uta_accounts"):
-                for asset in self.scales:
-                    if (asset not in snapshot.assets and
-                            self.ledger.balance(self._customer(account["account_id"]), asset, connection=connection)):
-                        raise ServiceError("market_incomplete", "cannot remove funded collateral specification", 409)
-            for debt in connection.execute("SELECT asset,principal,interest FROM uta_liabilities"):
-                if (debt["asset"] not in snapshot.assets and
-                        Fraction(Decimal(debt["principal"])) + Fraction(Decimal(debt["interest"]))):
-                    raise ServiceError("market_incomplete", "cannot remove gross liability asset specification", 409)
-            connection.execute("INSERT INTO uta_market VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", (payload,))
-            result = {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
-            self._event(connection, "MARKET_PUBLISHED", None, result)
-            return result
+            return self._publish_market(connection, snapshot, payload=payload)
+
+    def _publish_market(self, connection, snapshot: MarketSnapshot, *, payload: str | None = None) -> dict:
+        """Publish while joining the caller's financial/receipt transaction."""
+        if payload is None:
+            payload = self._validate_market_command(snapshot)
+        # A queued publisher may have waited for another writer; freshness
+        # is a commit-time admission condition, not just a parse-time one.
+        try:
+            snapshot.validate(now=self._now(), max_age=self.max_price_age)
+        except RiskInputError as exc:
+            raise ServiceError("invalid_market", str(exc)) from exc
+        market_id = None
+        if self.audit is not None:
+            market_id = self.audit.archive_market(connection, payload, origin="PUBLISHED", recorded_at=self._now().isoformat())
+        previous_row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+        if previous_row is not None:
+            previous = MarketSnapshot.from_json(previous_row["payload"])
+            if snapshot.version < previous.version or snapshot.observed_at < previous.observed_at:
+                raise ServiceError("market_regression", "market version or timestamp regressed", 409)
+            if snapshot.version == previous.version:
+                if payload != previous_row["payload"]:
+                    raise ServiceError("market_conflict", "market version reused with different content", 409)
+                result = {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
+                if market_id is not None:
+                    result["market_snapshot_id"] = market_id
+                return result
+        for row in connection.execute("SELECT DISTINCT symbol FROM uta_positions UNION SELECT DISTINCT symbol FROM uta_orders WHERE status IN ('OPEN','PARTIALLY_FILLED')"):
+            if row["symbol"] not in snapshot.instruments:
+                raise ServiceError("market_incomplete", "cannot remove a live instrument specification", 409)
+        # Positive funded assets need pricing even when no positions exist.
+        for account in connection.execute("SELECT account_id FROM uta_accounts"):
+            for asset in self.scales:
+                if (asset not in snapshot.assets and
+                        self.ledger.balance(self._customer(account["account_id"]), asset, connection=connection)):
+                    raise ServiceError("market_incomplete", "cannot remove funded collateral specification", 409)
+        for debt in connection.execute("SELECT asset,principal,interest FROM uta_liabilities"):
+            if (debt["asset"] not in snapshot.assets and
+                    Fraction(Decimal(debt["principal"])) + Fraction(Decimal(debt["interest"]))):
+                raise ServiceError("market_incomplete", "cannot remove gross liability asset specification", 409)
+        connection.execute("INSERT INTO uta_market VALUES (1,?) ON CONFLICT(singleton) DO UPDATE SET payload=excluded.payload", (payload,))
+        result = {"version": snapshot.version, "observed_at": snapshot.observed_at.isoformat()}
+        if market_id is not None:
+            result["market_snapshot_id"] = market_id
+        self._event(connection, "MARKET_PUBLISHED", None, result)
+        return result
 
     def deposit(self, account_id: str, event_id: str, asset: str, amount: Decimal) -> dict:
         for value, field in ((account_id, "account_id"), (event_id, "event_id"), (asset, "asset")):
@@ -727,10 +769,24 @@ class ExchangeService:
             self._check_reduction_surplus(current, projected)
         elif Fraction(Decimal(current["available_margin"])) < Fraction(reserve):
             raise ServiceError("insufficient_margin", "insufficient available margin for order and fee reserve", 409)
+        audit_before = self._audit_state(connection, account_id) if self.audit is not None else None
+        market_id = self.audit.market_ref(connection, market) if self.audit is not None else None
+        decision_id = self.audit.decision_id("ORDER_ACCEPTED", account_id, order_id) if self.audit is not None else None
         version = self._bump(connection, account_id)
-        connection.execute("INSERT INTO uta_orders(account_id,order_id,symbol,quantity,limit_price,reduce_only,filled_quantity,status,version,created_at) VALUES (?,?,?,?,?,?,?,'OPEN',?,?)",
-                           (account_id, order_id, symbol, quantity_text, price_text, int(reduce_only), "0", version, self._now().isoformat()))
+        columns = ",admission_decision_id" if decision_id is not None else ""
+        placeholder = ",?" if decision_id is not None else ""
+        arguments = (account_id, order_id, symbol, quantity_text, price_text, int(reduce_only), "0", version, self._now().isoformat())
+        connection.execute(f"INSERT INTO uta_orders(account_id,order_id,symbol,quantity,limit_price,reduce_only,filled_quantity,status,version,created_at{columns}) VALUES (?,?,?,?,?,?,?,'OPEN',?,?{placeholder})",
+                           arguments + ((decision_id,) if decision_id is not None else ()))
         result = self._order(connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?", (account_id, order_id)).fetchone(), market)
+        if self.audit is not None:
+            self.audit.record(connection, decision_id=decision_id, kind="ORDER_ACCEPTED", account_id=account_id,
+                business_id=order_id, market_id=market_id, before=audit_before, after=self._audit_state(connection, account_id),
+                operation={"order_id": order_id, "symbol": symbol, "quantity": quantity_text,
+                           "limit_price": price_text, "reduce_only": reduce_only},
+                summary={"reserved_margin": _text(reserve), "risk_before": current,
+                         "risk_after": self._risk(connection, account_id, market),
+                         "projected_execution": projected if reduce_only else None}, recorded_at=self._now().isoformat())
         self._event(connection, "ORDER_ACCEPTED", account_id, result)
         return result
 
@@ -834,7 +890,11 @@ class ExchangeService:
         if previous:
             if (previous["order_id"], previous["quantity"], previous["price"]) != (order_id, qtext, ptext):
                 raise ServiceError("idempotency_conflict", "fill ID was reused with different content", 409)
-            return self._order(row, self._market(connection, fresh=False))
+            replayed = self._order(row, self._market(connection, fresh=False))
+            if "execution_decision_id" in previous.keys():
+                replayed["execution_decision_id"] = previous["execution_decision_id"]
+                replayed["execution_evidence"] = "recorded" if previous["execution_decision_id"] else "legacy_missing"
+            return replayed
         if row["status"] not in _LIVE:
             raise ServiceError("order_closed", "cannot fill a terminal order", 409)
         remaining = Fraction(Decimal(row["quantity"])) - Fraction(Decimal(row["filled_quantity"]))
@@ -872,6 +932,10 @@ class ExchangeService:
             remaining_reserve = Fraction(self._reserve(remainder, market)) if status != "FILLED" else Fraction(0)
             if Fraction(Decimal(projected["available_margin"])) - remaining_reserve < 0:
                 raise ServiceError("insufficient_margin", "latest market no longer supports this local execution", 409)
+        audit_before = self._audit_state(connection, account_id) if self.audit is not None else None
+        audit_risk_before = self._risk(connection, account_id, market) if self.audit is not None else None
+        market_id = self.audit.market_ref(connection, market) if self.audit is not None else None
+        decision_id = self.audit.decision_id("FILL_CONFIRMED", account_id, fill_id) if self.audit is not None else None
         postings = []
         if pnl:
             postings.extend((Posting(self._customer(account_id), "USD", pnl),
@@ -888,13 +952,27 @@ class ExchangeService:
         version = self._bump(connection, account_id)
         connection.execute("UPDATE uta_orders SET filled_quantity=?,status=?,version=?,fee_notional=?,charged_fee=? WHERE account_id=? AND order_id=?",
                            (_text(filled), status, version, _text(next_notional), _text(next_charged_fee), account_id, order_id))
-        connection.execute("INSERT INTO uta_fills VALUES (?,?,?,?,?,?,?)", (account_id, fill_id, order_id, qtext, ptext, _text(pnl), _text(fee)))
+        columns = ",execution_decision_id" if decision_id is not None else ""
+        placeholder = ",?" if decision_id is not None else ""
+        arguments = (account_id, fill_id, order_id, qtext, ptext, _text(pnl), _text(fee))
+        connection.execute(f"INSERT INTO uta_fills(account_id,fill_id,order_id,quantity,price,realized_pnl,fee{columns}) VALUES (?,?,?,?,?,?,?{placeholder})",
+                           arguments + ((decision_id,) if decision_id is not None else ()))
         updated = connection.execute("SELECT * FROM uta_orders WHERE account_id=? AND order_id=?", (account_id, order_id)).fetchone()
         result = self._order(updated, market)
+        if decision_id is not None:
+            result["execution_decision_id"] = decision_id
+            result["execution_evidence"] = "recorded"
         self._event(connection, "FILL_APPLIED", account_id,
                     {"fill_id": fill_id, "quantity": qtext, "price": ptext,
-                     "realized_pnl": _text(pnl), "fee": _text(fee), "order": result})
+                     "realized_pnl": _text(pnl), "fee": _text(fee), "order": result,
+                     **({"decision_id": decision_id} if decision_id is not None else {})})
         self._invalidate_reductions(connection, account_id, next_positions)
+        if self.audit is not None:
+            self.audit.record(connection, decision_id=decision_id, kind="FILL_CONFIRMED", account_id=account_id,
+                business_id=fill_id, market_id=market_id, before=audit_before, after=self._audit_state(connection, account_id),
+                operation={"order_id": order_id, "fill_id": fill_id, "symbol": row["symbol"], "quantity": qtext, "price": ptext},
+                summary={"realized_pnl": _text(pnl), "fee": _text(fee), "risk_before": audit_risk_before,
+                         "risk_after": self._risk(connection, account_id, market)}, recorded_at=self._now().isoformat())
         return result
 
     def _invalidate_reductions(self, connection, account_id: str, positions: dict) -> None:
@@ -1125,14 +1203,20 @@ class ExchangeService:
     def set_kill_switch(self, enabled: bool) -> dict:
         if type(enabled) is not bool:
             raise ServiceError("invalid_input", "enabled must be a boolean")
-        value = "true" if enabled else "false"
         with self._transaction() as connection:
-            previous = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
-            old = previous["value"] if previous is not None else None
-            if old != value:
-                connection.execute("INSERT INTO uta_config VALUES ('halted',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (value,))
-                self._event(connection, "KILL_SWITCH_CHANGED", None, {"enabled": enabled})
-            return {"enabled": enabled}
+            return self._set_kill_switch(connection, enabled)
+
+    def _set_kill_switch(self, connection, enabled: bool) -> dict:
+        """Change the local halt and its event in the existing transaction."""
+        if type(enabled) is not bool:
+            raise ServiceError("invalid_input", "enabled must be a boolean")
+        value = "true" if enabled else "false"
+        previous = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+        old = previous["value"] if previous is not None else None
+        if old != value:
+            connection.execute("INSERT INTO uta_config VALUES ('halted',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", (value,))
+            self._event(connection, "KILL_SWITCH_CHANGED", None, {"enabled": enabled})
+        return {"enabled": enabled}
 
     def readiness(self) -> dict:
         try:
