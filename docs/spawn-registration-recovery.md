@@ -73,6 +73,9 @@ one error in 0.035s. The latter error follows the original uncaught monitor
 registration path. This is model regression evidence, not a native CI rerun.
 The shutdown/retry model passes on the old implementation because its newly
 introduced retry path is absent there.
+The initial fixed 8-case text did not capture its own imported runtime path;
+the later prepare-only hash check is a separate process and does not supply
+that missing observation. Preserve this limit when citing the initial result.
 
 The cases cover gated-child cleanup, modeled post-append lost reply, unknown
 cleanup across close/start, failed handle-close reference retention, unknown
@@ -136,6 +139,10 @@ model cases in 0.024s on fixed runtime `ff814d4`. A first direct file invocation
 omitted `PYTHONPATH=.` and failed at import with `ModuleNotFoundError`; that
 original harness error is preserved alongside the corrected command's output.
 It did not run a model case, SQL, worker or signal operation.
+`python -B tests/spawn_registration_model_probe.py` subsequently passed 9/9 in
+0.026s with source proof and imported runtime path captured in the same process
+and the same output stream, before its blocked-I/O model tests. Its first raw
+output is `pure/terminal-fixed-same-process-first.txt`.
 
 ## Candidate rollout and rollback
 
