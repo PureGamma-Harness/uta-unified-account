@@ -1,0 +1,119 @@
+{
+  "status": "PASS",
+  "scope": "independent manual standard selfcheck only; no candidate imported",
+  "pid": 502298,
+  "cpu_ids": [
+    3
+  ],
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "elapsed_ns_before_result_write": 9652967,
+  "budget_ns": 10000000000,
+  "reference_import_path": "/workspace/uta-interest-accrual-reference/scripts/interest_accrual_independent/reference.py",
+  "source_sha256": {
+    "scripts/interest_accrual_independent/reference.py": "e98ac9fb4b2e40507455f96d6e5e823b93197c6512236b74ca0594c1d64fe2db",
+    "docs/reviews/interest-accrual-independent/manual-cases-v1.json": "c61f856621ec095210622efc08bc38b64571c39f5ec31f6636e64d6891357711",
+    "scripts/interest_accrual_independent/check_manual.py": "eb50de646ad3c557ee3c4de48d910845725f27ce806c91d0d8fa7efc42fa6806"
+  },
+  "source_sha256_after": {
+    "scripts/interest_accrual_independent/reference.py": "e98ac9fb4b2e40507455f96d6e5e823b93197c6512236b74ca0594c1d64fe2db",
+    "docs/reviews/interest-accrual-independent/manual-cases-v1.json": "c61f856621ec095210622efc08bc38b64571c39f5ec31f6636e64d6891357711",
+    "scripts/interest_accrual_independent/check_manual.py": "eb50de646ad3c557ee3c4de48d910845725f27ce806c91d0d8fa7efc42fa6806"
+  },
+  "checks": [
+    {
+      "case": "IR-01-exact-day",
+      "passed": true,
+      "observed_exact_total": "1"
+    },
+    {
+      "case": "IR-02-subunit-day",
+      "passed": true,
+      "observed_exact_total": "1/365"
+    },
+    {
+      "case": "IR-03-halfyear-fivepercent",
+      "passed": true,
+      "observed_exact_total": "5/2"
+    },
+    {
+      "case": "IR-04-quarterday-split",
+      "passed": true,
+      "observed_exact_total": "1"
+    },
+    {
+      "case": "IR-05-principal-change",
+      "passed": true,
+      "observed_exact_total": "547/2"
+    },
+    {
+      "case": "IR-06-rate-change",
+      "passed": true,
+      "observed_exact_total": "219/4"
+    },
+    {
+      "case": "IR-07-carry-and-small-period",
+      "passed": true,
+      "observed_exact_total": "1099/1460"
+    },
+    {
+      "case": "IR-08-carry-matures",
+      "passed": true,
+      "observed_exact_total": "1"
+    },
+    {
+      "case": "IR-09-zero-principal-carry-retained",
+      "passed": true,
+      "observed_exact_total": "3/5"
+    },
+    {
+      "case": "IR-10-leapyear-fixed-basis",
+      "passed": true,
+      "observed_exact_total": "366"
+    },
+    {
+      "case": "IR-11-zero-rate-carry-retained",
+      "passed": true,
+      "observed_exact_total": "1/2"
+    },
+    {
+      "case": "IR-12-existing-carry-completes-year",
+      "passed": true,
+      "observed_exact_total": "37"
+    },
+    {
+      "case": "bool_principal",
+      "passed": true
+    },
+    {
+      "case": "string_principal",
+      "passed": true
+    },
+    {
+      "case": "negative_rate",
+      "passed": true
+    },
+    {
+      "case": "excessive_rate",
+      "passed": true
+    },
+    {
+      "case": "zero_duration",
+      "passed": true
+    },
+    {
+      "case": "excessive_duration",
+      "passed": true
+    },
+    {
+      "case": "365_day_split_equals_year",
+      "passed": true
+    },
+    {
+      "case": "initial_risk_bound_even_without_new_segment",
+      "passed": true
+    }
+  ],
+  "production_SQL_process_or_financial_import_permitted": false,
+  "production_approved": false
+}
