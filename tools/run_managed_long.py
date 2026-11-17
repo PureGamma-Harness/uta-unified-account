@@ -57,6 +57,19 @@ def classify_safely(coverage, sample, *, elapsed, attempt):
         return previous, previous.observe(marker, job_elapsed_seconds=elapsed, sample_attempt_id=attempt), marker
 
 
+def financial_drain_before_log(producer, fatal, history, path):
+    """A full output disk must never suppress a known financial safety action."""
+    history.update(fatal)
+    sent = producer.terminate_owned()
+    try:
+        append(path, {'synthetic': True, 'at_wall_ns': time.time_ns(),
+            'action': 'SIGTERM_ORIGINAL_DRIVER_FOR_OFFICIAL_DRAIN', 'fatal_codes': fatal,
+            'driver_identity': producer.identity(), 'signal_sent': sent})
+    except OSError:
+        pass
+    return sent
+
+
 def git(root, *args):
     return subprocess.check_output(['git', '--no-optional-locks', *args], cwd=root, stdin=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL, close_fds=True, text=True).strip()
@@ -344,15 +357,13 @@ def supervise(args):
                     collection_errors.append('invalid_observer_record_or_classification')
             classified.update(sample_wall_ns=sample.get('sample_wall_ns') if isinstance(sample, dict) else None, job_elapsed_seconds=elapsed,
                               timing_source=timing_source)
-            append(control / 'sample-classification.jsonl', classified)
             fatal = classified['fatal_financial_codes']
             historical_financial_alerts.update(fatal)
             if fatal and not drained and producer.process.poll() is None:
                 drained = True
                 drain_requested_ns = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
-                append(control / 'safety-events.jsonl', {'synthetic': True, 'at_wall_ns': time.time_ns(),
-                    'action': 'SIGTERM_ORIGINAL_DRIVER_FOR_OFFICIAL_DRAIN', 'fatal_codes': fatal,
-                    'driver_identity': producer.identity(), 'signal_sent': producer.terminate_owned()})
+                financial_drain_before_log(producer, fatal, historical_financial_alerts, control / 'safety-events.jsonl')
+            append(control / 'sample-classification.jsonl', classified)
         # Close a block only after processing the next snapshot in stream order;
         # a slow sample timestamped in the preceding block must not be discarded.
         live = coverage_report(last_sample_elapsed)

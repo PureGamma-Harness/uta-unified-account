@@ -23,6 +23,17 @@ def plan():
 
 
 class LongPreparationTests(unittest.TestCase):
+    def test_full_log_disk_cannot_suppress_known_financial_drain_or_history(self):
+        producer = Mock()
+        producer.terminate_owned.return_value = True
+        producer.identity.return_value = {'pid': 123, 'birth': '456'}
+        history = set()
+        with patch.object(runner, 'append', side_effect=OSError('synthetic disk full')):
+            self.assertTrue(runner.financial_drain_before_log(producer, ['stable_financial_golden_failed'], history,
+                                                            Path('/not-used/safety.jsonl')))
+        producer.terminate_owned.assert_called_once()
+        self.assertEqual(history, {'stable_financial_golden_failed'})
+
     def test_original_plan_hash_and_supported_amended_cadence(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
