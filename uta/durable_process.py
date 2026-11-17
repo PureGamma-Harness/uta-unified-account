@@ -64,19 +64,19 @@ class _DiagnosticDatabase(Database):
 
     def _connect(self):
         _diagnostic_remaining(self._deadline)
-        descriptor = os.open(self.path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
-        try:
-            before = os.fstat(descriptor)
-            if (not stat.S_ISREG(before.st_mode) or before.st_size == 0 or
-                    before.st_uid != os.geteuid() or stat.S_IMODE(before.st_mode) & 0o077):
-                raise StorageError("diagnostics require an existing private regular database")
-        finally:
-            os.close(descriptor)
+        # A raw close of this published inode would release other SQLite
+        # connections' POSIX locks in this process. Inspect metadata only.
+        before = os.stat(self.path, follow_symlinks=False)
+        if (not stat.S_ISREG(before.st_mode) or before.st_size == 0 or
+                before.st_uid != os.geteuid() or stat.S_IMODE(before.st_mode) & 0o077):
+            raise StorageError("diagnostics require an existing private regular database")
         connection = sqlite3.connect(Path(self.path).as_uri() + "?mode=ro", uri=True,
                                      timeout=_diagnostic_remaining(self._deadline), isolation_level=None)
         try:
             after = os.stat(self.path, follow_symlinks=False)
-            if (before.st_dev, before.st_ino) != (after.st_dev, after.st_ino):
+            if ((before.st_dev, before.st_ino) != (after.st_dev, after.st_ino)
+                    or not stat.S_ISREG(after.st_mode) or after.st_size == 0
+                    or after.st_uid != os.geteuid() or stat.S_IMODE(after.st_mode) & 0o077):
                 raise StorageError("database changed during diagnostic open")
             connection.row_factory = sqlite3.Row
             # Install before Database's persistent-guard validation, not merely

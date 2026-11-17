@@ -5,6 +5,7 @@ from threading import Event, Thread, current_thread
 import sqlite3
 import subprocess
 import sys
+from time import monotonic
 import unittest
 from unittest.mock import patch
 
@@ -24,6 +25,33 @@ class GuardSnapshotTests(unittest.TestCase):
         fence = WriterFence(self.database)
         fence.enable("snapshot-authority")
         self.writer = self.database.for_writer(fence.acquire("writer", 1))
+
+    def test_diagnostic_read_preserves_another_active_sqlite_kernel_lock(self):
+        from uta.durable_process import _DiagnosticDatabase
+        probe = """import fcntl,os,sys
+fd=os.open(sys.argv[1],os.O_RDWR)
+try:
+ try:
+  fcntl.lockf(fd,fcntl.LOCK_EX|fcntl.LOCK_NB,510,0x40000002,os.SEEK_SET)
+  print('ACQUIRED')
+ except BlockingIOError: print('BLOCKED')
+finally: os.close(fd)
+"""
+        def state():
+            return subprocess.check_output([sys.executable, "-c", probe, self.database.path], text=True, timeout=5).strip()
+        for write in (False, True):
+            with self.subTest(active_transaction="write" if write else "read"):
+                with (self.writer.transaction() if write else self.database.read_transaction()) as holder:
+                    holder.execute("SELECT COUNT(*) FROM initial_financial_table").fetchone()
+                    if write:
+                        holder.execute("INSERT INTO initial_financial_table VALUES (1)")
+                    self.assertEqual(state(), "BLOCKED")
+                    diagnostic = _DiagnosticDatabase(self.database, monotonic() + 3)
+                    with diagnostic.read_transaction() as observer:
+                        observer.execute("SELECT COUNT(*) FROM initial_financial_table").fetchone()
+                        self.assertEqual(state(), "BLOCKED")
+                    self.assertTrue(holder.in_transaction)
+                    self.assertEqual(state(), "BLOCKED")
 
     def test_preflight_does_not_release_an_active_sqlite_posix_lock(self):
         from uta.request_signing import _ExistingAuthDatabase
