@@ -1,0 +1,46 @@
+{"actual_native_late_boundaries": [{"complete_actual_staged_borrow_before_fault": true, "financial_snapshot_unchanged": true, "original_command_state": "PENDING", "outer_commit_error": "credit_v2_guard_failed", "scenario": "lost_context_after_closing"}, {"complete_actual_staged_borrow_before_fault": true, "financial_snapshot_unchanged": true, "original_command_state": "PENDING", "outer_commit_error": "credit_v2_guard_failed", "scenario": "stale_before_closing"}, {"complete_actual_staged_borrow_before_fault": true, "financial_snapshot_unchanged": true, "original_command_state": "PENDING", "outer_commit_error": "credit_v2_guard_failed", "scenario": "stale_before_commit"}, {"complete_actual_staged_borrow_before_fault": true, "financial_snapshot_unchanged": true, "original_command_state": "PENDING", "outer_commit_error": "credit_v2_sql_guard_failed", "scenario": "unrelated_account"}], "faults": "own disposable DB/context and synthetic clock only"}
+test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure (tests.test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure) ... 
+  test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure (tests.test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure) (scenario='lost_operation_before_closing') ... ERROR
+
+======================================================================
+ERROR: test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure (tests.test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure) (scenario='lost_operation_before_closing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-credit-internal-native-v2/tests/test_credit_v2_native_late_boundaries.py", line 38, in test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure
+    with exchange._transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/uta-credit-internal-native-v2/uta/service.py", line 310, in _transaction
+    with self.database.transaction() as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/uta-credit-internal-native-v2/uta/storage.py", line 159, in transaction
+    with self._role_transaction("financial") as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/uta-credit-internal-native-v2/uta/storage.py", line 192, in _role_transaction
+    with self._role_transaction_body(role) as connection:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "/workspace/uta-credit-internal-native-v2/uta/storage.py", line 224, in _role_transaction_body
+    raise guard.denied from exc
+  File "/workspace/uta-credit-internal-native-v2/uta/storage.py", line 214, in _role_transaction_body
+    guard.before_commit()
+  File "/workspace/uta-credit-internal-native-v2/uta/writer_fence.py", line 699, in before_commit
+    raise self.denied
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_native_v2.py", line 1511, in operation_scope
+    _verify_operation(guard, context)
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_native_v2.py", line 520, in _verify_operation
+    assert_operation_context(credit, con, command_id=view.command_id, account_id=view.account_id,
+  File "/workspace/uta-credit-internal-native-v2/uta/credit_native_v2.py", line 1038, in assert_operation_context
+    raise error
+uta.credit_native_v2.CreditV2Error: actual intent exists without its transaction operation context
+
+----------------------------------------------------------------------
+Ran 1 test in 10.408s
+
+FAILED (errors=1)
