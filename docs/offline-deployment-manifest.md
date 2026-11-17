@@ -53,3 +53,9 @@ python -B tools/check_deployment_manifest.py --manifest /absolute/review-manifes
 回滚只从审查流水线移除这一步并保留已保存的检查结果。不得删除 nonce 库、财务
 目录、审计历史或改用未支持的旧二进制。工具拒绝后修正新声明或准备环境再产生新的
 结果，原失败报告不覆盖。此工具本身不提供账务、存储或服务回滚能力。
+
+独立首测发现超长 JSON 整数的解析器 ValueError 未转为稳定拒绝。该首测和无完整
+traceback 的边界保留；后续修复及一次21项新源码验证见
+`docs/evidence/deployment-manifest-parser-refusal-fixed/`。普通解析器 ValueError 现
+映射为 `manifest_json_invalid`，重复字段/非有限值原错误码保持，声明文件参数的
+NUL/非法UTF8在文件访问前拒绝。这些组件结果不改变上述部署和真实资金门槛。
