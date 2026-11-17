@@ -40,7 +40,11 @@ def main():
         fields=row.split(' ',1)
         if len(fields)==2:object_names.setdefault(fields[0],[]).append(fields[1])
     assert len(object_names)<=5000
-    ids=set(object_names)|{v['git_oid'] for k,v in source.items() if k.startswith('uta/')}|{v['git_oid'] for k,v in current.items() if k.startswith('uta/')}
+    changed_paths=git('diff','--name-only',SOURCE,commit).decode().splitlines()
+    # A newly published path can reuse a blob already present in public909
+    # (notably empty stderr). It still needs a current exact-diff hash, while
+    # historical scanning correctly covers only genuinely newly reachable data.
+    ids=set(object_names)|{current[k]['git_oid'] for k in changed_paths}|{v['git_oid'] for k,v in source.items() if k.startswith('uta/')}|{v['git_oid'] for k,v in current.items() if k.startswith('uta/')}
     hashes={};findings=[];scanned=[];total=0
     batch=subprocess.Popen(['git','cat-file','--batch'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
     try:
