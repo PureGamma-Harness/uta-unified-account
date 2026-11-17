@@ -46,6 +46,8 @@
 
 所有跨记录 JSON 结构现在使用统一 `strict_equal` 按每层类型与值比较；financial watermark 的两个来源分别验证固定 format=2 的完整字段与整数类型后才比较。checkpoint、receipt 前后水位、cold response、producer projection、source map 和 coverage 也使用该规则，避免只修一个 ledger_sequence 字段。额外未知字段或缺字段在固定 watermark schema 下拒绝绑定；未来 schema 需要独立版本升级。此修订仍未授权实际任务提取，纯验证与独立审查另行记录。
 
+代码先固定为 `4f9efc9e16da108fabe3be0eaec4d9f922dad948`，再执行一次 CPU3、10s 上限的纯验证：原追加两个负控及合法新 birth，布尔/空值/Unicode/零/前导零/过长 token，金融水位 bool/多字段/receipt 缺嵌套字段，规范最大 birth 正例及递归类型/结构对照，共 **14/14 PASS**，完整耗时 214,873,239ns。原三项反例的函数通过 AST 仅提取定义复用，原 CPU4 顶层执行段与原 12/18 测试均未重跑。证据存于 `evidence/managed-terminal-binder-alias-fix-20261117`；无实际任务读取、SQL、observer、冷审计或进程动作，修复后仍需跨组代码审查。
+
 不部署到运行源；不实际对正在运行的目录调用。审查通过且原任务终态封存后，root 再给予准确 bundle、manifest SHA 和一次实际提取的具体 GO。激活候选资格亦需经审查的代码版本，不接受未审命令开关绕过。
 
 回滚只移除本新增绑定器、测试与文档引用，保留全部旧失败与原始资料。阶段一 extractor 的 candidate=false 继续有效。无服务 schema、公共 API、账务、风险参数或原长测阈值迁移。
