@@ -32,3 +32,20 @@ before a V2 authority exists; after publication only the exact compatible
 artifact and complete native loader may own it. Never remove markers or rewrite
 financial history to roll back. Real-funds and external HMAC borrowing remain
 disabled pending their separate acceptance and approval.
+
+The first internal V2 account is deliberately a restricted synthetic authority:
+
+| Operation after V2 publication | Current internal boundary |
+| --- | --- |
+| Explicit BTC BORROW | Original trusted synthetic source, account FIFO, full native context and complete dedicated evidence are mandatory |
+| BTC REPAY | Original source/FIFO and native four/seven-leg obligations; market dependency NONE |
+| Internal halt or market publication | Separate actual native metadata scope and exact permitted deltas |
+| Original pre-cap credit CID | Read-only original result; no historical source/decision reconstruction |
+| Generic writer/normal worker READY/CLI activation | Unsupported; no automatic promotion to V2 |
+| New orders, matching fills, spot operations, withdrawals or mode changes | No V2 transaction adapter in this first slice; financial guards fail closed without effects |
+| New pool funding, interest accrual or lending distress/insurance/ADL | Unsupported after publication; native SQL guards fail closed without effects |
+
+Opening orders/positions/debt may be valued if their exact supported original
+rows pass full verification, but that is not permission for new execution of
+those operations under V2. This restriction must not be presented as a
+production trading account or used to migrate real customer accounts.
