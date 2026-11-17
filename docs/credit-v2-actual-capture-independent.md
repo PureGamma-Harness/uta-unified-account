@@ -1,6 +1,8 @@
 # Actual credit capture: independent verification contract
 
-Status: **PENDING_ACTUAL_CAPTURE**. This work is separate from production
+Initial preregistration status: **PENDING_ACTUAL_CAPTURE**. The scoped actual
+BORROW SQL/oracle result appended below is now PASS; broader execution gates
+remain pending. This work is separate from production
 valuation, transition, capture and replay code. The reference math and eight
 manual vectors were committed first at `2b83a47`, extended at `205abbc95`.
 This adapter starts from integration `e7b26ec` and reads only retained data.
@@ -85,3 +87,81 @@ that archived executable code matches a live binary. The extension's first
 pure batch ran 2026-11-17T14:43:50.659670–50.781143 UTC on CPU4/Python3.12,
 10 tests passed in wall0.121470 seconds; original earlier8-test raw is retained.
 Actual capture, SQL origin and native/COMMIT/restart evidence remain pending.
+
+
+## First actual BORROW: independent SQL and financial reference
+
+**Scoped PASS**, not full M3 acceptance. The author fixed source/tests at
+`3e3e8133d9fc8e734a6fb244bf989d7010aed23e` and retained first native BORROW
+execution evidence at `1156ba1`. The independent checker was committed before
+execution: capture adapter `9028e4f` and extensions through `556628e`, then the
+independent original-SQL reader `43d2fe4`/`b3885bb`. No production calculator,
+exporter, serializer, risk transition or replay function was imported.
+
+On 2026-11-17T14:48:21.904964–22.001178 UTC the first independent SQL batch
+ran once on CPU4/Python3.12, wall0.096219 seconds, exit0, ResourceWarning error.
+It reopened the actual retained synthetic DB, not a backup or fabricated
+specimen, with mode=ro, query_only, SELECT-only authorizer and one read snapshot.
+The author had closed all handles and left the DB after BORROW `loan-1`, before
+any repayment. There was no new producer/native write or injected failure.
+
+The independent reader selected the original source, inbox, intent, credit
+receipt, journal and decision/market/policy/artifact rows directly through
+standard sqlite3. They matched the original 220089-byte export byte-for-byte
+as JSON structures. Original file SHA256 is
+`c3cfc2238d40225a0fd0c9408abcdf0005a298c50fa8876b6af92d309b03b2c7`;
+its canonical content without the final newline has digest
+`3c97bea652c42d57706a4fb260c56553a1b51dc9f0d4499d49a7e54989866a1e`.
+The exact copy and original raw checker stdout/stderr/command/source hashes
+are retained in the independent evidence directory.
+
+The original opening state was USD100, no BTC/debt, funded poolBTC1, account
+version1. The fixed local/global allocations are .5/1 BTC; actual account and
+local limits are .5 BTC. The .4 BTC borrow is feasible under the frozen manual
+M1 math and actual limits. The actual result is:
+
+| Item | Independently expected and observed |
+| --- | --- |
+| Customer USD/BTC | 100 / .4 |
+| Principal / interest | .4 / 0 BTC; liability ledger −.4 / 0 |
+| Pool / principal receivable | .6 / .4 BTC |
+| Accounting equity / discounted collateral | 100 / 132 USD |
+| Gross debt / risk equity | 40 / 92 USD |
+| IM / MM / open-order reserve | 8 / 4 / 0 USD |
+| Available margin / E÷MM | 84 USD / 23 |
+| Next conservative portfolio quote | .26 BTC; actual remaining static budget .1 BTC |
+| Account version | 1 → 2 |
+| Borrow journal | customer +.4; liability principal −.4; pool −.4; receivable +.4 BTC |
+
+All three original ledger events, eight postings and seven materialized
+balances were independently checked: contiguous sequence/ordinal, original
+hash chain, sealed events, zero sum per currency per event, and full balance
+reconstruction. The original prehead balances match retained gross prestate;
+current post cash, liability ledgers, pool and receivables match the independent
+transition and actual liability rows. Live positions/orders/frozen balances,
+limits, halt and liquidation state were selected independently and agree.
+Actual interest cash was additionally queried through the journal and remained
+0; the content payload alone still does not claim to observe that balance.
+The actual original financial rows were collected once more for durable raw
+review at 14:50:02.373698–02.428946, wall0.055225 seconds, zero logical changes.
+That fixed nine-table allowlist never reads writer-fence, owner or auth/nonce
+rows. This collection is not a native or financial-test rerun. The original DB
+stays private; only synthetic selected rows are public.
+
+The three actual retained checkpoint calls use the author's **fixed injected
+synthetic exchange clock**, 2026-11-17T00:00:00Z, rather than the current wall
+clock. This case therefore proves neither live-market TTL enforcement nor
+wall-clock regression/recovery. Actual physical COMMIT time remains null.
+The first reader's content subreport intentionally retains its provenance
+PENDING label: the surrounding independent SQL observation closes only original
+SQL selection/reopening and financial correctness for this one committed case.
+It does not independently prove the producer's prior source+PENDING COMMIT,
+native owner authentication, FIFO timing, a single financial COMMIT boundary,
+unknown-result recovery, process restart, crash durability or replication.
+Those remain separate execution/fault gates. Multi-product M3, public enablement,
+real funds, performance, HA and production approval remain **NO_GO/PENDING**.
+
+No initial red or retry occurred in the independent actual SQL batch. No native
+run was repeated to obtain this result. Rollback/deployment boundaries above
+remain unchanged. The private original database must not be published or
+modified as part of integrating these reference/evidence-only commits.
