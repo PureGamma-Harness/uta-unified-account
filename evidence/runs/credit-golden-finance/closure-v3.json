@@ -1,0 +1,449 @@
+{
+  "arithmetic_scope": "canonical case001 and case004 reserve/quote under explicit product metadata and original golden extra-state; no rerun of 36-state graph or production tests",
+  "canonical_template_remaining_scope": [
+    "case001 snapshot only; case004 quantity8 and limit100 still come from original golden JSON plus v2 prose, not a complete canonical live order row",
+    "no separate persisted account-credit/local-asset-limit documents, complete journal/intent/decision/source receipts or actual code artifact",
+    "unique synthetic funding references do not prove real funds or native source ownership",
+    "source/hash checks do not establish that any native UDF or trigger is deployed"
+  ],
+  "check_count": 68,
+  "checks": [
+    {
+      "check": "catalog.canonical_payload",
+      "expected": "{\"products\":{\"BTC-PERP\":{\"eligible_hedges\":[],\"expiry\":null,\"funding_interval_seconds\":28800,\"kind\":\"linear_perpetual\",\"min_notional\":\"1\",\"multiplier\":\"1\",\"price_tick\":\"0.01\",\"quantity_step\":\"0.01\",\"quote_asset\":\"USD\",\"risk_tier\":\"tier-1\",\"settlement_asset\":\"USD\",\"status\":\"active\",\"underlying\":\"BTC\"}},\"settlement_asset\":\"USD\",\"version\":1}",
+      "matches": true,
+      "observed": "{\"products\":{\"BTC-PERP\":{\"eligible_hedges\":[],\"expiry\":null,\"funding_interval_seconds\":28800,\"kind\":\"linear_perpetual\",\"min_notional\":\"1\",\"multiplier\":\"1\",\"price_tick\":\"0.01\",\"quantity_step\":\"0.01\",\"quote_asset\":\"USD\",\"risk_tier\":\"tier-1\",\"settlement_asset\":\"USD\",\"status\":\"active\",\"underlying\":\"BTC\"}},\"settlement_asset\":\"USD\",\"version\":1}"
+    },
+    {
+      "check": "catalog.content_hash",
+      "expected": "2385da9bfaca80778fe5068472f837f17075dd60402ef814810d6c0113ef68e1",
+      "matches": true,
+      "observed": "2385da9bfaca80778fe5068472f837f17075dd60402ef814810d6c0113ef68e1"
+    },
+    {
+      "check": "risk_rules.canonical_payload",
+      "expected": "{\"borrow_limits\":{\"BTC\":{\"initial_margin_rate\":\"0.2\",\"maintenance_margin_rate\":\"0.1\",\"max_principal\":\"10\",\"quantity_step\":\"0.01\"}},\"collaterals\":{\"BTC\":{\"loan_to_value\":\"0.5\",\"tiers\":[{\"factor\":\"0.8\",\"up_to\":null}]},\"USD\":{\"loan_to_value\":\"0.5\",\"tiers\":[{\"factor\":\"1\",\"up_to\":null}]}},\"linear_margin\":{\"tier-1\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\"}},\"max_total_debt\":\"10000\",\"rule_id\":\"UTA-CROSS-LOAN-v1\",\"version\":1}",
+      "matches": true,
+      "observed": "{\"borrow_limits\":{\"BTC\":{\"initial_margin_rate\":\"0.2\",\"maintenance_margin_rate\":\"0.1\",\"max_principal\":\"10\",\"quantity_step\":\"0.01\"}},\"collaterals\":{\"BTC\":{\"loan_to_value\":\"0.5\",\"tiers\":[{\"factor\":\"0.8\",\"up_to\":null}]},\"USD\":{\"loan_to_value\":\"0.5\",\"tiers\":[{\"factor\":\"1\",\"up_to\":null}]}},\"linear_margin\":{\"tier-1\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\"}},\"max_total_debt\":\"10000\",\"rule_id\":\"UTA-CROSS-LOAN-v1\",\"version\":1}"
+    },
+    {
+      "check": "risk_rules.content_hash",
+      "expected": "fe87ffdfec35e9d26fdf0fed07defff00af2c7eacd75525ed0cb80eb5c0222e9",
+      "matches": true,
+      "observed": "fe87ffdfec35e9d26fdf0fed07defff00af2c7eacd75525ed0cb80eb5c0222e9"
+    },
+    {
+      "check": "market_snapshot.canonical_payload",
+      "expected": "{\"assets\":{\"BTC\":{\"collateral_factor\":\"0.8\",\"price\":\"100\"},\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"BTC-PERP\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"100\"}},\"observed_at\":\"2026-11-17T00:00:00+00:00\",\"version\":11}",
+      "matches": true,
+      "observed": "{\"assets\":{\"BTC\":{\"collateral_factor\":\"0.8\",\"price\":\"100\"},\"USD\":{\"collateral_factor\":\"1\",\"price\":\"1\"}},\"instruments\":{\"BTC-PERP\":{\"initial_margin_rate\":\"0.1\",\"maintenance_margin_rate\":\"0.05\",\"mark_price\":\"100\"}},\"observed_at\":\"2026-11-17T00:00:00+00:00\",\"version\":11}"
+    },
+    {
+      "check": "market_snapshot.content_hash",
+      "expected": "662e75a2828c6c2f8e7010d876cdfb767a62dfa0fafe6a99e3da3cee53ee8a4f",
+      "matches": true,
+      "observed": "662e75a2828c6c2f8e7010d876cdfb767a62dfa0fafe6a99e3da3cee53ee8a4f"
+    },
+    {
+      "check": "credit_policy.canonical_payload",
+      "expected": "{\"allow_new_interest_accrual\":false,\"allow_post_cap_pool_funding\":false,\"allowed_customer_source_kind\":\"managed_hmac_v1\",\"allowed_low_level_test_source_kind\":\"synthetic_fixture\",\"batch_size_required\":0,\"budget_scope\":\"borrow_principal_plus_interest_in_native_asset\",\"cash_deficits_in_credit_quantity_budget\":false,\"format\":1,\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"policy_name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"scope\":\"synthetic managed Cross; quantity budgets principal plus interest only\"}",
+      "matches": true,
+      "observed": "{\"allow_new_interest_accrual\":false,\"allow_post_cap_pool_funding\":false,\"allowed_customer_source_kind\":\"managed_hmac_v1\",\"allowed_low_level_test_source_kind\":\"synthetic_fixture\",\"batch_size_required\":0,\"budget_scope\":\"borrow_principal_plus_interest_in_native_asset\",\"cash_deficits_in_credit_quantity_budget\":false,\"format\":1,\"new_borrow_fee_rate\":\"0\",\"new_interest_rate\":\"0\",\"policy_name\":\"SYNTHETIC-CREDIT-ZERO-v1\",\"scope\":\"synthetic managed Cross; quantity budgets principal plus interest only\"}"
+    },
+    {
+      "check": "credit_policy.content_hash",
+      "expected": "92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f",
+      "matches": true,
+      "observed": "92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f"
+    },
+    {
+      "check": "layout.canonical_payload",
+      "expected": "{\"asset_scales\":{\"BTC\":8,\"USD\":8},\"authorities\":{\"0\":\"fixture:shard0\",\"1\":\"fixture:shard1\"},\"fixture_layout_name\":\"two-shard-preassigned\",\"format\":1,\"shard_count\":2}",
+      "matches": true,
+      "observed": "{\"asset_scales\":{\"BTC\":8,\"USD\":8},\"authorities\":{\"0\":\"fixture:shard0\",\"1\":\"fixture:shard1\"},\"fixture_layout_name\":\"two-shard-preassigned\",\"format\":1,\"shard_count\":2}"
+    },
+    {
+      "check": "layout.content_hash",
+      "expected": "fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55",
+      "matches": true,
+      "observed": "fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55"
+    },
+    {
+      "check": "global_budget.canonical_payload",
+      "expected": "{\"allocations\":[{\"authority_id\":\"fixture:shard0\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:0\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":0},{\"authority_id\":\"fixture:shard1\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:1\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":1}],\"asset\":\"BTC\",\"asset_scale\":8,\"budget_business_id\":\"fixture:credit:budget:1\",\"credit_policy_id\":\"credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f\",\"format\":1,\"global_limit_units\":\"100000000\",\"layout_id\":\"layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55\",\"version\":1}",
+      "matches": true,
+      "observed": "{\"allocations\":[{\"authority_id\":\"fixture:shard0\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:0\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":0},{\"authority_id\":\"fixture:shard1\",\"funding_proof_kind\":\"SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION\",\"funding_reference\":\"fixture:pool-source:1\",\"limit_units\":\"50000000\",\"opening_interest_units\":\"0\",\"opening_principal_units\":\"0\",\"pool_opening_units\":\"100000000\",\"shard\":1}],\"asset\":\"BTC\",\"asset_scale\":8,\"budget_business_id\":\"fixture:credit:budget:1\",\"credit_policy_id\":\"credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f\",\"format\":1,\"global_limit_units\":\"100000000\",\"layout_id\":\"layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55\",\"version\":1}"
+    },
+    {
+      "check": "global_budget.content_hash",
+      "expected": "6e0c1a7d3857d876063d5530a54eebf1a72ee7153da3279a895a8dca55d35aeb",
+      "matches": true,
+      "observed": "6e0c1a7d3857d876063d5530a54eebf1a72ee7153da3279a895a8dca55d35aeb"
+    },
+    {
+      "check": "source_template.canonical_payload",
+      "expected": "{\"account_id\":\"alice\",\"expected_live_role\":\"borrower\",\"format\":1,\"key_id\":\"fixture-public-key-id-only-no-secret\",\"kind\":\"synthetic_fixture\",\"not_a_real_authentication_receipt\":true,\"request_kind\":\"BORROW\",\"tenant_audience\":\"fixture-audience\"}",
+      "matches": true,
+      "observed": "{\"account_id\":\"alice\",\"expected_live_role\":\"borrower\",\"format\":1,\"key_id\":\"fixture-public-key-id-only-no-secret\",\"kind\":\"synthetic_fixture\",\"not_a_real_authentication_receipt\":true,\"request_kind\":\"BORROW\",\"tenant_audience\":\"fixture-audience\"}"
+    },
+    {
+      "check": "source_template.content_hash",
+      "expected": "659c9ab35b0294a3fa6614135caeb0960a21db7ebedbf955ec632d2aab43ad7d",
+      "matches": true,
+      "observed": "659c9ab35b0294a3fa6614135caeb0960a21db7ebedbf955ec632d2aab43ad7d"
+    },
+    {
+      "check": "business.canonical_payload",
+      "expected": "{\"account_id\":\"alice\",\"amount\":\"0.4\",\"asset\":\"BTC\"}",
+      "matches": true,
+      "observed": "{\"account_id\":\"alice\",\"amount\":\"0.4\",\"asset\":\"BTC\"}"
+    },
+    {
+      "check": "business.sha256",
+      "expected": "b8e1a52e674f050523d6f7bb96aaf73ae1aa8c3eabab986d2327aadd6f01bef7",
+      "matches": true,
+      "observed": "b8e1a52e674f050523d6f7bb96aaf73ae1aa8c3eabab986d2327aadd6f01bef7"
+    },
+    {
+      "check": "business.account_matches_initial",
+      "expected": "alice",
+      "matches": true,
+      "observed": "alice"
+    },
+    {
+      "check": "business.account_matches_source",
+      "expected": "alice",
+      "matches": true,
+      "observed": "alice"
+    },
+    {
+      "check": "budget.layout_reference",
+      "expected": "layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55",
+      "matches": true,
+      "observed": "layout:fa5198431acf3b7a37efb081140edc9dd149e9d2ff00d6de732cae87d8618c55"
+    },
+    {
+      "check": "budget.credit_policy_reference",
+      "expected": "credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f",
+      "matches": true,
+      "observed": "credit-policy:92f51673d7bda8da213823df71be2ec5b6cc93d21cfd2bb5601e855370edfa8f"
+    },
+    {
+      "check": "budget.asset_scale",
+      "expected": 8,
+      "matches": true,
+      "observed": 8
+    },
+    {
+      "check": "budget.complete_shard_set",
+      "expected": [
+        0,
+        1
+      ],
+      "matches": true,
+      "observed": [
+        0,
+        1
+      ]
+    },
+    {
+      "check": "budget.unique_fixture_funding_references",
+      "expected": 2,
+      "matches": true,
+      "observed": 2
+    },
+    {
+      "check": "budget.allocation_sum_le_global",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "budget.shard0.authority",
+      "expected": "fixture:shard0",
+      "matches": true,
+      "observed": "fixture:shard0"
+    },
+    {
+      "check": "budget.shard0.opening_gross_le_allocation",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "budget.shard0.funding_is_synthetic",
+      "expected": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION",
+      "matches": true,
+      "observed": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION"
+    },
+    {
+      "check": "budget.shard1.authority",
+      "expected": "fixture:shard1",
+      "matches": true,
+      "observed": "fixture:shard1"
+    },
+    {
+      "check": "budget.shard1.opening_gross_le_allocation",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "budget.shard1.funding_is_synthetic",
+      "expected": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION",
+      "matches": true,
+      "observed": "SYNTHETIC_FIXTURE_NOT_EXTERNAL_CONFIRMATION"
+    },
+    {
+      "check": "request.exact_minor_units",
+      "expected": "40000000",
+      "matches": true,
+      "observed": "40000000"
+    },
+    {
+      "check": "case001.empty_positions",
+      "expected": {},
+      "matches": true,
+      "observed": {}
+    },
+    {
+      "check": "case001.empty_orders",
+      "expected": [],
+      "matches": true,
+      "observed": []
+    },
+    {
+      "check": "case001.empty_freezes",
+      "expected": {},
+      "matches": true,
+      "observed": {}
+    },
+    {
+      "check": "case001.collateral_value_USD",
+      "expected": "132",
+      "matches": true,
+      "observed": "132"
+    },
+    {
+      "check": "case001.loan_value_USD",
+      "expected": "66",
+      "matches": true,
+      "observed": "66"
+    },
+    {
+      "check": "case001.debt_value_USD",
+      "expected": "40",
+      "matches": true,
+      "observed": "40"
+    },
+    {
+      "check": "case001.risk_equity_USD",
+      "expected": "92",
+      "matches": true,
+      "observed": "92"
+    },
+    {
+      "check": "case001.initial_margin_USD",
+      "expected": "8",
+      "matches": true,
+      "observed": "8"
+    },
+    {
+      "check": "case001.maintenance_margin_USD",
+      "expected": "4",
+      "matches": true,
+      "observed": "4"
+    },
+    {
+      "check": "case001.available_margin_USD",
+      "expected": "84",
+      "matches": true,
+      "observed": "84"
+    },
+    {
+      "check": "case001.accounting_equity_USD",
+      "expected": "100",
+      "matches": true,
+      "observed": "100"
+    },
+    {
+      "check": "case004.reserve_with_explicit_multiplier",
+      "expected": "80",
+      "matches": true,
+      "observed": "80"
+    },
+    {
+      "check": "case004.available_margin",
+      "expected": "4",
+      "matches": true,
+      "observed": "4"
+    },
+    {
+      "check": "case004.conservative_quote",
+      "expected": "3/100",
+      "matches": true,
+      "observed": "3/100"
+    },
+    {
+      "check": "product.status",
+      "expected": "active",
+      "matches": true,
+      "observed": "active"
+    },
+    {
+      "check": "product.quantity_step_matches_borrow",
+      "expected": "0.01",
+      "matches": true,
+      "observed": "0.01"
+    },
+    {
+      "check": "policy.zero_new_interest",
+      "expected": "0",
+      "matches": true,
+      "observed": "0"
+    },
+    {
+      "check": "policy.zero_new_fee",
+      "expected": "0",
+      "matches": true,
+      "observed": "0"
+    },
+    {
+      "check": "policy.cash_deficits_outside_quantity_budget",
+      "expected": false,
+      "matches": true,
+      "observed": false
+    },
+    {
+      "check": "policy.new_interest_disabled",
+      "expected": false,
+      "matches": true,
+      "observed": false
+    },
+    {
+      "check": "policy.post_cap_funding_disabled",
+      "expected": false,
+      "matches": true,
+      "observed": false
+    },
+    {
+      "check": "policy.batch_size",
+      "expected": 0,
+      "matches": true,
+      "observed": 0
+    },
+    {
+      "check": "design_time.selected_at.age_within_limit",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "design_time.last_checked_at.age_within_limit",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "design_time.physical_commit_is_null",
+      "expected": null,
+      "matches": true,
+      "observed": null
+    },
+    {
+      "check": "design_time.not_actual_execution",
+      "expected": false,
+      "matches": true,
+      "observed": false
+    },
+    {
+      "check": "artifact.actual_source_manifest.null_template",
+      "expected": null,
+      "matches": true,
+      "observed": null
+    },
+    {
+      "check": "artifact.actual_loaded_engine_digest.null_template",
+      "expected": null,
+      "matches": true,
+      "observed": null
+    },
+    {
+      "check": "artifact.actual_python_sqlite_runtime.null_template",
+      "expected": null,
+      "matches": true,
+      "observed": null
+    },
+    {
+      "check": "artifact.reject_real_decision",
+      "expected": "NOT_IMPLEMENTED_MUST_REJECT_AS_REAL_DECISION",
+      "matches": true,
+      "observed": "NOT_IMPLEMENTED_MUST_REJECT_AS_REAL_DECISION"
+    },
+    {
+      "check": "source.synthetic",
+      "expected": "synthetic_fixture",
+      "matches": true,
+      "observed": "synthetic_fixture"
+    },
+    {
+      "check": "source.not_authentication_receipt",
+      "expected": true,
+      "matches": true,
+      "observed": true
+    },
+    {
+      "check": "proposed_rules.row_count",
+      "expected": 4,
+      "matches": true,
+      "observed": 4
+    },
+    {
+      "check": "proposed_rules.CREDIT-CAP-001.not_effective",
+      "expected": "NOT_EFFECTIVE_DESIGN_ONLY",
+      "matches": true,
+      "observed": "NOT_EFFECTIVE_DESIGN_ONLY"
+    },
+    {
+      "check": "proposed_rules.CREDIT-BUDGET-001.not_effective",
+      "expected": "NOT_EFFECTIVE_DESIGN_ONLY",
+      "matches": true,
+      "observed": "NOT_EFFECTIVE_DESIGN_ONLY"
+    },
+    {
+      "check": "proposed_rules.CREDIT-AUDIT-001.not_effective",
+      "expected": "NOT_EFFECTIVE_DESIGN_ONLY",
+      "matches": true,
+      "observed": "NOT_EFFECTIVE_DESIGN_ONLY"
+    },
+    {
+      "check": "proposed_rules.CREDIT-ATOMIC-001.not_effective",
+      "expected": "NOT_EFFECTIVE_DESIGN_ONLY",
+      "matches": true,
+      "observed": "NOT_EFFECTIVE_DESIGN_ONLY"
+    }
+  ],
+  "design_time_ages_seconds": {
+    "last_checked_at": 2,
+    "selected_at": 1
+  },
+  "manual_design_closure": {
+    "additional_confirmed_financial_formula_contradiction": "NONE_FOUND_IN_REVIEWED_ADDITIONS",
+    "legacy_post_boundary": "v3 lines102-105 still explicitly leaves old credit receipt/no durable inbox POST behavior to define; prefer rejecting POST and retaining read-only receipt query until specified",
+    "prior_complete_tuple_late_gate_block": "CLOSED_AS_SPECIFICATION_ONLY: v3 lines73-87; native effect pending real tests",
+    "prior_pending_missing_tuple_block": "CLOSED_AS_SPECIFICATION_ONLY: v3 lines93-105; native recovery pending real tests"
+  },
+  "mismatches": 0,
+  "source_access": "read-only git show of immutable commit blobs with explicit cwd",
+  "source_commit": "83d595f4eef4eb92203dc0d988fc4e36c121b453",
+  "source_root_read_only": "/workspace/uta-managed-credit-capability",
+  "source_sha256": {
+    "docs/managed-credit-capability-design.md": "3a8e70a261d8d11291f9cb634955e3ea6931037d5c8c13d6e0269b756efbd7dd",
+    "docs/managed-credit-capability-review-v2.md": "03dfd40834f85fe807a58224ea196aa4333d5b08c6394d67bca834b5ce2e9f92",
+    "docs/managed-credit-native-contract-v3.md": "bbf332fcefe7b690b7c811b70bb4be8eb9f01c1c21f1666b03426fbc9d533ff4",
+    "evidence/rules-managed-credit-proposed-v1.csv": "e282890e38b42f7c65ef5f04cfb58975ab533feecd63208e76207ebd205b8cbf",
+    "tests/fixtures/managed_credit_v1_canonical_example.json": "3ffcfeae20081bb8f9753999790cc641138a1048c7f58e26d8fc407165d869ab",
+    "tests/fixtures/managed_credit_v1_golden.json": "494a6a88397f9677cdb82bb1bcedf9338a0441cd5df6cd5acfe2fd28209be260"
+  },
+  "status": "DESIGN_CLOSURE_AND_SMALL_JSON_ARITHMETIC_ONLY_NATIVE_NOT_EXECUTED_NO_GO"
+}
