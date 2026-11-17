@@ -10,6 +10,7 @@ from decimal import Decimal
 from fractions import Fraction
 from hashlib import sha256
 import json
+import sqlite3
 from uuid import uuid4
 
 from .ledger import Ledger, LedgerError, Posting
@@ -72,9 +73,11 @@ class SpotExchange:
     order notional, rounded up once and charged by increment.
     """
 
-    def __init__(self, exchange: ExchangeService, catalog: ProductCatalog):
+    def __init__(self, exchange: ExchangeService, catalog: ProductCatalog, *, initialize: bool = True):
         if not isinstance(exchange, ExchangeService) or not isinstance(catalog, ProductCatalog):
             raise ServiceError("invalid_configuration", "SpotExchange requires an exchange and ProductCatalog")
+        if type(initialize) is not bool:
+            raise ServiceError("invalid_configuration", "initialize must be a boolean")
         configured = getattr(exchange, "product_catalog", None)
         if configured is not None and configured != catalog:
             raise ServiceError("configuration_conflict", "spot and account product catalogs must match", 409)
@@ -89,6 +92,10 @@ class SpotExchange:
                 raise ServiceError("spot_product_unsupported", "base and quote must be different assets")
             self._units(product.underlying, product.quantity_step)
             self._units(product.quote_asset, _exact(Fraction(product.quantity_step) * Fraction(product.price_tick)))
+        if not initialize:
+            # Verification views must inspect the existing schema and guards,
+            # never recreate them before discovering that they were missing.
+            return
         with exchange._transaction() as connection:
             for statement in (
                 "CREATE TABLE IF NOT EXISTS uta_spot_schema (singleton INTEGER PRIMARY KEY CHECK(singleton=1),version INTEGER NOT NULL)",
@@ -140,9 +147,14 @@ class SpotExchange:
             self._verify(connection)
 
     def _check_schema(self, connection) -> None:
-        row = connection.execute("SELECT version FROM uta_spot_schema WHERE singleton=1").fetchone()
-        if row is None or row["version"] != 1:
+        rows = [tuple(row) for row in connection.execute("SELECT singleton,version FROM uta_spot_schema")]
+        if rows != [(1, 1)]:
             raise ServiceError("spot_schema_version", "unsupported spot schema", 503)
+
+    def _check_configuration(self, connection) -> None:
+        rows = [tuple(row) for row in connection.execute("SELECT singleton,catalog,fee_rate FROM uta_spot_config")]
+        if rows != [(1, self.catalog.to_json(), _text(self.exchange.fee_rate))]:
+            raise ServiceError("spot_corrupt", "persisted spot catalog or fee policy differs", 503)
 
     def _units(self, asset: str, amount: Decimal) -> int:
         try:
@@ -395,6 +407,7 @@ class SpotExchange:
 
     def _verify(self, connection) -> dict:
         self._check_schema(connection)
+        self._check_configuration(connection)
         ledger_events = self.exchange.ledger.verify(connection=connection)
         installed = {row[0] for row in connection.execute("SELECT name FROM sqlite_master WHERE type='trigger'")}
         required = {"uta_spot_matches_no_update", "uta_spot_matches_no_delete",
@@ -448,6 +461,11 @@ class SpotExchange:
                     raise ServiceError("spot_corrupt", "private spot event differs from confirmed side", 503)
         orders = connection.execute("SELECT * FROM uta_spot_orders").fetchall()
         for order in orders:
+            product = self.catalog.products.get(order["symbol"])
+            if (product is None or product.kind not in (ProductKind.SPOT, ProductKind.SPOT_MARGIN)
+                    or (order["base_asset"], order["quote_asset"]) != (product.underlying, product.quote_asset)
+                    or order["status"] not in (*_LIVE, "FILLED", "CANCELLED")):
+                raise ServiceError("spot_corrupt", "spot order product metadata or status differs", 503)
             fills = connection.execute("SELECT * FROM uta_spot_fills WHERE account_id=? AND order_id=?", (order["account_id"], order["order_id"])).fetchall()
             quantity = sum((Fraction(Decimal(fill["quantity"])) for fill in fills), Fraction(0))
             notional = sum((Fraction(Decimal(fill["notional"])) for fill in fills), Fraction(0))
@@ -461,12 +479,23 @@ class SpotExchange:
             if (not original or abs(quantity) > abs(original) or quantity and (quantity > 0) != (original > 0)
                     or order["status"] in _LIVE and quantity == original):
                 raise ServiceError("spot_corrupt", "spot cumulative fill exceeds its signed order", 503)
+            if order["reserved_asset"] != (product.quote_asset if original > 0 else product.underlying):
+                raise ServiceError("spot_corrupt", "spot order reservation asset differs from its side", 503)
             expected_asset, expected_amount = self._reservation(order) if order["status"] in _LIVE else (order["reserved_asset"], Decimal(0))
             if (order["reserved_asset"], Decimal(order["reserved_amount"])) != (expected_asset, expected_amount):
                 raise ServiceError("spot_corrupt", "spot order lock differs from remaining obligation", 503)
         return {"matches": len(matches), "paired_fills": len(matches) * 2,
                 "orders": len(orders), "ledger_events": ledger_events}
 
-    def verify(self) -> dict:
-        with self.exchange._transaction() as connection:
-            return self._verify(connection)
+    def verify(self, *, connection=None) -> dict:
+        """Inspect existing history without installing schema or changing guards."""
+        try:
+            if connection is None:
+                with self.exchange.database.read_transaction() as connection:
+                    return self._verify(connection)
+            with self.exchange.database._using(connection) as connection:
+                return self._verify(connection)
+        except LedgerError as exc:
+            raise ServiceError("ledger_rejected", str(exc), 409) from exc
+        except sqlite3.OperationalError as exc:
+            raise ServiceError("storage_unavailable", "storage transaction could not complete", 503) from exc

@@ -1,160 +1,164 @@
-# Managed migration product scope review
+# Managed migration product scope and compatibility policy
 
-Reviewed source: `af7abab42f421520496c7547abe88378b9db6cdc` on
-`feat/uta-durable-integration`, reproduced in the independent
-`test/migration-scope` worktree. This review changes tests and documentation only.
-All accounts, amounts, markets, funding references, files, and requests are
-synthetic. Production remains **NO-GO**. An agent's engineering review is not
-financial launch approval.
+Rule version: **LOCAL-MANAGED-MIG-001**. Production remains **NO-GO**. An agent's
+engineering review is not financial launch approval. All reproduced accounts,
+amounts, markets, funding references, files and HTTP requests are synthetic.
 
-## Conclusion and source-origin limitation
+## Current policy
 
-**No supported public `ShardRouter`-only spot-order origin was established.**
-Its public order admission, cancellation, listing and matching operate on linear
-orders. Calling its admission method with the configured spot symbol returns
-`unsupported_product`; it does not create spot tables. There is no public spot
-service accessor or spot component mount.
+The managed runtime accepts linear order/cancellation and explicit repayment
+commands. It has no managed spot order, spot cancellation or spot matching
+protocol. Listing a spot product in the catalog does not activate those commands
+and does not by itself make a source incompatible.
 
-There is a reproducible compatibility-policy gap for an explicitly extended
-source: a quiescent single-shard router layout can share its database and exact
-catalog/rules with the public standalone `ExchangeService` and `SpotExchange`
-classes. `take_over()` and even the fresh initializer's offline bootstrap accept
-that source with live spot obligations and seal its financial writer. Managed
-activation then succeeds, although the managed customer command protocol cannot
-cancel or match those spot orders.
+Before creating a pending managed manifest, a queue or any irreversible shard
+fence, initializer/bootstrap sealing and explicit takeover inspect **all shards**
+under the exclusive offline router gate:
 
-The standalone spot writes **bypass the router gate**. This is outside the routing
-protocol guarantees stated in [sharding-capacity.md](sharding-capacity.md),
-paragraph beginning “这套屏障要求所有写者使用 router” (source line 35).
-The fixture therefore does **not** demonstrate an ordinary supported routed API
-path or a vulnerability reachable through customer HTTP alone. Offline
-quiescence and using public Python constructors do not remove that limitation.
-It demonstrates that the migration boundary does not classify/reject that
-persisted extension before accepting responsibility for it.
+| Source state | Result |
+| --- | --- |
+| No spot state or spot audit history | Existing linear and mixed principal/interest behavior continues |
+| `OPEN` or `PARTIALLY_FILLED` spot order, even with zero reservation | `409 managed_spot_state_unsupported` |
+| Any finite positive remaining spot reservation, including a terminal order | `409 managed_spot_state_unsupported`; reservation is retained |
+| Complete `FILLED`/`CANCELLED` spot history, zero remaining obligations | Verify existing schema/configuration, receipts, paired fills, journals, events, order aggregates and locks, then preserve all history and settled assets |
+| Missing/unknown spot schema, configuration mismatch, missing receipt guard, malformed amount, negative reservation, inconsistent receipt or orphaned spot audit history | Reject with `spot_corrupt` or `spot_schema_version` (503); never create missing objects as a repair |
 
-No source metadata, policy, identity, account routing or funding claim is forged.
-All accounts, deposits, credit limits, funding pools, borrowing, interest and the
-linear order originate through public `ShardRouter` methods. Only the spot
-extension uses a separate public local `ExchangeService(Database(shard_path),
-...)` with the **same** precision, fee policy, price age, catalog, portfolio rules
-and audit policy. No `_services`, `_transaction`, SQL update, manually inserted
-spot row or private source writer is used to create the source.
+The compatibility check uses `SpotExchange(..., initialize=False)` and its
+existing independent verifier. Parent preflight creates narrowly scoped
+`ExchangeService` and `DurableLedger` verification views with `__new__`; neither
+financial constructor runs. The views only issue read queries in the caller's
+guarded snapshot and do not escape the helper. Parent preflight uses a read
+transaction. `SpotExchange.verify(connection=...)`
+can join that snapshot; `verify()` also opens a guarded read transaction.
+Initialization disabled means **no DDL, schema installation, trigger installation,
+or implicit configuration repair**. A legacy-reference source without an account
+product catalog still loads and checks the persisted standalone spot catalog and
+fee policy; it cannot silently drop that history.
 
-## Reproduced before and after
+After fencing, token-owned final verification checks the actual persisted spot
+state before the manifest can be marked complete. The fresh initializer retains
+its existing generation-zero behavior when a post-fence read confirms there is
+no spot footprint; an old writer cannot add one after that fence. Any existing
+spot footprint takes the token-owned verification path. A quiescence violation
+that adds live state after preflight is caught after fencing and leaves the
+manifest incomplete. Reopening, worker readiness and activation also check spot
+compatibility. Worker readiness rechecks/renews the same still-live token after
+historical verification; an expired token cannot be revived or advertised READY.
 
-The configured source contains two accounts, USD/BTC cash and debt, principal
-plus USD interest, genuine routed pool claims, and an accepted linear order.
-The spot extension sells 2 BTC against a 1 BTC buy, then adds a separate 0.5 BTC
-buy at USD 90. Both sides pay the configured `.0004` fee.
+These checks do not attach a spot trading component to a managed worker. Actual
+authenticated spot order/cancel/match HTTP paths continue to return
+`501 unsupported_durable_operation`.
 
-| Item | Before takeover | After completed takeover and actual managed activation |
-| --- | --- | --- |
-| Spot sell | `PARTIALLY_FILLED`, filled `-1`, remaining BTC lock `1` | Exact row retained; BTC lock remains `1` |
-| Filled spot buy | `FILLED`, quantity `1`, no remaining lock | Exact row and trade/fills retained |
-| Separate spot buy | `OPEN`, quantity `.5`, USD lock `45.018` | Exact row and USD lock retained |
-| Ledger balances and liabilities | Settled BTC/USD transfers, fees, two asset debts and USD interest | Exact projection rows unchanged |
-| Migration manifest and fence | No managed manifest/fence | `initialized=1`, financial authority `managed=true` |
-| Global control | Legacy active source | Takeover first halts; explicit fresh market publication and managed activation return `halted=false` |
-| Old standalone spot cancellation | Available before fencing | Rejected with `writer_fenced` |
-| Managed spot order/cancel/match paths | No durable spot protocol | Actual authenticated loopback HTTP returns `501 unsupported_durable_operation` |
-| Generic durable cancellation of spot ID | Spot ID belongs to the spot table | Queued normally, terminal `REJECTED/order_not_found` from the linear endpoint |
-| Repay seller's remaining 1 BTC | BTC remains encumbered by the partial spot sell | Terminal `REJECTED/insufficient_cash`; lock and settled finances unchanged |
+## Source-origin limitation remains explicit
 
-The runtime used real managed child processes, actual queue receipts, actual
-fresh-market activation and the authenticated HTTP server. It did not manufacture
-success receipts, alter command processing, or access a writer token. The test
-observes existing shared lock accounting continuing to protect reserved assets;
-it does not show double spending, lock release or lost settled funds.
+No supported public `ShardRouter`-only spot-order origin was established. Its
+public order admission, cancellation, listing and matching operate on linear
+orders. Passing the configured spot symbol to routed admission returns
+`unsupported_product`; there is no public spot service accessor or mount.
 
-The old authority cannot perform normal customer cancellation after fencing, and
-the managed customer protocol lacks it. “Impossible to release forever” would be
-an overstatement: the internal risk supervisor can cancel spot orders for a
-distressed or non-normal account (`service.py`, source lines 1067–1075). That is
-not a normal customer spot-cancel command. The reproduced healthy accounts keep
-their locks during the exercised activation and rejection paths.
+The positive spot fixtures use a quiescent, single-shard layout with genuine
+public routed accounts, deposits, credit limits, funding pools, loans, interest
+and a linear order. A separate public standalone
+`ExchangeService(Database(shard_path), ...)` plus `SpotExchange` uses the **same**
+precision, fees, price age, catalog, portfolio and audit policy. No private source
+writer, fabricated claim, identity change or policy rewrite creates that state.
 
-## Settled history is a distinct case
+Those standalone spot writes **bypass the router gate** and remain outside the
+routing protocol guarantees stated in [sharding-capacity.md](sharding-capacity.md)
+(source line 35 at the reviewed revision). Offline quiescence and public Python
+constructors do not turn them into an ordinary supported routed API path. This
+change defines how managed sealing rejects or reconciles such persisted source
+extensions; it is not evidence of a customer HTTP exploit.
 
-A second fixture cancels the partial sell and the open buy **on the old
-authority**, retaining the already confirmed paired trade. Both accounts then
-have no live spot locks. Takeover and activation preserve the complete spot
-configuration, all three historical orders, the match receipt, both fills,
-settled ledger balances and liabilities. Repayment of the released BTC succeeds
-through the managed protocol.
+Negative tests deliberately damage synthetic terminal records/schema or inject a
+writer between preflight and fencing. Those fault injections are explicitly
+identified and are not presented as ordinary source operations.
 
-The existing spot verifier succeeds before migration and on an independent
-guarded read-only transaction after migration: `orders=3`, `matches=1`,
-`paired_fills=2`. The latter uses the private `SpotExchange._verify(connection)`
-audit hook solely to inspect the already committed rows, because the public
-`verify()` wrapper opens a financial transaction and the old service is fenced.
-It is disclosed as a private read-only diagnostic, **not** a migration check or
-source writer path.
+## Recovery and preservation
 
-History surviving does not mean takeover reconciled it. The tests temporarily
-replace `SpotExchange._verify` with a raising observer during takeover and
-activation; both still complete. This observation does not change source state
-or bypass any migration rejection.
+1. On a **pre-seal** `managed_spot_state_unsupported` rejection, the global router
+   gate is HALTED. No pending managed manifest, queue or shard fence was created.
+   Accepted financial rows, settled assets, liabilities, spot orders and their
+   reservations are retained. Operational halting may append its own
+   `KILL_SWITCH_CHANGED` audit event; it never overwrites existing events.
+2. Cancel or settle the live spot obligation on the original standalone source
+   authority. The migration does not cancel orders, release locks, manufacture a
+   fill or drop historical tables. Existing cancellation remains usable while
+   halted. Reconcile the source, maintain offline quiescence, inspect the layout
+   again, then explicitly retry `take_over(managed=True, expected_layout_hash=...)`.
+3. A rejected fresh initializer does **not** roll back already committed bootstrap
+   work across shards. It retains that unsealed source and halts it. After old
+   authority cancellation/settlement, use explicit takeover of the existing
+   layout. Retrying fresh `initialize()` on a nonempty directory is not recovery.
+4. If a trusted direct writer violates quiescence **after preflight**, the final
+   token-owned check can reject after an irreversible fence exists. The pending
+   manifest remains `initialized=0`, the global gate remains HALTED, and normal
+   reopening refuses incomplete bootstrap. Preserve the error and audit evidence
+   and perform reviewed forward recovery on that authority. Do not disable the
+   fence, restore an older financial snapshot, delete obligations, or claim that
+   an old standalone service can resume writing after fencing.
+5. For corrupt history, preserve evidence and reconcile/repair through an
+   explicitly reviewed source or forward-recovery procedure. Inspection never
+   fills missing tables/guards or treats missing history as zero. A schema/config
+   error is not an instruction to recreate it with the normal constructor.
 
-## Actual verification coverage at the reviewed revision
+The internal risk supervisor can cancel spot orders on distressed/non-normal
+accounts. That does not provide the missing managed customer cancellation
+protocol and is not a reason to allow unsupported live obligations through
+migration. The policy does not classify a reservation as lost or releasable just
+because the new runtime cannot service its product.
 
-| Boundary | Existing checks | Spot limitation |
-| --- | --- | --- |
-| Public router source | Linear product checks, funding registry, account hash and global gate | No public routed spot-order creation/matching |
-| `initialize()` | Funding reconciliation, queue/config setup and irreversible fencing | No bootstrap product-obligation preflight or spot verification |
-| `inspect_takeover()` | Layout, fence/queue status, ledger head, account/linear-order/position counts | Does not list spot tables, history, live statuses, reservations or schema |
-| `take_over()` | Existing economic policy hash; service ledger validation; credit verification; exact global/local funding claims; account and queued-command routing | No `SpotExchange` construction or verifier call; prepares pending manifest and fences before these per-shard verifications |
-| Managed activation | Halt receipts, funding claims, market digest/version and freshness | No spot compatibility or history reconciliation |
-| Managed worker | Attaches credit and linear background worker | Does not attach `exchange.spot`; background spot matching requires that component |
-| Shared repayment/risk accounting | Reads live spot reservations and subtracts them from available assets/collateral | Protects the lock but does not add customer cancellation capability |
+## Historical reproduction and immutable origin
 
-Relevant source locations: `durable_process.py` lines 205–210, 433–440,
-446–460, 483–550 and 1193–1211; `sharding.py` lines 408–417, 580–582 and
-761–764; `spot.py` lines 396–472; `supervisor.py` lines 27 and 81–89.
-The existing [spot deployment guidance](spot-settlement.md) requires spot,
-credit and ledger reconciliation after startup/recovery and says that software
-must not ignore remaining spot locks.
+Reviewed runtime origin: `af7abab42f421520496c7547abe88378b9db6cdc`.
+Independent original evidence commit:
+`0e04934710292a9804dea577c34713c3453a626b` (`test/migration-scope`). Its original
+four characterization tests and full report are available unchanged with:
 
-## Proposed policy for review; not implemented here
+```sh
+git show 0e04934710292a9804dea577c34713c3453a626b:tests/test_managed_migration_scope.py
+git show 0e04934710292a9804dea577c34713c3453a626b:docs/managed-migration-scope-review.md
+```
 
-1. Define managed migration's admitted source products explicitly, including how
-   unsupported direct extensions are identified. Treat inspection as a source
-   inventory, not approval or a complete financial snapshot.
-2. Under the exclusive offline control gate, inspect **all shards before any
-   irreversible fencing or pending-manifest modification**. Reject unsupported
-   live products with a stable, clear error. For spot, distinguish `OPEN` and
-   `PARTIALLY_FILLED` obligations from terminal history and include any remaining
-   asset reservation. Do not unlock or silently cancel them during migration.
-3. Preserve the old source authority so the operator/customer can cancel or
-   settle through its existing spot interface, then retry the same reviewed
-   migration. A preflight rejection should leave manifest/fence, source orders,
-   reservations, finances and original source write capability unchanged.
-4. Admit terminal spot history only under an explicit preservation and
-   reconciliation policy: verify schema/configuration, orders/fills, immutable
-   match receipts, corresponding ledger/events and zero remaining obligations.
-   Preserve settled assets, historical receipts and debt. Unknown or inconsistent
-   extension state should receive a clear rejection before sealing.
-5. Apply the compatibility rule to initializer bootstrap as well as takeover,
-   and retain defense checks during activation/resume. Keep supported existing
-   linear orders and mixed principal/interest liabilities working.
+At that origin, the extended source sold 2 BTC against a 1 BTC buy, then added a
+0.5 BTC buy at USD 90. With the `.0004` fee, it retained a partially filled sell
+with a BTC 1 lock and an open buy with a USD 45.018 lock. Original takeover and
+fresh bootstrap both sealed that source. Actual managed processes published a
+fresh market and activated with `halted=false`. The old spot cancellation then
+returned `writer_fenced`; HTTP spot commands returned 501; generic cancellation
+of the spot ID returned terminal `REJECTED/order_not_found`; repayment of the
+locked BTC returned `REJECTED/insufficient_cash`. Locks, settled balances, debt
+and spot history remained intact. The original migration did not invoke the
+existing spot verifier. This is the conditional compatibility gap addressed by
+the current policy, with the source-origin limitation above.
 
-The review does not authorize a production patch. It does not recommend
-classifying every catalog that lists a spot product as incompatible: an unused
-catalog entry is not an in-flight obligation, and terminal settled spot history
-does not require a live spot matching service.
+The separate terminal-history fixture cancelled the old live orders, retained
+one confirmed trade and two fills, then migrated without losing settled assets
+or historical rows. The new implementation preserves that behavior and now
+actually verifies the history before sealing.
 
-## Reproduction and result
+## Verification
 
 ```sh
 python -m unittest discover -s tests -p test_managed_migration_scope.py -v
+python -m unittest discover -s tests -p test_spot.py -v
+python -m unittest discover -s tests -p test_durable_process.py -v
 ```
 
-Result on the reviewed source with this independent test file: **4 tests passed**
-in approximately two seconds. Coverage includes the public-router-only linear
-and mixed-liability control, extended live source takeover/activation/HTTP
-behavior, terminal spot history preservation, and extended initializer bootstrap.
+The migration suite checks pre-seal rejection with unchanged financial rows and
+locks; live state on the last shard leaving all earlier shards unfenced;
+bootstrap facts retained unsealed/HALTED; verified terminal history preservation
+and activation; no financial constructor/write transaction during preflight;
+legacy standalone catalogs; incomplete/malformed schema, policy, guards and
+receipt failures without repair; token-owned rejection of post-preflight live
+state or damaged terminal history; and unchanged supported linear/mixed-debt
+behavior. The original acceptance assertions are retained only in the immutable
+evidence commit; current tests require rejection at the new policy boundary.
 
-These are characterization tests of current acceptance, not assertions that
-acceptance is the desired policy. A production fix must convert live-extension
-acceptance into pre-fence rejection tests and keep the terminal-history and
-supported-source controls. This small synthetic run supplies no production
-capacity, financial policy, disaster recovery, real-funds or launch approval.
+These bounded synthetic tests do not establish production capacity, financial
+policy approval, external custody, real-funds safety, disaster recovery or launch
+readiness. Production remains **NO-GO**.
+
+Recorded bounded regression result for this policy implementation: migration
+scope **15 passed**, standalone spot **19 passed**, durable process **17 passed**,
+and durable CLI **7 passed** (58 tests total). `git diff --check` also passed.
