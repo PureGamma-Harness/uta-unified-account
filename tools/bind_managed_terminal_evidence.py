@@ -74,7 +74,49 @@ def count_map(value, expected):
 
 def birth_token(value):
     return (isinstance(value, str) and 1 <= len(value) <= 19 and value.isascii()
-            and value.isdecimal() and 0 < int(value) <= MAX_INTEGER)
+            and value.isdecimal() and 0 < int(value) <= MAX_INTEGER
+            and value == str(int(value)))
+
+
+def strict_equal(left, right):
+    """JSON structure/value equality with exact types at every depth.
+
+    Python's ordinary container equality admits int/float and bool/int aliases.
+    Do not use it to bind two independently observed financial projections.
+    """
+    pending = [(left, right)]
+    while pending:
+        first, second = pending.pop()
+        if type(first) is not type(second):
+            return False
+        if isinstance(first, dict):
+            if set(first) != set(second):
+                return False
+            pending.extend((first[k], second[k]) for k in first)
+        elif isinstance(first, list):
+            if len(first) != len(second):
+                return False
+            pending.extend(zip(first, second))
+        elif type(first) not in (str, int, float, bool, type(None)) or first != second:
+            return False
+    return True
+
+
+def financial_watermark_valid(value):
+    return (isinstance(value, dict)
+            and set(value) == {"format", "sha256", "ledger_sequence", "ledger_hash", "business_event_sequence"}
+            and exact_integer(value.get("format"), 2)
+            and hex64(value.get("sha256")) and hex64(value.get("ledger_hash"))
+            and integer(value.get("ledger_sequence"), 1)
+            and integer(value.get("business_event_sequence"), 1))
+
+
+def watermark_valid(value, contract):
+    checkpoint = object_at(value, "checkpoint")
+    return (isinstance(value, dict) and set(value) == {"checkpoint", "financial", "contract_sha256"}
+            and value.get("contract_sha256") == contract
+            and set(checkpoint) == {"sequence", "hash"} and integer(checkpoint.get("sequence"), 1)
+            and hex64(checkpoint.get("hash")) and financial_watermark_valid(value.get("financial")))
 
 
 def numeric_tree_bounded(value):
@@ -191,7 +233,7 @@ def bind_records(records, *, all_file_pins_verified=False):
           and number(config.get("rate")) and config["rate"] == .25
           and exact_integer(job.get("planned_rounds"), 5400),
           "original_workload_not_21600_5400")
-    check(job.get("accounts") == ["managed-soak-alice", "managed-soak-bob", "managed-soak-credit"]
+    check(strict_equal(job.get("accounts"), ["managed-soak-alice", "managed-soak-bob", "managed-soak-credit"])
           and object_at(job, "bootstrap").get("synthetic_only") is True
           and exact_integer(object_at(job, "bootstrap").get("initial_principal_satoshi"), 10800),
           "original_synthetic_bootstrap_mismatch")
@@ -204,7 +246,7 @@ def bind_records(records, *, all_file_pins_verified=False):
           "original_contract_identity_or_clock_mismatch")
     check(baseline.get("job_manifest_sha256") == digest(job)
           and baseline.get("job_id_sha256") == digest(job.get("job_id"))
-          and baseline.get("source_sha256") == env.get("source_sha256")
+          and strict_equal(baseline.get("source_sha256"), env.get("source_sha256"))
           and baseline.get("workload_spec_sha256") == env.get("workload_spec_sha256")
           and baseline.get("file_identities_sha256") == digest(job.get("file_identities")),
           "baseline_job_binding_mismatch")
@@ -212,7 +254,7 @@ def bind_records(records, *, all_file_pins_verified=False):
     check(bool(identities) and all(isinstance(pair, list) and len(pair) == 2
           and integer(pair[0]) and integer(pair[1], 1) for pair in identities.values()),
           "original_file_identity_numeric_contract_invalid")
-    check(baseline.get("observer_code_sha256") == OBSERVER_CODE
+    check(strict_equal(baseline.get("observer_code_sha256"), OBSERVER_CODE)
           and isinstance(env.get("source_sha256"), dict) and bool(env["source_sha256"])
           and all(isinstance(k, str) and hex64(v) for k,v in env["source_sha256"].items())
           and hex64(env.get("workload_spec_sha256"))
@@ -251,12 +293,12 @@ def bind_records(records, *, all_file_pins_verified=False):
           "terminal_child_lifetime_identity_reused_or_invalid")
     identity = object_at(producer, "identity")
     check(exact_integer(identity.get("pid"), DRIVER[0]) and identity.get("birth") == DRIVER[1]
-          and identity.get("started_wall_ns") == launch.get("launched_wall_ns")
-          and identity.get("started_boottime_ns") == launch.get("launched_boottime_ns"),
+          and strict_equal(identity.get("started_wall_ns"), launch.get("launched_wall_ns"))
+          and strict_equal(identity.get("started_boottime_ns"), launch.get("launched_boottime_ns")),
           "producer_launch_receipt_identity_mismatch")
     fields = ("status", "planned_rounds", "rounds", "unresolved_steps", "unresolved_faults", "elapsed_seconds",
               "fault_signals", "logs_verified", "final_audit", "verified_tls", "controller_sessions")
-    check(all(k in p and digest(object_at(producer, "response").get(k)) == digest(p[k]) for k in fields),
+    check(all(k in p and strict_equal(object_at(producer, "response").get(k), p[k]) for k in fields),
           "producer_response_progress_mismatch")
     envelopes = (producer, before, cold, after)
     check(all(integer(v.get("ended_wall_ns"), 1) and integer(object_at(v, "identity").get("started_wall_ns"), 1)
@@ -296,18 +338,12 @@ def bind_records(records, *, all_file_pins_verified=False):
               and exact_integer(object_at(finance, "residuals").get("live_orders"), 0)
               and object_at(finance, "residuals").get("positions") == [],
               label + "_financial_observations_incomplete")
-        financial_head = object_at(wm, "financial")
-        check(wm.get("contract_sha256") == contract and wm.get("financial") == finance.get("watermark")
-              and exact_integer(financial_head.get("format"), 2)
-              and hex64(financial_head.get("sha256")) and hex64(financial_head.get("ledger_hash"))
-              and integer(financial_head.get("ledger_sequence"), 1)
-              and integer(financial_head.get("business_event_sequence"), 1)
-              and hex64(object_at(wm, "checkpoint").get("hash"))
-              and integer(object_at(wm, "checkpoint").get("sequence"), 1)
+        check(watermark_valid(wm, contract) and financial_watermark_valid(finance.get("watermark"))
+              and strict_equal(wm.get("financial"), finance.get("watermark"))
               and object_at(rec, "logs").get("verified") is True
               and integer(object_at(rec, "logs").get("events"), 1)
               and object_at(rec, "logs").get("last_hash") == object_at(wm, "checkpoint").get("hash")
-              and object_at(rec, "logs").get("events") == object_at(wm, "checkpoint").get("sequence")
+              and strict_equal(object_at(rec, "logs").get("events"), object_at(wm, "checkpoint").get("sequence"))
               and rec.get("independent_reopen_same_watermark") is True
               and rec.get("independent_reopen_reconciliation_passed") is True,
               label + "_watermark_reopen_or_logs_unbound")
@@ -315,14 +351,14 @@ def bind_records(records, *, all_file_pins_verified=False):
         check(rec.get("errors") == expected_errors and rec.get("eligible") is (label == "after")
               and response.get("final_evidence_eligible") is (label == "after"),
               label + "_final_eligibility_invalid")
-    check(bool(wmarks[0]) and digest(wmarks[0]) == digest(wmarks[1]), "before_after_watermark_mismatch")
+    check(bool(wmarks[0]) and strict_equal(wmarks[0], wmarks[1]), "before_after_watermark_mismatch")
     cold_response = object_at(cold, "response")
     check(exact_integer(receipt.get("format"), 1) and receipt.get("producer_cold_audit_passed") is True
           and receipt.get("frozen_commit") == SOURCE and receipt.get("producer_audit_scope") == SCOPE
-          and receipt.get("producer_audit_runtime") == {key:env.get(key) for key in ("python", "sqlite")}
-          and hex64(receipt.get("audit_sha256")) and digest(receipt.get("watermark_before")) == digest(wmarks[0])
-          and digest(receipt.get("watermark_after")) == digest(wmarks[0])
-          and all(digest(cold_response.get(k)) == digest(receipt.get(k)) for k in ("producer_cold_audit_passed", "frozen_commit",
+          and strict_equal(receipt.get("producer_audit_runtime"), {key:env.get(key) for key in ("python", "sqlite")})
+          and hex64(receipt.get("audit_sha256")) and strict_equal(receipt.get("watermark_before"), wmarks[0])
+          and strict_equal(receipt.get("watermark_after"), wmarks[0])
+          and all(strict_equal(cold_response.get(k), receipt.get(k)) for k in ("producer_cold_audit_passed", "frozen_commit",
                  "producer_audit_scope", "producer_audit_runtime", "audit_sha256", "watermark_before", "watermark_after"))
           and object_at(object_at(after, "response"), "final_reconciliation").get("producer_audit_sha256") == receipt.get("audit_sha256"),
           "cold_audit_receipt_binding_mismatch")
@@ -338,7 +374,7 @@ def bind_records(records, *, all_file_pins_verified=False):
           and count_map(final.get("actual_fault_signals"), FAULTS) and final.get("fault_schedule_complete") is True
           and final.get("no_automatic_resume_or_next_job") is True,
           "summary_facts_or_collection_errors_invalid")
-    check(digest(final.get("live_coverage")) == digest(coverage) and coverage.get("coverage_status") == "COMPLETE_WITHIN_COVERAGE_BUDGET"
+    check(strict_equal(final.get("live_coverage"), coverage) and coverage.get("coverage_status") == "COMPLETE_WITHIN_COVERAGE_BUDGET"
           and coverage.get("coverage_no_go_reasons") == [] and coverage.get("fatal_financial_code_counts") == {},
           "coverage_binding_incomplete")
     check(coverage_counts_valid(coverage), "coverage_numeric_or_registered_budget_contract_invalid")

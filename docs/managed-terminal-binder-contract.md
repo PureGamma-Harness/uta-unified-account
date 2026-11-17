@@ -40,6 +40,12 @@
 
 `Pipes.result.response` 已由原监督器过滤，无法从它重建原始 stdout 字节。因此 `stdout_sha256` 仅作为原回执中的已封存声明检查形状/文件 pin，**不声称已反算或独立核验原 stdout digest**。需要原始流时必须另有已授权、已保留原始资料；不得通过重新序列化过滤后 response 制造验证证明。
 
+追加独立首反例 `c7bb01f5d68b57e29c939a4b7a8e3df3e6b9de52` / `4746f6830372cb730fbae56bafd6000cbf95a5dd` 保留了 3 项新验证的 2 RED / 1 PASS：同 PID 的 birth `"2"` 与 `"02"` 被误当成不同 lifetime；金融观察中的 int ledger_sequence 与 float ledger_sequence 能在普通容器相等下绑定。同 PID 的 `"2"` 与 `"3"` 是合法正例。原 7301B stdout、SHA `df90d11aeb52884cfc2aa81b33be83460e72469f2a75c6cdc3811d3717a5dbe7` 及 116,251,434ns 首执行证据全部保留，不覆盖此前 18 项结果。
+
+本次修订明确新增本系统 token 规则：birth 必须是正值 ASCII 十进制、无前导零、长度与数值有界的规范表示。固定 909 源码只检查 isdecimal，不能作为 kernel canonical 表示已获外部验证的证据；这里是本工具主动采用的等价类消歧规则。正常正值十进制 token 保持接受；同 PID 真新 birth 保持合法。
+
+所有跨记录 JSON 结构现在使用统一 `strict_equal` 按每层类型与值比较；financial watermark 的两个来源分别验证固定 format=2 的完整字段与整数类型后才比较。checkpoint、receipt 前后水位、cold response、producer projection、source map 和 coverage 也使用该规则，避免只修一个 ledger_sequence 字段。额外未知字段或缺字段在固定 watermark schema 下拒绝绑定；未来 schema 需要独立版本升级。此修订仍未授权实际任务提取，纯验证与独立审查另行记录。
+
 不部署到运行源；不实际对正在运行的目录调用。审查通过且原任务终态封存后，root 再给予准确 bundle、manifest SHA 和一次实际提取的具体 GO。激活候选资格亦需经审查的代码版本，不接受未审命令开关绕过。
 
 回滚只移除本新增绑定器、测试与文档引用，保留全部旧失败与原始资料。阶段一 extractor 的 candidate=false 继续有效。无服务 schema、公共 API、账务、风险参数或原长测阈值迁移。
