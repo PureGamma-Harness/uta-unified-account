@@ -1,0 +1,45 @@
+{
+  "FIFO_at_execution_source_and_native_COMMIT_atomicity_provenance": "PENDING_SEPARATE_EXECUTION_EVIDENCE",
+  "borrow_decisions_for_original_CID": 0,
+  "content": {
+    "SQL_origin_FIFO_timing_and_native_COMMIT_provenance": "PENDING_SEPARATE_ORIGINAL_SQL_AND_EXECUTION_EVIDENCE",
+    "borrow_decisions": 0,
+    "command_id": "partial-repay-1",
+    "independent_repayment_financial_content_passed": true,
+    "interest_repaid_units": "0",
+    "journal_legs": 4,
+    "market_dependency": "NONE",
+    "original_events_replayed": 4,
+    "post_cash_units": "30000000",
+    "post_interest_cash_units": "0",
+    "post_pool_units": "70000000",
+    "principal_repaid_units": "10000000",
+    "production_approved": false,
+    "risk_or_quote_or_limits_used_for_admission": false
+  },
+  "database_path": "/tmp/uta-credit-v2-repay-fixed-actual-xanrh9al/actual-credit-v2-bn032cjy/synthetic.sqlite3",
+  "finished_at": "2026-11-17T15:11:22.494307+00:00",
+  "independent_original_repayment_SQL_reopen_passed": true,
+  "logical_changes": 0,
+  "original_file_identity": {
+    "device": 27,
+    "inode": 578951
+  },
+  "original_final_account_FIFO": [
+    {
+      "account_id": "alice",
+      "command_id": "loan-1",
+      "sequence": 1,
+      "state": "SUCCEEDED"
+    },
+    {
+      "account_id": "alice",
+      "command_id": "partial-repay-1",
+      "sequence": 2,
+      "state": "SUCCEEDED"
+    }
+  ],
+  "production_approved": false,
+  "read_policy": "mode=ro + query_only + select authorizer + one original read snapshot",
+  "started_at": "2026-11-17T15:11:22.489636+00:00"
+}

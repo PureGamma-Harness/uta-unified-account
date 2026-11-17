@@ -74,3 +74,46 @@ This is an offline checker-only change, with no deployment or data migration.
 Rollback reverts new checker/reference files in a fresh commit while retaining
 all original red/green evidence and private originals. It does not modify
 authority, money, immutable journals or enable a public borrowing route.
+
+
+## Actual file and original-SQL results
+
+The adapter/rules were owned at `3d3f95a` before its first file execution;
+the original SQL checker was owned at `17889f24328a0729e06ad00c67c5d1e736e7cecc`
+before any independent repayment SQL. The first file-only batch at
+2026-11-17T15:07:17.541882–17.593144 UTC passed both observations in wall0.051283s.
+The original26445-byte selected synthetic export digest is
+`dfdcbc059363f6f28cd1537fe8756f5863fdb11d8362f8fd6503fe1637ae3c54`.
+It is retained byte for byte; it contains no private database or auth/owner rows.
+
+After root scheduled CPU4 and the native group explicitly released it, a new
+immutable detached checker worktree fixed exact17889. The single original-SQL
+wrapper ran 15:11:22.428698–22.573644 UTC, whole0.155034s including both children;
+each child used <=5s timeout inside the <=15s whole budget. Both first attempts
+passed, no timeout, retries, native executions or original writes. The original
+DB identity remained device27/inodes578951 and578953, logical_changes0, checker
+source clean and unchanged. The private originals stay private and unmodified.
+
+Independent SELECTs of original source/inbox/intent/receipt/journal and all five
+financial tables match the archived export. Full original chains of4/5 events,
+actual ordinal legs, every event's per-currency balance, materialized balances,
+original prehead and post gross debt/pool/interest cash match the independent
+reference. R1's actual four legs leave cashBTC.3, principal.3, pool.7 and
+interestcash0. R2's actual seven legs leave cashBTC.3, principal.35, interest0,
+pool.65 and interestcash.05. Interest receivable is reduced separately, while
+only principal payment returns to the pool. No fresh quote or borrowing
+admission input is used. SQL confirms zero CREDIT_BORROWED decisions for either
+repayment CID and final account inbox entries are SUCCEEDED with no earlier
+PENDING entry. This proves the current final records, not their historical
+execution ordering or a prior independent source-COMMIT observation.
+
+**Scoped financial/content/original-SQL PASS** for these two cases. The content
+subreport's provenance label intentionally remains pending because an input
+file alone cannot prove SQL origin; this surrounding independently executed
+read-only observation closes that part only. Native owner enforcement, FIFO
+at execution time, source and financial COMMIT boundaries, unknown responses,
+restart/crash and replication retain separate execution/fault gates. No live
+wall-clock TTL or production behavior is approved by the fixed synthetic clock.
+All author original REDs remain unchanged. No initial independent actual red
+or rerun occurred. Raw commands, source hashes, output and timings are retained
+under `evidence/reviews/credit-repayment-independent/`.

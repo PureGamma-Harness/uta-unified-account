@@ -1,0 +1,73 @@
+{
+  "scope": "ROOT GO one independent original SQL pass for two frozen synthetic repayments",
+  "checker_source": "17889f24328a0729e06ad00c67c5d1e736e7cecc",
+  "source_clean_before": true,
+  "source_unchanged_after": true,
+  "started_at": "2026-11-17T15:11:22.428624+00:00",
+  "finished_at": "2026-11-17T15:11:22.583660+00:00",
+  "whole_wrapper_seconds": 0.15503401099704206,
+  "whole_budget_seconds": 15,
+  "records": [
+    {
+      "CID": "partial-repay-1",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-credit-repay-oracle-freeze-17889/scripts/credit_v2_repayment_sql_reference.py",
+        "--database",
+        "/tmp/uta-credit-v2-repay-fixed-actual-xanrh9al/actual-credit-v2-bn032cjy/synthetic.sqlite3",
+        "--observations",
+        "/workspace/uta-credit-internal-v2/evidence/runs/credit-v2-actual-followup/attempt-02/actual-repayment-financial-observations.json",
+        "--command-id",
+        "partial-repay-1"
+      ],
+      "started_at": "2026-11-17T15:11:22.428698+00:00",
+      "finished_at": "2026-11-17T15:11:22.501341+00:00",
+      "wall_seconds": 0.07264889999350999,
+      "exit_code": 0,
+      "timeout_seconds": 5,
+      "original_identity_unchanged": true,
+      "original_device": 27,
+      "original_inode": 578951
+    },
+    {
+      "CID": "repay-stale-halt",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-W",
+        "error::ResourceWarning",
+        "/workspace/uta-credit-repay-oracle-freeze-17889/scripts/credit_v2_repayment_sql_reference.py",
+        "--database",
+        "/tmp/uta-credit-v2-repay-fixed-actual-xanrh9al/actual-credit-v2-f4d9qqvd/synthetic.sqlite3",
+        "--observations",
+        "/workspace/uta-credit-internal-v2/evidence/runs/credit-v2-actual-followup/attempt-02/actual-repayment-financial-observations.json",
+        "--command-id",
+        "repay-stale-halt"
+      ],
+      "started_at": "2026-11-17T15:11:22.501632+00:00",
+      "finished_at": "2026-11-17T15:11:22.573644+00:00",
+      "wall_seconds": 0.07201545299903955,
+      "exit_code": 0,
+      "timeout_seconds": 5,
+      "original_identity_unchanged": true,
+      "original_device": 27,
+      "original_inode": 578953
+    }
+  ],
+  "input_sha256": "dfdcbc059363f6f28cd1537fe8756f5863fdb11d8362f8fd6503fe1637ae3c54",
+  "checker_files": {
+    "scripts/credit_v2_repayment_sql_reference.py": "d55b0b070d3b64051ef479064a23694f716f6837436e13dfaa8550ccb2514a38",
+    "scripts/credit_v2_repayment_reference.py": "3c9c22dd6519f071b1fb2ca77379b29dfe1de62d1342fa7c8cb63e4d241097e6",
+    "scripts/credit_v2_capture_reference.py": "08728bb6de59831b203e00e3013ac7d3046f95f0e585baabb15897f395581f35",
+    "scripts/credit_v2_original_sql_reference.py": "4533b2129b4d3a713e905f28db0f6533c5700f512babf748254563a359a1bcaa",
+    "scripts/credit_v2_financial_reference.py": "37bb40f876951e32304cccb7b21e8fe13b8b27dd1e617eec101fbf5c32b1395e"
+  },
+  "production_approved": false
+}

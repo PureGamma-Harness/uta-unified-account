@@ -1,0 +1,28 @@
+{
+  "scope": "first file-only actual repayment financial content, not independent SQL origin",
+  "commit": "3d3f95ae1c6527da8d644158e3e2b8593d5d444c",
+  "source_evidence": "5d8839d",
+  "input_sha256": "dfdcbc059363f6f28cd1537fe8756f5863fdb11d8362f8fd6503fe1637ae3c54",
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-W",
+    "error::ResourceWarning",
+    "/workspace/uta-credit-actual-independent/scripts/credit_v2_repayment_reference.py",
+    "/workspace/uta-credit-internal-v2/evidence/runs/credit-v2-actual-followup/attempt-02/actual-repayment-financial-observations.json"
+  ],
+  "started_at": "2026-11-17T15:07:17.541882+00:00",
+  "finished_at": "2026-11-17T15:07:17.593144+00:00",
+  "wall_seconds": 0.05128309100109618,
+  "timeout_seconds": 15,
+  "exit_code": 0,
+  "files": {
+    "scripts/credit_v2_repayment_reference.py": "3c9c22dd6519f071b1fb2ca77379b29dfe1de62d1342fa7c8cb63e4d241097e6",
+    "scripts/credit_v2_capture_reference.py": "08728bb6de59831b203e00e3013ac7d3046f95f0e585baabb15897f395581f35",
+    "scripts/credit_v2_financial_reference.py": "37bb40f876951e32304cccb7b21e8fe13b8b27dd1e617eec101fbf5c32b1395e"
+  },
+  "original_SQL_opened": false,
+  "production_approved": false
+}
