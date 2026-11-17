@@ -178,8 +178,11 @@ class NumericContractReferenceTests(unittest.TestCase):
                 for account in ("whole", "split"):
                     self.assertEqual(service.account(account)["balances"]["USD"], cash)
                     self.assertEqual(service.account(account)["positions"], {})
-                self.assertEqual(service.ledger.balance("system:realized-pnl", "USD"), D(counterpart))
-                service.ledger.verify()
+                reopened = DurableLedger(Database(service.database.path), service.scales)
+                self.assertEqual(reopened.balance("system:realized-pnl", "USD"), D(counterpart))
+                for account in ("whole", "split"):
+                    self.assertEqual(reopened.balance("customer:" + account, "USD"), D(cash))
+                reopened.verify()
 
     def test_display_ratio_can_equal_one_while_exact_amounts_are_above_mm(self):
         almost = D("1.0000000000000000000000000000000000000001")
