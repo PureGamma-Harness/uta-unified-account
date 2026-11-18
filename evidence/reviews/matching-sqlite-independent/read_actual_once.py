@@ -89,7 +89,7 @@ def reserve(order):
     remaining = rational(order['quantity']) - rational(order['filled_quantity'])
     limit = rational(order['limit_price'])
     initial = 0 if order['reduce_only'] else abs(remaining) * max(100, limit) / 10
-    loss = 0 if order['reduce_only'] else max(-remaining * (100 - limit), 0)
+    loss = max(-remaining * (100 - limit), 0)
     return initial + loss + fee(rational(order['fee_notional']) + abs(remaining) * limit) - rational(order['charged_fee'])
 
 
