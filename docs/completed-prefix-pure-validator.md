@@ -21,7 +21,7 @@
 - 独立整数预算计算 gross owner/asset 与剩余本金 `2(N-K)`；保留负债与应收，拒绝净额隐藏。每个 ledger event 序号、ID、业务归属、posting ordinal、每币守恒、每 fill 费用及每次借/还本金分录均核对，再完整重建 owner/asset 投影。跨轮补偿费用即使总余额相同仍拒绝。
 - 日志仅是**新合成 milestone 投影**的连续序号与前驱序号、每轮开始/控制终态/DONE/paused end 检查，不是对原 gzip 日志或原 SHA 链的重放。独立 receipt 的完整字段、前缀数值、scope、全部 false qualification 和 required limitations 均校验。
 
-手算 fixture 由独立 literal 金额与业务动作构造，不调用 reference budget。参考器用整数公式独立推导 N3/K2 的 11 项 gross balances、8 orders/8 fills/4 matches/16 ledger events/余本金 2 satoshi；25 个 unit methods 将合法例、类型/边界、重复缺口、未知 control、双边 fill、逐笔分录、补偿错误、receipt 与大整数等负控分开覆盖。测试尚未运行；首批将在 source 固定后按 root 的一次 CPU1/10s 预算执行，原始结果不论成败均保留，不覆盖旧失败。
+手算 fixture 由独立 literal 金额与业务动作构造，不调用 reference budget。参考器用整数公式独立推导 N3/K2 的 11 项 gross balances、8 orders/8 fills/4 matches/16 ledger events/余本金 2 satoshi；25 个 unit methods 将合法例、类型/边界、重复缺口、未知 control、双边 fill、逐笔分录、补偿错误、receipt 与大整数等负控分开覆盖。代码先固定为 `9f74dce34fd856fc2bc6e04b6c310a30e93ec10a`，向 root 报告 provenance 后，按唯一 CPU1/10s 预算执行首批：**25/25 PASS**，unittest 0.076s、完整外层耗时 214,356,773ns，exit 0。原 stdout/stderr、Git blob 输入及执行记录保存在 `evidence/completed-prefix-pure-validation`。旧 12/18/14 批次没有重跑；没有 SQL、实际数据、observer、备份、克隆、审计、网络、加密调用或业务进程动作。独立代码/差分审查仍待完成，不能把作者 unit PASS 当成金融签字。
 
 ## 部署、回滚与后续门槛
 
