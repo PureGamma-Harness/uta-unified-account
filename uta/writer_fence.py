@@ -55,6 +55,151 @@ _MAX_INTEGER = 2**63 - 1
 _REGISTRY = {}
 _REGISTRY_LOCK = RLock()
 
+# Private, bounded telemetry only. No field in this envelope grants authority.
+_LEASE_OBSERVATION_TAG = object()
+_LEASE_OBSERVATION_ATTRIBUTE = "_uta_lease_observation_v1"
+_LEASE_OBSERVATION_INTS = frozenset({
+    "version", "assert_generation", "assert_row_observed_ns", "assert_row_expires_ns", "assert_now_ns",
+    "guard_load_started_ns", "guard_lease_fetch_started_ns", "guard_lease_fetch_finished_ns",
+    "guard_load_finished_ns", "guard_validation_finished_ns", "guard_generation",
+    "guard_row_observed_ns", "guard_row_expires_ns", "assert_load_started_ns",
+    "assert_lease_fetch_started_ns", "assert_lease_fetch_finished_ns", "assert_load_finished_ns",
+    "renew_generation", "renew_observed_ns", "renew_expires_ns", "renew_attempt",
+    "renew_attempt_started_ns", "renew_attempt_finished_ns", "last_known_renew_attempt",
+    "last_known_renew_generation", "last_known_renew_observed_ns", "last_known_renew_expires_ns",
+    "last_known_renew_started_ns", "last_known_renew_finished_ns",
+})
+_LEASE_OBSERVATION_BOOLS = frozenset({
+    "identity_matches", "snapshot_time_known", "renew_known_commit", "last_known_renew_same_token",
+})
+_LEASE_OBSERVATION_ENUMS = {
+    "lease_clock": frozenset({"fence_clock_ns"}),
+    "elapsed_clock": frozenset({"monotonic_ns"}),
+    "phase": frozenset({"ledger_read_entry", "credit_read_entry", "renew"}),
+    "renew_attempt_state": frozenset({"pending", "known_commit", "returned_unobserved", "failed_or_unknown"}),
+}
+
+
+def _lease_observation(values):
+    """Copy fixed primitive fields; never inspect arbitrary values or messages."""
+    try:
+        if type(values) is dict:
+            items = dict.items(values)
+        elif type(values) is MappingProxyType:
+            items = MappingProxyType.items(values)
+        else:
+            return None
+        result = {}
+        for index, (key, value) in enumerate(items):
+            if index >= 64:
+                break
+            if type(key) is not str:
+                continue
+            if key in _LEASE_OBSERVATION_INTS and type(value) is int and 0 <= value <= _MAX_INTEGER:
+                result[key] = value
+            elif key in _LEASE_OBSERVATION_BOOLS and type(value) is bool:
+                # The implementation never knows SQLite's snapshot establishment time.
+                if key != "snapshot_time_known" or value is False:
+                    result[key] = value
+            elif (key in _LEASE_OBSERVATION_ENUMS and type(value) is str
+                  and value in _LEASE_OBSERVATION_ENUMS[key]):
+                result[key] = value
+        return MappingProxyType(result)
+    except Exception:
+        return None
+
+
+def _lease_note_time(values, name):
+    try:
+        if type(values) is not dict:
+            return
+        value = time.monotonic_ns()
+        if type(value) is int and 0 <= value <= _MAX_INTEGER:
+            values[name] = value
+    except Exception:
+        pass  # Optional timing cannot change the original transaction.
+
+
+def _lease_set(owner, name, value):
+    try:
+        setattr(owner, name, value)
+    except Exception:
+        pass
+
+
+def _lease_annotation(error, values):
+    """Retain the exact error; never overwrite an unknown private attribute."""
+    try:
+        data = BaseException.__dict__["__dict__"].__get__(error, BaseException)
+        existing = None
+        found = False
+        for index, (key, value) in enumerate(dict.items(data)):
+            if index >= 64 or type(key) is not str:
+                return
+            if type(key) is str and key == _LEASE_OBSERVATION_ATTRIBUTE:
+                found, existing = True, value
+        if found:
+            if not (type(existing) is tuple and len(existing) == 2
+                    and existing[0] is _LEASE_OBSERVATION_TAG
+                    and type(existing[1]) is MappingProxyType):
+                return
+            previous = _lease_observation(existing[1])
+            if previous is None:
+                return
+            combined = dict(previous)
+        else:
+            combined = {}
+        filtered = _lease_observation(values)
+        if filtered is None:
+            return
+        combined.update(filtered)
+        filtered = _lease_observation(combined)
+        if filtered is not None:
+            data[_LEASE_OBSERVATION_ATTRIBUTE] = (_LEASE_OBSERVATION_TAG, filtered)
+    except BaseException:
+        pass  # No replacement, formatting, note, args/code/chain mutation or retry.
+
+
+def _observed_load(connection, prefix):
+    """Observe one original load, not the SQLite snapshot establishment instant."""
+    try:
+        observation = {"version": 1, "elapsed_clock": "monotonic_ns", "snapshot_time_known": False}
+    except Exception:
+        return _load(connection), None
+    _lease_note_time(observation, prefix + "_load_started_ns")
+    # _load is executed exactly once. Failed SQL is neither replayed nor hidden.
+    state = _load(connection, _lease_observation=(observation, prefix))
+    _lease_note_time(observation, prefix + "_load_finished_ns")
+    try:
+        if prefix == "guard" and type(state) is dict:
+            observation.update(guard_generation=state["generation"],
+                               guard_row_observed_ns=state["observed_ns"],
+                               guard_row_expires_ns=state["expires_ns"])
+    except Exception:
+        pass
+    return state, _lease_observation(observation)
+
+
+def _read_guard_observation(connection):
+    try:
+        with _REGISTRY_LOCK:
+            guard = _REGISTRY.get(id(connection))
+            if guard is not None and guard.connection is connection and guard.role == "read":
+                return _lease_observation(guard._lease_load_observation)
+    except Exception:
+        pass
+    return None
+
+
+def _lease_load_note(observation, suffix):
+    try:
+        if (type(observation) is tuple and len(observation) == 2
+                and type(observation[0]) is dict and type(observation[1]) is str
+                and observation[1] in ("guard", "assert")):
+            _lease_note_time(observation[0], observation[1] + suffix)
+    except Exception:
+        pass
+
 # Authorizer numbers are part of SQLite's stable C API. Several are not exposed
 # by CPython 3.10, so do not depend on the interpreter exporting every constant.
 _ACTIONS = {name: getattr(sqlite3, "SQLITE_" + name, number) for name, number in (
@@ -175,7 +320,7 @@ def _clock(database):
     return value, boot
 
 
-def _load(connection):
+def _load(connection, *, _lease_observation=None):
     objects = tuple(connection.execute("SELECT name,type FROM sqlite_master WHERE (type='table' AND name LIKE 'writer_fence_%') OR name LIKE 'credit_native_%' OR name LIKE 'credit_v2_%'"))
     found = {row[0] for row in objects if row[1] == "table" and row[0].startswith("writer_fence_")}
     native_objects = {row[0] for row in objects if row[0].startswith("credit_native_")}
@@ -192,7 +337,11 @@ def _load(connection):
         raise WriterFenceError("fence_corrupt", "managed authority schema is incomplete")
     try:
         authority = connection.execute("SELECT singleton,format,authority_id,canonical_path FROM writer_fence_authority").fetchall()
+        if _lease_observation is not None:
+            _lease_load_note(_lease_observation, "_lease_fetch_started_ns")
         lease = connection.execute("SELECT singleton,generation,owner_nonce,owner_pid,boot_id,expires_ns,observed_ns FROM writer_fence_lease").fetchall()
+        if _lease_observation is not None:
+            _lease_load_note(_lease_observation, "_lease_fetch_finished_ns")
         if len(authority) != 1 or tuple(authority[0])[:2] != (1, 1) or not _NAME.fullmatch(authority[0][2]):
             raise ValueError("invalid authority")
         current_path = next(row[2] for row in connection.execute("PRAGMA database_list") if row[1] == "main")
@@ -292,7 +441,13 @@ def _assert_token(database, state, token):
             or boot != state["boot_id"]):
         raise WriterFenceError("writer_fenced", "transaction does not own the current authority generation in this process")
     if state["expires_ns"] <= now:
-        raise WriterFenceError("lease_expired", "writer lease expired; renew cannot revive it")
+        error = WriterFenceError("lease_expired", "writer lease expired; renew cannot revive it")
+        _lease_annotation(error, {"version": 1, "lease_clock": "fence_clock_ns",
+                                 "assert_generation": state["generation"],
+                                 "assert_row_observed_ns": state["observed_ns"],
+                                 "assert_row_expires_ns": state["expires_ns"], "assert_now_ns": now,
+                                 "identity_matches": True, "snapshot_time_known": False})
+        raise error
     return now, boot
 
 
@@ -380,6 +535,8 @@ class WriterFence:
         if not isinstance(database, Database):
             raise ValueError("database must be a Database")
         self.database = database
+        _lease_set(self, "_last_renewal_token", None)
+        _lease_set(self, "_last_renewal_observation", None)
 
     def enable(self, authority_id: str):
         if not isinstance(authority_id, str) or not _NAME.fullmatch(authority_id):
@@ -496,6 +653,8 @@ class WriterFence:
         return token
 
     def renew(self, token: WriterToken, ttl_seconds: float) -> WriterToken:
+        _lease_set(self, "_last_renewal_token", None)
+        _lease_set(self, "_last_renewal_observation", None)
         duration = _ttl(ttl_seconds)
         with self.database._fence_transaction() as connection:
             state = _load(connection)
@@ -504,7 +663,17 @@ class WriterFence:
             if now + duration > _MAX_INTEGER:
                 raise WriterFenceError("fence_exhausted", "lease clock exhausted its range")
             connection.execute("UPDATE writer_fence_lease SET expires_ns=?,observed_ns=? WHERE singleton=1", (now + duration, now))
-            self._event(connection, "renewed", _load(connection), now)
+            renewed = _load(connection)
+            self._event(connection, "renewed", renewed, now)
+        # Publish only after the original context reports a successful COMMIT.
+        try:
+            observation = _lease_observation({"version": 1, "lease_clock": "fence_clock_ns",
+                "renew_generation": renewed["generation"], "renew_observed_ns": renewed["observed_ns"],
+                "renew_expires_ns": renewed["expires_ns"], "renew_known_commit": True})
+            _lease_set(self, "_last_renewal_token", token)  # Private identity link, never projected.
+            _lease_set(self, "_last_renewal_observation", observation)
+        except Exception:
+            pass
         return token
 
     def release(self, token: WriterToken):
@@ -528,9 +697,20 @@ class WriterFence:
         if not isinstance(connection, sqlite3.Connection) or not connection.in_transaction:
             raise WriterFenceError("unguarded_connection", "writer assertion requires an active Database transaction")
         _assert_joinable(self.database, connection)
-        state = _load(connection)
+        guard_observation = _read_guard_observation(connection)
+        if guard_observation is None:
+            state = _load(connection)
+            load_observation = None
+        else:
+            state, load_observation = _observed_load(connection, "assert")
         _require_guard_format(state)
-        _assert_token(self.database, state, self.database.writer_token if token is None else token)
+        try:
+            _assert_token(self.database, state, self.database.writer_token if token is None else token)
+        except WriterFenceError as error:
+            if guard_observation is not None:
+                _lease_annotation(error, guard_observation)
+                _lease_annotation(error, load_observation)
+            raise
         return state
 
 
@@ -540,7 +720,11 @@ class _TransactionGuard:
             from .startup import _assert_initialization_actor
             _assert_initialization_actor(database)
         self.database, self.connection, self.role = database, connection, role
-        self.state = _load(connection)
+        if role == "read":
+            self.state, self._lease_load_observation = _observed_load(connection, "guard")
+        else:
+            self.state = _load(connection)
+            self._lease_load_observation = None
         self.internal = False
         self.written = False
         self.denied = None
@@ -576,6 +760,13 @@ class _TransactionGuard:
         self.armed = self.state is not None or database.writer_token is not None or role != "financial"
         if self.armed:
             connection.set_authorizer(self._authorize)
+        if self._lease_load_observation is not None:
+            try:
+                observation = dict(self._lease_load_observation)
+                _lease_note_time(observation, "guard_validation_finished_ns")
+                self._lease_load_observation = _lease_observation(observation)
+            except Exception:
+                self._lease_load_observation = None
         with _REGISTRY_LOCK:
             _REGISTRY[id(connection)] = self
 

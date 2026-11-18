@@ -132,6 +132,7 @@ class _OwnedStartup:
         self._ledger_verified = False
         self._verified_schema = None
         self.last_renew_started = None
+        self._lease_diagnostic_state = (None, None)  # Immutable attempt/last-known snapshots, never authority.
 
     def _fail(self, exc):
         with self._lock:
@@ -162,6 +163,67 @@ class _OwnedStartup:
         if (info.st_dev, info.st_ino) != self.identity:
             raise StartupError("startup_identity_changed", "authority file changed during initialization")
 
+    def _renew_diagnostic(self, stage, fence=None):
+        """Optional lock-free telemetry; successful-path cancellation propagates."""
+        from .writer_fence import _lease_note_time, _lease_observation
+        try:
+            state = self._lease_diagnostic_state
+            attempt, known = state if type(state) is tuple and len(state) == 2 else (None, None)
+            filtered = _lease_observation(attempt)
+            previous = dict(filtered) if filtered is not None else {}
+            known = _lease_observation(known)
+            number = previous.get("renew_attempt", 0)
+            number = number if type(number) is int and 0 <= number < 2**63 - 1 else 0
+            if stage == "pending":
+                previous = {"version": 1, "elapsed_clock": "monotonic_ns",
+                            "renew_attempt": number + 1, "renew_attempt_state": stage}
+                _lease_note_time(previous, "renew_attempt_started_ns")
+            else:
+                was_pending = (previous.get("renew_attempt_state") == "pending"
+                               and type(previous.get("renew_attempt")) is int
+                               and 1 <= previous["renew_attempt"] < 2**63)
+                previous["renew_attempt_state"] = stage
+                if stage == "known_commit":
+                    _lease_note_time(previous, "renew_attempt_finished_ns")
+                    receipt = _lease_observation(getattr(fence, "_last_renewal_observation", None))
+                    if (was_pending and getattr(fence, "_last_renewal_token", None) is self.token
+                            and receipt is not None and receipt.get("renew_known_commit") is True
+                            and receipt.get("lease_clock") == "fence_clock_ns"
+                            and receipt.get("renew_generation") == self.token.generation
+                            and type(receipt.get("renew_observed_ns")) is int
+                            and type(receipt.get("renew_expires_ns")) is int
+                            and receipt["renew_expires_ns"] > receipt["renew_observed_ns"]):
+                        candidate = {"version": 1, "lease_clock": "fence_clock_ns",
+                            "last_known_renew_attempt": previous.get("renew_attempt"),
+                            "last_known_renew_generation": receipt.get("renew_generation"),
+                            "last_known_renew_observed_ns": receipt.get("renew_observed_ns"),
+                            "last_known_renew_expires_ns": receipt.get("renew_expires_ns"),
+                            "last_known_renew_started_ns": previous.get("renew_attempt_started_ns"),
+                            "last_known_renew_finished_ns": previous.get("renew_attempt_finished_ns"),
+                            "last_known_renew_same_token": True}
+                        known = _lease_observation(candidate)
+                    else:
+                        previous["renew_attempt_state"] = "returned_unobserved"
+            self._lease_diagnostic_state = (_lease_observation(previous), known)
+        except Exception:
+            pass
+
+    def _annotate_lease_failure(self, error, phase):
+        # No check(), SQL, clock, filesystem operation or new lock while a
+        # primary is propagating. An unknown existing attribute stays untouched.
+        try:
+            from .writer_fence import _lease_annotation, _lease_observation
+            observation = {"version": 1, "phase": phase}
+            state = self._lease_diagnostic_state
+            if type(state) is tuple and len(state) == 2:
+                for value in state:
+                    filtered = _lease_observation(value)
+                    if filtered is not None:
+                        observation.update(filtered)
+            _lease_annotation(error, observation)
+        except BaseException:
+            pass
+
     def _renew(self):
         from .writer_fence import WriterFence
         self.check()
@@ -171,10 +233,24 @@ class _OwnedStartup:
         # permits lease-control writes only, never financial data or DDL.
         keeper_database = copy(self.database)
         keeper_database.timeout = min(self.database.timeout, self.lease_seconds / 12, .1)
-        WriterFence(keeper_database).renew(self.token, self.lease_seconds)
-        self._check_identity(self.database)
-        with self._lock:
-            self.last_renew_started = started
+        self._renew_diagnostic("pending")
+        fence = WriterFence(keeper_database)
+        try:
+            fence.renew(self.token, self.lease_seconds)
+            self._renew_diagnostic("known_commit", fence)
+            self._check_identity(self.database)
+            with self._lock:
+                self.last_renew_started = started
+        except BaseException as error:
+            try:
+                self._renew_diagnostic("failed_or_unknown")
+            except BaseException:
+                pass
+            try:
+                self._annotate_lease_failure(error, "renew")
+            except BaseException:
+                pass
+            raise
 
     def _keep(self):
         next_renew = monotonic()
@@ -309,7 +385,14 @@ class _OwnedStartup:
         self._exchange = exchange
         self._ledger = exchange.ledger
         with self.database.read_transaction() as connection:
-            WriterFence(self.database).assert_writer(connection, self.token)
+            try:
+                WriterFence(self.database).assert_writer(connection, self.token)
+            except BaseException as error:
+                try:
+                    self._annotate_lease_failure(error, "ledger_read_entry")
+                except BaseException:
+                    pass
+                raise
             exchange.ledger.verify(connection=connection)
             schema = self._schema(connection)
         # The read snapshot's lease row is deliberately NOT checked afterward:
@@ -329,7 +412,14 @@ class _OwnedStartup:
         if self._credit is not None:
             raise StartupError("startup_context_reused", "credit verification cannot be reused")
         with self.database.read_transaction() as connection:
-            WriterFence(self.database).assert_writer(connection, self.token)
+            try:
+                WriterFence(self.database).assert_writer(connection, self.token)
+            except BaseException as error:
+                try:
+                    self._annotate_lease_failure(error, "credit_read_entry")
+                except BaseException:
+                    pass
+                raise
             self._schema(connection)
             credit._verify(connection)
             self._schema(connection)
