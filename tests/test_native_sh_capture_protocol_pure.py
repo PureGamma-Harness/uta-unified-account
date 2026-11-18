@@ -186,8 +186,9 @@ class NativeSHCaptureProtocolPureTests(unittest.TestCase):
                     and node.args and isinstance(node.args[0], ast.Constant)
                     and node.args[0].value == "one-shot deterministic capture rejected native preconditions; no recapture"]
         self.assertEqual(len(refusals), 1)
-        # The existing complete-original-AST test removes only exact scheduling
-        # additions and still compares against its unchanged original reference.
+        # The complete-module guard still uses the unchanged original reference;
+        # one explicitly hashed ordinary-case delta permits the reviewed pending
+        # oracle while every recovery/capture/cleanup node remains protected.
         audit_source = (ROOT / "tests/test_expired_gate_failure_evidence.py").read_text()
         audit_tree = ast.parse(audit_source)
         helpers = [node for node in audit_tree.body if isinstance(node, ast.FunctionDef)

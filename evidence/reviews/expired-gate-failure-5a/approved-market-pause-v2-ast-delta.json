@@ -1,0 +1,11 @@
+{
+  "approved_method": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+  "original_module_ast_sha256": "6158b76f0c38eb9aa7acf7a4c28c88357cb3223a0f875bcb63f2db08b513b1d6",
+  "original_reference": "evidence/reviews/expired-gate-failure-5a/original-ast.json",
+  "previous_method_ast_sha256": "860dbe3535fd7305fd8ae64307c71c446468ab55bf63a122411998988c839907",
+  "previous_method_source": "def test_partial_publication_stays_halted_until_exact_publication_replay_completes(self):\n    self.active()\n    self.suspend_outside_transaction(1)\n    snapshot = self.market(2, \"110\")\n    try:\n        partial = self.router.publish_market(snapshot, timeout=.15)\n        self.assertTrue(partial[\"publishing\"])\n        self.assertTrue(partial[\"halted\"])\n        self.assertTrue(self.control_state()[\"publishing\"])\n        self.submit(\"during-partial\")\n        rejected = self.wait(\"during-partial\", state=\"REJECTED\")\n        self.assertEqual(rejected[\"error\"][\"code\"], \"router_halted\")\n        self.assertEqual(financial_snapshot(self.shard_path(0))[\"uta_orders\"], [])\n    finally:\n        self.router.terminate_worker(1)\n    repaired = self.router.publish_market(snapshot, timeout=10)\n    self.assertFalse(repaired[\"publishing\"])\n    self.assertTrue(repaired[\"halted\"])\n    self.assertFalse(self.router.set_kill_switch(False, timeout=10)[\"halted\"])\n    self.submit(\"after-complete-publication\")\n    self.wait(\"after-complete-publication\")\n",
+  "reviewed_compatibility_CODE": "2fb4d47349a9330a5279205fcea7b0aced4ecba0",
+  "reviewed_method_ast_sha256": "086bfd15b452dbfe134da509fb1ff2bf1fc45ae82b857edef38ba9ea37007e8e",
+  "reviewed_method_source_commit": "8faa56d5fcfcd1b176cbb1c2d8e142986f56ab15",
+  "schema": 1
+}
