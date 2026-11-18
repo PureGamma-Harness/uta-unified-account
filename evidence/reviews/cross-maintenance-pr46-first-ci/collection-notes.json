@@ -1,0 +1,21 @@
+{
+  "administrative_failures": [
+    {
+      "action": "combine seven decoded logs in one exec_command argument",
+      "correction": "write each already fetched log separately; no API refetch",
+      "result": "exec server rejected E2BIG before child start"
+    },
+    {
+      "action": "parse normalized PR artifact result as structuredContent.content",
+      "correction": "read already saved normalized artifacts object; no API refetch",
+      "result": "JSON.parse undefined before mutation"
+    }
+  ],
+  "extra_SH_cause": "UNDETERMINED",
+  "first_four_errors_confirmed_in_two_original_units": true,
+  "private_bytes": 1431017,
+  "private_files": 24,
+  "public_original_ZIP_or_profile_or_signed_reference": false,
+  "same_error_count_other_six_only_footer_observed": true,
+  "source_of_originals": "connector-decoded UTF8 logs and provider ZIP downloads; not HTTP wire"
+}
