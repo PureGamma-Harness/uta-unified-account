@@ -1,0 +1,178 @@
+{
+  "actual_imports_tests_thread_process_proc_PID_pidfd_SQL_signal_operations_this_CODE_phase": 0,
+  "audit_guard": "reject UTA/SQLite imports and actor/network/proc-open audit events; stat/lstat proxy additionally rejects /proc paths",
+  "callsite_mapping": [
+    {
+      "actual_resources": "no proc path should be constructed",
+      "calls": [
+        "host.identity",
+        "host.allowed"
+      ],
+      "method": "NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+      "real_lookup_protection": {
+        "host.Path": "fixture patch raises if used; protected numeric IDs reject first"
+      },
+      "test_source_line": 13
+    },
+    {
+      "actual_resources": "pure dictionary/type/tuple comparison only",
+      "calls": [
+        "host.registered_birth_matches"
+      ],
+      "method": "NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+      "real_lookup_protection": {},
+      "test_source_line": 21
+    },
+    {
+      "actual_resources": "pure dictionary/type/tuple comparison only",
+      "calls": [
+        "host.registered_birth_matches"
+      ],
+      "method": "NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+      "real_lookup_protection": {},
+      "test_source_line": 34
+    },
+    {
+      "calls": [
+        "host.adopt_verified_child",
+        "host.registered_birth_matches",
+        "host.cleanup_call"
+      ],
+      "method": "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+      "partial_branch": "identity OSError occurs before UID/liveness; still fake close only",
+      "real_lookup_protection": {
+        "host.dead": "fixture False; no poll",
+        "host.identity": "fixture dict or OSError; no real proc",
+        "host.os.close": "fixture MagicMock asserts candidateclose77 once",
+        "host.os.geteuid": "fixture1000",
+        "host.os.pidfd_open": "fixture MagicMock returns77",
+        "host.signal.pidfd_send_signal": "fixture asserts zero calls"
+      },
+      "test_source_line": 47
+    },
+    {
+      "calls": [
+        "adapter.guarded_popen",
+        "checks.require_gate_budget",
+        "host.signal_owned_before_deadline",
+        "adapter.signal_owned_before_deadline"
+      ],
+      "method": "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+      "real_lookup_protection": {
+        "adapter.monotonic": "fixture12 or81",
+        "adapter.monotonic_ns": "fixture82e9",
+        "adapter.subprocess.Popen": "fixture asserts zero calls after deadline",
+        "check_outer callback": "fixture append only, not real _outer_check/proc",
+        "host.monotonic_ns": "fixture82e9",
+        "host/adapter.signal.pidfd_send_signal": "fixture zero calls"
+      },
+      "test_source_line": 68
+    },
+    {
+      "calls": [
+        "host.close_stdin_no_flush",
+        "host.cleanup_call",
+        "adapter.OwnedWorkers.__new__",
+        "adapter.OwnedWorkers.close",
+        "adapter.cleanup_call"
+      ],
+      "method": "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue",
+      "real_lookup_protection": {
+        "OwnedWorkers.__init__/start": "not called; __new__ bypasses mkdir/uuid/router/Connection/startup",
+        "Process.wait": "test-local class appends then returns0; no Popen object",
+        "adapter.monotonic": "fixture1",
+        "adapter.os.close": "fixture logs fakeFD11/12/77/78",
+        "adapter.private_json": "MagicMock; no actual filewrite/uuid/fsync",
+        "adapter.signal.pidfd_send_signal": "fixture asserts zero calls",
+        "router.close": "test-local lambda append",
+        "stdin/raw/stop/gate/ready.close/send": "test-local classes append/raise only"
+      },
+      "test_source_line": 83,
+      "unreached_branch": "wait always returns0, so real signal path never entered; default poison catches any regression"
+    }
+  ],
+  "execution_authorized": false,
+  "fixed_methods": 6,
+  "kind": "STATIC_FINITE_GUARDS6_RESOURCE_LOOKUP_AND_REAL_IMPORT_MAP_NOT_EXECUTION",
+  "limits": "finite source/lookup proof, not a kernel syscall sandbox or audit of arbitrary native library constructors; after-run in-memory registries are not OS process enumeration",
+  "native70_changed": false,
+  "real_connection": "same actual class object; default-poison constructor only, original close function retained; no shim/type substitute",
+  "real_stdlib_imports": {
+    "multiprocessing": "retained real stdlib; _MainProcess is memory object/authkey entropy, no OS Process.start; no Connection constructed",
+    "multiprocessing.connection": "real Connection class retained; import reducer registrations, no Client/Listener/Pipe/Connection construction",
+    "multiprocessing.context": "BaseContext subclasses/default context instances only, resource constructors in uncalled methods",
+    "multiprocessing.util": "platform check is sys.platform predicate; registers atexit; empty _children means no daemon terminate/join actions",
+    "own_getpid": "permitted ordinary stdlib initialization if used, not external PID/proc inspection",
+    "signal_subprocess_socket_threading": "real imports reported, not falsely marked absent; source reviewed no handler/network/thread/process start during import",
+    "unittest.mock": "real unittest/mock and asyncio dependencies; definitions/in-memory objects, no event loop/worker creation in fixed tests"
+  },
+  "runtime_guard": "default poison at real module lookups; test patch.object replaces the same retained os/signal/subprocess objects, missing patch fails and poison blocks PASS even if controller cleanup catches it",
+  "stdlib_read_only_source_pins": {
+    "multiprocessing/__init__.py": {
+      "bytes": 916,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/__init__.py",
+      "sha256": "a5a42976033c7d63ee2740acceef949a3582dcb0e0442845f9717e1be771c68b"
+    },
+    "multiprocessing/connection.py": {
+      "bytes": 41398,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/connection.py",
+      "sha256": "c2f2d6f3d32d48d4d8c51a7d7c98766a04e958cae72a67c7f905438a7c332bdd"
+    },
+    "multiprocessing/context.py": {
+      "bytes": 11673,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/context.py",
+      "sha256": "63f15d3169f4453eb80af4ce673a193a0670941206673ab5192ea16a17e8419f"
+    },
+    "multiprocessing/process.py": {
+      "bytes": 12139,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py",
+      "sha256": "67f0c2a7a3a83c92dd024705bac18619a2e123c9df77c414beb81035ea4a0e18"
+    },
+    "multiprocessing/reduction.py": {
+      "bytes": 9512,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/reduction.py",
+      "sha256": "4999f8b9ae7b3e8a7f5de302612b4131498dc2e238a2c47f894905c1c63294fe"
+    },
+    "multiprocessing/util.py": {
+      "bytes": 14261,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/util.py",
+      "sha256": "6752c4515ec69f82e9df64e017da490c3754e51d818c270ea1ad2d64e09268be"
+    },
+    "socket.py": {
+      "bytes": 37815,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/socket.py",
+      "sha256": "7d4d4c66e6f4bcc961ab462c4f08002ca97def8713a4be1c7373bdbd970a5274"
+    },
+    "subprocess.py": {
+      "bytes": 88747,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py",
+      "sha256": "85d29b2bf0249f5436838298c9a60ee93508b1102e9ac43b001f8a7e7ae8f375"
+    },
+    "threading.py": {
+      "bytes": 60200,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py",
+      "sha256": "846f450ae794e4aab823a163f8c71d27751148af33e91dd3de886686a4e8ebfb"
+    },
+    "unittest/__init__.py": {
+      "bytes": 3487,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/__init__.py",
+      "sha256": "32ed48385c0377bc2900a76e9a6acc3705aeef402c72de8554b3c637420506f0"
+    },
+    "unittest/mock.py": {
+      "bytes": 106317,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py",
+      "sha256": "1de18141992c6742bff27e77c0cbe46d53d6a5ab1850574a536910508823fc5c"
+    },
+    "unittest/signals.py": {
+      "bytes": 2403,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/signals.py",
+      "sha256": "f8286e818ca56e10e03745bc056cdfd31147678f9a1dc8cb6b0fe96ef9a4362a"
+    },
+    "uuid.py": {
+      "bytes": 29656,
+      "path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/uuid.py",
+      "sha256": "fe357bff7241e9fd6f86ee81567fd20aeec2e17460428ea9b7924bebf57301fc"
+    }
+  },
+  "unit_inputs": 4
+}

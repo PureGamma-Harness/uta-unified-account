@@ -1,0 +1,160 @@
+{
+  "accepted_receipts_are_not_completed_reconciliation": true,
+  "actual_host_exit_external_witness": 1,
+  "actual_host_exit_in_internal_result": null,
+  "actual_parent_exit": 1,
+  "actual_tool_completion_externally_witnessed": true,
+  "actually_offered": 34,
+  "automatic_retry_performed": false,
+  "bounded_producer_threads_joined": true,
+  "client_timeout_unknown_facts": 0,
+  "code_origin": "c29da8040c0c5b1ed24b23f10edae5462d40b983",
+  "cohort_one_started": false,
+  "cohort_reports_written": 1,
+  "cohort_zero_qualified": false,
+  "cohorts_planned": 2,
+  "completed_after_client_deadline": 0,
+  "cross_host_replication_or_disaster_recovery_proven": false,
+  "derivation_target_execution_attempts": 0,
+  "derived_artifacts": {
+    "arrivals": {
+      "bytes": 25476,
+      "sha256": "996d113ba38298c363f56ed187f65814a68bdf11035b341b5c11f25143e05770"
+    },
+    "fixed_feed": {
+      "bytes": 1218,
+      "sha256": "09ba8a3602c4a851228e1ef90472c64a5b636f6a7cbefc756cc685a98e8d0e30"
+    }
+  },
+  "enqueue_technical_or_unknown_facts": 0,
+  "evidence_limits": [
+    "Observed durable terminal receipts only; no successful complete reopened reconciliation",
+    "Admission-only same-host two-writer pilot; no matching fills or liquidation capacity claim",
+    "No numerical valuation failure inferred from publication barrier rejection",
+    "No root-cause attribution to disk, CPU, queue, or SQL latency without additional separately authorized evidence"
+  ],
+  "finite_terminal_errors": [
+    {
+      "code": "product_rejected",
+      "count": 8,
+      "status": 409
+    },
+    {
+      "code": "router_halted",
+      "count": 1,
+      "status": 503
+    }
+  ],
+  "first_observed_fault": {
+    "code": null,
+    "offset_ns": 2112196307,
+    "phase": "unexpected_terminal",
+    "trigger_error_code": "router_halted",
+    "trigger_error_status": 503,
+    "trigger_ordinal": 33,
+    "type": "RuntimeError"
+  },
+  "global_cleanup_error_count": 0,
+  "host_cleanup_error_count": 0,
+  "independent_raw_review": "PENDING",
+  "kind": "FIRST_NATIVE_ATTEMPT_FAILURE_SAFE_FACTS",
+  "leftover_local_queue_counts": [
+    0,
+    0
+  ],
+  "native_writer_function_unchanged_as_recorded": true,
+  "not_offered_after_abort": 62,
+  "observed_terminal_by_drain_end": 34,
+  "observed_terminal_outcomes": {
+    "accepted_persistent": 25,
+    "business_rejected": 8,
+    "control_market_rejected": 1
+  },
+  "official_capacity_gate_passed": false,
+  "original_native_attempts": 1,
+  "original_status": "FIRST_FAIL_OR_UNKNOWN_NO_RETRY",
+  "parent_reaped": true,
+  "parent_stream_end_complete": true,
+  "plan_sha256": "a844eb613147ac52a65cc648f59c9cc408b8507e6459ad5d485695f5b2e41dbf",
+  "planned_arrivals": 96,
+  "private_seal_index_sha256": "a334abe3fbf563b0fc551b77e44d9f9288bfd947b3424d462874c80d8e6a78c6",
+  "private_seal_sha256": "e27f4fc0dc7af6750cf25e4060cccd2d71841a19c9d47e1eb6f15f54d04c8611",
+  "production_approved": false,
+  "query_technical_facts": 0,
+  "raw_artifacts": {
+    "arrivals": {
+      "bytes": 53326,
+      "sha256": "bfe17a9d08abd1478df6654f9a53e05a300fde260f23fb6a1f68dfc9c8d86168"
+    },
+    "external_exit_witness": {
+      "bytes": 1147,
+      "sha256": "342be20f425098cd04bd3a0b46670bc411142a7d268469f7bf6b0de3eb1d72ca"
+    },
+    "fixed_feed": {
+      "bytes": 2897,
+      "sha256": "2ffb22c2c7d1872846a005e83f7a73e1a15febf3b2accb065f2b350676916c66"
+    },
+    "host_result": {
+      "bytes": 2014,
+      "sha256": "3297e72e3dfd60874a958758572d4c326ea4e05c98de814c65d0dce87f36dfee"
+    },
+    "native_report": {
+      "bytes": 4639,
+      "sha256": "0badb8eee319ef845abe46a013e0bba487cfecbc1faed55f8f438d9075250ae8"
+    },
+    "native_result": {
+      "bytes": 302,
+      "sha256": "bd990d6f24332210ebbbe4bf158212ebfa665c2929e27387dc4b5f8b38718acb"
+    },
+    "root_authorization": {
+      "bytes": 1371,
+      "sha256": "8c6e69d59a83dfbccb3a00fa2179290f187538879f6d5fc433c72a3c41edfea0"
+    }
+  },
+  "raw_writer_failed_as_recorded": false,
+  "read_only_reconciliation_completed": false,
+  "read_only_reopen_result": null,
+  "schema": 1,
+  "source_commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+  "source_unchanged_as_recorded": true,
+  "status": "FIRST_FAIL_NO_RETRY",
+  "subsequent_faults": [
+    {
+      "category": "FIXED_FEED_AFTER_PUBLISH_DEADLINE",
+      "code": null,
+      "offset_ns": 2126251038,
+      "phase": "fixed_market_feed",
+      "type": "AssertionError"
+    },
+    {
+      "category": "UNEXPECTED_TERMINAL_REJECTION_NOT_BUSINESS_MIX",
+      "phase": "readonly_reconcile",
+      "type": "AssertionError"
+    }
+  ],
+  "worker_cleanup": [
+    {
+      "actual_wait_exit": 0,
+      "cleanup_error_count": 0,
+      "cleanup_error_present": false,
+      "death_observed_via_original_held_handle": true,
+      "forced_cleanup_signal_used": false,
+      "gate_released": true,
+      "reaped": true,
+      "stdin_gate_released": true,
+      "worker_index": 0
+    },
+    {
+      "actual_wait_exit": 0,
+      "cleanup_error_count": 0,
+      "cleanup_error_present": false,
+      "death_observed_via_original_held_handle": true,
+      "forced_cleanup_signal_used": false,
+      "gate_released": true,
+      "reaped": true,
+      "stdin_gate_released": true,
+      "worker_index": 1
+    }
+  ],
+  "worker_cleanup_static_cross_record_consistency": true
+}

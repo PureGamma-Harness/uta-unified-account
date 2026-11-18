@@ -1,0 +1,124 @@
+{
+  "finding_classification": [
+    {
+      "category": "CONTROL_PUBLICATION_BARRIER_REJECTION",
+      "certainty": "OBSERVED_RECEIPT_AND_DIRECT_PINNED_CODE_PATH",
+      "id": "NFF-001",
+      "location": "uta/sharding.py:809",
+      "trigger_ordinal": 33
+    },
+    {
+      "category": "FIXED_FEED_PUBLICATION_COMPLETION_DEADLINE",
+      "certainty": "OBSERVED_RELATIVE_TIMES_AND_DIRECT_PINNED_ASSERTION",
+      "id": "NFF-002",
+      "location": "benchmarks/cross_open_loop_checks.py:82"
+    },
+    {
+      "category": "COMPLETE_READ_ONLY_RECONCILIATION_NOT_REACHED",
+      "certainty": "RECORDED_ASSERTION_AND_NULL_REOPEN_RESULT",
+      "id": "NFF-003",
+      "location": "benchmarks/cross_open_loop_reconcile.py:73"
+    }
+  ],
+  "kind": "PINNED_SOURCE_STATIC_FAILURE_LOCATION",
+  "rerun_or_fix_authorized_by_this_report": false,
+  "retained_host_source_matches_pinned_bytes": true,
+  "retained_host_source_sha256": "d6a465f704a7c82d5d1cb6a087f77b906da806dd9279346e8718f3634c655e49",
+  "schema": 1,
+  "source_commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+  "source_records": [
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 26212,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "benchmarks/cross_open_loop_pilot.py",
+      "review_anchors": [
+        158,
+        165,
+        172,
+        178,
+        216,
+        228,
+        230,
+        232,
+        237,
+        295,
+        298,
+        303,
+        391,
+        394,
+        407
+      ],
+      "sha256": "85ffb69e3308cfe1cacc25697f6ba638daaa06b145787ad84fe308315b5f0f64"
+    },
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 6753,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "benchmarks/cross_open_loop_checks.py",
+      "review_anchors": [
+        7,
+        8,
+        73,
+        82
+      ],
+      "sha256": "11a7d75e5215ed32f85a09d2df5424365c4ac92734658c77474ef04c6cd2a0e7"
+    },
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 10219,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "benchmarks/cross_open_loop_reconcile.py",
+      "review_anchors": [
+        21,
+        25,
+        73,
+        74,
+        117
+      ],
+      "sha256": "704366a9db06e78d1392781847e101cbbe7722c979b26a0dc9779d710f41df5a"
+    },
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 106136,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "uta/durable_process.py",
+      "review_anchors": [
+        1525,
+        1546,
+        1566,
+        1572,
+        1620
+      ],
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 51451,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "uta/sharding.py",
+      "review_anchors": [
+        737,
+        803,
+        809,
+        810
+      ],
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    {
+      "access": "IMMUTABLE_GIT_BYTES_ONLY",
+      "bytes": 19847,
+      "commit": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "file": "benchmarks/cross_pilot_native_host.py",
+      "review_anchors": [],
+      "sha256": "d6a465f704a7c82d5d1cb6a087f77b906da806dd9279346e8718f3634c655e49"
+    }
+  ],
+  "target_import_compile_test_or_execution_performed_by_derivation": false,
+  "unproven": [
+    "Exact internal commit instant or complete database state",
+    "Which component accounts for publication call duration",
+    "Numerical valuation defect",
+    "Any capacity or production qualification"
+  ]
+}

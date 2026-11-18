@@ -1,0 +1,108 @@
+{
+  "actual_attempts": 0,
+  "actual_checkout_HEAD_requires_external_witness": true,
+  "actual_reference_checks": "test.host/adapter, controller function identities, actual Connection/OwnedWorkers classes, same retained os/signal/subprocess objects and guard restoration are checked before/after",
+  "binding": {
+    "bytes": 5623,
+    "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/binding.json",
+    "sha256": "c38550ace6e248c6229698a2fb16cf611fddfe19864ea30e58486015c7463beb"
+  },
+  "budget_proposal": {
+    "EOF_drain_max_after_exit_seconds": 2,
+    "blocked_C_IO_hard_realtime_proven": false,
+    "host_total_code_budget_seconds": 12,
+    "kernel_directory_quota_proven": false,
+    "logical_capture_bytes": 8388608,
+    "outer_raw_bytes_including512reserve": 2048,
+    "shared_raw_bytes": 32768,
+    "target_OS_timeout_seconds": 10,
+    "target_combined_raw_bytes": 30720,
+    "whole_host_and_target_CPU_count": 1
+  },
+  "capture_reuse": "new capture byte-identical to previously reviewed cross_pilot_pure_capture.py except fixed scope choices guards6; no auto next native/scope/retry/discovery",
+  "code_origin_commit": "880d116ad489ec8211aafdaa35951e4b153096a2",
+  "execution_authorized": false,
+  "first_failure": "preserve first raw/receipt/exit/EOF/reap; missing/late/short/cap/unknown cannot PASS; no source fix-and-rerun in same approved scope",
+  "forbidden_actions": [
+    "OS process/worker start",
+    "thread start",
+    "network/Connection/Listener/Client establishment",
+    "multiprocessing sem-resource creation",
+    "proc/bootid or externalPID inspection",
+    "real pidfd open or signal action/handler install",
+    "SQL connection or UTA/SQLite import"
+  ],
+  "kind": "SINGLE_SEPARATE_FIXED_GUARDS6_FAKE_SCOPE_CODE_ONLY",
+  "native80_boundary": "NOT_RUN/NO_GO unchanged; this scope can never authorize or start native pilot/worker/SQL",
+  "native_base_scope_preserved": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+  "observation_limits": "finite reviewed source and dangerous-lookup guards, not a general C/kernel syscall sandbox; in-memory child-registry emptiness is not OS process enumeration",
+  "prior_native_delta_CODE": "b14accaa96dd51a64b8a68b3bbccf5e5e48c3584",
+  "production_or_capacity_approved": false,
+  "real_stdlib": "unittest/mock + real multiprocessing/connection/subprocess/signal/socket/threading imports allowed and reported; real Connection class retained and unused, no shim/type substitute; memory_MainProcess/authkey/atexit/own-getpid semantics are not an OS child",
+  "required_results": [
+    "six exact actual successful unittest IDs in order",
+    "N6 and zero failure/error/skip/expectedfailure/unexpectedsuccess",
+    "no unexpected unmocked operations or forbiddenimports",
+    "real Connection class retained, in-memory MP child registry empty",
+    "source/control/currentplans beforeafter pins exact",
+    "actual prefix0/reap/full stdoutstderr EOF and bounded raw writes",
+    "real external whole-host taskset-c1 exit/time witness; inner actual_host_exit stays null"
+  ],
+  "resource_guard": "audit refuses UTA/SQLite and actor/network/proc-open events; default poison installed on same real os/signal/subprocess/thread/socket/multiprocessing lookup attributes patched by fixtures; missed patch poisons PASS even if cleanup catches BaseException; proc stat/lstat proxy also refuses /proc",
+  "retained_loading": "empty benchmarks namespace; pinned exact source bytes compiled/executed under actual retained ModuleSpec for controls/checks/host/adapter/test, no unbound namespace or pyc load; original sys.path.insert cannot select another helper",
+  "scopes": {
+    "guards6": {
+      "expected_success_IDs": [
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ],
+      "fresh_capture_root": "/workspace/uta-native-guards6-880d116-once01",
+      "methods": [
+        "NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ],
+      "outer_prefix": [
+        "/usr/bin/timeout",
+        "--signal=KILL",
+        "10s",
+        "/usr/bin/taskset",
+        "-c",
+        "1"
+      ],
+      "target_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-I",
+        "-S",
+        "-B",
+        "/workspace/uta-native-guards6-capture/benchmarks/cross_native_guards6_entry.py",
+        "--scope",
+        "guards6",
+        "--binding",
+        "/workspace/uta-native-guards6-capture/evidence/reviews/cross-open-loop-pilot/guards6-capture/binding.json",
+        "--approved-binding-sha256",
+        "c38550ace6e248c6229698a2fb16cf611fddfe19864ea30e58486015c7463beb",
+        "NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ]
+    }
+  },
+  "source_commit": "880d116ad489ec8211aafdaa35951e4b153096a2",
+  "source_semantics": "four actual unit input files are not four tests; fixed six methods across two actual classes; four inputs and three new test-control files are pinned separately",
+  "static_resource_map": {
+    "bytes": 9085,
+    "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/resource-import-map.json",
+    "sha256": "d1a76e47a80779fa9bcb390751708e0831df3b323f76f4ed7333f5fd3a20845c"
+  }
+}

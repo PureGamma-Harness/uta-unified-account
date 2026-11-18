@@ -1,0 +1,221 @@
+{
+  "actual_execution_source_HEAD": "76827a4aed28726c30a9bdc829e6c101383b7bdf",
+  "attempts": 1,
+  "capture_observation": {
+    "EOF_complete": true,
+    "actual_host_exit": null,
+    "actual_host_exit_requires_external_observation": true,
+    "actual_prefix_exit": 0,
+    "elapsed_ns": 193677572,
+    "elapsed_semantics": "before Popen through real wait/EOF/raw fsync; metadata pins outside interval",
+    "exact_argv": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "10s",
+      "/usr/bin/taskset",
+      "-c",
+      "1",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-native-guards6-capture/benchmarks/cross_native_guards6_entry.py",
+      "--scope",
+      "guards6",
+      "--binding",
+      "/workspace/uta-native-guards6-capture/evidence/reviews/cross-open-loop-pilot/guards6-capture/binding.json",
+      "--approved-binding-sha256",
+      "c38550ace6e248c6229698a2fb16cf611fddfe19864ea30e58486015c7463beb",
+      "NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+      "NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+      "NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+      "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+      "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+      "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+    ],
+    "fault": null,
+    "host_before_receipt_end_ns": 145921050416417,
+    "host_start_ns": 145920847937111,
+    "live_raw_bytes_reserved_before_write": 4247,
+    "live_raw_bytes_written": 4247,
+    "monotonic_end_ns": 145921048790262,
+    "monotonic_start_ns": 145920855112690,
+    "native_SQL_or_worker_runs": 0,
+    "reaped": true,
+    "scope": "guards6",
+    "source_before_after_equal": true,
+    "status": "PURE_SCOPE_FUNCTIONAL_PASS_PENDING_CAPTURE_EXIT_AND_INDEPENDENT_RAW",
+    "stream_bytes": {
+      "stderr": 1254,
+      "stdout": 2993
+    },
+    "target_output_may_be_incomplete_on_cap_or_short_write": false,
+    "target_result": {
+      "actual_failure_IDs": [],
+      "actual_success_IDs": [
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ],
+      "counts": {
+        "errors": 0,
+        "expectedFailures": 0,
+        "failures": 0,
+        "skipped": 0,
+        "unexpectedSuccesses": 0
+      },
+      "event": "FIXED_PURE_SCOPE_RESULT",
+      "expected_IDs": [
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "benchmarks._guards6_fixed_tests.NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "benchmarks._guards6_fixed_tests.NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ],
+      "forbidden_imports": [],
+      "in_memory_mp_child_registry_empty": true,
+      "methods": [
+        "NativeHostGuardContracts.test_protected_ids_reject_before_any_proc_path",
+        "NativeHostGuardContracts.test_same_numeric_pid_cannot_alias_different_birth_or_nonce",
+        "NativeHostGuardContracts.test_ack_prerequisites_are_typed_true_and_gates_closed",
+        "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+        "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+        "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+      ],
+      "observation_limit": "finite source and lookup-guard proof; no kernel PID/process/thread enumeration or arbitrary-C sandbox claim",
+      "passed": true,
+      "real_connection_class_retained": true,
+      "retained_helper_identity_unchanged": true,
+      "scope": "guards6",
+      "source_pins_unchanged": true,
+      "stdlib_import_semantics": "real multiprocessing creates memory MainProcess/authkey and registers util atexit; these are not OS children/threads/Connections/semaphore resources",
+      "stdlib_modules_imported": [
+        "multiprocessing",
+        "multiprocessing.connection",
+        "subprocess",
+        "signal",
+        "socket",
+        "threading"
+      ],
+      "tests_run": 6,
+      "unexpected_unmocked_operation_attempts": []
+    },
+    "write_calls": 18
+  },
+  "code_origin": "880d116ad489ec8211aafdaa35951e4b153096a2",
+  "external_exit_witness": {
+    "actual_external_exit": 0,
+    "actual_tool_chunk_id": "ef1697",
+    "exact_external_command": "/usr/bin/taskset -c 1 /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B /workspace/uta-native-guards6-capture/benchmarks/cross_native_guards6_capture.py --plan /workspace/uta-native-guards6-capture/evidence/reviews/cross-open-loop-pilot/guards6-capture/plan.json --approved-plan-sha256 aecd26807f056136fd6f557d9ff0df5d832ce6acc3531fa61cbd7b32f4c79cf7 --scope guards6",
+    "post15_physical_Git_pins_equal": true,
+    "prelaunch_actual_tool": {
+      "binary_FA674_matched": true,
+      "chunk_id": "bbf449",
+      "exit_code": 0,
+      "repo_bytes": 115982,
+      "repo_inputs": 15,
+      "selected_stdlib_bytes": 418524,
+      "selected_stdlib_sources": 13,
+      "source_checks_are_not_full_loaded_extension_attestation": true
+    },
+    "source_file": {
+      "bytes": 3219,
+      "sha256": "f9e413dcbaf5da80e3c54063df8a5d03bd18a12313fdf93508f906058552ed30"
+    },
+    "tool_wall_time_seconds": 0.09637351
+  },
+  "independent_CODE_review": "8bda283f2bb3e2bf9bfa524e7376b88c6668e608",
+  "kind": "GUARDS6_FIRST_ONCE_SAFE_CAPTURE_REPORT",
+  "native80_status": "NOT_RUN/NO_GO",
+  "no_private_full_source_or_binding_export": true,
+  "preserved_private_originals": {
+    "files": {
+      "caller-summary.stdout": {
+        "bytes": 205,
+        "sha256": "29e7c96da68ea6b011fe80ad6ab2fbc957f19b8923b88cc57a6ad502b9c60d2a"
+      },
+      "capture-source.py": {
+        "bytes": 8877,
+        "sha256": "fc4c3ebfa21f6a53b29378757c2335f85880fb8afc9e6a2d61f998874388e690"
+      },
+      "first.stderr": {
+        "bytes": 1254,
+        "sha256": "0e298f096dc87e58060b870215de93fc837f484b71e1abfc863d414c623a6cc8"
+      },
+      "first.stdout": {
+        "bytes": 2993,
+        "sha256": "234c2e9ce5c6522b5ed6f1c03c9c087946a39224ff4e3965db41cd389feffe2d"
+      },
+      "intent.json": {
+        "bytes": 1844,
+        "sha256": "055615fb5dedc2ffcc1f53491a323a269be67f25833118049bdf74db6865825b"
+      },
+      "inventory.json": {
+        "bytes": 1186,
+        "sha256": "8475e21c77d6c48ad3fddc45ceb3460066570d6ffd0f9a79e7ff03506bb2a488"
+      },
+      "pins-after.json": {
+        "bytes": 2803,
+        "sha256": "c14b36e6fc901985cb3652e9bdc47ae419b056c9c10f0bed2650d9c759dc627e"
+      },
+      "pins-before.json": {
+        "bytes": 2803,
+        "sha256": "c14b36e6fc901985cb3652e9bdc47ae419b056c9c10f0bed2650d9c759dc627e"
+      },
+      "receipt.json": {
+        "bytes": 5339,
+        "sha256": "d72319d4d2ad56f370db19581e1113728121850c80ca9aafff607542e04de1c9"
+      },
+      "root-tool-exit-witness.json": {
+        "bytes": 3219,
+        "sha256": "f9e413dcbaf5da80e3c54063df8a5d03bd18a12313fdf93508f906058552ed30"
+      }
+    },
+    "final_seal": {
+      "bytes": 2205,
+      "sha256": "5e9b63c1a8f3888429b81ffd110d9d163151374d3d96a0da4f40435db206f10d"
+    },
+    "final_seal_excludes_itself": true,
+    "initial_inventory_covers": 8,
+    "initial_inventory_excludes_itself": true,
+    "original_bytes": 30523,
+    "original_file_count": 10,
+    "root_witness_is_later_original": true
+  },
+  "production_or_capacity_approved": false,
+  "public_allowlist": [
+    "README.md",
+    "first.stdout",
+    "first.stderr",
+    "report.json",
+    "inventory.json"
+  ],
+  "restoration_and_atexit_limits": {
+    "direct_post_restore_event_emitted": false,
+    "preserved_evidence": "Target result is emitted before finally/restore; complete raw tail, real prefix wait/exit0 and later external capture exit0 are preserved. No per-API restoration or atexit attestation is invented.",
+    "reviewed_source_finally_calls_LookupGuard_restore": true
+  },
+  "scope": "guards6",
+  "sealing_actions": "Only JSON/raw/source/Git byte verification and new seal/SAFE files; no target rerun, import, SQL, worker, proc/PID/pidfd/signal actions.",
+  "source_binding": {
+    "binding": {
+      "bytes": 5623,
+      "sha256": "c38550ace6e248c6229698a2fb16cf611fddfe19864ea30e58486015c7463beb"
+    },
+    "pins_before_equals_after": true,
+    "plan": {
+      "bytes": 6988,
+      "sha256": "aecd26807f056136fd6f557d9ff0df5d832ce6acc3531fa61cbd7b32f4c79cf7"
+    },
+    "repo_bytes": 115982,
+    "repo_inputs": 15
+  },
+  "source_meaning": "Plan source_commit is code origin, not the actual checkout HEAD; all 15 pinned inputs matched both Git commits and physical bytes.",
+  "status": "FUNCTIONAL_CAPTURE_VERIFIED_LOCALLY_PENDING_INDEPENDENT_RAW",
+  "stdlib_limits": "Real multiprocessing import creates only the recorded memory MainProcess/authkey and atexit registrations; authkey values are not inspected or exported. The empty in-memory child registry and lookup guard are finite evidence, not kernel enumeration.",
+  "timing_limits": "Tool wall time and prefix monotonic interval are separate observations and are not combined or used as performance/capacity results."
+}
