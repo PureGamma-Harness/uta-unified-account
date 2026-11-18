@@ -133,3 +133,26 @@ loading SQL/native imports. The original plan is retained byte-for-byte as
 `once-plan-7c8bf60-NOT_RUN.json`; it had zero target attempts and was not a test
 failure. The new plan rebinds only the corrected driver. Financial service code,
 six model modules and all manual expectations are unchanged by this correction.
+
+## Source materialization after the completed pure run
+
+After the first pure run and `ca0f37bf` seal, a Git sparse-pattern preparation
+for the proposed fresh SQL scope removed twenty tracked paths from this
+isolated worktree because its earlier positive patterns omitted those newly
+tracked test/control/evidence files. They were restored byte-for-byte from the
+sealed `ca0f37bf` Git tree; all twenty-one paths changed from the PR35 base were
+then checked against that tree. The private ten first-run originals and their
+namespaces were untouched. No database existed in this scope and no test or
+SQL was rerun.
+
+The worktree test file and pure driver now have different physical
+identities/timestamps from the saved first-run metadata; their bytes still
+match the frozen source. The actual executed interval's original before/after
+facts remain unchanged. The earlier unverified preparation output claiming
+these files were not rewritten is superseded by the
+[exact materialization record](../evidence/reviews/cross-maintenance-boundary/post-pure-materialization-event.json).
+The public first-run copies were rematerialized exactly from the sealed Git
+tree; the original raw files were not regenerated. Future preparation adds
+only exact positive patterns to this worktree's own noncone configuration,
+with no broad sparse reapplication. This event does not borrow a new PASS or
+retroactively change the first source identity.
