@@ -9,6 +9,9 @@ fixed methods each have an actual `ok` line, with zero failures, errors or skips
 The methods cover twenty-two bounded source groups; there was no separate
 per-group execution counter, so those groups are not22 independently recorded
 test invocations. No retry, baseline rerun, whole suite or CI was requested.
+The frozen plan's non-executable `limitations` sentence still says twenty; its
+case-group arithmetic and the revised source describe22. That stale narrative
+was not edited in the approved plan. Actual observed method count is six.
 
 The real current whole credit artifact and its validator ran in memory. The
 selected method asserted the exact61-entry retained source map, rejected added
