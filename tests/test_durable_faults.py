@@ -1231,6 +1231,10 @@ class ManagedProcessFaultTests(unittest.TestCase):
             lease_seconds=fixture_lease, poll_interval=.01, background_interval=.05,
             account_batch=1, matches_per_symbol=1, max_attempts=2)
         self.addCleanup(self.router.close)
+        if self._testMethodName == "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover":
+            from native_sh_capture_fixture import NativeSHCapture
+            self._native_sh_capture = NativeSHCapture(self.router, fresh_synthetic=True)
+            self.addCleanup(self._native_sh_capture.close)
 
     def shard_path(self, shard):
         return self.path / f"shard-{shard:04d}.sqlite3"
@@ -1384,6 +1388,10 @@ class ManagedProcessFaultTests(unittest.TestCase):
         publication_started = None
         try:
             capture_deadline = monotonic() + 5
+            armed = lease("deterministic_capture_arm")
+            self.assertTrue(armed["active"] and armed["owner_pid"] == pid)
+            bound_generation = armed["generation"]
+            self._native_sh_capture.arm(identity, bound_generation, capture_deadline)
             for _ in range(8):
                 # Both the finite capture horizon and the original live binding
                 # constrain every signal. No business command is retried here.
@@ -1396,7 +1404,7 @@ class ManagedProcessFaultTests(unittest.TestCase):
                         bound_generation = current["generation"]
                     self.assertEqual(current["generation"], bound_generation)
                     candidate = bound_router_shared_flocks(pid, identity, lock_path, file_identity)
-                    if candidate:
+                    if candidate and self._native_sh_capture.entered(identity, bound_generation):
                         break
                     sleep(.001)
                 else:
@@ -1437,6 +1445,7 @@ class ManagedProcessFaultTests(unittest.TestCase):
                 # holder. Do not read its lease through that same blocked DB.
                 observation["capture_attempts"][-1]["resume_lease_observation"] = {
                     "observed": False, "reason": "undo_own_stop_before_fresh_authority_read"}
+                self._native_sh_capture.release(identity, bound_generation)
                 self.assertTrue(undo_owned_test_stop(
                     pid, pidfd, identity, observation, reason="unsatisfied_capture",
                     known_lease=last_native_lease, expected_generation=bound_generation))
@@ -1458,6 +1467,7 @@ class ManagedProcessFaultTests(unittest.TestCase):
                 self.assertTrue(recovered["active"] and recovered["owner_pid"] == pid,
                                 "unknown/inactive observation cannot reenter capture")
                 self.assertEqual(recovered["generation"], bound_generation)
+                self.fail("one-shot deterministic capture rejected native preconditions; no recapture")
             self.assertTrue(captured, "read/stop races exhausted the bounded SH capture attempts")
             old = lease()
             old_generation = old["generation"]

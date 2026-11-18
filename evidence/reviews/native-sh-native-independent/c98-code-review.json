@@ -1,0 +1,97 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_NATIVE_SH_CONTROLLER_CODE_REVIEW",
+  "source_commit": "c98a02679fcd86d90ace6161b316724b2f8a1867",
+  "source_tree": "ee3073262df604efcfa5ce90395d11bf90a7725d",
+  "source_parent": "c42c44410148f3fece5ffb4772e9836c42e0916b",
+  "conclusion": "NOT_CLOSED",
+  "native_status": "NOT_RUN",
+  "native_attempts": 0,
+  "static_counterexamples_executed": false,
+  "pins": {
+    "tests/native_sh_capture_native_once.py": {
+      "bytes": 48791,
+      "sha256": "b41c3cbba941eab755badcece7d4674edd25c628ec776216237b1970b85a33f7"
+    },
+    "evidence/reviews/native-sh-capture-handshake/native-executor-plan.json": {
+      "sha256": "93ebb40f08d67cecd3ad0179fdc5589e08da2ee1d2eebcab16d1d26b35530af7"
+    },
+    "docs/native-sh-native-executor-contract.md": {
+      "bytes": 8576,
+      "sha256": "e1b4adfb26048da994e9e6cc905d3593efefc9cb5274875e2421fd333204614f"
+    },
+    "uta/durable_process.py": {
+      "bytes": 106136,
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    }
+  },
+  "closure": {
+    "input_files": 69,
+    "input_bytes": 1512892,
+    "physical_regular_nonsymlink_lengths_and_sha_match_plan": true,
+    "git_blob_lengths_and_sha_match_plan": true,
+    "stdlib_source_pins": 5,
+    "stdlib_source_sha_match_plan": true,
+    "uta_matches_PR35_9b61": true,
+    "PR37_point1_registration_cap_included": false,
+    "test_fixture_helper_protocol_and_envelope_match_f434": true,
+    "immediate_parent_diff_is_exactly_three_new_paths": true,
+    "old_pure_and_other_existing_evidence_unchanged_from_parent": true
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "status": "BLOCKING",
+      "title": "SystemExit and early outer setup escape registered finally ownership",
+      "source_lines": [505, 630, 646, 648, 653, 661, 742, 972, 978],
+      "stdlib_path": "multiprocessing/util.py:353-360",
+      "selected_worker_daemon_true_proven": false,
+      "definite_shutdown_risk": "residual non-daemon child unbounded join and restored waitpid after held references close",
+      "early_error_example": "EIO at first OWNED_LEADER event before outer resource try/finally",
+      "required_boundary": "unconditional final real_os._exit including flush/error-report exceptions; own resources immediately after creation"
+    },
+    {
+      "id": "F2",
+      "status": "BLOCKING",
+      "title": "Pidfd signals lack a common absolute deadline at actual dispatch",
+      "source_lines": [273, 278, 369, 391, 392, 667, 675, 879, 882, 887],
+      "counterexample": "finally entered at elapsed51.01 still dispatches SIGKILL; logging may also return after deadline before syscall",
+      "required_boundary": "one shared absolute51 deadline checked after logging/IPC immediately before each signal; expired means UNKNOWN and no dispatch"
+    },
+    {
+      "id": "F3",
+      "status": "BLOCKING",
+      "title": "Late final fsync can retain PASS and exit0 beyond51 seconds",
+      "source_lines": [843, 848, 855, 861, 863, 874, 875, 902, 918],
+      "counterexample": "elapsed50.99 passes check; fsync returns at52; END still contains PASS/exit0 even if elapsed field exceeds51",
+      "required_boundary": "late or partial finalization must block final PASS; independent actual outer monotonic end/exit/reap evidence remains mandatory"
+    },
+    {
+      "id": "F4",
+      "status": "BLOCKING",
+      "title": "Original identity/kernel observers still traverse bare PID proc paths",
+      "source_lines": [431, 435, 438],
+      "other_source_references": [
+        "tests/test_durable_faults.py:70-104",
+        "tests/test_durable_faults.py:1341/1373/1416/1419/1457",
+        "uta/durable_process.py:393-398"
+      ],
+      "counterexample": "A is verified, exits and is reaped; reused integer is read by bare identity/fd walk before later birth mismatch rejects it",
+      "required_boundary": "case-only observer/identity adapters using retained kernel references or rejecting terminal/unknown ownership before lookup; original runtime/financial source unchanged"
+    }
+  ],
+  "review_actions": {
+    "git_and_text_reads": true,
+    "source_file_hash_and_length_checks": true,
+    "runtime_metadata_probe": false,
+    "compile_or_import": false,
+    "test_or_fixture_execution": false,
+    "SQL_or_worker_or_native_execution": false,
+    "actual_proc_or_PID_or_pidfd_or_signal_operation": false,
+    "network": false,
+    "author_source_or_old_evidence_modified": false,
+    "new_subagent_spawned": false
+  },
+  "native_execution_authorized": false,
+  "production_or_real_funds_approved": false
+}

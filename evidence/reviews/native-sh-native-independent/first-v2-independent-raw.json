@@ -1,0 +1,211 @@
+{
+  "additional_checks": {
+    "STOP_before_captured_expiry_and_KILL_after_expiry": true,
+    "actual_caller_end_minus_start_checked": true,
+    "actual_controller_owned_exit0_reap_within51": true,
+    "explicit_extra_real_test_fixture_SH_FD": true,
+    "first_EX_observed_within_original5s": true,
+    "frozen_controller_raw_EOF_acceptance_condition_satisfied": true,
+    "no_new_runtime_metadata_probe": true,
+    "observed_max_live_financial": 2,
+    "original_supervisor_own_SIGKILL_recovery_occurred": true,
+    "outer_case_parent_reap_receipts": 1,
+    "parent_WAIT_receipts": 4,
+    "pending_END_completed_by_FINAL_PREEXIT_and_independent_actual_caller_wait": true,
+    "private_kernel_gate_device_inode_and_real_pidfd_duplicate_links_match": true,
+    "publication_phases_relative_to_publication_start_not_lease_expiry": true,
+    "real_SIGSTOP_fault_injection_occurred": true,
+    "saved_runtime_identity": {
+      "absolute_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "case_cpu": [
+        1
+      ],
+      "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "launcher_cpu": [
+        1
+      ],
+      "launcher_flags": {
+        "dont_write_bytecode": 1,
+        "isolated": 1,
+        "no_site": 1
+      },
+      "launcher_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+      "native_SQLite_expected_and_entry_equality_check_passed": "3.53.1",
+      "sqlite_check_is_in_parent_case_before_authority_creation": true
+    },
+    "unique_creator_birth_terminal_native_wait_status_links_consistent": true
+  },
+  "artifact_checks": {
+    "SAFE_finite_key_allowlist_and_privacy_checks_passed": true,
+    "author_SAFE_bytes": 7888,
+    "author_SAFE_sha256": "a7f42fd232a4b35b5ea833d46cbf6a130f4e044bd1c3c641ebeb3779b59553df",
+    "author_doc_sha256": "0a8cf0e1a84627b5779fc65fd119c0595c4dbe0953534d4a5d4e857da1d69496",
+    "events_sha256": "49ad806a29187e8824c9cda23b2641eb66c789dee58412eef8a7289716f3d621",
+    "inventory_exact_and_physical_length_SHA_matched": true,
+    "original_bytes_exported": false,
+    "private_artifact_digest_fields_cross_checked": 12,
+    "private_original_bytes_verified": 2569983,
+    "private_original_files_verified": 98,
+    "private_seal_bytes": 28592,
+    "private_seal_sha256": "9782b6267254f3530322c005ddda0598489d0705686300b363154f64b24ec664",
+    "raw_derived_SAFE_fields_cross_checked": 49,
+    "raw_stderr_sha256": "79019596c4199b6010602b42ac0c7665c56f4d7fbdf7c062a8d107fc6154095f",
+    "raw_stdout_sha256": "4e3d1bdb9c343f9a32c2352dba53bec2b80b6f802dcfc97562a966614d4a52cb",
+    "scope_provenance_fields_checked": 16
+  },
+  "author_safe_seal": "8e121d31c046db15e1bb2e40608715d60f083c2f",
+  "conclusion": "RAW_PASS_INSTRUMENTED_BASELINE_SINGLE_CASE",
+  "kind": "INDEPENDENT_FIRST_NATIVE_SH_V2_RAW_REVIEW",
+  "limits": [
+    "One fresh instrumented baseline case with real SIGSTOP and supervisor SIGKILL; not an uninstrumented-engine qualification.",
+    "Controller overflow, late-fsync, quota and forced outer-cleanup failure branches were not injected or exercised; outer cleanup signals were zero.",
+    "Single-run phase timings are not production recovery RTO, throughput, stress or universal liveness guarantees.",
+    "No comparison to the PR37 .1 registration cap; earlier CI root cause remains UNDETERMINED.",
+    "Finance evidence is the pinned original assertion path plus recorded tail; reviewer did not reopen SQLite databases or rerun SQL.",
+    "Authority/evidence monitoring is logical sampling with possible overshoot, not a hard filesystem quota.",
+    "c98 remains NOT_RUN with zero native attempts and its unchanged NOT_CLOSED review; no retry or further run follows from this RAW result."
+  ],
+  "native_attempts_by_reviewer": 0,
+  "new_native_execution_authorized": false,
+  "prior_CODE_review": "132ab64d080c6ffa94ff91f27c46d012cfdc482c",
+  "prior_c98_NOT_CLOSED_review": "8112e785a24290706f690e34b437814147d7771a",
+  "production_or_real_funds_approved": false,
+  "raw_derived_facts": {
+    "actual_caller_measured_controller_elapsed_ns": 8409570634,
+    "actual_controller_elapsed_within_51s": true,
+    "actual_controller_exit": 0,
+    "actual_controller_owned_reap": true,
+    "actual_kernel_SH_observation_events": 10,
+    "actual_replacement_READY_events": 1,
+    "all_registered_roles_terminal": true,
+    "authority_monitor_is_logical_not_hard_quota": true,
+    "authority_peak_observed_bytes": 929848,
+    "births_by_role": {
+      "case_parent": 1,
+      "financial": 3,
+      "tracker": 1
+    },
+    "caller_signal_count": 0,
+    "caller_timeout": false,
+    "capture_attempt_count": 1,
+    "case_counts": {
+      "case_passed": true,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests_run": 1,
+      "unexpected_successes": 0
+    },
+    "cleanup_error_count": 0,
+    "cleanup_forced_kill": false,
+    "driver_sha256": "3d9304247e7a208ab0148892ce1132b4589440c7b20668fe51405bbeddd63938",
+    "end_observed_candidate": "NATIVE_SINGLE_CASE_PASS",
+    "end_qualification": "PENDING_FINAL_RETURN",
+    "event_bytes": 36729,
+    "event_count": 36,
+    "final_authority_logical_bytes": 925696,
+    "final_evidence_logical_bytes_at_case_measurement": 1595381,
+    "final_unknown_count": 0,
+    "inner_case_host_exit": 0,
+    "inner_case_host_reaped": true,
+    "inner_pre_exit": {
+      "before_absolute51": true,
+      "proposed_exit": 0
+    },
+    "launcher_raw_complete_after_actual_owned_exit": true,
+    "launcher_stdout_stderr_bytes": 0,
+    "original_assertions_completed": true,
+    "original_horizons_seconds": {
+      "api_phase_timeout_seconds": 5,
+      "capture_horizon_seconds": 5,
+      "fixture_lease_seconds": 5,
+      "publication_lifecycle_watchdog_seconds": 15,
+      "recovery_horizon_seconds": 5
+    },
+    "original_two_shards": 2,
+    "outer_cleanup_signal_entries": 0,
+    "outer_pre_exit": {
+      "before_absolute51": true,
+      "proposed_exit": 0
+    },
+    "parent_own_signal_entries": 1,
+    "phase_seconds_after_publication_start": {
+      "new_generation_observed_at": 0.8571489729947643,
+      "old_pidfd_exit_observed_at": 0.2532917450007517,
+      "publication_finished_at": 1.0483800849906402
+    },
+    "plan_sha256": "89afc801d96ccc7efc71671711c3f52b61c4b33624ce57d3dbaa51b2b7afb1e7",
+    "raw_capture_failed": false,
+    "raw_stdout_stderr_bytes": 980,
+    "role_terminals_without_identifiers": [
+      {
+        "actual_exit": 0,
+        "actual_reaped": true,
+        "pidfd_exit": true,
+        "role": "case_parent"
+      },
+      {
+        "actual_exit": 0,
+        "actual_reaped": true,
+        "pidfd_exit": true,
+        "role": "tracker"
+      },
+      {
+        "actual_exit": -9,
+        "actual_reaped": true,
+        "pidfd_exit": true,
+        "role": "financial"
+      },
+      {
+        "actual_exit": 0,
+        "actual_reaped": true,
+        "pidfd_exit": true,
+        "role": "financial"
+      },
+      {
+        "actual_exit": 0,
+        "actual_reaped": true,
+        "pidfd_exit": true,
+        "role": "financial"
+      }
+    ],
+    "runtime_sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "sampling_overshoot_possible": true,
+    "source_commit": "48d045d478564f7ea15239e21f8164ca517339ca",
+    "source_tree": "4ee064c8a94b9e6656295768b782975a3671e14c",
+    "source_unchanged": {
+      "original_unchanged": true,
+      "private_copy_unchanged": true,
+      "stdlib_unchanged": true
+    },
+    "test_signal_entries": 1,
+    "undo_count": 0,
+    "unknown_count": 0,
+    "watchdog": false
+  },
+  "review_actions": {
+    "current_PID_proc_pidfd_or_signal_probe": false,
+    "database_WAL_SHM_length_SHA_only_no_SQLite_open": true,
+    "existing_authorized_private_raw_read_only": true,
+    "network": false,
+    "new_subagent": false,
+    "profile_boot_PID_binding_nonce_or_full_capsule_exported": false,
+    "source_or_private_originals_modified": false,
+    "target_compile_import_test_SQL_native_rerun": false
+  },
+  "schema": 1,
+  "source_closure": {
+    "Git_original_and_private_copy_lengths_SHA_matched": true,
+    "UTA_matches_PR35_without_PR37_point1_cap": true,
+    "input_bytes": 1526322,
+    "input_files": 69,
+    "old_c98_plan_contract_fixture_test_pure_history_preserved": true,
+    "original_physical_before_after_equal": true,
+    "private_copy_physical_identity_matched": true,
+    "private_source_mode": "0444",
+    "stdlib_length_SHA_and_recorded_physical_identity_matches": 5
+  },
+  "source_commit": "48d045d478564f7ea15239e21f8164ca517339ca",
+  "source_tree": "4ee064c8a94b9e6656295768b782975a3671e14c"
+}

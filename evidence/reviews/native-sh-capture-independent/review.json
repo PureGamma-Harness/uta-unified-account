@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_CODE_ONLY_NATIVE_SH_CAPTURE_REVIEW",
+  "reviewed_commit": "47b1c2cfd8c3d2e1b9c47eb10d407c5d720d1991",
+  "reviewed_tree": "a4e59daf18139e05c865816f888ca9e77edff56d",
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "date_utc": "2026-11-18",
+  "method": ["git_metadata", "git_diff", "source_text_inspection", "sha256"],
+  "fixture_protocol_source_review": "CLOSED_STATIC_SCOPE",
+  "first_pure_go": "BLOCKED_EXECUTION_ENVELOPE_CLOSURE",
+  "blocking_findings": [
+    {
+      "id": "NSHC-CODE-001",
+      "scope": "proposed_first_pure_batch",
+      "finding": "One CPU and 10 seconds are declarations; the frozen source does not reference a frozen enforcing outer runner or shared stdout-plus-stderr write cap.",
+      "required_before_execution": ["exact_command_and_import_context", "one_cpu_envelope", "outer_wall_limit_and_termination_ownership", "shared_raw_write_ceiling", "first_output_exit_preservation", "runner_dependency_closure"]
+    }
+  ],
+  "verified_sha256": {
+    "uta/durable_process.py": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "tests/native_sh_capture_fixture.py": "a3e4894441467f449b810a70a2c5c44fbb065166efd978e413148c2dc7c7dcec",
+    "tests/test_native_sh_capture_protocol_pure.py": "e4357798e3d1e55397f7f49ecba2ba0fceb6a7c42d5b35093bc00f9fc4d0b212",
+    "tests/test_durable_faults.py": "b22629beadfd5d224d7030871f232b84604398ba3c00e13dd153b4227a934a7f",
+    "tests/test_expired_gate_failure_evidence.py": "42b38c8a721367ec562a6e7b9ec00c0e017421855edbcf4dd78ba8ce51986852",
+    "docs/native-sh-capture-handshake-plan.md": "90bb2f27270c5d21db3699e210a0ee5215059747ff23b9644a31bffc12765531",
+    "evidence/reviews/native-sh-capture-handshake/source-closure.json": "ee6da5889df5383e5cd857f0f83f23ebef5ca32ff4859c60d78dcd77f12efb74"
+  },
+  "runtime_directory_diff_from_base": [],
+  "fault_test_numstat": {"added": 11, "removed": 1},
+  "pure_methods_by_source_inspection": 8,
+  "explicit_protocol_permutations_by_source_inspection": 24,
+  "target_compiled_imported_or_executed": false,
+  "ast_guard_executed": false,
+  "pure_tests_executed": false,
+  "native_capabilities_exercised": false,
+  "protected_processes_inspected_or_signalled": false,
+  "spent_authority_reused": false,
+  "actual_native_codeobject_equivalence_proven": false,
+  "actual_native_capture_proven": false,
+  "five_second_recovery_proven": false,
+  "pr37_cap_effectiveness_proven": false,
+  "original_ci_unique_cause_proven": false,
+  "production_approved": false,
+  "read_only_review_of_candidate": true,
+  "independent_review_worktree": "/workspace/uta-native-sh-capture-independent"
+}

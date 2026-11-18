@@ -62,7 +62,44 @@ def recursive_error():
 class FailureDiagnosticTests(unittest.TestCase):
     def test_complete_original_ast_is_preserved_except_exact_failure_hook(self):
         tree = ast.parse((ROOT / 'tests/test_durable_faults.py').read_text())
+        # Remove only the exact reviewed test scheduling additions. The frozen
+        # original module reference, recovery/financial assertions and cleanup
+        # remain unchanged; this is not a new golden recovery result.
+        owner = next(node for node in tree.body if isinstance(node, ast.ClassDef)
+                     and node.name == 'ManagedProcessFaultTests')
+        setup = next(node for node in owner.body if isinstance(node, ast.FunctionDef) and node.name == 'setUp')
+        expected_setup = ast.parse('''if self._testMethodName == "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover":
+    from native_sh_capture_fixture import NativeSHCapture
+    self._native_sh_capture = NativeSHCapture(self.router, fresh_synthetic=True)
+    self.addCleanup(self._native_sh_capture.close)
+''').body[0]
+        self.assertEqual(canonical(setup.body[-1]), canonical(expected_setup))
+        setup.body.pop()
         method = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == METHOD)
+        capture = next(node for node in method.body if isinstance(node, ast.Try))
+        self.assertEqual(canonical(capture.body[0]), canonical(ast.parse('capture_deadline = monotonic() + 5').body[0]))
+        expected_arm = ast.parse('''armed = lease("deterministic_capture_arm")
+self.assertTrue(armed["active"] and armed["owner_pid"] == pid)
+bound_generation = armed["generation"]
+self._native_sh_capture.arm(identity, bound_generation, capture_deadline)
+''').body
+        self.assertEqual(canonical(capture.body[1:5]), canonical(expected_arm))
+        del capture.body[1:5]
+        loop = capture.body[1]
+        self.assertIsInstance(loop, ast.For)
+        predicates = [node for node in ast.walk(loop) if isinstance(node, ast.If)
+            and canonical(node.test) == canonical(ast.parse(
+                'candidate and self._native_sh_capture.entered(identity, bound_generation)', mode='eval').body)]
+        self.assertEqual(len(predicates), 1)
+        predicates[0].test = ast.Name(id='candidate', ctx=ast.Load())
+        expected_release = ast.parse('self._native_sh_capture.release(identity, bound_generation)').body[0]
+        release = [index for index, node in enumerate(loop.body) if canonical(node) == canonical(expected_release)]
+        self.assertEqual(len(release), 1)
+        self.assertIn('undo_owned_test_stop', ast.dump(loop.body[release[0] + 1]))
+        loop.body.pop(release[0])
+        expected_refusal = ast.parse('self.fail("one-shot deterministic capture rejected native preconditions; no recapture")').body[0]
+        self.assertEqual(canonical(loop.body[-1]), canonical(expected_refusal))
+        loop.body.pop()
         hooks = [(block, index, node) for block in ast.walk(method) if isinstance(block, ast.Try)
                  for index, node in enumerate(block.finalbody) if isinstance(node, ast.If)
                  and any(isinstance(part, ast.ImportFrom) and part.module == 'tests.expired_gate_failure_evidence' for part in ast.walk(node))]
