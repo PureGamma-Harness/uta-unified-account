@@ -1,0 +1,31 @@
+{
+  "command": [
+    "timeout",
+    "10s",
+    "taskset",
+    "-c",
+    "1",
+    "python",
+    "-I",
+    "-S",
+    "-B",
+    "tests/test_batch_disposition_contract.py",
+    "-v"
+  ],
+  "cpu_ids": [
+    1
+  ],
+  "cwd": "/workspace/uta-batch-disposition-contract",
+  "first_and_only": true,
+  "planned_subcases": 26,
+  "planned_test_methods": 5,
+  "scope": "PRODUCTION_METHOD_AST_ONLY_FAKE_ROWS_NO_MODULE_IMPORT_DB_WORKERS_NETWORK",
+  "source_head": "8efb65026054b19b7a97ef50ac1ae4f38bdf5529",
+  "source_sha256": {
+    "tests/test_batch_disposition_contract.py": "b852fc477daf689de659438a23bcecc3bc00da15e6561d3e9fcab04c6be4a9a2",
+    "uta/durable_batches.py": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9",
+    "uta/durable_commands.py": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8",
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+  },
+  "whole_seconds": 10
+}
