@@ -702,6 +702,13 @@
     "WaitRecordsValidation": {
       "additionalProperties": false,
       "properties": {
+        "action_ids": {
+          "items": {
+            "$ref": "#/$defs/ActionID"
+          },
+          "maxItems": 1000,
+          "type": "array"
+        },
         "activation_permission": {
           "const": false
         },
@@ -715,6 +722,7 @@
         }
       },
       "required": [
+        "action_ids",
         "record_count",
         "holds_unchanged",
         "activation_permission"
@@ -755,7 +763,8 @@
     "Old expected_active_ref keyword is explicitly UNSUPPORTED; never inferred into a complete Stage",
     "Well-formed unsupported settlement assets are UNSUPPORTED; malformed native types and invalid supported preconditions REJECT",
     "Unexpected target/reference/constructor errors are TECHNICAL_FAILURE outside this response contract, never an expected matching business result",
-    "Only exact known HoldError/HoldUnsupported or explicit known wire-decode rejection may be classified by target adapter; do not catch all ValueError/TypeError/Exception as business outcomes"
+    "Only exact known HoldError/HoldUnsupported or explicit known wire-decode rejection may be classified by target adapter; do not catch all ValueError/TypeError/Exception as business outcomes",
+    "wait_records action_ids must contain every actual returned ID in its actual order; count-only summaries cannot claim full-output equality"
   ],
   "natural_slot_order": [
     "authority_id",
@@ -1031,12 +1040,13 @@
         ],
         "type": "object"
       },
-      "target_call": "validate_wait_records exact tuple; on normal return serialize input-count and constant no-financial-effects flags only",
+      "target_call": "Serialize the actual exact sorted action-ID tuple returned by target validate_wait_records as action_ids array, without sorting/deduplicating/replacing it; record_count is provided input count; remaining flags constants only",
       "value": {
         "$ref": "#/$defs/WaitRecordsValidation"
       }
     }
   },
+  "prior_wire_commit": "2a204f064ddda782547993fa4a16e669bbbcd907",
   "protocol": "PFH-D1-INDEPENDENT-WIRE-v2",
   "request": {
     "additionalProperties": false,
@@ -1128,7 +1138,7 @@
     "Gross totals, completeness, provided scope and once-only accounting/backing projections",
     "Wait policy dynamic bounds, fixed first deadline, highwater, shared action conflict and only-change revision"
   ],
-  "status": "FROZEN_API_BEFORE_NEW_CODE_NOT_RUN",
+  "status": "FROZEN_API_ACTION_IDS_REVISION_NOT_RUN",
   "support_slice": "Pure reachable DutyState histories0..2 transitions; all external authority/approval/completeness/history facts unauthenticated; no APPLIED or real dispatch",
   "target_reference_runs": 0
 }
