@@ -1,0 +1,18 @@
+{
+  "status": "TOOLING_ERROR_NO_SCAN_VERDICT",
+  "original_checker_sha256": "74a2f158a8e307afe29b98e5526d9ea24249326e1b75c76e3f64c1699d9eca25",
+  "failing_command": [
+    "git",
+    "--no-optional-locks",
+    "diff-tree",
+    "--no-commit-id",
+    "--raw",
+    "--no-abbrev",
+    "-rz",
+    "a82e0e26c9044de192d610b691f06821efec1d78"
+  ],
+  "git_exit_code": 129,
+  "cause": "diff-tree does not accept --no-abbrev in this Git; use supported --abbrev=40",
+  "original_branch_tip": "236c361a9f58bfeb0468a17bbb5c74fedbed89b3",
+  "product_or_live_job_impact": false
+}

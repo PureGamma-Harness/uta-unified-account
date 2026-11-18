@@ -1,0 +1,41 @@
+{
+  "name": "tracked-zip",
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/uta-credit-v2-py310-candidate/evidence/20261117-package-a35fd56/verify_tracked_ci_zips.py",
+    "--source",
+    "/workspace/uta-credit-v2-py310-candidate",
+    "--manifest",
+    "/tmp/uta-release-909acec-7xiri71l/artifact-manifest.json",
+    "--wheel",
+    "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+    "--sdist",
+    "/tmp/uta-release-909acec-7xiri71l/artifacts/uta_reference_exchange-0.5.0a1.tar.gz",
+    "--unpacked-source",
+    "/tmp/uta-release-909acec-7xiri71l/sdist-unpacked/uta_reference_exchange-0.5.0a1",
+    "--provenance",
+    "/workspace/uta-package-909acec/evidence/20261117-package-909acec/ci-zip-provenance.json",
+    "--output",
+    "/tmp/uta-release-909acec-7xiri71l/tracked-ci-zip-checks"
+  ],
+  "cwd": "/tmp/uta-release-909acec-7xiri71l",
+  "scope": "archive-only",
+  "started_utc": "2026-11-17T17:07:06.671288+00:00",
+  "started_monotonic_ns": 72353148610798,
+  "timeout_seconds": 900,
+  "expected_returncode": 0,
+  "returncode": 0,
+  "finished_utc": "2026-11-17T17:13:05.800781+00:00",
+  "finished_monotonic_ns": 72712278428275,
+  "seconds": 359.129817477,
+  "stdout": {
+    "path": "/tmp/uta-release-909acec-7xiri71l/raw/tracked-zip.stdout.txt",
+    "sha256": "6662c163d03458b0cd12e0de2f41b368ec49a251278edc95db07241803e48b27",
+    "bytes": 262
+  },
+  "stderr": {
+    "path": "/tmp/uta-release-909acec-7xiri71l/raw/tracked-zip.stderr.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  }
+}

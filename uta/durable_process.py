@@ -41,6 +41,32 @@ from .storage import Database, DurableLedger, StorageError
 _TERMINAL = frozenset({"SUCCEEDED", "REJECTED", "QUARANTINED"})
 
 
+class _SpawnRegistrationFailure(ServiceError):
+    """The new child never received its gate; registration may have committed."""
+    def __init__(self, *, child_pid, cleanup_complete, retryable):
+        super().__init__("worker_registration_failed",
+                         "worker registration was not confirmed; query recovery diagnostics", 503)
+        self.child_pid = child_pid
+        self.cleanup_complete = cleanup_complete
+        self.retryable = retryable
+
+
+def _retryable_spawn_registration(error):
+    """Only identified contention/protocol failures retry with a NEW child.
+
+    This never retries the uncertain registry INSERT or its nonce. A completed
+    gated-child cleanup is an additional mandatory condition at the caller.
+    """
+    if type(error) is not sqlite3.OperationalError:
+        return False
+    native = getattr(error, "sqlite_errorcode", None)
+    if type(native) is int:
+        return native & 255 in {5, 6, 15}
+    return (not hasattr(error, "sqlite_errorcode") and len(error.args) == 1
+            and type(error.args[0]) is str and error.args[0] in {
+                "database is locked", "database table is locked", "locking protocol"})
+
+
 def _diagnostic_remaining(deadline):
     remaining = deadline - monotonic()
     if remaining <= 0:
@@ -977,6 +1003,9 @@ class DurableProcessRouter:
                               financial_batch_size=financial_batch_size, normal_cache_size=normal_cache_size)
         self._queues, self._workers, self._reports = {}, {}, {}
         self._start_gates = {}
+        self._spawn_retry_at, self._spawn_failures = {}, {}
+        self._spawn_blocked = set()
+        self._spawn_pending_cleanup = {}
         self._recovered_orphans = []
         self._coordinator = None
         self._mutex, self._stop = RLock(), Event()
@@ -1076,6 +1105,8 @@ class DurableProcessRouter:
         self._supervisor_fd = descriptor
 
     def _spawn(self, shard):
+        if shard in self._spawn_blocked or shard in self._spawn_pending_cleanup:
+            raise ServiceError("spawn_recovery_pending", "prior worker cleanup or registration requires resolution", 503)
         stop_read, stop_write = self._context.Pipe(duplex=False)
         gate_read, gate_write = self._context.Pipe(duplex=False)
         stop, start_gate = _SignalSender(stop_write), _SignalSender(gate_write)
@@ -1085,16 +1116,97 @@ class DurableProcessRouter:
         process = self._context.Process(target=_run_worker,
             args=(str(self.directory), shard, self._settings, _SignalReceiver(stop_read), send, os.getpid(), _SignalReceiver(gate_read), nonce, self._coordinator),
             name=f"uta-shard-{shard}")
-        process.start()
-        stop_read.close()
-        gate_read.close()
-        send.close()
-        self._workers[shard] = (process, stop, receive)
-        # Child cannot acquire or touch a financial authority until its kernel
-        # birth identity and intended authority/nonce are durably registered.
-        _record_process(self._control, "SPAWNED", shard, nonce, 0,
-                        _process_identity(process.pid), self._coordinator)
+        try:
+            process.start()
+            stop_read.close()
+            gate_read.close()
+            send.close()
+            self._workers[shard] = (process, stop, receive)
+            # Child cannot acquire or touch a financial authority until its
+            # birth identity and intended nonce are durably registered.
+            _record_process(self._control, "SPAWNED", shard, nonce, 0,
+                            _process_identity(process.pid), self._coordinator)
+        except BaseException as error:
+            # A reply can be lost AFTER registry COMMIT. Never repeat this
+            # INSERT, delete its possible audit row, or release this child gate.
+            child_pid = process.pid
+            self._spawn_pending_cleanup[shard] = {
+                "process": process, "stop": stop, "gate": start_gate,
+                "pid": child_pid, "child_exit_confirmed": child_pid is None,
+                "registration_retryable": _retryable_spawn_registration(error),
+                "handles": [stop_read, gate_read, send, receive, stop, start_gate]}
+            cleanup_complete = self._cleanup_gated_spawn(shard)
+            failure = _SpawnRegistrationFailure(child_pid=child_pid,
+                cleanup_complete=cleanup_complete,
+                retryable=cleanup_complete and _retryable_spawn_registration(error))
+            self._note_spawn_failure(shard, failure, error)
+            if not isinstance(error, Exception):
+                raise
+            raise failure from error
+        self._spawn_retry_at.pop(shard, None)
+        self._spawn_blocked.discard(shard)
+        if shard in self._spawn_failures:
+            self._spawn_failures[shard]["recovered"] = True
         start_gate.set()
+
+    def _cleanup_gated_spawn(self, shard):
+        """Retain every unclosed resource until both exit and close are known."""
+        pending = self._spawn_pending_cleanup[shard]
+        process = pending["process"]
+        try:
+            pending["stop"].set()
+            if not pending["child_exit_confirmed"]:
+                process.join(timeout=.1)
+                if process.is_alive():
+                    process.kill()  # Only our own unreaped multiprocessing child.
+                    process.join(timeout=1)
+                pending["child_exit_confirmed"] = not process.is_alive()
+            if not pending["child_exit_confirmed"]:
+                return False
+            for handle in list(pending["handles"]):
+                try:
+                    handle.close()
+                except BaseException:
+                    continue
+                pending["handles"] = [item for item in pending["handles"] if item is not handle]
+            if pending["handles"]:
+                return False
+            process.close()
+        except BaseException:
+            return False
+        # Do not lose references before the last close succeeds.
+        if self._workers.get(shard, (None,))[0] is process:
+            self._workers.pop(shard, None)
+        if self._start_gates.get(shard) is pending["gate"]:
+            self._start_gates.pop(shard, None)
+        self._spawn_pending_cleanup.pop(shard)
+        # Resolving resource uncertainty cannot clear a terminal registration
+        # error. Only a known retryable cause may permit a later new child.
+        if pending["registration_retryable"]:
+            self._spawn_blocked.discard(shard)
+        if shard in self._spawn_failures:
+            self._spawn_failures[shard]["cleanup_complete"] = True
+        return True
+
+    def _note_spawn_failure(self, shard, failure, cause):
+        """Bounded in-memory diagnostics; not a replacement registry receipt."""
+        previous = self._spawn_failures.get(shard, {})
+        count = min(previous.get("count", 0) + 1, 2**31 - 1)
+        native = getattr(cause, "sqlite_errorcode", None) if isinstance(cause, sqlite3.Error) else None
+        native = native if type(native) is int and 0 <= native < 2**31 else None
+        record = {"code": "worker_registration_failed", "phase": "spawn_registration",
+                  "pid": failure.child_pid, "count": count,
+                  "registration_outcome": "UNKNOWN", "cleanup_complete": failure.cleanup_complete,
+                  "retryable_new_child": failure.retryable, "recovered": False,
+                  "sqlite_errorcode": native}
+        self._spawn_failures[shard] = record
+        self._reports[shard] = {"state": "failed", "shard": shard,
+                               "code": "worker_registration_failed", "pid": failure.child_pid}
+        if failure.retryable:
+            self._spawn_retry_at[shard] = monotonic() + min(1.0, .05 * 2**min(count - 1, 5))
+        else:
+            self._spawn_retry_at.pop(shard, None)
+            self._spawn_blocked.add(shard)
 
     def _recover_registered_orphans(self, timeout):
         with self._control.control.read_transaction() as connection:
@@ -1162,6 +1274,8 @@ class DurableProcessRouter:
         if isinstance(recovery_timeout, bool) or not isinstance(recovery_timeout, (float, int)) or not math.isfinite(recovery_timeout) or not 0 <= recovery_timeout <= 3600:
             raise ValueError("recovery_timeout requires seconds in 0..3600")
         with self._mutex:
+            if self._spawn_pending_cleanup or self._spawn_blocked:
+                raise ServiceError("spawn_recovery_pending", "prior worker cleanup or registration requires resolution", 503)
             if self._supervisor_fd is not None:
                 raise ServiceError("supervisor_started", "supervisor is already running", 409)
             self._claim_supervisor()
@@ -1198,7 +1312,19 @@ class DurableProcessRouter:
     def _supervise(self):
         while not self._stop.wait(.05):
             with self._mutex:
+                if self._stop.is_set():
+                    return  # close may have set stop while this thread waited for the mutex.
+                for shard, retry_at in list(self._spawn_retry_at.items()):
+                    if (self._stop.is_set() or shard in self._spawn_blocked
+                            or shard in self._workers or monotonic() < retry_at):
+                        continue
+                    try:
+                        self._spawn(shard)
+                    except _SpawnRegistrationFailure:
+                        pass  # Already diagnosed; next bounded retry is a new child.
                 for shard, (process, stop, pipe) in list(self._workers.items()):
+                    if shard in self._spawn_blocked:
+                        continue
                     try:
                         while pipe.poll():
                             self._reports[shard] = pipe.recv()
@@ -1224,7 +1350,12 @@ class DurableProcessRouter:
                         pipe.close()
                         stop.close()
                         self._start_gates[shard].close()
-                        self._spawn(shard)
+                        self._workers.pop(shard, None)
+                        self._start_gates.pop(shard, None)
+                        try:
+                            self._spawn(shard)
+                        except _SpawnRegistrationFailure:
+                            pass  # Keep monitoring the other shards after registration failure.
 
     def worker_pid(self, shard):
         with self._mutex:
@@ -1258,6 +1389,7 @@ class DurableProcessRouter:
                   "decision_audit_required": self.decision_audit_required,
                   "profile": "managed_audit_required" if self.decision_audit_required else "managed_development_legacy_gap",
                   "recovered_orphans": [], "workers_alive": False,
+                  "supervisor_alive": False,
                   "financial_ready": False, "ready": False, "reason": "diagnostic_unavailable"}
         acquired = False
         try:
@@ -1266,10 +1398,13 @@ class DurableProcessRouter:
             acquired = self._mutex.acquire(timeout=_diagnostic_remaining(deadline))
             if not acquired:
                 raise ServiceError("diagnostic_timeout", "supervisor observation timed out", 503)
+            result["supervisor_alive"] = self._monitor is not None and self._monitor.is_alive()
             result["recovered_orphans"] = [
                 {key: row[key] for key in ("shard", "pid", "start_ticks", "generation")}
                 for row in self._recovered_orphans]
             for row in rows:
+                if row["shard"] in self._spawn_failures:
+                    row["last_spawn_failure"] = dict(self._spawn_failures[row["shard"]])
                 worker = self._workers.get(row["shard"])
                 row["alive"] = worker is not None and worker[0].is_alive()
                 row["pid"] = worker[0].pid if row["alive"] else None
@@ -1354,7 +1489,7 @@ class DurableProcessRouter:
                                    if row["reason"] not in {"ready", "diagnostic_timeout"}), None)
                 if fatal_read is None:
                     _diagnostic_remaining(deadline)
-                financial_ready = (complete and not state["halted"] and all(
+                financial_ready = (result["supervisor_alive"] and complete and not state["halted"] and all(
                     row["owner_ready"] and row["market_ready"] and row.get("locally_active", False)
                     and row["funding_registry_ready"] for row in rows))
                 result.update(financial_ready=financial_ready, ready=financial_ready)
@@ -1362,6 +1497,8 @@ class DurableProcessRouter:
                     result["reason"] = "publication_incomplete"
                 elif state["halted"]:
                     result["reason"] = "router_halted"
+                elif not result["supervisor_alive"] and fatal_read is None:
+                    result["reason"] = "supervisor_unavailable"
                 elif financial_ready:
                     result["reason"] = "ready"
                 elif fatal_read is not None:
@@ -1492,7 +1629,11 @@ class DurableProcessRouter:
         if monitor is not None and monitor is not current_thread():
             monitor.join(timeout=5)
         with self._mutex:
-            workers, self._workers = self._workers, {}
+            for shard in list(self._spawn_pending_cleanup):
+                self._cleanup_gated_spawn(shard)
+            pending = set(self._spawn_pending_cleanup)
+            workers = {shard: item for shard, item in self._workers.items() if shard not in pending}
+            self._workers = {shard: item for shard, item in self._workers.items() if shard in pending}
             for process, stop, pipe in workers.values():
                 stop.set()
             for process, stop, pipe in workers.values():
@@ -1502,13 +1643,13 @@ class DurableProcessRouter:
                     process.join(timeout=5)
                 pipe.close()
                 stop.close()
-            if self._supervisor_fd is not None:
+            if self._supervisor_fd is not None and not pending:
                 os.close(self._supervisor_fd)
                 self._supervisor_fd = None
             self._monitor = None
-            for gate in self._start_gates.values():
-                gate.close()
-            self._start_gates.clear()
+            for shard in list(self._start_gates):
+                if shard not in pending:
+                    self._start_gates.pop(shard).close()
 
     def __enter__(self):
         return self.start()

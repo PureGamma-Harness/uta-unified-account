@@ -1,0 +1,55 @@
+test_cold_prepare_failure_cannot_hide_direct_cold_pass (__main__.ReceiptContractTests.test_cold_prepare_failure_cannot_hide_direct_cold_pass) ... FAIL
+test_completed_progress_cannot_hide_failed_producer_capture (__main__.ReceiptContractTests.test_completed_progress_cannot_hide_failed_producer_capture) ... FAIL
+test_fault_timeout_cannot_be_typed_unknown_pass (__main__.ReceiptContractTests.test_fault_timeout_cannot_be_typed_unknown_pass) ... FAIL
+test_normal_prepare_failure_cannot_hide_healthy_payload (__main__.ReceiptContractTests.test_normal_prepare_failure_cannot_hide_healthy_payload) ... FAIL
+test_strict_timeout_cannot_be_expected_refusal (__main__.ReceiptContractTests.test_strict_timeout_cannot_be_expected_refusal) ... FAIL
+
+======================================================================
+FAIL: test_cold_prepare_failure_cannot_hide_direct_cold_pass (__main__.ReceiptContractTests.test_cold_prepare_failure_cannot_hide_direct_cold_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/test_stage_receipt_contract.py", line 57, in test_cold_prepare_failure_cannot_hide_direct_cold_pass
+    with self.assertRaises(ValueError):C.validate_result('cold',cold(1),{}, {},False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_completed_progress_cannot_hide_failed_producer_capture (__main__.ReceiptContractTests.test_completed_progress_cannot_hide_failed_producer_capture)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/test_stage_receipt_contract.py", line 65, in test_completed_progress_cannot_hide_failed_producer_capture
+    with self.assertRaises(ValueError):live.finish_producer('pure-fake')
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_fault_timeout_cannot_be_typed_unknown_pass (__main__.ReceiptContractTests.test_fault_timeout_cannot_be_typed_unknown_pass)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/test_stage_receipt_contract.py", line 60, in test_fault_timeout_cannot_be_typed_unknown_pass
+    with self.assertRaises(ValueError):C.validate_result('fault-live',data,running(4),running(5,1),True,witness)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_normal_prepare_failure_cannot_hide_healthy_payload (__main__.ReceiptContractTests.test_normal_prepare_failure_cannot_hide_healthy_payload)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/test_stage_receipt_contract.py", line 55, in test_normal_prepare_failure_cannot_hide_healthy_payload
+    with self.assertRaises(ValueError):C.validate_result('normal-live',data,running(),running(),True)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_strict_timeout_cannot_be_expected_refusal (__main__.ReceiptContractTests.test_strict_timeout_cannot_be_expected_refusal)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v3/test_stage_receipt_contract.py", line 52, in test_strict_timeout_cannot_be_expected_refusal
+    with self.assertRaises(ValueError):C.validate_result('strict-negative',strict(True),{}, {},False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+FAILED (failures=5)

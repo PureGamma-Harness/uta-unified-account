@@ -1,0 +1,190 @@
+{
+  "actual_clock": {
+    "UTC_mapping_is_handoff_wall_boot_anchor_not_original_stored_UTC": true,
+    "anchor_boottime_ns": 81082310453178,
+    "anchor_wall_after_ns": 1794943955833143345,
+    "anchor_wall_before_ns": 1794943955833141513,
+    "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "duration_seconds": 21600,
+    "mapped_deadline_utc_range": [
+      "2026-11-18T01:29:04.651791+00:00",
+      "2026-11-18T01:29:04.651793+00:00"
+    ],
+    "mapped_start_utc_range": [
+      "2026-11-17T19:29:04.651791+00:00",
+      "2026-11-17T19:29:04.651793+00:00"
+    ],
+    "may_cross_Nov18": true,
+    "original_deadline_boottime_ns": 102471129103044,
+    "original_start_boottime_ns": 80871129103044,
+    "planned_rounds": 5400
+  },
+  "all_long_financial_coverage_stability_production_capacity_flags_false": true,
+  "capacity_10000_per_s_passed": false,
+  "continuous_6h_stability_passed": false,
+  "coverage_projection": {
+    "counts": {
+      "active_round_inflight_unknown_samples": 0,
+      "alerted_samples": 0,
+      "elapsed_or_span_unavailable_samples": 0,
+      "fatal_financial_samples": 0,
+      "financial_unknown_or_failed_samples": 0,
+      "inconsistent_stable_boundary_samples": 0,
+      "planned_fault_inflight_unknown_samples": 0,
+      "stable_golden_cross_block_samples": 0,
+      "stable_golden_uncredited_timing_samples": 0,
+      "technical_read_unknown_samples": 0,
+      "unproven_logical_point_samples": 0
+    },
+    "coverage_no_go_reasons": [],
+    "coverage_status": "PENDING",
+    "financial_golden_counts": {
+      "stable_compared_passed": 4
+    },
+    "logical_point_counts": {
+      "stable_boundary": 4
+    },
+    "maximum_observed_consecutive_technical_read_unknown": 0,
+    "samples_observed": 4,
+    "technical_error_digests": {},
+    "technical_error_types": {}
+  },
+  "current_df_free_bytes": 17630760960,
+  "financial_6h_passed": false,
+  "financial_comparisons_across_these_snapshots_not_performed": true,
+  "launch_metadata": {
+    "capacity_10000_per_s_passed": false,
+    "continuous_24h_stability_passed": false,
+    "continuous_6h_stability_passed": false,
+    "driver_birth": "8086955",
+    "driver_pid": 310039,
+    "launched_boottime_ns": 80869553387520,
+    "launched_wall_ns": 1794943743076076205,
+    "production_approved": false,
+    "synthetic": true
+  },
+  "live_coverage_passed": false,
+  "new_start_or_resume_authorized_by_this_archive": false,
+  "no_SQL_additional_observer_status_signal_or_write_to_job": true,
+  "observer_latest_projection": {
+    "active_elapsed_seconds": 185.792983995,
+    "alerts": [],
+    "completed_rounds": 46,
+    "final_evidence_eligible": false,
+    "financial_ready": "unknown_independent_observer_has_no_readiness_authority",
+    "logical_point": "stable_boundary",
+    "original_deadline_boottime_ns": 102471129103044,
+    "original_start_boottime_ns": 80871129103044,
+    "sample_wall_ns": 1794943930444777487
+  },
+  "original_763_and_first01_remain_NO_GO": true,
+  "preflight_independent_acceptance_commit": "43222eca2bc5c1948fb9ff2de7c07ce772e0838d",
+  "preflight_service_started_false_is_historical_not_current": true,
+  "preregistration_commit": "923b37845bcb588d8e953d49be978034f28a0de8",
+  "process_metadata": [
+    {
+      "argv_bytes": 484,
+      "argv_sha256": "c7ad352acdf7b7e187835e4d4d48d1da68b6b9e80f7649abee5e3382511c3544",
+      "birth": "8086947",
+      "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+      "pid": 310035,
+      "role": "supervisor",
+      "state_after": "S",
+      "state_before": "S",
+      "uids": [
+        1000,
+        1000,
+        1000,
+        1000
+      ]
+    },
+    {
+      "argv_bytes": 317,
+      "argv_sha256": "a0cc401bf926054da9a39df1f1ffbd9ec8cf1f52c063e0d79f60f0c018f2a00c",
+      "birth": "8086955",
+      "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+      "pid": 310039,
+      "role": "original-driver",
+      "state_after": "S",
+      "state_before": "S",
+      "uids": [
+        1000,
+        1000,
+        1000,
+        1000
+      ]
+    },
+    {
+      "argv_bytes": 1128,
+      "argv_sha256": "83a8eb0e3b503b7b429c71e038406662964167244d6423ee3765d0e0fa0e9d13",
+      "birth": "8087358",
+      "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+      "pid": 310266,
+      "role": "observer-bwrap-monitor",
+      "state_after": "S",
+      "state_before": "S",
+      "uids": [
+        1000,
+        1000,
+        1000,
+        1000
+      ]
+    },
+    {
+      "--driver-birth": "8086955",
+      "--driver-pid": "310039",
+      "--frozen-commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "--interval": "61",
+      "--job": "/workspace/uta-managed-observer-runs/909acec-six-hours-20261117/job",
+      "--max-address-space-bytes": "2147483648",
+      "--max-private-clone-bytes": "1073741824",
+      "--min-private-free-bytes": "1073741824",
+      "--output": "/workspace/uta-managed-observer-runs/909acec-six-hours-20261117/observer",
+      "--source": "/workspace/uta-credit-v2-py310-candidate",
+      "argv_bytes": 584,
+      "argv_sha256": "749c3dcbf937e8328f779a555fd5efd5f2338f1a1285d8c8d2ce5c528682b861",
+      "birth": "8087359",
+      "boot": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+      "pid": 310269,
+      "role": "observer-actual-watch-CLI",
+      "state_after": "S",
+      "state_before": "S",
+      "uids": [
+        1000,
+        1000,
+        1000,
+        1000
+      ]
+    }
+  ],
+  "production_approved": false,
+  "profile_sha256": "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d",
+  "progress_projection": {
+    "elapsed_seconds": 209.988482784,
+    "error": null,
+    "fault_signals": {
+      "parent": 0,
+      "worker": 1
+    },
+    "final_audit": null,
+    "logs_verified": false,
+    "planned_rounds": 5400,
+    "resources": {
+      "budget_exceeded": false,
+      "directory_bytes": 15096894,
+      "free_bytes": 17631256576
+    },
+    "rounds": {
+      "DONE": 52
+    },
+    "status": "running",
+    "unresolved_faults": 0,
+    "unresolved_steps": 0,
+    "verified_tls": true
+  },
+  "single_phase_runner_review_commit": "d0e964ddc58ba62893454d629aa241550141bd2f",
+  "snapshots_are_from_different_logical_points": true,
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_root": "/workspace/uta-credit-v2-py310-candidate",
+  "status": "ACTUALLY_STARTED_FINANCIAL_AND_COVERAGE_STILL_RUNNING_NOT_FINAL"
+}

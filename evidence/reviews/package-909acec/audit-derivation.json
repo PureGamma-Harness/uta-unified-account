@@ -1,0 +1,27 @@
+{
+  "code_source_commit": "05e1f8d9c286962fffb08e934e9cd456a863eb33",
+  "code_source_path": "evidence/reviews/package-dbc93e5/inspect_package_files.py",
+  "source_code_sha256": "98f7a645c05c9e60dfadcf998f8e2d4135d3f62dd5cc4e4811b90cc1d8040374",
+  "purpose": "reuse independent file-audit code only; no old report, result, artifact, installed tree or private state reused",
+  "literal_replacements": {
+    "dbc93e5d50125e6ab8f1154511a537f8b1a8fa1b": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "/workspace/uta-combined-freeze-dbc93e5": "/workspace/uta-credit-v2-py310-candidate",
+    "/workspace/uta-package-dbc93e5/evidence/20261117-package-dbc93e5": "/workspace/uta-package-909acec/evidence/20261117-package-909acec",
+    "/tmp/uta-release-dbc93e5-oor3dlj4": "/tmp/uta-release-909acec-7xiri71l",
+    "assert len(hashes) == 5159": "assert len(hashes) == 5518",
+    "for phase in (\"core\", \"zip\", \"strict\", \"v2\")": "for phase in (\"core\", \"v2\", \"runtime\", \"zip\", \"strict\")",
+    "ACCEPT_DBC93E5_PACKAGE_SCOPE_ONLY": "ACCEPT_909ACEC_PACKAGE_SCOPE_ONLY"
+  },
+  "fresh_source_pin": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "review_execution_before_final_author_seal": false,
+  "prior_package_acceptance_inherited": false,
+  "new_review_requirements": [
+    "fresh909 source/tree/artifact pins only",
+    "5518 tracked and62 runtime all actual bytes",
+    "all five first-result phases with cfg+helper SHA",
+    "original127 DBC public/raw byte preservation only; no historical qualification inheritance"
+  ],
+  "prepared_audit_sha256": "8e8f66d7aadd82b4d3ec79e4afcfe5242014d6ce559f12528f981338d0840e30",
+  "author_evidence_commit": "721e9d02308d900cd39db2a209d0130394f78338",
+  "helper_execution_identity": "actual phase driver/config and strict checker SHA match final author commit; product source pin remains909"
+}

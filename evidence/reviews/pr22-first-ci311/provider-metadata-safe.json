@@ -1,0 +1,874 @@
+{
+  "retrieved_by": "GitHub plugin read-only GET",
+  "run": {
+    "id": 44162304965,
+    "run_attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "event": "pull_request",
+    "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc",
+    "head_branch": "evidence/909acec-qualification",
+    "created_at": "2026-11-17T19:47:08Z",
+    "updated_at": "2026-11-17T19:55:13Z",
+    "run_started_at": "2026-11-17T19:47:08Z",
+    "pull_requests": [
+      {
+        "number": 22,
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc",
+        "base_sha": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+      }
+    ]
+  },
+  "pr": {
+    "number": 22,
+    "state": "open",
+    "merged": false,
+    "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc",
+    "base_sha": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "merge_commit_sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e"
+  },
+  "provider_merge": {
+    "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+    "message": "Merge e4396b4b1fd9c2e3a138e48a045feffe158705cc into 909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "repository_full_name": "PureGamma-Harness/uta-unified-account",
+    "created_at": "2026-11-17T19:47:02Z",
+    "local_object_present": false
+  },
+  "jobs": [
+    {
+      "id": 134319073058,
+      "name": "test (3.11)",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 44162304965,
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Record actual runtime and SQLite build before tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run unit tests",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 6,
+          "name": "Preserve complete unit validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Compile source",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 8,
+          "name": "Run demo",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 9,
+          "name": "Preserve and replay research scenario",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 10,
+          "name": "Run transactional acceptance scenario",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 11,
+          "name": "Explore bounded reservation model",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 12,
+          "name": "Explore bounded paired settlement model",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 13,
+          "name": "Explore bounded grouped receipt protocol",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 14,
+          "name": "Explore bounded shard scheduling and commit retry models",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 15,
+          "name": "Explore durable command receipt and recovery protocol",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 16,
+          "name": "Explore bounded managed writer and liquidation receipt models",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 17,
+          "name": "Explore proposed market epoch and financial batch protocols",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 18,
+          "name": "Build installable wheel",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 19,
+          "name": "Build and verify exact source distribution and wheel",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 20,
+          "name": "Verify installed package outside source tree",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 21,
+          "name": "Preserve exact package and installed validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Retain installable review artifact",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 43,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 44,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 45,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134319073353,
+      "name": "test (3.13)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44162304965,
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Record actual runtime and SQLite build before tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Preserve complete unit validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Compile source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run demo",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Preserve and replay research scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Run transactional acceptance scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Explore bounded reservation model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Explore bounded paired settlement model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Explore bounded grouped receipt protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Explore bounded shard scheduling and commit retry models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Explore durable command receipt and recovery protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Explore bounded managed writer and liquidation receipt models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Explore proposed market epoch and financial batch protocols",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Build installable wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Build and verify exact source distribution and wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 20,
+          "name": "Verify installed package outside source tree",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Preserve exact package and installed validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Retain installable review artifact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 43,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 44,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 45,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134319073451,
+      "name": "test (3.12)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44162304965,
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Record actual runtime and SQLite build before tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Preserve complete unit validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Compile source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run demo",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Preserve and replay research scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Run transactional acceptance scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Explore bounded reservation model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Explore bounded paired settlement model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Explore bounded grouped receipt protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Explore bounded shard scheduling and commit retry models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Explore durable command receipt and recovery protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Explore bounded managed writer and liquidation receipt models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Explore proposed market epoch and financial batch protocols",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Build installable wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Build and verify exact source distribution and wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 20,
+          "name": "Verify installed package outside source tree",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Preserve exact package and installed validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Retain installable review artifact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 43,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 44,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 45,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 134319073520,
+      "name": "test (3.10)",
+      "status": "completed",
+      "conclusion": "success",
+      "run_id": 44162304965,
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Record actual runtime and SQLite build before tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Run unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Preserve complete unit validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Compile source",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Run demo",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Preserve and replay research scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Run transactional acceptance scenario",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Explore bounded reservation model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Explore bounded paired settlement model",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Explore bounded grouped receipt protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Explore bounded shard scheduling and commit retry models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Explore durable command receipt and recovery protocol",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Explore bounded managed writer and liquidation receipt models",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Explore proposed market epoch and financial batch protocols",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Build installable wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Build and verify exact source distribution and wheel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 20,
+          "name": "Verify installed package outside source tree",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Preserve exact package and installed validation evidence",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 22,
+          "name": "Retain installable review artifact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 43,
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 44,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 45,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14365505245,
+      "name": "uta-package-validation-python-3.13",
+      "size_in_bytes": 52969,
+      "digest": "sha256:2b9e3b324856285cd51ff19afd2222c487fb410f23342bbe9dc0352f7b0ac7c9",
+      "expired": false,
+      "created_at": "2026-11-17T19:54:45Z",
+      "updated_at": "2026-11-17T19:54:45Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14365450249,
+      "name": "uta-wheel-python-3.13",
+      "size_in_bytes": 45722191,
+      "digest": "sha256:efb05f74bb1b8d3c2de2623ac575ed46668f20007e77aca92adce3a71e17e41c",
+      "expired": false,
+      "created_at": "2026-11-17T19:54:47Z",
+      "updated_at": "2026-11-17T19:54:47Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14365440363,
+      "name": "uta-wheel-python-3.12",
+      "size_in_bytes": 45747172,
+      "digest": "sha256:5fa7d884d1936b882e3d85c3949cd9d512298e2098fc5ac07af22421a5ec82ae",
+      "expired": false,
+      "created_at": "2026-11-17T19:55:10Z",
+      "updated_at": "2026-11-17T19:55:10Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14365340388,
+      "name": "uta-unit-validation-python-3.11",
+      "size_in_bytes": 92276,
+      "digest": "sha256:9ea4bae56cd6c2697cd613972bbcbf56c0fc3bffbd3c720313fc740ca66eaffc",
+      "expired": false,
+      "created_at": "2026-11-17T19:54:00Z",
+      "updated_at": "2026-11-17T19:54:00Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14365310501,
+      "name": "uta-wheel-python-3.10",
+      "size_in_bytes": 45735400,
+      "digest": "sha256:cec2ccf61b3b36438b307e98df0edc3cbffda6798645b6e5cbf5d07387cf24ea",
+      "expired": false,
+      "created_at": "2026-11-17T19:53:48Z",
+      "updated_at": "2026-11-17T19:53:48Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14365165680,
+      "name": "uta-unit-validation-python-3.13",
+      "size_in_bytes": 91670,
+      "digest": "sha256:74119ffe6e9f6b016e442f2389ea8ca19e598ebc5efa0076944237cd229127cd",
+      "expired": false,
+      "created_at": "2026-11-17T19:53:50Z",
+      "updated_at": "2026-11-17T19:53:50Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14364426441,
+      "name": "uta-unit-validation-python-3.10",
+      "size_in_bytes": 81847,
+      "digest": "sha256:98b170f062ef30411016b22fb73ecb08b6179d2d440855ca4065faefb82fa964",
+      "expired": false,
+      "created_at": "2026-11-17T19:52:54Z",
+      "updated_at": "2026-11-17T19:52:54Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14363573720,
+      "name": "uta-unit-validation-python-3.12",
+      "size_in_bytes": 91626,
+      "digest": "sha256:1c7a9aa12bced073b9403f016e4565bb1f13c5df3039714bf1bfb0462c00038e",
+      "expired": false,
+      "created_at": "2026-11-17T19:54:03Z",
+      "updated_at": "2026-11-17T19:54:03Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14363498899,
+      "name": "uta-package-validation-python-3.12",
+      "size_in_bytes": 52967,
+      "digest": "sha256:b4c428a666c1b508cf3c9ebccdfe32c32563631a889dd87c736b6d2f1c453e09",
+      "expired": false,
+      "created_at": "2026-11-17T19:55:07Z",
+      "updated_at": "2026-11-17T19:55:07Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    },
+    {
+      "id": 14363169776,
+      "name": "uta-package-validation-python-3.10",
+      "size_in_bytes": 52927,
+      "digest": "sha256:a6689af37ead0a71335477a2bc52dfbcff7d8905912be463e6d6445916d029e1",
+      "expired": false,
+      "created_at": "2026-11-17T19:53:46Z",
+      "updated_at": "2026-11-17T19:53:46Z",
+      "workflow_run": {
+        "id": 44162304965,
+        "repository_id": 1457814529,
+        "head_repository_id": 1457814529,
+        "head_branch": "evidence/909acec-qualification",
+        "head_sha": "e4396b4b1fd9c2e3a138e48a045feffe158705cc"
+      }
+    }
+  ],
+  "provider_joblog_checkout_anchors": [
+    {
+      "provider_line": 93,
+      "kind": "merge_checkout_sha",
+      "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+      "timestamp": "2026-11-17T19:47:13.9002656Z"
+    },
+    {
+      "provider_line": 95,
+      "kind": "merge_checkout_sha",
+      "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+      "timestamp": "2026-11-17T19:47:16.3193646Z"
+    },
+    {
+      "provider_line": 123,
+      "kind": "merge_checkout_sha",
+      "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+      "timestamp": "2026-11-17T19:47:16.7741311Z"
+    },
+    {
+      "provider_line": 162,
+      "kind": "merge_checkout_sha",
+      "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+      "timestamp": "2026-11-17T19:47:17.1070286Z"
+    },
+    {
+      "provider_line": 248,
+      "kind": "merge_checkout_sha",
+      "sha": "289ca5d05585ba5fd981a6e11ac2cf8b98d6672e",
+      "timestamp": "2026-11-17T19:53:59.3667403Z"
+    }
+  ],
+  "no_redirect_or_signed_URL_persisted": true,
+  "original_CI_failure_preserved": true,
+  "local_reproduction_claimed": false,
+  "production_approved": false
+}
+

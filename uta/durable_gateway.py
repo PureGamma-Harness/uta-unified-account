@@ -140,6 +140,9 @@ class _RouterProducer:
             control = {key: state.get(key) for key in ("halted", "publishing", "epoch", "market_version")}
             control["error"] = None if state.get("error") is None else code(state["error"])
         workers = []
+        supervisor_alive = report.get("supervisor_alive")
+        if "supervisor_alive" in report and type(supervisor_alive) is not bool:
+            raise ServiceError("diagnostic_unavailable", "supervisor observation is malformed", 503)
         for worker in report["workers"]:
             observed = {key: worker.get(key) for key in ("shard", "pid", "owner_pid", "lease_active", "generation")}
             for key in ("alive", "owner_ready", "locally_active", "market_ready", "funding_registry_ready"):
@@ -150,13 +153,29 @@ class _RouterProducer:
                     observed[key] = worker[key]
             if "reason" in worker:
                 observed["reason"] = code(worker["reason"])
+            if "last_spawn_failure" in worker:
+                failure = worker["last_spawn_failure"]
+                if (type(failure) is not dict or failure.get("code") != "worker_registration_failed"
+                        or failure.get("phase") != "spawn_registration"
+                        or failure.get("registration_outcome") != "UNKNOWN"
+                        or type(failure.get("count")) is not int or not 1 <= failure["count"] < 2**31
+                        or failure.get("pid") is not None and (type(failure["pid"]) is not int or failure["pid"] <= 0)
+                        or any(type(failure.get(key)) is not bool for key in
+                               ("cleanup_complete", "retryable_new_child", "recovered"))
+                        or failure.get("sqlite_errorcode") is not None and
+                           (type(failure["sqlite_errorcode"]) is not int or not 0 <= failure["sqlite_errorcode"] < 2**31)):
+                    raise ServiceError("diagnostic_unavailable", "spawn recovery observation is malformed", 503)
+                observed["last_spawn_failure"] = {key: failure.get(key) for key in (
+                    "code", "phase", "pid", "count", "registration_outcome", "cleanup_complete",
+                    "retryable_new_child", "recovered", "sqlite_errorcode")}
             workers.append(observed)
         dispatch_available = (state_observed and not state["halted"] and not state["publishing"]
-                              and report.get("ready") is True)
+                              and report.get("ready") is True and supervisor_alive is not False)
         financial_ready = dispatch_available and report.get("financial_ready") is True
         return {"mode": "process_router", "managed": report.get("managed") is True,
                 "state_observed": state_observed, "control_observed": state_observed, "control": control, "workers": workers,
                 "workers_alive": report.get("workers_alive") is True,
+                "supervisor_alive": supervisor_alive,
                 "dispatch_available": dispatch_available, "ready": financial_ready, "financial_ready": financial_ready,
                 "readiness_source": "persistent_market_and_owner" if "financial_ready" in report else "legacy_process_control_only",
                 "reason": code(report.get("reason")),

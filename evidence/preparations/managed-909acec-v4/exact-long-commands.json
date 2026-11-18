@@ -1,0 +1,73 @@
+{
+  "all_long_flags_false": true,
+  "amendment_sha256": "432c7c8dec731c154074bf47babcf1d35300cf1432439c76fd02eead29b1b3d6",
+  "generated_at_utc": "2026-11-17T19:01:06.252398+00:00",
+  "new_financial_job_created": false,
+  "no_command_invoked": true,
+  "phases": {
+    "long-preflight": {
+      "execution_authorized": false,
+      "fresh_snapshot": null,
+      "frozen_target_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/run_managed_long.py",
+        "preflight",
+        "--plan",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-smoke02-conditional.json",
+        "--amendment",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-observer-amendment.json",
+        "--scratch",
+        "/workspace/uta-managed-observer-runs/909acec-six-hours-20261117"
+      ],
+      "frozen_target_command_sha256": "6e6b76313f86fedad9aaef3ff43128543835e40cbfb3939f944d27becc19b56e",
+      "root_specific_GO": null,
+      "wrapper_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json",
+        "--invoke",
+        "long-preflight",
+        "--root-go-profile-sha256",
+        "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d"
+      ],
+      "wrapper_command_sha256": "2b74cef228d60473648a77e8014c59fbc9b74257496666ea5e40f8ad1f6a46e1"
+    },
+    "long-start": {
+      "execution_authorized": false,
+      "fresh_snapshot": null,
+      "frozen_target_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/run_managed_long.py",
+        "start",
+        "--plan",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-smoke02-conditional.json",
+        "--amendment",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-observer-amendment.json",
+        "--scratch",
+        "/workspace/uta-managed-observer-runs/909acec-six-hours-20261117"
+      ],
+      "frozen_target_command_sha256": "e0281164e062c8d5c90c5fe6ecb7637647bc7a8c170bf465ace850f5d1e1de15",
+      "root_specific_GO": null,
+      "wrapper_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "-B",
+        "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+        "--profile",
+        "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json",
+        "--invoke",
+        "long-start",
+        "--root-go-profile-sha256",
+        "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d"
+      ],
+      "wrapper_command_sha256": "5f4b7d244c166556d56ea929a9f3ba5326328cad29421c6e3a00a97218bec875"
+    }
+  },
+  "plan_sha256": "e0bff7603d5ff236a261a53533c3afede20c40580ba84161350c708a5860e284",
+  "profile": "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v4-long-conditional.json",
+  "profile_sha256": "9ecd5476c347fbf1d767445f6c73a26fde46b026c7008d9b0f24f36e8801213d",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+}
