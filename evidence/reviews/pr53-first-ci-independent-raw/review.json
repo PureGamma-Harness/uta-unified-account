@@ -1,0 +1,152 @@
+{
+  "CI": {
+    "failure": 1,
+    "fixed_unit_samples": [
+      {
+        "errors": 0,
+        "failures": 1,
+        "selection": "push313-unit",
+        "skipped": 0,
+        "tests": 2061,
+        "worker_exit": 1
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "selection": "pr313-unit",
+        "skipped": 0,
+        "tests": 2061,
+        "worker_exit": 0
+      }
+    ],
+    "funding_methods_each": 6,
+    "jobs": 8,
+    "observations_are_not_independent_SQL6_reexecution": true,
+    "pull_request": {
+      "attempt": 1,
+      "conclusion": "success",
+      "run_id": 44307604140
+    },
+    "push": {
+      "attempt": 1,
+      "conclusion": "failure",
+      "run_id": 44307367546
+    },
+    "steps": {
+      "failure": 1,
+      "skipped": 16,
+      "success": 183
+    },
+    "success": 7,
+    "total_plain_ok_observations": 12,
+    "uncollected_six_unit_test_counts": "NOT_INDEPENDENTLY_OBSERVED"
+  },
+  "administrative_observations": {
+    "collector_wrapper": {
+      "first_derivation_reported_exit": 0,
+      "missing_own_docs_directory_failure_and_later_administrative_correction": "collector-recorded chronology",
+      "not_a_target_rerun": true,
+      "target_originals_unchanged": true
+    },
+    "reviewer_early_shape_inspection": {
+      "correction": "normalized git-commit payload has direct tree/parents keys",
+      "evidence_limit": "post-call tool-observation transcription retained; no claim of a prelaunch archived inspection source",
+      "mistaken_assumption": "provider git-commit endpoint has nested commit.tree",
+      "observed_error": "KeyError: commit",
+      "target_or_CI_rerun": false
+    }
+  },
+  "archives": {
+    "CRC_and_exact_member_bytes_verified": true,
+    "alternate_green_package_substitution": false,
+    "fixed_samples": [
+      "push313-unit",
+      "pr313-unit"
+    ],
+    "members": 6,
+    "selected_ZIPs": 2,
+    "total_bytes": 202415
+  },
+  "base": "5520eae7b4e7a2394907174da16d13f383aa73be",
+  "collector": "e0dd90e23c175b330b84309ba741adb42513e14d",
+  "failure": {
+    "assertion": "read/stop races exhausted the bounded SH capture attempts",
+    "original_first_failure_preserved": true,
+    "root_cause": "UNRESOLVED",
+    "selection": "push313-unit",
+    "source_SHA256": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba",
+    "source_line": 1461,
+    "source_path": "tests/test_durable_faults.py",
+    "stage": "SH capture precondition, before completed publication/recovery proof",
+    "test_id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+  },
+  "limits": [
+    "No runtime root cause attribution, no exclusion of indirect effects.",
+    "No independent financial-model or nine-DB SQL6 acceptance from these CI logs.",
+    "No installed funding-obligations execution, binary attestation or qualification run.",
+    "No performance, multi-node/HA, capacity, production or real-funds approval."
+  ],
+  "originals": {
+    "before_after_original_bytes_equal": true,
+    "bytes": 1577194,
+    "files": 33,
+    "mode": "0600, directory0700",
+    "seal_bytes": 5951,
+    "seal_sha256": "8f3ae9278090488ddd536f494397ef7a35deffa71e298f1b2c44a08518b79331"
+  },
+  "package": {
+    "fixed_push313_report": "NOT_PRESENT",
+    "installed_funding_obligations_import": "NOT_VERIFIED",
+    "other_matrix_reports": "METADATA_ONLY_NOT_DOWNLOADED",
+    "qualification_result": null,
+    "reason": "unit failure skips following build/install validation"
+  },
+  "production_approved": false,
+  "public_export": {
+    "all_bytes_match_collector_Git": true,
+    "bytes": 71185,
+    "changes_only_docs_and_evidence": true,
+    "collection_seal_14_entries_verified": true,
+    "files": 15,
+    "no_raw_logs_archives_DBs_private_paths_signed_refs_or_download_identifiers_exported": true,
+    "opaque_original_inventory_matches_seal": true
+  },
+  "review_reader": {
+    "first_formal_reader_exit": 0,
+    "private_file_bytes": 17966,
+    "private_files_before_seal": 4,
+    "private_seal_SHA256": "09f0199c3ee2f0a768d6bd0ef8d499c7a294ad2a36b78adced4b228943e674c8",
+    "private_seal_bytes": 957,
+    "source_SHA256": "69159d99c72f085089c8c572abe3491cc839e747a746fa79379c919ea200cb32",
+    "source_bytes": 14879,
+    "summary_SHA256": "8e045d5f8508390c1faea88018bb28a1db5863d1ddde88a0607236d88df20b46",
+    "summary_bytes": 1143
+  },
+  "schema": 1,
+  "scope": "Independent PR53 first CI RAW review",
+  "source": "118f7a6f7812f9ca44b0928e01d6d8f373c103d9",
+  "source_binding": {
+    "CI_config_delta": [],
+    "Git_repository_paths": 6987,
+    "Git_runtime_paths": 65,
+    "all_before_after_maps_equal": true,
+    "all_pins_independently_match_local_source_Git": true,
+    "forbidden_private_ancestors_absent": true,
+    "head_tree": "bb3cb4416c4589b93a8993d661b8e04cf3153824",
+    "local_merge_commit_object_present": false,
+    "maps": 2,
+    "paths_each": 377,
+    "provider_merge": "68d08424c90c4d0800185fefce849afef5d86980",
+    "provider_merge_metadata_tree_equals_local_source_tree": true,
+    "provider_merge_parents": [
+      "5520eae7b4e7a2394907174da16d13f383aa73be",
+      "118f7a6f7812f9ca44b0928e01d6d8f373c103d9"
+    ],
+    "runtime_delta": [
+      "uta/funding_local.py",
+      "uta/funding_obligations.py"
+    ]
+  },
+  "target_or_SQL_or_CI_reruns_or_downloads_by_reviewer": 0,
+  "verdict": "FIRST_CI_FAILURE_CONFIRMED_EVIDENCE_ACCEPTED_NOT_PLATFORM_PASS"
+}
