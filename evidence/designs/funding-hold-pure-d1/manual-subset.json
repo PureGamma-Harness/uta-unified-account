@@ -1,0 +1,288 @@
+{
+  "schema": 1,
+  "kind": "ORIGINAL_17_PLUS_10_MANUAL_SUPPORT_REJECT_MATRIX",
+  "status": "CODE_DEFINITIONS_ONLY_ALL_TESTS_NOT_RUN",
+  "rules_commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "independent_rules_commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+  "target_execution_attempts": 0,
+  "full_27_case_coverage_claim": false,
+  "independent_Fraction_oracle": "SEPARATE_GROUP_NOT_IMPLEMENTED_OR_REUSED_HERE",
+  "test_method_definitions": 22,
+  "cases": [
+    {
+      "manual_case_id": "PFH-M01",
+      "supported_slice": "Given P, effective risk/available and separate raw USD budget",
+      "unsupported_fields_or_operations": "Order admissibility and durable reservation",
+      "test_method_definitions": [
+        "test_m01_m02_gross_payables_never_net_pending_receivers"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M02",
+      "supported_slice": "Gross P19/N20 and distinct accrual/risk decomposition",
+      "unsupported_fields_or_operations": "Accounting posting or risk authorization",
+      "test_method_definitions": [
+        "test_m01_m02_gross_payables_never_net_pending_receivers"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M03",
+      "supported_slice": "Aggregate two already rounded1-unit debits as H2",
+      "unsupported_fields_or_operations": "Compute rounding from .015, waive dust or regroup periods",
+      "test_method_definitions": [
+        "test_m03_only_given_original_rounded_units_are_aggregated"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M04",
+      "supported_slice": "Given base loan/fee components, hold subtraction and own-payment unit projection",
+      "unsupported_fields_or_operations": "Calculate debt equity/interest/fees or post loans/funding",
+      "test_method_definitions": [
+        "test_m04_loans_fees_and_funding_are_given_separate_base_components"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M05",
+      "supported_slice": "F0 negative-cash backing and given risk decomposition",
+      "unsupported_fields_or_operations": "Actual deficit recognition or bankruptcy recovery",
+      "test_method_definitions": [
+        "test_m05_m25_zero_frozen_negative_cash_keeps_other_H_once"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M06",
+      "supported_slice": "Own payable preview keeps other P and receiver N",
+      "unsupported_fields_or_operations": "Sequential real APPLIED/credit settlement",
+      "test_method_definitions": [
+        "test_m06_receiver_has_no_preview_cash_and_other_payable_stays"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M07",
+      "supported_slice": "Stable duty/duplicate prevention and pure CAS; claim unsupported",
+      "unsupported_fields_or_operations": "Claim expiry/lease/workers/persistence",
+      "test_method_definitions": [
+        "test_m07_m18_duplicate_slots_and_foreign_ref_do_not_create_extra_debt"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M08",
+      "supported_slice": "Negative given availability and changed input reserve arithmetic",
+      "unsupported_fields_or_operations": "Real cancellation, freeze/unfreeze, concurrent fill ordering",
+      "test_method_definitions": [
+        "test_m08_m09_given_margin_arithmetic_is_not_liquidation_or_admission"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M09",
+      "supported_slice": "Given effective equity equals supplied MM, no admission grant; backing projection",
+      "unsupported_fields_or_operations": "Derive MM/liquidation or authorize funding cash",
+      "test_method_definitions": [
+        "test_m08_m09_given_margin_arithmetic_is_not_liquidation_or_admission"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M10",
+      "supported_slice": "Given U600->P246/N246/zero pure conversion",
+      "unsupported_fields_or_operations": "Compute cap/rate/mark cash leg or authenticate cut",
+      "test_method_definitions": [
+        "test_m10_m19_cap_resolution_has_one_active_stage_and_history",
+        "test_m19_sign_zero_cap_breach_and_CAS_ref_conflicts"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M11",
+      "supported_slice": "Raw cash budget88 versus given available38 decomposition",
+      "unsupported_fields_or_operations": "Withdrawal/transfer approval or custody handoff",
+      "test_method_definitions": [
+        "test_m11_m12_provided_USD_base_values_do_not_revalue_collateral"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M12",
+      "supported_slice": "Subtract H from provided USD-reporting base230/205",
+      "unsupported_fields_or_operations": "Compute BTC haircut/tier valuation or collateral removal",
+      "test_method_definitions": [
+        "test_m11_m12_provided_USD_base_values_do_not_revalue_collateral"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M13",
+      "supported_slice": "Given separate receivable does not offset old P/H",
+      "unsupported_fields_or_operations": "Approve cancellation/correction or actual compensation/APPLIED",
+      "test_method_definitions": [
+        "test_m13_m17_given_receivables_do_not_grant_risk_or_capital"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M14",
+      "supported_slice": "Explicit unsupported request only",
+      "unsupported_fields_or_operations": "Quote80, original borrowable90, credit pool and loan authorization",
+      "test_method_definitions": [
+        "test_m14_m15_m27_and_other_unsupported_operations_have_no_fallback"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M15",
+      "supported_slice": "Explicit unsupported real apply/crash request only",
+      "unsupported_fields_or_operations": "Any actual atomicity, crash/restart or cash/hold commit proof",
+      "test_method_definitions": [
+        "test_m14_m15_m27_and_other_unsupported_operations_have_no_fallback"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M16",
+      "supported_slice": "F0 provided cash5-own12->-7 with otherH10 and risk-recheck marker",
+      "unsupported_fields_or_operations": "Current-risk valuation, actual no-quote settlement/recovery",
+      "test_method_definitions": [
+        "test_m05_m25_zero_frozen_negative_cash_keeps_other_H_once"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M17",
+      "supported_slice": "Given rounded receiver1-unit N has zero H",
+      "unsupported_fields_or_operations": "Derive .015 rounding, provide capital, clear journals",
+      "test_method_definitions": [
+        "test_m13_m17_given_receivables_do_not_grant_risk_or_capital"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M18",
+      "supported_slice": "Exact public synthetic canonical duty hash/natural slot",
+      "unsupported_fields_or_operations": "Persistent uniqueness, source attestation",
+      "test_method_definitions": [
+        "test_m18_exact_canonical_identity_precedes_schedule",
+        "test_m07_m18_duplicate_slots_and_foreign_ref_do_not_create_extra_debt"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M19",
+      "supported_slice": "One-active immutable stage/CAS/cap-breach/negative-rate-or-zero final representation",
+      "unsupported_fields_or_operations": "Durable CAS/idempotent commands/actual financial rejection",
+      "test_method_definitions": [
+        "test_m10_m19_cap_resolution_has_one_active_stage_and_history",
+        "test_m19_sign_zero_cap_breach_and_CAS_ref_conflicts"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M20",
+      "supported_slice": "Given F95 WAIT, F85 backing projection and given risk3",
+      "unsupported_fields_or_operations": "Real cancellation ACK, actual frozen release/payment/APPLIED",
+      "test_method_definitions": [
+        "test_m20_m24_frozen_backing_wait_and_given_true_release_projection"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M21",
+      "supported_slice": "Given prior obligation flag or cash95/F91/F81 backing checks",
+      "unsupported_fields_or_operations": "Confirm fill/fee or revalue received asset/ledger",
+      "test_method_definitions": [
+        "test_m21_m22_prior_confirmed_fill_or_unknown_ack_does_not_release_backing"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M22",
+      "supported_slice": "Incomplete prior-confirmation fact cannot pass backing precondition",
+      "unsupported_fields_or_operations": "External CANCELLED reply/fill watermark validation",
+      "test_method_definitions": [
+        "test_m21_m22_prior_confirmed_fill_or_unknown_ack_does_not_release_backing"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M23",
+      "supported_slice": "Fixed required wait policy, deadline/highwater, query-count projection, shared action uniqueness",
+      "unsupported_fields_or_operations": "Clock, durable outbox, real query/unknown outcome observation, persistent budgets",
+      "test_method_definitions": [
+        "test_m23_deadline_and_highwater_not_reset_by_observations",
+        "test_m23_unknown_dispatched_query_consumes_budget_and_CAS_once_in_projection",
+        "test_shared_action_cannot_take_second_policy_or_duty_budget"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M24",
+      "supported_slice": "Same no-settlement preview leaves original P untouched",
+      "unsupported_fields_or_operations": "Crash/commit/ACK persistence and whole-period recovery",
+      "test_method_definitions": [
+        "test_m20_m24_frozen_backing_wait_and_given_true_release_projection"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M25",
+      "supported_slice": "F0 negative cash versus F1 blocked, other H retained",
+      "unsupported_fields_or_operations": "Actual lock release/no-quote obligation execution",
+      "test_method_definitions": [
+        "test_m05_m25_zero_frozen_negative_cash_keeps_other_H_once"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M26",
+      "supported_slice": "Backing arithmetic over given independently funded snapshot",
+      "unsupported_fields_or_operations": "Authorize grant/loan, verify real capital proof or convert principal",
+      "test_method_definitions": [
+        "test_m26_given_capital_snapshot_does_not_authorize_financing"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    },
+    {
+      "manual_case_id": "PFH-M27",
+      "supported_slice": "Cross-account whole-period requests explicitly rejected",
+      "unsupported_fields_or_operations": "Atomic whole-period multi-account settlement/receiver credit",
+      "test_method_definitions": [
+        "test_m14_m15_m27_and_other_unsupported_operations_have_no_fallback"
+      ],
+      "full_case_supported": false,
+      "status": "NOT_RUN"
+    }
+  ]
+}
