@@ -23,16 +23,18 @@ worker/summary equality. It preserves complete original reports and cannot
 borrow old proof for new source. No SQL, schema/data
 migration, customer API/error contract, lease duration or keeper deadline is
 changed. Private v1 diagnostic fields are a paired, strictly validated report
-extension. This adapter's new6method/32case actual-QA-prefix fake fixture is
-CODE-only and awaits independent review and its separate once budget.
+extension. Its frozen8518a0b actual-QA-prefix fake fixture completed its unique
+authorized first6methods/32cases PASS,0FAIL/ERROR; full raw/host evidence is
+retained and awaits independent RAW closure. It does not execute package gates
+or certify an actual source's full qualification.
 
 Evidence remains source-specific: baseline8methods/30traces includes3
 conditional RED; first88da96f12methods was11OK/1FAIL/0ERROR with45 entered;
 correctedbf48ae2 isolated m08 was1method/4selectors PASS. The last result does
 not turn the old all12 run green. Independent CODE/raw closures are included.
-This merged source and new adapter fixture have not run whole CI, packaging,
-native SQLite/workers or performance tests. No new tests/build/services were
-executed during assembly. The proposed focused fixture excludes package,
+This merged source has not run whole CI, packaging, native SQLite/workers or
+performance tests. Assembly added only the separately authorized frozen pure
+fixture run; no whole suite/build/services were executed. The focused fixture excludes package,
 installed, omission, process/resource and real proof-reader behavior.
 
 All reads gain monotonic/metadata work, guarded assertions gain a registry-lock

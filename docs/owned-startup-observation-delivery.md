@@ -17,7 +17,7 @@ source/config and both first failed CI records remain untouched.
 
 The observation changes in `uta/writer_fence.py`, `uta/startup.py` and
 `tools/run_validation.py` retain exact6303 bytes. A fourth executable source,
-`tools/run_managed_variants.py`, adds the separately reviewed/planned strict
+`tools/run_managed_variants.py`, adds the separately reviewed strict
 worker-report compatibility gate described below. Original SQL, transaction
 context/COMMIT, source clocks, token identity and expiry refusal, full ledger
 and credit verifiers and READY policy remain their original decisions. A
@@ -98,7 +98,9 @@ or rewritten worker record is needed: original9-field artifacts stay complete.
 The adapter does not admit a passing capsule containing a lease failure and
 does not reuse old qualification for new source. All earlier qualification
 conditions, including exact-source binding, remain authoritative. Its separate
-six-method/32-case pure preparation is NOT_RUN until its own review/budget.
+six-method/32-case pure run at8518a0b completed PASS under root's exact once
+budget; its memory QA-prefix scope and pending independent RAW review are
+recorded in [first evidence](../evidence/reviews/owned-startup-observation-delivery/first-pure-8518a0b/README.md).
 The earlier81a1af9 preparation/plan was never executed; independent CODE review
 found its missing W7/S9 summary validation. That static finding and zero-attempt
 source are preserved; it is not a test RED or a runtime incident.
@@ -113,8 +115,8 @@ artifacts, but a whole-CI result for this delivery is still NOT_RUN.
 | Baseline5af6cb0 / sourcea95838b | Eight methods/30 model traces;27 matching and3 conditional RED; not an explanation of real CI errors |
 | Source88da96f, sealed47dfa75, independent85a3d3c | Twelve methods:11OK/1FAIL/0ERROR,45 entered; fake copied-counter assertion failed;3 later m08 selectors and a later known-case assertion untested there |
 | Corrected sourcebf48ae2, sealedb59106c, independenta202499 | One explicitly selected m08 method/four original selectors PASS, no retry; other11 test bodies not rerun |
-| New strict consumer adapter | CODE-only preparation:6methods/32 independent examples executing the actual QA prefix with memory proofs; no execution yet; package/installed/omission gates excluded from that fixture |
-| This merged delivery | Static assembly/compatibility/materialization only; no new test, SQLite, native worker, build, package or CI execution |
+| New strict consumer adapter / source8518a0b | First6methods/32 independent examples PASS on actual QA prefix with memory proofs,0FAIL/ERROR, no retry; package/installed/omission gates excluded |
+| Delivery beyond that frozen pure scope | Static assembly/compatibility/materialization; no whole suite, SQLite, native worker, build, package or CI execution |
 
 The three observation runtime/tool files retain their exact approved source;
 the additional control-layer adapter has its own CODE/focused-test gate. Those CODE

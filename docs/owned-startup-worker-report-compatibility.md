@@ -1,4 +1,10 @@
-# Strict worker-report compatibility v1: CODE-only preparation
+# Strict worker-report compatibility v1 and its first pure result
+
+At8518a0b this was a CODE-only preparation. After independent CODE closure,
+root authorized one six-method/32-case pure run, which completed PASS with
+zero failures/errors and actual host exit0; it was reaped and never retried.
+The [first evidence](../evidence/reviews/owned-startup-observation-delivery/first-pure-8518a0b/README.md)
+preserves all raw/host/input bindings; independent RAW review is pending there.
 
 The validation producer's reviewed6303 version always adds two optional v1
 diagnostic report fields. The old managed-variant qualification grammar accepted
@@ -56,11 +62,12 @@ categories and bool aliases, source/runtime binding, pending/old CI and raw log
 rejection. Original fake proof objects must remain unchanged after each call.
 The actual full package qualification is never declared passing by this fixture.
 
-No new focused test was compiled or executed during CODE preparation. Its
+No focused test was compiled or executed during CODE preparation. The later
+once execution used exactly the reviewed8518a0b source; its
 new once driver/plan reuse the reviewed CPU1/10s, immutable source-byte binding,
 runtime/executable/flags checks, shared256KiB reserve-before-FD-write stream cap
 with512-byte trailer/sticky125, and O_EXCL0700/0600 evidence protocol. Independent
-CODE review and root's exact new once budget are required before the32 examples.
+CODE review and root's exact once budget preceded the32 examples.
 Any first RED/ERROR/UNKNOWN remains retained and is not automatically retried.
 
 The earlier observation evidence remains separate: baseline3 conditional RED,
