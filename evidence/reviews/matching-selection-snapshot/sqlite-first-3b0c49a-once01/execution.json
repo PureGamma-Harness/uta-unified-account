@@ -1,0 +1,85 @@
+{
+  "DB_files_copied_to_public": false,
+  "actual_SQL_scope_invocations": 1,
+  "actual_exit_status": 0,
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-B",
+    "evidence/reviews/matching-selection-snapshot/sqlite_once.py",
+    "--run-root",
+    "/workspace/uta-matching-sqlite-3b0c49a-once01",
+    "--source-commit",
+    "3b0c49a6df6773ea7cdb208945541480ea091ea8",
+    "--approved-manifest-sha256",
+    "de3944988def848c59c98cb8c2ab02f048d53cab406d6dc20de0f02dea6c7ada"
+  ],
+  "attempt": 1,
+  "automatic_retries": 0,
+  "begin": {
+    "actual_affinity": [
+      0
+    ],
+    "child_processes": 0,
+    "event": "BEGIN_SQLITE_ONCE",
+    "kernel_directory_quota_proven": false,
+    "logical_data_cap_bytes": 67108864,
+    "manifest_sha256": "de3944988def848c59c98cb8c2ab02f048d53cab406d6dc20de0f02dea6c7ada",
+    "raw_cap_bytes": 524288,
+    "source_commit": "3b0c49a6df6773ea7cdb208945541480ea091ea8",
+    "source_files": 63
+  },
+  "checkpoint_lines": 470,
+  "driver_end_elapsed_seconds": 10.144206064011087,
+  "driver_result_snapshot_elapsed_seconds": 10.072730762010906,
+  "end": {
+    "all_financial_production_and_performance_approvals": false,
+    "authorities": 8,
+    "cases": 4,
+    "driver_elapsed_seconds": 10.144206064011087,
+    "event": "END_SQLITE_ONCE",
+    "exit_status": 0,
+    "max_observed_logical_bytes": 8602820,
+    "source_unchanged": true,
+    "status": "LOCAL_SQLITE_FUNCTIONAL_PASS_PENDING_INDEPENDENT_REVIEW"
+  },
+  "outer_monotonic_lifecycle_elapsed_ns": null,
+  "outer_timing_limitation": "Two tool wait segments and second-resolution UTC observations do not supply full lifecycle monotonic E2E timing. Do not sum segments or relabel driver elapsed.",
+  "private_run_root": "/workspace/uta-matching-sqlite-3b0c49a-once01",
+  "raw": {
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 76270,
+      "sha256": "6bf03110cad36fc4607c03a3ed96dc742813a48cd084ae3bcfd89463344a025b"
+    }
+  },
+  "raw_json_lines": 472,
+  "recorded_at": "2026-11-18T05:22:37.702181+00:00",
+  "schema": 1,
+  "source_commit": "3b0c49a6df6773ea7cdb208945541480ea091ea8",
+  "tool_observations": {
+    "completion_clock": {
+      "current_time": "2026-11-18 05:18:58 UTC"
+    },
+    "completion_exec": {
+      "chunk_id": "df9440",
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": "",
+      "wall_time_seconds": 2.0839e-05
+    },
+    "first_exec": {
+      "chunk_id": "8d75cb",
+      "original_token_count": 0,
+      "output": "",
+      "session_id": 74976,
+      "wall_time_seconds": 1.001169212
+    },
+    "start_clock": {
+      "current_time": "2026-11-18 05:18:47 UTC"
+    }
+  }
+}
