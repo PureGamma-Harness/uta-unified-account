@@ -1,4 +1,4 @@
-Repeated full-book reads/sorts dominate selection work on larger limit books. This adds an explicitly opt-in transaction-local exact priority list while re-reading each selected order's current state. `Matcher(exchange)` remains scan; snapshot rejects unsupported components, custom clocks and configured policy models. Financial pricing, risk/fees, both settlement legs, savepoints and commit rules remain unchanged. Worker/CLI activation is absent.
+The matching loop repeatedly reads and sorts the full limit book. This adds an explicitly opt-in transaction-local exact priority list while re-reading each selected order's current state. `Matcher(exchange)` remains scan; snapshot rejects unsupported components, custom clocks and configured policy models. Financial pricing, risk/fees, both settlement legs, savepoints and commit rules remain unchanged. Worker/CLI activation is absent.
 
 The published source qualification is C `a2434bdfe711ead1d202f6c1527e527f73e2dfa2`. Its first attempt1 outcomes remain separate:
 
