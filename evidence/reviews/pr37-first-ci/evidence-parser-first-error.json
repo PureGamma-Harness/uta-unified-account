@@ -1,0 +1,12 @@
+{
+  "CI_or_test_rerun": false,
+  "CI_source_or_original_ZIP_or_logs_mutated": false,
+  "cause_from_actual_log_format": "Python3.10 unittest method lines use parenthesized module.class without a .method suffix.",
+  "correction": "Accept the exact module.class with an optional .method component, and compare the three first-column method names with AST-defined current test methods.",
+  "failed_assertion": "len(methods)==3 and all(line.endswith(\" ... ok\") for line in methods)",
+  "first_error_type": "AssertionError",
+  "first_extract_returncode": 1,
+  "old_filter": "(test_shared_gate_registration_progress.SharedGateRegistrationProgressTests.",
+  "retained_originals": "All first decoded responses, three ZIPs and extracted original unit files remain unchanged.",
+  "scope": "LOCAL_EVIDENCE_PARSER_ONLY_NOT_A_TEST_OR_CI_RUN"
+}
