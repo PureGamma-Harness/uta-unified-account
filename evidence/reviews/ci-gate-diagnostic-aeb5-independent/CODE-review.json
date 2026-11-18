@@ -1,0 +1,100 @@
+{
+  "GO_granted": false,
+  "closed_subscopes": [
+    {
+      "evidence": "Renew observer retains exactly one original(fence,token,ttl) call per invocation, directly returns its object, and bare-raises the original exception after the caught marker path.",
+      "id": "CI-DIAG-AEB-A-CALL",
+      "result": "CLOSED_LIMITED"
+    },
+    {
+      "evidence": "Existing phase flags, requested.set ordering, wait.3/sleep.08/fixture lease.4, initialization enter/construct/check/writer/finish sequence and original assertions remain. Seventeen mark callsite labels are fixed literals.",
+      "id": "CI-DIAG-AEB-A-SEMANTICS",
+      "result": "CLOSED_LIMITED"
+    },
+    {
+      "evidence": "Marker clock/type/code/dictionary failures are caught as collection_failed. The native errors in the inspected runtime are constructed with literal codes; new timeline data do not use exception text/repr or token/identity payload.",
+      "id": "CI-DIAG-AEB-A-FAILURE",
+      "result": "CLOSED_LIMITED"
+    },
+    {
+      "evidence": "The final diagnostics() call still occurs exactly once. It is retained in final, its same native bool ready controls assertTrue, and projection runs only on the false path. No extra diagnostic query, SQL, market creation, activation, renewal or refresh is introduced.",
+      "id": "CI-DIAG-AEB-B",
+      "result": "CLOSED_LIMITED_SAME_RESULT_PROJECTION"
+    },
+    {
+      "evidence": "Exact dict/list/tuple and bool/str checks prevent arbitrary object string/repr calls. Only the first two dictionary worker rows feed finite reason counts and six true/false/unknown gate counts. PID/nonce/generation/shard/path/full report/market digest are not projected. Projection exceptions return fixed JSON.",
+      "id": "CI-DIAG-AEB-B-BOUND",
+      "result": "CLOSED_LIMITED"
+    },
+    {
+      "evidence": "Ten canonical regular physical/Git pins323524B and the0ac93 plan hash match. All61 UTA Python Git blobs and CI configuration match the historical f774 source. Only the two tests plus document/plan change.",
+      "id": "CI-DIAG-AEB-SOURCE",
+      "result": "CLOSED"
+    }
+  ],
+  "financial_rules_or_timeout_approval": false,
+  "findings": [
+    {
+      "counterexample_kind": "Static permitted-interleaving reasoning, not an observed runtime trace, executed repro or original CI root cause.",
+      "evidence": [
+        "The main test thread calls mark around enter/construct/writer/wait/sleep/finish; the keeper thread calls mark through the patched renewal observer.",
+        "Both producers execute if len(timeline)>=timeline_limit, then a clock read/dictionary construction, then timeline.append(item), without a shared reservation or a structurally bounded container.",
+        "No lock in the observed source serializes both producers' complete mark sections: keeper renew_request is recorded before the original renewal attempts its existing write gate."
+      ],
+      "file": "tests/test_startup_write_contention.py",
+      "function": "StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal.mark",
+      "id": "CI-DIAG-AEB-001",
+      "impact": "The exact resource/projection contract and overflow flag can be wrong. With only these two non-reentrant producers this is an off-by-one bound, not evidence of unbounded memory growth or financial-state corruption.",
+      "resolution_requirements": [
+        "Enforce at most64 stored records for every permitted two-producer interleaving without relying on check-plus-append atomicity.",
+        "Make overflow/truncation accurate even when the last two attempts race.",
+        "Preserve the existing one original renew call, return object/bare raise, time thresholds, financial gates and exception behavior.",
+        "Do not add financial/lease locks, queries, refreshes or retries to solve the diagnostic resource issue.",
+        "Freeze a new source/plan and obtain limited delta review before any execution."
+      ],
+      "source_level_counterexample": [
+        "Precondition: timeline contains63 records; limit64; truncatedFalse.",
+        "Main checks len63<64, then is suspended before its append.",
+        "Keeper checks len63<64 and appends its record: length64.",
+        "Main resumes and appends its earlier record: length65.",
+        "If these are the final markers, neither enters the overflow branch, so truncated can remainFalse."
+      ],
+      "status": "CODE_BLOCKER_AGAINST_DECLARED_64_RECORD_LIMIT",
+      "summary": "Two producers share a non-atomic length check followed by append, so the source does not enforce its declared64-record maximum."
+    }
+  ],
+  "historical_target_source": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "input_closure": {
+    "bytes": 323524,
+    "components": "five UTA files, four tests and one document",
+    "count": 10,
+    "full61_physical_materialization_claimed": false,
+    "physical_canonical_regular_and_Git_exact": true,
+    "plan_sha256": "0ac93bfd671012cce6b2771f50e194e1d6fa62f388390a1b9140cc65b15db6da",
+    "runtime_and_CI_changed": false,
+    "unchanged_UTA_Python_Git_count": 61
+  },
+  "kind": "INDEPENDENT_CI_GATE_DIAGNOSTIC_CODE_REVIEW",
+  "observations": [
+    "Clock reads, dictionary construction and append bookkeeping perturb timing, including the main financial writer-held interval; these timestamps are not authoritative lease/CLOCK_BOOTTIME/SQL acquisition/commit witnesses.",
+    "The shared append order is not an attested total time order between threads.",
+    "The existing describe_error helper still formats original error chains/messages exactly as before. Anonymous/finite claims here apply to newly added timeline fields and the readiness projection, not a reclassification of entire raw logs.",
+    "The readiness preservation conclusion uses the inspected diagnostics provider's native bool/dict result contract; it is not a guarantee for arbitrary side-effecting ready objects.",
+    "Historical f774 failures remain unchanged and causesUNDETERMINED. This CODE review does not reread or requalify their sealed RAW collection.",
+    "No diagnostic phase or CI result has been rerun by this review."
+  ],
+  "parent_readonly_review": "16ac950c5d8fc160026c0947f991f9b409ee6ba9",
+  "production_approved": false,
+  "remaining_gates": [
+    "Resolve CI-DIAG-AEB-001 and freeze revised pins",
+    "Independent limited delta CODE review",
+    "Root separate exact execution/CI decision",
+    "Preserve first instrumented result under its actual source",
+    "Independent RAW review"
+  ],
+  "schema": 1,
+  "source": "aeb5f23934fba8efc1ffd7b27c702a1b596bd228",
+  "status": "NOT_CLOSED_STRICT_TIMELINE_CAP",
+  "target_executions": 0,
+  "workspace_scope": "Only a verified-new review worktree/index was initialized and two independent report artifacts written. No source, target authority or primary workspace index was modified."
+}
