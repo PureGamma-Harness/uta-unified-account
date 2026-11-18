@@ -201,12 +201,18 @@ class BatchStore:
                     or row["disposition"] == "RECOVERED" and executed
                     or not isinstance(commands, list) or len(commands) != len(ids)):
                 raise ValueError("invalid disposition membership")
+            # The executor visits immutable membership in order, but may skip
+            # backoff/preexisting terminals. Its execution list is a subsequence.
+            if executed != [cid for cid in ids if cid in executed]:
+                raise ValueError("disposition execution order differs from membership")
             for expected, recorded, actual in zip(ids, commands, current):
                 if (not isinstance(recorded, dict) or set(recorded) != {"command_id", "state"}
                         or recorded["command_id"] != expected
                         or recorded["state"] not in (*_TERMINAL, "PENDING")
                         or recorded["state"] in _TERMINAL and recorded["state"] != actual["state"]
-                        or expected in executed and recorded["state"] not in _TERMINAL):
+                        # Technical quarantine is a separate failure-recording
+                        # transition; _execute produces only business terminals.
+                        or expected in executed and recorded["state"] not in ("SUCCEEDED", "REJECTED")):
                     raise ValueError("disposition contradicts original command state")
             return value
         except (ValueError, TypeError, KeyError) as exc:
