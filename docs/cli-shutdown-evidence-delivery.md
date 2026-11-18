@@ -36,3 +36,16 @@ API change or service restart. Rollback restores the original test observation
 plumbing while retaining both first failures and private originals. Integrated
 CI, recovery correctness, production, real funds, sustained capacity and HA
 acceptance remain open gates.
+
+The first integrated PR32 CI exposed a separate portability defect: its fixed
+Python3.12 AST-dump hash rejected the supported3.10/3.11/3.13 representations.
+All six original failures are retained. Commitdfb7f99 froze the exact original
+6b7 method source and provenance before code05c3e4d changed the guard to parse
+both sources with the same actual interpreter. The normalization rules did not
+change. A new one-shot batch ran only three pure AST checks on each local
+Python3.10/3.12/3.13: preserved current business behavior and negative controls
+for a changed exit deadline or business argv. All nine passed; no actual CLI,
+SQL or signal ran. No local3.11 run or new whole-suite result is claimed. The
+old fixed hash remains historical evidence. The guard is a scoped preservation
+check and does not prove equivalence of arbitrary Python mutations or all
+observation helper behavior.
