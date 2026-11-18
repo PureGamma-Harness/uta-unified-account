@@ -1,0 +1,35 @@
+{
+  "execution_authorized": false,
+  "imports": "only existing ReserveKernel and stdlib; zero SQLite/service/storage/monitor/network/process execution",
+  "inputs": {
+    "benchmarks/test_reserve_reuse_candidate.py": {
+      "bytes": 6188,
+      "control_origin_git_blob": "f882131c143e34f265f7ebf0f6b46bf13bfd0324",
+      "origin_relative_path": "benchmarks/test_reserve_reuse_candidate.py",
+      "sha256": "15bcb4a33944918959aa1cc3a89444727c9329bae6130e5bd0e59345272171b6",
+      "target_runtime_git_blob": null
+    },
+    "uta/__init__.py": {
+      "bytes": 104,
+      "control_origin_git_blob": "8b645a52b1e6edac38e458e61266c0cbe9ad5b61",
+      "origin_relative_path": "uta/__init__.py",
+      "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43",
+      "target_runtime_git_blob": "8b645a52b1e6edac38e458e61266c0cbe9ad5b61"
+    },
+    "uta/reserve_kernel.py": {
+      "bytes": 4923,
+      "control_origin_git_blob": "7d6f455c89b0660e24bb0491f5f8d9d558147e4f",
+      "origin_relative_path": "uta/reserve_kernel.py",
+      "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95",
+      "target_runtime_git_blob": "7d6f455c89b0660e24bb0491f5f8d9d558147e4f"
+    }
+  },
+  "kind": "EXACT_FOUR_ARITHMETIC_ONLY_INPUT_MANIFEST",
+  "methods_in_exact_order": [
+    "ReserveReuseContracts.test_manual_cumulative_fee_signed_and_zero_cases",
+    "ReserveReuseContracts.test_all_ten_economic_key_inputs_remain_exact",
+    "ReserveReuseContracts.test_lru_eviction_and_numeric_equal_keys",
+    "ReserveReuseContracts.test_exact_arithmetic_ignores_ambient_context_and_failed_math_is_not_cached"
+  ],
+  "source_commit": "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f"
+}

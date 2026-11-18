@@ -1,0 +1,219 @@
+{
+  "deployment_rollback_manual": {
+    "bytes": 11305,
+    "control_origin_git_blob": "d2dc7b9e4aad7a8b357713f61a99c2b03733fae7",
+    "origin_relative_path": "docs/performance/exact-reserve-reuse-candidate.md",
+    "sha256": "fd300d0d321d93374968f58ff73cf88d4e9ba697fdd91f78df5b73856a40b5db",
+    "target_runtime_git_blob": null
+  },
+  "execution_authorized": false,
+  "external_capture_contract": {
+    "actual_host_monotonic_start_end_elapsed_and_exit_reaped": true,
+    "before_after_pins": "trusted local read pins; not immutable remote attestation",
+    "fullargv_and_first_intent": true,
+    "no_future_exit_self_attestation": true,
+    "operator": "root separately authorized external timeout/taskset capture; target never spawns children",
+    "outer_elapsed_not_sum_of_inner_times": true,
+    "producer_pattern": "same finite original root-owned Popen/wait/raw capture as prior once scopes; no new general host harness added",
+    "raw_cap": "shared write-before-reserve; short/overflow/late/timeout/unknown is not PASS",
+    "requires_unique_OEXCL0700_directory": true
+  },
+  "hotspot_evidence": {
+    "bytes": 9834,
+    "control_origin_git_blob": "38f0c9c4fe8a256baa9cef02749375052b2a15ff",
+    "origin_relative_path": "evidence/reviews/matching-component-profile/reserve-reuse-candidate/stored-profile-hotspots.json",
+    "sha256": "de591f6137a83bccbf0231e4d5dc246d337c8c6636aef0171b6516c138afacb6",
+    "target_runtime_git_blob": null
+  },
+  "kind": "PROPOSED_MINIMAL_EXACT_RESERVE_REUSE_DIFFERENTIAL_SCOPE",
+  "manual_contract": {
+    "bytes": 3103,
+    "control_origin_git_blob": "591d15bc6da47b23afc338d4c7de8b2e4938d615",
+    "origin_relative_path": "evidence/reviews/matching-component-profile/reserve-reuse-candidate/manual-contracts.json",
+    "sha256": "030b7645aa6945ec53abec6b10613a09d4f96ac62973531e944a8a8418b6a204",
+    "target_runtime_git_blob": null
+  },
+  "native": {
+    "budget_proposal": {
+      "CPU_count": 1,
+      "aggregate": 0,
+      "allocations_bytes": {
+        "business": 33554432,
+        "external_capture_cleanup_reserve": 10485760,
+        "reports": 4194304,
+        "source": 2097152
+      },
+      "application_thread_starts": 0,
+      "blocked_C_IO_hard_realtime_guarantee": false,
+      "cProfile_and_SQLtrace_and_local_LINE": true,
+      "drain_max_seconds": 2,
+      "hard_timeout_seconds": 30,
+      "kernel_quota_proven": false,
+      "logical_total_bytes": 50331648,
+      "network_socket_TLS_AuthDB": 0,
+      "new_authorities": 2,
+      "old_or_full_profile": 0,
+      "outer_raw_bytes": 1024,
+      "proc_PID_pidfd_signal": 0,
+      "retry": 0,
+      "shared_raw_bytes": 262144,
+      "target_Python_boundary_seconds": 30,
+      "target_children": 0,
+      "target_raw_bytes_including_512_trailer": 261120,
+      "warmup": 0,
+      "worker_starts": 0
+    },
+    "entry": "run_reserve_reuse_pair; fixed32/scan; reference0 then candidate128; stops after two authorities",
+    "exact_argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-risk-kernel-candidate/benchmarks/matching_profile_once.py",
+      "--reserve-reuse-pair",
+      "--profile-set",
+      "reserve-reuse",
+      "--book-size",
+      "32",
+      "--book-selection",
+      "scan",
+      "--run-root",
+      "/workspace/uta-reserve-reuse-73c8aa3-once01",
+      "--source-commit",
+      "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+      "--approved-manifest-sha256",
+      "e47c4aa8d98781acbee5fab649c7c9f3862c466d89dfac7ac8297c2ca3949e0d"
+    ],
+    "expected_per_authority": {
+      "accounts": 2,
+      "deposits_USD": "1000000 per account",
+      "fills": 16,
+      "matches": 8,
+      "matching_calls": 1,
+      "not_global_unique_ID_capacity": true,
+      "orders": 32
+    },
+    "finite_provenance_exceptions": [
+      "original quote observed_at separately verified against real quote/hash/ID/history/TTL",
+      "order and match created_at preserved in complete raw",
+      "audit execution_options.reserve_cache_size and derived policy ID only; remaining entire policy and artifact exact"
+    ],
+    "fixed_options": {
+      "USD_scale": 8,
+      "book_selection": "scan",
+      "clock": "unchanged native UTC",
+      "decision_audit": true,
+      "fee_rate": ".0004",
+      "journal": "WAL",
+      "market_cache_size": 0,
+      "max_future_skew_seconds": 1,
+      "max_price_age_seconds": 5,
+      "products": "legacy catalog None linear USD synthetic BTC-PERP only",
+      "reserve_cache_sizes_in_order": [
+        0,
+        128
+      ],
+      "synchronous": "FULL"
+    },
+    "fresh_run_root": "/workspace/uta-reserve-reuse-73c8aa3-once01",
+    "functional_requirements": [
+      "six cold candidate economic keys; actual hits/misses/evictions logged with manual bounds",
+      "actual confirmed matching plus ledger/position commit; no attempted-order proxy",
+      "independent FIFO hand quantity/notional/cumulative fee/cash/cost/PnL",
+      "each before-after reopen and both authorities complete typed economic projection/accounts/nine non-temporal risk fields/market finance exact",
+      "strict Matcher.verify and independent reconcile_exchange passed on each authority",
+      "one actual nonempty FILL numerical audit replay per authority",
+      "audited exact policy schema/options/archive ID and financial runtime artifact verification",
+      "strict observer phase counters and closed lifecycle; no unknown-source/slot loss/first fault ignored"
+    ],
+    "manifest": {
+      "bytes": 22898,
+      "path": "evidence/reviews/matching-component-profile/source-manifest-reserve-reuse.json",
+      "sha256": "e47c4aa8d98781acbee5fab649c7c9f3862c466d89dfac7ac8297c2ca3949e0d"
+    },
+    "new_outer_capture_root": "/workspace/uta-reserve-reuse-73c8aa3-once01-host-once01",
+    "on_first_fault_or_partial_or_unknown": "stop entire new pair; retain original bytes/exit; no retry, TTL change or quote republish repair",
+    "proposed_outer_prefix": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "30s",
+      "/usr/bin/taskset",
+      "-c",
+      "1"
+    ],
+    "status_for_actual_exit0_only_if_all_checks": "RESERVE_REUSE_PAIR_DIFFERENTIAL_COMPLETE_PENDING_INDEPENDENT_REVIEW"
+  },
+  "native_runtime_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "new_executions_to_date": {
+    "SQL": 0,
+    "benchmark": 0,
+    "monitor_registration": 0,
+    "native": 0,
+    "pure": 0
+  },
+  "performance_claims": false,
+  "private_public_boundary": "DB/WAL/SHM/actual nonce/complete mini/fullcapsule/private absolute raw originals never public ancestor; later SAFE whitelist only",
+  "pure": {
+    "budget_proposal": {
+      "CPU_count": 1,
+      "SQLite_import_and_SQL": 0,
+      "application_threads_started": 0,
+      "drain_max_seconds": 2,
+      "hard_timeout_seconds": 10,
+      "logical_bytes": 8388608,
+      "network": 0,
+      "raw_reserved_trailer_bytes": 512,
+      "real_monitor_registration": 0,
+      "shared_external_raw_bytes": 32768,
+      "target_children": 0
+    },
+    "exact_argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-risk-kernel-candidate/benchmarks/test_reserve_reuse_candidate.py",
+      "ReserveReuseContracts.test_manual_cumulative_fee_signed_and_zero_cases",
+      "ReserveReuseContracts.test_all_ten_economic_key_inputs_remain_exact",
+      "ReserveReuseContracts.test_lru_eviction_and_numeric_equal_keys",
+      "ReserveReuseContracts.test_exact_arithmetic_ignores_ambient_context_and_failed_math_is_not_cached"
+    ],
+    "manifest": {
+      "bytes": 1696,
+      "path": "evidence/reviews/matching-component-profile/reserve-reuse-candidate/pure-manifest.json",
+      "sha256": "7afab6e767af3339457598863c827d0392e29290b7756f80e7118aa73db56499"
+    },
+    "methods_in_order": [
+      "ReserveReuseContracts.test_manual_cumulative_fee_signed_and_zero_cases",
+      "ReserveReuseContracts.test_all_ten_economic_key_inputs_remain_exact",
+      "ReserveReuseContracts.test_lru_eviction_and_numeric_equal_keys",
+      "ReserveReuseContracts.test_exact_arithmetic_ignores_ambient_context_and_failed_math_is_not_cached"
+    ],
+    "model_limit": "independent arithmetic only; no native policy/admission/transactions/freshness proof",
+    "new_capture_root": "/workspace/uta-reserve-reuse-pure-73c8aa3-once01",
+    "proposed_outer_prefix": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "10s",
+      "/usr/bin/taskset",
+      "-c",
+      "1"
+    ]
+  },
+  "review_dependencies": [
+    "independent CODE closure for exact source/plans/manifests",
+    "separate unique explicit root PURE GO and independent RAW result",
+    "separate unique explicit root NATIVE pair GO; no implied continuation"
+  ],
+  "rollback": "revert isolated benchmark controls/plans; default/runtime remain unchanged0; preserve all old/native evidence and authority state; no persisted policy edits",
+  "runtime_files_modified": 0,
+  "safe_base": "13a25363ede7fcfcd61d0b1f33b1b539ca9e3cab",
+  "source_commit": "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+  "target_UTA_files": 61,
+  "unsupported_evidence": [
+    "no configured product/MM/rule/freshness mutation native acceptance from this pair",
+    "no concurrency/fencing/fault-recovery qualification",
+    "no significant performance/regression/TPS/P99/open-loop/30min/soak/10k/liquidation/production claims"
+  ],
+  "worktree": "/workspace/uta-matching-risk-kernel-candidate"
+}
