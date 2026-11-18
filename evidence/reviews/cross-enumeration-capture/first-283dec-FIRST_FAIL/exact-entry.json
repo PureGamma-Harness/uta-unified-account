@@ -1,0 +1,26 @@
+{
+  "actual_source_commit_from_literal_CLI": "must be current final metadata HEAD; placeholders are not approved substitutions until root exact GO",
+  "capture_plan": {
+    "bytes": 24569,
+    "path": "evidence/reviews/cross-enumeration-capture/capture-plan.json",
+    "sha256": "add0f4a60bd214d930c8cee5a796ac0e87242832043d9a645c928e9420ba7f02"
+  },
+  "schema": 1,
+  "status": "CODE_ONLY_NOT_RUN",
+  "target_attempts": 0,
+  "whole_host_argv_template": [
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-cross-enumeration-capture/tools/run_cross_enumeration_capture.py",
+    "--execute",
+    "--source-commit",
+    "<FINAL_SOURCE_HEAD>",
+    "--approved-plan-sha256",
+    "add0f4a60bd214d930c8cee5a796ac0e87242832043d9a645c928e9420ba7f02"
+  ]
+}

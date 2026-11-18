@@ -1,0 +1,7 @@
+# Cross decimal synthetic golden vectors
+
+vectors.json is the exact866704-byte original from actual sourcebb2a2cf13a7337d4b6ef9f35ce2335c5732ad85c, SHA25617364d12847d5f118cc62f0e301a45180e8ccd353a38010e3cf3582a917afd97. It is not reformatted or relabeled. The artifact contains only fixed synthetic inputs and their exact independent expected/candidate actual values; author and independent peer explicitly cleared this one new file.
+
+Five test IDs contain512/6/8/8/4=538 checks. The hostile-context group repeats the first eight generated inputs;538 is not a distinct-state or trade count. Input integer coefficients use the scales in tests/test_cross_decimal_enumeration.py models(); for example cash uses10^-2 USD, BTC gross uses10^-4 BTC, quantity uses10^-1 contracts and cost uses10^-4 USD. Expected/actual strings are canonical exact rationals, not rounded decimal renderings. The last four vectors check independent USD whole-unit borrowing at zero/equal IM-MM rates. Per-asset quotes are alternative counterfactuals and cannot be jointly drawn.
+
+Top source/plan SHA fields bind the observed invocation. No private path, PID, nonce, birth/boot/lease identity, signature, raw control, receipt or archive is included. The old source283dec failure is preserved and not authorized as a second public raw file. This artifact does not enable a service or establish full model, concurrency, liquidity, capacity, production or real-funds acceptance.

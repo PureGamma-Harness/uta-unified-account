@@ -1,0 +1,27 @@
+{
+  "actual_source_commit_from_literal_CLI": "root fills final metadata HEAD after independent delta CODE; code origin is not invocation HEAD",
+  "capture_plan": {
+    "bytes": 25026,
+    "path": "evidence/reviews/cross-enumeration-capture/capture-plan.json",
+    "sha256": "405da5ed431e926e9665e18ebed6d60851bd0135859c4526c962757e9c7b6739"
+  },
+  "old_first_failure_preserved": true,
+  "schema": 1,
+  "status": "CODE_ONLY_NOT_RUN",
+  "target_attempts": 0,
+  "whole_host_argv_template": [
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-cross-enumeration-pipe-v2-code/tools/run_cross_enumeration_capture.py",
+    "--execute",
+    "--source-commit",
+    "<FINAL_SOURCE_HEAD>",
+    "--approved-plan-sha256",
+    "405da5ed431e926e9665e18ebed6d60851bd0135859c4526c962757e9c7b6739"
+  ]
+}

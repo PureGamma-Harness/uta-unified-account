@@ -18,7 +18,7 @@ from uta.credit_artifact import (CreditArtifactError, _hash, _loaded_modules,
 
 # Versioned test inventory: byte expectations come from the current immutable
 # deployment, while frozen runs must still supply their exact retained pins.
-_SOURCE_INVENTORY_V1 = (
+_SOURCE_INVENTORY_V2 = (
     '__init__.py',
     '__main__.py',
     'acceptance.py',
@@ -36,6 +36,7 @@ _SOURCE_INVENTORY_V1 = (
     'credit_policy.py',
     'credit_transition.py',
     'credit_v2_payload_contract.py',
+    'cross_decimal_kernel.py',
     'cutover.py',
     'decision_audit.py',
     'durable_batches.py',
@@ -88,8 +89,8 @@ def current_source_snapshot():
     root = Path(writer_fence.__file__).resolve().parent
     names = tuple(sorted(path.relative_to(root).as_posix()
                          for path in root.rglob("*.py")))
-    if names != _SOURCE_INVENTORY_V1:
-        raise AssertionError("current source inventory differs from test inventory v1")
+    if names != _SOURCE_INVENTORY_V2:
+        raise AssertionError("current source inventory differs from test inventory v2")
     hashes, metadata = {}, {}
     fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
     for name in names:
@@ -140,7 +141,8 @@ class LeaseObservationTagArtifactTests(unittest.TestCase):
         artifact = credit_code_artifact()
         if ordinary_snapshot is not None:
             self.assertEqual((retained, ordinary_snapshot), current_source_snapshot())
-        self.assertEqual(len(retained), 61)
+        self.assertEqual(len(retained), 62)
+        self.assertEqual(tuple(sorted(retained)), _SOURCE_INVENTORY_V2)
         self.assertEqual(artifact["source_files"], retained)
         with self.assertRaises(AssertionError):
             self.assertEqual({**artifact["source_files"], "unreviewed.py": "0" * 64}, retained)
