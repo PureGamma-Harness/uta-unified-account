@@ -24,7 +24,7 @@ import unittest
 import _thread
 
 GUARD_CODE = r'''
-import sys, os, signal, socket, _thread, threading, subprocess, _posixsubprocess, importlib.machinery
+import sys, os, signal, _signal, socket, _socket, _thread, threading, subprocess, _posixsubprocess, importlib.machinery
 _scope_denials=[]
 _scope_checks=[]
 class ScopeDenied(BaseException):pass
@@ -46,13 +46,16 @@ def _scope_block(name):
 for _name in ('system','fork','forkpty','posix_spawn','posix_spawnp','kill','killpg',
               'execl','execle','execlp','execlpe','execv','execve','execvp','execvpe'):
     if hasattr(os,_name):setattr(os,_name,_scope_block('os.'+_name))
-for _name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait','set_wakeup_fd','siginterrupt','pause'):
-    if hasattr(signal,_name):setattr(signal,_name,_scope_block('signal.'+_name))
+for _signal_module in (signal,_signal):
+    for _name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait','set_wakeup_fd','siginterrupt','pause'):
+        if hasattr(_signal_module,_name):setattr(_signal_module,_name,_scope_block(_signal_module.__name__+'.'+_name))
 _thread.start_new_thread=_scope_block('_thread.start_new_thread')
 _thread.start_new=_scope_block('_thread.start_new')
 _thread.interrupt_main=_scope_block('_thread.interrupt_main')
 threading._start_new_thread=_scope_block('threading._start_new_thread')
 threading.Thread.start=_scope_block('threading.Thread.start')
+for _socket_module in (socket,_socket):
+    if hasattr(_socket_module,'socketpair'):setattr(_socket_module,'socketpair',_scope_block(_socket_module.__name__+'.socketpair'))
 _scope_real_fork_exec=subprocess._fork_exec
 def _scope_fork_exec(*args,**kwargs):
     if not globals().get('_scope_launch_allowed',False):_scope_deny('raw_fork_exec')

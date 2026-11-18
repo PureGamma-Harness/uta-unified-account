@@ -13,7 +13,9 @@ import json
 import os
 from pathlib import Path
 import signal
+import _signal
 import socket
+import _socket
 import stat
 import subprocess
 import sys
@@ -46,12 +48,15 @@ def main():
     # Even a faulty guard cannot reach these real capabilities in this preflight.
     for name in ('system','fork','forkpty','posix_spawn','posix_spawnp','kill','killpg','execl','execle','execlp','execlpe','execv','execve','execvp','execvpe'):
         if hasattr(os,name):setattr(os,name,sentinel('os.'+name))
-    for name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait','set_wakeup_fd','siginterrupt','pause'):
-        if hasattr(signal,name):setattr(signal,name,sentinel('signal.'+name))
+    for module in (signal,_signal):
+        for name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait','set_wakeup_fd','siginterrupt','pause'):
+            if hasattr(module,name):setattr(module,name,sentinel(module.__name__+'.'+name))
     for name in ('start_new_thread','start_new','interrupt_main'):
         if hasattr(_thread,name):setattr(_thread,name,sentinel('_thread.'+name))
     threading.Thread.start=sentinel('threading.Thread.start')
     threading._start_new_thread=sentinel('threading._start_new_thread')
+    for module in (socket,_socket):
+        if hasattr(module,'socketpair'):setattr(module,'socketpair',sentinel(module.__name__+'.socketpair'))
     subprocess.Popen=sentinel('subprocess.Popen')
     subprocess._fork_exec=sentinel('subprocess._fork_exec')
     _posixsubprocess.fork_exec=sentinel('_posixsubprocess.fork_exec')
@@ -100,6 +105,11 @@ def main():
             ('signal_handler',lambda:signal.signal(signal.SIGTERM,signal.SIG_DFL)),
             ('signal_wakeup_fd',lambda:signal.set_wakeup_fd(-1)),
             ('signal_alarm',lambda:signal.alarm(0)),
+            ('raw_signal_handler',lambda:_signal.signal(_signal.SIGTERM,_signal.SIG_DFL)),
+            ('raw_signal_wakeup_fd',lambda:_signal.set_wakeup_fd(-1)),
+            ('raw_signal_raise',lambda:_signal.raise_signal(_signal.SIGTERM)),
+            ('socketpair',lambda:socket.socketpair()),
+            ('raw_socketpair',lambda:_socket.socketpair()),
         ]
         for name,call in cases:rejected(name,call)
         # Audit-only effects are represented by API stubs that emit the same
