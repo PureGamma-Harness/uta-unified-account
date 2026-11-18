@@ -91,6 +91,11 @@ Matcher 构造器与停市前段提取为 AST，在内存行和不可执行的�
 实验脚本中显式构造 snapshot，并记录精确提交、模式与运行范围。现有 authority
 不可通过替换正在运行的 writer 二进制测试本实验。
 
+本提交改变 `uta/matching.py` 的源码指纹，选择 scan 时也必须遵守 managed
+authority 的代码绑定。已有 authority 的离线升级与旧决策的精确 artifact 回放
+须按各自契约独立验证；本 PR 没有提供该升级，也不允许改写 marker 或伪造历史
+manifest 来接管旧库。以下回滚操作仍须满足目标 authority 的代码与格式兼容门槛。
+
 回滚先按既有入口排空及 writer 停止手册完成停机，再使用匹配账务格式的候选版本
 恢复 scan 构造。保留所有已确认成交、订单、分录和审计，不删除数据库、不重建 ID，
 不降级持久 guard/schema。因为本变更无数据迁移，模式切换本身不需要财务补偿。
