@@ -1,4 +1,6 @@
 {
+  "CODE_delta_parent": "eb778b916459407c231d2244a266ce1dfa443b56",
+  "DB_byte_read_policy": "Only after all observed native closes, intact profiles, no sticky observer/forbidden errors, exact connect/handle path accounting and quiescent declared threads. Otherwise stat-only NOT_OPENED and no qualification repair. Caller also refuses bytes without this proof.",
   "UTA_source_count": 64,
   "base_public_source_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
   "bounds": {
@@ -82,15 +84,15 @@
     "old-empty",
     "review"
   ],
-  "independent_ENTRY_CALLER_CODE": "PENDING",
+  "independent_ENTRY_CALLER_CODE": "PENDING_LIMITED_DELTA_AND_ORIGINAL_REVIEW",
   "independent_account_delta": "df21d9ce415bac3ad8a10e297a437c562facfa75",
   "independent_risk_delta": "f665e4e20975a04cd57d476694a68a77a389887b",
-  "input_bytes": 1487710,
+  "input_bytes": 1490461,
   "input_count": 69,
   "input_files": {
     "docs/funding-obligations-sql6-once-contract.md": {
-      "bytes": 9169,
-      "sha256": "a59ba7652893816ddd21098bfb38fecef76f2eec282fa00586830b44d9146955"
+      "bytes": 10458,
+      "sha256": "3219fad1c16dcf2a8a4c88248656c9372dd409d24692e6223b66065c08dcd13c"
     },
     "evidence/reviews/funding-obligations-local/sql6-manual-oracle.json": {
       "bytes": 9517,
@@ -105,8 +107,8 @@
       "sha256": "e9b1e44c9ea46d28a8d432384c873f028e3ac8952a944b439f3126fe92594825"
     },
     "tools/run_funding_obligations_sql6_once.py": {
-      "bytes": 43324,
-      "sha256": "80b12ec5c1120caab75a5ab4a995312f4ad3ee56febbbca74ac700451c5e9422"
+      "bytes": 44786,
+      "sha256": "80bc312ad254fdb1f8e3d38068050fece9fb26eee87a076c7f365be2127cf9a4"
     },
     "uta/__init__.py": {
       "bytes": 104,
@@ -388,7 +390,7 @@
   "resource_semantics": "Native connect/handle audit; native successful close c_return observed on original object in its own thread via bounded profile; no factory/connect/close replacement or cross-thread SQL probe. Only original two executor threads allowed in method4; restored finally.",
   "retained_test_semantics": "Whole original six methods and original scenario; existing CASE_ROOT retains; scenario wrapper only retains returned object and verifies fixed order. No extra setup/no finance/SQL/market methods replaced.",
   "schema": 1,
-  "source_origin_commit": "27c8b4668b3efd18cac1f4a82c8a331ac15a1e6d",
+  "source_origin_commit": "3b459f797d2fd526d81f9cefb97002d7e5c91d60",
   "stop_policy": "First FAIL/UNKNOWN; no later SQL oracle or target retry. Preserve DBs and all original output. Later EOF/reap cannot repair timely completion.",
   "target_compile_import_SQL_test_thread_worker_attempts": 0,
   "unsupported_production": [
