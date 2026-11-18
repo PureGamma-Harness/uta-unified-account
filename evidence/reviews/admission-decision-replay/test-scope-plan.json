@@ -1,0 +1,120 @@
+{
+  "attempts": 0,
+  "correction_history": {
+    "compatibility_choice": "fresh synthetic only; no existing-authority migration, old/new-policy coexistence or writer-handoff acceptance; retain rejection and exact code binding.",
+    "finding": "ADMISSION-RO-HALT-SHAPE-001",
+    "first_owner": "90ba4beda98e9bc1a58bb64a5345db91c64f6906",
+    "first_source": "8be1838b04224d43c348a86030471c8e4051e0b6",
+    "first_target_attempts": 0,
+    "new_target_attempts": 0,
+    "original_independent_review": "a9ac9cf2928f635cbfd5da6a7c31e071938204e1",
+    "original_manifest_copy": "source-manifest-90ba-original.json",
+    "original_manifest_sha256": "8b5cb9cc33ceb902ef434aab864d04e4c1d40216e41a780947877b2b160e7c26",
+    "original_plan_copy": "test-scope-plan-90ba-original.json",
+    "original_plan_sha256": "7aaa8cf28b0276d6360ed530f62a7cd11814eb5130e9b9cb765ee736500778f9",
+    "runtime_delta_from_original": "Only common native-boolean validation of both captured halt states; existing_services and financial admission/capture code unchanged."
+  },
+  "entrypoint_status": "Prepared unittest sources and fixed selectors only; a separately reviewed bounded outer execution launcher is required before GO.",
+  "execution_authorized": false,
+  "existing_artifact_requirement": "Original exact artifact/source/Python/SQLite matching is retained; no compatible-math bypass.",
+  "format": 1,
+  "independent_delta_review": "PENDING",
+  "manual_oracle_source": "docs/admission-decision-replay.md#manual-examples-and-proposed-verification",
+  "preparation_bookkeeping": {
+    "affected_owned_paths": [
+      "docs/admission-decision-replay.md",
+      "evidence/reviews/admission-decision-replay/source-manifest.json",
+      "evidence/reviews/admission-decision-replay/test-scope-plan.json",
+      "tests/test_admission_policy_reference.py",
+      "tests/test_decision_admission_capture.py"
+    ],
+    "cause": "owned tracked paths outside positive sparse patterns were not materialized after merge",
+    "event": "metadata freeze first attempt FileNotFoundError after merging independent review into sparse worktree",
+    "financial_runtime_or_private_authority_changed": false,
+    "new_target_attempts": 0,
+    "original_target_attempts": 0,
+    "physical_identity_note": "Restored files have new physical identities/timestamps; their frozen source bytes are unchanged. No executed first-run source identity is claimed.",
+    "resolution": "restored only these exact missing tracked paths from HEAD; all nine branch-owned paths then byte-compared to Git. Earlier two new independent review files were likewise exact-restored. No broad sparse reapply.",
+    "stage": "before input rebinding or target execution"
+  },
+  "profiles": {
+    "pure": {
+      "matching_calls_allowed": 0,
+      "method_count": 7,
+      "native_workers_allowed": 0,
+      "network_calls_allowed": 0,
+      "passive_sqlite_library_imports_permitted": true,
+      "proposed_control_logical_disk_bytes": 8388608,
+      "proposed_cpu_affinity": [
+        1
+      ],
+      "proposed_drain_seconds": 2,
+      "proposed_shared_raw_bytes_including_failure_trailer": 32768,
+      "proposed_target_wall_limit_seconds": 10,
+      "reserved_failure_trailer_bytes": 512,
+      "selectors": [
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_requires_native_boolean_halt_state",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail"
+      ],
+      "sql_statements_allowed": 0,
+      "sqlite_authority_count": 0,
+      "sqlite_connection_calls_allowed": 0,
+      "test_module": "tests/test_admission_policy_reference.py"
+    },
+    "sql": {
+      "fresh_local_authority_count": 4,
+      "full_existing_service_reopen_accepted": false,
+      "launcher_open_requirements": [
+        "Fresh exclusive private run root; tempfile operations confined to that root by the reviewed launcher.",
+        "Declare exact allowed database and sidecar paths after tempfile-directory construction, with aggregate logical disk accounting and per-file limits; do not claim logical monitoring is a hard quota.",
+        "Capture and bound stdout/stderr across the entire target/launcher interval, including EOF and failure trailer.",
+        "Record source bytes before/after, actual caller monotonic start/end and exit/reap; no inferred future exit.",
+        "On first failure or unknown result, retain original artifacts and stop; no automatic warmup, refresh or retry."
+      ],
+      "local_apply_fill_calls": 1,
+      "matching_calls_allowed": 0,
+      "method_count": 4,
+      "native_workers_allowed": 0,
+      "network_calls_allowed": 0,
+      "private_data_policy": "All databases, sidecars, full source/code capsules and binding metadata stay private; export only explicitly reviewed finite synthetic projections.",
+      "proposed_cpu_affinity": [
+        1
+      ],
+      "proposed_drain_seconds": 3,
+      "proposed_shared_raw_bytes_including_failure_trailer": 262144,
+      "proposed_target_wall_limit_seconds": 30,
+      "reserved_failure_trailer_bytes": 512,
+      "selectors": [
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision",
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence",
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage",
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+      ],
+      "source_argument_ambiguity_negative_fixture": 1,
+      "test_module": "tests/test_decision_admission_capture.py"
+    }
+  },
+  "root_approval_and_independent_code_review_required": true,
+  "scope_note": "No command in this plan is an execution authorization. The pure profile is reviewed first; SQL requires a separate GO.",
+  "source_commit": "be3c5c3ad695caedf438e09a25461571855fc43d",
+  "source_manifest": "evidence/reviews/admission-decision-replay/source-manifest.json",
+  "source_manifest_sha256": "649e85fe996a2a93e3e3c3548807bd1e83934f701ff4127d1c6e228caa7243e1",
+  "status": "CODE_ONLY_NOT_RUN",
+  "unsupported_acceptance": [
+    "independent Cross risk/reserve model",
+    "historical freshness",
+    "fencing/HA",
+    "API authorization",
+    "rejected decision archive",
+    "all concurrent orders and arbitrary partial-fill orders",
+    "real paired matching",
+    "throughput or production",
+    "existing-authority admission-contract migration",
+    "coexisting-policy read reopen and writer handoff"
+  ]
+}

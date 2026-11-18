@@ -1,0 +1,58 @@
+{
+  "do_not_claim_repeated_success_or_rerun_to_green": true,
+  "first_new_source_failures_preserved": true,
+  "old137_first_failure_preserved_in_separate_scope": true,
+  "old_credit_policy_ERROR_IDs_no_longer_failed_in_all_selected_logs": true,
+  "precise_failure_cause_unresolved": true,
+  "public_source_lines": [
+    {
+      "line": 196,
+      "path": "tests/test_process_readiness.py",
+      "source": "self.assertTrue(self.router.diagnostics()[\"ready\"])",
+      "test_file_bytes_equal_base": true
+    },
+    {
+      "line": 74,
+      "path": "tests/test_startup_write_contention.py",
+      "source": "self.assertIsNone(failure, json.dumps(evidence, sort_keys=True))",
+      "test_file_bytes_equal_base": true
+    }
+  ],
+  "samples": [
+    {
+      "errors": 0,
+      "failures": 1,
+      "footer_bound": true,
+      "not_attributed_to_policy_or_timing_by_collection": true,
+      "observed_error_codes": [
+        "startup_keeper_failed",
+        "lease_expired"
+      ],
+      "observed_keeper_error_codes": [
+        "lease_expired"
+      ],
+      "phases": {
+        "constructed": true,
+        "entered": true,
+        "finished": false,
+        "renewal_requested": true,
+        "writer_held": true
+      },
+      "repository_frames_bound_to_Git": 1,
+      "root_cause": "UNDETERMINED",
+      "sample": "pr313-unit",
+      "test_id": "test_startup_write_contention.StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal"
+    },
+    {
+      "errors": 0,
+      "failures": 1,
+      "footer_bound": true,
+      "not_attributed_to_policy_or_timing_by_collection": true,
+      "observed_assertion": "diagnostics ready is False at existing assertion",
+      "repository_frames_bound_to_Git": 1,
+      "root_cause": "UNDETERMINED",
+      "sample": "push312-unit",
+      "test_id": "test_process_readiness.ProcessReadinessTests.test_partial_fanout_is_unready_until_exact_generation_finishes"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "GO": false,
+  "OPEN": [
+    "Four pure contracts have no actual runtime result here.",
+    "Unique bounded pure-entry proposal and separate root execution decision.",
+    "New exact-source normal CI including existing credit helper, stored bootstrap, artifact and restart tests.",
+    "Independent corrected-source first CI RAW review.",
+    "Original restart failure cause/closure remains unproved by this source-only review.",
+    "Capacity, migration, managed credit activation, replicated durability, disaster recovery, production and real funds remain unapproved."
+  ],
+  "all63_Git_and_physical_regular_input_pins_checked": true,
+  "blockers_in_scoped_source_delta": [],
+  "cause_proof": {
+    "distinguishing_key": "admission_contract",
+    "parent_order_envelope_top_level_fields": 11,
+    "persisted_credit_base_and_BASE_POLICY_FIELDS_top_level_fields": 10,
+    "result": "Different key sets force runtime base != persisted base even if all10 valuation values match. New credit path obtains explicit10-field valuation constructor; exact comparison remains unchanged."
+  },
+  "changed_runtime_files": [
+    "uta/credit_audit_v2.py",
+    "uta/decision_audit.py"
+  ],
+  "child_agents": 0,
+  "compatibility_and_release": {
+    "artifact_identity_changes_expected": true,
+    "custom_H1_AuthDB_probe": "BLOCKED_BY_PRIOR_AUTOMATIC_REVIEW; NOT_RETRIED_OR_REPLACED",
+    "existing_authority_reopen_migration_or_in_place_binary_upgrade_authorized": false,
+    "financial_history_or_policy_archive_rewrite_authorized": false,
+    "first_CI_16_credit_errors_plus1_restart_failure_context": "Reported context from root; this CODE review does not independently certify CI RAW or claim corrected restart PASS.",
+    "fresh_synthetic_authority_only": true,
+    "old_artifact_acceptance_must_not_be_inferred_from_equal_policy_values": true,
+    "original_PR52_first_RED_source_remains_original": true,
+    "rollback": "Use previous candidate code in separate fresh synthetic environment; preserve confirmed history and all old evidence."
+  },
+  "counterexamples_reviewed_by_source": [
+    {
+      "case": "valid fixed zero-fee USD/BTC Cross with caches0",
+      "reason": "Same10 runtime values can match authoritative persisted base; no admission key is introduced into credit envelope. Real persisted read remains unexecuted."
+    },
+    {
+      "case": "extra unknown_valuation_rule in returned runtime valuation dictionary",
+      "reason": "Existing supported-scope guard passes unchanged known fields, then complete dictionary inequality raises credit_audit_policy_mismatch. No filtering or normalize step."
+    },
+    {
+      "case": "runtime order_precision7 vs persisted8",
+      "reason": "Complete dictionary inequality raises credit_audit_policy_mismatch."
+    },
+    {
+      "case": "extra unknown stored trading/risk policy field or stored precision7",
+      "reason": "Unchanged _persisted_policy uses exact _fields sets and native int8 precision constraints; rejects prior to successful comparison."
+    },
+    {
+      "case": "order archive contract",
+      "reason": "DecisionAudit.policy explicit merge yields same11 values as parent. Unchanged canonical sort_keys serializer and archive/install/replay call sites retain admission_contract and v1 evidence checks."
+    }
+  ],
+  "credit_file_reverse_one_call_replacement_equals_complete_parent_file": true,
+  "decision": "LIMITED_CODE_CLOSED_NOT_RUN",
+  "execution_authorized": false,
+  "input_bytes": 1301397,
+  "input_files": 63,
+  "order_policy_explicitly_readds_admission_contract": true,
+  "parent_first_RED_source": "137562a0f3fcb5e8d8c608746b41ab19349ec6b8",
+  "plan": {
+    "bytes": 9997,
+    "sha256": "2d71b7b12d2cf8d9fc9666c1bca4fc07f9819ad4554971cbd1fd322c0adbb15f"
+  },
+  "preserved_contracts": [
+    "All persisted-policy reconstruction, exact dictionary inequality, supported currency/fee/cache constraints remain byte-identical.",
+    "BASE_POLICY_FIELDS and dedicated credit format2/base format1 remain unchanged.",
+    "Full credit replay, transitions, borrow/repay mutations, debt and collateral mathematics, DDL, source authority and artifact checks are in unchanged59 runtime files or unchanged portions proven by single-call reverse comparison.",
+    "Order snapshot/control/replay service source unchanged; contract is still attached to archived order policy, unlike the credit valuation dictionary.",
+    "New valuation dictionaries are reconstructed per call; scales dict, JSON-decoded catalog/rules and execution-options dictionary are fresh. Canonical JSON avoids insertion-order changes in archived policy IDs."
+  ],
+  "pure_contracts": {
+    "expected_credit_base_is_explicit_literal_shape_not_production_valuation_result": true,
+    "fake_exchange_is_SimpleNamespace_and_no_Database_or_DecisionAudit_instance_constructed": true,
+    "method_count": 4,
+    "methods": [
+      "AdmissionCreditPolicyContracts.test_valuation_fields_preserve_the_exact_credit_wire_contract",
+      "AdmissionCreditPolicyContracts.test_order_envelope_preserves_admission_and_copies_runtime_values",
+      "AdmissionCreditPolicyContracts.test_credit_policy_does_not_consume_the_order_admission_envelope",
+      "AdmissionCreditPolicyContracts.test_exact_credit_comparison_rejects_changed_and_unknown_valuation_fields"
+    ],
+    "no_SQL_or_AuthDB_operation_on_reviewed_test_paths": true,
+    "not_independent_product_risk_reference_or_SQL_restart_acceptance": true,
+    "persisted_read_is_mocked": true,
+    "status": "CODE_ONLY_NOT_RUN"
+  },
+  "runtime_python_files": 61,
+  "schema": "independent-admission-credit-policy-CODE-v1",
+  "source_commit": "ea41be1b2cf7373b2e2404460407771863274509",
+  "target_import_compile_test_SQL_native_AuthDB_CI_PID_probe_calls": 0,
+  "unchanged_runtime_files_vs_parent": 59,
+  "valuation_constructor_equals_parent_policy_constructor_except_removed_explicit_admission_key_and_name_docstring": true
+}

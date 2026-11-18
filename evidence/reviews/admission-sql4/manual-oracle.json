@@ -1,0 +1,265 @@
+{
+  "account": "alice",
+  "aggregate": {
+    "Matcher_calls": 0,
+    "accepted_order_replays": 3,
+    "account_versions_sum": 8,
+    "decision_replays": 4,
+    "decision_rows": 4,
+    "fees_USD": "0.02",
+    "fill_admission_unsupported": 1,
+    "fill_rows": 1,
+    "fresh_authorities": 4,
+    "ledger_events": 5,
+    "local_apply_fill_calls": 1,
+    "order_rows": 3,
+    "paired_match_count_claim": false,
+    "policy_rows": 5,
+    "read_only_guard_negative_cases": 4,
+    "source_arguments_expected_rejections": 1
+  },
+  "case_clock": "2026-11-18T09:00:00+00:00",
+  "cases": {
+    "coexist": {
+      "account_version": 1,
+      "balances": {
+        "customer:alice": "10.04",
+        "system:custody": "-10.04"
+      },
+      "decision_count": 0,
+      "decisions": {},
+      "deposit_USD": "10.04",
+      "fills_count": 0,
+      "halted": false,
+      "ledger_events": 1,
+      "native_matcher_calls": 0,
+      "orders": {},
+      "orders_count": 0,
+      "policy_count": 2,
+      "positions": {},
+      "risk": {
+        "available_margin": "10.04",
+        "equity": "10.04",
+        "initial_margin": "0",
+        "maintenance_margin": "0",
+        "open_order_margin": "0"
+      },
+      "scales": {
+        "USD": 2
+      },
+      "source_arguments": "EXPECTED_AMBIGUOUS_REJECTION",
+      "uta_events": 4
+    },
+    "configured": {
+      "account_version": 4,
+      "balances": {
+        "customer:alice": "99.98",
+        "system:custody": "-100",
+        "system:fees": "0.02"
+      },
+      "decision_count": 3,
+      "decisions": {
+        "FILL_CONFIRMED:fill": {
+          "fee": "0.02",
+          "order_id": "open",
+          "pnl": "0",
+          "post_version": 3,
+          "pre_version": 2,
+          "price": "100",
+          "quantity": "0.5"
+        },
+        "ORDER_ACCEPTED:close": {
+          "fee": "0.02",
+          "pnl": "0",
+          "post_version": 4,
+          "pre_version": 3,
+          "projected": {
+            "available_margin": "94.94",
+            "equity": "99.96",
+            "initial_margin": "0",
+            "maintenance_margin": "0",
+            "open_order_margin": "5.02"
+          },
+          "reserve": "0.02"
+        },
+        "ORDER_ACCEPTED:open": {
+          "fee": "0.04",
+          "pnl": "0",
+          "post_version": 2,
+          "pre_version": 1,
+          "projected": {
+            "available_margin": "89.96",
+            "equity": "99.96",
+            "initial_margin": "10",
+            "maintenance_margin": "5",
+            "open_order_margin": "0"
+          },
+          "reserve": "10.04"
+        }
+      },
+      "deposit_USD": "100",
+      "fills_count": 1,
+      "halted": false,
+      "ledger_events": 2,
+      "native_matcher_calls": 0,
+      "orders": {
+        "close": {
+          "charged_fee": "0",
+          "fee_notional": "0",
+          "filled_quantity": "0",
+          "limit_price": "100",
+          "quantity": "-0.5",
+          "reduce_only": 1,
+          "status": "OPEN",
+          "version": 4
+        },
+        "open": {
+          "charged_fee": "0.02",
+          "fee_notional": "50",
+          "filled_quantity": "0.5",
+          "limit_price": "100",
+          "quantity": "1",
+          "reduce_only": 0,
+          "status": "PARTIALLY_FILLED",
+          "version": 3
+        }
+      },
+      "orders_count": 2,
+      "policy_count": 1,
+      "positions": {
+        "BTC-PERP": [
+          "0.5",
+          "50"
+        ]
+      },
+      "risk": {
+        "available_margin": "89.94",
+        "equity": "99.98",
+        "initial_margin": "5",
+        "maintenance_margin": "2.5",
+        "open_order_margin": "5.04"
+      },
+      "scales": {
+        "BTC": 8,
+        "USD": 2
+      },
+      "source_arguments": "UNIQUE",
+      "uta_events": 7
+    },
+    "mm-equality": {
+      "account_version": 1,
+      "balances": {
+        "customer:alice": "10.04",
+        "system:custody": "-10.04"
+      },
+      "decision_count": 0,
+      "decisions": {},
+      "deposit_USD": "10.04",
+      "fills_count": 0,
+      "halted": false,
+      "ledger_events": 1,
+      "native_matcher_calls": 0,
+      "orders": {},
+      "orders_count": 0,
+      "policy_count": 1,
+      "positions": {},
+      "risk": {
+        "available_margin": "10.04",
+        "equity": "10.04",
+        "initial_margin": "0",
+        "maintenance_margin": "0",
+        "open_order_margin": "0"
+      },
+      "scales": {
+        "USD": 8
+      },
+      "source_arguments": "UNIQUE",
+      "uta_events": 4
+    },
+    "ordinary": {
+      "account_version": 2,
+      "balances": {
+        "customer:alice": "10.04",
+        "system:custody": "-10.04"
+      },
+      "decision_count": 1,
+      "decisions": {
+        "ORDER_ACCEPTED:order": {
+          "fee": "0.04",
+          "pnl": "0",
+          "post_version": 2,
+          "pre_version": 1,
+          "projected": {
+            "available_margin": "0",
+            "equity": "10",
+            "initial_margin": "10",
+            "maintenance_margin": "5",
+            "open_order_margin": "0"
+          },
+          "reserve": "10.04"
+        }
+      },
+      "deposit_USD": "10.04",
+      "fills_count": 0,
+      "halted": true,
+      "ledger_events": 1,
+      "native_matcher_calls": 0,
+      "orders": {
+        "order": {
+          "charged_fee": "0",
+          "fee_notional": "0",
+          "filled_quantity": "0",
+          "limit_price": "100",
+          "quantity": "1",
+          "reduce_only": 0,
+          "status": "OPEN",
+          "version": 2
+        }
+      },
+      "orders_count": 1,
+      "policy_count": 1,
+      "positions": {},
+      "risk": {
+        "available_margin": "0",
+        "equity": "10.04",
+        "initial_margin": "0",
+        "maintenance_margin": "0",
+        "open_order_margin": "10.04"
+      },
+      "scales": {
+        "USD": 2
+      },
+      "source_arguments": "UNIQUE",
+      "uta_events": 6
+    }
+  },
+  "fee_rate": "0.0004",
+  "fixture_order": [
+    "ordinary",
+    "mm-equality",
+    "configured",
+    "coexist"
+  ],
+  "methods": [
+    "test_ordinary_capture_and_known_id_retry_preserve_original_decision",
+    "test_mm_equality_rejection_has_no_fabricated_accepted_evidence",
+    "test_configured_projection_and_reduce_only_have_explicit_coverage",
+    "test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+  ],
+  "schema": 1,
+  "scope_counts": {
+    "Matcher_calls": 0,
+    "fresh_databases": 4,
+    "original_method_known_order_retry": 1,
+    "original_method_local_apply_fill_calls": 1,
+    "original_methods_source_argument_rejections": 1,
+    "original_test_methods": 4,
+    "post_oracle_archived_order_copy_negative_groups": 12,
+    "post_oracle_guard_denied_DML_transactions": 4,
+    "post_oracle_source_argument_rejections": 1,
+    "scope_note": "Counts are proposed source/manual expectations, not observed results. Detached-copy checks are not new unittest methods or committed business actions.",
+    "total_declared_source_argument_rejections": 2
+  },
+  "status": "MANUAL_ORACLE_CODE_ONLY_NOT_RUN",
+  "symbol": "BTC-PERP"
+}
