@@ -6,7 +6,7 @@ supported. This file is CODE-only until separately reviewed and authorized.
 """
 import argparse
 import ast
-from contextlib import ExitStack
+import builtins
 import ctypes
 import fcntl
 from hashlib import sha256
@@ -31,7 +31,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 DRIVER = "tests/native_sh_capture_native_once.py"
-PLAN = "evidence/reviews/native-sh-capture-handshake/native-executor-plan.json"
+PLAN = "evidence/reviews/native-sh-capture-handshake/native-executor-plan-v2.json"
 CASE = "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
 PROTECTED = frozenset((4471, 8784, 122905, 122907, 123007, 123009, 310035, 310039, 310266, 310269))
 RAW_CAP, RAW_TRAILER = 262144, 512
@@ -40,6 +40,8 @@ DATA_CAP, DATA_HEADROOM, EVIDENCE_CAP = 33554432, 4194304, 8388608
 FINAL_EVIDENCE_RESERVE = 262144
 MAX_FRAME, SAMPLE_SECONDS = 65536, .05
 ROLE_LIMITS = {"financial": 8, "tracker": 2, "case_parent": 1}
+EXIT_CONTEXT = {}
+REAL_EXIT = os._exit
 
 
 class ScopeUnknown(RuntimeError):
@@ -59,6 +61,16 @@ def ready(fd):
     poller = select.poll()
     poller.register(fd, select.POLLIN)
     return bool(poller.poll(0))
+
+
+def dispatch_owned(record, sig, deadline, *, fd=None, siginfo=None, flags=0):
+    """Last check after all logging/IPC, immediately before the real syscall."""
+    deny_pid(record["identity"]["pid"])
+    checked = time.monotonic()
+    if checked >= deadline:
+        return False
+    signal.pidfd_send_signal(record["pidfd"] if fd is None else fd, sig, siginfo, flags)
+    return True
 
 
 def identity(pid, procfd=None):
@@ -92,10 +104,13 @@ def bind_new(pid, *, parents, receipt):
     if not receipt:
         raise ScopeUnknown("no positive creation receipt")
     procfd = os.open(f"/proc/{pid}", os.O_PATH | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
-    first = identity(pid, procfd)
-    if first["ppid"] not in parents or first["uid"] != os.geteuid():
+    try:
+        first = identity(pid, procfd)
+        if first["ppid"] not in parents or first["uid"] != os.geteuid():
+            raise ScopeUnknown("new child parent/UID differs")
+    except BaseException:
         os.close(procfd)
-        raise ScopeUnknown("new child parent/UID differs")
+        raise
     try:
         fd = os.pidfd_open(pid)
     except BaseException:
@@ -182,8 +197,9 @@ class EventFile:
 
 class ParentLedger:
     """Only the new case parent: actual stdlib birth/wait receipts, held fds."""
-    def __init__(self, channel):
+    def __init__(self, channel, deadline):
         self.channel, self.lock = channel, threading.RLock()
+        self.deadline = deadline
         self.records, self.by_pid, self.test_fds = [], {}, {}
         self.counts = {"financial": 0, "tracker": 0}
         self.pending_shard, self.unknown, self.stopped = None, [], set()
@@ -208,6 +224,15 @@ class ParentLedger:
         if record is None:
             self.fail("PID has no new-child birth receipt")
         return record
+
+    def case_identity(self, pid):
+        record = self.record_for(pid)
+        if ready(record["pidfd"]):
+            raise FileNotFoundError("held new child has exited")
+        current = identity(pid, record["procfd"])
+        if not birth_equal(current, record["identity"]):
+            self.fail("held-procdir child identity differs")
+        return {key: current[key] for key in ("pid", "start_ticks", "boot_id", "uid", "state")}
 
     def classify_spawn(self, path, argv):
         if str(Path(os.fsdecode(path)).resolve()) != str(Path(sys.executable).resolve()):
@@ -275,7 +300,8 @@ class ParentLedger:
         if ready(record["pidfd"]):
             return
         self.event("OWN_SIGNAL_ENTRY", birth=record["birth"], signal=int(sig), reason=reason)
-        signal.pidfd_send_signal(record["pidfd"], sig)
+        if not dispatch_owned(record, sig, self.deadline):
+            self.fail("absolute51 deadline refused parent signal")
         self.event("OWN_SIGNAL_RETURN", birth=record["birth"], signal=int(sig), reason=reason)
 
     def finish(self, tracker):
@@ -389,7 +415,8 @@ class TestSignal:
         elif record["birth"] not in self.ledger.stopped:
             self.ledger.fail("undo/cleanup signal is not this fixture's own stop")
         self.ledger.event("TEST_SIGNAL_ENTRY", birth=record["birth"], signal=int(sig), fd=fd)
-        signal.pidfd_send_signal(fd, sig, siginfo, flags)
+        if not dispatch_owned(record, sig, self.ledger.deadline, fd=fd, siginfo=siginfo, flags=flags):
+            self.ledger.fail("absolute51 deadline refused test signal")
         self.ledger.event("TEST_SIGNAL_RETURN", birth=record["birth"], signal=int(sig), fd=fd)
 
 
@@ -408,13 +435,13 @@ def parent_case(config, channel):
     validate_loaded(mp_util.spawnv_passfds, config["stdlib_files"])
     validate_loaded(type(tracker._resource_tracker).ensure_running, config["stdlib_files"])
     validate_loaded(type(tracker._resource_tracker)._stop_locked, config["stdlib_files"])
-    ledger = ParentLedger(channel)
+    ledger = ParentLedger(channel, config["absolute_deadline_monotonic"])
     ledger.real_spawn = mp_util.spawnv_passfds
     spec = importlib.util.spec_from_file_location("test_durable_faults", root / "tests/test_durable_faults.py")
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    original_temp, original_kernel = module.TemporaryDirectory, module.bound_router_shared_flocks
+    original_temp = module.TemporaryDirectory
     authority_tmp = Path(config["output"]) / "authority-tmp"
 
     class KeptTemporaryDirectory(original_temp):
@@ -432,7 +459,56 @@ def parent_case(config, channel):
         record = ledger.record_for(pid)
         if not birth_equal(owner, record["identity"]):
             ledger.fail("kernel observer binding differs from new child")
-        value = original_kernel(pid, owner, path, file_identity)
+        # Same kernel predicates as the original helper, reached exclusively
+        # through creator-held procdir anchors. A reused integer cannot redirect
+        # fd/fdinfo reads. Missing/exited identity is an error, never fake SH.
+        ledger.case_identity(pid)
+        current = path.stat(follow_symlinks=False)
+        if (current.st_dev, current.st_ino) != file_identity:
+            raise AssertionError("router lock file identity changed")
+        value = []
+        infofd = os.open("fdinfo", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=record["procfd"])
+        try:
+            for name in os.listdir(infofd):
+                if not name.isdigit():
+                    ledger.fail("unexpected kernel descriptor name")
+                try:
+                    if os.readlink("fd/" + name, dir_fd=record["procfd"]) != str(path):
+                        continue
+                    details = os.stat("fd/" + name, dir_fd=record["procfd"])
+                    if (details.st_dev, details.st_ino) != file_identity:
+                        raise AssertionError("worker lock descriptor targets a different inode")
+                    fd = os.open(name, os.O_RDONLY | os.O_CLOEXEC, dir_fd=infofd)
+                    try:
+                        chunks, size = [], 0
+                        while size <= 65536:
+                            chunk = os.read(fd, min(8192, 65537 - size))
+                            if not chunk:
+                                break
+                            chunks.append(chunk)
+                            size += len(chunk)
+                        content = b"".join(chunks).decode()
+                    finally:
+                        os.close(fd)
+                    if size > 65536:
+                        ledger.fail("kernel fdinfo exceeds bounded observation")
+                except FileNotFoundError:
+                    continue
+                for line in content.splitlines():
+                    fields = line.split()
+                    if (len(fields) == 9 and fields[0] == "lock:"
+                            and fields[2:5] == ["FLOCK", "ADVISORY", "READ"]
+                            and fields[5] == str(pid) and fields[7:] == ["0", "EOF"]):
+                        device = fields[6].split(":")
+                        if (len(device) != 3 or int(device[0], 16) != os.major(current.st_dev)
+                                or int(device[1], 16) != os.minor(current.st_dev)
+                                or int(device[2]) != current.st_ino):
+                            raise AssertionError("kernel lock record differs from router lock identity")
+                        value.append({"fd": int(name), "kernel_record": line,
+                                      "device": current.st_dev, "inode": current.st_ino})
+        finally:
+            os.close(infofd)
+        ledger.case_identity(pid)
         ledger.pre_sh[pid] = value
         ledger.event("ACTUAL_KERNEL_SH", birth=record["birth"], records=value)
         return value
@@ -485,13 +561,22 @@ def parent_case(config, channel):
 
     case.setUp = setup
     setattr(case, CASE, body)
-    saved_wait = os.waitpid
-    saved_spawn = mp_util.spawnv_passfds
+    saved_import = builtins.__import__
+
+    def case_import(name, globals=None, locals=None, fromlist=(), level=0):
+        imported = saved_import(name, globals, locals, fromlist, level)
+        # Only original test/undo helper local imports are adapted. Native
+        # financial modules and worker code receive the real module unchanged.
+        if (globals is module.__dict__ and name == "uta.durable_process"
+                and tuple(fromlist) == ("_process_identity",) and level == 0):
+            return types.SimpleNamespace(_process_identity=ledger.case_identity)
+        return imported
     try:
         module.TemporaryDirectory = KeptTemporaryDirectory
         module.bound_router_shared_flocks = kernel_records
         module.os, module.signal = TestOS(ledger), TestSignal(ledger)
         os.waitpid, mp_util.spawnv_passfds = ledger.waitpid, ledger.spawn
+        builtins.__import__ = case_import
         def cancelled(signum, frame):
             ledger.fail("outer cancelled this new case scope")
         signal.signal(signal.SIGTERM, cancelled)
@@ -503,10 +588,12 @@ def parent_case(config, channel):
             unknowns=ledger.unknown, actual_affinity=sorted(os.sched_getaffinity(0)))
         return 0 if result.wasSuccessful() and not ledger.unknown else 1
     finally:
-        os.waitpid, mp_util.spawnv_passfds = saved_wait, saved_spawn
-        for record in ledger.records:
-            os.close(record["pidfd"])
-            os.close(record["procfd"])
+        # This interpreter has exactly one case and ends through REAL_EXIT.
+        # Keep registration/wait/identity gates and held fds live until then:
+        # a residual monitor cannot spawn/wait through restored raw callbacks
+        # or observe a closed/reused ledger fd during final status persistence.
+        # Normal original TestCase teardown already ran, unchanged.
+        EXIT_CONTEXT["parent_ledger_retained_until_real_exit"] = True
 
 
 def private_totals(output):
@@ -605,9 +692,13 @@ def outer(args):
         if {key: fact[key] for key in ("bytes", "sha256")} != pin:
             raise ScopeUnknown("declared stdlib spawn/wait source differs")
         stdlib_before[name] = fact
+    started = time.monotonic()
+    deadline = started + 51
+    EXIT_CONTEXT.update(output=output, deadline=deadline, actor="outer")
     config = {"revision": args.source_commit, "output": str(output), "source_copy": str(source_copy),
         "python": plan["python_executable"], "expected_sqlite": args.sqlite_version,
-        "files": plan["input_files"], "stdlib_files": plan["stdlib_files"]}
+        "files": plan["input_files"], "stdlib_files": plan["stdlib_files"],
+        "absolute_deadline_monotonic": deadline}
     config_raw = encode(config)
     env.private_file(output / "inner-config.json", config_raw)
     events_fd = env.private_file(output / "events.jsonl")
@@ -625,41 +716,12 @@ def outer(args):
         "plan_sha256": args.plan_sha256, "driver_sha256": args.driver_sha256, "before": before,
         "proposed_wall_seconds": 45, "cleanup_seconds": 6, "cpu": [1], "protected_deny": sorted(PROTECTED),
         "prior_scope_reused": False, "future_exit_not_attested": True}))
-    started = time.monotonic()
     launch_started_ns = time.monotonic_ns()
-    process = subprocess.Popen(command, cwd=source_copy, start_new_session=True, stdin=subprocess.DEVNULL,
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE, pass_fds=(child_socket.fileno(),), close_fds=True,
-        env={**os.environ, "TMPDIR": str(output / "authority-tmp"), "PYTHONDONTWRITEBYTECODE": "1"})
-    child_socket.close()
-    try:
-        leader = bind_new(process.pid, parents={os.getpid()}, receipt="actual_new_Popen_return")
-    except BaseException:
-        # Inner waits for START_CASE before imports/authority/children. Closing
-        # this private channel makes that new unreleased actor exit; no PID
-        # lookup, bare/group signal or existing PID cleanup is used here.
-        parent_socket.close()
-        try:
-            process.wait(timeout=2)
-        except subprocess.TimeoutExpired:
-            pass
-        raise
-    if leader["identity"]["group"] != process.pid or leader["identity"]["session"] != process.pid:
-        raise ScopeUnknown("new leader did not own a new private session")
-    env.private_file(output / "ACTUAL_LAUNCH.json", encode({"started_monotonic_ns": launch_started_ns,
-        "bound_monotonic_ns": time.monotonic_ns(), "argv": command,
-        "actual_new_leader_identity": leader["identity"], "future_exit_not_attested": True}))
-    leader.update(role="case_parent", birth="case_parent")
-    records, by_pid, counts = {"case_parent": leader}, {process.pid: "case_parent"}, {"financial": 0, "tracker": 0}
-    self_record = bind_new(os.getpid(), parents={os.getppid()}, receipt="new_outer_self")
+    process, leader, self_record, selector = None, None, None, None
+    records, by_pid, counts = {}, {}, {"financial": 0, "tracker": 0}
     unknowns, case_end, all_terminal, authority_totals = [], None, None, []
     watchdog, cleanup_started, killed = False, None, False
-    selector = selectors.DefaultSelector()
-    selector.register(parent_socket, selectors.EVENT_READ, "control")
-    for label, stream in (("stdout", process.stdout), ("stderr", process.stderr)):
-        os.set_blocking(stream.fileno(), False)
-        selector.register(stream, selectors.EVENT_READ, label)
-    events.write({"kind": "OWNED_LEADER", "identity": leader["identity"], "creation_receipt": leader["receipt"]})
-
+    exit_status, started_case = 126, False
     def note_unknown(reason):
         if reason not in unknowns:
             unknowns.append(reason)
@@ -672,26 +734,39 @@ def outer(args):
                               "at": time.monotonic()}, cleanup=True)
             except BaseException:
                 note_unknown("cleanup_event_capture_failed")
-            signal.pidfd_send_signal(record["pidfd"], sig)
+            if not dispatch_owned(record, sig, deadline):
+                note_unknown("absolute51_deadline_refused_outer_signal")
+                return False
+            return True
 
     def register(message, receipt, *, expected_parent):
         nonlocal records
         pid = message["identity"]["pid"]
         deny_pid(pid)
         role = message["role"]
+        birth = message.get("birth")
         if role not in ("financial", "tracker", "unknown_descendant", "pending_birth"):
             raise ScopeUnknown("new child role is not declared")
+        if type(birth) is not str or not 1 <= len(birth) <= 96 or birth in records:
+            raise ScopeUnknown("new child birth frame is invalid or duplicated")
         existing = records.get(by_pid.get(pid))
-        if existing is not None and existing["role"] == "pending_birth" and birth_equal(existing["identity"], message["identity"]):
-            records.pop(existing["birth"])
+        reuse_pending = (existing is not None and existing["role"] == "pending_birth"
+            and birth_equal(existing["identity"], message["identity"]))
+        if reuse_pending:
             record = existing
         else:
             record = bind_new(pid, parents={expected_parent, os.getpid()}, receipt=receipt)
-        if not birth_equal(record["identity"], message["identity"]):
-            os.close(record["pidfd"])
-            os.close(record["procfd"])
-            raise ScopeUnknown("parent/outer held birth differs")
-        record.update(role=role, shard=message.get("shard"), birth=message["birth"])
+        try:
+            if not birth_equal(record["identity"], message["identity"]):
+                raise ScopeUnknown("parent/outer held birth differs")
+        except BaseException:
+            if not reuse_pending:
+                os.close(record["pidfd"])
+                os.close(record["procfd"])
+            raise
+        if reuse_pending:
+            records.pop(record["birth"])
+        record.update(role=role, shard=message.get("shard"), birth=birth)
         records[record["birth"]], by_pid[pid] = record, record["birth"]
         if role in counts:
             counts[role] += 1
@@ -738,10 +813,33 @@ def outer(args):
             except BaseException:
                 note_unknown("reap_event_capture_failed")
 
-    last_sample = 0.0
     try:
+        process = subprocess.Popen(command, cwd=source_copy, start_new_session=True, stdin=subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, pass_fds=(child_socket.fileno(),), close_fds=True,
+            env={**os.environ, "TMPDIR": str(output / "authority-tmp"), "PYTHONDONTWRITEBYTECODE": "1"})
+        child_socket.close()
+        # Owning finally already covers every statement after actual Popen.
+        leader = bind_new(process.pid, parents={os.getpid()}, receipt="actual_new_Popen_return")
+        leader.update(role="case_parent", birth="case_parent")
+        records["case_parent"], by_pid[process.pid] = leader, "case_parent"
+        if leader["identity"]["group"] != process.pid or leader["identity"]["session"] != process.pid:
+            raise ScopeUnknown("new leader did not own a new private session")
+        env.private_file(output / "ACTUAL_LAUNCH.json", encode({"started_monotonic_ns": launch_started_ns,
+            "bound_monotonic_ns": time.monotonic_ns(), "argv": command,
+            "actual_new_leader_identity": leader["identity"], "future_exit_not_attested": True}))
+        self_record = bind_new(os.getpid(), parents={os.getppid()}, receipt="new_outer_self")
+        selector = selectors.DefaultSelector()
+        selector.register(parent_socket, selectors.EVENT_READ, "control")
+        for label, stream in (("stdout", process.stdout), ("stderr", process.stderr)):
+            os.set_blocking(stream.fileno(), False)
+            selector.register(stream, selectors.EVENT_READ, label)
+        events.write({"kind": "OWNED_LEADER", "identity": leader["identity"], "creation_receipt": leader["receipt"]})
+        last_sample = 0.0
+        if time.monotonic() >= deadline:
+            raise ScopeUnknown("absolute51 expired before START_CASE")
         send(parent_socket, {"kind": "START_CASE", "source_commit": args.source_commit})
-        while time.monotonic() - started < 51:
+        started_case = True
+        while time.monotonic() < deadline:
             now = time.monotonic()
             for key, _ in selector.select(.01):
                 if key.data in ("stdout", "stderr"):
@@ -840,12 +938,13 @@ def outer(args):
             and case_end.get("tests_run") == 1 and case_end.get("case_passed") is True
             and not any(case_end.get(key) for key in ("failures", "errors", "skipped", "expected_failures", "unexpected_successes"))
             and leader["exit"] == 0)
-        if time.monotonic() - started > 51:
+        if time.monotonic() >= deadline:
             note_unknown("actual_native_envelope_exceeded_51_seconds")
             passed = False
         qualification = "NATIVE_SINGLE_CASE_PASS" if passed else "UNKNOWN" if unknowns else "NATIVE_SINGLE_CASE_FAIL"
         exit_status = 0 if passed else 125 if raw.failed else 126 if unknowns else 1
-        raw.trailer({"event": "NSHC_NATIVE_END", "qualification": qualification,
+        raw.trailer({"event": "NSHC_NATIVE_END", "qualification": "PENDING_FINAL_RETURN",
+            "observed_candidate": qualification, "future_exit_not_attested": True,
             "host_exit": leader["exit"], "leader_reaped": leader["reaped"], "all_new_children_terminal": all_exited,
             "envelope_exit": exit_status})
         if raw.failed:
@@ -858,7 +957,8 @@ def outer(args):
         if sum(value["bytes"] for value in raw_facts.values()) > RAW_CAP:
             note_unknown("actual_raw_limit")
             qualification, exit_status = "UNKNOWN", 125
-        end = {"qualification": qualification, "envelope_exit": exit_status,
+        end = {"qualification": "PENDING_FINAL_RETURN", "observed_candidate": qualification,
+            "proposed_envelope_exit": exit_status, "future_exit_not_attested": True,
             "source_commit": args.source_commit, "actual_host_exit": leader["exit"], "actual_host_reaped": leader["reaped"],
             "actual_elapsed_seconds": time.monotonic() - started,
             "case_end": case_end, "unknowns": unknowns, "watchdog": watchdog, "data_sample_seconds": SAMPLE_SECONDS,
@@ -872,50 +972,101 @@ def outer(args):
         if len(encode(end)) > FINAL_EVIDENCE_RESERVE // 2:
             raise ScopeUnknown("final metadata reservation exceeded")
         env.private_file(output / "END.json", encode(end))
-        return exit_status
     finally:
-        # Every exceptional route uses the same held new handles. No old PID,
-        # bare kill, group kill, global process walk or imported authority exists.
+        # Covers Popen, all pre-START setup and every subsequent exception.
+        # A not-yet-bound actor receives channel EOF; only creation-held
+        # positive handles may dispatch signals, always before absolute51.
+        try:
+            parent_socket.close()
+        except BaseException:
+            note_unknown("control_close_failed")
+        try:
+            child_socket.close()
+        except BaseException:
+            note_unknown("child_channel_close_failed")
         for record in list(records.values()):
-            if not ready(record["pidfd"]):
-                try:
+            try:
+                if not ready(record["pidfd"]):
                     own_signal(record, signal.SIGKILL)
-                except BaseException:
-                    pass
-        # Exception cleanup has the same absolute51s bound. Drain known pipes
-        # and collect actual own/adopted-child waits; a missing result stays UNKNOWN.
-        while time.monotonic() - started < 51 and any(not row["reaped"] for row in records.values()):
+            except BaseException:
+                note_unknown("exception_cleanup_signal_unknown")
+        if process is not None and leader is None:
+            # START was never released. Direct Popen wait is a creator receipt,
+            # not a lookup/adoption of this integer and never dispatches a signal.
+            note_unknown("new_leader_binding_incomplete")
+            try:
+                process.wait(timeout=max(0, deadline - time.monotonic()))
+            except BaseException:
+                note_unknown("unbound_new_leader_reap_unknown")
+        while time.monotonic() < deadline and any(not row["reaped"] for row in records.values()):
             try:
                 reap_owned()
             except BaseException:
                 note_unknown("exception_cleanup_reap_unknown")
-            for stream, label in ((process.stdout, "stdout"), (process.stderr, "stderr")):
-                if not stream.closed:
-                    try:
-                        block = os.read(stream.fileno(), 8192)
-                        if block:
-                            raw.write(label, block)
-                    except BlockingIOError:
-                        pass
-            time.sleep(.01)
+            if process is not None:
+                for stream, label in ((process.stdout, "stdout"), (process.stderr, "stderr")):
+                    if not stream.closed:
+                        try:
+                            os.set_blocking(stream.fileno(), False)
+                            block = os.read(stream.fileno(), 8192)
+                            if block:
+                                raw.write(label, block)
+                        except BlockingIOError:
+                            pass
+                        except BaseException:
+                            note_unknown("exception_cleanup_pipe_unknown")
+            time.sleep(min(.01, max(0, deadline - time.monotonic())))
+        terminal = bool(leader is not None and leader["reaped"]
+            and all(row["reaped"] and ready(row["pidfd"]) for row in records.values()))
+        if not terminal:
+            note_unknown("final_registered_terminal_evidence_incomplete")
+        if time.monotonic() >= deadline:
+            note_unknown("absolute51_before_final_ownership")
         try:
-            env.private_file(output / "FINAL_OWNERSHIP.json", encode({"leader_exit": leader["exit"],
-                "leader_reaped": leader["reaped"], "all_registered_new_children_terminal":
-                    all(row["reaped"] and ready(row["pidfd"]) for row in records.values()),
+            env.private_file(output / "FINAL_OWNERSHIP.json", encode({
+                "leader_exit": None if leader is None else leader["exit"],
+                "leader_reaped": False if leader is None else leader["reaped"],
+                "unbound_creator_handle_exit": None if process is None else process.returncode,
+                "START_CASE_sent": started_case, "all_registered_new_children_terminal": terminal,
                 "unknowns": unknowns, "elapsed_seconds": time.monotonic() - started,
-                "production_approved": False}))
+                "future_exit_not_attested": True, "production_approved": False}))
         except BaseException:
-            pass
-        for record in [self_record, *records.values()]:
-            os.close(record["pidfd"])
-            os.close(record["procfd"])
-        for stream in (process.stdout, process.stderr):
-            if not stream.closed:
-                stream.close()
-        selector.close()
-        parent_socket.close()
+            note_unknown("final_ownership_write_failed")
+        for record in ([self_record] if self_record is not None else []) + list(records.values()):
+            for name in ("pidfd", "procfd"):
+                try:
+                    os.close(record[name])
+                except BaseException:
+                    note_unknown("held_handle_close_failed")
+        if process is not None:
+            for stream in (process.stdout, process.stderr):
+                try:
+                    if not stream.closed:
+                        stream.close()
+                except BaseException:
+                    note_unknown("pipe_close_failed")
+        if selector is not None:
+            try:
+                selector.close()
+            except BaseException:
+                note_unknown("selector_close_failed")
         for fd in (events_fd, out_fd, err_fd):
-            os.close(fd)
+            try:
+                os.fsync(fd)
+            except BaseException:
+                note_unknown("final_raw_fsync_failed")
+            finally:
+                try:
+                    os.close(fd)
+                except BaseException:
+                    note_unknown("raw_descriptor_close_failed")
+    # No in-try return can retain a pre-fsync PASS. CLI hard-exit repeats the
+    # check after its own durable status/flush; external actual exit is required.
+    if time.monotonic() >= deadline:
+        note_unknown("absolute51_after_durable_finalization")
+    if unknowns:
+        exit_status = 125 if raw.failed else 126
+    return exit_status
 
 
 def inner(args):
@@ -940,6 +1091,10 @@ def inner(args):
     config = json.loads(raw)
     if config["source_copy"] != str(ROOT) or config["output"] != str(ROOT.parent):
         raise ScopeUnknown("inner output/source root differs")
+    deadline = config["absolute_deadline_monotonic"]
+    if type(deadline) not in (int, float) or not 0 < deadline < 2**53:
+        raise ScopeUnknown("inner absolute deadline is invalid")
+    EXIT_CONTEXT.update(output=ROOT.parent, deadline=deadline, actor="inner")
     for name, pin in config["files"].items():
         path = Path(config["source_copy"]) / name
         data = path.read_bytes()
@@ -953,6 +1108,51 @@ def inner(args):
         return parent_case(config, channel)
     finally:
         channel.close()
+
+
+def finish_process(status):
+    """Never enter multiprocessing atexit, including failed log/flush paths.
+
+    This durable observation proposes an exit; only the separate launcher can
+    attest actual exit/reap and the final elapsed bound.
+    """
+    status = status if type(status) is int and 0 <= status <= 255 else 126
+    try:
+        if EXIT_CONTEXT:
+            deadline = EXIT_CONTEXT["deadline"]
+            if time.monotonic() >= deadline:
+                status = 126
+            data = encode({"event": "NSHC_NATIVE_PRE_EXIT_OBSERVATION",
+                "actor": EXIT_CONTEXT["actor"], "proposed_exit": status,
+                "before_absolute51": time.monotonic() < deadline,
+                "observed_monotonic_ns": time.monotonic_ns(),
+                "future_exit_not_attested": True, "production_approved": False})
+            path = EXIT_CONTEXT["output"] / (EXIT_CONTEXT["actor"].upper() + "_PRE_EXIT.json")
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+            try:
+                if os.write(fd, data) != len(data):
+                    raise ScopeUnknown("pre-exit observation short write")
+                os.fsync(fd)
+            finally:
+                os.close(fd)
+    except BaseException:
+        status = 126
+    finally:
+        try:
+            sys.stdout.flush()
+            sys.stderr.flush()
+        except BaseException:
+            status = 126
+        finally:
+            # Recheck after every write/fsync/flush. No durable earlier claim
+            # can turn a late actual return into success. No atexit callbacks.
+            try:
+                if EXIT_CONTEXT and time.monotonic() >= EXIT_CONTEXT["deadline"]:
+                    status = 126
+            except BaseException:
+                status = 126
+            finally:
+                REAL_EXIT(status)
 
 
 if __name__ == "__main__":
@@ -969,10 +1169,13 @@ if __name__ == "__main__":
     parser.add_argument("--config-sha256")
     parser.add_argument("--event-fd", type=int)
     args = parser.parse_args()
+    status = 126
     try:
-        status = inner(args) if args.inner else outer(args)
-    except BaseException as error:
-        print(encode({"event": "NSHC_NATIVE_CONTROLLER_UNKNOWN", "error_type": type(error).__name__,
-                      "qualification": "UNKNOWN", "production_approved": False}).decode(), file=sys.stderr, end="", flush=True)
-        status = 126
-    raise SystemExit(status)
+        try:
+            status = inner(args) if args.inner else outer(args)
+        except BaseException as error:
+            status = 126
+            print(encode({"event": "NSHC_NATIVE_CONTROLLER_UNKNOWN", "error_type": type(error).__name__,
+                          "qualification": "UNKNOWN", "production_approved": False}).decode(), file=sys.stderr, end="", flush=True)
+    finally:
+        finish_process(status)
