@@ -88,6 +88,7 @@ def application_trace(frame, event, argument):
 sys.settrace(application_trace)
 import argparse
 import hashlib
+from importlib.machinery import BuiltinImporter, ExtensionFileLoader, ModuleSpec
 import json
 import runpy
 import shutil
@@ -132,6 +133,69 @@ def regular_bytes(path, expected_size=None):
             or expected_size is not None and details.st_size != expected_size):
         raise ValueError("source is not the declared regular materialized file")
     return path.read_bytes()
+
+
+def binary_descriptor(value):
+    """Hash the actual regular binary without reading process maps or state."""
+    declared = Path(value)
+    if not declared.is_absolute() or declared.parts[:2] == ("/", "proc"):
+        raise ValueError("binary metadata requires an absolute non-proc path")
+    path = declared.resolve()
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError("binary metadata target is not a regular file")
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        while True:
+            data = stream.read(131072)
+            if not data:
+                break
+            digest.update(data)
+    after = path.lstat()
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    if tuple(getattr(before, name) for name in fields) != tuple(getattr(after, name) for name in fields):
+        raise ValueError("binary metadata target changed during hashing")
+    return {"declared_path": str(declared), "resolved_path": str(path),
+            "bytes": after.st_size, "sha256": digest.hexdigest()}
+
+
+def sqlite_runtime_descriptor(sqlite_module, native_module):
+    """Describe this execution's builtin or extension, never assume __file__."""
+    spec = getattr(native_module, "__spec__", None)
+    if (type(spec) is not ModuleSpec or spec.name != "_sqlite3"
+            or getattr(native_module, "__name__", None) != "_sqlite3"
+            or getattr(native_module, "__loader__", None) is not spec.loader):
+        raise ValueError("unrecognized SQLite native module specification")
+    module_file = getattr(native_module, "__file__", None)
+    builtin_name = "_sqlite3" in sys.builtin_module_names
+    claims_builtin = builtin_name or spec.loader is BuiltinImporter or spec.origin == "built-in"
+    if claims_builtin:
+        if (not builtin_name or spec.loader is not BuiltinImporter or spec.origin != "built-in"
+                or spec.has_location is not False or module_file is not None):
+            raise ValueError("SQLite builtin metadata is inconsistent")
+        module = {"kind": "builtin", "spec_name": spec.name, "spec_origin": spec.origin,
+                  "loader": "importlib.machinery.BuiltinImporter", "in_builtin_module_names": True,
+                  "declared_path": None, "resolved_path": None, "bytes": None, "sha256": None}
+    else:
+        loader = spec.loader
+        if (type(loader) is not ExtensionFileLoader or spec.has_location is not True
+                or loader.name != spec.name or type(module_file) is not str
+                or type(spec.origin) is not str or type(loader.path) is not str):
+            raise ValueError("SQLite native module is neither verified builtin nor extension")
+        paths = (Path(module_file), Path(spec.origin), Path(loader.path))
+        if any(not value.is_absolute() or value.parts[:2] == ("/", "proc") for value in paths):
+            raise ValueError("SQLite extension metadata has an unsupported path")
+        resolved = tuple(value.resolve() for value in paths)
+        if not resolved[0] == resolved[1] == resolved[2]:
+            raise ValueError("SQLite extension module/spec/loader paths differ")
+        module = {"kind": "extension", "spec_name": spec.name, "spec_origin": spec.origin,
+                  "loader": "importlib.machinery.ExtensionFileLoader", "in_builtin_module_names": False,
+                  **binary_descriptor(module_file)}
+    return {"python_version": sys.version, "sqlite_version": sqlite_module.sqlite_version,
+            "python_executable": binary_descriptor(sys.executable), "sqlite_module": module,
+            "loaded_libraries": None, "loaded_libraries_status": "NOT_OBSERVED",
+            "runtime_attestation_complete": False,
+            "scope": "current interpreter and SQLite module descriptor; no proc/maps or complete loaded-library attestation"}
 
 
 def verify_sources(root, manifest):
@@ -309,9 +373,11 @@ def main():
     original_after = verify_sources(ROOT, manifest)
     if after != pins or original_after != pins:
         raise AssertionError("source changed during the actual once scope")
+    runtime_descriptor = sqlite_runtime_descriptor(sqlite3, _sqlite3)
     result.update({"source_commit": args.source_commit, "source_unchanged": True, "loaded_uta_origins": origins,
                    "source_before_sha256": pins, "snapshot_after_sha256": after, "original_after_sha256": original_after,
-                   "sqlite_version": sqlite3.sqlite_version, "sqlite_extension_sha256": hashlib.sha256(Path(_sqlite3.__file__).read_bytes()).hexdigest(),
+                   "sqlite_version": sqlite3.sqlite_version, "sqlite_extension_sha256": runtime_descriptor["sqlite_module"]["sha256"],
+                   "runtime_descriptor": runtime_descriptor,
                    "python_version": sys.version, "actual_affinity": sorted(os.sched_getaffinity(0)),
                    "driver_elapsed_seconds": monotonic() - STARTED, "checkpoints": CHECKPOINTS,
                    "max_observed_logical_bytes": MAX_OBSERVED_BYTES, "kernel_directory_quota_proven": False,
