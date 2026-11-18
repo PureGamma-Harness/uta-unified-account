@@ -29,6 +29,18 @@ transactional scenario, package and bounded formal checks will supply fresh
 evidence for the final integrated SHA. Do not execute historical component
 plans against this tree and relabel their old source pins.
 
+Independent CODE580f1ae6 blocked the initial integration before execution:
+the ordinary tag test compared the current runtime with a historical plan's
+source hashes. The revised test retains that strict injected-pin branch for
+frozen runs. Ordinary tests instead independently read the current canonical,
+regular source files using a versioned61-path inventory, bounded no-follow
+reads and matching hashes/metadata before and after artifact calculation.
+They do not call production source-enumeration helpers to form expectations.
+Historical plans, financial runtime, validators, exclusions and unknown-object
+negative controls are unchanged. This test correction is NOT_RUN pending
+independent delta review; the combined suite remains unaccepted. Future module
+inventory changes require an explicit test-inventory version update.
+
 Known first failures remain visible: PR45's ordinary publication router_busy
 error is not explained by its SH fixture; PR46's original descriptor errors
 and separate capture-undo failure are retained. The corrected descriptor's
