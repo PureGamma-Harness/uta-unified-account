@@ -1,7 +1,7 @@
 """Fixed once-only parent FD capture for four local admission SQL methods.
 
-Four new synthetic DBs only; no existing authority or service. The sole target
-is an owned timeout/taskset interpreter executing retained approved buffers.
+Four new synthetic DBs only, with read-only reopen of those newly created here.
+The sole target is an owned timeout/taskset interpreter executing retained buffers.
 """
 import argparse
 import base64

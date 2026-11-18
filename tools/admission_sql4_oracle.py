@@ -93,6 +93,9 @@ def verify_cases(owned, expected_db, oracle, read_regular, closed_handles, disk_
             account_rows = [tuple(row) for row in connection.execute("SELECT account_id,version FROM uta_accounts")]
             if account_rows != [("alice", expected["account_version"])]:
                 raise ValueError("full account/version inventory differs")
+            deposits = [tuple(row) for row in connection.execute("SELECT account_id,event_id,asset,amount FROM uta_deposits")]
+            if len(deposits) != 1 or deposits[0][:3] != ("alice", "fund", "USD") or Decimal(deposits[0][3]) != Decimal(expected["deposit_USD"]):
+                raise ValueError("original deposit receipt inventory differs")
             positions = {row["symbol"]: [Fraction(Decimal(row["quantity"])), Fraction(Decimal(row["cost_basis"]))]
                          for row in connection.execute("SELECT * FROM uta_positions") if row["account_id"] == "alice"}
             all_positions = connection.execute("SELECT COUNT(*) FROM uta_positions").fetchone()[0]
