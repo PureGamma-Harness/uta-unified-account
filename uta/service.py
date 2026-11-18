@@ -17,7 +17,7 @@ import re
 import sqlite3
 from typing import Callable, Mapping
 
-from .decision_audit import DecisionAudit
+from .decision_audit import ADMISSION_CONTRACT, DecisionAudit
 from .ledger import LedgerError, Posting
 from .market import MarketSnapshot
 from .market_cache import MAX_CACHE_CAPACITY as MAX_MARKET_CACHE_CAPACITY, MarketDecodeCache
@@ -814,8 +814,9 @@ class ExchangeService:
             # must retain strictly positive maintenance surplus. Revalue the
             # whole projected account after settlement rounding and fees.
             next_positions, pnl = self._project_fill(positions, symbol, quantity, limit_price)
+            fee = self._fee(quantity, limit_price)
             projected = self._risk(connection, account_id, market, positions=next_positions,
-                                   balance_delta=_exact(Fraction(pnl) - Fraction(self._fee(quantity, limit_price))))
+                                   balance_delta=_exact(Fraction(pnl) - Fraction(fee)))
             self._require_maintenance_surplus(projected)
         audit_before = self._audit_state(connection, account_id) if self.audit is not None else None
         market_id = self.audit.market_ref(connection, market) if self.audit is not None else None
@@ -834,7 +835,10 @@ class ExchangeService:
                            "limit_price": price_text, "reduce_only": reduce_only},
                 summary={"reserved_margin": _text(reserve), "risk_before": current,
                          "risk_after": self._risk(connection, account_id, market),
-                         "projected_execution": projected if reduce_only else None}, recorded_at=self._now().isoformat())
+                         "projected_execution": projected,
+                         "admission": {"format": 1, "contract": ADMISSION_CONTRACT,
+                                       "projected_realized_pnl": _text(pnl),
+                                       "projected_fee": _text(fee)}}, recorded_at=self._now().isoformat())
         self._event(connection, "ORDER_ACCEPTED", account_id, result)
         return result
 

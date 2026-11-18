@@ -43,8 +43,10 @@ prove normal unittest fixture compatibility. The corrected fixture initializes
 the actual backing fields, checks both real property getters and rejects
 assignment, while the revised pure scope retains both original descriptors.
 The old first plan is preserved byte-for-byte. This correction changes no
-financial runtime, database evidence or prior outcome; its tests are NOT_RUN
-pending independent review. Keep the PR draft and real-funds enablement blocked until
+financial runtime, database evidence or prior outcome. Its unique pure run
+passed six methods/fifteen recorded cases, actual caller exit0/reap in
+229264668ns, with independent CODE568d8c3e and RAW2f84e016. Post-fix full CI
+is pending. Keep the PR draft and real-funds enablement blocked until
 independent release review and explicit launch approval.
 
 There is no schema migration. First deploy to a new synthetic, code-bound

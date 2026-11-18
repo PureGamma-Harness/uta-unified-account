@@ -1,0 +1,80 @@
+{
+  "attempts": 0,
+  "entrypoint_status": "Prepared unittest sources and fixed selectors only; a separately reviewed bounded outer execution launcher is required before GO.",
+  "execution_authorized": false,
+  "existing_artifact_requirement": "Original exact artifact/source/Python/SQLite matching is retained; no compatible-math bypass.",
+  "format": 1,
+  "manual_oracle_source": "docs/admission-decision-replay.md#manual-examples-and-proposed-verification",
+  "profiles": {
+    "pure": {
+      "matching_calls_allowed": 0,
+      "method_count": 6,
+      "native_workers_allowed": 0,
+      "network_calls_allowed": 0,
+      "proposed_control_logical_disk_bytes": 8388608,
+      "proposed_cpu_affinity": [
+        1
+      ],
+      "proposed_drain_seconds": 2,
+      "proposed_shared_raw_bytes_including_failure_trailer": 32768,
+      "proposed_target_wall_limit_seconds": 10,
+      "reserved_failure_trailer_bytes": 512,
+      "selectors": [
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify",
+        "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail"
+      ],
+      "sql_statements_allowed": 0,
+      "sqlite_authority_count": 0,
+      "test_module": "tests/test_admission_policy_reference.py"
+    },
+    "sql": {
+      "fresh_local_authority_count": 3,
+      "launcher_open_requirements": [
+        "Fresh exclusive private run root; tempfile operations confined to that root by the reviewed launcher.",
+        "Declare exact allowed database and sidecar paths after tempfile-directory construction, with aggregate logical disk accounting and per-file limits; do not claim logical monitoring is a hard quota.",
+        "Capture and bound stdout/stderr across the entire target/launcher interval, including EOF and failure trailer.",
+        "Record source bytes before/after, actual caller monotonic start/end and exit/reap; no inferred future exit.",
+        "On first failure or unknown result, retain original artifacts and stop; no automatic warmup, refresh or retry."
+      ],
+      "local_apply_fill_calls": 1,
+      "matching_calls_allowed": 0,
+      "method_count": 3,
+      "native_workers_allowed": 0,
+      "network_calls_allowed": 0,
+      "private_data_policy": "All databases, sidecars, full source/code capsules and binding metadata stay private; export only explicitly reviewed finite synthetic projections.",
+      "proposed_cpu_affinity": [
+        1
+      ],
+      "proposed_drain_seconds": 3,
+      "proposed_shared_raw_bytes_including_failure_trailer": 262144,
+      "proposed_target_wall_limit_seconds": 30,
+      "reserved_failure_trailer_bytes": 512,
+      "selectors": [
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision",
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence",
+        "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage"
+      ],
+      "test_module": "tests/test_decision_admission_capture.py"
+    }
+  },
+  "root_approval_and_independent_code_review_required": true,
+  "scope_note": "No command in this plan is an execution authorization. The pure profile is reviewed first; SQL requires a separate GO.",
+  "source_commit": "8be1838b04224d43c348a86030471c8e4051e0b6",
+  "source_manifest": "evidence/reviews/admission-decision-replay/source-manifest.json",
+  "source_manifest_sha256": "8b5cb9cc33ceb902ef434aab864d04e4c1d40216e41a780947877b2b160e7c26",
+  "status": "CODE_ONLY_NOT_RUN",
+  "unsupported_acceptance": [
+    "independent Cross risk/reserve model",
+    "historical freshness",
+    "fencing/HA",
+    "API authorization",
+    "rejected decision archive",
+    "all concurrent orders and arbitrary partial-fill orders",
+    "real paired matching",
+    "throughput or production"
+  ]
+}

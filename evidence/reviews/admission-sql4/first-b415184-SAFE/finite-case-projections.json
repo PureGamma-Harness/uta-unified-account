@@ -1,0 +1,124 @@
+{
+  "coexist": {
+    "actual_row_manual_cash_position_risk_equal": true,
+    "customer_USD_cash_from_sealed_rows": "10.04",
+    "decision_rows": 0,
+    "decision_statuses": [],
+    "fees_USD_from_sealed_rows": "0",
+    "full_automatic_open_existing_services_accepted": false,
+    "known_argument_RO_join": true,
+    "ledger_events": 1,
+    "local_unpaired_fill_rows": 0,
+    "main_DB_sha256_before_after": "03f775802c5f25ead65f55faf244de8c3098d44291a295183c3ed44d6a7c70e0",
+    "manual_risk_expected": {
+      "available_margin": "10.04",
+      "equity": "10.04",
+      "initial_margin": "0",
+      "maintenance_margin": "0",
+      "open_order_margin": "0"
+    },
+    "order_rows": 0,
+    "policy_rows": 2,
+    "query_only_guard_denied_DML_and_poisoned_commit": true,
+    "schema_rows_and_main_DB_bytes_unchanged": true,
+    "source_arguments": "EXPECTED_AMBIGUOUS_REJECTION",
+    "source_rows_schema_digest": "ebeba5b0c2068571a7ea884bc68b7e5fb5d29659a91f8ee7a0a1b971d3e48cd0"
+  },
+  "configured": {
+    "actual_row_manual_cash_position_risk_equal": true,
+    "customer_USD_cash_from_sealed_rows": "99.98",
+    "decision_rows": 3,
+    "decision_statuses": [
+      {
+        "admission_status": "VERIFIED",
+        "business_key": "ORDER_ACCEPTED:open",
+        "numerical_matches": true
+      },
+      {
+        "admission_status": "UNSUPPORTED",
+        "business_key": "FILL_CONFIRMED:fill",
+        "numerical_matches": true
+      },
+      {
+        "admission_status": "VERIFIED",
+        "business_key": "ORDER_ACCEPTED:close",
+        "numerical_matches": true
+      }
+    ],
+    "fees_USD_from_sealed_rows": "0.02",
+    "full_automatic_open_existing_services_accepted": false,
+    "known_argument_RO_join": true,
+    "ledger_events": 2,
+    "local_unpaired_fill_rows": 1,
+    "main_DB_sha256_before_after": "f8ec6cbb97d71fca40052bb4c20fc4a8b2f9928afcdc5e45bb26caad5d51b1ac",
+    "manual_risk_expected": {
+      "available_margin": "89.94",
+      "equity": "99.98",
+      "initial_margin": "5",
+      "maintenance_margin": "2.5",
+      "open_order_margin": "5.04"
+    },
+    "order_rows": 2,
+    "policy_rows": 1,
+    "query_only_guard_denied_DML_and_poisoned_commit": true,
+    "schema_rows_and_main_DB_bytes_unchanged": true,
+    "source_arguments": "UNIQUE",
+    "source_rows_schema_digest": "9b1e26bcee1888b0ab4d503544f8ec2b1a59c337a84fb5d8a180154b1863fdb1"
+  },
+  "mm-equality": {
+    "actual_row_manual_cash_position_risk_equal": true,
+    "customer_USD_cash_from_sealed_rows": "10.04",
+    "decision_rows": 0,
+    "decision_statuses": [],
+    "fees_USD_from_sealed_rows": "0",
+    "full_automatic_open_existing_services_accepted": false,
+    "known_argument_RO_join": true,
+    "ledger_events": 1,
+    "local_unpaired_fill_rows": 0,
+    "main_DB_sha256_before_after": "3ae590445da18d8cec317ac3de7dd12001f306537a62d992bcbc2a3af6c4be5e",
+    "manual_risk_expected": {
+      "available_margin": "10.04",
+      "equity": "10.04",
+      "initial_margin": "0",
+      "maintenance_margin": "0",
+      "open_order_margin": "0"
+    },
+    "order_rows": 0,
+    "policy_rows": 1,
+    "query_only_guard_denied_DML_and_poisoned_commit": true,
+    "schema_rows_and_main_DB_bytes_unchanged": true,
+    "source_arguments": "UNIQUE",
+    "source_rows_schema_digest": "30e3d77f90c4f9119622cb2bcca4381b200e0cd2a725fab23af17d7d98d198a9"
+  },
+  "ordinary": {
+    "actual_row_manual_cash_position_risk_equal": true,
+    "customer_USD_cash_from_sealed_rows": "10.04",
+    "decision_rows": 1,
+    "decision_statuses": [
+      {
+        "admission_status": "VERIFIED",
+        "business_key": "ORDER_ACCEPTED:order",
+        "numerical_matches": true
+      }
+    ],
+    "fees_USD_from_sealed_rows": "0",
+    "full_automatic_open_existing_services_accepted": false,
+    "known_argument_RO_join": true,
+    "ledger_events": 1,
+    "local_unpaired_fill_rows": 0,
+    "main_DB_sha256_before_after": "b7187c9b6572e4a0a1bd8964092b138a841e8e8b7c154bab268bbcb0c36c98f9",
+    "manual_risk_expected": {
+      "available_margin": "0",
+      "equity": "10.04",
+      "initial_margin": "0",
+      "maintenance_margin": "0",
+      "open_order_margin": "10.04"
+    },
+    "order_rows": 1,
+    "policy_rows": 1,
+    "query_only_guard_denied_DML_and_poisoned_commit": true,
+    "schema_rows_and_main_DB_bytes_unchanged": true,
+    "source_arguments": "UNIQUE",
+    "source_rows_schema_digest": "e633d7d80b8a4871c52d37f77231e86b299f29d6aea0489918e2ed95ba65ca66"
+  }
+}
