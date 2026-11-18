@@ -1,0 +1,433 @@
+{
+  "case_count": 17,
+  "cases": [
+    {
+      "case_id": "PFH-M01",
+      "exact_rational_results": {
+        "H": "12",
+        "N": "0",
+        "P": "12",
+        "U": "0",
+        "accrual_equity": "88",
+        "available_margin_effective": "38",
+        "raw_USD_spendable_before_projected_margin": "88",
+        "risk_equity_effective": "88"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 8,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M02",
+      "exact_rational_results": {
+        "H": "19",
+        "N": "20",
+        "P": "19",
+        "U": "0",
+        "accrual_equity": "101",
+        "available_margin_effective": "31",
+        "risk_equity_effective": "81"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 7,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M03",
+      "exact_rational_results": {
+        "H": "1/50",
+        "cash_debits": [
+          "1/100",
+          "1/100"
+        ],
+        "waived_subunits": [
+          "1/200",
+          "1/200"
+        ]
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 3,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M04",
+      "exact_rational_results": {
+        "IM": "11/5",
+        "MM": "11/10",
+        "P_after_funding": "0",
+        "available_after_fee": "284/5",
+        "available_after_funding": "284/5",
+        "available_before_fee": "289/5",
+        "base_cash_ledger_equity": "78",
+        "cash_after_fee": "99",
+        "cash_after_funding_applied": "91",
+        "interest_after_funding": "2",
+        "principal_after_funding": "20",
+        "risk_equity_after_fee": "69",
+        "risk_equity_after_funding": "69",
+        "risk_equity_before_fee": "70"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 14,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M05",
+      "exact_rational_results": {
+        "P_after_apply": "0",
+        "cash_after_apply": "-2",
+        "cash_deficit_after_apply": "2",
+        "interest_after_apply": "0",
+        "principal_after_apply": "0",
+        "risk_equity_after_apply": "-2",
+        "risk_equity_before_apply": "-2"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 7,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M06",
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED",
+      "sequence": [
+        {
+          "case_id": "PFH-M06",
+          "exact_rational_results": {
+            "N": "20",
+            "P": "19",
+            "accrual_equity": "101",
+            "available": "31",
+            "cash": "100",
+            "risk_equity": "81"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 6,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M06",
+          "exact_rational_results": {
+            "N": "20",
+            "P": "7",
+            "accrual_equity": "101",
+            "available": "31",
+            "cash": "88",
+            "risk_equity": "81"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 6,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M06",
+          "exact_rational_results": {
+            "N": "0",
+            "P": "7",
+            "accrual_equity": "101",
+            "available": "51",
+            "cash": "108",
+            "risk_equity": "101"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 6,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M06",
+          "exact_rational_results": {
+            "N": "0",
+            "P": "0",
+            "accrual_equity": "101",
+            "available": "51",
+            "cash": "101",
+            "risk_equity": "101"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 6,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        }
+      ]
+    },
+    {
+      "case_id": "PFH-M07",
+      "exact_rational_results": {
+        "H_after_expiry": "12",
+        "H_after_reclaim": "12",
+        "H_before_expiry": "12"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 3,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M08",
+      "exact_rational_results": {
+        "available_after_cancel": "50",
+        "available_before_cancel": "-10",
+        "confirmed_full_cancel_order_reserve": "0",
+        "risk_equity": "70",
+        "unacknowledged_cancel_available": "-10"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 5,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M09",
+      "exact_rational_results": {
+        "H_after_funding": "0",
+        "cash_after_funding": "5",
+        "post_funding_risk_equity": "5",
+        "risk_equity": "5"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 4,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M10",
+      "exact_rational_results": {
+        "if_resolved_rate_negative_N": "123/50",
+        "if_resolved_rate_negative_P": "0",
+        "if_resolved_rate_negative_cash_credit_before_apply": "0",
+        "initial_P": "0",
+        "initial_U": "6",
+        "released_buffer": "177/50",
+        "resolved_U": "0",
+        "resolved_cash_debit_P": "123/50",
+        "resolved_exact_debit": "2469/1000"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 9,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M11",
+      "exact_rational_results": {
+        "raw_USD_spendable": "88",
+        "receiving_subaccount_credit_before_transfer_commit": "0",
+        "withdraw_or_transfer_out_38_available_after": "0",
+        "withdraw_or_transfer_out_38_risk_equity_after": "50"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 4,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M12",
+      "exact_rational_results": {
+        "BTC_collateral_after": "105",
+        "BTC_collateral_before": "130",
+        "BTC_removed": "1/2",
+        "available_after": "143",
+        "available_before": "168",
+        "risk_equity_after": "193",
+        "risk_equity_before": "218"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 7,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M13",
+      "correction_authorization": "UNSUPPORTED_PROPOSAL_ONLY",
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED",
+      "sequence": [
+        {
+          "case_id": "PFH-M13",
+          "exact_rational_results": {
+            "N": "0",
+            "P": "12",
+            "cash": "100"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 3,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M13",
+          "exact_rational_results": {
+            "N": "2",
+            "P": "12",
+            "cash": "100",
+            "risk_equity": "88"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 4,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M13",
+          "exact_rational_results": {
+            "N": "2",
+            "P": "0",
+            "cash": "88",
+            "risk_equity": "88"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 4,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        },
+        {
+          "case_id": "PFH-M13",
+          "exact_rational_results": {
+            "N": "0",
+            "P": "0",
+            "cash": "90",
+            "risk_equity": "90"
+          },
+          "numeric_expectations_match": true,
+          "numerical_field_count": 4,
+          "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+        }
+      ]
+    },
+    {
+      "case_id": "PFH-M14",
+      "exact_rational_results": {
+        "MM_after_quote80": "4",
+        "conservative_quote": "80",
+        "effective_LTV_headroom": "88",
+        "effective_available": "88",
+        "risk_after_proceeds_leave_for_quote80": "8"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 5,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "allowed_effective_equities": [
+        "88",
+        "88"
+      ],
+      "arithmetic_consistent": true,
+      "case_id": "PFH-M15",
+      "forbidden_effective_equities": [
+        "100",
+        "76"
+      ],
+      "transaction_atomicity": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M16",
+      "exact_rational_results": {
+        "cash_after_first_apply": "-7",
+        "remaining_P": "10",
+        "risk_equity_when_valid_quotes_return": "-17"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 3,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    },
+    {
+      "case_id": "PFH-M17",
+      "exact_rational_results": {
+        "clearing_units": "-1",
+        "payer_cash_units": [
+          "0",
+          "0"
+        ],
+        "receiver_cash_units": "1",
+        "receiver_pending_credit_before_capital_and_apply": "0",
+        "required_confirmed_rounding_capital_units": "1"
+      },
+      "numeric_expectations_match": true,
+      "numerical_field_count": 5,
+      "runtime_or_fault_behavior": "NOT_EXECUTED_NOT_VALIDATED"
+    }
+  ],
+  "financial_operation_activation": false,
+  "findings": [
+    {
+      "id": "PFH-REV-B1",
+      "issue": "Unknown-rate U has no final_cut_sha yet, but the sole economic identity requires final_cut_sha. Specify a stable duty key, separate immutable exposure/final cut references and an atomic single-active representation transition.",
+      "status": "OPEN_RULE_DEFINITION_BLOCKER"
+    },
+    {
+      "id": "PFH-REV-B2",
+      "issue": "Mandatory payer cash can cross existing USD spot locks. Frozen<=gross remains a base invariant; choose atomic confirmed local cancellation before debit or explicitly fence out the unsupported spot-lock capability. Current-quote degradation alone does not resolve this state.",
+      "rational_counterexample": {
+        "P": "12",
+        "base_invariant": "95 <= 88 is false",
+        "base_risk_before": "5",
+        "cash_before": "100",
+        "effective_risk_before": "-7",
+        "existing_USD_spot_lock": "95",
+        "gross_USD_after": "88",
+        "mandatory_cash_after": "88",
+        "production_execution": "NOT_RUN",
+        "unchanged_frozen_USD": "95"
+      },
+      "status": "OPEN_SETTLEMENT_SCOPE_BLOCKER"
+    }
+  ],
+  "kind": "INDEPENDENT_SPECIFICATION_ARITHMETIC_REVIEW_NOT_RUNTIME_ACCEPTANCE",
+  "method": "stdlib Fraction from raw JSON strings; independent case-specific arithmetic; no target helpers/imports",
+  "numerical_field_comparisons": 123,
+  "parent": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+  "production_approved": false,
+  "runtime_gates_all_remain_not_run": true,
+  "source_pin_count": 13,
+  "source_pins": [
+    {
+      "exact_pin_match": true,
+      "path": "uta/funding_obligations.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/perpetual_funding.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/funding_local.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/service.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/portfolio.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/credit.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/decision_audit.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/spot.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/matching.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/storage.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "uta/ledger.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "tests/test_funding_obligations_local.py"
+    },
+    {
+      "exact_pin_match": true,
+      "path": "docs/durable-funding-obligations-delivery.md"
+    }
+  ],
+  "specification_commit": "bac842516abc8f1e8af42f8624b5cf28f31b5972",
+  "specification_signoff": "WITHHELD_PENDING_TWO_RULE_DEFINITIONS",
+  "traceability_counts": {
+    "all_rule_test_and_manual_references_resolve": true,
+    "invariants": 9,
+    "not_run_gates": 24,
+    "rules": 22
+  }
+}
