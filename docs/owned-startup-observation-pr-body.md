@@ -25,7 +25,9 @@ migration, customer API/error contract, lease duration or keeper deadline is
 changed. Private v1 diagnostic fields are a paired, strictly validated report
 extension. Its frozen8518a0b actual-QA-prefix fake fixture completed its unique
 authorized first6methods/32cases PASS,0FAIL/ERROR; full raw/host evidence is
-retained and awaits independent RAW closure. It does not execute package gates
+retained. Independent CODE review c741f0f and first-RAW review d64db05 both
+closed their limited scopes. The RAW review binds all eight originals, actual
+host exit0/reap, seven input pins and all32 cases; it does not execute package gates
 or certify an actual source's full qualification.
 
 Evidence remains source-specific: baseline8methods/30traces includes3

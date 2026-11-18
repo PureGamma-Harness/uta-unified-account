@@ -4,7 +4,9 @@ At8518a0b this was a CODE-only preparation. After independent CODE closure,
 root authorized one six-method/32-case pure run, which completed PASS with
 zero failures/errors and actual host exit0; it was reaped and never retried.
 The [first evidence](../evidence/reviews/owned-startup-observation-delivery/first-pure-8518a0b/README.md)
-preserves all raw/host/input bindings; independent RAW review is pending there.
+preserves all raw/host/input bindings. Independent CODE review c741f0f and
+first-RAW review d64db05 closed their limited scopes; their separate records are
+in `evidence/reviews/owned-startup-phase1-independent-code/`.
 
 The validation producer's reviewed6303 version always adds two optional v1
 diagnostic report fields. The old managed-variant qualification grammar accepted

@@ -99,8 +99,11 @@ The adapter does not admit a passing capsule containing a lease failure and
 does not reuse old qualification for new source. All earlier qualification
 conditions, including exact-source binding, remain authoritative. Its separate
 six-method/32-case pure run at8518a0b completed PASS under root's exact once
-budget; its memory QA-prefix scope and pending independent RAW review are
+budget; its memory QA-prefix scope and original raw evidence are
 recorded in [first evidence](../evidence/reviews/owned-startup-observation-delivery/first-pure-8518a0b/README.md).
+Independent CODE review c741f0f and first-RAW review d64db05 are included as
+separate records in `evidence/reviews/owned-startup-phase1-independent-code/`.
+They close only the stated memory-prefix and evidence-binding scopes.
 The earlier81a1af9 preparation/plan was never executed; independent CODE review
 found its missing W7/S9 summary validation. That static finding and zero-attempt
 source are preserved; it is not a test RED or a runtime incident.
