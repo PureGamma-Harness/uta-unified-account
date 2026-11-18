@@ -1,0 +1,1760 @@
+{
+  "SQL_process_threads_network": 0,
+  "baseline": {
+    "complete": true,
+    "coverage": {
+      "activation_gap": 28,
+      "admitted": 332,
+      "fatal_observed": 48,
+      "halted_during_publication": 432,
+      "inflight_activation_halt": 24,
+      "paused_CIDs": 94,
+      "recovered_pause": 94
+    },
+    "states": 854,
+    "transitions": 3339,
+    "violations": []
+  },
+  "bounds": {
+    "CIDs": 1,
+    "operator_halts": 1,
+    "publications": 1,
+    "restarts": 1,
+    "shards": 2,
+    "state_limit_each_variant": 25000
+  },
+  "kind": "INDEPENDENT_BOUNDED_PUBLICATION_PENDING_DESIGN_MODEL",
+  "liveness_proven": false,
+  "negative_controls": {
+    "activation_ignores_stale_quote": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "quote_expires",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "complete_publication_keep_activation_gap",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "gap",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_activation_capture_operator_revision",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "validating",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "last_validation_and_activate_atomically",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [
+              false,
+              true,
+              false,
+              0,
+              0,
+              false
+            ],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": false,
+            "halted": false,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "complete",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "activation_has_final_freshness_check",
+      "states": 712,
+      "transitions": 2720,
+      "violations": [
+        "activation_has_final_freshness_check"
+      ]
+    },
+    "duplicate_admission_reserves_twice": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "last_checkpoint_and_one_CID_reservation",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              0,
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "attempts": 1,
+            "command": "SUCCEEDED",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 1
+          }
+        },
+        {
+          "action": "duplicate_CID_query",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [
+              false,
+              false,
+              false,
+              false,
+              true,
+              true,
+              false,
+              0,
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            "attempts": 1,
+            "command": "SUCCEEDED",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 2
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "one_CID_reserves_once",
+      "states": 76,
+      "transitions": 134,
+      "violations": [
+        "one_CID_reserves_once"
+      ]
+    },
+    "exception_without_freeze": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "complete_publication_keep_activation_gap",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "gap",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_activation_capture_operator_revision",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "validating",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "fatal_validation_exit",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": true,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "failed",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "fatal_exit_clears_temporary_pause",
+      "states": 673,
+      "transitions": 2575,
+      "violations": [
+        "fatal_exit_clears_temporary_pause"
+      ]
+    },
+    "late_activation_reopens_gate": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "complete_publication_keep_activation_gap",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "gap",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_activation_capture_operator_revision",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "validating",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "operator_halt_durably_clears_pause",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "validating",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "last_validation_and_activate_atomically",
+          "state": {
+            "activation_revision": 0,
+            "activation_witness": [
+              true,
+              true,
+              false,
+              0,
+              1,
+              true
+            ],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "complete",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "operator_halt_dominates_old_control",
+      "states": 740,
+      "transitions": 2809,
+      "violations": [
+        "operator_halt_dominates_old_control"
+      ]
+    },
+    "late_publication_revives_pause": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "operator_halt_durably_clears_pause",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 1,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 1,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 1,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 1,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_1",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 1,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "complete_publication_keep_activation_gap",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              1
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              1
+            ],
+            "operator_halt": true,
+            "operator_revision": 1,
+            "pending": true,
+            "phase": "gap",
+            "publication_revision": 1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "operator_halt_dominates_old_control",
+      "states": 554,
+      "transitions": 2006,
+      "violations": [
+        "operator_halt_dominates_old_control"
+      ]
+    },
+    "partial_fanout_visible": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "install_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "query_durable_receipt_shard_0",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "complete_publication_keep_activation_gap",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              1,
+              0
+            ],
+            "lease": true,
+            "market": 1,
+            "observed": [
+              1,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "gap",
+            "publication_revision": 0,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "visible_market_has_both_durable_receipts",
+      "states": 261,
+      "transitions": 684,
+      "violations": [
+        "visible_market_has_both_durable_receipts"
+      ]
+    },
+    "paused_poll_charges_attempt": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "poll_paused_CID",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 1,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "paused_pending_command_is_unchanged",
+      "states": 67,
+      "transitions": 112,
+      "violations": [
+        "paused_pending_command_is_unchanged"
+      ]
+    },
+    "restart_forgets_pending": {
+      "complete": false,
+      "counterexample": [
+        {
+          "action": "initial",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": false,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "idle",
+            "publication_revision": -1,
+            "publishing": false,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "begin_one_publication",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": true,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": false,
+            "reservations": 0
+          }
+        },
+        {
+          "action": "restart_from_durable_control_and_original_CID",
+          "state": {
+            "activation_revision": -1,
+            "activation_witness": [],
+            "admission_witness": [],
+            "attempts": 0,
+            "command": "PENDING",
+            "fatal_observed": false,
+            "fresh": true,
+            "halted": true,
+            "installed": [
+              0,
+              0
+            ],
+            "lease": true,
+            "market": 0,
+            "observed": [
+              0,
+              0
+            ],
+            "operator_halt": false,
+            "operator_revision": 0,
+            "pending": false,
+            "phase": "publishing",
+            "publication_revision": 0,
+            "publishing": true,
+            "recovered": true,
+            "reservations": 0
+          }
+        }
+      ],
+      "replayed": true,
+      "required_violation": "temporary_pause_survives_restart",
+      "states": 61,
+      "transitions": 98,
+      "violations": [
+        "temporary_pause_survives_restart"
+      ]
+    }
+  },
+  "passed": true,
+  "physical_fsync_age_proven": false,
+  "production_approved": false,
+  "runtime_imports": 0,
+  "runtime_refinement_proven": false
+}
