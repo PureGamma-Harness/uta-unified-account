@@ -1,0 +1,29 @@
+{
+  "prepare_only": true,
+  "selected_input_count": 351,
+  "all_QA_input_count": 874,
+  "supervisor_sha256": "ad250a99027eb5a5c333751739968ffba68ad27aa7c3e4fbc20dc4ec6f5cf0f4",
+  "commands": [
+    [
+      "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "-B",
+      "/workspace/uta-stopped-owner-gate/tools/run_validation.py",
+      "--output",
+      "/workspace/uta-spawn-full3-validation/6b7d473-first/python310"
+    ],
+    [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-B",
+      "/workspace/uta-stopped-owner-gate/tools/run_validation.py",
+      "--output",
+      "/workspace/uta-spawn-full3-validation/6b7d473-first/python312"
+    ],
+    [
+      "/usr/bin/python3.13",
+      "-B",
+      "/workspace/uta-stopped-owner-gate/tools/run_validation.py",
+      "--output",
+      "/workspace/uta-spawn-full3-validation/6b7d473-first/python313-sqlite346"
+    ]
+  ]
+}

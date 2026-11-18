@@ -1,0 +1,27 @@
+======================================================================
+ERROR: test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers (test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 263, in _lock
+    fcntl.flock(descriptor, operation | fcntl.LOCK_NB)
+BlockingIOError: [Errno 11] Resource temporarily unavailable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_durable_process.py", line 424, in test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers
+    publication = self.router.publish_market(self.market(2), timeout=4)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/durable_process.py", line 1395, in publish_market
+    with self._control._lock(exclusive=True, timeout=timeout):
+  File "/opt/hostedtoolcache/Python/3.11.18/x64/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/uta/sharding.py", line 267, in _lock
+    raise ServiceError("router_busy", "router control gate did not become available before timeout", 503)
+uta.service.ServiceError: router control gate did not become available before timeout
+
+----------------------------------------------------------------------
+Ran 1801 tests in 400.673s
+
+FAILED (errors=1)

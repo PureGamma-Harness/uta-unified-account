@@ -1,0 +1,35 @@
+{
+  "reviewed_at_UTC": "2026-11-17T20:33:09.306185+00:00",
+  "base": "e4396b4b1fd9c2e3a138e48a045feffe158705cc",
+  "candidate": "b689b42455c458c63677ca7e30a9aa3ea53bb047",
+  "parent": "e4396b4b1fd9c2e3a138e48a045feffe158705cc",
+  "changed_paths": [
+    "uta/durable_process.py"
+  ],
+  "patch_sha256": "77c8dec885427f9d8184a86e05197edb19cb3ee86f071df72e41cb5412b7bb1e",
+  "source_sha256": {
+    "base": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70",
+    "candidate": "875553814df391d3b7a287b5171b5b0f5a424ca11f326136eba7b0690b2cb37c"
+  },
+  "selected_existing_function_AST_unchanged": {
+    "_record_process": true,
+    "_run_worker": true,
+    "_SignalReceiver.is_set": true,
+    "_SignalReceiver.wait": true,
+    "_SignalSender.set": true,
+    "_SignalSender.close": true,
+    "DurableProcessRouter._recover_registered_orphans": true,
+    "DurableProcessRouter.publish_market": true,
+    "DurableProcessRouter.set_kill_switch": true,
+    "DurableProcessRouter.close": true
+  },
+  "storage_Git_blob_unchanged": true,
+  "original_DurableProcessTests_Git_blob_unchanged": true,
+  "gate_before_financial_initialization_preserved": true,
+  "SPAWNED_original_nonce_not_retried_deleted_or_rewritten_in_candidate": true,
+  "code_executed": false,
+  "tests_SQL_or_native_faults_run": false,
+  "PR22_original_failure_fixed_or_reproduced_claimed": false,
+  "candidate_static_acceptance": "NO_GO pending lifecycle findings and separate verification",
+  "production_approved": false
+}

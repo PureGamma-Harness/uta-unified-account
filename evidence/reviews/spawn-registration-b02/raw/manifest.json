@@ -1,0 +1,20 @@
+{
+  "commands": {
+    "fixed-eight": "Original raw unittest result retained; full invocation environment and same-process import path were not separately captured",
+    "fixed-nine-corrected": "PYTHONPATH=. python -B tests/test_spawn_registration_recovery.py",
+    "fixed-nine-first-import-error": "python -B tests/test_spawn_registration_recovery.py",
+    "fixed-nine-same-process": "python -B tests/spawn_registration_model_probe.py",
+    "prepare-latest": "python -B tests/stopped_gate_recovery_probe.py --case all"
+  },
+  "files": {
+    "prepare-only-first.json": "d59a611527f21554147d11bd96c538afd459299634b25483e23030f699da0d29",
+    "prepare-terminal-fixed.json": "f1a538e964047a6d9bcbd1aa8da20b6168bfaf0af8fbe3b39f7695abb230bce9",
+    "pure/fixed-first.txt": "196f014041e36179bfad3d0d5805166696e37d6637b243461fb85dc71827d0c5",
+    "pure/original-first.txt": "14258c2790325af84f9e7c3f32783c6810d186dd2160a4401eeffad00b7e08fb",
+    "pure/original-proof.json": "28d3a71954b5db60806926d405dcdce52edd131fef04ac504ea8d762d7048a1e",
+    "pure/terminal-fixed-first-import-error.txt": "810e2c269912cf09a741e228e48cfdd5377f6e431cf9d9807cdf19e1aeb2671b",
+    "pure/terminal-fixed-import-corrected.txt": "3daccdbb94b7a467191f62a53bafe2b41bc0d9a383ef69c87d3882284a680a18",
+    "pure/terminal-fixed-same-process-first.txt": "437e9f05d22a9c938d94526b8d7e981cfd26c013c7b34565141b2b0d195f4b5d"
+  },
+  "native_executed": false
+}

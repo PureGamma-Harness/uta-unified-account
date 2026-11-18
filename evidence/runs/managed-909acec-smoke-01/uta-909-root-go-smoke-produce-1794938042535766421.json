@@ -1,0 +1,34 @@
+{
+  "authorized": true,
+  "command_sha256": "e789af86971a7a3bbcc422ac8d0770e36d56e12861b168d850f8b3e817d9d7aa",
+  "exact_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "/workspace/uta-credit-v2-py310-candidate/tools/prepare_managed_stability.py",
+    "--profile",
+    "/workspace/uta-managed-909acec-prepare/benchmarks/profiles/managed-909acec-v2-qualified-conditional.json",
+    "--root-go-profile-sha256",
+    "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+    "--invoke",
+    "smoke-produce",
+    "--record",
+    "producer.json"
+  ],
+  "guard_result": {
+    "fresh_admission_check_passed": true,
+    "guard_is_not_blanket_permission": true,
+    "phase": "smoke-produce",
+    "phase_execution_performed": false,
+    "remaining_validity_ns": 12737043470
+  },
+  "outer_smoke_seconds": 150,
+  "phase": "smoke-produce",
+  "profile_sha256": "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+  "record": "producer.json",
+  "root_approved_wall_ns": 1794938042535766421,
+  "root_static_review": "final909 full3/CI8/package721 peer5c981; b6c fixedv2; capacity204ecc+2ee819e consumer final review",
+  "scope": "ONLY this exact stage once; no other stage or long-run blanket permission",
+  "snapshot_file": "/tmp/uta-909-admission-root-produce-1794938042473511972.json",
+  "snapshot_sha256": "308a9dadef85cd44746f567d3c626f667fb7aa13fe354bc2e38a29200291e881",
+  "stage": "produce"
+}
