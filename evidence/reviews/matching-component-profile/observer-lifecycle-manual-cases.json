@@ -1,0 +1,153 @@
+{
+  "actual_executions": 0,
+  "cases": [
+    {
+      "expected": {
+        "attach_calls_during_audit": 0,
+        "before_budget_PRAGMA_events": 2,
+        "before_budget_handles_attempts_attachments": [
+          2,
+          2,
+          2
+        ],
+        "budget_first_category": "sqlite_trace_event_budget_exceeded",
+        "own_tool_after_close": false,
+        "per_connection_order": [
+          "audit",
+          "returned",
+          "attach",
+          "PRAGMA"
+        ],
+        "snapshot_after_budget": "REJECT"
+      },
+      "manual_sequence": [
+        "audit first while not ready",
+        "connect first returns",
+        "local LINE",
+        "first PRAGMA",
+        "same sequence second connection",
+        "set total trace count1000000 then one synthetic SELECT"
+      ],
+      "method": "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal"
+    },
+    {
+      "expected": {
+        "attach_calls": 0,
+        "first_category": "sqlite_unknown_connect_callsite",
+        "pending_before_close": 1,
+        "pending_references_after_close": 0,
+        "snapshot": "REJECT",
+        "unattached_at_close": 1,
+        "weak_reference_after_dropping_caller": "None"
+      },
+      "manual_sequence": [
+        "audit handle from a different code object",
+        "no monitored owner return event",
+        "snapshot",
+        "close and drop caller reference"
+      ],
+      "method": "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references"
+    },
+    {
+      "expected": {
+        "all_handles_attached": false,
+        "both_snapshot_results": "REJECT",
+        "closed_pending_references": 0,
+        "late_attach_calls": 0,
+        "late_line_first_category": "sqlite_trace_install_failed",
+        "no_line_first_category": "sqlite_unattached_pending_handle"
+      },
+      "manual_sequence": [
+        "owned audit without return LINE",
+        "snapshot and close",
+        "separate owned audit, delivered LINE strictly after first SQL line",
+        "snapshot and close"
+      ],
+      "method": "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete"
+    },
+    {
+      "expected": {
+        "first_fault_replaced": false,
+        "foreign_slot_mutations": 0,
+        "foreign_slot_name_after_close": "foreign-owner",
+        "missing_API_first_category": "sqlite_monitor_install_failed",
+        "occupied_first_category": "sqlite_monitor_slot_occupied",
+        "own_partially_claimed_slot_after_registration_failure": "released",
+        "registration_first_category": "sqlite_monitor_install_failed"
+      },
+      "manual_sequence": [
+        "three separate bounded variants: missing monitoring API, occupied tool3, callback registration raises",
+        "install rejects",
+        "close preserves original fault"
+      ],
+      "method": "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal"
+    },
+    {
+      "expected": {
+        "first_category": "sqlite_trace_install_failed",
+        "first_event": "post_connect_local_LINE",
+        "first_exception_type": "builtins.RuntimeError",
+        "first_message_bytes": 512,
+        "later_fault_replaces_first": false,
+        "message_truncated": true,
+        "snapshot": "REJECT"
+      },
+      "manual_sequence": [
+        "owned audit then ready return LINE",
+        "native setter model raises long RuntimeError",
+        "later callback model raises ValueError",
+        "snapshot then close"
+      ],
+      "method": "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten"
+    },
+    {
+      "expected": {
+        "final_active_pending_owned": [
+          false,
+          0,
+          false
+        ],
+        "new_callback_replaced_by_old": false,
+        "new_failure": null,
+        "new_handles_attachments": [
+          1,
+          1
+        ],
+        "new_trace_events": {
+          "BEGIN": 1,
+          "COMMIT": 1,
+          "PRAGMA": 1
+        },
+        "old_counts_after_close": "unchanged",
+        "tool3_after_final_close": "None"
+      },
+      "manual_sequence": [
+        "old observer attaches and sees PRAGMA",
+        "old close",
+        "new observer installs same numeric slot",
+        "old close again",
+        "all old/new hooks see a new handle",
+        "new callback sees PRAGMA/BEGIN/COMMIT",
+        "old callback invoked after close",
+        "new snapshot and close"
+      ],
+      "method": "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+    }
+  ],
+  "kind": "MANUAL_EXPECTED_FAKE_LIFECYCLE_CONTRACTS_NOT_RUNTIME_EVIDENCE",
+  "methods": [
+    "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal",
+    "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references",
+    "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete",
+    "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal",
+    "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten",
+    "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+  ],
+  "not_generated_from_observer_outputs": true,
+  "proof_limits": [
+    "Synthetic frame/LINE scheduling is assumed by these models, not validated against CPython.",
+    "No real monitor registration, SQLite connection, SQL, cProfile or native UTA import occurs in fake contracts.",
+    "Native first-SQL timing and cProfile coexistence require separately authorized smoke/component runs."
+  ],
+  "schema": 1
+}

@@ -1,0 +1,41 @@
+{
+  "SqlObserver_AST_equal_reviewed_fault_H876": true,
+  "args_fixed": {
+    "book_size": 32,
+    "mode": "scan"
+  },
+  "kind": "STATIC_SETUP_ONLY_CONTROL_FLOW_NOT_EXECUTION",
+  "native_and_pure_execution_counts": 0,
+  "no_profile_verify_match_or_profiler_calls_in_setup_entry": true,
+  "private_failure_ancestors_excluded": true,
+  "run_profile_is_other_exclusive_main_branch": true,
+  "runtime61_unchanged": true,
+  "schema": 1,
+  "setup_direct_call_attributes": [
+    "_bounded",
+    "install",
+    "setup",
+    "snapshot"
+  ],
+  "setup_function": "run_observer_setup",
+  "source_parses": {
+    "benchmarks/matching_profile_case.py": {
+      "AST_only": true,
+      "bytes": 30589,
+      "sha256": "ba6560215a17c769a94c98eb037d52b713dba99b48ecb38954a79858fcfc1d96",
+      "target_import_or_bytecode_compile": false
+    },
+    "benchmarks/matching_profile_once.py": {
+      "AST_only": true,
+      "bytes": 26531,
+      "sha256": "86b58f5fc61a270e3fd39ea14550ccb597e22ba115eff913cee5d4f70e9dec76",
+      "target_import_or_bytecode_compile": false
+    },
+    "benchmarks/test_matching_profile_observer.py": {
+      "AST_only": true,
+      "bytes": 4670,
+      "sha256": "055eadfb15c46b753eee2ec684e0e9a8902930a0c67801be1dd26ecbe37f8870",
+      "target_import_or_bytecode_compile": false
+    }
+  }
+}

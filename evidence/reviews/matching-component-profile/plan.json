@@ -1,0 +1,364 @@
+{
+  "acceptance": {
+    "actual_WAL_FULL_commit": true,
+    "actual_continuous_host_timing_no_target_time_sum": true,
+    "actual_host_exit_and_complete_BEGIN_checkpoint_END_required": true,
+    "actualunique8matches16fills_per_authority": true,
+    "all6authorities": true,
+    "all_phase_and_total_and_host_overhead_caps_required": true,
+    "all_raw_DB_and_reports_retained": true,
+    "config_and_liquidation_state_tables_full_exact": true,
+    "independent_cashflow_reconcile": true,
+    "manual_cash_quantity_cost_fees": true,
+    "only_declared_order_match_created_at_excluded_from_tables": true,
+    "own_market_payload_history_asof_ID_SHA_and_TTL_independently_verified": true,
+    "paired_financial_types_and_values_exact": true,
+    "reopen_ledger_and_projection": true,
+    "risk_only_observed_at_is_quote_provenance_not_calculation_time": true,
+    "risk_remaining_nine_fields_canonical_typed_exact": true,
+    "risk_schema_unknown_fields_rejected": true,
+    "sample_one_historical_FILL_per_authority": true,
+    "source_original_snapshot_before_after": true,
+    "strict_matching": true,
+    "successful_actual_host_outer_exit_observed_by_root_required": true,
+    "typed_ns_not_bool_and_end_minus_start_exact": true
+  },
+  "base_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "budget": {
+    "actual_cpu": "minimum allowed, record actual ID; do not infer CPU1",
+    "allowed_cpu_count": 1,
+    "application_children": 0,
+    "application_thread_starts": 0,
+    "explicit_proc_PID_pidfd_signals": 0,
+    "host_existing_process_inspection_or_signals": 0,
+    "host_new_owned_target_children": 2,
+    "host_own_child_pipe_and_held_pidfd_exception": true,
+    "host_reserved_seconds": 5,
+    "initial_free_disk_floor_each": 268435456,
+    "joint_logical_bytes": 134217728,
+    "joint_raw_python_bytes": 524288,
+    "logical_bytes_allocations": {
+      "aggregate": 8388608,
+      "current": 81788928,
+      "host": 2097152,
+      "original-scan": 41943040
+    },
+    "mandatory_JSON_report_bytes_each": 4194304,
+    "mini_source_bytes_each": 2097152,
+    "network_socket_TLS_AuthDB": 0,
+    "raw_python_bytes_allocations": {
+      "aggregate": 15360,
+      "current": 327680,
+      "host": 1024,
+      "original-scan": 180224
+    },
+    "raw_trailer_reserved_each": 512,
+    "retries": 0,
+    "target_phase_seconds": {
+      "aggregate": 10,
+      "current": 60,
+      "original-scan": 45
+    },
+    "total_intended_active_sequence_seconds": 120,
+    "warmup": 0
+  },
+  "capacity_10000_30minute_accepted": false,
+  "commands": {
+    "aggregate": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-component-profile/benchmarks/matching_profile_aggregate.py",
+      "--control-source-commit",
+      "25486476244ac7b86b5f16b894501f5db8afb208",
+      "--current-root",
+      "/workspace/uta-matching-profile-current-2548647-once01",
+      "--original-root",
+      "/workspace/uta-matching-profile-original-2548647-once01",
+      "--current-host-receipt",
+      "/workspace/uta-matching-profile-host-2548647-once01/current-host.json",
+      "--original-host-receipt",
+      "/workspace/uta-matching-profile-host-2548647-once01/original-host.json",
+      "--output-root",
+      "/workspace/uta-matching-profile-comparison-2548647-once01",
+      "--host-sequence-context",
+      "/workspace/uta-matching-profile-host-2548647-once01/aggregate-context.json"
+    ],
+    "current": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-component-profile/benchmarks/matching_profile_once.py",
+      "--host-start-gate-stdin",
+      "--profile-set",
+      "current",
+      "--run-root",
+      "/workspace/uta-matching-profile-current-2548647-once01",
+      "--source-commit",
+      "25486476244ac7b86b5f16b894501f5db8afb208",
+      "--approved-manifest-sha256",
+      "eca35b4698f81dfa806842c27c872b060c739a4e0a833d96e30c359ea730276b"
+    ],
+    "original-scan": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-component-profile/benchmarks/matching_profile_once.py",
+      "--host-start-gate-stdin",
+      "--profile-set",
+      "original-scan",
+      "--run-root",
+      "/workspace/uta-matching-profile-original-2548647-once01",
+      "--source-commit",
+      "25486476244ac7b86b5f16b894501f5db8afb208",
+      "--approved-manifest-sha256",
+      "c441d61cb3c09134a308998b57dd7b8aee5be3256a17b2a37b53495aacc211cf"
+    ]
+  },
+  "control_source_commit": "25486476244ac7b86b5f16b894501f5db8afb208",
+  "default_scan_regression_accepted": false,
+  "fresh_namespaces": {
+    "aggregate": "/workspace/uta-matching-profile-comparison-2548647-once01",
+    "current": "/workspace/uta-matching-profile-current-2548647-once01",
+    "host": "/workspace/uta-matching-profile-host-2548647-once01",
+    "original-scan": "/workspace/uta-matching-profile-original-2548647-once01"
+  },
+  "hardware_metadata_plan": {
+    "CPU_model": null,
+    "affinity_before_and_after": true,
+    "complete_hardware_capacity_characterization": false,
+    "loaded_libraries": null,
+    "loaded_libraries_status": "NOT_OBSERVED",
+    "network_replication": "NOT_USED",
+    "os_logical_CPU_count": true,
+    "physical_storage_medium": null,
+    "proc_maps_read_authorized": false,
+    "rlimit_nofile": true,
+    "self_rusage_deltas": true
+  },
+  "host_scope": {
+    "C_IO_hard_realtime_guarantee": false,
+    "actual_root_outer_elapsed_and_exit_required": true,
+    "aggregate_execution": "same host interpreter, explicit readonly main, zero UTA/SQLite import",
+    "child_status_field": "actual_exit_status from wait/reap",
+    "continuous_timer": "host main entry through durable aggregate/final receipt tail guard, no human/model pause",
+    "final_receipt": "sequence-completion.json",
+    "final_receipt_reserved_bytes_within_host_allocation": 1048576,
+    "final_receipt_tail_guard_same_caps": true,
+    "fixed_startgate": "explicit --host-start-gate-stdin; FD0 reads G then EOF before main/UTA/SQL",
+    "gate_releases_each_child": 1,
+    "handle_signal_raw_failure": "finally closes gate, bounded own-child wait, UNKNOWN receipt, closes held handle; no naked PID fallback",
+    "held_handle_fact_before_gate_release": true,
+    "host_handles_signals": "held pidfd only for its own new unreaped child; timeout may SIGKILL, never raw PID or old process",
+    "host_raw_cap_failure": "sticky exception unwinds cleanup; never os._exit",
+    "in_process_aggregate_status_field": "actual_return_status",
+    "interpreter_startup_before_main_included": false,
+    "missing_late_unknown": "FAIL_OR_UNKNOWN_NO_RETRY",
+    "new_owned_target_children_only": 2,
+    "outer_host_status_field": "actual_outer_exit_status null until independently observed by caller",
+    "owned_child_fact_before_handle": true,
+    "pre_release_deadline_check": true,
+    "producer": "benchmarks/matching_profile_host.py",
+    "producer_execution_authorized": false,
+    "protected_collision": "close unreleased gate, bounded wait/reap own child; no pidfd/signal",
+    "protected_numeric_PID_set": [
+      4471,
+      8784,
+      122905,
+      122907,
+      123007,
+      123009,
+      310035,
+      310039,
+      310266,
+      310269
+    ],
+    "raw_host_completion_reserved_bytes": 1024,
+    "raw_pool_split_bytes": {
+      "aggregate": 15360,
+      "host": 1024
+    },
+    "root_explicit_exact_both_target_argv_and_host_plan_digest_GO_required": true,
+    "stage_remaining_total_and_control_budget_before_new_phase": true,
+    "target_children": 0,
+    "target_proc_PID_pidfd_signals": 0
+  },
+  "latency_percentiles": null,
+  "limitations": [
+    "Logical lengths are monitored, not a kernel quota; native writes can grow between checks.",
+    "Line tracing is disabled in each finite profiled matching call, restored in finally; deadline checked at boundaries cannot interrupt blocked C IO.",
+    "Root must record actual whole lifecycle, exits/reaping and completion outside both target-write namespaces; target internal durations do not prove total outer wall.",
+    "Raw cap covers reviewed Python streams, not arbitrary hostile native FD writers; source and OS user are trusted.",
+    "SQLite trace counts include trigger repeats; cProfile Connection.execute time combines SQL/commit and cannot isolate fsync.",
+    "Single profiled samples, ordering/cache/cohost effects and profiler overhead do not establish significance, no regression, or sustained capacity.",
+    "Host owns only two newly created gated children; held pidfd failures/unreapable children are UNKNOWN, never passed. No hard realtime guarantee; raw cap failure unwinds cleanup."
+  ],
+  "manifests": {
+    "current": {
+      "bytes": 22538,
+      "path": "evidence/reviews/matching-component-profile/source-manifest-current.json",
+      "sha256": "eca35b4698f81dfa806842c27c872b060c739a4e0a833d96e30c359ea730276b",
+      "source_bytes": 1340631,
+      "source_files": 63,
+      "target_repository_uta_tree_oid": "05075e8b51c8b365e46a7f5f520a625a791fd6ad",
+      "target_runtime_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2"
+    },
+    "original-scan": {
+      "bytes": 22605,
+      "path": "evidence/reviews/matching-component-profile/source-manifest-original-scan.json",
+      "sha256": "c441d61cb3c09134a308998b57dd7b8aee5be3256a17b2a37b53495aacc211cf",
+      "source_bytes": 1332791,
+      "source_files": 63,
+      "target_repository_uta_tree_oid": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+      "target_runtime_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec"
+    }
+  },
+  "open_loop": false,
+  "origin_capsule_exact_old_matching": true,
+  "performance_claims_accepted": false,
+  "preparation_history": {
+    "older_control_870": "87090c6b9ab39a301a8179432769cf52008d7e05",
+    "preserved_original_bytes": [
+      "*-87090c6-preparation.json",
+      "*-53739d1-preparation.json",
+      "materialization-first.json",
+      "materialization-v2.json",
+      "*-cd7d7b2-preparation.json"
+    ],
+    "previous_cd7_control": "cd7d7b26aba6acd03d1129c0a5505572d10d7457",
+    "previous_control": "53739d1efdb6a1df3e33d9493eb2b1db50aee92d",
+    "previous_final_own": "3b28fa19d2b8436926c4bc52d9d96fccade0ff47",
+    "reason": "Exact status contract repair, sole known quote-asof provenance exception, and runnable continuous external host receipt producer",
+    "status": "NOT_RUN_ZERO_TARGET_ATTEMPTS"
+  },
+  "prod_or_financial_activation_approved": false,
+  "profile_scope": "Single-node synchronous matching component with profiler/counter overhead, not order-admission or liquidation E2E",
+  "risk_comparison_contract": {
+    "age_arithmetic": "timedelta days/seconds/microseconds integers; no float rounding",
+    "all_raw_preserved": true,
+    "compared_exact": [
+      "account_version",
+      "equity",
+      "initial_margin",
+      "maintenance_margin",
+      "open_order_margin",
+      "available_margin",
+      "margin_ratio",
+      "market_version",
+      "risk_mode"
+    ],
+    "configured_policy_or_unknown_risk_fields": "REJECT",
+    "financial_table_projection_time_exceptions": [
+      "uta_orders.created_at",
+      "uta_matches.created_at"
+    ],
+    "native_own_quote_age_inclusive_us": [
+      -1000000,
+      5000000
+    ],
+    "native_schema_total_fields": 10,
+    "new_full_exact_tables": {
+      "uta_config": [
+        "key",
+        "value"
+      ],
+      "uta_liquidation_accounts": [
+        "account_id",
+        "state",
+        "cycle",
+        "revision",
+        "plan_market_version",
+        "plan_position_digest"
+      ]
+    },
+    "observed_at_source": "native market.observed_at.isoformat(); quote asof, not calculation time",
+    "quote_non_temporal_compared_exact": [
+      "version",
+      "assets",
+      "instruments"
+    ],
+    "separate_quote_provenance": [
+      "observed_at",
+      "content-derived market_snapshot_id",
+      "payload SHA",
+      "history recorded_at",
+      "real validation_clock_after_risk"
+    ],
+    "setup_quote_cadence": "already fixed once before each submit, same per-mode price/version sequence; unchanged",
+    "sole_risk_provenance_field": "observed_at"
+  },
+  "root_separate_explicit_go_each_required": true,
+  "runtime60_current_and_original_equal": true,
+  "runtime61_current_unchanged": true,
+  "runtime_contract": {
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "expected_only_not_observed_by_this_preparation": true,
+    "sqlite_version": "3.53.1",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "runtime_current_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "runtime_original_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "schema": 1,
+  "source_control_files": {
+    "benchmarks/matching_profile_aggregate.py": {
+      "bytes": 25278,
+      "git_blob": "cc202d3456f4739aa793adb5748000e9cc5f62e5",
+      "sha256": "d6436792d287153dabef32704cc79a7a361fc4beabddd3c46db43b8448102b2c",
+      "source_commit": "25486476244ac7b86b5f16b894501f5db8afb208"
+    },
+    "benchmarks/matching_profile_host.py": {
+      "bytes": 18831,
+      "git_blob": "8472013ec46e6bd8937f7cd5ac97ab39d219cf29",
+      "sha256": "629a30fcc85b6f6beaf717b0d506e2e7aa6823d514c145d6c211c72c65b1e305",
+      "source_commit": "25486476244ac7b86b5f16b894501f5db8afb208"
+    }
+  },
+  "source_rules_and_mode_defaults_unchanged": true,
+  "status": "CODE_ONLY_NOT_RUN_AWAITING_INDEPENDENT_REVIEW_AND_ROOT_CONTINUOUS_SCOPE_GO",
+  "stop_sequence_after_any_first_failure_no_retry": true,
+  "target_invocations": 0,
+  "target_sequence": [
+    "current",
+    "original-scan",
+    "aggregate"
+  ],
+  "workload": {
+    "USD_unit_digits": 8,
+    "batch_confirmed_matches": 8,
+    "book_sizes": [
+      32,
+      128
+    ],
+    "business_IDs_repeat_across_paired_authorities_not_global_capacity": true,
+    "current_authorities": 4,
+    "deposit_USD_per_account": "1000000",
+    "do_not_republish_retry_partial_stale_result": true,
+    "expected_paired_fills_each_authority": 16,
+    "fee_rate": "0.0004 original default",
+    "fresh_native_quote_once_immediately_before_matching": true,
+    "hand_case_128": {
+      "fee_each": "1.632",
+      "notional": "4080",
+      "quantity": "40"
+    },
+    "hand_case_32": {
+      "fee_each": "1.2624",
+      "notional": "3156",
+      "quantity": "31"
+    },
+    "hand_fees_exact_at_USD8_no_rounding_dust": true,
+    "not_a_partial_fee_rounding_test": true,
+    "original_authorities": 2,
+    "positive_canonical_financial_comparisons": true,
+    "quantity_distribution": [
+      1,
+      2,
+      5
+    ],
+    "seed_rule": "17023+book_size",
+    "two_side_accounts": 2
+  }
+}

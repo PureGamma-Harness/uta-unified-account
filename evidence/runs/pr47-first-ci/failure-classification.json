@@ -1,0 +1,90 @@
+{
+  "canonical_test_id": "test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers",
+  "capture_actual_owner_identity_proven": false,
+  "classification": {
+    "five_second_assertion_failure": false,
+    "ordinary_partial_publication_test": false,
+    "recovery_publication_admission_exception": true,
+    "sh_capture_precondition_or_undo_exception": false
+  },
+  "errors": 1,
+  "exception_chain": [
+    "BlockingIOError",
+    "uta.service.ServiceError"
+  ],
+  "failure_stage": "recovery publication exclusive-control-gate acquisition; after capture polling, stop request and rollback calls returned; before five-second assertion",
+  "failures": 0,
+  "five_second_assertion_reached": false,
+  "frames": [
+    {
+      "function": "_lock",
+      "line": 263,
+      "path": "uta/sharding.py",
+      "source_git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "source_git_bound": true,
+      "source_line": "fcntl.flock(descriptor, operation | fcntl.LOCK_NB)",
+      "source_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    {
+      "function": "test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers",
+      "line": 424,
+      "path": "tests/test_durable_process.py",
+      "source_git_blob": "bd388af4d5a717f4f47d7cfb5929ddc221e1bd30",
+      "source_git_bound": true,
+      "source_line": "publication = self.router.publish_market(self.market(2), timeout=4)",
+      "source_sha256": "68d8e0ab267713ca9cb670f512a7157a609c1117787b8d73256948bc2c23e003"
+    },
+    {
+      "function": "publish_market",
+      "line": 1532,
+      "path": "uta/durable_process.py",
+      "source_git_blob": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+      "source_git_bound": true,
+      "source_line": "with self._control._lock(exclusive=True, timeout=timeout):",
+      "source_sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    {
+      "function": "__enter__",
+      "line": 135,
+      "path": "<stdlib>/contextlib.py",
+      "source_git_bound": false,
+      "source_line": "return next(self.gen)"
+    },
+    {
+      "function": "_lock",
+      "line": 267,
+      "path": "uta/sharding.py",
+      "source_git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "source_git_bound": true,
+      "source_line": "raise ServiceError(\"router_busy\", \"router control gate did not become available before timeout\", 503)",
+      "source_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    }
+  ],
+  "full_traceback_and_binding_values_exported": false,
+  "job_id": 134715524250,
+  "message": "router control gate did not become available before timeout",
+  "not_inferred": [
+    "new observer benchmark caused the failure",
+    "a prior CI failure has the same cause",
+    "local component profile or green PR run repairs or supersedes this first push failure"
+  ],
+  "original_traceback": {
+    "bytes": 272628,
+    "mode": "0600",
+    "private_basename": "push310-failed-unit-unittest.txt",
+    "sha256": "29048f5163d88ee1e3675c73fb3bc8107d72a0a25fab0664a2a04203b995965b"
+  },
+  "production_approved": false,
+  "python_matrix": "3.10",
+  "reproduction_by_collector": false,
+  "root_cause": "UNDETERMINED",
+  "run_id": 44279325039,
+  "runtime_error_code_field_observed": false,
+  "schema": "pr47-first-failure-finite-projection-v1",
+  "signal_delivery_or_owner_stopped_state_proven_by_traceback": false,
+  "skipped": 0,
+  "source_commit": "05ebc17f5a2a4934a2ee27f14ecdfe0a7067bd45",
+  "source_literal_error_code": "router_busy",
+  "source_literal_http_status": 503,
+  "tests_run": 2061
+}
