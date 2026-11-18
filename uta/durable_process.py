@@ -32,7 +32,9 @@ from .portfolio import PortfolioRules
 from .products import ProductCatalog
 from .service import ServiceError, _name, _text
 from .sharding import (_BoundShardDatabase, ShardRouter, ShardWorkerView,
-                       _json, _open_router_control)
+                       _json, _market_transition_pending, _open_router_control,
+                       _raise_transition_unknown, _record_transition_failure,
+                       _transition_failure_cause, _transition_identity)
 from .writer_fence import (WriterFence, WriterFenceError,
                            _load as _load_writer_lease, _observed as _observe_writer_clock)
 from .storage import Database, DurableLedger, StorageError
@@ -181,6 +183,7 @@ def _diagnostic_state(connection, descriptor, shard_count):
     if any(key not in indices or type(value) is not int or not 0 <= value < 2**63
            for key, value in state["watermarks"].items()):
         raise ServiceError("control_corruption", "diagnostic watermarks are invalid", 503)
+    _market_transition_pending(state)
     complete = (version is not None and not state["publishing"]
                 and set(state["watermarks"]) == indices
                 and all(type(value) is int and value == version for value in state["watermarks"].values()))
@@ -692,7 +695,7 @@ class DurableProcessRouter:
                 with router.control.transaction() as connection:
                     connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
             except BaseException as exc:
-                router._write_state({**router._state(), "halted": True,
+                router._write_state({**router._state(), "halted": True, "market_transition_pending": False,
                                      "error": getattr(exc, "code", "managed_bootstrap_incomplete")})
                 raise
             finally:
@@ -745,7 +748,8 @@ class DurableProcessRouter:
         try:
             with control._lock(exclusive=True, timeout=30):
                 state = control._state()
-                control._write_state({**state, "halted": True, "error": "takeover_in_progress"})
+                control._write_state({**state, "halted": True, "market_transition_pending": False,
+                                      "error": "takeover_in_progress"})
                 leases = []
                 try:
                     _preflight_managed_ledger_sources(control)
@@ -822,9 +826,10 @@ class DurableProcessRouter:
                         connection.execute("INSERT INTO router_durable_takeover_events(stage,payload,observed_at) VALUES ('COMPLETED',?,?)",
                                            (_json({"layout_hash": layout_hash}), datetime.now(timezone.utc).isoformat()))
                         connection.execute("UPDATE router_durable_config SET initialized=1 WHERE singleton=1")
-                    control._write_state({**control._state(), "halted": True, "error": None})
+                    control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
+                                          "error": None})
                 except BaseException as exc:
-                    control._write_state({**control._state(), "halted": True,
+                    control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
                                           "error": getattr(exc, "code", "takeover_incomplete")})
                     raise
                 finally:
@@ -864,7 +869,8 @@ class DurableProcessRouter:
         if expected_layout_hash != layout_hash:
             raise ServiceError("layout_conflict", "reviewed layout hash does not match this authority", 409)
         with control._lock(exclusive=True, timeout=30):
-            control._write_state({**control._state(), "halted": True, "error": "decision_audit_upgrade_requested"})
+            control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
+                                  "error": "decision_audit_upgrade_requested"})
         holder = cls.__new__(cls)
         holder.directory, holder._supervisor_fd = control.directory, None
         holder._claim_supervisor()  # A live coordinator must be stopped first.
@@ -934,10 +940,12 @@ class DurableProcessRouter:
                             connection.execute("INSERT INTO router_decision_audit_events(stage,payload,observed_at) VALUES ('READY',?,?)",
                                                (_json({"layout_hash": layout_hash}), datetime.now(timezone.utc).isoformat()))
                             connection.execute("UPDATE router_decision_audit_capability SET state='READY' WHERE singleton=1")
-                        control._write_state({**control._state(), "halted": True, "error": None})
-                    control._write_state({**control._state(), "halted": True, "error": None})
+                        control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
+                                              "error": None})
+                    control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
+                                          "error": None})
                 except BaseException as exc:
-                    control._write_state({**control._state(), "halted": True,
+                    control._write_state({**control._state(), "halted": True, "market_transition_pending": False,
                                           "error": getattr(exc, "code", "decision_audit_upgrade_incomplete")})
                     raise
                 finally:
@@ -1041,7 +1049,7 @@ class DurableProcessRouter:
         except BaseException as exc:
             with self._control._lock(exclusive=True):
                 state = self._control._state()
-                self._control._write_state({**state, "halted": True,
+                self._control._write_state({**state, "halted": True, "market_transition_pending": False,
                                            "error": getattr(exc, "code", "managed_shard_unavailable")})
             raise
 
@@ -1423,6 +1431,7 @@ class DurableProcessRouter:
                     state, complete = _diagnostic_state(connection, self._control._descriptor, len(rows))
                     result["state"] = {key: state[key] for key in (
                         "halted", "publishing", "epoch", "market_version", "market_digest", "watermarks")}
+                    result["state"]["market_transition_pending"] = _market_transition_pending(state)
                     result["state"]["error"] = None if state.get("error") is None else _diagnostic_code(state["error"])
                     result["state_observed"] = True
                     claims = _diagnostic_claims(connection, self._control, deadline)
@@ -1522,6 +1531,21 @@ class DurableProcessRouter:
             results[index] = receipt
         return results
 
+    def _record_receipt_read_failure(self, error, expected, *, timeout, phase):
+        """An old waiter cannot stop a newer operator/control transition."""
+        if _transition_failure_cause(error, phase) is None:
+            return
+        try:
+            with self._control._lock(exclusive=True, timeout=timeout):
+                state = self._control._state()
+                recorded = _record_transition_failure(self._control, state, error, phase=phase, expected=expected)
+        except BaseException as stop_error:
+            if stop_error is error:
+                raise
+            _raise_transition_unknown(error, stop_error)
+        if not recorded:
+            raise ServiceError("control_superseded", "complete control phase changed before late failure handling", 409) from error
+
     def publish_market(self, snapshot, *, timeout=10):
         if not isinstance(snapshot, MarketSnapshot):
             raise ServiceError("invalid_market", "publish a validated MarketSnapshot")
@@ -1537,36 +1561,58 @@ class DurableProcessRouter:
             if state["publishing"] and (snapshot.version < state.get("target_version", snapshot.version)
                     or snapshot.version == state.get("target_version") and digest != state.get("target_digest")):
                 raise ServiceError("market_conflict", "cannot regress or change an in-progress market generation", 409)
-            # Reuse the exact pending publication after a parent crash.
-            if state["publishing"] and state.get("target_digest") == digest:
-                commands = state["durable_market_commands"]
-            else:
-                epoch = state["epoch"] + 1
-                commands = {str(index): f"market:{epoch}:{index}:{digest[:16]}" for index in range(self.layout["shard_count"])}
-                state.update(halted=True, publishing=True, epoch=epoch, target_version=snapshot.version,
-                             target_digest=digest, watermarks={}, durable_market_commands=commands,
-                             durable_halt_commands={}, durable_desired_halt=True, error=None)
-                self._control._write_state(state)
-            for index, command_id in commands.items():
-                self._queue(int(index)).enqueue_market(command_id, snapshot)
-        receipts = self._receipts(commands, timeout)
+            try:
+                # Reuse the exact pending publication after a parent crash.
+                if state["publishing"] and state.get("target_digest") == digest:
+                    commands = state["durable_market_commands"]
+                else:
+                    epoch = state["epoch"] + 1
+                    commands = {str(index): f"market:{epoch}:{index}:{digest[:16]}" for index in range(self.layout["shard_count"])}
+                    pending = not state["halted"] or _market_transition_pending(state)
+                    state.update(halted=True, publishing=True, market_transition_pending=pending,
+                                 epoch=epoch, target_version=snapshot.version,
+                                 target_digest=digest, watermarks={}, durable_market_commands=commands,
+                                 durable_halt_commands={}, durable_desired_halt=True, error=None)
+                    self._control._write_state(state)
+                for index, command_id in commands.items():
+                    self._queue(int(index)).enqueue_market(command_id, snapshot)
+                expected = _transition_identity(self._control._state())
+            except BaseException as error:
+                _record_transition_failure(self._control, state, error, phase="publication_enqueue")
+                raise
+        try:
+            receipts = self._receipts(commands, timeout)
+        except BaseException as error:
+            self._record_receipt_read_failure(error, expected, timeout=timeout, phase="publication_receipts")
+            raise
         with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             if state.get("durable_market_commands") != commands:
                 raise ServiceError("control_superseded", "another market publication superseded this request", 409)
-            state["watermarks"] = {index: snapshot.version for index, receipt in receipts.items()
-                                    if receipt is not None and receipt["state"] == "SUCCEEDED"}
-            if len(state["watermarks"]) == self.layout["shard_count"]:
-                for index in commands:
-                    with self._database(int(index)).read_transaction() as connection:
-                        row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
-                        if row is None or sha256(row[0].encode()).hexdigest() != digest:
-                            self._control._write_state({**state, "halted": True, "error": "market_barrier_mismatch"})
-                            raise ServiceError("market_barrier_mismatch", "published receipts disagree with persisted market", 503)
-                state.update(publishing=False, market_version=snapshot.version, market_digest=digest, error=None)
-            else:
-                state.update(halted=True, publishing=True, error="market_fanout_incomplete")
-            self._control._write_state(state)
+            owns_phase = _transition_identity(state) == expected
+            if not owns_phase:
+                raise ServiceError("control_superseded", "complete control phase changed during market publication", 409)
+            try:
+                state["watermarks"] = {index: snapshot.version for index, receipt in receipts.items()
+                                        if receipt is not None and receipt["state"] == "SUCCEEDED"}
+                if len(state["watermarks"]) == self.layout["shard_count"]:
+                    for index in commands:
+                        with self._database(int(index)).read_transaction() as connection:
+                            row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+                            if row is None or sha256(row[0].encode()).hexdigest() != digest:
+                                raise ServiceError("market_barrier_mismatch", "published receipts disagree with persisted market", 503)
+                    state.update(publishing=False, market_version=snapshot.version, market_digest=digest)
+                    if owns_phase:
+                        state["error"] = None
+                else:
+                    state.update(halted=True, publishing=True)
+                    if owns_phase:
+                        state["error"] = "market_fanout_incomplete"
+                self._control._write_state(state)
+            except BaseException as error:
+                if owns_phase:
+                    _record_transition_failure(self._control, state, error, phase="publication_integrity")
+                raise
             return {**state, "receipts": receipts}
 
     def set_kill_switch(self, enabled, *, timeout=10):
@@ -1576,51 +1622,71 @@ class DurableProcessRouter:
             raise ValueError("timeout requires seconds in 0..3600")
         with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
-            state.update(halted=True)
-            self._control._write_state(state)
-            if not enabled and (state["publishing"] or state["market_version"] is None):
-                raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
-            if not enabled:
-                try:
+            try:
+                state.update(halted=True)
+                if enabled:
+                    state["market_transition_pending"] = False
+                self._control._write_state(state)
+                if not enabled and (state["publishing"] or state["market_version"] is None):
+                    raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
+                if not enabled:
                     _preflight_managed_spot_sources(self._control)
-                except ServiceError as exc:
-                    self._control._write_state({**state, "halted": True, "error": exc.code})
-                    raise
-            transition = uuid4().hex
-            commands = {str(index): f"halt:{transition}:{index}" for index in range(self.layout["shard_count"])}
-            state.update(durable_halt_commands=commands, durable_desired_halt=enabled, error=None)
-            self._control._write_state(state)
-            for index, command_id in commands.items():
-                self._queue(int(index)).enqueue_halt(command_id, enabled)
-        receipts = self._receipts(commands, timeout)
+                transition = uuid4().hex
+                commands = {str(index): f"halt:{transition}:{index}" for index in range(self.layout["shard_count"])}
+                state.update(durable_halt_commands=commands, durable_desired_halt=enabled, error=None)
+                self._control._write_state(state)
+                for index, command_id in commands.items():
+                    self._queue(int(index)).enqueue_halt(command_id, enabled)
+                expected = _transition_identity(self._control._state())
+            except BaseException as error:
+                _record_transition_failure(self._control, state, error, phase="activation_integrity")
+                raise
+        try:
+            receipts = self._receipts(commands, timeout)
+        except BaseException as error:
+            self._record_receipt_read_failure(error, expected, timeout=timeout, phase="halt_receipts")
+            raise
         with self._control._lock(exclusive=True, timeout=timeout):
             state = self._control._state()
             if state.get("durable_halt_commands") != commands:
                 raise ServiceError("control_superseded", "another halt transition superseded this request", 409)
-            complete = all(receipt is not None and receipt["state"] == "SUCCEEDED" for receipt in receipts.values())
-            if not enabled and complete:
-                # Recheck current data/freshness using read-only parent access;
-                # this never opens an unbound financial writer.
-                if state["publishing"]:
-                    raise ServiceError("publication_incomplete", "publication interrupted the activation", 503)
-                claims = self._control._batch_funding_claims()
-                for index in commands:
-                    with self._database(int(index)).read_transaction() as connection:
-                        _verify_managed_spot_source(connection, self._database(int(index)), self.layout["scales"])
-                        self._control._batch_reconcile_shard(connection, int(index), claims)
-                        local_halt = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
-                        if local_halt is None or local_halt[0] != "false":
-                            raise ServiceError("activation_incomplete", "local halt transition did not remain applied", 503)
-                        row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
-                        snapshot = MarketSnapshot.from_json(row[0]) if row is not None else None
-                        if snapshot is None or sha256(snapshot.to_json().encode()).hexdigest() != state["market_digest"]:
-                            raise ServiceError("market_barrier_mismatch", "activation market is incomplete", 503)
-                        from datetime import datetime, timezone
-                        snapshot.validate(now=datetime.now(timezone.utc), max_age=timedelta(microseconds=self._config["service"]["max_price_age_us"]))
-                state.update(halted=False, error=None)
-            elif not complete:
-                state.update(halted=True, error="halt_fanout_incomplete")
-            self._control._write_state(state)
+            owns_phase = _transition_identity(state) == expected
+            if not owns_phase:
+                raise ServiceError("control_superseded", "control phase or operator intent changed during halt transition", 409)
+            phase = "activation_integrity"
+            try:
+                complete = all(receipt is not None and receipt["state"] == "SUCCEEDED" for receipt in receipts.values())
+                if not enabled and complete:
+                    # RO validation, with quote-only failures separated from
+                    # source/funding/local-state and exact generation failures.
+                    if state["publishing"]:
+                        raise ServiceError("publication_incomplete", "publication interrupted the activation", 503)
+                    claims = self._control._batch_funding_claims()
+                    for index in commands:
+                        phase = "activation_integrity"
+                        with self._database(int(index)).read_transaction() as connection:
+                            _verify_managed_spot_source(connection, self._database(int(index)), self.layout["scales"])
+                            self._control._batch_reconcile_shard(connection, int(index), claims)
+                            local_halt = connection.execute("SELECT value FROM uta_config WHERE key='halted'").fetchone()
+                            if local_halt is None or local_halt[0] != "false":
+                                raise ServiceError("activation_incomplete", "local halt transition did not remain applied", 503)
+                            row = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()
+                            snapshot = MarketSnapshot.from_json(row[0]) if row is not None else None
+                            if (snapshot is None or snapshot.version != state["market_version"] or
+                                    sha256(snapshot.to_json().encode()).hexdigest() != state["market_digest"]):
+                                raise ServiceError("market_barrier_mismatch", "activation market is incomplete", 503)
+                            from datetime import datetime, timezone
+                            phase = "quote_freshness"
+                            snapshot.validate(now=datetime.now(timezone.utc), max_age=timedelta(microseconds=self._config["service"]["max_price_age_us"]))
+                            phase = "activation_integrity"
+                    state.update(halted=False, error=None)
+                elif not complete:
+                    state.update(halted=True, error="halt_fanout_incomplete")
+                self._control._write_state(state)
+            except BaseException as error:
+                if owns_phase:
+                    _record_transition_failure(self._control, state, error, phase=phase)
+                raise
             return {**state, "receipts": receipts}
 
     def close(self):
