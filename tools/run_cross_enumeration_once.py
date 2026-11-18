@@ -249,8 +249,6 @@ def main():
         "production_approved": False, "SQL_or_native_or_admission_executed": False}
     exclusive(output / "first.execution.json", receipt)
     print(json.dumps({"event": "CROSS_ENUMERATION_END", **receipt}, sort_keys=True))
-    os.fsync(1)
-    os.fsync(2)
     return 0 if passed else 1
 
 
