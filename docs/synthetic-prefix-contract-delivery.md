@@ -1,0 +1,9 @@
+# Synthetic completed-prefix contract library
+
+This source/sdist library validates a fixed synthetic managed-workload projection. It checks strict JSON types, command origins and joins, gross per-currency postings, complete event effects and causal prerequisites. Its zero-genesis profile permits independent bootstrap deposits and either side of a trade pair in either order; it rejects repayments before its sole bootstrap loan and unfunded fees/loans. Accounts with opening debt require a separately specified profile.
+
+Run the source API `tools.prefix_contract` or discover `test_prefix_contract.py` / `test_prefix_causality_fix.py` from the pinned checkout. The wheel trading runtime is unchanged. The v1 receipt schema is included explicitly in the sdist. Synthetic result/error envelopes are distinct from an authenticated forensic receipt; caller-provided flags and hashes never grant real audit authority. All real verification, financial, stability and production qualification flags remain false.
+
+Evidence preserves the first 25-case implementation PASS, independent 4PASS/4FAIL counterexamples, repaired first10 focused PASS, independent specification review and repaired-CODE/raw binding review d2a599c. The original old strict producer-audit gate is unchanged. These are synthetic contract checks, not SQLite reads, complete event replay, risk-model reexecution or a successful cold audit of the failed909 run.
+
+No service, account mode, risk parameter or database is deployed or migrated. A real forensic adapter still requires independently proven whole-writer quiescence, source/identity closure and complete consistent SQLite/WAL inputs before any database access. Its implementation and actual audit remain open. Preserve the failed run, every immutable command and all original evidence. Rollback removes this unused library/schema/tests only; never alter old journals, terminal results or real-funds state to satisfy the synthetic contract.
