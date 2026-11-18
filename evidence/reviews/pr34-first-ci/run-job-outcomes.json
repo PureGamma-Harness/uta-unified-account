@@ -1,0 +1,94 @@
+{
+  "runs": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "8d6e7852689851f56801768de65506242f9d4c46",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134511831031,
+          "name": "test (3.12)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134511831262,
+          "name": "test (3.13)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134511831334,
+          "name": "test (3.10)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134511831430,
+          "name": "test (3.11)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        }
+      ],
+      "run_id": 44217784215,
+      "status": "completed"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "8d6e7852689851f56801768de65506242f9d4c46",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134512043261,
+          "name": "test (3.10)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134512043520,
+          "name": "test (3.12)",
+          "status": "completed",
+          "unit_conclusion": "failure"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134512043600,
+          "name": "test (3.11)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134512043912,
+          "name": "test (3.13)",
+          "status": "completed",
+          "unit_conclusion": "success"
+        }
+      ],
+      "run_id": 44217846755,
+      "status": "completed"
+    }
+  ],
+  "source": "Two actual first-attempt provider runs; final run and whole-job metadata independently fetched by this reviewer. Successful ZIP contents were not fetched."
+}
