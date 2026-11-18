@@ -2,10 +2,15 @@
   "CI_reruns": 0,
   "SQL_operations": 0,
   "base_target_source": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "code_delta_parent": "aeb5f23934fba8efc1ffd7b27c702a1b596bd228",
+  "independent_finding": {
+    "commit": "b0d63adeddde8608298e947f01fc75bfb6272585",
+    "id": "CI-DIAG-AEB-001"
+  },
   "input_files": {
-    "docs/ci-gate-reliability-f774-diagnostics.md": {
-      "bytes": 3155,
-      "sha256": "7b2f5fd2d228d5150259083208e7b7eddbf530afbfc3c95dd587228cbadb02e7"
+    "docs/ci-gate-reliability-cap-v2.md": {
+      "bytes": 3426,
+      "sha256": "5ad5bb7f3f348263ae83e5ac63d6bf750080a78e422f714b9408ac4adafaace6"
     },
     "tests/test_owned_startup.py": {
       "bytes": 15781,
@@ -20,8 +25,8 @@
       "sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba"
     },
     "tests/test_startup_write_contention.py": {
-      "bytes": 11490,
-      "sha256": "ae56fc679485debaa01b66346726ef46ac4853ec895e192803788e912bbd4136"
+      "bytes": 12463,
+      "sha256": "4cdeec91fd4f722097e771dcf6f0e3e756311b6589f32e32c717f4e9709ab706"
     },
     "uta/durable_process.py": {
       "bytes": 106136,
@@ -58,9 +63,17 @@
     "Clock and append overhead can perturb timing.",
     "No new authoritative lease or physical commit observation.",
     "No root-cause or runtime safety conclusion.",
-    "No new test execution or failure reproduction."
+    "No new test execution or failure reproduction.",
+    "Deque capacity is structural; snapshot fields do not claim atomic finality.",
+    "truncated is conservative and can be true without a proven eviction."
   ],
   "original_failures_preserved": true,
+  "preserved_plan": {
+    "bytes": 4034,
+    "path": "evidence/reviews/ci-gate-reliability-f774/diagnostic-CODE-plan-aeb5-NOT_RUN.json",
+    "sha256": "0ac93bfd671012cce6b2771f50e194e1d6fa62f388390a1b9140cc65b15db6da",
+    "status": "NOT_RUN"
+  },
   "proc_PID_worker_operations": 0,
   "read_only_review": "16ac950c5d8fc160026c0947f991f9b409ee6ba9",
   "readiness": {
@@ -106,14 +119,19 @@
       "main_raise"
     ],
     "fixture_lease_seconds": 0.4,
+    "new_explicit_financial_locks": 0,
     "observer_failure": "collection_failed sticky; original flow continues",
     "original_exception_bare_raise": true,
     "original_return_identity_preserved": true,
     "original_sleep_seconds": 0.08,
     "original_wait_seconds": 0.3,
-    "overflow": "truncated sticky; no more clock/record work",
+    "overflow": "capacity_reached sticky; capacity64 or collection failure means possible truncation; no exact eviction count",
+    "recording_at_capacity": "continues retaining append-order tail; observation work may continue",
     "renew_original_calls_per_observer": 1,
-    "timeline_limit": 64
+    "retention": "at most64-record tail by append order; no first64 or chronological-order claim",
+    "snapshot": "guarded list copy; exception returns preallocated finite snapshot_failed fallback without replacing original outcome",
+    "timeline_limit": 64,
+    "timeline_storage": "collections.deque(maxlen=64)"
   },
   "status": "CODE_ONLY_NOT_RUN",
   "target_executions": 0

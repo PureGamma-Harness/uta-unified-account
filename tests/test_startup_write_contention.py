@@ -1,6 +1,7 @@
 """Deterministic real SQLite writer ordering, without synthetic busy errors."""
 import json
 import sqlite3
+from collections import deque
 from decimal import Decimal
 from pathlib import Path
 from threading import Event, current_thread
@@ -42,14 +43,16 @@ class StartupWriteContentionTests(unittest.TestCase):
         original = WriterFence.renew
         phases = dict(entered=False, constructed=False, writer_held=False,
                       renewal_requested=False, finished=False)
-        timeline, timeline_limit = [], 64
-        timeline_truncated = timeline_failed = False
+        timeline_limit = 64
+        timeline = deque(maxlen=timeline_limit)
+        timeline_capacity_reached = timeline_failed = False
+        timeline_snapshot_failure = dict(events=[], limit=timeline_limit,
+            capacity_reached=None, truncated=True, collection_failed=True, snapshot_failed=True,
+            retention="bounded tail in append order; snapshot unavailable",
+            semantics="test observation overhead; no exact loss count, lease-clock or commit attestation")
         def mark(stage, error=None):
-            nonlocal timeline_truncated, timeline_failed
+            nonlocal timeline_capacity_reached, timeline_failed
             try:
-                if len(timeline) >= timeline_limit:
-                    timeline_truncated = True
-                    return
                 observed = monotonic_ns()
                 if type(observed) is not int or not 0 <= observed <= 2**63 - 1:
                     timeline_failed = True
@@ -66,8 +69,23 @@ class StartupWriteContentionTests(unittest.TestCase):
                         "fence_clock_regressed", "startup_keeper_stuck", "startup_cancelled",
                         "startup_deadline"} else "other")
                 timeline.append(item)
+                if len(timeline) == timeline_limit:
+                    timeline_capacity_reached = True
             except BaseException:
                 timeline_failed = True  # Observation must not replace the original result.
+        def snapshot_timeline():
+            nonlocal timeline_failed
+            try:
+                events = list(timeline)
+                capacity_reached = timeline_capacity_reached or len(events) == timeline_limit
+                return dict(events=events, limit=timeline_limit,
+                    capacity_reached=capacity_reached, truncated=capacity_reached or timeline_failed,
+                    collection_failed=timeline_failed, snapshot_failed=False,
+                    retention="bounded tail in append order; capacity means possible truncation",
+                    semantics="test observation overhead; no exact loss count, lease-clock or commit attestation")
+            except BaseException:
+                timeline_failed = True
+                return timeline_snapshot_failure
         def observe(fence, token, ttl):
             mark("renew_request")
             if current_thread().name == "uta-startup-lease" and held.is_set():
@@ -118,9 +136,7 @@ class StartupWriteContentionTests(unittest.TestCase):
             mark("main_raise", error)
         evidence = dict(phases=phases, error=describe_error(failure),
                         keeper_error=describe_error(initialization._failure),
-                        timeline=dict(events=timeline, limit=timeline_limit,
-                            truncated=timeline_truncated, collection_failed=timeline_failed,
-                            semantics="test observation clock and append overhead; not lease-clock or commit attestation"))
+                        timeline=snapshot_timeline())
         self.assertIsNone(failure, json.dumps(evidence, sort_keys=True))
         self.assertEqual(phases, dict(entered=True, constructed=True, writer_held=True,
                                      renewal_requested=True, finished=True))
