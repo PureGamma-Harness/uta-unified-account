@@ -1,5 +1,5 @@
 {
-  "CODE_delta_parent": "eb778b916459407c231d2244a266ce1dfa443b56",
+  "CODE_delta_parent": "9171e8e5e8d16b99a8a46f2f6ec1563754f55811",
   "DB_byte_read_policy": "Only after all observed native closes, intact profiles, no sticky observer/forbidden errors, exact connect/handle path accounting and quiescent declared threads. Otherwise stat-only NOT_OPENED and no qualification repair. Caller also refuses bytes without this proof.",
   "UTA_source_count": 64,
   "base_public_source_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
@@ -34,6 +34,17 @@
     "target_threads_max_live": 2,
     "target_timeout_seconds": 45
   },
+  "control_input_files": {
+    "docs/funding-obligations-sql6-intent-v2.md": {
+      "bytes": 4844,
+      "sha256": "06c2de418d65422f5b32ad512d2ccaaec6f3301c97665c2c4f4d5c83fb0835f7"
+    },
+    "tools/check_funding_obligations_sql6_intent_static.py": {
+      "bytes": 11957,
+      "sha256": "e759e46e6449878370317b89cf277d3082e72756b21d1b86ede727535f2cab0b"
+    }
+  },
+  "control_pins_are_static_preparation_not_extra_target_loaded_inputs": true,
   "data": "NEW_SYNTHETIC_ONLY",
   "exact_DB_relative_paths": [
     "inner/cases/normal/obligations.sqlite3",
@@ -84,7 +95,15 @@
     "old-empty",
     "review"
   ],
-  "independent_ENTRY_CALLER_CODE": "PENDING_LIMITED_DELTA_AND_ORIGINAL_REVIEW",
+  "historical_first_UNKNOWN": {
+    "SAFE": "caea35102e0d4c77ca348597da429bbabafda106",
+    "caller_exit": 126,
+    "caller_plan_sha256": "155950087c7d9a6785b9b76d55df43d8b5b959427088ec4347a6898a3f34d6c4",
+    "independent_RAW": "b5fbbf464b3e436d87d7e09ea848e0aee2ad7ecf",
+    "source": "9171e8e5e8d16b99a8a46f2f6ec1563754f55811",
+    "target_plan_sha256": "02f57cfb7d55498c436ed61243f7180d1ba51995209e3b5c09b8d49b28761ea1"
+  },
+  "independent_ENTRY_CALLER_CODE": "PENDING_INTENT_V2_LIMITED_CODE_REVIEW",
   "independent_account_delta": "df21d9ce415bac3ad8a10e297a437c562facfa75",
   "independent_risk_delta": "f665e4e20975a04cd57d476694a68a77a389887b",
   "input_bytes": 1490461,
@@ -390,7 +409,8 @@
   "resource_semantics": "Native connect/handle audit; native successful close c_return observed on original object in its own thread via bounded profile; no factory/connect/close replacement or cross-thread SQL probe. Only original two executor threads allowed in method4; restored finally.",
   "retained_test_semantics": "Whole original six methods and original scenario; existing CASE_ROOT retains; scenario wrapper only retains returned object and verifies fixed order. No extra setup/no finance/SQL/market methods replaced.",
   "schema": 1,
-  "source_origin_commit": "3b459f797d2fd526d81f9cefb97002d7e5c91d60",
+  "scope_id": "SQL6_INTENT_V2_CODE_ONLY",
+  "source_origin_commit": "2680b9a69595c87a093e0942e650465ce18963ef",
   "stop_policy": "First FAIL/UNKNOWN; no later SQL oracle or target retry. Preserve DBs and all original output. Later EOF/reap cannot repair timely completion.",
   "target_compile_import_SQL_test_thread_worker_attempts": 0,
   "unsupported_production": [
