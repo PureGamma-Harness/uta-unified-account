@@ -1,0 +1,111 @@
+{
+  "kind": "INDEPENDENT_STRICT_WORKER_COMPATIBILITY_STATIC_CODE_REVIEW",
+  "version": 1,
+  "status": "CODE_ONLY_CLOSED_NOT_A_TEST_RESULT",
+  "reviewed_commit": "8518a0b8fbe22a808183d17f579829d59a62f25f",
+  "reviewed_tree": "540dbc26a635ab58583f162f7d79a5eb11419b9c",
+  "baseline_consumer_commit": "17e0838ff0c153f36ec53a03e4db219e5948ab33",
+  "unchanged_observation_runtime_CODE": "6303ed46d946138c08551e30387abd3de18ab146",
+  "static_review_completed_before_root_once_GO": true,
+  "record_created_after_root_reported_separate_once_authorization": true,
+  "RAW_review": "SEPARATE_WAIT_FOR_TERMINAL_OWNER_SEAL_NO_LIVE_FILES_READ",
+  "plan": {
+    "path": "evidence/reviews/owned-startup-observation-delivery/worker-compat-plan.json",
+    "bytes": 8080,
+    "sha256": "f336d6e293b983f5e8ee6609b1273f43401bc2f5e870bdf8b5da2446ebde7b90"
+  },
+  "input_files": {
+    "evidence/reviews/owned-startup-observation-delivery/run_worker_compat_once.py": {"bytes": 10401, "sha256": "dff3d926d113405d9afe1d7324be68668a27d4956abd987b06ddfd06e1af7d24"},
+    "evidence/reviews/owned-startup-observation-delivery/worker-compat-reference.json": {"bytes": 9688, "sha256": "65d5c30ac8411fcd611fffc55b51656814d31dddc8587ce6c341df37b98ab88e"},
+    "evidence/reviews/owned-startup-observation-delivery/worker_compat_fake.py": {"bytes": 12811, "sha256": "a82af6c4f7c4426fe20cab9ea37d0ca479f5fdbcc9b36b34546a9a831b86ad49"},
+    "tools/run_managed_variants.py": {"bytes": 67008, "sha256": "755bc31acb4d183fa8513b860f131490a2aba706c4e260b29b102f1592a15e33"},
+    "tools/run_validation.py": {"bytes": 12185, "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"},
+    "uta/startup.py": {"bytes": 23653, "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"},
+    "uta/writer_fence.py": {"bytes": 55394, "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"}
+  },
+  "input_binding": {
+    "seven_materialized_regular_non_symlink_files_match_length_SHA_and_frozen_Git_blobs": true,
+    "total_seven_input_bytes": 191140,
+    "producer_three_files_equal_reviewed6303_bytes": true,
+    "driver_compiles_immutable_verified_fixture_bytes": true,
+    "selected_consumer_AST_and_independent_reference_use_same_verified_byte_map": true
+  },
+  "finding_preserved": {
+    "source": "81a1af9337a51d8751c53bb3be134e5f6e6d7512",
+    "prior_plan_sha256": "03d72f87853cc23076c9050ddcf5c443c5e0038dc23d2af8de22db418e42e4d6",
+    "classification": "STATIC_CODE_FINDING_NOT_AN_EXECUTED_FAILURE",
+    "attempts": 0,
+    "gap": "The legacy7 worker path ignored reserved diagnostic fields in summary, allowing a half pair or invalid nonempty/truncated/type-aliased pair to pass that schema boundary.",
+    "repair": "Validate any summary reserved-key occurrence as a complete native-empty-list and literalFalse pair independently of worker shape; retain new9 presence and per-key typed equality.",
+    "old_source_and_plan_history_not_rewritten": true
+  },
+  "final_schema_policy": {
+    "worker_keys_are_exact_legacy7_or_exact_new9": true,
+    "new_worker_extension_requires_both_reserved_fields_native_empty_list_and_literalFalse": true,
+    "W7_S7": "ACCEPT_IF_ALL_ORIGINAL_QA_GATES_PASS",
+    "W7_S9": "ACCEPT_ONLY_COMPLETE_NATIVE_EMPTY_LIST_AND_LITERAL_FALSE_SUMMARY_PAIR_AND_ORIGINAL_QA_GATES",
+    "W7_summary_half_or_nonempty_truncated_tuple_list_subtype_zero_or_None": "REJECT",
+    "W9_S7_or_half_summary": "REJECT",
+    "W9_S9": "REQUIRE_COMPLETE_VALID_PAIRS_AND_ALL_NINE_WORKER_SUMMARY_KEYS_HAVE_IDENTICAL_NATIVE_TYPES_AND_VALUES",
+    "summary_other_previously_allowed_metadata_unchanged": true,
+    "no_projection_normalization_or_generic_subset_grammar": true,
+    "actual6303_parent_loads_worker_JSON_and_unpacks_result_into_summary": true,
+    "no_producer_change_needed_or_made": true
+  },
+  "consumer_AST_proof": {
+    "whole_module_AST_equals17e_after_replacing_only_five_authorized_schema_nodes_with_original_one_require": true,
+    "all_other_counts_flags_source_runtime_raw_log_qualification_and_package_statements_unchanged": true,
+    "all_other_functions_AST_unchanged": true,
+    "native_SQL_expiry_fencing_admission_READY_or_financial_rules_changed": false
+  },
+  "fixture_static_scope": {
+    "methods": 6,
+    "planned_cases": 32,
+    "positive_cases": 3,
+    "negative_cases": 29,
+    "positive_shapes": ["W7_S7", "W9_S9", "actual_W7_S9_across_all_eleven_records"],
+    "new_worker_legacy_summary_case_removes_both_summary_reserved_keys": true,
+    "six_worker_boundary_negative_cases": true,
+    "six_legacy_worker_bad_summary_cases": ["half_list", "half_flag", "nonempty", "truncated", "native_list_subtype", "zero_not_literalFalse"],
+    "original_seventeen_QA_negative_method_AST_and_hand_recorded_reference_entries_equal81a": true,
+    "expected_decisions_and_messages_not_generated_by_production_helpers": true,
+    "actual_GateError_require_and_qualification_prefix_AST_selected": true,
+    "prefix_includes_all_three_local_and_eight_CI_records_and_local_matrix_gate": true,
+    "cut_is_immediately_before_package_assignment": true,
+    "real_proof_reader_filesystem_hash_provider_and_log_boundaries_are_memory_fakes": true,
+    "proof_input_objects_are_compared_before_and_after": true,
+    "actual_full_package_or_whole_QA_executed_or_proven": false
+  },
+  "capture_and_host_contract": {
+    "driver_bytes_unchanged_from81a_review": true,
+    "CPU_affinity_required": [1],
+    "outer_host_absolute_timeout_KILL_10s_taskset_and_Python_I_S_B_argv": true,
+    "actual_affinity_runtime_version_executable_SHA_and_flags_checked_before_target": true,
+    "shared_reviewed_Python_stream_cap_bytes": 262144,
+    "failure_trailer_reserve_bytes": 512,
+    "reserve_before_FD_write_partial_reservation_sticky125": true,
+    "fresh_namespace0700_and_O_EXCL0600_FD1_FD2": true,
+    "not_an_OS_sandbox_for_arbitrary_direct_FD_or_native_writes": true,
+    "actual_host_argv_exit_reap_and_complete_raw_END_inner_receipt_required_separately": true,
+    "hard_stop_or_missing_evidence_is_UNKNOWN_not_PASS": true
+  },
+  "preservation_and_limits": {
+    "source47dfa_first_all12_RED_and_original_raw_unchanged": true,
+    "sourcebf48_isolated_m08_first_PASS_and_original_raw_unchanged": true,
+    "earlier_baseline_three_conditional_RED_preserved": true,
+    "old_all48_green_or_new_whole_QA_claim": false,
+    "all_read_observation_timing_allocation_overhead_remains_unmeasured": true,
+    "existing_code_bound_authorities_cannot_be_hot_swapped": true,
+    "phase2": "NO_GO",
+    "original_CI_causes": "UNDETERMINED",
+    "reviewer_target_import_compile_execution_SQL_probe_PID_or_network_action": false
+  },
+  "execution_authorized_by_this_record": false,
+  "native_approved": false,
+  "financial_approved": false,
+  "CI_approved": false,
+  "recovery_approved": false,
+  "performance_approved": false,
+  "production_approved": false,
+  "next_run_permitted": false
+}
