@@ -1,0 +1,68 @@
+{
+  "actual_watch_SQL_FSadapter_native_workers_crypto_keys_network_CI": "NOT_AUTHORIZED",
+  "argv": [
+    "taskset",
+    "-c",
+    "1",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python",
+    "-B",
+    "tests/test_observer_v2_pipeline_pure.py",
+    "-v"
+  ],
+  "authorization_adds_no_second_budget": true,
+  "inputs": {
+    "tests/fixtures/managed_observer_coverage_909.py": {
+      "bytes": 16510,
+      "sha256": "15e4f97c1d3541c2ee076e618b19ce5442f42290b3ffefd63e29985942485699"
+    },
+    "tests/fixtures/managed_soak_observer_909.py": {
+      "bytes": 53490,
+      "sha256": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1"
+    },
+    "tests/fixtures/run_managed_long_909.py": {
+      "bytes": 34491,
+      "sha256": "be5470dbecdbf39a8d61fad8d4caba45d96f9b6b9dba7725873dadf41f02fe61"
+    },
+    "tests/test_observer_v2_pipeline_pure.py": {
+      "bytes": 27836,
+      "sha256": "3308a5c2365920f0e51f8c33d8c1559db0571fcd475b0dd6a905b50e3d944b7d"
+    },
+    "tools/managed_observer_coverage.py": {
+      "bytes": 16880,
+      "sha256": "1cde10c376bdb0c9cb42884eee808f815a1633dceb87ff0c66ec92d17cab3a30"
+    },
+    "tools/managed_observer_report.py": {
+      "bytes": 17733,
+      "sha256": "ae81dc4140cb7fdbfc00ed7937267b7897d050f5fee73257cbb373739d0154b1"
+    },
+    "tools/managed_observer_transport.py": {
+      "bytes": 6933,
+      "sha256": "ca393795ff3424543659a0892bdc8575472e5a27f6ebdea4e78d4fa2df5fda37"
+    },
+    "tools/managed_output_budget.py": {
+      "bytes": 3764,
+      "sha256": "8044707e4ff20dc54c9b9b7663689e2a3a0b15915c64c72e54c63b13466e9f58"
+    },
+    "tools/managed_soak_observer.py": {
+      "bytes": 55562,
+      "sha256": "3e6536413abec22a5bda71887ce228b7d7d584bd71bd950d525d84525398adeb"
+    },
+    "tools/run_managed_long.py": {
+      "bytes": 44447,
+      "sha256": "0dfdf63ade12a5a424b6f7de59f657e2e8732f3677b36274837d41454d6e27b6"
+    }
+  },
+  "launcher": {
+    "birth": "10576588",
+    "boot_id": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "pid": 767739,
+    "state": "R"
+  },
+  "old_author_or_independent_batch_rerun": false,
+  "root_authorization": "one new 12-method CPU1/10s KILL pure batch after independent protocol CODE closure",
+  "source": "a7c9d0f8daf014efdab45d35e4cd94f2d0041cb9",
+  "started_intent_utc": "2026-11-18T02:23:59.495227+00:00"
+}

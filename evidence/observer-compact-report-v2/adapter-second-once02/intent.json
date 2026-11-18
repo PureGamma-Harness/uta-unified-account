@@ -1,0 +1,87 @@
+{
+  "actual_watch_SQL_financial_workers_crypto_keys_network_CI_6h": "FORBIDDEN",
+  "argv": [
+    "taskset",
+    "-c",
+    "1",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python",
+    "-B",
+    "tools/probe_observer_v2_adapters.py",
+    "--execute-synthetic-adapters",
+    "--new-output",
+    "/workspace/uta-observer-v2-adapter-runs/read1-c076b0d-once02"
+  ],
+  "commands_per_frame": 3,
+  "frozen_HEAD": "fce121387cb87478a1d9878f76d7405d79ad3759",
+  "inputs_before": {
+    "tools/emit_observer_v2_fixture.py": {
+      "bytes": 1642,
+      "sha256": "a1edce1adabdcb9f1ecf3fb23ce40cb68ff8ce046f60eb1ace7dc44c782702de"
+    },
+    "tools/managed_observer_coverage.py": {
+      "bytes": 16880,
+      "sha256": "1cde10c376bdb0c9cb42884eee808f815a1633dceb87ff0c66ec92d17cab3a30"
+    },
+    "tools/managed_observer_report.py": {
+      "bytes": 17733,
+      "sha256": "ae81dc4140cb7fdbfc00ed7937267b7897d050f5fee73257cbb373739d0154b1"
+    },
+    "tools/managed_observer_transport.py": {
+      "bytes": 6933,
+      "sha256": "ca393795ff3424543659a0892bdc8575472e5a27f6ebdea4e78d4fa2df5fda37"
+    },
+    "tools/managed_output_budget.py": {
+      "bytes": 3764,
+      "sha256": "8044707e4ff20dc54c9b9b7663689e2a3a0b15915c64c72e54c63b13466e9f58"
+    },
+    "tools/managed_soak_observer.py": {
+      "bytes": 55562,
+      "sha256": "3e6536413abec22a5bda71887ce228b7d7d584bd71bd950d525d84525398adeb"
+    },
+    "tools/probe_observer_v2_adapters.py": {
+      "bytes": 24949,
+      "sha256": "4624f4cd5181d5ef526f60cb6c2b126421eace16741537d7a021775397a12bcc"
+    },
+    "tools/run_managed_long.py": {
+      "bytes": 44598,
+      "sha256": "03b4437e2d20a35182b74f6aadad417b9bb830df011731ea97ae7f7e050cbc55"
+    }
+  },
+  "intent_utc": "2026-11-18T03:39:40.727670+00:00",
+  "launcher": {
+    "birth": "11030714",
+    "boot_id": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+    "observed": true,
+    "pid": 777617,
+    "state": "R"
+  },
+  "launcher_sha256": "c2b9d07d70250bd780de17706aa130cfcb52504dbe78ebbf5fe97bf85970346c",
+  "max_CAS_bytes": 65536,
+  "max_Pipes_threads": 2,
+  "max_combined_outer_raw_bytes": 102400,
+  "max_data_children": 1,
+  "max_frames": 4,
+  "max_measured_probe_bytes": 131072,
+  "max_pipe_bytes": 32768,
+  "metadata_preflight_attempt": 2,
+  "new_actual_probe_budget_added": 0,
+  "new_probe_readonly_null_FD_is_only_null_device_open_in_this_launcher_and_probe_path": true,
+  "no_second_budget": true,
+  "old_once01_dc1e_3e42_or_pure_batch_rerun": false,
+  "original_actual_probe_budget": 1,
+  "outer_raw_diagnostic_scope_separate": true,
+  "output": "/workspace/uta-observer-v2-adapter-runs/read1-c076b0d-once02",
+  "parent_identity": {
+    "dev": 27,
+    "ino": 1861427,
+    "mode": "0700",
+    "uid": 1000
+  },
+  "previous_preflight_failure_seal": "22e3f9a54607f70ef61edf4ba4c1e2b45ac4f2bd",
+  "root_authorization": "one fixed c076 actual once02 synthetic readonly-null/live-pipe/report-FS adapter; CPU1 outer10s KILL; first result no retry",
+  "source": "c076b0dc1feb765686de9c78683a4e4bea5429e2",
+  "stricter_per_regular_file_RLIMIT_FSIZE_bytes": 49152
+}

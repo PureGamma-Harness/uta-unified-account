@@ -10,6 +10,7 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
+from queue import Empty, Queue
 import resource
 import signal
 import sqlite3
@@ -24,11 +25,14 @@ try:
     from tools.managed_observer_coverage import Coverage, fatal_financial_codes
     from tools.managed_observer_smoke import PUBLIC_FIELDS
     from tools.managed_output_budget import explicit_output_budget, measured_output_bytes, output_budget_bytes
+    from tools import managed_observer_report as compact_reports, managed_observer_transport as transport
 except ModuleNotFoundError:
     import managed_soak_observer as ro
     from managed_observer_coverage import Coverage, fatal_financial_codes
     from managed_observer_smoke import PUBLIC_FIELDS
     from managed_output_budget import explicit_output_budget, measured_output_bytes, output_budget_bytes
+    import managed_observer_report as compact_reports
+    import managed_observer_transport as transport
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = Path('/workspace/uta-next-integration/benchmarks/plans/20261117-managed-763202d-six-hours.json')
@@ -93,6 +97,7 @@ def read_plan(path, amendment):
     raw, change = path.read_bytes(), ro.load_json(amendment)
     plan = ro.parse(raw)
     output_budget_bytes(plan)
+    transport.report_format(plan)
     if sha256(raw).hexdigest() != change['original_plan_sha256']:
         raise ValueError('original_preregistration_bytes_changed')
     expected = (plan['producer']['duration_seconds'], plan['producer']['rate_rounds_per_second'],
@@ -124,6 +129,10 @@ def observer_command(plan, scratch, launch, *, audit=False, persistent=True):
         str(plan['observer']['max_private_clone_bytes']), '--min-private-free-bytes',
         str(plan['observer']['clone_headroom_bytes']), '--max-address-space-bytes',
         str(plan['observer']['max_address_space_bytes'])]
+    if transport.report_format(plan) == 'compact-v2':
+        command += ['--report-protocol', 'compact-v2']
+        if not audit:
+            command += ['--collector-input-v2']
     if audit:
         command += ['--python', plan['python']]
     elif persistent:
@@ -193,7 +202,11 @@ def preflight(args):
 
 class Pipes:
     """Keep six-hour pipes drained, retaining bounded final stdout and no stderr."""
-    def __init__(self, command, cwd, stdout_limit=4 * 1024**2):
+    def __init__(self, command, cwd, stdout_limit=4 * 1024**2, *, stream_samples=False, wire_input=False):
+        self.samples = Queue(maxsize=transport.QUEUE_FRAMES) if stream_samples else None
+        self.line_buffer = transport.LineBuffer() if stream_samples else None
+        self.frame_decoder = transport.FrameDecoder() if wire_input else None
+        self.stream_error, self.decode_failed, self.discarded_frames = None, False, 0
         self.process = subprocess.Popen(command, cwd=cwd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, close_fds=True)
         self.birth = ro.process_identity(self.process.pid)['birth']
@@ -205,13 +218,27 @@ class Pipes:
             checksum, count, kept, chunks = sha256(), 0, 0, []
             try:
                 while True:
-                    raw = stream.read(65536)
+                    if label == 'stdout' and self.samples is not None:
+                        raw = stream.read1(65536)
+                    else:
+                        raw = stream.read(65536)
                     if not raw:
                         break
                     checksum.update(raw); count += len(raw)
-                    if retain and kept + len(raw) <= stdout_limit:
+                    if label == 'stdout' and self.samples is not None and self.stream_error is None:
+                        try:
+                            for frame in self.line_buffer.feed(raw):
+                                self.samples.put(frame)
+                        except (ValueError, TypeError, MemoryError) as error:
+                            self.stream_error = type(error).__name__
+                    if retain and self.samples is None and kept + len(raw) <= stdout_limit:
                         chunks.append(raw); kept += len(raw)
             finally:
+                if label == 'stdout' and self.line_buffer is not None and self.stream_error is None:
+                    try:
+                        self.line_buffer.finish()
+                    except ValueError as error:
+                        self.stream_error = type(error).__name__
                 stream.close()
             self.results[label] = {'sha256': checksum.hexdigest(), 'bytes': count,
                 'complete': not retain or count == kept, 'raw': b''.join(chunks)}
@@ -219,6 +246,40 @@ class Pipes:
                         Thread(target=drain, args=('stderr', self.process.stderr, False), daemon=True)]
         for thread in self.threads:
             thread.start()
+
+    def read_samples(self):
+        if self.samples is None or self.frame_decoder is None:
+            raise ValueError('full_input_stream_not_selected')
+        for _ in range(transport.QUEUE_FRAMES):
+            try:
+                raw = self.samples.get_nowait()
+            except Empty:
+                break
+            if self.decode_failed:
+                self.discarded_frames += 1
+                continue  # Drain backpressure after a latched protocol failure.
+            try:
+                yield self.frame_decoder.decode(raw)
+            except (ValueError, TypeError, KeyError, MemoryError):
+                self.decode_failed = True
+                self.discarded_frames += 1
+                raise
+        if self.decode_failed or self.stream_error is not None:
+            raise ValueError('full_input_stream_unknown')
+
+    def input_state(self):
+        if self.samples is None:
+            raise ValueError('full_input_stream_not_selected')
+        eof = 'stdout' in self.results
+        pending = len(self.line_buffer.pending)
+        queued = self.samples.qsize()
+        failed = self.decode_failed or self.stream_error is not None
+        return {'stdout_read_to_EOF': eof, 'stdout_fully_retained': False,
+                'pending_frame_bytes': pending, 'queued_raw_frames': queued,
+                'queue_raw_frame_cap': transport.QUEUE_FRAMES,
+                'discarded_protocol_failed_frames': self.discarded_frames,
+                'protocol_failed': failed, 'next_decode_sequence': self.frame_decoder.next_sequence,
+                'frames_complete': eof and not pending and not queued and not failed}
 
     def identity(self):
         return {'pid': self.process.pid, 'birth': self.birth, 'started_wall_ns': self.started_wall_ns,
@@ -243,19 +304,24 @@ class Pipes:
         value = None
         if out['complete'] and out['raw']:
             try:
-                raw = ro.parse(out['raw'])
+                raw = transport.FrameDecoder().decode(out['raw']) if self.frame_decoder is not None else ro.parse(out['raw'])
                 value = {key: raw[key] for key in RESULT_FIELDS if key in raw}
             except (ValueError, TypeError):
                 pass
-        return {'synthetic': True, 'exit_code': self.process.returncode, 'identity': self.identity(),
+        result = {'synthetic': True, 'exit_code': self.process.returncode, 'identity': self.identity(),
             'ended_wall_ns': time.time_ns(), 'stdout_sha256': out['sha256'], 'stdout_complete': out['complete'],
             'stderr_present': err['bytes'] > 0, 'stderr_sha256': err['sha256'], 'response': value, **ro.FLAGS}
+        if self.samples is not None:
+            result.update(stdout_complete=False, stdout_retention_scope='hash_only_stream_not_retained',
+                          full_input_stream=self.input_state())
+        return result
 
 
 class Timeline:
-    def __init__(self, path):
+    def __init__(self, path, *, reference_store=None):
         self.path, self.offset, self.pending = path, 0, b''
         self.invalid_rows = 0
+        self.reference_store = reference_store
 
     def read(self):
         if not self.path.exists():
@@ -270,7 +336,12 @@ class Timeline:
             raise ValueError('observer_jsonl_line_over_budget')
         for line in lines:
             try:
-                values.append(ro.parse(line))
+                value = ro.parse(line)
+                if isinstance(value, dict) and value.get('report_schema') == compact_reports.SCHEMA:
+                    if self.reference_store is None:
+                        raise ValueError('compact_timeline_requires_verified_full_hydration')
+                    value = compact_reports.restore(value, self.reference_store)
+                values.append(value)
             except (ValueError, TypeError) as error:
                 self.invalid_rows += 1
                 values.append({'synthetic': True, 'logical_point': 'unknown', 'alerts': ['observation_failed_closed'],
@@ -279,21 +350,30 @@ class Timeline:
         return values
 
 
-def final_once(plan, scratch, launch, name, *, receipt=False):
+def final_once(plan, scratch, launch, name, *, receipt=False, publish_full=None):
     command = observer_command(plan, scratch, launch, persistent=False)
     command += ['--once']
     if receipt:
         command += ['--producer-receipt', str(scratch / 'observer/producer-cold-audit-receipt.json')]
-    child = Pipes(command, ROOT, stdout_limit=LINE_CAP)
+    child = Pipes(command, ROOT, stdout_limit=LINE_CAP,
+                  wire_input=transport.report_format(plan) == 'compact-v2')
     try:
         child.process.wait(timeout=300)
     except subprocess.TimeoutExpired:
         child.terminate_owned(); raise ValueError('final_observer_timeout')
-    result = child.result(); ro.atomic_json(scratch / 'control' / name, result)
+    result = child.result()
+    stored = result
+    if publish_full is not None:
+        if not isinstance(result.get('response'), dict):
+            raise ValueError('final_full_input_response_unavailable')
+        stored = {**result, 'response': publish_full(result['response']),
+                  'response_stored_schema': compact_reports.SCHEMA,
+                  'stdout_sha256_scope': transport.WIRE_SCHEMA}
+    ro.atomic_json(scratch / 'control' / name, stored)
     return result
 
 
-def request_observer_stop(observer, output):
+def request_observer_stop(observer, output, *, pump=None):
     path = output / 'watch-cli-identity.json'
     if path.exists():
         identity = ro.load_json(path)
@@ -304,7 +384,29 @@ def request_observer_stop(observer, output):
     else:
         observer.terminate_owned()
     try:
-        observer.process.wait(timeout=180)
+        if pump is None:
+            observer.process.wait(timeout=180)
+        else:
+            deadline = time.monotonic() + 180
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise subprocess.TimeoutExpired('owned_observer', 180)
+                pump()
+                state = observer.input_state()
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise subprocess.TimeoutExpired('owned_observer', 180)
+                if (observer.process.poll() is not None and state['stdout_read_to_EOF']
+                        and state['queued_raw_frames'] == 0):
+                    break
+                if observer.process.poll() is not None:
+                    time.sleep(min(.005, remaining))
+                    continue
+                try:
+                    observer.process.wait(timeout=min(.1, remaining))
+                except subprocess.TimeoutExpired:
+                    pass
         return True
     except subprocess.TimeoutExpired:
         observer.terminate_owned()
@@ -327,6 +429,11 @@ def supervise(args):
         raise ValueError('registered_observer_output_budget_changed')
     os.sched_setaffinity(0, {registered['selected_cpu']})
     control, output, job = scratch / 'control', scratch / 'observer', scratch / 'job'
+    v2 = transport.report_format(plan) == 'compact-v2'
+    if v2 and any(output.iterdir()):
+        raise ValueError('compact_v2_requires_new_empty_output_no_resume')
+    node_store = compact_reports.DirectoryStore(output) if v2 else None
+    receipts = transport.DirectoryReceipts(output) if v2 else None
     producer = Pipes(producer_command(plan, job), Path(plan['source_root']))
     identity = producer.identity()
     launch = {'synthetic': True, 'driver_pid': identity['pid'], 'driver_birth': identity['birth'],
@@ -383,28 +490,9 @@ def supervise(args):
             value['coverage_no_go_reasons'] = sorted(set(value['coverage_no_go_reasons']) | set(collection_errors))
         value['watch_timeline_count_scope_complete'] = not collection_errors and not timeline.pending
         return value
-    def collect():
-        nonlocal attempt, drained, last_budget_check, last_sample_elapsed, coverage, drain_requested_ns, last_coverage_record
-        budget_check_due = time.monotonic() - last_budget_check >= 30
-        if strict_output and budget_check_due:
-            last_budget_check = time.monotonic()
-            try:
-                measured = measured_output_bytes(control, output)
-            except (OSError, ValueError, MemoryError) as error:
-                resource_no_go('observer_output_budget_measurement_unknown', error)
-            else:
-                if measured > output_budget:
-                    resource_no_go('observer_output_budget_exceeded', measured=measured)
-        try:
-            samples = timeline.read()
-        except (OSError, ValueError, TypeError) as error:
-            code = 'observer_timeline_unreadable_or_invalid'
-            if code not in collection_errors:
-                collection_errors.append(code)
-                write_output(append, control / 'collection-errors.jsonl', {'synthetic': True, 'code': code,
-                    'at_wall_ns': time.time_ns(), 'error_type': type(error).__name__,
-                    'error_digest': sha256(str(error).encode()).hexdigest(), 'financial_drain_requested': False})
-            samples = []
+    def process_samples(samples):
+        nonlocal attempt, drained, last_sample_elapsed, coverage, drain_requested_ns
+        last_compact = None
         for sample in samples:
             attempt += 1
             elapsed = sample.get('active_elapsed_seconds') if isinstance(sample, dict) else None
@@ -428,6 +516,74 @@ def supervise(args):
                 drain_requested_ns = time.clock_gettime_ns(time.CLOCK_BOOTTIME)
                 financial_drain_before_log(producer, fatal, historical_financial_alerts, control / 'safety-events.jsonl')
             write_output(append, control / 'sample-classification.jsonl', classified)
+            if v2:
+                try:
+                    # The complete original classify/rollback/fatal-drain path
+                    # above has already finished exactly once for this sample.
+                    def already_consumed(full, **_timing):
+                        if full is not sample:
+                            raise ValueError('consumed_full_input_identity_changed')
+                        return classified
+                    last_compact = compact_reports.consume_and_format(sample, already_consumed,
+                        job_elapsed_seconds=elapsed, sample_attempt_id=attempt,
+                        report_format='compact-v2', store=node_store)
+                    transport.commit_publication(last_compact, attempt, receipts,
+                        lambda value: write_output(append, output / 'timeline.jsonl', value),
+                        lambda value: write_output(ro.atomic_json, output / 'latest.json', value))
+                except (OSError, ValueError, KeyError, TypeError, ArithmeticError, MemoryError, RecursionError) as error:
+                    # Export UNKNOWN cannot erase a known financial result or
+                    # suppress its already-issued safety action. Never observe
+                    # this attempt a second time to make serialization pass.
+                    resource_no_go('observer_v2_export_unknown', error)
+                    failure = {'synthetic': True, 'record_origin': 'observer_v2_export_unknown',
+                        'sample_attempt_id': attempt, 'classification': classified, 'full_input': sample,
+                        'error_type': type(error).__name__, **ro.FLAGS}
+                    try:
+                        required = len(ro.canonical(failure).encode()) + 1
+                        used = measured_output_bytes(control, output)
+                        if used + required > output_budget:
+                            raise ValueError('full_input_retention_exceeds_original_output_budget')
+                        write_output(ro.atomic_json, output / ('v2-export-failure-' + str(attempt) + '.json'), failure)
+                    except (OSError, ValueError, TypeError, MemoryError):
+                        if 'observer_v2_failed_full_input_retention_unknown' not in collection_errors:
+                            collection_errors.append('observer_v2_failed_full_input_retention_unknown')
+                    raise
+        return last_compact
+
+    def collect():
+        nonlocal last_budget_check, last_coverage_record
+        budget_check_due = time.monotonic() - last_budget_check >= 30
+        if strict_output and budget_check_due:
+            last_budget_check = time.monotonic()
+            try:
+                measured = measured_output_bytes(control, output)
+            except (OSError, ValueError, MemoryError) as error:
+                resource_no_go('observer_output_budget_measurement_unknown', error)
+            else:
+                if measured > output_budget:
+                    resource_no_go('observer_output_budget_exceeded', measured=measured)
+        try:
+            samples = (observer.read_samples() if observer is not None else ()) if v2 else timeline.read()
+        except (OSError, ValueError, TypeError) as error:
+            if v2:
+                resource_no_go('observer_v2_input_or_export_unknown', error)
+            code = 'observer_timeline_unreadable_or_invalid'
+            if code not in collection_errors:
+                collection_errors.append(code)
+                write_output(append, control / 'collection-errors.jsonl', {'synthetic': True, 'code': code,
+                    'at_wall_ns': time.time_ns(), 'error_type': type(error).__name__,
+                    'error_digest': sha256(str(error).encode()).hexdigest(), 'financial_drain_requested': False})
+            samples = ()
+        if v2:
+            try:
+                process_samples(samples)
+            except (OSError, ValueError, KeyError, TypeError, ArithmeticError, MemoryError, RecursionError) as error:
+                resource_no_go('observer_v2_input_or_export_unknown', error)
+        else:
+            # Preserve the legacy exception boundary: only timeline.read was
+            # caught above, while original classification/write failures still
+            # propagate to the unchanged outer supervision handler.
+            process_samples(samples)
         # Close a block only after processing the next snapshot in stream order;
         # a slow sample timestamped in the preceding block must not be discarded.
         live = coverage_report(last_sample_elapsed)
@@ -458,11 +614,14 @@ def supervise(args):
             try:
                 if not observer_start_attempted and (job / 'progress.json').exists():
                     observer_start_attempted = True
-                    observer = Pipes(observer_command(plan, scratch, launch), ROOT)
+                    observer = Pipes(observer_command(plan, scratch, launch), ROOT,
+                                     stream_samples=v2, wire_input=v2)
                     write_output(ro.atomic_json, control / 'observer-identity.json', observer.identity())
                 collect()
                 if observer is not None and observer.process.poll() is not None:
                     if 'observer_exited_without_restart' not in collection_errors:
+                        if v2:
+                            resource_no_go('observer_v2_exited_without_restart')
                         collection_errors.append('observer_exited_without_restart')
                         write_output(ro.atomic_json, control / 'observer-exit.json', observer.result())
                 if stop.is_set() and not drained:
@@ -492,12 +651,20 @@ def supervise(args):
             time.sleep(.5)
         write_output(ro.atomic_json, control / 'producer-result.json', producer.result())
         if observer is not None:
-            if not request_observer_stop(observer, output):
+            if not request_observer_stop(observer, output, pump=collect if v2 else None):
                 collection_errors.append('readonly_observer_stop_timeout')
             collect()
+            if v2:
+                stream_state = observer.input_state()
+                write_output(ro.atomic_json, control / 'observer-v2-stream-final.json',
+                             {'synthetic': True, **stream_state, **ro.FLAGS})
+                if not stream_state['frames_complete']:
+                    collection_errors.append('observer_v2_stream_incomplete_at_shutdown')
             if timeline.pending:
                 collection_errors.append('observer_jsonl_truncated_at_shutdown')
-        before = final_once(plan, scratch, launch, 'final-before-cold.json')
+        before = final_once(plan, scratch, launch, 'final-before-cold.json',
+                            publish_full=lambda full: process_samples([full])) if v2 else final_once(
+                                plan, scratch, launch, 'final-before-cold.json')
         collect()
         audit = Pipes(observer_command(plan, scratch, launch, audit=True), ROOT)
         try:
@@ -505,7 +672,9 @@ def supervise(args):
         except subprocess.TimeoutExpired:
             audit.terminate_owned(); raise ValueError('strict_producer_cold_audit_timeout')
         write_output(ro.atomic_json, control / 'strict-producer-cold-result.json', audit.result())
-        after = final_once(plan, scratch, launch, 'final-after-cold.json', receipt=True)
+        after = final_once(plan, scratch, launch, 'final-after-cold.json', receipt=True,
+                           publish_full=lambda full: process_samples([full])) if v2 else final_once(
+                               plan, scratch, launch, 'final-after-cold.json', receipt=True)
         collect()
         final = after.get('response') or {}
         progress = ro.load_json(job / 'progress.json')
@@ -538,7 +707,7 @@ def supervise(args):
         return 1
     finally:
         if observer is not None and observer.process.poll() is None:
-            request_observer_stop(observer, output)
+            request_observer_stop(observer, output, pump=collect if v2 else None)
     return 0
 
 

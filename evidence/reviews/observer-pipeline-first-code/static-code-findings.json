@@ -1,0 +1,51 @@
+{
+  "FS_SQL_observer_watch_audit_original_data_network_crypto": "NOT_RUN",
+  "findings": [
+    {
+      "audit_contract_omits_those_fields": true,
+      "evidence_scope": "STATIC_REACHABILITY_NOT_AN_EXECUTED_AUDIT_FAILURE",
+      "expected_refusal_literal": "original_source_start_deadline_or_identity_changed",
+      "id": "PIPE-CODE-01",
+      "kind": "baseline_contract_identity_mismatch",
+      "producer_audit_collector_input_v2": false,
+      "same_baseline_required_by_sample": true,
+      "watch_collector_input_v2": true,
+      "watch_contract_additional_protocol_and_four_source_entries": true
+    }
+  ],
+  "pipeline_tests_executed": false,
+  "production_approved": false,
+  "review_type": "STATIC_CODE_ONLY_NO_TARGET_EXECUTION",
+  "reviewed_tip": "73bfdce2551c2925af442f6987fe510b5ac4c6a9",
+  "runtime_source_commit": "9cd70912d6c8c2c40f348f8d6bca1071363a47aa",
+  "schema": "uta.observer-pipeline-first-independent-code.v1",
+  "source_files": {
+    "tests/test_observer_v2_pipeline_pure.py": {
+      "bytes": 23801,
+      "same_at_runtime_source": false,
+      "sha256": "b5fd01fdd248b037fd3585a976830706dbde58961e69b90b9e10ed84c13b4bbd"
+    },
+    "tools/managed_observer_report.py": {
+      "bytes": 17733,
+      "same_at_runtime_source": true,
+      "sha256": "ae81dc4140cb7fdbfc00ed7937267b7897d050f5fee73257cbb373739d0154b1"
+    },
+    "tools/managed_observer_transport.py": {
+      "bytes": 6933,
+      "same_at_runtime_source": true,
+      "sha256": "ca393795ff3424543659a0892bdc8575472e5a27f6ebdea4e78d4fa2df5fda37"
+    },
+    "tools/managed_soak_observer.py": {
+      "bytes": 54915,
+      "same_at_runtime_source": true,
+      "sha256": "3ca8cf342576dac6b8e2ed1ddb5634b407a2ccac338f0ab84d555b81dbcd8959"
+    },
+    "tools/run_managed_long.py": {
+      "bytes": 44380,
+      "same_at_runtime_source": true,
+      "sha256": "8eacd1e85c92d79956a5f37bba6cc93bebf217a6f34631dc0318dbbace181bd3"
+    }
+  },
+  "status": "BLOCKED_WATCH_AUDIT_BASELINE_PROTOCOL_MISMATCH",
+  "system_qualification": "NO_GO"
+}

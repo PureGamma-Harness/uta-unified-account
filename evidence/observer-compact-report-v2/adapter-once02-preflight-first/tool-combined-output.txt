@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-report-v2/evidence/observer-compact-report-v2/launch_adapter_second_once.py", line 71, in <module>
+    before = closure()
+             ^^^^^^^^^
+  File "/workspace/uta-observer-compact-report-v2/evidence/observer-compact-report-v2/launch_adapter_second_once.py", line 62, in closure
+    actual, expected = path.read_bytes(), git('show', SOURCE + ':' + name)
+                       ^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/uta-observer-compact-report-v2/tools/probe_observer_v2_adapters.py'

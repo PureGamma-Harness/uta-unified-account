@@ -1,0 +1,57 @@
+test_alias_control_integer_one_to_true_is_rejected (__main__.IndependentSmallJsonTests.test_alias_control_integer_one_to_true_is_rejected) ... FAIL
+test_alias_report_version_two_to_float_is_rejected (__main__.IndependentSmallJsonTests.test_alias_report_version_two_to_float_is_rejected) ... FAIL
+test_alias_synthetic_true_to_integer_one_is_rejected (__main__.IndependentSmallJsonTests.test_alias_synthetic_true_to_integer_one_is_rejected) ... FAIL
+test_alias_total_integer_three_to_float_is_rejected (__main__.IndependentSmallJsonTests.test_alias_total_integer_three_to_float_is_rejected) ... FAIL
+test_manual_full_reference_and_extra_fields_expand_without_candidate_decoder (__main__.IndependentSmallJsonTests.test_manual_full_reference_and_extra_fields_expand_without_candidate_decoder) ... ok
+test_missing_or_corrupt_dependency_never_expands (__main__.IndependentSmallJsonTests.test_missing_or_corrupt_dependency_never_expands) ... ok
+test_new_item_export_limit_does_not_skip_complete_consumer (__main__.IndependentSmallJsonTests.test_new_item_export_limit_does_not_skip_complete_consumer) ... ok
+test_oracle_parser_rejects_duplicate_keys_and_nonfinite_json (__main__.IndependentSmallJsonTests.test_oracle_parser_rejects_duplicate_keys_and_nonfinite_json) ... ok
+
+======================================================================
+FAIL: test_alias_control_integer_one_to_true_is_rejected (__main__.IndependentSmallJsonTests.test_alias_control_integer_one_to_true_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 183, in test_alias_control_integer_one_to_true_is_rejected
+    self.check_alias(("summary", "commands", "control_commands"), True)
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 176, in check_alias
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_alias_report_version_two_to_float_is_rejected (__main__.IndependentSmallJsonTests.test_alias_report_version_two_to_float_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 186, in test_alias_report_version_two_to_float_is_rejected
+    self.check_alias(("report_version",), 2.0)
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 176, in check_alias
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_alias_synthetic_true_to_integer_one_is_rejected (__main__.IndependentSmallJsonTests.test_alias_synthetic_true_to_integer_one_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 189, in test_alias_synthetic_true_to_integer_one_is_rejected
+    self.check_alias(("synthetic",), 1)
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 176, in check_alias
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_alias_total_integer_three_to_float_is_rejected (__main__.IndependentSmallJsonTests.test_alias_total_integer_three_to_float_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 180, in test_alias_total_integer_three_to_float_is_rejected
+    self.check_alias(("summary", "commands", "total"), 3.0)
+  File "/workspace/uta-observer-compact-independent/evidence/reviews/observer-compact-independent/reference_and_alias_once.py", line 176, in check_alias
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.006s
+
+FAILED (failures=4)

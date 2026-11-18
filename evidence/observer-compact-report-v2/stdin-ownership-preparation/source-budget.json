@@ -1,0 +1,40 @@
+{
+  "scope": "READONLY_STDIN_AND_PARTIAL_CONSTRUCTOR_CANDIDATE_PREPARATION_ONLY",
+  "source_commit": "9596eee193b9c75776f341a4e58126864a30d797",
+  "preserved_first_actual_FAIL_seal": "c9a0a12961cf26afe7242c3c8c17b54e391d002c",
+  "source_sha256": {
+    "tools/probe_observer_v2_adapters.py": "4624f4cd5181d5ef526f60cb6c2b126421eace16741537d7a021775397a12bcc",
+    "tests/test_observer_v2_stdin_ownership_pure.py": "845b5326cccb164566f138bde00a8932c0f31169324dfbab351311914f0fccb7"
+  },
+  "proposed_pure_argv": ["taskset", "-c", "1", "timeout", "--signal=KILL", "10s", "python", "-B", "tests/test_observer_v2_stdin_ownership_pure.py", "-v"],
+  "proposed_pure_test_methods": 6,
+  "max_small_fake_branches": 32,
+  "max_combined_original_raw_stdout_stderr_bytes": 102400,
+  "pure_actual_child_pipe_null_device_SQL_signal_network_writes": "FORBIDDEN",
+  "pure_execution": "NOT_RUN",
+  "actual_adapter_execution_at_new_source": "NOT_RUN",
+  "allowed_pure_runs_without_further_root_go": 0,
+  "allowed_actual_adapter_runs_without_further_root_go": 0,
+  "proposed_new_actual_adapter_output": "/workspace/uta-observer-v2-adapter-runs/read1-9596eee-once02",
+  "actual_adapter_original_limits_unchanged": {
+    "CPU": 1, "outer_KILL_seconds": 10, "work_seconds": 5, "cooperative_cleanup_seconds": 2,
+    "data_children": 1, "Pipes_drain_threads": 2, "frames": 4, "commands_per_frame": 3,
+    "pipe_bytes": 32768, "CAS_bytes": 65536, "same_scope_control_and_observer_bytes": 131072
+  },
+  "readonly_stdin_flags": ["O_RDONLY", "O_CLOEXEC", "O_NOFOLLOW"],
+  "stdin_fixed_device": {"path": "/dev/null", "type": "character", "major": 1, "minor": 3},
+  "directory_write_guard_widened": false,
+  "stdout_actual_BufferedReader_read1_semantics_changed": false,
+  "constructor_failure_registered_child_cooperative_cleanup": true,
+  "failure_unknown_birth_or_cleanup_is_never_adapter_pass": true,
+  "CPython_source_only_inspection_sha256": "85d29b2bf0249f5436838298c9a60ee93508b1102e9ac43b001f8a7e7ae8f375",
+  "original_first_FAIL_raws_changed": false,
+  "old_dc1e_3e42_mock12_or_6h_execution": false,
+  "actual_watch_SQL_financial_business_matching_crypto_keys_network_CI": "FORBIDDEN",
+  "automatic_retry": false,
+  "production_approved": false,
+  "financial_6h_passed": false,
+  "continuous_6h_stability_passed": false,
+  "capacity_10000_per_s_passed": false,
+  "system_qualification": "NO_GO"
+}

@@ -1,0 +1,232 @@
+{
+  "allowed_runs_now": 0,
+  "current_authorization": {
+    "10k": false,
+    "HA": false,
+    "SQL": false,
+    "actual_watch": false,
+    "loopback_TLS_OpenSSL": false,
+    "mount_probe": false,
+    "new6h": false,
+    "producer_workers": false,
+    "production": false,
+    "protected_PID_actions": false,
+    "real_funds": false,
+    "target_tests": false
+  },
+  "expected_short_blockers": [
+    "actual_6h_and_5400_rounds_required",
+    "producer_actual_active_duration_incomplete",
+    "producer_cold_audit_same_watermark_missing"
+  ],
+  "failure_classes": {
+    "EXPECTED_SHORT_STRICT_REJECTION": "onlyexact originalshortblockers and no receipt; no6hPASS",
+    "NOT_RUN": "qualification/identity/materialization/RO mount/capability missing beforestart",
+    "OBSERVED_FINANCIAL_OR_GOLDEN_REJECT": "explicit actualfalse golden on declarednegativecopy; do not transfer to originaljob/M05",
+    "TECHNICAL_UNKNOWN_NO_GO": "SQL unavailable, timeout, EOF/queue/child/receipt/unrecordedoutput/resource/copy/missingdep; retainfirst no financialdamage inference",
+    "UNEXPECTED_FIRST_FAIL": "anything else preserved with fullscope, no automaticretry"
+  },
+  "kind": "PROPOSED_FRESH60_SECOND_CLI_SQL_COMPACT_SMOKE",
+  "new_source_and_external_launcher_SHA_review_required": true,
+  "no_probe_or_watch_authorized_by_this_plan": true,
+  "not_legacy909_acceptance_extension": true,
+  "original_6h_independent_blockers": {
+    "CAS_only_fix_does_not_close_coverage_or_rate": true,
+    "persistent_watch_shutdown_180s_not_exercised_by_once_smoke": true,
+    "prior_counts_not_recomputed_from_old_private_data_here": true,
+    "producer_no_catchup": "eligible=max(planned,last_actual_start+4s), no recovery bursts; record actualstart/latency/elapsed and all15rounds; no elapsed extension or rate-pass inference",
+    "producer_original_round_cadence_seconds": 4,
+    "root_reported_prior_inflight": 305,
+    "root_reported_prior_stable": 16
+  },
+  "phases": [
+    {
+      "expected": "C/runtime/regular-files/bytes match, new parent0700, root supplied protected registry excluded; old10 protected remain untouched",
+      "max_seconds": 15,
+      "phase": "0_SOURCE_AND_LAUNCH_PREFLIGHT",
+      "real_IO": "source and QA metadata only; no child capability probe before exactGO"
+    },
+    {
+      "argv": [
+        "PYTHON",
+        "-B",
+        "benchmarks/run_managed_soak.py",
+        "run",
+        "--directory",
+        "FRESH_JOB",
+        "--duration",
+        "60",
+        "--worker-every",
+        "5",
+        "--parent-every",
+        "10",
+        "--validation-report",
+        "EXACT_C_REPORT"
+      ],
+      "cwd": "ASSEMBLED_SOURCE",
+      "expected": "actual complete CLI SQL frame while driver birth alive creates baseline; original full Coverage beforeCAS; stable/inflight actualfacts retained, no assumedgolden",
+      "max_seconds": 100,
+      "phase": "1_FRESH_PRODUCER_AND_LIVE_COMPACT",
+      "watch_argv": [
+        "PYTHON",
+        "-B",
+        "ASSEMBLED_SOURCE/tools/managed_soak_observer.py",
+        "watch",
+        "--job",
+        "FRESH_JOB",
+        "--output",
+        "FRESH_OBSERVER_V2",
+        "--source",
+        "ASSEMBLED_SOURCE",
+        "--frozen-commit",
+        "FINAL_C",
+        "--driver-pid",
+        "NEW_OWNED_DRIVER_PID",
+        "--driver-birth",
+        "NEW_OWNED_DRIVER_BIRTH",
+        "--once",
+        "--interval",
+        "60",
+        "--collector-input-v2",
+        "--report-protocol",
+        "compact-v2",
+        "--max-private-clone-bytes",
+        "268435456",
+        "--min-private-free-bytes",
+        "1073741824",
+        "--max-address-space-bytes",
+        "2147483648"
+      ]
+    },
+    {
+      "argv_difference": "same watch--once but omit collector-input-v2/report-protocol and use separate FRESH_OBSERVER_LEGACY output",
+      "expected": "legacy baseline while same driver alive for existing short-cold; additionally run wrong-frozen-commit actualwatch CLI in a separate bad-identity output while live WAL exists and require the source-identity rejection; never mix receipts",
+      "max_seconds": 20,
+      "phase": "1B_LEGACY_COMPAT_BASELINE"
+    },
+    {
+      "expected": "after new producer naturally completed and own authority cold, compact watch--once final keeps final_evidence_eligible=false and exact original EXPECTED_SHORT_BLOCKERS; producer-audit --report-protocol compact-v2 rejects short other-final-checks; no long receipt",
+      "long_audit_expected_error_digest": "4a5ed95de5ca7c7837583d12ce1ff661d7aa5b80428619cfa19821d19f1cf37b",
+      "long_audit_expected_gate": "producer_audit_requires_other_final_checks_passed",
+      "max_seconds": 20,
+      "no_fake_elapsed_or5400rows": true,
+      "phase": "2_COLD_COMPACT_FINAL_AND_ORIGINAL_STRICT_REJECTION"
+    },
+    {
+      "argv": [
+        "PYTHON",
+        "-B",
+        "ASSEMBLED_SOURCE/tools/managed_observer_smoke.py",
+        "short-cold",
+        "--source",
+        "ASSEMBLED_SOURCE",
+        "--commit",
+        "FINAL_C",
+        "--report",
+        "EXACT_C_REPORT",
+        "--job",
+        "FRESH_JOB",
+        "--output",
+        "FRESH_OBSERVER_LEGACY",
+        "--audit-output",
+        "FRESH_SHORT_AUDIT"
+      ],
+      "expected": "actual producer audit CLI onprivatefullclone15round; samewatermark, short_smoke_cold_audit_passed=true, long_run_receipt_issued=false/final_evidence_eligible=false; notcompact-positivecoldhelper claim",
+      "max_seconds": 45,
+      "phase": "3_POSITIVE_SHORT_COLD_SQL_AUDIT"
+    },
+    {
+      "cases": [
+        "one financial balance-unit mutation in a separate new private shard copy; original read_financial query_only golden must false/nonemptyerrors; read failure instead is UNKNOWN notnegativePASS",
+        "missingCAS dependency on separate controlled CAS copy must reject before another Coverage observation; identical receipt query cannot reconsume an attempt"
+      ],
+      "max_seconds": 30,
+      "no_positive_job_mutation": true,
+      "phase": "4_BOUNDED_NEGATIVE_CASES"
+    },
+    {
+      "expected": "rehydrate complete SQL reports then independent frozen legacyCoverage; exact same counters; retain12x1800/duration21600 plan and actualelapsed<=smoke, finalNO_GO missingtime/blocks; no scaledwindow/clamp/reset; firststdoutstderr/runtime/SQLmode/source/childcleanup/outputmeasure sealed",
+      "max_seconds": 10,
+      "phase": "5_COVERAGE_AND_ORIGINALS"
+    }
+  ],
+  "profile": "fresh-matched-source60s-15round-1shard-compactCLI-and-shortcold-v1",
+  "profile_configuration": {
+    "accounts": 3,
+    "duration_seconds": 60,
+    "expected_parent_faults": 1,
+    "expected_worker_faults": 3,
+    "no_allow_dirty_development": true,
+    "no_allow_long_run": true,
+    "no_resume": true,
+    "parent_fault_every_rounds": 10,
+    "planned_rounds": 15,
+    "rate_rounds_per_second": 0.25,
+    "shards": 1,
+    "worker_fault_every_rounds": 5
+  },
+  "real_capabilities_only_in_future_explicit_scope": {
+    "SQLite": "new job writes by producer; original watch mode=ro/query_only transactions under kernelRO; full backup to private clones, DELETE journal there; negative onlynew clone SQL mutation",
+    "crypto": "producer may execute one synthetic OpenSSL certificate issue and ephemeral signing profile; no key/nonce read/print/export by observer/collector",
+    "filesystem": "only new0700 scratch/0600 evidence and private source materialization; O_EXCL first intent/stdout/stderr/results; no oldrun files",
+    "mount": "existing bwrap RO bind with only controlled output writable; capability unavailable => NOT_RUN/FAIL_CLOSED, no RW fallback",
+    "network": "synthetic producer loopback TLS/HMAC only; no external exchange or outbound service",
+    "private_backups": "only fresh checkpoint/router/shard complete SQLite copies; opaque writer/control nonce columns stayprivate; excludes AuthDB/private-auth.sqlite3/TLS/signing/HTTPnonce files; notH1 probe",
+    "process": "new registered roles plus read-only Git; birth/PGID/session tracked; no unregistered child",
+    "signals": "producer configured synthetic fault5/10 and own fresh official cleanup only after exact identity+protected exclusion; no action on10protected PIDs",
+    "standard_descriptors": "targets stdin/stdout/stderr non-regular; parent captures viaPIPE and alone writes O_EXCL raw files; permit only /dev/null character device when source internal subprocess.DEVNULL opens it, not arbitrary outside filesystem writes; no assumption actualPipes was changed by adapter shim",
+    "threads": "actual CLI/product threads and 2 pipe drainers peractive captured child counted/joined; exact maximum to be frozen by launcher review"
+  },
+  "resource_caps_proposal": {
+    "CAS_additional_profile_subcap_bytes": 16777216,
+    "CAS_negative_seconds": 10,
+    "CPU_affinity": [
+      1
+    ],
+    "RSS_or_kernel_quota_claim": false,
+    "SQL_negative_seconds": 10,
+    "all_CAS_receipts_pending_failure_logs_clone_files_charged_to_fresh_profile": true,
+    "child_count_scope": "include producer/bootstrap/loopback listener/spawn worker/resource trackers/OpenSSL/bwrap/watch/audit; counters measured by new launcher, cap exceed first UNKNOWN",
+    "combined_outer_raw_diagnostics_bytes": 1048576,
+    "conservative_source_plus_scratch_plus_headroom_bytes": 1879048192,
+    "each_raw_regular_file_bytes": 524288,
+    "each_watch_once_seconds": 20,
+    "fresh_scratch_aggregate_logical_bytes": 536870912,
+    "full_stdout_not_generally_retained": true,
+    "job_subcap_bytes": 268435456,
+    "long_gate_negative_seconds": 20,
+    "minimum_free_headroom_bytes": 1073741824,
+    "nonGit_peak_children": 12,
+    "nonGit_total_launches": 32,
+    "observer_address_space_bytes": 2147483648,
+    "observer_control_subcap_bytes": 33554432,
+    "original_control_observer_2GiB_cap_not_raised": true,
+    "private_clone_subcap_bytes": 268435456,
+    "producer_existing_capture_seconds": 100,
+    "provisional_exact_launcher_CODE_review_required": true,
+    "raw_queue_frames": 2,
+    "read_only_Git_total_launches": 128,
+    "short_cold_existing_outer_seconds": 45,
+    "source_separate_readonly_bytes": 268435456,
+    "total_launches_including_Git": 160,
+    "unknown_unlinked_open_and_FS_metadata_physical_bytes_not_hard_bounded": true,
+    "whole_outer_seconds": 240,
+    "wire_original_line_cap_bytes": 67108864
+  },
+  "sources": {
+    "base_tracked_blob_bytes_metadata": 208261486,
+    "cold_audit": "same C script ROOT/cwd",
+    "environment": {
+      "GIT_OPTIONAL_LOCKS": "0",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "external_launcher": "new external frozen source/hash; must not mutate candidate or patch original gate",
+    "full_checkout_required_for_actual_phase": "sparse assembly is not assumed runnable; materialize all qualified report inputs beforeGO, sourceRO thereafter",
+    "observer": "same C",
+    "producer": "new assembled final C, clean full physical checkout; UTA4a0d asPR35",
+    "qualification": "actual passed push-CI new C full report plus worker/log sidecars, exact commit/Python/SQLite/argv; a PR merge report cannot qualify head C merely because trees match; missing/mismatch => NOT_RUN",
+    "source_worktree_cap_bytes": 268435456
+  },
+  "status": "NOT_RUN",
+  "version": 1
+}
