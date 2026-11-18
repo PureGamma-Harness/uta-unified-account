@@ -66,3 +66,15 @@ All eight PR32 jobs were in progress when fetched, and their package steps were 
 This commit contains only sanitized documentation and JSON evidence. It changes no runtime, test assertion, lease, quote TTL, API timeout, schema, parameter, controller or active process. Preserve original failure bytes and missing-field disclosures before adding diagnostic instrumentation in a separately reviewed source.
 
 Revert this evidence commit to withdraw the report while retaining original records. No merge, deployment, real-funds enablement or gate override is authorized. Production/capacity approval remains false; the long-run acceptance is a separate ongoing task.
+
+## Later PR32 natural-completion observation
+
+At **2026-11-18 00:21:21 UTC**, a separately labeled follow-up GET found both original PR32 attempt-1 runs completed with **FAILURE**. The first 00:14 pending snapshot above and its original JSON remain unchanged. No CI execution was retried.
+
+In each run, Python 3.12 succeeded; Python 3.10, 3.11 and 3.13 each failed their unit step and skipped packaging. Each failing suite ran **1,840 tests with one failure, no errors/skips**. All six failures are the pure preservation-evidence assertion at `tests/test_cli_sigterm_failure_evidence.py:201`: `test_original_business_case_is_preserved_except_documented_observation`. They are not failures at a native CLI shutdown assertion.
+
+The test removes specified observation hooks, returns `ast.dump(method, include_attributes=False)`, hashes that representation and compares it to the single fixed digest `a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128`. The committed digest record declares no Python-version or cross-version AST serialization contract. Both 3.10 and 3.11 runs report actual digest `2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98`; both 3.13 runs report `3bf36241a88c82a67a2381c0cc1b737343a01885efb90f09794e4295160305b5`. The two 3.12 jobs succeeded. This identifies a version-dependent evidence-test contract for review; it does not establish a business-method change, explain the earlier CLI shutdown failure, or justify removing the preservation requirement.
+
+The six newly failed unit ZIPs were each downloaded once. Provider SHA/size, all three member CRCs, unittest hash, equal before/after source maps and all **355** standard Git input blobs per ZIP were independently verified against head `497c67f60901653634a96f629087f805032acec5`; PR artifacts report the bound synthetic merge. No successful-job ZIP or package ZIP was downloaded. [The later observation](../evidence/reviews/pr31-pr32-first-ci-20261118/pr32-natural-completion-observation.json) records all run/job IDs, artifact hashes and exact observed digests.
+
+This follow-up performed no normalization experiment, test rerun, SQL, CLI, worker, long-run action, CI trigger or code fix. PR31's three distinct first failures remain open, and all production approval remains false.
