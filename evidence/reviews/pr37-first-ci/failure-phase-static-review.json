@@ -1,0 +1,25 @@
+{
+  "SPAWNED_policy_limit": "SQLite busy-handler budgetmin .1 does not impose a hard bound on LOCKED/PROTOCOL/internal retries/disk/OS scheduling; native5s gate remains open.",
+  "actual_phase": "Undo of an unsatisfied native SH capture; bounded sampler never established the required eligible non-SH observation.",
+  "failed_method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+  "file": "tests/test_durable_faults.py",
+  "head": "67cd9bd9fd494369b53c0a2792120c587d3e757f",
+  "later_not_reached": [
+    "captured success assertion",
+    "captured native5s lease checks",
+    "unexpired held-SH owner control",
+    "queued held-gate command and subsequent publication/expiry recovery assertions"
+  ],
+  "line": 1456,
+  "missing_evidence": "Full capture-attempt vector and registration trace are not attached to the retained failure message. Causal origin remains unknown.",
+  "not_inferred": [
+    "No actual kernel progress ever occurred",
+    "The new SPAWNED budget caused this failure",
+    "The new budget fixes the native5s recovery deadline",
+    "Financial corruption or repeated settlement"
+  ],
+  "observed_exception": "bound child did not leave SH after undo within original capture horizon",
+  "source_scope_limit": "Unchanged failing test source is not a baseline reproduction or proof of harmlessness.",
+  "test_source_bytes_equal_base6010": true,
+  "test_source_sha256": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba"
+}
