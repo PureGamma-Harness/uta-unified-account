@@ -1,0 +1,120 @@
+{
+  "CI_reruns": 0,
+  "SQL_operations": 0,
+  "base_target_source": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "input_files": {
+    "docs/ci-gate-reliability-f774-diagnostics.md": {
+      "bytes": 3155,
+      "sha256": "7b2f5fd2d228d5150259083208e7b7eddbf530afbfc3c95dd587228cbadb02e7"
+    },
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7"
+    },
+    "tests/test_process_readiness.py": {
+      "bytes": 18382,
+      "sha256": "82afb046a74e6a2210fa04eecaf06a6c4ff2ba4f2c115e7b442f94b4e8c8c3d8"
+    },
+    "tests/test_readiness_sampling.py": {
+      "bytes": 21783,
+      "sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba"
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 11490,
+      "sha256": "ae56fc679485debaa01b66346726ef46ac4853ec895e192803788e912bbd4136"
+    },
+    "uta/durable_process.py": {
+      "bytes": 106136,
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    "uta/sharding.py": {
+      "bytes": 51451,
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    "uta/startup.py": {
+      "bytes": 18728,
+      "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d"
+    },
+    "uta/storage.py": {
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 46393,
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+    }
+  },
+  "modified_test_methods": [
+    "StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal",
+    "ProcessReadinessTests.test_partial_fanout_is_unready_until_exact_generation_finishes"
+  ],
+  "next_gates": [
+    "independent CODE review",
+    "root explicit new execution/CI decision",
+    "preserve first result and original source",
+    "independent evidence review"
+  ],
+  "observation_limits": [
+    "Clock and append overhead can perturb timing.",
+    "No new authoritative lease or physical commit observation.",
+    "No root-cause or runtime safety conclusion.",
+    "No new test execution or failure reproduction."
+  ],
+  "original_failures_preserved": true,
+  "proc_PID_worker_operations": 0,
+  "read_only_review": "16ac950c5d8fc160026c0947f991f9b409ee6ba9",
+  "readiness": {
+    "counts": "true/false/unknown by exact bool type",
+    "existing_diagnostics_calls_at_final_assertion": 1,
+    "maximum_worker_rows": 2,
+    "no_identities": true,
+    "original_assertion": "assertTrue(final ready)",
+    "projection_failure": "fixed JSON message",
+    "projection_only_when_ready_false": true,
+    "unchanged_market_snapshot": true,
+    "unknown_reason": "other",
+    "worker_gate_fields": [
+      "alive",
+      "lease_active",
+      "market_ready",
+      "owner_ready",
+      "locally_active",
+      "funding_registry_ready"
+    ]
+  },
+  "schema": 1,
+  "startup": {
+    "clock": "time.monotonic_ns",
+    "clock_value_type": "exact int in0..2**63-1",
+    "fixed_stage_labels": [
+      "renew_request",
+      "held_renewal_requested",
+      "renew_raise",
+      "renew_return",
+      "enter_before",
+      "enter_return",
+      "construct_before",
+      "construct_return",
+      "writer_before",
+      "writer_body_enter",
+      "writer_held",
+      "requested_wait_return",
+      "sleep_return",
+      "writer_return_and_held_cleared",
+      "finish_before",
+      "finish_return",
+      "main_raise"
+    ],
+    "fixture_lease_seconds": 0.4,
+    "observer_failure": "collection_failed sticky; original flow continues",
+    "original_exception_bare_raise": true,
+    "original_return_identity_preserved": true,
+    "original_sleep_seconds": 0.08,
+    "original_wait_seconds": 0.3,
+    "overflow": "truncated sticky; no more clock/record work",
+    "renew_original_calls_per_observer": 1,
+    "timeline_limit": 64
+  },
+  "status": "CODE_ONLY_NOT_RUN",
+  "target_executions": 0
+}

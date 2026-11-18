@@ -4,7 +4,7 @@ import sqlite3
 from decimal import Decimal
 from pathlib import Path
 from threading import Event, current_thread
-from time import monotonic, sleep
+from time import monotonic, monotonic_ns, sleep
 import unittest
 from unittest.mock import patch
 
@@ -42,35 +42,85 @@ class StartupWriteContentionTests(unittest.TestCase):
         original = WriterFence.renew
         phases = dict(entered=False, constructed=False, writer_held=False,
                       renewal_requested=False, finished=False)
+        timeline, timeline_limit = [], 64
+        timeline_truncated = timeline_failed = False
+        def mark(stage, error=None):
+            nonlocal timeline_truncated, timeline_failed
+            try:
+                if len(timeline) >= timeline_limit:
+                    timeline_truncated = True
+                    return
+                observed = monotonic_ns()
+                if type(observed) is not int or not 0 <= observed <= 2**63 - 1:
+                    timeline_failed = True
+                    return
+                item = dict(stage=stage, monotonic_ns=observed)
+                if error is not None:
+                    kind = ("startup_error" if type(error) is StartupError else
+                            "writer_fence_error" if type(error) is WriterFenceError else
+                            "sqlite_operational_error" if type(error) is sqlite3.OperationalError else "other")
+                    code = error.code if type(error) in (StartupError, WriterFenceError) else None
+                    item.update(error_type=kind, error_code=code if code in {
+                        "startup_keeper_failed", "lease_expired", "writer_fenced",
+                        "startup_write_gate_timeout", "initialization_in_progress",
+                        "fence_clock_regressed", "startup_keeper_stuck", "startup_cancelled",
+                        "startup_deadline"} else "other")
+                timeline.append(item)
+            except BaseException:
+                timeline_failed = True  # Observation must not replace the original result.
         def observe(fence, token, ttl):
+            mark("renew_request")
             if current_thread().name == "uta-startup-lease" and held.is_set():
                 requested.set()
-            return original(fence, token, ttl)
+                mark("held_renewal_requested")
+            try:
+                result = original(fence, token, ttl)
+            except BaseException as error:
+                mark("renew_raise", error)
+                raise
+            mark("renew_return")
+            return result
         failure = None
         try:
             with patch.object(WriterFence, "renew", observe):
+                mark("enter_before")
                 with initialization:
                     phases["entered"] = True
+                    mark("enter_return")
+                    mark("construct_before")
                     self.fixture.construct(initialization)
                     phases["constructed"] = True
+                    mark("construct_return")
                     initialization.check()
                     # A real owned financial BEGIN IMMEDIATE retains the writer
                     # lock through COMMIT. The pause is >.4/12 busy wait, but
                     # comfortably below the unchanged .4-second lease.
+                    mark("writer_before")
                     with self.fixture.bound.transaction() as conn:
+                        mark("writer_body_enter")
                         conn.execute("UPDATE uta_schema SET version=version")
                         held.set()
                         phases["writer_held"] = True
+                        mark("writer_held")
                         self.assertTrue(requested.wait(.3), "keeper did not actually request renewal")
                         phases["renewal_requested"] = True
+                        mark("requested_wait_return")
                         sleep(.08)
+                        mark("sleep_return")
                     held.clear()
+                    mark("writer_return_and_held_cleared")
+                    mark("finish_before")
                     initialization.finish()
                     phases["finished"] = initialization._finished
+                    mark("finish_return")
         except BaseException as error:
             failure = error
+            mark("main_raise", error)
         evidence = dict(phases=phases, error=describe_error(failure),
-                        keeper_error=describe_error(initialization._failure))
+                        keeper_error=describe_error(initialization._failure),
+                        timeline=dict(events=timeline, limit=timeline_limit,
+                            truncated=timeline_truncated, collection_failed=timeline_failed,
+                            semantics="test observation clock and append overhead; not lease-clock or commit attestation"))
         self.assertIsNone(failure, json.dumps(evidence, sort_keys=True))
         self.assertEqual(phases, dict(entered=True, constructed=True, writer_held=True,
                                      renewal_requested=True, finished=True))
