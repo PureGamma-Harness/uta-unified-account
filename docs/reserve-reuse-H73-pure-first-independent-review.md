@@ -1,0 +1,15 @@
+# H73 first four arithmetic contracts: independent raw acceptance
+
+Result: **SCOPED FOUR-ARITHMETIC-CONTRACT PASS**, source `73c8aa3a57955901ddfe777ff8e22b2fd883bc1f`, safe seal `b1909d0610f2d04108a18458299156ffc480da1d`. All nine private files match the final seal and remain 0400 files under a 0500 directory. Final seal SHA is `277062eb94d84ed99a93a9cfc58ce0119cffefae3e1581f7a6b995906e6a7208`.
+
+Stdout is empty; stderr is exactly 102 bytes, SHA `d094b1bd2c8318c96097f80c50da282add5b2972970a77046de8db6c8935f6ca`: four dots, `Ran 4 tests in 0.002s`, then `OK`. Exact argv names the four reviewed methods with no verbose flag. Selection is supported by fixed selectors, unchanged source and the four-test summary; no per-ID verbose success records are invented.
+
+The prefix actually exited 0, was reaped, reached both stream EOFs and recorded no fault. Its measured Popen/wait/raw-fsync interval is 93,723,613 ns, exactly the monotonic difference. Three source files total 11,215 bytes. Their before/after hashes, plan and manifest match frozen metadata and Git. Trusted local read pins are not immutable remote attestation or a complete publication-lifecycle timer.
+
+The first inventory contains six entries and predates caller-summary. Its bytes are unchanged. Final seal covers eight preceding files, including that inventory and the later caller-summary, excluding itself. This appends evidence without retroactively expanding the first inventory. Five public artifacts match Git and their byte inventory; safe report SHA is `e0708565f7f8d9ff02bbf2f4e18127e5611aed3080ed37f98bb6ac37593b272f`. Its fifteen receipt fields are individually finite and reviewed for this pure run: fixed public-source argv, statuses, time, stream size and zero native/SQL/monitor counts. This is not general permission to publish a native full receipt.
+
+Recording limit: the nine originals do not contain capture-controller source or per-write reserved/dropped/short-write counters. Current evidence verifies the complete stored 102-byte output, dual EOF, fault=null and trusted caller result against a declared 32 KiB/512-byte-reserve contract. It does not independently establish overflow/short-write enforcement or unrun fault branches. No target blocker was found and no additional run is requested by this review.
+
+Acceptance covers these arithmetic contracts only. Native admission, product/rule/freshness, ledger, durability and actual cache reuse in the two-authority candidate remain unvalidated. Native pair has not run and still needs root's separate GO. Performance, capacity and production acceptance remain **NO_GO**. Earlier H33 evidence stays private and unchanged; H254 remains UNKNOWN.
+
+Sanitized verification: `evidence/reviews/matching-component-profile-independent/reserve-reuse-H73-pure-first-independent.json`. This safe independent commit descends from `b25b8ce9e7fd501f28f6d7f30ab7d7cc41dfa5d7`. It copies no private caller content, original path, nonce, database or capsule. Review performed no target import/compile, test, SQL, native/monitor operation, process/PID or network probe.
