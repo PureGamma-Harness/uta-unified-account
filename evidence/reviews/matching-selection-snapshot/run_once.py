@@ -7,6 +7,71 @@ from time import monotonic
 STARTED = monotonic()
 DEADLINE = STARTED + 10
 ROOT = Path(__file__).resolve().parents[3]
+RAW_CAP = 262144
+RAW_TRAILER_RESERVE = 512
+RAW_RESERVED = 0
+RAW_FAILED = False
+
+
+def raw_abort(reason):
+    global RAW_FAILED
+    RAW_FAILED = True
+    trailer = ('{"event":"PURE_RAW_CAPTURE_ABORT","reason":"' + reason
+               + '","exit_status":125}\n').encode("ascii")
+    # All normal bytes were reserved below CAP-512 before their first write.
+    # One direct trailer attempt remains inside that independently held space.
+    try:
+        os.write(2, trailer)
+    except BaseException:
+        pass
+    os._exit(125)
+
+
+class BoundedRaw:
+    encoding = "utf-8"
+    errors = "backslashreplace"
+
+    def __init__(self, descriptor):
+        self.descriptor = descriptor
+
+    def write(self, value):
+        global RAW_RESERVED
+        if RAW_FAILED:
+            os._exit(125)
+        if type(value) is not str:
+            raise TypeError("bounded raw writer requires plain text")
+        data = value.encode(self.encoding, self.errors)
+        if len(data) > RAW_CAP - RAW_TRAILER_RESERVE - RAW_RESERVED:
+            raw_abort("combined_capacity")
+        RAW_RESERVED += len(data)  # Reserve the whole request before any FD write.
+        remaining = memoryview(data)
+        try:
+            while remaining:
+                written = os.write(self.descriptor, remaining)
+                if type(written) is not int or written <= 0 or written > len(remaining):
+                    raw_abort("short_or_invalid_write")
+                remaining = remaining[written:]
+        except BaseException:
+            raw_abort("fd_write_failure")
+        return len(value)
+
+    def flush(self):
+        # os.write is already unbuffered; do not claim filesystem fsync here.
+        if RAW_FAILED:
+            os._exit(125)
+
+    def isatty(self):
+        return False
+
+    def fileno(self):
+        return self.descriptor
+
+
+# The frozen fixture writes via Python's streams and has no native FD emitter.
+# Install before imports/main/fixture execution; interpreter pre-exec failures
+# are a separate preparation scope. Keep Python's fallback streams bounded too.
+sys.stdout = sys.__stdout__ = BoundedRaw(1)
+sys.stderr = sys.__stderr__ = BoundedRaw(2)
 
 
 def budget(frame, event, argument):
@@ -72,7 +137,8 @@ def main():
     emit("BEGIN_FIRST_PURE_ONCE", attempt=1, source_commit=sys.argv[1], runtime=sys.version,
          actual_affinity=sorted(os.sched_getaffinity(0)), inputs_sha256=before,
          plan_sha256=hashlib.sha256(plan_data).hexdigest(), methods=12,
-         native_execution_authorized=False, sql_authorized=False, wall_seconds=10)
+         native_execution_authorized=False, sql_authorized=False, wall_seconds=10,
+         combined_raw_cap_bytes=RAW_CAP, trailer_reserve_bytes=RAW_TRAILER_RESERVE)
     sys.addaudithook(audit)
     values = runpy.run_path(str(ROOT / "tests/test_matching_selection_snapshot.py"),
                             run_name="matching_selection_memory_fixture")
