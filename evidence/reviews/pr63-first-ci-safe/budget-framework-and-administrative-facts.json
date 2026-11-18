@@ -1,0 +1,131 @@
+{
+  "administrative_reader_errors": [],
+  "archive_read_plan": {
+    "before_artifact_metadata_or_download": true,
+    "binary_central_directory_entries_max": 16000,
+    "binary_central_directory_read_budget": 2097152,
+    "binary_compressed_bytes_each": 67108864,
+    "binary_downloads_max": 1,
+    "binary_hash_stream_roles": [
+      "download stream SHA",
+      "final seal inventory SHA"
+    ],
+    "binary_member_CRC_reads": 0,
+    "binary_member_payload_reads": 0,
+    "binary_whole_hash_stream_bytes_total_max": 134217728,
+    "binary_whole_hash_streams_max": 2,
+    "global_physical_IO_quota_or_hard_deadline_proved": false,
+    "rawtar_payload_reads": 0,
+    "repeat_reads_must_be_disclosed": true,
+    "schema": "pr63-archive-read-ledger-plan/v1",
+    "small_archive_reads_per_member": 1,
+    "small_archive_shared_member_expansion_bytes": 8388608,
+    "wheel_payload_reads": 0
+  },
+  "artifact_selection": {
+    "binary_payload_expansion": 0,
+    "first_failed_job": 134973560798,
+    "parent_authorized_failed_unit_addendum": true,
+    "raw_file_count": 256,
+    "raw_total_bytes": 134217728,
+    "selected": [
+      {
+        "bytes": 107635,
+        "event": "push",
+        "id": 14450725450,
+        "name": "uta-unit-validation-python-3.13",
+        "role": "fixed-push313-unit",
+        "sha256": "sha256:b117b6ca94962cee8f5dc63afeb6c1809893c34bb136702bd5ad11a5ed9adc44"
+      },
+      {
+        "bytes": 107555,
+        "event": "pull_request",
+        "id": 14448928729,
+        "name": "uta-unit-validation-python-3.13",
+        "role": "fixed-pr313-unit",
+        "sha256": "sha256:9d82c7f9e1612e889e227b794e6f590218111701b1923b5ed1ca6d3eea6785e4"
+      },
+      {
+        "bytes": 66325,
+        "event": "push",
+        "id": 14448674472,
+        "name": "uta-package-validation-python-3.13",
+        "role": "fixed-push313-package",
+        "sha256": "sha256:5be13224eaa1fc785b29d6cbe7bed8365b0d433a2135607aa8b2ffee2fc4db8f"
+      },
+      {
+        "bytes": 108005,
+        "event": "push",
+        "id": 14448369893,
+        "name": "uta-unit-validation-python-3.12",
+        "role": "first-failing-job-unit",
+        "sha256": "sha256:929329bf1123c15b7c34da086de3d79148d6a908a91cf75284f63a241dc6fcf8"
+      },
+      {
+        "bytes": 54814960,
+        "event": "push",
+        "id": 14449947051,
+        "name": "uta-wheel-python-3.13",
+        "role": "one-binary-outer-only",
+        "sha256": "sha256:dd18f8b204f1a76e9454fd5d3d4456f8736352d2ef27b276431fb6d753bc591c"
+      }
+    ],
+    "shared_small_expansion_bytes": 8388608,
+    "source": "16f64fec1d2fba638ea99a6414cf8778f9638537"
+  },
+  "collection_plan": {
+    "archive_compressed_bytes_each": 67108864,
+    "archive_entries": 16000,
+    "binary_downloads_max": 1,
+    "binary_outer_metadata_only": true,
+    "events": [
+      "push",
+      "pull_request"
+    ],
+    "framework_bytes": 12311,
+    "framework_changes": "SOURCE and SOURCE_TREE literals only",
+    "framework_sha256": "616062301b39cffd3e5c771891f997cd3e26d07bacb2178295b8cda903f64071",
+    "local_target_execution_permitted": false,
+    "new_full_layer_reader_executed": false,
+    "outer_members_shared_expanded_bytes": 67108864,
+    "provider_and_logs_total_bytes": 33554432,
+    "qualification": "NOT_VERIFIED",
+    "raw_files": 256,
+    "raw_total_bytes": 134217728,
+    "rawtar_payload_expanded_bytes": 0,
+    "repository": "PureGamma-Harness/uta-unified-account",
+    "run_IDs": "DISCOVER_AND_FREEZE_BEFORE_TERMINAL_COLLECTION",
+    "run_attempt": 1,
+    "schema": "pr63-first-ci-collection/v1",
+    "single_provider_response_bytes": 8388608,
+    "small_members_shared_expanded_bytes": 8388608,
+    "source": "16f64fec1d2fba638ea99a6414cf8778f9638537",
+    "stable_framework_origin": "d4208f8044939759efcab10d28a4258de3f8de15:evidence/reviews/pr62-corrected-first-ci-safe/collect_data.py",
+    "tree": "871e55bed70aca4db42f5405c3556fefac8bacdd",
+    "wheel_payload_expanded_bytes": 0
+  },
+  "financial_or_test_target_execution_by_collector": false,
+  "first_scope_preserved": true,
+  "reader_component_delta": {
+    "actual_target_or_test_execution": false,
+    "after_component_paths": [
+      "tests/test_funding_hold_pure.py"
+    ],
+    "all_other_AST_nodes_unchanged": true,
+    "before_any_helper_or_member_read": true,
+    "before_component_paths": [
+      "tests/test_market_transition_pending.py",
+      "tests/test_market_transition_activation_failures.py"
+    ],
+    "budget_changes": false,
+    "new_framework_bytes": 12249,
+    "new_framework_sha256": "bfdb43bfd355df7ab40aa230480991fa1995071e50f9f78dc54b40f537b5d6ce",
+    "only_new_delta": "one literal tuple: old market two testcase paths -> current funding_hold testcase path",
+    "original_framework_unchanged": true,
+    "original_frozen_framework_sha256": "616062301b39cffd3e5c771891f997cd3e26d07bacb2178295b8cda903f64071",
+    "parent_approval": "root accepted necessary component-binding addendum before helper execution",
+    "schema": "pr63-collector-component-binding/v1",
+    "target_or_tests_executed": false
+  },
+  "workflow_reruns": 0
+}

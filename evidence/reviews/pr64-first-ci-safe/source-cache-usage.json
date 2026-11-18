@@ -1,0 +1,50 @@
+{
+  "Git_blob_metadata_queries_during_unit_projection": 820,
+  "actual_Git_payload_reads_during_unit_projection": 0,
+  "actual_cache_return_bytes_are_memory_not_additional_Git_reads": true,
+  "actual_preload_Git_payload_bytes": 7031179,
+  "administrative_cache_logical_requests": 830,
+  "administrative_cache_returned_bytes_including_repeats": 14429150,
+  "administrative_cache_unique_requested_paths": 410,
+  "conservative_Git_source_payload_byte_debit": 7193382,
+  "conservative_unique_public_paths": 416,
+  "fixed_public_source_unique_payload_paths": 411,
+  "metadata_only_queries": "Git tree listings, object/commit IDs and sizes are accounted separately from content payload; no physical Git I/O proof",
+  "noncache_preparation_debits": [
+    {
+      "bytes_upper_bound": 12249,
+      "exact_returned_bytes": true,
+      "operation": "source reader origin full Git blob"
+    },
+    {
+      "bytes_upper_bound": 18451,
+      "full_blob_debited_even_if_excerpt_shorter": true,
+      "operation": "readiness source head excerpt"
+    },
+    {
+      "bytes_upper_bound": 36833,
+      "conservative_full_blobs_not_physical_IO": true,
+      "operation": "readiness old/current diff"
+    },
+    {
+      "bytes_upper_bound": 47335,
+      "conservative_full_changed_blobs_not_physical_IO": true,
+      "operation": "source-range diff stat"
+    },
+    {
+      "bytes_upper_bound": 47335,
+      "conservative_full_changed_blobs_not_physical_IO": true,
+      "operation": "head commit show stat"
+    }
+  ],
+  "package_tree_metadata_query": {
+    "kind": "Git tree path metadata only, no source payload read",
+    "listed_paths": 7848,
+    "payload_reads": 0,
+    "returned_bytes": 597891
+  },
+  "physical_IO_quota_proved": false,
+  "source_Git_payload_budget_bytes": 67108864,
+  "source_Git_unique_public_path_budget": 512,
+  "unit_projection_cache_patch_scope": "data reader git_bytes only; fixed C bytes revalidated; no UTA/test/financial function or assertion patched"
+}

@@ -1,0 +1,378 @@
+{
+  "archive_central_open_counts": [
+    {
+      "central_open_count": 2,
+      "entry_count": 3,
+      "payload_reads": 3,
+      "role": "fixed-push313-unit"
+    },
+    {
+      "central_open_count": 2,
+      "entry_count": 3,
+      "payload_reads": 3,
+      "role": "fixed-pr313-unit"
+    },
+    {
+      "central_open_count": 2,
+      "entry_count": 19,
+      "payload_reads": 19,
+      "role": "fixed-push313-package"
+    },
+    {
+      "central_open_count": 2,
+      "entry_count": 3,
+      "payload_reads": 3,
+      "role": "first-failing-job-unit"
+    },
+    {
+      "central_open_count": 1,
+      "entry_count": 2,
+      "payload_reads": 0,
+      "role": "one-binary-outer-only"
+    }
+  ],
+  "binary_member_CRC_reads": 0,
+  "binary_member_payload_reads": 0,
+  "binary_qualification": null,
+  "binary_qualification_status": "NOT_VERIFIED",
+  "binary_whole_compressed_hash_streams": 2,
+  "compressed_hash_streams": [
+    {
+      "bytes_each_stream": 107635,
+      "origins": "one download stream; subsequent pre-download inventory scans; one final seal scan",
+      "role": "fixed-push313-unit",
+      "whole_hash_stream_count": 6
+    },
+    {
+      "bytes_each_stream": 107555,
+      "origins": "one download stream; subsequent pre-download inventory scans; one final seal scan",
+      "role": "fixed-pr313-unit",
+      "whole_hash_stream_count": 5
+    },
+    {
+      "bytes_each_stream": 66325,
+      "origins": "one download stream; subsequent pre-download inventory scans; one final seal scan",
+      "role": "fixed-push313-package",
+      "whole_hash_stream_count": 4
+    },
+    {
+      "bytes_each_stream": 108005,
+      "origins": "one download stream; subsequent pre-download inventory scans; one final seal scan",
+      "role": "first-failing-job-unit",
+      "whole_hash_stream_count": 3
+    },
+    {
+      "bytes_each_stream": 54814960,
+      "origins": "one download stream; subsequent pre-download inventory scans; one final seal scan",
+      "role": "one-binary-outer-only",
+      "whole_hash_stream_count": 2
+    }
+  ],
+  "decoded_data_read_disclosure": {
+    "arbitrary_kernel_read_amplification_measured": false,
+    "final_seal": "each original file receives one final hash read",
+    "first_failure_projection": "the failed decoded unittest log and summary are read again",
+    "fixed_unit_projection": "each selected summary/worker/log is read; each log SHA is checked",
+    "package_projection": "decoded manifest, installed report and CLI log are read",
+    "privacy_review": "reads the sealed installed-report once more for exact actual private path-token negative checking; no additional archive expansion"
+  },
+  "downloads": [
+    {
+      "artifact_id": 14450725450,
+      "bytes": 107635,
+      "provider_size_and_digest_match": true,
+      "role": "fixed-push313-unit",
+      "sha256": "b117b6ca94962cee8f5dc63afeb6c1809893c34bb136702bd5ad11a5ed9adc44"
+    },
+    {
+      "artifact_id": 14448928729,
+      "bytes": 107555,
+      "provider_size_and_digest_match": true,
+      "role": "fixed-pr313-unit",
+      "sha256": "9d82c7f9e1612e889e227b794e6f590218111701b1923b5ed1ca6d3eea6785e4"
+    },
+    {
+      "artifact_id": 14448674472,
+      "bytes": 66325,
+      "provider_size_and_digest_match": true,
+      "role": "fixed-push313-package",
+      "sha256": "5be13224eaa1fc785b29d6cbe7bed8365b0d433a2135607aa8b2ffee2fc4db8f"
+    },
+    {
+      "artifact_id": 14448369893,
+      "bytes": 108005,
+      "provider_size_and_digest_match": true,
+      "role": "first-failing-job-unit",
+      "sha256": "929329bf1123c15b7c34da086de3d79148d6a908a91cf75284f63a241dc6fcf8"
+    },
+    {
+      "artifact_id": 14449947051,
+      "bytes": 54814960,
+      "provider_size_and_digest_match": true,
+      "role": "one-binary-outer-only",
+      "sha256": "dd18f8b204f1a76e9454fd5d3d4456f8736352d2ef27b276431fb6d753bc591c"
+    }
+  ],
+  "duplicate_member_reads": 0,
+  "new_full_layer_helper_executed": false,
+  "outer_member_output_bytes": 2226064,
+  "physical_IO_quota_or_deadline_proved": false,
+  "rawtar_payload_reads": 0,
+  "read_metric_scope": "small_member_reads and duplicate_member_reads count archive ZipExtFile expansion opens only; decoded-file parsing and sealing hashes are separate ordinary reads, not a total physical-I/O ledger",
+  "small_member_output_bytes": 2226064,
+  "small_member_reads": [
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-unit",
+      "bytes": 223,
+      "crc32": "4aae3fa4",
+      "opaque_member": 1,
+      "read_ordinal": 1,
+      "sha256": "799fc53fb8c1e97fb71d7657ec026b508ba5076a8cbff51009e87998d8cefa0f"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-unit",
+      "bytes": 90010,
+      "crc32": "e3c066d5",
+      "opaque_member": 2,
+      "read_ordinal": 1,
+      "sha256": "1e0c7f22f0bd4635cd78992fcb48d84dacb7746568ffa9c1035fcd8b16d8ede7"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-unit",
+      "bytes": 424682,
+      "crc32": "0547e5f9",
+      "opaque_member": 3,
+      "read_ordinal": 1,
+      "sha256": "0625048726e3a1c0f00c88efc2f070784418dc62cd0acde4b3a9fb373077aa7d"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-pr313-unit",
+      "bytes": 90015,
+      "crc32": "33efcdef",
+      "opaque_member": 4,
+      "read_ordinal": 1,
+      "sha256": "c98ebad68da2f2f6b8bb23ada5dd8e2cdbe9674300233a816c559eba87dc440f"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-pr313-unit",
+      "bytes": 223,
+      "crc32": "4aae3fa4",
+      "opaque_member": 5,
+      "read_ordinal": 1,
+      "sha256": "799fc53fb8c1e97fb71d7657ec026b508ba5076a8cbff51009e87998d8cefa0f"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-pr313-unit",
+      "bytes": 423449,
+      "crc32": "2b32ea9b",
+      "opaque_member": 6,
+      "read_ordinal": 1,
+      "sha256": "2fd14698f0122114c562659a78fd6e851f07b97fc392140b921970bbdbfa84e7"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 660627,
+      "crc32": "d82b14e8",
+      "opaque_member": 7,
+      "read_ordinal": 1,
+      "sha256": "b7680a175377909bdc5a1a04084097c69437b7725b7030f31655c7fb155beabb"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 5671,
+      "crc32": "1841c730",
+      "opaque_member": 8,
+      "read_ordinal": 1,
+      "sha256": "5fc775b3657a31ba1361c75406c5ec7cf4d2b44e7b50782b32f3a43679029fff"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 1603,
+      "crc32": "92c6cdac",
+      "opaque_member": 9,
+      "read_ordinal": 1,
+      "sha256": "cf4fcce567f8f8531e97c2967a715c65f09d6087cb24e498e0bc8c87feb48963"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 10,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 1780,
+      "crc32": "efa079a7",
+      "opaque_member": 11,
+      "read_ordinal": 1,
+      "sha256": "e93f79641e9fcbc0f5042ca802f2091fbef7bd55a33b55699cf938dc0a59489e"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 12,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 1136,
+      "crc32": "bd3dc0e2",
+      "opaque_member": 13,
+      "read_ordinal": 1,
+      "sha256": "ee43265a2d8044afb45957e3399486fc5a4d096f823a2eb8f2fdd08eb71e6573"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 14,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 458,
+      "crc32": "be574779",
+      "opaque_member": 15,
+      "read_ordinal": 1,
+      "sha256": "a3757464515aeb43d3bd31b3ed5a291d19b9f6c79c0680a3ec7790f986cd21b8"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 16,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 684,
+      "crc32": "900c4334",
+      "opaque_member": 17,
+      "read_ordinal": 1,
+      "sha256": "e8d0c33f679a1078e492b3deac5d17119ae76eae92e563c3e17d8cbb8306631d"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 18,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 616,
+      "crc32": "8b6bc624",
+      "opaque_member": 19,
+      "read_ordinal": 1,
+      "sha256": "98820b1279f836a469cad4c957756f3ec4b924b322b76b54700c95a19f4fb148"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 20,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 764,
+      "crc32": "3fdfff11",
+      "opaque_member": 21,
+      "read_ordinal": 1,
+      "sha256": "9da2c7c7c52ae0d12dc852b3dfc2dcee51e1c3447cff87df6d4237e35daf8ae0"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 22,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 398,
+      "crc32": "4ec806a8",
+      "opaque_member": 23,
+      "read_ordinal": 1,
+      "sha256": "0cfbce3821d3d91b21bc72b0496da0404b7da7bb1258f481d0345f68b07f1b60"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 0,
+      "crc32": "00000000",
+      "opaque_member": 24,
+      "read_ordinal": 1,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "fixed-push313-package",
+      "bytes": 6794,
+      "crc32": "9d6f6c9f",
+      "opaque_member": 25,
+      "read_ordinal": 1,
+      "sha256": "3d25a4ccfb0b84055c490edf5826203cfa6fe7ef68daa997705308c42511ca27"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "first-failing-job-unit",
+      "bytes": 224,
+      "crc32": "c1074715",
+      "opaque_member": 26,
+      "read_ordinal": 1,
+      "sha256": "718a1ea4f2153176133109b3572718f56b14bc884fba355ee945905c0e727d64"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "first-failing-job-unit",
+      "bytes": 90012,
+      "crc32": "325f3b10",
+      "opaque_member": 27,
+      "read_ordinal": 1,
+      "sha256": "d656e6328eb994261864a9647bcbdc7b62452e10c414c76690833093940d379b"
+    },
+    {
+      "CRC_verified": true,
+      "archive_role": "first-failing-job-unit",
+      "bytes": 426695,
+      "crc32": "4525c17c",
+      "opaque_member": 28,
+      "read_ordinal": 1,
+      "sha256": "fb4e8d3e292ba382626816bfa9af18bf799d0b365dbf9c3f95ffff40d161d767"
+    }
+  ],
+  "wheel_payload_reads": 0
+}
