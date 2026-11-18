@@ -1,0 +1,86 @@
+{
+  "CODE_limitations": [
+    "trusted source import contract only; -I/-S is not a hostile-code sandbox",
+    "no claim to stop aliases/dlopen, preload supply-chain, future function paths, blocking kernel syscalls or process descendants",
+    "old native-SH failure and original CI remain separate NO_GO"
+  ],
+  "child_program_identical": true,
+  "child_program_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+  "final_helper_sha256": "91c4a813e4147bcdfb68cc28b3d0f0604e9ec5c6f0a94dac28f23972675223c5",
+  "first8_not_relabelled_final9": true,
+  "first_helper_sha256": "371fffa8397ccba2734d5b71a5c481ce0ae8dcb1611723e3bc794695b568ee72",
+  "first_observation": {
+    "bytes": 12142,
+    "sha256": "1a2559a78ffa042d5fa0d133710cf524ef973889702994afd92f8dcbbe34306a"
+  },
+  "first_to_final_exact_diff": "--- author-first-helper\n+++ final-87c-helper\n@@ -134,7 +134,7 @@\n         try:raw,out=_stream(stdout_path);errors,err=_stream(stderr_path)\n         except OSError:result['code']='CHILD_OUTPUT_IO';return result\n         result.update(stdout=out,stderr=err)\n-        if result['code']=='CHILD_TIMEOUT':return result\n+        if result['code']!='CHILD_EXITED':return result\n         if len(raw)>STREAM_CAP or errors or result['returncode']!=0:result['code']='CHILD_OUTPUT_OR_EXIT';return result\n         try:\n             def pairs(items):\n",
+  "fixed_commit": "87c9675d9852d709782d7f461661c66f2e0ba80d",
+  "four_first_real_child_safe_records_RO_only": [
+    {
+      "blocked_cache_count": 0,
+      "bytes": 293,
+      "file": "evidence/reviews/m0-cold-import-contract/real-controller.stdout.json",
+      "guard_events": [],
+      "mode": "controller",
+      "sha256": "84153cab8b6ddd662d1f55ad5f9549b0f4c505f3651ef69ba87cb48da15ef401",
+      "status": "PASS_IMPORT_COLD",
+      "target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a"
+    },
+    {
+      "blocked_cache_count": 0,
+      "bytes": 289,
+      "file": "evidence/reviews/m0-cold-import-contract/real-escrow.stdout.json",
+      "guard_events": [],
+      "mode": "escrow",
+      "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3",
+      "status": "PASS_IMPORT_COLD",
+      "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+    },
+    {
+      "blocked_cache_count": 0,
+      "bytes": 251,
+      "file": "evidence/reviews/m0-cold-import-contract/negative-sqlite.stdout.json",
+      "guard_events": [
+        "SQLITE3",
+        "_SQLITE3"
+      ],
+      "mode": "deny_sqlite3",
+      "sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83",
+      "status": "GUARD_BLOCKED",
+      "target_sha256": null
+    },
+    {
+      "blocked_cache_count": 0,
+      "bytes": 231,
+      "file": "evidence/reviews/m0-cold-import-contract/negative-uta.stdout.json",
+      "guard_events": [
+        "UTA"
+      ],
+      "mode": "deny_uta",
+      "sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf",
+      "status": "GUARD_BLOCKED",
+      "target_sha256": null
+    }
+  ],
+  "no_new_true_child": true,
+  "runtime_uta_tree": [
+    "5ab19a2bb5d3b66a6cc2b60ae1fb1e2239ab1c4b",
+    "5ab19a2bb5d3b66a6cc2b60ae1fb1e2239ab1c4b"
+  ],
+  "target_source_hashes_unchanged": {
+    "tools/independent_m0_controller.py": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+  },
+  "two_workflows": {
+    ".github/workflows/independent-m0-once.yml": {
+      "actual_discovery_pattern_present": true,
+      "only_exact_two_sparse_additions": true,
+      "sha256": "07592e600fc2d7143f42856905f75070fc92c984d719ceef0e1fce93f9e4ee10"
+    },
+    ".github/workflows/independent-m0.yml": {
+      "actual_discovery_pattern_present": true,
+      "only_exact_two_sparse_additions": true,
+      "sha256": "d0902f2ec214a4371e8a2aed8fddd58880341a13d2f95e40a5d5c13041fbd336"
+    }
+  }
+}
