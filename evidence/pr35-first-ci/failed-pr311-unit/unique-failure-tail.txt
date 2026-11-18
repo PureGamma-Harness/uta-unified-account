@@ -1,0 +1,11 @@
+FAIL: test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover (test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_durable_faults.py", line 1525, in test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover
+    self.assertTrue(exited.poll(max(0, int((recovery_deadline - monotonic()) * 1000))),
+AssertionError: [] is not true : original bound PID did not exit within the unchanged five-second recovery horizon
+
+----------------------------------------------------------------------
+Ran 2049 tests in 394.371s
+
+FAILED (failures=1)
