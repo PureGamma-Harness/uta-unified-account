@@ -948,7 +948,7 @@
       "evidence": [
         {
           "path": "uta/credit_native_v2.py",
-          "symbol_or_lines": "826-951",
+          "symbol_or_lines": "203-217,826-951,1157-1159",
           "git_blob": "3c5c58e9936a9463eb43871556de49c3532e2c0b",
           "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
         },
@@ -1555,7 +1555,7 @@
       "product": "loan-only distressed account",
       "mode": "Cross",
       "operation": "liquidation / forced spot conversion",
-      "internal_decision": "No perp positions and debt distress ->BLOCKED/frozen; no fabricated forced spot fill; repayment/conversion adapter needed",
+      "internal_decision": "With no perp positions: equity<0 ->BANKRUPT; otherwise has_debt and equity<=MM (or existing distress with equity<=1.10*MM) ->BLOCKED/frozen; no fabricated forced spot fill; repayment/conversion adapter needed",
       "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
       "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
       "current_entry": "ExchangeService.supervise_account",
