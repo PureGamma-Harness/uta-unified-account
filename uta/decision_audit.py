@@ -468,7 +468,7 @@ class DecisionAudit:
             ro = request["reduce_only"]
             bounds = (type(ro) is bool and quantity != 0 and price > 0 and
                 all(value.is_finite() and len(value.as_tuple().digits) <= 32
-                    and -8 <= value.as_tuple().exponent <= 12 and abs(value) <= Decimal("1000000000000")
+                    and -8 <= value.as_tuple().exponent <= 12 and value.copy_abs() <= Decimal("1000000000000")
                     for value in (quantity, price)))
             result["checks"]["request_bounds"] = bounds
             if not bounds:
@@ -506,7 +506,7 @@ class DecisionAudit:
                 and new.get("account_id") == record["account_id"]
                 and type(new.get("reduce_only")) is int and new["reduce_only"] == int(ro)
                 and new.get("filled_quantity") == "0" and new.get("status") == "OPEN"
-                and new.get("version") == after["version"] and new.get("fee_notional") == "0"
+                and type(new.get("version")) is int and new["version"] == after["version"] and new.get("fee_notional") == "0"
                 and new.get("charged_fee") == "0" and new.get("admission_decision_id") == record["decision_id"])
             expected_meta = {"account_version": before["version"], "market_version": market.version,
                              "observed_at": market.observed_at.isoformat(), "risk_mode": policy["risk_mode"]}
@@ -524,7 +524,8 @@ class DecisionAudit:
                 expected_meta.update(rule_id=rules["rule_id"], rule_version=rules["version"], catalog_version=catalog["version"])
             else:
                 checks["product_eligibility"] = request["symbol"] in market.instruments
-            checks["version_provenance"] = all(recorded.get(key) == value for key, value in expected_meta.items())
+            checks["version_provenance"] = all(type(recorded.get(key)) is type(value) and recorded[key] == value
+                                               for key, value in expected_meta.items())
             current_surplus = Fraction(Decimal(values["before"]["equity"])) - Fraction(Decimal(values["before"]["maintenance_margin"]))
             projected_surplus = Fraction(Decimal(risk["equity"])) - Fraction(Decimal(risk["maintenance_margin"]))
             if ro:
