@@ -1,5 +1,9 @@
 # M05 guard 修复：被动导入与实际能力分开
 
+G `b78a28d62b334c63ef0598f95073823dbd9b7781`（tree `0a43f607532465e86cae923a082d0af5dbc7c921`）的一次获准 pure stub/AST 已首轮退出 0，CPU2，monotonic 238,502,353 ns。六个所需标准库模块被动 import 可达，28 个能力负控拒于 raw sentinel 之前，sentinel calls=0、actual children=0、virtual children=0；未执行 whole 或导入产品/测试/helper。五份原件共 7,150 字节保存于 `evidence/preparations/m05-guard-stub-b78a28d/`。这仅是 stub/AST 通过。
+
+独立 CODE 随后发现仅 patch `signal` API 仍遗漏 `_signal` 原生别名；现有目标没有该调用，但广义 signal 全拒绝断言尚未闭合。此新 finding 单列保留，不能用上面的 stub 通过覆盖它。原 G 不改、不重跑；后续 CODE 补丁必须有新 source，当前没有追加执行授权，next_run_permitted=false。
+
 本修复仅改测试执行器，不改 controller、cold helper、测试、两 workflow、public recipient、业务 runtime 或 strict19 模板。原 C `4eabab3` 的首 4 PASS + 8 import ERROR / 0 child / exit1 及 ed55fc9 的全部 37,788 字节原件保持不变，仍是 FIRST_ERROR/NO_GO。
 
 root 新授权仅覆盖新 guard CODE 和一次 CPU2、外层 10 秒以内的纯 stub/AST 预检；没有授权新 whole suite 或六个真实 child，更无 actualM05/marker/ref/push/CI/SQL/业务/worker/OpenSSL/网络。current policy 与 next_run_permitted 保持 false，独立 guard CODE 审核暂待。

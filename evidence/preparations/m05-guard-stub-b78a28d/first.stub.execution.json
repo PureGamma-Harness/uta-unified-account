@@ -1,0 +1,223 @@
+{
+  "actual_children": 0,
+  "all_scope_denials": [
+    "import:sqlite3",
+    "import:_sqlite3",
+    "import:uta",
+    "subprocess.Popen",
+    "subprocess.Popen",
+    "os.system",
+    "os.fork",
+    "raw_fork_exec",
+    "raw_fork_exec",
+    "threading.Thread.start",
+    "threading._start_new_thread",
+    "_thread.start_new_thread",
+    "concurrent.futures.thread.ThreadPoolExecutor.submit",
+    "concurrent.futures.process.ProcessPoolExecutor.submit",
+    "multiprocessing.process.BaseProcess.start",
+    "multiprocessing.pool.Pool.__init__",
+    "os.kill",
+    "signal.signal",
+    "signal.set_wakeup_fd",
+    "signal.alarm",
+    "socket.__new__",
+    "socket.connect",
+    "socket.getaddrinfo",
+    "sqlite3.connect",
+    "ctypes.dlopen",
+    "ctypes.dlsym",
+    "ctypes.call_function",
+    "subprocess.Popen"
+  ],
+  "cold_helper_executed": false,
+  "denied_api_cases": [
+    {
+      "audit_or_monkeyguard": "import:sqlite3",
+      "case": "active_import_sqlite3",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "import:_sqlite3",
+      "case": "active_import__sqlite3",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "import:uta",
+      "case": "active_import_uta",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "subprocess.Popen",
+      "case": "unapproved_openssl",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "subprocess.Popen",
+      "case": "unapproved_python_child",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "os.system",
+      "case": "os_system",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "os.fork",
+      "case": "os_fork",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "raw_fork_exec",
+      "case": "raw_subprocess_fork_exec",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "raw_fork_exec",
+      "case": "raw_posix_fork_exec",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "threading.Thread.start",
+      "case": "thread_start",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "threading._start_new_thread",
+      "case": "thread_alias",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "_thread.start_new_thread",
+      "case": "raw_thread",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "concurrent.futures.thread.ThreadPoolExecutor.submit",
+      "case": "threadpool_submit",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "concurrent.futures.process.ProcessPoolExecutor.submit",
+      "case": "processpool_submit",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "multiprocessing.process.BaseProcess.start",
+      "case": "multiprocessing_start",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "multiprocessing.pool.Pool.__init__",
+      "case": "multiprocessing_pool",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "os.kill",
+      "case": "os_kill",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "signal.signal",
+      "case": "signal_handler",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "signal.set_wakeup_fd",
+      "case": "signal_wakeup_fd",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "signal.alarm",
+      "case": "signal_alarm",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "socket.__new__",
+      "case": "stub_api_socket.__new__",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "socket.connect",
+      "case": "stub_api_socket.connect",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "socket.getaddrinfo",
+      "case": "stub_api_socket.getaddrinfo",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "sqlite3.connect",
+      "case": "stub_api_sqlite3.connect",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "ctypes.dlopen",
+      "case": "stub_api_ctypes.dlopen",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "ctypes.dlsym",
+      "case": "stub_api_ctypes.dlsym",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "ctypes.call_function",
+      "case": "stub_api_ctypes.call_function",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    },
+    {
+      "audit_or_monkeyguard": "subprocess.Popen",
+      "case": "stub_api_subprocess.Popen",
+      "status": "DENIED_BEFORE_RAW_EFFECT"
+    }
+  ],
+  "error": null,
+  "finished_monotonic_ns": 101649318838328,
+  "guard_audit_selfchecks": [
+    "sqlite3.connect",
+    "socket.connect",
+    "os.kill",
+    "os.fork",
+    "subprocess.Popen"
+  ],
+  "kind": "M05_GUARD_FIRST_STUB_AST_PREFLIGHT",
+  "next_run_permitted": false,
+  "product_or_test_modules_loaded": false,
+  "raw_effect_sentinel_calls": [],
+  "runtime": {
+    "affinity": [
+      2
+    ],
+    "binary_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "source": {
+    "actual_children_authorized": 0,
+    "cpu": 2,
+    "kind": "M05_GUARD_STUB_AST_IDENTITY",
+    "next_run_permitted": false,
+    "outer_seconds": 10,
+    "runner_sha256": "b08ea6e81f0652e79cfc8f0105d0c898f9a3a9c205cf4b4895ec68b40956447c",
+    "source_clean": true,
+    "source_commit": "b78a28d62b334c63ef0598f95073823dbd9b7781",
+    "source_tree": "0a43f607532465e86cae923a082d0af5dbc7c921",
+    "stub_sha256": "8e1b7ae1446974f4eb9c68d92e0f49555d9aae4588d2425f588d5e9fc4b90d45",
+    "whole_suite_authorized": false
+  },
+  "standard_library_imports": [
+    "unittest.mock",
+    "asyncio",
+    "concurrent.futures",
+    "concurrent.futures.thread",
+    "concurrent.futures.process",
+    "multiprocessing.pool"
+  ],
+  "started_at_utc": "2026-11-18T01:15:22.603030+00:00",
+  "started_monotonic_ns": 101649080335975,
+  "status": "PASS_STUB_AST_ONLY",
+  "virtual_children": 0,
+  "whole_suite_executed": false
+}
