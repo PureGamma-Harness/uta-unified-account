@@ -1,0 +1,156 @@
+{
+  "full_report_exported": false,
+  "original_unit_archives_and_members_all_private": true,
+  "other_six_success_jobs": "metadata only; no unit counts or raw unit artifacts collected",
+  "samples": [
+    {
+      "duration_seconds": 419.874478376,
+      "errors": 1,
+      "expected_failures": 0,
+      "failures": 0,
+      "finished_at": "2026-11-18T09:55:20.787243+00:00",
+      "job_id": 134715524250,
+      "lease_observations_present": false,
+      "lease_observations_truncated_present": false,
+      "originals_private": true,
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+      "qualification": null,
+      "raw_summary": {
+        "bytes": 81381,
+        "mode": "0600",
+        "private_basename": "push310-failed-unit-summary.json",
+        "sha256": "a52fc59f593d63d9f355e19d9ed25d5a5b36a7de217c5d011f218f3c87616c27"
+      },
+      "raw_unittest": {
+        "bytes": 272628,
+        "mode": "0600",
+        "private_basename": "push310-failed-unit-unittest.txt",
+        "sha256": "29048f5163d88ee1e3675c73fb3bc8107d72a0a25fab0664a2a04203b995965b"
+      },
+      "raw_worker_result": {
+        "bytes": 155,
+        "mode": "0600",
+        "private_basename": "push310-failed-unit-worker-result.json",
+        "sha256": "a13be46cb5d4372042da74b67c89938adb4b243b0c5f80bd1fa40a14fe586433"
+      },
+      "sample": "push310-failed-unit",
+      "schema": "exact legacy seven fields; reserved lease observation pair absent in worker and summary",
+      "skipped": 0,
+      "source_commit": "05ebc17f5a2a4934a2ee27f14ecdfe0a7067bd45",
+      "source_map_entries_after": 372,
+      "source_map_entries_before": 372,
+      "source_maps_equal_and_exact_git_bound": true,
+      "source_tree": "15fb593f0786affb953eeafbbecf3f44adb9dabb",
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T09:48:20.843517+00:00",
+      "target_case_outcome": {
+        "canonical_test_id": "test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers",
+        "outcome": "ERROR",
+        "raw_line_number": 578
+      },
+      "tests_run": 2061,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": false,
+      "worker_exit_code": 1,
+      "worker_keys": [
+        "errors",
+        "expected_failures",
+        "failures",
+        "skipped",
+        "tests_run",
+        "unexpected_successes",
+        "unittest_passed"
+      ],
+      "worker_values": {
+        "errors": 1,
+        "expected_failures": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests_run": 2061,
+        "unexpected_successes": 0,
+        "unittest_passed": false
+      }
+    },
+    {
+      "duration_seconds": 291.266417929,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 0,
+      "finished_at": "2026-11-18T09:54:54.613893+00:00",
+      "job_id": 134716479374,
+      "lease_observations_present": false,
+      "lease_observations_truncated_present": false,
+      "originals_private": true,
+      "passed": true,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "qualification": null,
+      "raw_summary": {
+        "bytes": 81379,
+        "mode": "0600",
+        "private_basename": "pr313-success-unit-summary.json",
+        "sha256": "dd9a5b31a39cfee1f6ac2ba7afc0f58a6b02de1b5c78a4a29665aa4f295b06f3"
+      },
+      "raw_unittest": {
+        "bytes": 402710,
+        "mode": "0600",
+        "private_basename": "pr313-success-unit-unittest.txt",
+        "sha256": "bab1665d47107bd01037e5477cd92c2487e7953e1ceaa16e6fa4aa4ceb27cd97"
+      },
+      "raw_worker_result": {
+        "bytes": 154,
+        "mode": "0600",
+        "private_basename": "pr313-success-unit-worker-result.json",
+        "sha256": "c536521995b24e67cf76193179ca7e066d7c1ed3673f58b4a9166d637e4c7a4e"
+      },
+      "sample": "pr313-success-unit",
+      "schema": "exact legacy seven fields; reserved lease observation pair absent in worker and summary",
+      "skipped": 0,
+      "source_commit": "341779921dea79d4c8d831e5bb79fa5cb5360093",
+      "source_map_entries_after": 372,
+      "source_map_entries_before": 372,
+      "source_maps_equal_and_exact_git_bound": true,
+      "source_tree": "15fb593f0786affb953eeafbbecf3f44adb9dabb",
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T09:50:03.286255+00:00",
+      "target_case_outcome": {
+        "canonical_test_id": "test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers",
+        "outcome": "ok",
+        "raw_line_number": 595
+      },
+      "tests_run": 2061,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": true,
+      "worker_exit_code": 0,
+      "worker_keys": [
+        "errors",
+        "expected_failures",
+        "failures",
+        "skipped",
+        "tests_run",
+        "unexpected_successes",
+        "unittest_passed"
+      ],
+      "worker_values": {
+        "errors": 0,
+        "expected_failures": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests_run": 2061,
+        "unexpected_successes": 0,
+        "unittest_passed": true
+      }
+    }
+  ],
+  "schema": "pr47-finite-unit-projection-v1"
+}
