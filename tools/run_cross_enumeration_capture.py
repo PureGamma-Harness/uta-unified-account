@@ -131,6 +131,8 @@ def verify_target(target, stdout, plan, source):
         and type(receipt["completed_vectors"]) is int and receipt["completed_vectors"] == count == 538
         and all(type(receipt[k]) is int and receipt[k] == 0 for k in ("failures", "errors", "skipped"))
         and receipt["complete"] is True and receipt["passed"] is True and receipt["source_unchanged"] is True
+        and receipt["source_commit_invoker_label"] == source and receipt["plan_sha256"] == plan["target_plan_sha256"]
+        and receipt["after"] == intent["before"]
         and receipt["runtime"] == plan["expected_runtime"] and receipt["forbidden_listed_events"] == []
         and receipt["Python_thread_count"] == 1 and receipt["loaded_UTA_modules"] == plan["loaded_modules"]
         and receipt["oracle_uses_reference_core"] is False and receipt["SQL_or_native_or_admission_executed"] is False)
@@ -150,6 +152,13 @@ def main():
     if sha256(plan_raw).hexdigest() != args.approved_plan_sha256:
         raise ValueError("approved capture plan SHA differs")
     plan = json.loads(plan_raw); before = pins(plan, args.source_commit, plan_raw)
+    target_plan_raw = read_regular(ROOT / TARGET_PLAN)
+    target_plan = json.loads(target_plan_raw)
+    if (sha256(target_plan_raw).hexdigest() != plan["target_plan_sha256"]
+            or target_plan["input_files"] != plan["target_inputs"] or target_plan["methods"] != plan["methods"]
+            or target_plan["expected_completed_counts"] != plan["expected_counts"]
+            or target_plan["expected_runtime"] != plan["expected_runtime"]):
+        raise ValueError("parent and frozen target plan disagree")
     directory, target = Path(plan["capture_root"]), Path(plan["target_root"])
     if directory == target or any(p.resolve() != p or p.parent != Path("/workspace") or os.path.lexists(p) for p in (directory, target)):
         raise ValueError("two distinct new canonical workspace roots required")
@@ -179,7 +188,8 @@ def main():
             if now >= deadline or exited_at is not None and now - exited_at > 2_000_000_000:
                 fault = "DEADLINE_OR_INCOMPLETE_EOF_UNKNOWN"; break
             for key, unused in selector.select(min(.05, max(0, (deadline - now) / 1e9))):
-                value = os.read(key.fileobj.fileno(), 4096)
+                try: value = os.read(key.fileobj.fileno(), 4096)
+                except BlockingIOError: continue
                 if not value: selector.unregister(key.fileobj); key.fileobj.close(); continue
                 if reserved + len(value) > CAPTURE_RAW: fault = "RAW_CAP_UNKNOWN"; break
                 reserved += len(value)
