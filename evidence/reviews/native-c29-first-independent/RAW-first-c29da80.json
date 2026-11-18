@@ -1,0 +1,268 @@
+{
+  "SAFE_review": {
+    "SAFE_commit": "75fe3a16f7482a88e72b76f9a7801de5ef14aa83",
+    "SAFE_file_count": 7,
+    "SAFE_keeps_independent_review_PENDING_no_self_approval": true,
+    "SAFE_parent": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+    "SAFE_total_bytes": 53353,
+    "conclusion": "SAFE_FIRST_FAILURE_FACTS_CONSISTENT_WITH_ORIGINALS_NO_NATIVE_PASS",
+    "exact34_row_whitelist_projection": true,
+    "exact_feed_projection": true,
+    "files": {
+      "docs/cross-native-first-fail-c29da80.md": {
+        "bytes": 8752,
+        "sha256": "ef25954c4c16803a914fb5f1cf2a847a78c8f0efdad480f00ca0704850dfb2f1"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/arrivals.json": {
+        "bytes": 25476,
+        "sha256": "996d113ba38298c363f56ed187f65814a68bdf11035b341b5c11f25143e05770"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/fixed-feed.json": {
+        "bytes": 1218,
+        "sha256": "09ba8a3602c4a851228e1ef90472c64a5b636f6a7cbefc756cc685a98e8d0e30"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/inventory.json": {
+        "bytes": 1728,
+        "sha256": "61205993328a5c8e0b9384ef4e1128305ede36aee592128ca9022b573d0fcc2b"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/report.json": {
+        "bytes": 5272,
+        "sha256": "c2c1207fd0a8e31c7c6120b56ccfdfb259293c9de492d5c04c739ac61ce55380"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/seal-inventory.json": {
+        "bytes": 7265,
+        "sha256": "0cb28281a75712b5ec6546db13a868bbe49ed13b7dde4d0fa33c1f739b9df007"
+      },
+      "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/source-map.json": {
+        "bytes": 3642,
+        "sha256": "c45deb9f10f82c5586afda17f701889e4ea8ecad057844578e6d801bf46f8c51"
+      }
+    },
+    "only_seven_added_SAFE_files": true,
+    "opaque48_ordinal_hash_projection": true,
+    "private_identity_absolute_clock_path_exclusion": true,
+    "report_raw_scalar_fault_wait_digest_checks": true,
+    "source_map_git_hashes_and_anchor_ranges": true
+  },
+  "capacity_gate_passed": false,
+  "final_integrity": {
+    "SAFE7_sha_unchanged": true,
+    "all_original_sha_modes_unchanged": true,
+    "final_original_bytes": 1272533,
+    "final_original_directories": 6,
+    "final_original_files": 48,
+    "target_actions": 0
+  },
+  "followup_boundary": "New code proposal and independently reviewed fixed plan required; current once-only authorization consumed; no rerun or production approval granted.",
+  "independent_facts": {
+    "all_original_hashes_unchanged_after_read": true,
+    "children": [
+      {
+        "actual_reaped": true,
+        "actual_wait_exit": 0,
+        "birth_ACK_stable_binding": true,
+        "cleanup_errors": [],
+        "cohort": 0,
+        "forced_kill": false,
+        "held_death_observed": true,
+        "shard": 0,
+        "worker_end_source_equal": true
+      },
+      {
+        "actual_reaped": true,
+        "actual_wait_exit": 0,
+        "birth_ACK_stable_binding": true,
+        "cleanup_errors": [],
+        "cohort": 0,
+        "forced_kill": false,
+        "held_death_observed": true,
+        "shard": 1,
+        "worker_end_source_equal": true
+      }
+    ],
+    "execution_facts": {
+      "actual_external_complete_duration_NOT_ATTESTED_from_internal_sample": true,
+      "actual_host_parent_affinity": [
+        1
+      ],
+      "actual_parent_wait_exit": 1,
+      "cleanup_errors": [],
+      "external_actual_host_exit": 1,
+      "external_terminal_tool_chunk_id": "942f43",
+      "host_last_internal_sample_elapsed_ns": 3981060359,
+      "inside_host_actual_host_exit": null,
+      "parent_EOF_complete": true,
+      "parent_reaped": true
+    },
+    "feed": {
+      "bad_terminal_offset_ns": 2112185351,
+      "feed_fault_offset_ns": 2126251038,
+      "ordering_consistent_with_global_barrier_rejection_not_exclusive_causal_proof": true,
+      "planned_offset_ns": 2031250000,
+      "publication_call_duration_ns": 90387533,
+      "publication_lateness_ns": 94985475,
+      "publication_return_offset_ns": 2126235475,
+      "publish_start_offset_ns": 2035847942,
+      "recorded_activation_absent": true,
+      "start_offset_ns": 2035696719,
+      "unchanged_complete_limit_ns": 31250000,
+      "unexpected_fault_offset_ns": 2112196307,
+      "version": 6
+    },
+    "raw_budget": {
+      "actual_raw_stream_bytes": 0,
+      "all_sha_mode_complete_set_verified": true,
+      "logical_limit": 67108864,
+      "original_bytes": 1272533,
+      "original_directories": 6,
+      "original_files": 48,
+      "per_parent_and_worker_reserved_bytes": 0,
+      "physical_kernel_quota_or_C_IO_hard_realtime_proven": false,
+      "raw_including_external_reserves_NOT_inferred_zero": true,
+      "shared_raw_limit": 131072
+    },
+    "reconcile": {
+      "attempted_after_join_and_reap": true,
+      "completed": false,
+      "fixed_mix_AssertionError": true,
+      "independent_SQL_or_target_rebuild_performed": false,
+      "no_claim_26_risk_or_ledger_pass": true,
+      "reopened": null
+    },
+    "scope": "FIRST_NATIVE_CONFIGURED_CROSS_ADMISSION_FAIL_NO_RETRY_NO_CAPACITY_OR_PRODUCTION_ACCEPTANCE",
+    "source_binding": {
+      "CODE": "c29da8040c0c5b1ed24b23f10edae5462d40b983",
+      "actual_checkout_HEAD": "be373acef9f54db6acbc223011d81ee0b0c53b66",
+      "actual_host_source_copy_equal": true,
+      "manifest_sha256": "e3c62d9ee7f2aac50eb1335835c60d45ca5fdd5eef71fb0d5a62150f10559c4e",
+      "physical_Git_c29_and_be373_match": true,
+      "plan_sha256": "a844eb613147ac52a65cc648f59c9cc408b8507e6459ad5d485695f5b2e41dbf",
+      "repo_input_bytes": 1490898,
+      "repo_inputs": 70,
+      "reported_before_after_equal": true,
+      "static_interpreter_SHA_equal": true
+    },
+    "unsupported_claims": [
+      "second cohort result",
+      "four worker native lifetime completion",
+      "26-field risk and ledger reconciliation",
+      "10,000/s sustained capacity",
+      "matching or liquidation",
+      "production readiness",
+      "external hard realtime duration",
+      "exclusive root cause"
+    ],
+    "workload": {
+      "accepted_receipt_reserve_sum_fraction": "251/100",
+      "actually_offered": 34,
+      "all_34_original_CID_receipts_link": true,
+      "cohorts_recorded": 1,
+      "counts": {
+        "accepted_persistent": 25,
+        "business_rejected": 8,
+        "control_market_rejected": 1
+      },
+      "no_observed_client_unknown_or_timeout": true,
+      "not_offered_after_abort": 62,
+      "planned_cohorts": 2,
+      "planned_per_cohort": 96,
+      "receipt_only_reserve_is_NOT_RO_ledger_reconciliation": true,
+      "second_cohort_not_started": true,
+      "unexpected_error": {
+        "code": "router_halted",
+        "status": 503
+      },
+      "unexpected_ordinal": 33
+    }
+  },
+  "kind": "INDEPENDENT_FIRST_NATIVE_RAW_FAILURE_ACCEPTANCE_REVIEW",
+  "metadata_reader_receipts": {
+    "SAFE_reader": {
+      "exit_code": 0,
+      "tool_chunk_id": "8f83aa"
+    },
+    "detail_reader_attempts": [
+      {
+        "exit_code": 1,
+        "reader_error": "Expected boolean for rootGO preflight_physical_equals_Git_inputs; original field is integer count70.",
+        "source_preserved_as": "reader-details-first-attempt.py",
+        "tool_chunk_id": "5c7dea"
+      },
+      {
+        "exit_code": 1,
+        "reader_error": "Expected null for rootGO actual_host_exit; original predecision field is NOT_RUN_AT_DECISION.",
+        "source_preserved_as": "reader-details-second-attempt.py",
+        "tool_chunk_id": "fb9c41"
+      },
+      {
+        "exit_code": 0,
+        "source": "reader-details.py",
+        "tool_chunk_id": "89b8c9"
+      }
+    ],
+    "original_bytes_or_permissions_modified_by_reviewer": false,
+    "original_raw_reader": {
+      "exit_code": 0,
+      "tool_chunk_id": "1b738e"
+    },
+    "schema_reader": {
+      "exit_code": 0,
+      "tool_chunk_id": "635d5a"
+    },
+    "scope": "METADATA_READERS_ONLY_NOT_TARGET_RETRIES",
+    "settings_reader": {
+      "exit_code": 0,
+      "tool_chunk_id": "2b63f5"
+    },
+    "target_execution_or_retry": 0,
+    "target_import_compile_test_SQL_or_live_process_inspection": 0
+  },
+  "native_functional_gate_passed": false,
+  "new_native_execution_authorized": false,
+  "new_target_actions": 0,
+  "original_seal_index_sha256": "a334abe3fbf563b0fc551b77e44d9f9288bfd947b3424d462874c80d8e6a78c6",
+  "original_seal_sha256": "e27f4fc0dc7af6750cf25e4060cccd2d71841a19c9d47e1eb6f15f54d04c8611",
+  "private_review_artifact_seal": {
+    "bytes_including_seal": 116148,
+    "directory_mode": "0500",
+    "files_including_seal": 17,
+    "files_mode": "0400",
+    "scope": "Independent metadata readers/results; private identity mappings remain unpublished.",
+    "seal_bytes": 2766,
+    "sha256": "a3f7abbb5ac6007579f79a228a70fe5c0daea2b5f502f2ecd23314b400908af6"
+  },
+  "production_approved": false,
+  "review_scope": "Sealed recorded bytes, JSON, immutable Git and source only; no target import/compile/test/SQL/live authority interaction.",
+  "runtime_and_conservative_raw_budget": {
+    "external_tool_output_bytes": 0,
+    "external_witness_bytes": 1147,
+    "raw_conservative_including_512_per_parent_two_workers_and_host": 3195,
+    "selected_runtime_values": {
+      "config/queue/cancel_reserve": 4,
+      "config/queue/market_capacity": 4,
+      "config/queue/queue_capacity": 32,
+      "config/service/decision_audit": true,
+      "config/service/market_cache_size": 0,
+      "config/service/reserve_cache_size": 0,
+      "worker_settings/account_batch": 4,
+      "worker_settings/background_interval": 0.1,
+      "worker_settings/financial_batch_size": 0,
+      "worker_settings/lease_seconds": 5,
+      "worker_settings/matches_per_symbol": 1,
+      "worker_settings/max_attempts": 1,
+      "worker_settings/normal_cache_size": 0,
+      "worker_settings/poll_interval": 0.01
+    },
+    "stream_bytes": 0,
+    "stream_file_count": 6
+  },
+  "schema": 1,
+  "unmet_gates": [
+    "Both cohorts each96 with72persistentacceptance+24onlyproduct_rejected409",
+    "Four fresh native worker births/ACKs and four actual waits",
+    "Successful complete26field configuredCross risk and originalCID/reserve/audit/ledger reopen reconciliation",
+    "Fixed scheduled feed completion deadline without hiding control rejection",
+    "Formal sustained10000/s and production requirements outside this pilot"
+  ],
+  "verdict": "FIRST_NATIVE_FUNCTIONAL_FAIL_RAW_AND_SAFE_FAILURE_FACTS_ACCEPTED"
+}

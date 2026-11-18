@@ -1,0 +1,38 @@
+{
+  "actual_runs": 0,
+  "delta_methods_exact": [
+    "NativeControllerDeltaContracts.test_001_unverified_candidate_is_closed_never_adopted_or_signalled",
+    "NativeControllerDeltaContracts.test_002_slow_setup_or_stop_record_cannot_spawn_or_signal_past_deadline",
+    "NativeControllerDeltaContracts.test_003_broken_gate_close_is_sticky_but_all_owned_resources_continue"
+  ],
+  "execution_authorized": false,
+  "execution_runner_status": "NOT_BOUND_OR_AUTHORIZED; separate retained entry and root GO required before any test execution",
+  "existing_three_guard_methods": "retained CODE, not executed",
+  "inputs": {
+    "benchmarks/cross_open_loop_checks.py": {
+      "bytes": 6753,
+      "sha256": "11a7d75e5215ed32f85a09d2df5424365c4ac92734658c77474ef04c6cd2a0e7"
+    },
+    "benchmarks/cross_pilot_native_host.py": {
+      "bytes": 19847,
+      "sha256": "d6a465f704a7c82d5d1cb6a087f77b906da806dd9279346e8718f3634c655e49"
+    },
+    "benchmarks/pilot_owned_workers.py": {
+      "bytes": 13346,
+      "sha256": "42d58832804f2a4977bb22b852d3cac3556afe8fc7020ba656d491d938c5334b"
+    },
+    "benchmarks/test_cross_native_host_guards.py": {
+      "bytes": 8431,
+      "sha256": "ac94c306dcf8989778e9aff23f04119949bc7a7541b3723dde120b315020cecd"
+    }
+  },
+  "kind": "THREE_NEW_FAKE_NEGATIVE_CONTROLS_CODE_ONLY",
+  "origin_git_blobs": {
+    "benchmarks/cross_open_loop_checks.py": "ed0dde3e60dd0ca57fd8311a5bb2e85dd5b5260b",
+    "benchmarks/cross_pilot_native_host.py": "38ee1a0fa10f9c966443094d5668ed9596e801bb",
+    "benchmarks/pilot_owned_workers.py": "dcc9b8c9716bc897109bbb1043e2af85a80f1a5f",
+    "benchmarks/test_cross_native_host_guards.py": "9342542fc8a61bc6a28519e2cfa34cc7d8934dc5"
+  },
+  "scope": "only fake descriptors/dictionaries/mocked clocks/mocked Popen/signal/osclose/private JSON; no real resources",
+  "source_commit": "c29da8040c0c5b1ed24b23f10edae5462d40b983"
+}

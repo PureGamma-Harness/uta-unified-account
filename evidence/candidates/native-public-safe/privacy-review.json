@@ -1,0 +1,390 @@
+{
+  "schema": 1,
+  "kind": "AUTHOR_WHITELIST_PRIVACY_AND_BYTE_REVIEW",
+  "status": "SELF_REVIEW_COMPLETE_PENDING_INDEPENDENT_CODE_PRIVACY_REVIEW",
+  "export_files": 44,
+  "export_bytes": 296169,
+  "target_execution_attempts": 0,
+  "network_actions": 0,
+  "public_base": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+  "scan_and_manual_review_scope": [
+    "Exact Git blobs only; no original private run directory or control copy opened for this export",
+    "11 Python files parsed with ast.parse, never compiled/imported/evaluated",
+    "JSON exact-field/literal inspection and cross-reference hash verification",
+    "PEM/private-key/signed-URL and private-history-token literal exclusion",
+    "Recursive sensitive-key inspection of existing SAFE projections; identity-valued nonce/PID/boot/session/capsule data absent",
+    "Fixed protected PID denyset and visibly synthetic fixture identities retained as source, not observed process data",
+    "Old absolute source/capture/root/argv strings are historical synthetic CODE intent approved for exact retention; old roots consumed and prohibited from reuse",
+    "Existing SAFE seal/approval/tool-witness digest or short receipt metadata is provenance only, not a live process binding or original private raw locator"
+  ],
+  "not_a_complete_security_audit": true,
+  "independent_review_required": true,
+  "actual_runtime_content_excluded": [
+    "actual nonce/session/PID/boot/worker/process identity",
+    "private key/capsule/TLS material/signed URL",
+    "actual generated runtime bindings and original control copies",
+    "DB/WAL/SHM/ZIP/private raw roots and private raw artifact locations"
+  ],
+  "files": [
+    {
+      "path": "benchmarks/cross_open_loop_checks.py",
+      "bytes": 6753,
+      "sha256": "11a7d75e5215ed32f85a09d2df5424365c4ac92734658c77474ef04c6cd2a0e7",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_open_loop_model.py",
+      "bytes": 3403,
+      "sha256": "ada4810932c591899011bafe7723010bfbf48e27e07010ece9ee84305a3ee5a2",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_open_loop_pilot.py",
+      "bytes": 26212,
+      "sha256": "85ffb69e3308cfe1cacc25697f6ba638daaa06b145787ad84fe308315b5f0f64",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_open_loop_reconcile.py",
+      "bytes": 10219,
+      "sha256": "704366a9db06e78d1392781847e101cbbe7722c979b26a0dc9779d710f41df5a",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_pilot_native_host.py",
+      "bytes": 19847,
+      "sha256": "d6a465f704a7c82d5d1cb6a087f77b906da806dd9279346e8718f3634c655e49",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/pilot_owned_workers.py",
+      "bytes": 13346,
+      "sha256": "42d58832804f2a4977bb22b852d3cac3556afe8fc7020ba656d491d938c5334b",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_native_guards6_capture.py",
+      "bytes": 8877,
+      "sha256": "fc4c3ebfa21f6a53b29378757c2335f85880fb8afc9e6a2d61f998874388e690",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_native_guards6_entry.py",
+      "bytes": 8990,
+      "sha256": "acc163fd72f195bae51f493a9693703b24296c3fda863ee25dc46f447074ae35",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/cross_pilot_pure_capture.py",
+      "bytes": 8887,
+      "sha256": "d56bd8dae062f79522fa4fc9d4a96ffd05e79943df6351a13ff6541f35be4664",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/native_guards6_lookup_guard.py",
+      "bytes": 3890,
+      "sha256": "6a534239a6775e1d388678eb4fe5c8a9739b245743e1368ea4e16b5ee0b33796",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "benchmarks/test_cross_native_host_guards.py",
+      "bytes": 8431,
+      "sha256": "ac94c306dcf8989778e9aff23f04119949bc7a7541b3723dde120b315020cecd",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/plan.json",
+      "bytes": 6365,
+      "sha256": "a844eb613147ac52a65cc648f59c9cc408b8507e6459ad5d485695f5b2e41dbf",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/source-manifest.json",
+      "bytes": 15544,
+      "sha256": "e3c62d9ee7f2aac50eb1335835c60d45ca5fdd5eef71fb0d5a62150f10559c4e",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/unit-code-manifest.json",
+      "bytes": 1883,
+      "sha256": "e10aae9a58b241311f6ec336cb512d91199fd7a05039060b8bdc0ad434488e82",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/manual-contracts.json",
+      "bytes": 1709,
+      "sha256": "90f468d1b3323dbbb3df28e805439cd0e734a7f49ec026abe2b7658057a93bb4",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/exact-entry.json",
+      "bytes": 829,
+      "sha256": "dd7e0c1cdf75a9f50f2d377615e8fe9d0661d72cfff9e18c4ff1a87055786ae1",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/controller-001-003/static-source-proof.json",
+      "bytes": 1546,
+      "sha256": "93d3df932f85e3f992cbbc9933dbb45a1f958dc7e2791fcb09d86c188808fd3f",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-host-plan.json",
+      "bytes": 5665,
+      "sha256": "a1d529f03e6fb7edabc8a0251586c08d1d3a7dcab724a63dddc404ce61c4158b",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/source-manifest-native-host.json",
+      "bytes": 15476,
+      "sha256": "259aa6895ec35da1c0a1b842eb0889ba7edda8038ab9f1a366b34a8caba7cc71",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-host-unit-code-manifest.json",
+      "bytes": 1151,
+      "sha256": "2a7f985b5aa8f7867003a088d0223f1c900d233d25087dd36ecc56a5d1c2a90c",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-host-manual-contracts.json",
+      "bytes": 2150,
+      "sha256": "78e09b3744f21506d5875ea09ea537e6a564dcd1fa534a80ac8b17fe8d77f6b0",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-host-exact-entry.json",
+      "bytes": 817,
+      "sha256": "3217116d8440900cbbdcc61a4f5b4012202cd21d1b80563d2d811cd42dcc47eb",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-host-static-source-proof.json",
+      "bytes": 1467,
+      "sha256": "c2b2e9b69659877ffb4d9785e84d93058e92b78b3579768160577357ebf62689",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/plan.json",
+      "bytes": 6988,
+      "sha256": "aecd26807f056136fd6f557d9ff0df5d832ce6acc3531fa61cbd7b32f4c79cf7",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/binding.json",
+      "bytes": 5623,
+      "sha256": "c38550ace6e248c6229698a2fb16cf611fddfe19864ea30e58486015c7463beb",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/exact-entry.json",
+      "bytes": 868,
+      "sha256": "9a55185c5008fc90f2fb87822e2d7916cc02a73a6aa3829f95163fc12b85fb92",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/static-source-proof.json",
+      "bytes": 1377,
+      "sha256": "12d78b3548e67828bf74acc8528cb76a6ec6cfbeddee99b7a69daf942f9eff78",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-capture/resource-import-map.json",
+      "bytes": 9085,
+      "sha256": "d1a76e47a80779fa9bcb390751708e0831df3b323f76f4ed7333f5fd3a20845c",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": true
+    },
+    {
+      "path": "docs/cross-native-first-fail-c29da80.md",
+      "bytes": 8752,
+      "sha256": "ef25954c4c16803a914fb5f1cf2a847a78c8f0efdad480f00ca0704850dfb2f1",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/arrivals.json",
+      "bytes": 25476,
+      "sha256": "996d113ba38298c363f56ed187f65814a68bdf11035b341b5c11f25143e05770",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/fixed-feed.json",
+      "bytes": 1218,
+      "sha256": "09ba8a3602c4a851228e1ef90472c64a5b636f6a7cbefc756cc685a98e8d0e30",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/inventory.json",
+      "bytes": 1728,
+      "sha256": "61205993328a5c8e0b9384ef4e1128305ede36aee592128ca9022b573d0fcc2b",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/report.json",
+      "bytes": 5272,
+      "sha256": "c2c1207fd0a8e31c7c6120b56ccfdfb259293c9de492d5c04c739ac61ce55380",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/seal-inventory.json",
+      "bytes": 7265,
+      "sha256": "0cb28281a75712b5ec6546db13a868bbe49ed13b7dde4d0fa33c1f739b9df007",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/native-first-c29da80-safe/source-map.json",
+      "bytes": 3642,
+      "sha256": "c45deb9f10f82c5586afda17f701889e4ea8ecad057844578e6d801bf46f8c51",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "docs/native-first-c29da80-independent-raw.md",
+      "bytes": 6702,
+      "sha256": "4173d216c7d686d8e44cbef88bee8cf31e3f2ae0519874e6a83190b2deaa1295",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/native-c29-first-independent/RAW-first-c29da80.json",
+      "bytes": 10500,
+      "sha256": "f29cd65a08856b1ef6f41beb867fd00c7d369a4b314e948763f5cb73fca126ed",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-first-880d116-safe/README.md",
+      "bytes": 1729,
+      "sha256": "662c3b2048dade81a8641a8b93fbf633f8c770cfe876a089b4ab256f11b60741",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-first-880d116-safe/first.stderr",
+      "bytes": 1254,
+      "sha256": "0e298f096dc87e58060b870215de93fc837f484b71e1abfc863d414c623a6cc8",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-first-880d116-safe/first.stdout",
+      "bytes": 2993,
+      "sha256": "234c2e9ce5c6522b5ed6f1c03c9c087946a39224ff4e3965db41cd389feffe2d",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-first-880d116-safe/inventory.json",
+      "bytes": 824,
+      "sha256": "638c25b0365eb319a2f70ae060864e14e320cfdaa8a95b3b479f9ab230c3e27f",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/cross-open-loop-pilot/guards6-first-880d116-safe/report.json",
+      "bytes": 10642,
+      "sha256": "ad994441e2cf54f403ae9fbb5e1a55a3559b49d66c9006c9407a0f12ff57e183",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "docs/native-guards6-first-independent-raw.md",
+      "bytes": 4104,
+      "sha256": "7c7b959d4d9c4a9e8b1589b7c7357308e4b5114eec5f1f14c5988c5d6a827bfd",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    },
+    {
+      "path": "evidence/reviews/native-guards6-independent/RAW-first-880d116a.json",
+      "bytes": 6670,
+      "sha256": "04c217f0fadcc86194cec18b79642a91da4ccb48700b77b937eb2d6519503a43",
+      "review": "ALLOW_EXACT_SOURCE_INTENT_FAKE_FIXTURE_OR_EXISTING_EXPLICIT_SAFE_VALUES",
+      "actual_runtime_binding_or_secret_found": false,
+      "history_intent_only": false
+    }
+  ],
+  "code_and_execution_limits": "Source contains APIs capable of process control, local SQL and native workers. This export never calls those APIs. Guards6 historical fake PASS is finite fixture evidence, not an arbitrary-code sandbox, native functionality or new scope permission.",
+  "historical_false_flags_interpretation": "Original execution_authorized:false and attempts:0 are original CODE-time fields; they do not erase the retained FIRST_NATIVE_FAIL or retained first guards6 fake execution.",
+  "required_remaining_reviews": [
+    "independent exact source and normative70/guards15 closure",
+    "independent whole exported-tree privacy review",
+    "new plan/runtime/namespace and scope approval before any test or native execution",
+    "first-failure fix correctness and full reconciled end-to-end acceptance before success claims"
+  ]
+}
