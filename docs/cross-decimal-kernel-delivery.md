@@ -32,7 +32,7 @@ legacy ReserveKernel gains do not apply to this configured Cross candidate.
 
 All11 originals107103 bytes, capture source and full output remain private.
 Public evidence contains the cleared stderr and finite projections/hashes.
-First normal CI for this delivery is pending. Broader differential coverage,
+First normal CI completed; its exact scope is recorded below. Broader differential coverage,
 Cross-specific performance, future loaded-engine binding, activation and human
 financial approval remain OPEN.
 
@@ -43,3 +43,8 @@ future business effect. Reverting the candidate leaves the original reference
 service behavior intact; preserve all first results and confirmed history.
 Do not run historical plans against new bytes or reuse sealed output paths.
 Trading production, HA, custody, mixed load and10000/s remain NO_GO.
+
+
+First normal CI is now archived and independently reviewed (0921a23d). Push44296777854 and PR44296832834 both succeeded across all eight jobs. Fixed push/PR Python3.13 logs each ran2135 tests with0 failures/errors/skips; all9 Cross candidate and6 lease-tag methods had actual plain ok records. This does not separately instrument the96 grid callbacks. Each source map's382 pins, actual merge tree and small-package7386 required paths were checked against source667171d1.
+
+Package runtime inventory includes63 files (62 Python modules plus HTML), including the new kernel. Its25-module installed report,8 existing CLI tests and8 commands do not directly import or exercise the new kernel after installation; that acceptance remains OPEN. Private43 originals2160149 bytes and three ZIPs were sealed;18 public files provide cleared finite evidence and independent review. Candidate activation, new loaded-engine binding, Cross performance, sustained capacity and production approval remain OPEN.
