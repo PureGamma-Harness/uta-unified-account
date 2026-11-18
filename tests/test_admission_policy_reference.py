@@ -130,15 +130,45 @@ class AdmissionPolicyReferenceTests(unittest.TestCase):
                 self.assertEqual((actual_pnl, actual_fee), (Fraction(D(pnl)), Fraction(D(fee))))
                 self.assertEqual(Fraction(D(state["balances"]["USD"])), Fraction(D(cash)))
 
+    def test_reduce_only_requires_native_boolean_halt_state(self):
+        fixture = example(cash="4", quantity="-1", positions={"X": {"quantity": "1", "cost_basis": "100"}},
+            reduce_only=True, reserved="0.04", before_values=risk("4", "10", "5", "0", "-6"),
+            after_values=risk("4", "10", "5", "0.04", "-6.04"),
+            projected_values=risk("3.96", "0", "0", "0", "3.96"))
+        for halted in (False, True):
+            candidate = (deepcopy(fixture[0]), fixture[1], fixture[2])
+            for side in ("before", "after"):
+                candidate[0]["inputs"][side]["halted"] = halted
+            self.assertTrue(verify(candidate)["matches"])
+        for halted in (None, "unknown", 0, 1, [], {}):
+            with self.subTest(halted=halted):
+                candidate = (deepcopy(fixture[0]), fixture[1], fixture[2])
+                for side in ("before", "after"):
+                    candidate[0]["inputs"][side]["halted"] = halted
+                result = verify(candidate)
+                self.assertEqual((result["status"], result["eligible"], result["matches"]),
+                                 ("FAILED", False, False))
+                self.assertFalse(result["checks"]["control_state_valid"])
+
     def test_missing_legacy_and_unknown_contract_never_verify(self):
         for mutation, reason in ((lambda row: row["summary"].pop("admission"), "historical_admission_evidence_missing"),
                                 (lambda row: row.update(kind="FILL_CONFIRMED"), "decision_kind_not_supported"),
+                                (lambda row: row["summary"]["admission"].update(contract="unknown-contract"), "admission_contract_not_supported"),
                                 (lambda row: row["summary"]["admission"].update(format=True), "admission_contract_not_supported")):
             fixture = example()
             mutation(fixture[0])
             result = verify(fixture)
             self.assertEqual((result["status"], result["eligible"], result["matches"], result["reason"]),
                              ("UNSUPPORTED", None, None, reason))
+        for contract in (None, "unknown-contract"):
+            fixture = example()
+            if contract is None:
+                fixture[2].pop("admission_contract")
+            else:
+                fixture[2]["admission_contract"] = contract
+            result = verify(fixture)
+            self.assertEqual((result["status"], result["eligible"], result["matches"]),
+                             ("UNSUPPORTED", None, None))
 
     def test_projection_fee_versions_and_control_tampering_fail(self):
         changes = (

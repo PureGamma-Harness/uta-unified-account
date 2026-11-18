@@ -22,6 +22,20 @@ The unsigned code-bound artifact changes. Old releases remain necessary for
 their own archived artifacts: the existing exact engine/runtime mismatch check
 still runs before valuation and has no compatibility bypass.
 
+Unchanged schema does **not** imply existing-authority compatibility. This
+delivery supports fresh synthetic authorities only; migration of an existing
+audited authority is not implemented or accepted. The policy gains a contract
+field, so an old no-contract policy and the new policy have different IDs even
+when their financial configuration and execution options are identical.
+`existing_services._source_arguments` does not distinguish that field or
+deduplicate equal execution options: both rows are candidates and read-source
+reconstruction rejects the ambiguity. This patch deliberately leaves that
+rejection and exact archived-policy/current-artifact checks unchanged.
+Do not call the ordinary installing constructor on an old archive as a migration:
+it may append new metadata without proving read-reopen compatibility. No old
+policy is deleted, rewritten or selected by a compatible-math bypass. Old/new
+policy coexistence and existing-authority writer handoff remain OPEN.
+
 `DecisionAudit.replay` preserves `matches` and `differences` as the existing
 numerical-valuation result, including the proposed reserve. The additive
 `valuation_matches` states that meaning explicitly. The separate `admission`
@@ -57,7 +71,10 @@ recorded halt/liquidation controls, configured product status/steps/minimum,
 rule/catalog/market provenance, full-order projected fee/PnL, ordinary IM
 reservation and strictly positive projected MM surplus. Reduce-only checks
 separately retain cumulative outstanding reduction quantity and non-worsening
-maintenance surplus; they do not inherit the ordinary IM/MM rule.
+maintenance surplus; they do not inherit the ordinary IM/MM rule. Both paths
+require the captured pre/post halt states to be native booleans. In RO mode,
+`halted=True` remains valid; corrupt control types are invalid regardless of
+whether equal values appear in both snapshots.
 
 This does not certify historical clock freshness, writer fencing, API identity,
 command delivery, matching, rejected-command history, or correctness under all
@@ -84,25 +101,55 @@ unless stated. Expected values are constants, not outputs of service helpers.
 | flip | long1 cost100; sell2 at90; PnL-10, fee0.08 | short1 cost-90, cash89.92 from100 |
 | short close | short1 cost-100; buy0.5 at90; PnL5, fee0.02 | short0.5 cost-50, cash104.98 from100 |
 
-The fixed pure plan selects six methods in
-`tests/test_admission_policy_reference.py`. Three methods in
-`tests/test_decision_admission_capture.py` propose three fresh temporary local
+The corrected pure plan selects seven methods in
+`tests/test_admission_policy_reference.py`. Four methods in
+`tests/test_decision_admission_capture.py` propose four fresh temporary local
 SQL authorities, one local `apply_fill` call and no paired matcher/native
 worker. They must not be called real matching throughput acceptance. Proposed
 SQL checks cover ordinary capture, exact-MM rejection with no accepted record,
 original-ID retry while halted/stale, configured rule references, one RO
-admission, and explicit unsupported fill-admission scope. Source/code binding,
+admission, explicit unsupported fill-admission scope, and source-argument
+rejection when a synthetic negative fixture has old/new policy candidates.
+The last case does not establish complete `open_existing_services` compatibility.
+Source/code binding,
 raw-output closure, before/after hashes and actual caller exit/reap must be
 sealed by the eventual execution protocol. Until that review and run, every
 case remains NOT_RUN.
 
+## Independent CODE corrections before any execution
+
+The initial CODE delivery `90ba4beda98e9bc1a58bb64a5345db91c64f6906`
+and its six-pure/three-SQL plan remain in Git as NOT_RUN, zero attempts.
+Independent source review identified a replay false-verification path: in RO
+mode, changing both captured halt states to a nonboolean could satisfy the
+old unchanged-state comparison while skipping the ordinary-only control
+predicate. The real service validates the control row before either branch.
+The correction requires native booleans in both snapshots without rejecting
+RO when the actual boolean is True. This is a static verification gap, not an
+observed illegal order admission or an executed failing test.
+
+The original independent report is
+[`a9ac9cf2928f635cbfd5da6a7c31e071938204e1`](admission-decision-independent-code-review.md).
+Its `ADMISSION-RO-HALT-SHAPE-001` finding and NOT_CLOSED verdict remain bound
+to the original source; this author correction does not close its independent
+gate without a separate delta review.
+
+The same review identified the policy-coexistence ambiguity described above.
+This delivery chooses the explicit fresh-only scope and a synthetic rejection
+test; it does not change the existing reconstruction algorithm or introduce
+an authority migration. Original plan/manifests are retained separately when
+the corrected source is frozen. All proposed new cases still require review
+and a bounded execution entrypoint before any GO.
+
 ## Deployment and rollback
 
-Keep audit mode opt-in and use fresh synthetic, code-bound authorities first.
-Do not modify a live authority or binary in place. Existing deployments require
-their own reviewed writer handoff and exact artifact/schema compatibility
-checks before this release can write. Preserve original command IDs, receipts,
-orders, fills and immutable audit rows; resolve unknown results before handoff.
+Keep audit mode opt-in and deploy only to fresh synthetic, code-bound
+authorities. Do not modify a live authority or binary in place. Existing audited
+deployments have no supported migration or writer-handoff path in this change;
+that work requires its own compatibility design and independent acceptance.
+Preserve all original command IDs, receipts, orders, fills, immutable audit
+rows and old policy/source versions. No experiment on an existing authority
+is part of this CODE delivery.
 
 Rollback must use a compatible audited release after quiescing admission and
 verifying writer ownership. Preserve the additional JSON evidence and old

@@ -486,6 +486,9 @@ class DecisionAudit:
                 if evidence.get(name) != actual:
                     differences[name] = {"recorded": evidence.get(name), "replayed": actual}
             checks = result["checks"]
+            # The production admission path validates the stored control row
+            # even for RO orders. Halted=True permits RO; corrupt types do not.
+            checks["control_state_valid"] = type(before["halted"]) is bool and type(after["halted"]) is bool
             checks["valuation_evidence_consistent"] = (all(
                 record["summary"]["risk_" + side].get(name) == value
                 for side in ("before", "after") for name, value in values[side].items())

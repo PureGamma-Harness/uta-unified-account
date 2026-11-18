@@ -1,6 +1,8 @@
 """Finite local SQL capture plan; synthetic accounts, no native workers."""
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal as D
+from hashlib import sha256
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -9,7 +11,7 @@ from uta.examples import synthetic_policy
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
 from uta.service import ExchangeService, ServiceError
-from uta.storage import Database
+from uta.storage import Database, StorageError
 
 
 class DecisionAdmissionCaptureTests(unittest.TestCase):
@@ -87,6 +89,30 @@ class DecisionAdmissionCaptureTests(unittest.TestCase):
         self.assertEqual(service.ledger.verify(), 2)
         with database.read_transaction() as connection:
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_risk_decisions").fetchone()[0], 3)
+
+    def test_synthetic_coexisting_policy_candidates_reject_read_arguments(self):
+        # This is a synthetic negative fixture, not a supported old-writer
+        # migration. Do not claim it validates open_existing_services fully.
+        from uta.existing_services import _source_arguments
+        service, database, _ = self.fixture()
+        with database.read_transaction() as connection:
+            scales, arguments = _source_arguments(connection)
+            self.assertEqual(scales, {"USD": 2})
+            self.assertTrue(arguments["decision_audit"])
+        policy = service.audit.policy_record(service.audit.policy_id)
+        policy.pop("admission_contract")
+        payload = json.dumps(policy, sort_keys=True, separators=(",", ":"), allow_nan=False)
+        identity = "policy:" + sha256(payload.encode()).hexdigest()
+        with database.transaction() as connection:
+            connection.execute("INSERT INTO uta_risk_policies(policy_id,payload) VALUES (?,?)", (identity, payload))
+        before = service.account("alice")
+        with database.read_transaction() as connection:
+            self.assertEqual(connection.execute("SELECT COUNT(*) FROM uta_risk_policies").fetchone()[0], 2)
+            with self.assertRaises(StorageError) as caught:
+                _source_arguments(connection)
+            self.assertEqual(str(caught.exception), "existing source configuration cannot be reconstructed")
+            self.assertEqual(str(caught.exception.__cause__), "existing base policy is missing or ambiguous")
+        self.assertEqual(service.account("alice"), before)
 
 
 if __name__ == "__main__":
