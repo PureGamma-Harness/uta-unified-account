@@ -1,0 +1,483 @@
+{
+  "schema": 1,
+  "kind": "HUMAN_EXAMPLES_BEFORE_IMPLEMENTATION",
+  "contract_id": "UTA-FUNDING-RISK-HOLD-v1",
+  "status": "PROPOSED_UNRUN_INDEPENDENT_REVIEW_PENDING",
+  "base_commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+  "policy_attribution": "LOCAL_SYSTEM_CHOICE_NOT_EXCHANGE_FACT",
+  "target_execution_attempts": 0,
+  "notation": "P=confirmed gross unpaid rounded payer cash; U=unresolved-rate conservative buffer; N=confirmed unpaid receiver cash; H=P+U, no netting with N",
+  "cases": [
+    {
+      "id": "PFH-M01",
+      "purpose": "Confirmed payer debit reduces every new-risk budget once",
+      "given": {
+        "cash_equity": "100",
+        "IM": "20",
+        "MM": "10",
+        "order_reserve": "30",
+        "confirmed_pending_debits": [
+          "12"
+        ],
+        "pending_credits": []
+      },
+      "expected": {
+        "P": "12",
+        "U": "0",
+        "N": "0",
+        "H": "12",
+        "accrual_equity": "88",
+        "risk_equity_effective": "88",
+        "available_margin_effective": "38",
+        "raw_USD_spendable_before_projected_margin": "88",
+        "additional_order_reserve_38": "ALLOW_IF_OTHER_CHECKS_PASS",
+        "additional_order_reserve_38.01": "REJECT"
+      },
+      "arithmetic": "100-12-20-30=38; 88>10. Native cash spendability is a separate constraint, not the final withdrawal limit."
+    },
+    {
+      "id": "PFH-M02",
+      "purpose": "Gross debits across tasks; pending receivers do not fund admission",
+      "given": {
+        "cash_equity": "100",
+        "IM": "20",
+        "MM": "10",
+        "order_reserve": "30",
+        "confirmed_pending_debits": [
+          "12",
+          "7"
+        ],
+        "pending_credits": [
+          "20"
+        ]
+      },
+      "expected": {
+        "P": "19",
+        "U": "0",
+        "N": "20",
+        "H": "19",
+        "accrual_equity": "101",
+        "risk_equity_effective": "81",
+        "available_margin_effective": "31"
+      },
+      "arithmetic": "P=12+7=19, not max(19-20,0). Accrual=100-19+20=101; risk=100-19=81."
+    },
+    {
+      "id": "PFH-M03",
+      "purpose": "Keep original per-account/per-period toward-zero units and waived subunits",
+      "given": {
+        "usd_scale": 2,
+        "two_separate_product_periods_exact_debits": [
+          "0.015",
+          "0.015"
+        ]
+      },
+      "expected": {
+        "cash_debits": [
+          "0.01",
+          "0.01"
+        ],
+        "H": "0.02",
+        "waived_subunits": [
+          "0.005",
+          "0.005"
+        ],
+        "aggregate_before_rounding_0.03": "FORBIDDEN"
+      },
+      "arithmetic": "Each original immutable leg is truncated toward zero independently. The two existing identities cannot be split or merged to alter cash/holds."
+    },
+    {
+      "id": "PFH-M04",
+      "purpose": "Pending funding, existing loans and confirmed fees are distinct",
+      "given": {
+        "cash": "100",
+        "principal": "20",
+        "interest": "2",
+        "borrow_IM_rate": "0.1",
+        "borrow_MM_rate": "0.05",
+        "order_reserve": "10",
+        "P": "8",
+        "confirmed_trade_fee": "1"
+      },
+      "expected": {
+        "base_cash_ledger_equity": "78",
+        "IM": "2.2",
+        "MM": "1.1",
+        "risk_equity_before_fee": "70",
+        "available_before_fee": "57.8",
+        "cash_after_fee": "99",
+        "risk_equity_after_fee": "69",
+        "available_after_fee": "56.8",
+        "cash_after_funding_applied": "91",
+        "P_after_funding": "0",
+        "risk_equity_after_funding": "69",
+        "available_after_funding": "56.8",
+        "principal_after_funding": "20",
+        "interest_after_funding": "2"
+      },
+      "arithmetic": "Funding debit removes8 cash and its8 hold together. Fee1 reduces cash once. Funding does not create loan principal or accrue loan interest."
+    },
+    {
+      "id": "PFH-M05",
+      "purpose": "Insufficient cash does not suppress a confirmed obligation or create principal",
+      "given": {
+        "cash": "3",
+        "P": "5",
+        "IM": "0",
+        "MM": "0",
+        "other_reserves": "0"
+      },
+      "expected": {
+        "risk_equity_before_apply": "-2",
+        "new_risk": "FROZEN",
+        "cash_after_apply": "-2",
+        "cash_deficit_after_apply": "2",
+        "P_after_apply": "0",
+        "risk_equity_after_apply": "-2",
+        "principal_after_apply": "0",
+        "interest_after_apply": "0"
+      },
+      "arithmetic": "Before3-5=-2; after cash deficit2 gives equity-2, with H=0. Subtracting the paid5 again would be wrong."
+    },
+    {
+      "id": "PFH-M06",
+      "purpose": "Application order preserves remaining holds and grants receipts only at commit",
+      "given": {
+        "cash": "100",
+        "IM": "20",
+        "MM": "10",
+        "order_reserve": "30",
+        "debits": [
+          "12",
+          "7"
+        ],
+        "credit": "20"
+      },
+      "expected_sequence": [
+        {
+          "step": "all_pending",
+          "cash": "100",
+          "P": "19",
+          "N": "20",
+          "accrual_equity": "101",
+          "risk_equity": "81",
+          "available": "31"
+        },
+        {
+          "step": "debit12_APPLIED",
+          "cash": "88",
+          "P": "7",
+          "N": "20",
+          "accrual_equity": "101",
+          "risk_equity": "81",
+          "available": "31"
+        },
+        {
+          "step": "credit20_APPLIED",
+          "cash": "108",
+          "P": "7",
+          "N": "0",
+          "accrual_equity": "101",
+          "risk_equity": "101",
+          "available": "51"
+        },
+        {
+          "step": "debit7_APPLIED",
+          "cash": "101",
+          "P": "0",
+          "N": "0",
+          "accrual_equity": "101",
+          "risk_equity": "101",
+          "available": "51"
+        }
+      ],
+      "arithmetic": "Changing application order may change when incoming settled cash becomes usable, but never spends pending receivables or releases another task hold."
+    },
+    {
+      "id": "PFH-M07",
+      "purpose": "Executor lease expiry changes ownership, not customer debt",
+      "given": {
+        "cash": "100",
+        "immutable_debit": "12",
+        "initial_claim_generation": "g",
+        "next_claim_generation": "g+1"
+      },
+      "expected": {
+        "H_before_expiry": "12",
+        "H_after_expiry": "12",
+        "H_after_reclaim": "12",
+        "old_claim_application": "FENCED",
+        "duplicate_command": "ORIGINAL_RESULT_OR_CONTENT_CONFLICT",
+        "second_hold_for_same_leg": "FORBIDDEN"
+      },
+      "arithmetic": "Claim ownership and task automation states are excluded from the economic hold identity."
+    },
+    {
+      "id": "PFH-M08",
+      "purpose": "Existing orders cannot consume newly recognized funding buffer",
+      "given": {
+        "cash_equity": "100",
+        "IM": "20",
+        "MM": "10",
+        "order_reserve": "60",
+        "P": "30"
+      },
+      "expected": {
+        "risk_equity": "70",
+        "available_before_cancel": "-10",
+        "new_risk": "FROZEN_RESERVATION_DEFICIT",
+        "unacknowledged_cancel_available": "-10",
+        "confirmed_full_cancel_order_reserve": "0",
+        "available_after_cancel": "50",
+        "automatic_liquidation_only_from_available_negative": "NO",
+        "automatic_unfreeze_without_recheck": "NO"
+      },
+      "arithmetic": "70>MM10, so this is a reservation deficit first. Cancellation only frees acknowledged unfilled reservation; concurrent confirmed fills still settle."
+    },
+    {
+      "id": "PFH-M09",
+      "purpose": "Strict MM equality triggers distress; own funding hold never vetoes payment",
+      "given": {
+        "cash_equity": "25",
+        "IM": "10",
+        "MM": "5",
+        "P": "20"
+      },
+      "expected": {
+        "risk_equity": "5",
+        "status": "LIQUIDATION_REQUIRED_AT_EQUALITY",
+        "cash_after_funding": "5",
+        "H_after_funding": "0",
+        "post_funding_risk_equity": "5",
+        "payment_rejected_for_equity_equal_MM": "FORBIDDEN"
+      },
+      "arithmetic": "25-20=5 equals MM5. Liquidation execution still needs valid prices/liquidity and actual matching; no fabricated fill."
+    },
+    {
+      "id": "PFH-M10",
+      "purpose": "Unknown rate has a bounded cap only after trusted quantity/mark exposure cut",
+      "given": {
+        "usd_scale": 2,
+        "frozen_quantity": "2",
+        "frozen_mark": "100",
+        "max_abs_rate": "0.03",
+        "resolved_positive_rate": "0.012345"
+      },
+      "expected": {
+        "initial_U": "6",
+        "initial_P": "0",
+        "resolved_exact_debit": "2.469",
+        "resolved_cash_debit_P": "2.46",
+        "resolved_U": "0",
+        "released_buffer": "3.54",
+        "if_resolved_rate_negative_P": "0",
+        "if_resolved_rate_negative_N": "2.46",
+        "if_resolved_rate_negative_cash_credit_before_apply": "0",
+        "missing_trusted_mark_or_quantity_or_cap": "REJECT_NEW_RISK_NOT_ZERO_HOLD"
+      },
+      "arithmetic": "Cap=ceil_minor(2*100*.03)=6.00; final debit=truncate_minor(2*100*.012345)=2.46. Replace cap with final hold atomically, do not add both."
+    },
+    {
+      "id": "PFH-M11",
+      "purpose": "Outgoing cash and collateral changes use projected account risk and native currency holds",
+      "given": {
+        "cash_equity": "100",
+        "P": "12",
+        "IM": "20",
+        "MM": "10",
+        "order_reserve": "30",
+        "spot_USD_locks": "0"
+      },
+      "expected": {
+        "raw_USD_spendable": "88",
+        "withdraw_or_transfer_out_38_available_after": "0",
+        "withdraw_or_transfer_out_38_risk_equity_after": "50",
+        "withdraw_or_transfer_out_38": "ALLOW_IF_PERMISSION_AND_OTHER_LIMITS_PASS",
+        "withdraw_or_transfer_out_38.01": "REJECT",
+        "receiving_subaccount_credit_before_transfer_commit": "0"
+      },
+      "arithmetic": "100-38-12-20-30=0 and50>MM10; native88 alone is insufficient to approve larger debits. Cross-account holds never net."
+    },
+    {
+      "id": "PFH-M12",
+      "purpose": "Collateral tiers revalue the full projected inventory",
+      "given": {
+        "cash_USD": "100",
+        "BTC_quantity": "2",
+        "BTC_price": "100",
+        "BTC_tiers": "first100@0.8,remainder@0.5",
+        "P": "12",
+        "IM": "20",
+        "order_reserve": "30"
+      },
+      "expected": {
+        "BTC_collateral_before": "130",
+        "risk_equity_before": "218",
+        "available_before": "168",
+        "BTC_removed": "0.5",
+        "BTC_collateral_after": "105",
+        "risk_equity_after": "193",
+        "available_after": "143"
+      },
+      "arithmetic": "Initial BTC80+50=130; after removing.5 BTC,80+25=105. Funding12 is subtracted once in both states, never allocated as a fictional BTC freeze."
+    },
+    {
+      "id": "PFH-M13",
+      "purpose": "Cancellation requests and corrections never erase confirmed debt",
+      "given": {
+        "cash": "100",
+        "original_pending_debit": "12",
+        "proposed_correction_pending_credit": "2"
+      },
+      "expected_sequence": [
+        {
+          "step": "cancel_requested",
+          "P": "12",
+          "N": "0",
+          "cash": "100"
+        },
+        {
+          "step": "correction_approved_as_separate_credit",
+          "P": "12",
+          "N": "2",
+          "cash": "100",
+          "risk_equity": "88"
+        },
+        {
+          "step": "original_APPLIED",
+          "P": "0",
+          "N": "2",
+          "cash": "88",
+          "risk_equity": "88"
+        },
+        {
+          "step": "correction_APPLIED",
+          "P": "0",
+          "N": "0",
+          "cash": "90",
+          "risk_equity": "90"
+        }
+      ],
+      "arithmetic": "No editing original cut/task/cash. A debit correction2 instead adds its own hold2. Correction capability is unsupported until separately approved; requests alone have no effect."
+    },
+    {
+      "id": "PFH-M14",
+      "purpose": "Conservative borrow quote includes funding in headroom without loan-account fabrication",
+      "given": {
+        "cash_USD": "100",
+        "P": "12",
+        "USD_LTV": "1",
+        "borrow_IM_rate": "0.1",
+        "borrow_MM_rate": "0.05",
+        "quantity_step": "1",
+        "other_credit_limits": "NON_BINDING",
+        "positions_orders_loans": "NONE"
+      },
+      "expected": {
+        "effective_available": "88",
+        "effective_LTV_headroom": "88",
+        "conservative_quote": "80",
+        "risk_after_proceeds_leave_for_quote80": "8",
+        "MM_after_quote80": "4",
+        "stale_unadjusted_quote90": "REJECT_NOT_AUTHORIZATION"
+      },
+      "arithmetic": "min(88,88/1.1)=80. Strict MM8>4 holds. This quote assumes loan proceeds leave collateral; an actual credited-cash loan must also pass funding-aware post-state checks and independent pool/limit permissions."
+    },
+    {
+      "id": "PFH-M15",
+      "purpose": "Atomic cut/hold and cash/release transitions survive crashes",
+      "given": {
+        "cash": "100",
+        "P": "12"
+      },
+      "allowed_committed_states": [
+        {
+          "cash": "100",
+          "P": "12",
+          "task": "PENDING"
+        },
+        {
+          "cash": "88",
+          "P": "0",
+          "task": "APPLIED"
+        }
+      ],
+      "forbidden_visible_states": [
+        {
+          "cash": "100",
+          "P": "0",
+          "task": "APPLIED"
+        },
+        {
+          "cash": "88",
+          "P": "12",
+          "task": "PENDING"
+        }
+      ],
+      "expected": {
+        "uncommitted_cut_creation": "NO_CUT_OR_HOLD_VISIBLE_AND_DUE_BOUNDARY_ADMISSION_GATE_REMAINS_CLOSED",
+        "commit_response_lost": "QUERY_ORIGINAL_ID_DO_NOT_REPEAT_CASH",
+        "unknown_commit_then_restart": "RECONCILE_RECEIPT_CUT_HOLD_AND_JOURNAL_BEFORE_RESUME"
+      },
+      "arithmetic": "All customer legs, clearing/capital, hold states, receipt and task status share the existing local authority transaction; current scope has no distributed partial commit."
+    },
+    {
+      "id": "PFH-M16",
+      "purpose": "Stale current risk quotes cannot erase trusted mandatory USD cash",
+      "given": {
+        "cash": "5",
+        "confirmed_pending_debit": "12",
+        "another_pending_debit": "10",
+        "current_risk_market": "UNAVAILABLE",
+        "trusted_final_cut_and_cash_artifact": "VALID"
+      },
+      "expected": {
+        "cash_after_first_apply": "-7",
+        "remaining_P": "10",
+        "risk_equity_when_valid_quotes_return": "-17",
+        "risk_status_at_commit": "RESTRICTED_RISK_RECHECK_REQUIRED",
+        "mandatory_cash_rejected_by_own_hold_or_missing_live_risk_quote": "FORBIDDEN",
+        "successfully_valued_or_risk_recovered_claim": "FORBIDDEN",
+        "reference_or_cut_integrity_unverifiable": "KEEP_HOLDS_AND_OBLIGATIONS_DURABLE_RECOVER_APPROVED_AUTHORITY_NO_FALLBACK"
+      },
+      "arithmetic": "Before5-12-10=-17, after-7-10=-17. Persist risk restriction/recheck obligation with cash, do not emit a successful liquidation or a fresh-risk result from missing quotes."
+    },
+    {
+      "id": "PFH-M17",
+      "purpose": "Rounding-capital deficit has a traceable real owner and cannot release customer holds",
+      "given": {
+        "usd_scale": 2,
+        "mark": "1",
+        "rate": "0.015",
+        "positions": [
+          {
+            "account": "payerA",
+            "quantity": "0.5"
+          },
+          {
+            "account": "payerB",
+            "quantity": "0.5"
+          },
+          {
+            "account": "receiver",
+            "quantity": "-1"
+          }
+        ]
+      },
+      "expected": {
+        "payer_cash_units": [
+          0,
+          0
+        ],
+        "receiver_cash_units": 1,
+        "clearing_units": -1,
+        "required_confirmed_rounding_capital_units": 1,
+        "receiver_pending_credit_before_capital_and_apply": "0",
+        "WAITING_CAPITAL_releases_other_customer_holds": "NO",
+        "unfunded_minted_capital": "FORBIDDEN"
+      },
+      "arithmetic": "Payers exact-.0075 each truncate0; receiver exact+.015 truncates+.01. Segregated real capital must supply.01; waived subunits are not later customer debt."
+    }
+  ],
+  "production_approved": false
+}

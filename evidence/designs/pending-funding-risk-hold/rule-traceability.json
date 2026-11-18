@@ -1,0 +1,1581 @@
+{
+  "schema": 1,
+  "kind": "PENDING_FUNDING_RISK_HOLD_RULE_TRACEABILITY",
+  "contract_id": "UTA-FUNDING-RISK-HOLD-v1",
+  "base_commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+  "status": "PROPOSED_DOCS_ONLY_NOT_RUN",
+  "target_execution_attempts": 0,
+  "runtime_changed": false,
+  "production_approved": false,
+  "policy_attribution": "LOCAL_SYSTEM_CHOICE_NOT_VERIFIED_EXCHANGE_BEHAVIOR",
+  "manual_cases_written_before_rules": true,
+  "specification": "docs/pending-funding-risk-hold-spec.md",
+  "manual_cases": "evidence/designs/pending-funding-risk-hold/manual-cases.json",
+  "source_pins": "evidence/designs/pending-funding-risk-hold/source-pins.json",
+  "initial_scope": {
+    "data": "SYNTHETIC_ONLY",
+    "authority": "FRESH_LOCAL_EXCLUSIVE_SINGLE_WRITER_NEW_GENERATION",
+    "HA": false,
+    "modes": [
+      "CROSS"
+    ],
+    "settlement": [
+      "USD"
+    ],
+    "products": [
+      "LINEAR_PERPETUAL_MULTIPLIER_1"
+    ],
+    "financial_operation_activation": false,
+    "source_activity_claim": "CURRENT_PR53_SLICE_IS_INACTIVE_FRESH_ONLY_NO_PRODUCTION_ACTIVATION"
+  },
+  "definitions": {
+    "P": "SUM_OF_UNAPPLIED_ORIGINAL_ROUNDED_PAYER_DEBITS",
+    "U": "SUM_OF_FROZEN_EXPOSURE_UNKNOWN_RATE_CEILING_BUFFERS",
+    "N": "SUM_OF_UNAPPLIED_ORIGINAL_ROUNDED_RECEIVER_CREDITS",
+    "H": "P_PLUS_U_NO_N_OFFSET",
+    "cash_ledger_accounting_equity": "EXISTING_BASE_CASH_LEDGER_AND_GROSS_LIABILITY_METRIC",
+    "accrual_equity": "BASE_ACCOUNTING_EQUITY_MINUS_P_PLUS_N_NOT_A_RISK_CREDIT_GRANT",
+    "risk_equity_effective": "BASE_RISK_EQUITY_MINUS_H",
+    "available_margin_effective": "RISK_EQUITY_EFFECTIVE_MINUS_BASE_IM_MINUS_BASE_ORDER_RESERVE",
+    "new_risk_boundary": "AVAILABLE_EFFECTIVE_GE_ZERO_AND_EQUITY_EFFECTIVE_STRICT_GT_BASE_MM_AND_ALL_OPERATION_LIMITS",
+    "economic_identity": [
+      "authority_id",
+      "authority_generation",
+      "obligation_id",
+      "account_id",
+      "settlement_asset",
+      "final_cut_sha"
+    ],
+    "not_economic_identity": [
+      "claim_owner",
+      "claim_nonce",
+      "claim_generation",
+      "claim_expiry"
+    ],
+    "mandatory_settlement": "VERIFIED_FIXED_CONFIRMED_OBLIGATION_NOT_NEW_RISK_ADMISSION"
+  },
+  "invariants": [
+    {
+      "id": "PFH-I01",
+      "assertion": "H equals exact sum of one active P or U per unique economic duty; N cannot reduce it."
+    },
+    {
+      "id": "PFH-I02",
+      "assertion": "At fixed market/unrelated state, confirmed payer cash delta -D and own P delta -D are one atomic commit, so effective risk is continuous."
+    },
+    {
+      "id": "PFH-I03",
+      "assertion": "Receiver cash and N removal commit together; N never enters prior cash, risk collateral, borrow pool or admission availability."
+    },
+    {
+      "id": "PFH-I04",
+      "assertion": "Per-currency journal balances and complete original leg/treasury/clearing references reconcile; no capital is minted."
+    },
+    {
+      "id": "PFH-I05",
+      "assertion": "One immutable duty has at most one APPLIED receipt and each customer leg posts once; retry, lease and ownership changes never duplicate effects."
+    },
+    {
+      "id": "PFH-I06",
+      "assertion": "Every accepted implemented new-risk operation has a complete exact historical funding basis and durable reservation under serialized account/funding versions."
+    },
+    {
+      "id": "PFH-I07",
+      "assertion": "No state/claim expiry/cancel request/restart/data gap releases a fixed unpaid P; unknown basis cannot be treated as zero."
+    },
+    {
+      "id": "PFH-I08",
+      "assertion": "Pending liabilities/receivables, credit principal/interest, cash deficits, fees, spot locks and order reserve remain separately auditable with each monetary effect counted once."
+    },
+    {
+      "id": "PFH-I09",
+      "assertion": "Historical replay reconstructs state only through original watermark and exact source/policy/market/evaluation time, never from present task status."
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "PFH-R001",
+      "title": "Closed economic identity and gross hold",
+      "policy": "H=sum(P+U) over complete unpaid unique legs; N never offsets H, including same currency/account opposite tasks and parent/subaccounts.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:113; schedule/capture/query/pending"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Claim identifiers and automation states are not debt identity.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T001",
+        "PFH-T011",
+        "PFH-T018"
+      ],
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M02",
+        "PFH-M06",
+        "PFH-M07"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R002",
+      "title": "Original cash rounding and dust ownership",
+      "policy": "Use immutable signed cash_units toward zero per account/period; final payer hold equals rounded debit exactly; waived subunit is not unpaid debt.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "perpetual_funding.py:FundingPolicy.payload/plan_funding"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Never sum before rounding, split task identity, or ceil a fixed cash leg into new debt.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T002",
+        "PFH-T012"
+      ],
+      "manual_case_ids": [
+        "PFH-M03",
+        "PFH-M17"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R003",
+      "title": "Capture atomically creates complete holds and restrictions",
+      "policy": "Final cut, participant holds, funding versions, basis and required freezes commit together even when debtor lacks capital.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:capture"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "No cut-only, hold-only, omitted account or caller-pagination aggregation.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T003",
+        "PFH-T020",
+        "PFH-T022"
+      ],
+      "manual_case_ids": [
+        "PFH-M05",
+        "PFH-M08",
+        "PFH-M09",
+        "PFH-M15"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R004",
+      "title": "Boundary completeness precedes admission",
+      "policy": "Derive expected periods from immutable catalog/calendar and event ownership; unknown/missing due cut is not zero liability.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:schedule/capture; matching.py:Matcher.match_once"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Do not substitute post-boundary current positions or ignore prior confirmed unsettled fills.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T004",
+        "PFH-T018",
+        "PFH-T021"
+      ],
+      "manual_case_ids": [
+        "PFH-M10",
+        "PFH-M15"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R005",
+      "title": "Separate cash-ledger, accrual and risk metrics",
+      "policy": "Cash ledger remains original gross components; accrual=base accounting-P+N; effective risk=base risk-P-U; available=effective risk-IM-order reserve.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "service.py:_risk; portfolio.py:calculate_cross_risk"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "No N risk credit, H double subtraction, artificial principal/frozen assets, or silently redefined historical fields.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T001",
+        "PFH-T012",
+        "PFH-T018"
+      ],
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M02",
+        "PFH-M04",
+        "PFH-M05",
+        "PFH-M06"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R006",
+      "title": "Native cash debits plus projected effective risk",
+      "policy": "USD raw cash budget=cash-native locks-H; non-USD original cash locks plus full projected tier risk; cash budget alone does not authorize debit.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "service.py:_available_asset; spot.py:cash admission"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Raw negative retained; public withdrawable clamp does not conceal deficit. No implicit conversion.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T007",
+        "PFH-T008",
+        "PFH-T012"
+      ],
+      "manual_case_ids": [
+        "PFH-M11",
+        "PFH-M12"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R007",
+      "title": "One durable basis covers new risk",
+      "policy": "Every implemented order/modify/trigger/batch/borrow/funds/collateral/mode/matching-before-confirmation path checks account/funding versions, complete H, market/rules/artifact/time in its authority transaction.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "service.py:_admit_order/_apply_fill; credit.py:_borrow; spot.py:order admission"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Unimplemented operation rejects before financial/capability writes; no old path bypass.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T005",
+        "PFH-T007",
+        "PFH-T008",
+        "PFH-T016",
+        "PFH-T019",
+        "PFH-T021"
+      ],
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M08",
+        "PFH-M11",
+        "PFH-M12",
+        "PFH-M14"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R008",
+      "title": "Funding-aware conservative borrowing",
+      "policy": "Recompute quote using base debt+H in debt/LTV headroom, effective availability and strict MM; principal/interest limits and pool remain separate; no Credit V2 implicit activation.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "portfolio.py:calculate_cross_risk; credit.py:_borrow"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Proceeds-leave quote is not actual credited-cash equity or a permission grant; zero cache/default formats not silently upgraded.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T006",
+        "PFH-T012",
+        "PFH-T016"
+      ],
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M14"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R009",
+      "title": "Strict MM and existing reservation distress",
+      "policy": "New risk requires effective available>=0 and effective equity>MM. Negative availability freezes/cancels acknowledged unfilled risk first; E<=MM including equality triggers durable distress.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "service.py:supervise_account; portfolio.py:calculate_cross_risk"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "No false NORMAL/unfreeze, no release before cancel confirmation, no mark-generated execution.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T014",
+        "PFH-T015",
+        "PFH-T021"
+      ],
+      "manual_case_ids": [
+        "PFH-M05",
+        "PFH-M08",
+        "PFH-M09"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R010",
+      "title": "Confirmed funding settlement is not new-risk admission",
+      "policy": "Fixed trusted obligation applies independently of cash/H availability and strict MM; exact debit may make cash negative and consumes only own hold in same commit.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:apply/_cash"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Reference authority and cut must be verified. Unknown authority is retained for recovery, not fallback or successful fake payment.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T009",
+        "PFH-T010",
+        "PFH-T012",
+        "PFH-T020"
+      ],
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M05",
+        "PFH-M06",
+        "PFH-M09",
+        "PFH-M15",
+        "PFH-M16"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R011",
+      "title": "Whole local period atomic completion",
+      "policy": "All participant/real-capital/clearing postings, hold consumption, P/N removal, versions, receipt/APPLIED and risk restriction/recheck event share one local authority commit.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:apply/_cash; storage.py:transaction"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Partial sharded settlement and multi-node atomicity are outside scope.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T009",
+        "PFH-T020",
+        "PFH-T021"
+      ],
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M06",
+        "PFH-M15",
+        "PFH-M17"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R012",
+      "title": "Market data degradation preserves mandatory cash",
+      "policy": "With intact trusted fixed USD cut/authority but missing current risk quotes, cash commits with restricted risk and durable recheck outbox; no fresh-risk success claimed.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:_check_current_quotes/_cash/apply (current rollback behavior to be versioned)"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Current PR53 behavior differs; no legacy receipt may be reinterpreted. Cut/reference corruption still blocks and preserves duty/holds.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T010",
+        "PFH-T015",
+        "PFH-T020"
+      ],
+      "manual_case_ids": [
+        "PFH-M16"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R013",
+      "title": "Claim expiry cannot erase economic ownership",
+      "policy": "Economic hold persists through SCHEDULED after a captured exposure, DUE/WAITING_DATA/WAITING_CAPITAL/REVIEW and expired/reclaimed executor ownership.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:claim/_held/_wait"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Only verified cash settlement consumes final P; state transitions alone never release it.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T011",
+        "PFH-T020",
+        "PFH-T021"
+      ],
+      "manual_case_ids": [
+        "PFH-M07",
+        "PFH-M15"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R014",
+      "title": "Unknown rate uses bounded frozen exposure or rejects",
+      "policy": "For trusted frozen q/mark/scale and approved max_abs_rate, U=ceil_minor(abs(q)*mark*cap). Final cut atomically replaces U with P/N; otherwise refuse new risk, no zero default.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "perpetual_funding.py:FundingPolicy; funding_obligations.py:capture"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Missing snapshot, cap breach, overflow or clock regression retains prior holds and restriction. Current-price shocks are not unbounded mark guarantees.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T004",
+        "PFH-T013",
+        "PFH-T016"
+      ],
+      "manual_case_ids": [
+        "PFH-M10"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R015",
+      "title": "No pending receiver or capital credit",
+      "policy": "N is gross recognized receivable, no risk/cash/pool availability before all corresponding postings and APPLIED commit. Rounding capital must be real, segregated, deposited and unreserved.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:_capital/_cash; perpetual_funding.py:FundingPolicy.payload"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "WAITING_CAPITAL does not release customer holds or mint capital; treasury segregation and reuse proof remain.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T001",
+        "PFH-T002",
+        "PFH-T009"
+      ],
+      "manual_case_ids": [
+        "PFH-M02",
+        "PFH-M06",
+        "PFH-M17"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R016",
+      "title": "Principal, interest, fees and negative cash remain distinct",
+      "policy": "Loan principal/interest are unaffected by funding hold/payment; fees post once separately. Post-payment cash deficit replaces paid hold, never coexists as second debit for same duty.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "service.py:_risk/_fill_fee; credit.py:_repay; funding_obligations.py:_cash"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Voluntary debt repayment must not consume reserved funding USD through a legacy available-asset bypass; retain interest-first policy or reject unsupported operation.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T009",
+        "PFH-T012"
+      ],
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M05"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R017",
+      "title": "Debt cancellation and corrections are explicit new authority",
+      "policy": "Immutable cut cannot be cancelled, edited or freed by review/request. First version rejects post-cut void/supersession and unapproved correction capability; later compensation is separately authorized and linked.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:immutable cuts/tasks/triggers"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Future correction debit adds H; credit never nets before APPLIED; scheduled-task edits cannot bypass expected product periods.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T017",
+        "PFH-T019"
+      ],
+      "manual_case_ids": [
+        "PFH-M13"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R018",
+      "title": "Replay uses exact historical obligation basis",
+      "policy": "Archive complete P/U/N entries and creation/application events through watermark, exact source/policy/market/time and versions; historical replay never reads current APPLIED status as past truth.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "decision_audit.py:policy/replay; funding_obligations.py:verify"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Hash alone is not enough. Missing/inconsistent basis or receipt causes explicit refusal and restriction, not silent repair.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T018",
+        "PFH-T020"
+      ],
+      "manual_case_ids": [
+        "PFH-M02",
+        "PFH-M06",
+        "PFH-M15"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R019",
+      "title": "New generation and all-entry old-writer rejection",
+      "policy": "New exact funding contract/capability and policy version mapping; old/default/no-hold financial entrypoints must reject before state/capability writes.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:install_synthetic_fresh; decision_audit.py:policy; service.py:constructor"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "PR53 lacks PR52 valuation10/order11 separation. Existing authority migration, managed/sharded/HA/custody/credit activation remain unsupported.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T016",
+        "PFH-T019"
+      ],
+      "manual_case_ids": [
+        "PFH-M07",
+        "PFH-M11"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R020",
+      "title": "Bounded resources fail closed without eviction",
+      "policy": "Complete task/participant/command/archive and integer limits are explicit and checked; no dropping/evicting holds or rounding overflow to fit resources.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "funding_obligations.py:_MAX_OBLIGATIONS/_MAX_COMMANDS/_ARCHIVE_LIMIT; perpetual_funding.py:number/plan_funding"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Existing local limits are max1000 tasks/participants,10000 commands,1MiB archive and ledger magnitude<10^38 units; no production capacity inferred.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T020",
+        "PFH-T022"
+      ],
+      "manual_case_ids": [
+        "PFH-M08",
+        "PFH-M10",
+        "PFH-M15"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R021",
+      "title": "Independent invariants and real end-to-end evidence",
+      "policy": "Separate independent arithmetic, bounded model, concurrent/fault/replay and actual matching four-side plus funding-basis evidence; source-only design is not execution acceptance.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "tests/test_funding_obligations_local.py; matching.py:verify"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "Assume serialized trusted writer/atomic local transaction explicitly; no physical lease/fsync, replication or HA proof inherited.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T001",
+        "PFH-T002",
+        "PFH-T021",
+        "PFH-T023"
+      ],
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M02",
+        "PFH-M03",
+        "PFH-M04",
+        "PFH-M05",
+        "PFH-M06",
+        "PFH-M07",
+        "PFH-M08",
+        "PFH-M09",
+        "PFH-M10",
+        "PFH-M11",
+        "PFH-M12",
+        "PFH-M13",
+        "PFH-M14",
+        "PFH-M15",
+        "PFH-M16",
+        "PFH-M17"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    },
+    {
+      "rule_id": "PFH-R022",
+      "title": "Capacity, observability and reversible deployment",
+      "policy": "Open-loop user gates, planned-arrival latency, all result classes, full reopened reconciliation and dedicated obligation/freeze/recheck metrics; fresh-only deploy and event-preserving rollback.",
+      "provenance": [
+        {
+          "type": "LOCAL_SYSTEM_POLICY_PROPOSAL",
+          "contract": "UTA-FUNDING-RISK-HOLD-v1"
+        },
+        {
+          "type": "IMMUTABLE_SOURCE_REFERENCE_NOT_NEW_RUNTIME_PROOF",
+          "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+          "scope": "docs/durable-funding-obligations-delivery.md"
+        }
+      ],
+      "products": [
+        "SYNTHETIC_USD_LINEAR_PERPETUAL_MULTIPLIER_1",
+        "EXISTING_QUALIFIED_COLLATERAL_VALUATION"
+      ],
+      "account_modes": [
+        "CROSS"
+      ],
+      "interface_version": "PROPOSED_UTA-FUNDING-RISK-HOLD-v1_UNPUBLISHED_NO_ENDPOINT_ACTIVATED",
+      "effective_time": "ONLY_FUTURE_NEW_AUTHORITY_GENERATION_AFTER_EXPLICIT_ACCEPTANCE",
+      "currencies": [
+        "USD_SETTLEMENT_REPORTING",
+        "OTHER_COLLATERAL_ONLY_WITH_EXPLICIT_NATIVE_CASH_AND_PRODUCT_RULES"
+      ],
+      "units": {
+        "cash_hold_P_U_N": "USD_MINOR_UNITS_AND_EXACT_USD_VALUE",
+        "risk_equity_margin": "USD",
+        "rates": "DIMENSIONLESS",
+        "versions": "NATIVE_INTEGER_NOT_BOOL"
+      },
+      "precision": "USD scale2..8; final cash per original task/account toward zero; unknown-rate cap ceiling only; risk arithmetic exact without float/ambient context; signed negative and equality behavior explicit",
+      "limits": "Existing synthetic bounds unless separately reviewed: <=1000 tasks/participants,<=10000 commands,<=1MiB archive,abs(cash_units)<10^38; never truncate holds",
+      "boundary_conditions": "No TPS/RPO/RTO/production approval from documentation, historical finite cases or CI; real funds require independent review and explicit launch approval.",
+      "verifiable_scope": "STATIC_POLICY_AND_FIXED_SOURCE_ONLY; manual expectations unrun; external exchange behavior and runtime conformance not asserted",
+      "test_ids": [
+        "PFH-T020",
+        "PFH-T022",
+        "PFH-T023",
+        "PFH-T024"
+      ],
+      "manual_case_ids": [
+        "PFH-M08",
+        "PFH-M09",
+        "PFH-M15",
+        "PFH-M16"
+      ],
+      "implementation_status": "NOT_IMPLEMENTED",
+      "acceptance_status": "NOT_RUN"
+    }
+  ],
+  "test_gates": [
+    {
+      "test_id": "PFH-T001",
+      "kind": "PURE_DIFFERENTIAL",
+      "title": "Gross P/U/N and duplicate identity",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M02",
+        "PFH-M06",
+        "PFH-M07"
+      ],
+      "acceptance": "Two or more debits sum gross; receivers never increase pre-commit risk credit; each exact economic identity contributes once.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T002",
+      "kind": "INDEPENDENT_ROUNDING",
+      "title": "Per-period per-account minor units and real rounding capital",
+      "manual_case_ids": [
+        "PFH-M03",
+        "PFH-M17"
+      ],
+      "acceptance": "Independent integer/rational oracle matches original toward-zero leg units, waiver and real capital postings; no cross-period merge, split, dust carry or minted money.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T003",
+      "kind": "TRANSACTION_FAULT",
+      "title": "Cut plus hold plus restriction atomicity",
+      "manual_case_ids": [
+        "PFH-M08",
+        "PFH-M09",
+        "PFH-M15"
+      ],
+      "acceptance": "Fault before/after each write yields no partial cut/hold; complete cut remains recorded even if effective equity is negative; due boundary keeps new risk closed if commit fails.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T004",
+      "kind": "BOUNDARY_REPLAY",
+      "title": "Complete due-period inventory and temporal ownership",
+      "manual_case_ids": [
+        "PFH-M10",
+        "PFH-M15"
+      ],
+      "acceptance": "Missing task, delayed timer, unsettled prior confirmed fill, clock rollback, orphan or paginated omission blocks new risk; before/after-boundary trades use the proper frozen quantity and event watermark.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T005",
+      "kind": "CONCURRENT_ADMISSION",
+      "title": "Order/modify/trigger/batch/auto-borrow shared admission",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M02",
+        "PFH-M08"
+      ],
+      "acceptance": "Multiple commands against one remaining budget cannot both spend it; not implemented operations reject before state/capability effects. Orders include fees, slippage, pending cancellation and overlap.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T006",
+      "kind": "CREDIT_NEGATIVE_AND_DIFFERENTIAL",
+      "title": "Funding-aware quote and no implicit Credit V2 activation",
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M14"
+      ],
+      "acceptance": "Recompute quote with H headroom and strict MM; stale base quote rejects. Actual loan pool, limits and post-state remain independent; old Credit V2 installer and borrow reject new contract before effects until separately upgraded.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T007",
+      "kind": "FUNDS_CONCURRENCY",
+      "title": "Withdrawal/transfer/native currency handoff",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M11"
+      ],
+      "acceptance": "Cash budget and projected account risk both checked once; source/destination isolation and exactly-once transaction/authorization hold. Unsupported custody or transfer adapters reject before financial effects.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T008",
+      "kind": "COLLATERAL_DIFFERENTIAL",
+      "title": "Collateral removal and non-USD tiers",
+      "manual_case_ids": [
+        "PFH-M12"
+      ],
+      "acceptance": "Revalue whole projected inventory; do not lock fictional BTC for USD funding or double-count H/spot/order locks; asset eligibility removal and non-USD debits use the same basis.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T009",
+      "kind": "SETTLEMENT_FAULT",
+      "title": "Own hold cannot block confirmed cash and atomic consumption",
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M05",
+        "PFH-M06",
+        "PFH-M09",
+        "PFH-M15"
+      ],
+      "acceptance": "All local period cash/capital/clearing/postings/hold transitions/receipt/APPLIED/version commit together. Negative cash is recorded; other task holds remain. Effective risk continuity holds at fixed market and unchanged unrelated state.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T010",
+      "kind": "MANDATORY_SETTLEMENT_DEGRADATION",
+      "title": "Missing current quote versus damaged cash authority",
+      "manual_case_ids": [
+        "PFH-M16"
+      ],
+      "acceptance": "Trusted fixed USD cash applies with restricted-risk/recheck event when only current risk data is missing; no false fresh-risk success. Unknown/damaged cut/reference authority retains holds and recovers known-good artifact, with no engine/policy fallback.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T011",
+      "kind": "CLAIM_RESTART",
+      "title": "Lease expiry, generations and duplicate results",
+      "manual_case_ids": [
+        "PFH-M07",
+        "PFH-M15"
+      ],
+      "acceptance": "Stale claimant cannot mutate; reclaim never duplicates or releases holds. WAITING/REVIEW states retain H; result unknown queries original ID; duplicate same content replays original result, changed content conflicts.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T012",
+      "kind": "ACCOUNTING_DIFFERENTIAL",
+      "title": "Principal/interest/fees/cash deficits remain gross",
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M05"
+      ],
+      "acceptance": "No debt netting, invented principal, loan interest on funding, repeated fee, or H retained after cash debit. Independent per-currency accounting and explicit accrual view reconcile.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T013",
+      "kind": "UNCERTAIN_RATE",
+      "title": "Fixed-exposure cap and resolution replacement",
+      "manual_case_ids": [
+        "PFH-M10"
+      ],
+      "acceptance": "Exact ceiling minor-unit cap replaces atomically with final toward-zero P/N, including zero and sign change; missing bounds/cut/rate outside cap reject new risk and preserve prior holds, never rate0 fallback.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T014",
+      "kind": "CANCEL_FILL_INTERLEAVING",
+      "title": "Under-reserved existing orders",
+      "manual_case_ids": [
+        "PFH-M08"
+      ],
+      "acceptance": "Freeze before new admission; retain unacknowledged reserve; partial fills and cancel acknowledgements update only confirmed quantities. No NORMAL supervisor state silently clears funding restriction.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T015",
+      "kind": "LIQUIDATION_REPLAY",
+      "title": "MM equality, negative equity and residual debt",
+      "manual_case_ids": [
+        "PFH-M05",
+        "PFH-M09",
+        "PFH-M16"
+      ],
+      "acceptance": "Fund-aware E<=MM triggers durable distress; real candidates include fees/slippage and fixed unpaid cuts, closure does not erase old funding. No liquidity remains blocked; no invented execution, insurance payment or ADL.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T016",
+      "kind": "EXACT_CONTRACT_NEGATIVE",
+      "title": "Version, unsupported products and operation rejection",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M10"
+      ],
+      "acceptance": "Unknown/duplicate fields, bool versions, wrong generation, missing capability, unsupported mode/settlement/worker/shard/credit/custody reject before financial/capability writes. Default legacy paths do not silently gain this behavior.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T017",
+      "kind": "CORRECTION_PERMISSION",
+      "title": "Immutable debt, cancellation and compensation",
+      "manual_case_ids": [
+        "PFH-M13"
+      ],
+      "acceptance": "No post-cut delete/void/edit, no release on request/review. Compensation capability remains rejected until separately reviewed; its future debits add H, credits do not net before APPLIED.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T018",
+      "kind": "HISTORICAL_REPLAY",
+      "title": "Exact funding basis and event-time replay",
+      "manual_case_ids": [
+        "PFH-M02",
+        "PFH-M06",
+        "PFH-M15"
+      ],
+      "acceptance": "Replay uses complete archived entries as of recorded event watermark and exact code/policy/market/time; current APPLIED state cannot alter historical H. Reconcile active holds versus cut/receipt/journal after reopen.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T019",
+      "kind": "OLD_WRITER_AND_AUTHORIZATION",
+      "title": "All financial entrypoints and frozen recovery",
+      "manual_case_ids": [
+        "PFH-M07",
+        "PFH-M11"
+      ],
+      "acceptance": "Pinned old binaries, constructors/openers/direct service/credit/spot/matching/managed/takeover entrypoints cannot write the new authority. Read-only open causes no DDL/repair/cap creation. Customer, treasury, risk unlock and correction permissions stay separate.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T020",
+      "kind": "CRASH_AND_STORAGE_FAULT",
+      "title": "Unknown commit, disk full and recovery",
+      "manual_case_ids": [
+        "PFH-M15",
+        "PFH-M16"
+      ],
+      "acceptance": "Kill/fault each financial boundary, disk-full/archive-full/store-unavailable/response-lost, reopen and reconcile. No lost duty, duplicate posting, released in-flight hold or silently resumed risk; do not infer HA/RPO from single-host evidence.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T021",
+      "kind": "BOUNDED_MODEL",
+      "title": "Enumerate concurrency and crash states",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M06",
+        "PFH-M07",
+        "PFH-M15"
+      ],
+      "acceptance": "Independent model with two accounts, two tasks, two orders and two competing claimants plus one serialized authority writer checks invariants for capture/resolve/admit/cancel/fill/apply/retry/expiry/crash. Transaction commit atomicity and immutable exact authority are explicit assumptions, not proven replication properties.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T022",
+      "kind": "CAPACITY_AND_BACKPRESSURE",
+      "title": "Bounded complete aggregation and control-plane liveness",
+      "manual_case_ids": [
+        "PFH-M08",
+        "PFH-M10",
+        "PFH-M15"
+      ],
+      "acceptance": "Existing task<=1000/participant<=1000/command<=10000/archive<=1MiB or new reviewed bounds enforced without silent truncation/hold eviction. Reserve cancellation, repayment and mandatory settlement capacity; quota failure keeps restrictions durable.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T023",
+      "kind": "REAL_MATCHING_END_TO_END",
+      "title": "Four-side trade link plus funding basis",
+      "manual_case_ids": [
+        "PFH-M04",
+        "PFH-M08",
+        "PFH-M09"
+      ],
+      "acceptance": "Independent matcher confirms trades and receipts; orders/trades/positions/ledger and archived funding basis reconcile across partial fills, cancellations, liquidation, restart and negative cash. Mark-price generated fills remain labelled tests.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T024",
+      "kind": "OPEN_LOOP_ACCEPTANCE",
+      "title": "Mixed 10k durable order and 10k complete liquidation fills",
+      "manual_case_ids": [
+        "PFH-M01",
+        "PFH-M09",
+        "PFH-M16"
+      ],
+      "acceptance": "Separate pure/adapter/SQL/matching/queue costs; same declared hardware/shards/storage/replication/liquidity/account skew, >=30min plus soak, mixed/double burst/hotspot/stale quote/depeg/thin book/faults. Planned-arrival P50/P95/P99/P99.9, unique successful ledger+position-committed fills, all result classes and reopened reconciliation; no split-fill inflation.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    }
+  ],
+  "stage_gates": {
+    "P0": "Independent financial/accounting rule review and hand examples; no runtime execution",
+    "P1": "New exact source plan for pure math, independent oracle and bounded model; no financial authority",
+    "P2": "Fresh synthetic single-host hold/cut/admission/settlement/reopen correctness and negative paths; unsupported credit/funds paths reject",
+    "P3": "Actual matching four-side linkage, old-writer rejection, faults, operations and user capacity acceptance",
+    "current": "ALL_NOT_RUN_INDEPENDENT_REVIEW_PENDING"
+  },
+  "evidence_gaps": [
+    {
+      "id": "PFH-G01",
+      "gap": "Official exchange pending-funding haircut/netting/withdrawal behavior not collected or verified for this rule set",
+      "choice": "Use explicit local gross-debit hold and zero pending-receiver credit; do not attribute to an exchange"
+    },
+    {
+      "id": "PFH-G02",
+      "gap": "No authorized production classic-account/incident/market dataset used",
+      "choice": "All cases synthetic; production calibration, gap analysis and replay remain separate"
+    },
+    {
+      "id": "PFH-G03",
+      "gap": "No trusted production timer/boundary event ownership or historical cut migration proven",
+      "choice": "Fresh synthetic-only, closed period inventory gate; missing boundary refuses new risk"
+    },
+    {
+      "id": "PFH-G04",
+      "gap": "All financial entrypoint old-binary exclusion and new required capability schema unimplemented",
+      "choice": "No financial activation until exact mapping and runtime negative evidence"
+    },
+    {
+      "id": "PFH-G05",
+      "gap": "Current quote-independent cash settlement, recheck outbox and negative-cash liquidation adapter unimplemented",
+      "choice": "New version required; current PR53 behavior cannot be relabelled"
+    },
+    {
+      "id": "PFH-G06",
+      "gap": "Credit V2/new borrowing, funds custody, conversion, correction and distributed settlement not accepted",
+      "choice": "Explicit pre-effect rejection rather than implied capability"
+    },
+    {
+      "id": "PFH-G07",
+      "gap": "Independent whole-ledger accrual mapping for P/N remains to be approved",
+      "choice": "Retain gross obligation subledger and distinguish cash-ledger, accrual and risk views; do not net or post customer cash early"
+    },
+    {
+      "id": "PFH-G08",
+      "gap": "No HA, replicated RPO/RTO, real-funds signoff or 10k durable end-to-end capacity evidence",
+      "choice": "0HA/no production approval; all user gates remain mandatory"
+    }
+  ],
+  "deployment_and_rollback": "No runtime/data change in this commit. Future accepted fresh generation must isolate old writers and preserve all cuts/holds/events through rollback; no field deletion or balance-only copy. Known good authority continues mandatory obligations, new risk remains stopped.",
+  "independent_review": "PENDING_NO_SIGNATURE_OR_PRODUCTION_SIGNOFF_CREATED"
+}
