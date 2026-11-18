@@ -710,9 +710,12 @@ class WriterFence:
         try:
             _assert_token(self.database, state, self.database.writer_token if token is None else token)
         except WriterFenceError as error:
-            if guard_observation is not None:
-                _lease_annotation(error, guard_observation)
-                _lease_annotation(error, load_observation)
+            try:
+                if guard_observation is not None:
+                    _lease_annotation(error, guard_observation)
+                    _lease_annotation(error, load_observation)
+            except BaseException:
+                pass  # Keep the already-thrown token error, even if annotation cannot be called.
             raise
         return state
 
