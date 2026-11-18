@@ -150,7 +150,8 @@ class Ledger:
         """
         result = cls(scales, unit_digits=unit_digits)
         for expected, event in enumerate(events, 1):
-            if not isinstance(event, JournalEvent) or event.sequence != expected:
+            if (not isinstance(event, JournalEvent) or type(event.sequence) is not int
+                    or event.sequence != expected):
                 raise LedgerError("journal sequence is missing or out of order")
             posted = result.post(event.event_id, event.postings)
             if posted.sequence != expected:

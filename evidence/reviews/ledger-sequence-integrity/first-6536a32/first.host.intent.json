@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-account-ledger-sequence/tools/run_ledger_sequence_once.py",
+    "--plan-sha256",
+    "56391a2e51ad82442c16ea669ec15aaca56a7a21fe3eb99847889e73dce8d32b",
+    "--source-commit",
+    "6536a32cbbd44c2ad7509e8eba26fd1a520f0dd0",
+    "--private-directory",
+    "/workspace/uta-ledger-native-sequence-6536a32-once01"
+  ],
+  "cwd": "/workspace/uta-account-ledger-sequence",
+  "first_and_only": true,
+  "monotonic_start_ns": 122375129700147,
+  "production_approved": false,
+  "root_authorization": "EXACT_UNIQUE_FIRST_PURE_GO",
+  "source_commit": "6536a32cbbd44c2ad7509e8eba26fd1a520f0dd0"
+}
