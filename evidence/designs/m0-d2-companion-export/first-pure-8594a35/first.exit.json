@@ -1,0 +1,43 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--fsize=51200:51200",
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "2",
+    "python3",
+    "-I",
+    "-S",
+    "/workspace/uta-d2-export-first-pure-8594a35/runner.py",
+    "/workspace/uta-d2-export-first-pure-8594a35/control",
+    "/workspace/uta-d2-export-first-pure-8594a35",
+    "/workspace/uta-d2-export-first-pure-8594a35/identity.json"
+  ],
+  "combined_bytes": 12384,
+  "combined_limit_bytes": 102400,
+  "each_limit_bytes": 51200,
+  "elapsed_ns": 389344436,
+  "finished_at_utc": "2026-11-18T03:16:32.466600+00:00",
+  "finished_monotonic_ns": 108918943673112,
+  "first_stdout_stderr": {
+    "first.stderr": {
+      "bytes": 12384,
+      "sha256": "1eb0941bafa435a42837363f1cad7ef774d28a50273e27eb75238287bcd5bcfb"
+    },
+    "first.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "kind": "FIRST_OUTER_EXIT_NO_RETRY",
+  "outer_child_reaped": true,
+  "rerun_permitted": false,
+  "returncode": 0,
+  "source_commit": "8594a35827b0e064584113de48fda2490cb1c98e",
+  "source_tree": "ee5699814d37bbfb5d1ccb08e2c8bd5358f16fa3",
+  "started_at_utc": "2026-11-18T03:16:32.077019+00:00",
+  "started_monotonic_ns": 108918554328676
+}

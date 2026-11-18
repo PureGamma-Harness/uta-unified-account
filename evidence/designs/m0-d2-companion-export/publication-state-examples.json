@@ -1,0 +1,74 @@
+{
+  "examples": [
+    {
+      "captured": true,
+      "expected_export": "DISABLED",
+      "new_D2_IO": 0,
+      "owned_cleanup": true,
+      "state": "default disabled"
+    },
+    {
+      "expected_export": "CLEANUP_UNPROVEN",
+      "new_D2_IO": 0,
+      "pending_owners": 1,
+      "primary_unchanged": true,
+      "state": "capsule queued while owned run active"
+    },
+    {
+      "cleanup_unproven_sticky": true,
+      "expected_export": "CLEANUP_UNPROVEN",
+      "new_D2_IO": 0,
+      "pending_owners": 0,
+      "state": "all owned returns proved but one tracking fault"
+    },
+    {
+      "calculation": "33552432 + 2*1000 = 33554432",
+      "capsule_bytes": 1000,
+      "existing_cleanup_bytes": 33552432,
+      "expected_cap_check": "PASS_IF_OTHER_PRECONDITIONS_HOLD",
+      "kernel_quota_evidence": false,
+      "state": "tail same-bucket two-alias headroom"
+    },
+    {
+      "calculation": "33553432 + 2*1000 = 33555432 > 33554432",
+      "capsule_bytes": 1000,
+      "existing_cleanup_bytes": 33553432,
+      "expected_cap_check": "REJECT_BEFORE_STAGE_OPEN",
+      "state": "one alias headroom is insufficient"
+    },
+    {
+      "automatic_retry": false,
+      "expected_export": "UNAVAILABLE",
+      "original_case_primary_unchanged": true,
+      "private_stage_retained": true,
+      "public_companion_created": false,
+      "state": "fsync fails before link"
+    },
+    {
+      "charged_aliases": 2,
+      "directory_crash_durability_proven": false,
+      "expected_export": "RECORDED",
+      "first_public_never_rewritten": true,
+      "state": "no-overwrite link succeeds; private unlink fails"
+    },
+    {
+      "case_success_implied": false,
+      "comparison": "LE",
+      "deadline_ns": 50000000,
+      "original_gate": "FAIL_RESOURCE_AUX_RETRY_DEADLINE",
+      "predicate_site": "AFTER_RETRY_SUCCESS",
+      "state": "post retry scan returned; elapsed 50000001ns"
+    },
+    {
+      "DB_corruption_implied": false,
+      "comparison": "LT",
+      "deadline_ns": 50000000,
+      "original_gate": "FAIL_RESOURCE_AUX_RETRY_DEADLINE",
+      "predicate_site": "AFTER_AUX_MISS",
+      "state": "accepted aux miss; elapsed 50000000ns"
+    }
+  ],
+  "kind": "MANUAL_D2_PUBLICATION_STATE_EXAMPLES_NOT_RESULTS",
+  "status": "HAND_CALCULATED_NOT_RUN",
+  "version": 1
+}

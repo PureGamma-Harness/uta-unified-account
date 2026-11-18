@@ -1,0 +1,125 @@
+{
+  "HA_approved": false,
+  "M05_original_UNKNOWN_P_NOT_RUN_and_05spent_unchanged": true,
+  "actual_children": 0,
+  "actual_methods": 120,
+  "actual_mount_loop_quota_SQL_UTA_native_crypto_service_network_signal_probe": false,
+  "blocked_module_cache": [],
+  "capacity_approved": false,
+  "combined_stdout_stderr_bytes": 19721,
+  "combined_stdout_stderr_limit_bytes": 102400,
+  "elapsed_ns": 264358860,
+  "execution_argv": [
+    "/usr/bin/prlimit",
+    "--fsize=51200:51200",
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "2",
+    "python3",
+    "-I",
+    "-S",
+    "runner.py",
+    "CONTROL",
+    "PRIVATE",
+    "identity.json"
+  ],
+  "guard_checks": [
+    "sqlite3.connect",
+    "socket.connect",
+    "os.kill",
+    "os.fork",
+    "subprocess.Popen"
+  ],
+  "inheritance_explanation": "RouterAuxContract declares7 and inherits21 ResourceRaceContract tests: 28 runtime entries; ResourceRaceContract itself runs21. Same five planned modules, no added test dependency or capability.",
+  "inherited_additional_methods": 21,
+  "kind": "D2_3040_FIRST_ZERO_CHILD_PURE_SEAL",
+  "materialized_source_bytes": 158305,
+  "materialized_source_files": 6,
+  "new_D2_methods": 19,
+  "new_NOT_IMPLEMENTED_interface_methods": 5,
+  "next_run_permitted": false,
+  "old_related_runtime_entries": 96,
+  "outcome": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "successful": true,
+    "tests": 120
+  },
+  "outer_exit": 0,
+  "outer_per_file_RLIMIT_FSIZE_bytes": 51200,
+  "output_limit_method": "outer /usr/bin/prlimit --fsize=51200:51200; bound applies to each stream and all synthetic output files",
+  "physical_backend": "NOT_IMPLEMENTED",
+  "physical_capability_not_tested_or_verified": true,
+  "production_approved": false,
+  "raw_files": {
+    "first.execution.json": {
+      "bytes": 3725,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/private/first.execution.json",
+      "sha256": "944e99443d9c14de194c32a664fd4ecbf75fe295232341cda1840fda53126d2e"
+    },
+    "first.stderr.txt": {
+      "bytes": 19721,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/private/first.stderr.txt",
+      "sha256": "3e5aea03f5381810cfae897baaf74324118b89688f7a9eb3d4baaf95dba8a314"
+    },
+    "first.stdout.txt": {
+      "bytes": 0,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/private/first.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "identity.json": {
+      "bytes": 2645,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/identity.json",
+      "sha256": "cd194eb642b5f1c484d06e0f4d2139c7402686ff51fd8e7b9018b6a0d2107ce7"
+    },
+    "outer.exit.txt": {
+      "bytes": 2,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/private/outer.exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "prepared-identity.json": {
+      "bytes": 2410,
+      "mode": "0o600",
+      "original_path": "/workspace/uta-d2-first-pure-3040d09/prepared-identity.json",
+      "sha256": "75b3dfd984cbbd4f0714b08961ae1d439c17d4365e402f1dd49e27078ddb09a0"
+    }
+  },
+  "real_money_approved": false,
+  "runtime": {
+    "affinity": [
+      2
+    ],
+    "binary_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "isolated": 1,
+    "no_site": 1,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "runtime_class_method_counts": {
+    "test_independent_m0_d2.KernelSpaceDesignContract": 5,
+    "test_independent_m0_d2.ScanD2Contract": 19,
+    "test_independent_m0_diagnostics.D1Contract": 23,
+    "test_independent_m0_entry_types.EntryTypeProvenance": 14,
+    "test_independent_m0_resource_race.ResourceRaceContract": 21,
+    "test_independent_m0_resource_race.RouterAuxContract": 28,
+    "test_independent_m0_scan_proof.ScanProofContract": 10
+  },
+  "same_five_modules_as_authorized": true,
+  "same_source_retry_performed": false,
+  "source_commit": "3040d09b576009893c6630f3c19ef4ad35fd774d",
+  "source_hashes_unchanged_after_run": true,
+  "source_tree": "37e3cefe1fd6e318a7094597d6c88ebfe84899b3",
+  "started_at_utc": "2026-11-18T02:25:31.681210+00:00",
+  "static_declared_methods": 99,
+  "status": "PASS_FIRST_PURE_ONLY_PENDING_INDEPENDENT_POSTREVIEW",
+  "unexpected_denials": []
+}

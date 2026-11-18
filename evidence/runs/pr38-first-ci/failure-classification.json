@@ -1,0 +1,258 @@
+{
+  "D2_COMPANION_EXPORT_ENABLED": false,
+  "HA_approved": false,
+  "PR_merge_commit": "81b1d4f08c96ca3b3ad83108af07f4199eba1c86",
+  "PR_merge_tree_equals_head_tree": true,
+  "PR_second_failure_scope": "activate() line279 -> publish_market publishing assertFalse atline74; later offline mutation branch was not reached by this traceback",
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "capacity_approved": false,
+  "head_commit": "9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439",
+  "head_tree": "91cfb3c27447b26357322a211345df61a57b6be2",
+  "interpretation": "Observed first exceptions/assertions only; no shared-root-cause/flake/DB-corruption or M05 inference. No rerun or capability probe.",
+  "kind": "PR38_FIRST_CI_SAFE_FAILURE_CLASSIFICATION",
+  "production_approved": false,
+  "real_funds_authorized": false,
+  "runs": [
+    {
+      "attempt": 1,
+      "cases": [
+        {
+          "cause": "UNDETERMINED_NO_SAME_CAUSE_CLAIM",
+          "exception_type": "uta.writer_fence.WriterFenceError",
+          "frames": [
+            {
+              "function": "test_credit_projection_corruption_rejected_after_successful_full_ledger_replay",
+              "line": 182,
+              "path": "tests/test_owned_startup.py",
+              "source_line": "self.construct(initialization)"
+            },
+            {
+              "function": "construct",
+              "line": 61,
+              "path": "tests/test_owned_startup.py",
+              "source_line": "exchange = ExchangeService(self.bound, {\"USD\": 2}, _startup=initialization)"
+            },
+            {
+              "function": "__init__",
+              "line": 189,
+              "path": "uta/service.py",
+              "source_line": "_startup.verify_ledger(self)"
+            },
+            {
+              "function": "verify_ledger",
+              "line": 312,
+              "path": "uta/startup.py",
+              "source_line": "WriterFence(self.database).assert_writer(connection, self.token)"
+            },
+            {
+              "function": "assert_writer",
+              "line": 533,
+              "path": "uta/writer_fence.py",
+              "source_line": "_assert_token(self.database, state, self.database.writer_token if token is None else token)"
+            },
+            {
+              "function": "_assert_token",
+              "line": 295,
+              "path": "uta/writer_fence.py",
+              "source_line": "raise WriterFenceError(\"lease_expired\", \"writer lease expired; renew cannot revive it\")"
+            }
+          ],
+          "kind": "ERROR",
+          "observed_code": "WRITER_LEASE_EXPIRED",
+          "original_failure_body_sha256": "d12e536e3970788dcc90b898bdf1e30f6b425197809ae35393f6d45f56a96aa0",
+          "safe_message": "writer lease expired; renew cannot revive it",
+          "test": "test_credit_projection_corruption_rejected_after_successful_full_ledger_replay (test_owned_startup.OwnedStartupTests.test_credit_projection_corruption_rejected_after_successful_full_ledger_replay)"
+        },
+        {
+          "cause": "UNDETERMINED_NO_SAME_CAUSE_CLAIM",
+          "exception_type": "uta.writer_fence.WriterFenceError",
+          "frames": [
+            {
+              "function": "test_an_unrelated_new_authority_keeps_its_normal_financial_path",
+              "line": 152,
+              "path": "tests/test_startup_write_contention.py",
+              "source_line": "self.fixture.construct(initialization)"
+            },
+            {
+              "function": "construct",
+              "line": 61,
+              "path": "tests/test_owned_startup.py",
+              "source_line": "exchange = ExchangeService(self.bound, {\"USD\": 2}, _startup=initialization)"
+            },
+            {
+              "function": "__init__",
+              "line": 189,
+              "path": "uta/service.py",
+              "source_line": "_startup.verify_ledger(self)"
+            },
+            {
+              "function": "verify_ledger",
+              "line": 312,
+              "path": "uta/startup.py",
+              "source_line": "WriterFence(self.database).assert_writer(connection, self.token)"
+            },
+            {
+              "function": "assert_writer",
+              "line": 533,
+              "path": "uta/writer_fence.py",
+              "source_line": "_assert_token(self.database, state, self.database.writer_token if token is None else token)"
+            },
+            {
+              "function": "_assert_token",
+              "line": 295,
+              "path": "uta/writer_fence.py",
+              "source_line": "raise WriterFenceError(\"lease_expired\", \"writer lease expired; renew cannot revive it\")"
+            }
+          ],
+          "kind": "ERROR",
+          "observed_code": "WRITER_LEASE_EXPIRED",
+          "original_failure_body_sha256": "c8d9039f320c94805347890eb33b2b3ea67a8986669da2310e3cb0fd96ea743e",
+          "safe_message": "writer lease expired; renew cannot revive it",
+          "test": "test_an_unrelated_new_authority_keeps_its_normal_financial_path (test_startup_write_contention.StartupWriteContentionTests.test_an_unrelated_new_authority_keeps_its_normal_financial_path)"
+        }
+      ],
+      "duration_seconds": 440.08471617,
+      "errors": 2,
+      "event": "push",
+      "failures": 0,
+      "frame_source_pins": {
+        "tests/test_owned_startup.py": {
+          "bytes": 15781,
+          "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7",
+          "unchanged_vs_PR35_base": true
+        },
+        "tests/test_startup_write_contention.py": {
+          "bytes": 8761,
+          "sha256": "bd07f4e2c855bd948d8d47db5b45376d963d8b76cd77967fdb54adc8fcfeb3ce",
+          "unchanged_vs_PR35_base": true
+        },
+        "uta/service.py": {
+          "bytes": 85864,
+          "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+          "unchanged_vs_PR35_base": true
+        },
+        "uta/startup.py": {
+          "bytes": 18728,
+          "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+          "unchanged_vs_PR35_base": true
+        },
+        "uta/writer_fence.py": {
+          "bytes": 46393,
+          "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+          "unchanged_vs_PR35_base": true
+        }
+      },
+      "job_id": 134556896833,
+      "python": "3.12",
+      "run_id": 44231349622,
+      "skipped": 0,
+      "source_before_after_maps_equal": true,
+      "source_code_commit": "9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439",
+      "source_tree": "91cfb3c27447b26357322a211345df61a57b6be2",
+      "source_unchanged": true,
+      "tests_run": 2102,
+      "unit_log_SHA_matches_summary": true,
+      "unit_step": 5,
+      "unit_zip": "push-python-3.12-unit-first.zip",
+      "unit_zip_bytes": 101078,
+      "unit_zip_sha256": "df928133099dd661620a88206136b67fe31e3fc646ef2c8cb54e5535e0206010",
+      "worker_exit_code": 1
+    },
+    {
+      "attempt": 1,
+      "cases": [
+        {
+          "cause": "UNDETERMINED_NO_SAME_CAUSE_CLAIM",
+          "exception_type": "AssertionError",
+          "frames": [
+            {
+              "function": "test_healthy_real_workers_and_read_only_original_observation",
+              "line": 100,
+              "path": "tests/test_process_readiness.py",
+              "source_line": "snapshot = self.activate()"
+            },
+            {
+              "function": "activate",
+              "line": 76,
+              "path": "tests/test_process_readiness.py",
+              "source_line": "self.wait_ready()"
+            },
+            {
+              "function": "wait_ready",
+              "line": 63,
+              "path": "tests/test_process_readiness.py",
+              "source_line": "return readiness_fixtures.ReadinessSamplingTests.wait_ready(self, self.router)"
+            },
+            {
+              "function": "wait_ready",
+              "line": 55,
+              "path": "tests/test_readiness_sampling.py",
+              "source_line": "self.fail(\"non-transient readiness observation: \" + json.dumps(report, sort_keys=True))"
+            }
+          ],
+          "kind": "FAIL",
+          "observed_code": "NON_TRANSIENT_READINESS_MARKET_STALE",
+          "original_failure_body_sha256": "b0842fec98e10e8dbbbdfa673b893052cfde6631c02f20a7c48ff33a3668545c",
+          "safe_message": "non-transient readiness observation; observed reason=market_stale",
+          "test": "test_healthy_real_workers_and_read_only_original_observation (test_process_readiness.ProcessReadinessTests)"
+        },
+        {
+          "cause": "UNDETERMINED_NO_SAME_CAUSE_CLAIM",
+          "exception_type": "AssertionError",
+          "frames": [
+            {
+              "function": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+              "line": 279,
+              "path": "tests/test_process_readiness.py",
+              "source_line": "self.activate()"
+            },
+            {
+              "function": "activate",
+              "line": 74,
+              "path": "tests/test_process_readiness.py",
+              "source_line": "self.assertFalse(self.router.publish_market(snapshot, timeout=8)[\"publishing\"])"
+            }
+          ],
+          "kind": "FAIL",
+          "observed_code": "ACTIVATION_PUBLISHING_EXPECTED_FALSE_GOT_TRUE",
+          "original_failure_body_sha256": "830949fae6837d70398796aa6b41abc081e632511e3acbb5b8de53717cb0dfe7",
+          "safe_message": "True is not false",
+          "test": "test_incomplete_watermarks_and_invalid_control_flags_are_unready (test_process_readiness.ProcessReadinessTests)"
+        }
+      ],
+      "duration_seconds": 418.89585364199996,
+      "errors": 0,
+      "event": "pull_request",
+      "failures": 2,
+      "frame_source_pins": {
+        "tests/test_process_readiness.py": {
+          "bytes": 15799,
+          "sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+          "unchanged_vs_PR35_base": true
+        },
+        "tests/test_readiness_sampling.py": {
+          "bytes": 21783,
+          "sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+          "unchanged_vs_PR35_base": true
+        }
+      },
+      "job_id": 134556964156,
+      "python": "3.10",
+      "run_id": 44231370634,
+      "skipped": 0,
+      "source_before_after_maps_equal": true,
+      "source_code_commit": "81b1d4f08c96ca3b3ad83108af07f4199eba1c86",
+      "source_tree": "91cfb3c27447b26357322a211345df61a57b6be2",
+      "source_unchanged": true,
+      "tests_run": 2102,
+      "unit_log_SHA_matches_summary": true,
+      "unit_step": 5,
+      "unit_zip": "pr-python-3.10-unit-first.zip",
+      "unit_zip_bytes": 90632,
+      "unit_zip_sha256": "f6db01c0b775453ca7beeba0a7cdfb8cb4dcd48ad8c75350a8b9d8835863d95f",
+      "worker_exit_code": 1
+    }
+  ],
+  "source20flags_unchanged": true,
+  "version": 1
+}
