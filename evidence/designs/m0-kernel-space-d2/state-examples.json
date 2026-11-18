@@ -1,0 +1,94 @@
+{
+  "M05_attempts_elapsed_deadline_remain": "NOT_RECORDED",
+  "MiB": 1048576,
+  "allocation_example_assumptions": [
+    "4096-byte allocation blocks",
+    "each nonempty file has at least one exclusive data block",
+    "no inline data",
+    "no compression",
+    "no deduplication",
+    "no shared extents",
+    "payload allocation values denote exclusive allocated data blocks, not arbitrary st_size"
+  ],
+  "kind": "HAND_CALCULATED_PROTOCOL_EXAMPLES_NOT_EXECUTED",
+  "next_run_permitted": false,
+  "physical_capability": "NOT_IMPLEMENTED_NOT_VERIFIED",
+  "states": [
+    {
+      "actual_verification": "NOT_RUN",
+      "expected_kernel_accounting": "still_charged",
+      "name": "unlinked_open",
+      "path_sum_bytes": 0,
+      "still_open_allocated_bytes": 1048576
+    },
+    {
+      "actual_verification": "NOT_RUN",
+      "assumed_block_bytes": 4096,
+      "files": 1000,
+      "minimum_data_blocks_bytes": 4096000,
+      "name": "tiny_files",
+      "payload_bytes": 1000,
+      "plus_metadata_bytes": "H_unmeasured"
+    },
+    {
+      "actual_verification": "NOT_RUN",
+      "cleanup_payload": 33554432,
+      "escrow_payload": 100663296,
+      "expected": "ENOSPC_before_all_payloads_full_no_extra_reserve",
+      "metadata_H_positive": true,
+      "name": "full_payload_plus_metadata",
+      "normal_payload": 67108864,
+      "payload_fields_mean": "exclusive allocated data blocks under allocation_example_assumptions",
+      "payload_sum": 201326592,
+      "volume_limit": 201326592
+    },
+    {
+      "B_bytes": 33554432,
+      "P_bytes": 33554432,
+      "expected": "logical_normal_gate_rejects_even_if_other_pools_have_space",
+      "name": "normal_budget_includes_common_metadata",
+      "normal_limit": 67108864,
+      "root_normal_bytes": 1048576,
+      "sum_bytes": 68157440
+    },
+    {
+      "attempt": 1,
+      "comparison": "LT",
+      "deadline_ns": 50000000,
+      "elapsed_ns": 50000000,
+      "expected": "FAIL_RESOURCE_AUX_RETRY_DEADLINE",
+      "gate": "QUALIFIED_AUX_ENOENT",
+      "name": "D2_L382_equal",
+      "scan_walls_ns": [
+        8000000
+      ]
+    },
+    {
+      "attempt": 2,
+      "comparison": "LE",
+      "deadline_ns": 50000000,
+      "elapsed_ns": 50000000,
+      "expected": "PASS_GATE_NO_D2_FAILURE_CAPSULE",
+      "gate": "POST_RETRY_SCAN_RETURN",
+      "name": "D2_L377_equal",
+      "scan_walls_ns": [
+        2000000,
+        7000000
+      ]
+    },
+    {
+      "attempt": 2,
+      "comparison": "LE",
+      "deadline_ns": 50000000,
+      "elapsed_ns": 50000001,
+      "expected": "FAIL_RESOURCE_AUX_RETRY_DEADLINE",
+      "gate": "POST_RETRY_SCAN_RETURN",
+      "name": "D2_L377_over",
+      "scan_walls_ns": [
+        2000000,
+        7000000
+      ]
+    }
+  ],
+  "version": 1
+}

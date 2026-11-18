@@ -112,6 +112,166 @@ DIAGNOSTIC_CODES=frozenset({'resource_root_directory','resource_entries_cap','re
 _DIAGNOSTIC_CONTEXT=ContextVar('m0_resource_diagnostic_context',default=None)
 _RESOURCE_SCAN_TOKEN=ContextVar('m0_resource_scan_token',default=None)
 
+# D2 is opt-in diagnostic CODE. No legacy workflow enables or publishes it.
+# It cannot grant a retry, reset the clock, or change the nine-field D1 schema.
+_RESOURCE_SCAN_D2_CAPTURE=ContextVar('m0_resource_scan_d2_capture',default=None)
+SCAN_D2_GATES={
+    'POST_RETRY_SCAN_RETURN':('LE','C933_L377'),
+    'QUALIFIED_AUX_ENOENT':('LT','C933_L382'),
+}
+SCAN_D2_AUX_LABELS=frozenset({'UNKNOWN','AUTH_ROUTER_WAL','AUTH_ROUTER_SHM',
+    'AUTH_SHARD_0_WAL','AUTH_SHARD_0_SHM','AUTH_SHARD_1_WAL','AUTH_SHARD_1_SHM',
+    'RUNTIME_PROBE_WAL','RUNTIME_PROBE_SHM'})
+
+@contextmanager
+def resource_scan_d2_capture(phase):
+    """Opt-in in-memory first deadline capsule; no file or protocol activation."""
+    need(type(phase) is str and phase in DIAGNOSTIC_PHASES,'scan_d2_phase')
+    value={'status':'NOT_OBSERVED','records':[]}
+    token=_RESOURCE_SCAN_D2_CAPTURE.set({'phase':phase,'value':value})
+    try:yield value
+    finally:_RESOURCE_SCAN_D2_CAPTURE.reset(token)
+
+def kernel_space_design_spec():
+    """New protocol interface only; no mount/quota backend or activation path.
+
+    Values are requirements, not observations. Legacy format2 still measures
+    statvfs(private), rejects tmpfs and requires MIN_FREE on that filesystem.
+    A bounded-volume protocol needs a new schema/profile and separate backing
+    free-space measurements; it cannot reinterpret the old fields.
+    """
+    return {
+        'kind':'M0_KERNEL_SPACE_DESIGN','version':1,'backend':'BOUNDED_DISK_FILESYSTEMS',
+        'storage_profile':'DRAFT_BOUNDED_DISK_FS_V1_UNQUALIFIED',
+        'implementation':'NOT_IMPLEMENTED','execution_enabled':False,
+        'legacy_format2_compatible':False,'prior_625_baseline_directly_comparable':False,
+        'logical_limits':{'case_B':CASE_CAP,'case_P':CASE_CAP,'normal':AGGREGATE_CAP,
+            'escrow':ESCROW_CAP,'cleanup':CLEANUP_RESERVE,'total':TOTAL_CAP},
+        'volume_address_space_limits':{'normal':AGGREGATE_CAP,'escrow':ESCROW_CAP,'cleanup':CLEANUP_RESERVE},
+        'case_quota_requirement':'nested normal pool plus per-case quota across tree/descriptor/owner logs/public case',
+        'backing_host_minimum_free_bytes':MIN_FREE,
+        'volume_internal_charges_required':['data_blocks','unlinked_open_blocks','journal','inodes','directory_and_extent_metadata'],
+        'not_covered_by_volume_limit':['host_backing_FS_inode_and_extents','loop_device_and_kernel_RAM',
+            'process_RAM','provider_source_checkout','provider_and_uploader_logs'],
+        'verification_evidence_required':['trusted_privileged_helper','fresh_private_mount_namespace',
+            'pinned_mount_ID_dev_root_inode_and_FD_identity','unprivileged_owned_uid_gid_and_no_mount_capabilities',
+            'no_writable_alias_nested_mount_or_inherited_escape_FD','source_read_only',
+            'all_SQLite_temp_TMPDIR_native_cache_stdout_and_export_paths_covered',
+            'exact_192MiB_total_and_case32_normal64_escrow96_cleanup32_coverage',
+            'unlinked_open_and_FS_metadata_charging','separate_real_backing_free_and_volume_capacity_fields',
+            'producers_reaped_before_read_only_same_allocation_export','normal_unmount_after_export'],
+        'fail_closed_events':['ENOSPC','EDQUOT','mount_or_quota_unavailable','mount_identity_changed',
+            'uncovered_write_path_or_FD','unsafe_export_copy','I/O_error','unmount_EBUSY'],
+        'fallback_to_ordinary_directory':False,'lazy_or_forced_unmount_allowed':False,
+        'logical_scan_UNKNOWN_may_be_silently_upgraded':False,
+        'next_run_permitted':False,'production_approved':False,
+    }
+
+def validate_kernel_space_design_spec(value):
+    expected=kernel_space_design_spec()
+    canonical=lambda v:json.dumps(v,sort_keys=True,separators=(',',':'),allow_nan=False)
+    try:valid=type(value) is dict and canonical(value)==canonical(expected)
+    except (TypeError,ValueError,RecursionError):valid=False
+    need(valid,'kernel_space_design_spec')
+    return True
+
+def request_kernel_space_backend(value):
+    """An explicit hard stop even for a syntactically valid design request."""
+    validate_kernel_space_design_spec(value)
+    raise GateError('kernel_space_backend_not_implemented')
+
+def validate_resource_scan_d2(value):
+    expected={'kind','version','phase','scope','catalogue_label','context_origin',
+        'gate','comparison','legacy_gate','attempt','elapsed_ns','deadline_ns',
+        'attempts','primary_code'}
+    need(type(value) is dict and set(value)==expected,'scan_d2_fields')
+    need(value['kind']=='M0_RESOURCE_SCAN_D2' and type(value['version']) is int and value['version']==1,'scan_d2_version')
+    need(all(type(value[key]) is str for key in ('phase','scope','catalogue_label','context_origin',
+        'gate','comparison','legacy_gate','primary_code')),'scan_d2_enum_type')
+    need(value['phase'] in DIAGNOSTIC_PHASES and value['scope'] in {'PRIVATE_ROOT','PRIVATE_CASE','UNKNOWN'}
+        and value['catalogue_label'] in SCAN_D2_AUX_LABELS,'scan_d2_catalogue')
+    need(value['context_origin'] in {'CURRENT_QUALIFIED_AUX','LAST_QUALIFIED_AUX','NONE'},'scan_d2_context_origin')
+    gate=value['gate'];need(type(gate) is str and gate in SCAN_D2_GATES,'scan_d2_gate')
+    expected_origin='CURRENT_QUALIFIED_AUX' if gate=='QUALIFIED_AUX_ENOENT' else 'LAST_QUALIFIED_AUX'
+    need(value['context_origin'] in {expected_origin,'NONE'},'scan_d2_context_gate')
+    need(value['context_origin']!='NONE' or (value['scope'],value['catalogue_label'])==('UNKNOWN','UNKNOWN'),'scan_d2_empty_context')
+    need((value['comparison'],value['legacy_gate'])==SCAN_D2_GATES[gate],'scan_d2_comparison')
+    attempt=integer(value['attempt'],1,RESOURCE_SCAN_ATTEMPTS)
+    elapsed=integer(value['elapsed_ns']);integer(value['deadline_ns'])
+    need(value['deadline_ns']==RESOURCE_SCAN_RETRY_NS and value['primary_code']=='resource_aux_retry_deadline','scan_d2_policy')
+    need(elapsed>RESOURCE_SCAN_RETRY_NS if gate=='POST_RETRY_SCAN_RETURN' else elapsed>=RESOURCE_SCAN_RETRY_NS,'scan_d2_failure_only')
+    need(attempt>=2 if gate=='POST_RETRY_SCAN_RETURN' else attempt<RESOURCE_SCAN_ATTEMPTS,'scan_d2_gate_attempt')
+    rows=value['attempts'];need(type(rows) is list and len(rows)==attempt,'scan_d2_attempts')
+    for number,row in enumerate(rows,1):
+        need(type(row) is dict and set(row)=={'attempt','scan_wall_ns','scan_result'},'scan_d2_attempt_fields')
+        need(type(row['attempt']) is int and row['attempt']==number,'scan_d2_attempt_order')
+        integer(row['scan_wall_ns'])
+        expected_result='RETURNED' if number==attempt and gate=='POST_RETRY_SCAN_RETURN' else 'ENOENT'
+        need(row['scan_result']==expected_result,'scan_d2_attempt_result')
+    need(sum(row['scan_wall_ns'] for row in rows)<=elapsed,'scan_d2_clock_order')
+    return True
+
+def _scan_d2_timed_call(scan,observe,attempt,rows):
+    if rows is None:return scan(observe)
+    try:started=time.monotonic_ns()
+    except Exception:return scan(observe)
+    outcome='RETURNED'
+    try:return scan(observe)
+    except FileNotFoundError:
+        outcome='ENOENT';raise
+    except BaseException:
+        outcome='ERROR';raise
+    finally:
+        try:
+            wall=time.monotonic_ns()-started;integer(wall)
+            rows.append({'attempt':attempt,'scan_wall_ns':wall,'scan_result':outcome})
+        except BaseException as timing_error:
+            # Preserve an existing scan exception; without one, honour cancel.
+            if outcome=='RETURNED' and not isinstance(timing_error,Exception):raise
+
+def _scan_d2_aux_catalogue(error,anchors):
+    """Called only after the current attempt's single-use proof was accepted.
+
+    Paths are used locally for the fixed catalogue lookup and never serialized.
+    This is nearby qualifying context, not attribution of the deadline to a DB.
+    """
+    try:
+        path=Path(error.filename);location=_sqlite_aux_location(path,anchors)
+        if location is None:return ('UNKNOWN','UNKNOWN')
+        anchor,relative=location
+        role=next(role for role,candidate in anchors if candidate==anchor)
+        if role=='private_root':scope='PRIVATE_ROOT'
+        elif role=='private_case':
+            scope='PRIVATE_CASE'
+            relative=anchor.name+'/'+relative if anchor.name in {'B','P'} else ''
+        else:return ('UNKNOWN','UNKNOWN')
+        return scope,_diagnostic_label('PRIVATE_ROOT',relative)
+    except Exception:return ('UNKNOWN','UNKNOWN')
+
+def _scan_deadline_need(elapsed,attempt,gate,rows,aux_catalogue):
+    # These are exactly the original <= (old L377) and < (old L382) gates.
+    passed=elapsed<=RESOURCE_SCAN_RETRY_NS if gate=='POST_RETRY_SCAN_RETURN' else elapsed<RESOURCE_SCAN_RETRY_NS
+    try:need(passed,'resource_aux_retry_deadline')
+    except GateError as primary:
+        state=None
+        try:
+            state=_RESOURCE_SCAN_D2_CAPTURE.get()
+            if state is not None and not state['value']['records']:
+                scope,label=aux_catalogue or ('UNKNOWN','UNKNOWN')
+                value={'kind':'M0_RESOURCE_SCAN_D2','version':1,'phase':state['phase'],
+                    'scope':scope,'catalogue_label':label,
+                    'context_origin':('CURRENT_QUALIFIED_AUX' if gate=='QUALIFIED_AUX_ENOENT' else 'LAST_QUALIFIED_AUX') if aux_catalogue else 'NONE',
+                    'gate':gate,'comparison':SCAN_D2_GATES[gate][0],'legacy_gate':SCAN_D2_GATES[gate][1],
+                    'attempt':attempt,'elapsed_ns':elapsed,'deadline_ns':RESOURCE_SCAN_RETRY_NS,
+                    'attempts':[dict(row) for row in rows], 'primary_code':'resource_aux_retry_deadline'}
+                validate_resource_scan_d2(value)
+                state['value']['records'].append(value)
+                primary._m0_resource_scan_d2=value;state['value']['status']='RECORDED'
+        except BaseException:
+            try:state['value']['status']='UNAVAILABLE'
+            except BaseException:pass
+        raise
+
 def _take_regular_entry_proof(error):
     # Internal opaque objects never enter D1 or public records. Every read
     # consumes the proof, including rejection for a different path or scan.
@@ -356,6 +516,8 @@ def _known_missing_sqlite_aux(error, anchors):
 def _fresh_resource_scan(scan, anchors):
     started=time.monotonic_ns()
     stable_types={};max_sizes={};current=set()
+    d2_rows=[] if _RESOURCE_SCAN_D2_CAPTURE.get() is not None else None
+    d2_aux=None
     def observe(path,info):
         kind=stat.S_IFMT(info.st_mode)
         if _sqlite_aux_location(path,anchors) is not None:
@@ -371,15 +533,16 @@ def _fresh_resource_scan(scan, anchors):
         current=set()
         reset_token=_RESOURCE_SCAN_TOKEN.set(object())
         try:
-            value=scan(observe)
+            value=scan(observe) if d2_rows is None else _scan_d2_timed_call(scan,observe,attempt+1,d2_rows)
             if attempt:
                 need(set(stable_types)<=current,'resource_stable_disappeared_during_retry')
-                need(time.monotonic_ns()-started<=RESOURCE_SCAN_RETRY_NS,'resource_aux_retry_deadline')
+                _scan_deadline_need(time.monotonic_ns()-started,attempt+1,'POST_RETRY_SCAN_RETURN',d2_rows,d2_aux)
             return value
         except FileNotFoundError as error:
             need(_known_missing_sqlite_aux(error,anchors),'resource_missing_non_aux')
+            if d2_rows is not None:d2_aux=_scan_d2_aux_catalogue(error,anchors)
             need(attempt+1<RESOURCE_SCAN_ATTEMPTS,'resource_aux_churn_limit')
-            need(time.monotonic_ns()-started<RESOURCE_SCAN_RETRY_NS,'resource_aux_retry_deadline')
+            _scan_deadline_need(time.monotonic_ns()-started,attempt+1,'QUALIFIED_AUX_ENOENT',d2_rows,d2_aux)
         finally:
             _RESOURCE_SCAN_TOKEN.reset(reset_token)
     raise GateError('resource_aux_churn_limit')
