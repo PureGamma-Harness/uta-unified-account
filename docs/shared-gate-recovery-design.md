@@ -1,6 +1,9 @@
 # Stopped shared-gate owner recovery: static design
 
-Status: source analysis and a first sealed pure-model baseline. No worker, SQLite
+Status at baseline freeze: source analysis and a first sealed pure-model baseline.
+The separately frozen candidate's first result is recorded in
+[shared-gate-recovery-model-result.md](shared-gate-recovery-model-result.md).
+No worker, SQLite
 connection, native fault injection, signal, original authority, or protected PID
 was used for this analysis. This document does not establish the cause of the
 PR 35 failure and does not establish production readiness.
