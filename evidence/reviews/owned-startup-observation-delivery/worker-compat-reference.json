@@ -49,24 +49,6 @@
       "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
       "variant": "new"
     },
-    "false_none": {
-      "accept_QA_prefix": false,
-      "error_message": "QA worker lease diagnostics must be empty and untruncated",
-      "independent_policy_reason": "None is not literalFalse.",
-      "variant": "new"
-    },
-    "false_zero": {
-      "accept_QA_prefix": false,
-      "error_message": "QA worker lease diagnostics must be empty and untruncated",
-      "independent_policy_reason": "Numeric zero is not literalFalse.",
-      "variant": "new"
-    },
-    "half_flag": {
-      "accept_QA_prefix": false,
-      "error_message": "QA worker result fields",
-      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
-      "variant": "new"
-    },
     "half_list": {
       "accept_QA_prefix": false,
       "error_message": "QA worker result fields",
@@ -79,29 +61,17 @@
       "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
       "variant": "legacy"
     },
-    "legacy_unknown_key": {
-      "accept_QA_prefix": false,
-      "error_message": "QA worker result fields",
-      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
-      "variant": "legacy"
+    "legacy_worker_new_summary": {
+      "accept_QA_prefix": true,
+      "error_message": null,
+      "independent_policy_reason": "W7/S9 is supported only with complete native emptylist/literalFalse summary diagnostics across all eleven QA records.",
+      "variant": "summary_new"
     },
     "list_alias": {
       "accept_QA_prefix": false,
       "error_message": "QA worker lease diagnostics must be empty and untruncated",
       "independent_policy_reason": "Native list aliases are not accepted.",
       "variant": "new"
-    },
-    "mixed_local7_ci9": {
-      "accept_QA_prefix": true,
-      "error_message": null,
-      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
-      "variant": "new_ci"
-    },
-    "mixed_local9_ci7": {
-      "accept_QA_prefix": true,
-      "error_message": null,
-      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
-      "variant": "new_local"
     },
     "new_all": {
       "accept_QA_prefix": true,
@@ -113,6 +83,12 @@
       "accept_QA_prefix": false,
       "error_message": "QA worker result fields",
       "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
+      "variant": "new"
+    },
+    "new_worker_legacy_summary": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker differs from summary",
+      "independent_policy_reason": "W9 requires complete S9; a legacy S7 summary is not sufficient.",
       "variant": "new"
     },
     "nonempty_list": {
@@ -169,22 +145,46 @@
       "independent_policy_reason": "New diagnostics cannot make a failed summary healthy.",
       "variant": "new"
     },
-    "summary_missing_diagnostic": {
+    "summary_false_zero": {
       "accept_QA_prefix": false,
-      "error_message": "QA worker differs from summary",
-      "independent_policy_reason": "The complete worker extension cannot be paired with a partial summary extension.",
-      "variant": "new"
+      "error_message": "QA summary lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Numeric zero in summary is not literalFalse.",
+      "variant": "summary_new"
+    },
+    "summary_half_flag": {
+      "accept_QA_prefix": false,
+      "error_message": "QA summary lease diagnostic fields",
+      "independent_policy_reason": "W7 does not bypass completeness of a reserved summary pair.",
+      "variant": "summary_new"
+    },
+    "summary_half_list": {
+      "accept_QA_prefix": false,
+      "error_message": "QA summary lease diagnostic fields",
+      "independent_policy_reason": "W7 does not bypass completeness of a reserved summary pair.",
+      "variant": "summary_new"
+    },
+    "summary_list_alias": {
+      "accept_QA_prefix": false,
+      "error_message": "QA summary lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "The summary collection must be native list, not a subtype.",
+      "variant": "summary_new"
+    },
+    "summary_nonempty": {
+      "accept_QA_prefix": false,
+      "error_message": "QA summary lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "A W7 worker cannot hide nonempty S9 diagnostics.",
+      "variant": "summary_new"
+    },
+    "summary_truncated": {
+      "accept_QA_prefix": false,
+      "error_message": "QA summary lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "A W7 worker cannot hide truncated S9 diagnostics.",
+      "variant": "summary_new"
     },
     "truncated_true": {
       "accept_QA_prefix": false,
       "error_message": "QA worker lease diagnostics must be empty and untruncated",
       "independent_policy_reason": "Truncation prevents an unambiguous empty successful diagnostic report.",
-      "variant": "new"
-    },
-    "tuple_list": {
-      "accept_QA_prefix": false,
-      "error_message": "QA worker lease diagnostics must be empty and untruncated",
-      "independent_policy_reason": "Only native list is accepted; an empty tuple is not the new grammar.",
       "variant": "new"
     },
     "worker_count_mismatch": {
@@ -202,6 +202,31 @@
     "CI/provider/source/runtime records",
     "package/installed/omission section omitted"
   ],
-  "root_policy": "Accept exactlegacy7 or exactnew9 only; new empty native list and literalFalse, all previous qualification gates retained.",
+  "preparation_history": {
+    "original17_unrelated_QA_negative_examples_unchanged": [
+      "count_failures",
+      "count_errors",
+      "count_skipped",
+      "count_expected_failures",
+      "count_unexpected_successes",
+      "count_worker_exit_code",
+      "count_bool_alias",
+      "summary_failed",
+      "worker_count_mismatch",
+      "source_hash_mismatch",
+      "runtime_mismatch",
+      "old_local_source",
+      "ci_pending",
+      "old_ci_head",
+      "old_ci_summary",
+      "raw_warning",
+      "raw_not_OK"
+    ],
+    "previous_NOT_RUN_attempts": 0,
+    "previous_cross_claim": "The two mixed positives switched local/CI schemas per record; they were not cross worker/summary schema cases.",
+    "previous_reference_sha256": "12ada58f51667623885b3749e047b61db69a6116334400ea7f34c9777bccabc7",
+    "previous_source": "81a1af9337a51d8751c53bb3be134e5f6e6d7512"
+  },
+  "root_policy": "Worker exactlegacy7 or exactnew9 only; any summary reserved-key presence independently requires a complete native[]/literalFalse pair. W7/S9 valid, W9 requires S9; all original gates retained.",
   "scope": "INDEPENDENT_HAND_RECORDED_QA_PREFIX_POLICY_EXAMPLES"
 }

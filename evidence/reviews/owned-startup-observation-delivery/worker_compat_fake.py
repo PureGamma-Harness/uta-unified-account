@@ -57,10 +57,11 @@ class MemoryQA:
     def add_record(self, kind, version, event, variant):
         label = (event or kind) + "-" + version
         prefix = "/synthetic/qa/" + label
-        extension = variant == "new" or variant == "new_local" and kind == "local" or variant == "new_ci" and kind == "ci"
+        worker_extension = variant == "new"
+        summary_extension = variant in ("new", "summary_new")
         worker = {"tests_run": 2, "failures": 0, "errors": 0, "skipped": 0,
                   "expected_failures": 0, "unexpected_successes": 0, "unittest_passed": True}
-        if extension:
+        if worker_extension:
             worker.update(lease_observations=[], lease_observations_truncated=False)
         summary = {"tests_run": 2, "failures": 0, "errors": 0, "skipped": 0,
             "expected_failures": 0, "unexpected_successes": 0, "unittest_passed": True,
@@ -69,7 +70,7 @@ class MemoryQA:
             "tracked_source_clean_after": True, "source_sha256": dict(self.expected_hashes),
             "source_sha256_after": dict(self.expected_hashes), "python": version + ".1",
             "command_argv": ["/synthetic/python", "/synthetic/tools/run_validation.py", "--output", "/synthetic/results"]}
-        if extension:
+        if summary_extension:
             summary.update(lease_observations=[], lease_observations_truncated=False)
         logpath = prefix + ".txt"
         self.logs[logpath] = "Ran 2 tests in 0.1s\n\nOK\n"
@@ -148,28 +149,31 @@ class ActualQAPrefix:
 
 def apply_case(memory, label):
     worker, summary = memory.worker(), memory.summary()
-    if label == "legacy_unknown_key":
-        worker["unknown"] = 0
-    elif label == "new_unknown_key":
+    if label == "new_unknown_key":
         worker["unknown"] = 0
     elif label == "half_list":
         del worker["lease_observations_truncated"]
-    elif label == "half_flag":
-        del worker["lease_observations"]
-    elif label == "tuple_list":
-        worker["lease_observations"] = ()
-    elif label == "summary_missing_diagnostic":
+    elif label == "new_worker_legacy_summary":
+        del summary["lease_observations"]
         del summary["lease_observations_truncated"]
+    elif label == "summary_half_list":
+        del summary["lease_observations_truncated"]
+    elif label == "summary_half_flag":
+        del summary["lease_observations"]
+    elif label == "summary_nonempty":
+        summary["lease_observations"] = [{"test": "synthetic.Case.test_probe", "lease": {"version": 1}}]
+    elif label == "summary_truncated":
+        summary["lease_observations_truncated"] = True
+    elif label == "summary_list_alias":
+        summary["lease_observations"] = ListAlias()
+    elif label == "summary_false_zero":
+        summary["lease_observations_truncated"] = 0
     elif label == "nonempty_list":
         worker["lease_observations"] = [{"test": "synthetic.Case.test_probe", "lease": {"version": 1}}]
     elif label == "truncated_true":
         worker["lease_observations_truncated"] = True
     elif label == "list_alias":
         worker["lease_observations"] = ListAlias()
-    elif label == "false_zero":
-        worker["lease_observations_truncated"] = 0
-    elif label == "false_none":
-        worker["lease_observations_truncated"] = None
     elif label == "count_bool_alias":
         summary["errors"] = worker["errors"] = False
     elif label.startswith("count_"):
@@ -198,7 +202,7 @@ def apply_case(memory, label):
         memory.logs[memory.records[0]["log"]["path"]] += "ResourceWarning: synthetic\n"
     elif label == "raw_not_OK":
         memory.logs[memory.records[0]["log"]["path"]] = "Ran 2 tests in 0.1s\n\nFAILED\n"
-    elif label not in ("legacy_all", "new_all", "mixed_local7_ci9", "mixed_local9_ci7"):
+    elif label not in ("legacy_all", "new_all", "legacy_worker_new_summary"):
         raise ValueError("unregistered synthetic case")
 
 
@@ -222,14 +226,16 @@ class WorkerCompatibilityTests(unittest.TestCase):
                 self.assertEqual(actual, (expected["accept_QA_prefix"], expected["error_message"]))
                 self.assertEqual((memory.values, memory.registration, memory.logs), original_records)
 
-    def test_01_exact_legacy_new_and_mixed_positive_records(self):
-        self.examples(("legacy_all", "new_all", "mixed_local7_ci9", "mixed_local9_ci7"))
+    def test_01_exact_legacy_new_and_cross_summary_positive_records(self):
+        self.examples(("legacy_all", "new_all", "legacy_worker_new_summary"))
 
-    def test_02_unknown_half_fields_and_wrong_collection_rejected(self):
-        self.examples(("legacy_unknown_key", "new_unknown_key", "half_list", "half_flag", "tuple_list", "summary_missing_diagnostic"))
+    def test_02_worker_unknown_half_missing_summary_and_bad_diagnostics_rejected(self):
+        self.examples(("new_unknown_key", "half_list", "new_worker_legacy_summary",
+                       "nonempty_list", "truncated_true", "list_alias"))
 
-    def test_03_nonempty_truncated_and_type_aliases_rejected(self):
-        self.examples(("nonempty_list", "truncated_true", "list_alias", "false_zero", "false_none"))
+    def test_03_legacy_worker_with_half_or_bad_summary_diagnostics_rejected(self):
+        self.examples(("summary_half_list", "summary_half_flag", "summary_nonempty",
+                       "summary_truncated", "summary_list_alias", "summary_false_zero"))
 
     def test_04_original_nonzero_counts_and_boolean_alias_rejected(self):
         self.examples(("count_failures", "count_errors", "count_skipped", "count_expected_failures",

@@ -61,16 +61,16 @@
       "sha256": "dff3d926d113405d9afe1d7324be68668a27d4956abd987b06ddfd06e1af7d24"
     },
     "evidence/reviews/owned-startup-observation-delivery/worker-compat-reference.json": {
-      "bytes": 8689,
-      "sha256": "12ada58f51667623885b3749e047b61db69a6116334400ea7f34c9777bccabc7"
+      "bytes": 9688,
+      "sha256": "65d5c30ac8411fcd611fffc55b51656814d31dddc8587ce6c341df37b98ab88e"
     },
     "evidence/reviews/owned-startup-observation-delivery/worker_compat_fake.py": {
-      "bytes": 12453,
-      "sha256": "d036f5da7ca51db18be481999caa6c1af8c3e43bb74c38c8663f89b24028f646"
+      "bytes": 12811,
+      "sha256": "a82af6c4f7c4426fe20cab9ea37d0ca479f5fdbcc9b36b34546a9a831b86ad49"
     },
     "tools/run_managed_variants.py": {
-      "bytes": 66618,
-      "sha256": "35c22d50b89ee282c22118442b039f27917aa9d80c0243dd2a74d06d146fece5"
+      "bytes": 67008,
+      "sha256": "755bc31acb4d183fa8513b860f131490a2aba706c4e260b29b102f1592a15e33"
     },
     "tools/run_validation.py": {
       "bytes": 12185,
@@ -94,6 +94,14 @@
   "planned_bounded_cases": 32,
   "planned_methods": 6,
   "planned_small_traces": 32,
+  "preparation_history": {
+    "current_CODE_record": "consumer-adapter-summary-CODE.json",
+    "old_plan_exact_copy": "worker-compat-plan-81a-NOT_RUN.json",
+    "old_plan_sha256": "03d72f87853cc23076c9050ddcf5c443c5e0038dc23d2af8de22db418e42e4d6",
+    "source81a": "81a1af9337a51d8751c53bb3be134e5f6e6d7512",
+    "source81a_target_compile_or_execution_attempts": 0,
+    "static_finding": "worker-compat-81a-static-finding.json"
+  },
   "raw_capture": {
     "boundary": "Trusted reviewed pure Python stream writes; not an OS sandbox against arbitrary direct FD/native code.",
     "complete_requires": "Host completion/actualexit plus END and inner receipt; hard stop or missing evidence is UNKNOWN, neverPASS.",
@@ -107,7 +115,7 @@
     "zero_error_oversize_capture": "sticky UNKNOWN, exit125, no retry"
   },
   "raw_host_policy": "Capture first stdout/stderr/END/innerreceipt and actualhostargv/exit/reap. Missing capture or hardstop isUNKNOWN; actualKILL137 never relabeled124; no retry.",
-  "reference_independence": "Hand-entered32policy expected decisions/messages, no productionhelper generates expected values. Real prefix executes against independently built memoryproof matrices; originalobjects must remain unchanged.",
+  "reference_independence": "Hand-recorded32policy expectations:3actualW/S positives,6worker negatives,6W7/summarynegative,original17QAthreshold negatives. No corehelper generatesexpected; realQA AST runs only against memoryproofs and unchangedoriginalobjects.",
   "requires_root_exact_once_budget": true,
   "root_budget_maximum_if_authorized": {
     "CPU_id": 1,
@@ -117,26 +125,26 @@
   },
   "scope": "ONE_ACTUAL_QUALIFICATION_QA_PREFIX_MEMORY_COMPATIBILITY_RUN_ONLY",
   "selected_methods_and_cases": {
-    "test_01_exact_legacy_new_and_mixed_positive_records": [
+    "test_01_exact_legacy_new_and_cross_summary_positive_records": [
       "legacy_all",
       "new_all",
-      "mixed_local7_ci9",
-      "mixed_local9_ci7"
+      "legacy_worker_new_summary"
     ],
-    "test_02_unknown_half_fields_and_wrong_collection_rejected": [
-      "legacy_unknown_key",
+    "test_02_worker_unknown_half_missing_summary_and_bad_diagnostics_rejected": [
       "new_unknown_key",
       "half_list",
-      "half_flag",
-      "tuple_list",
-      "summary_missing_diagnostic"
-    ],
-    "test_03_nonempty_truncated_and_type_aliases_rejected": [
+      "new_worker_legacy_summary",
       "nonempty_list",
       "truncated_true",
-      "list_alias",
-      "false_zero",
-      "false_none"
+      "list_alias"
+    ],
+    "test_03_legacy_worker_with_half_or_bad_summary_diagnostics_rejected": [
+      "summary_half_list",
+      "summary_half_flag",
+      "summary_nonempty",
+      "summary_truncated",
+      "summary_list_alias",
+      "summary_false_zero"
     ],
     "test_04_original_nonzero_counts_and_boolean_alias_rejected": [
       "count_failures",
@@ -164,5 +172,6 @@
   },
   "source_base": "17e0838ff0c153f36ec53a03e4db219e5948ab33",
   "source_binding": "Driver compiles exactly retained immutable verified fixturebytes; its selected consumerAST/reference reads use the same byte map. Materialized before/after pins are supplemental. Root checks all7 Git blobs before once execution.",
-  "type_alias_injection": "Only memoryfakes; ordinary native JSON would normalize list subtype. No claim about actual proof parser/OS regularity/authorization."
+  "type_alias_injection": "Only memoryfakes; ordinary native JSON would normalize list subtype. No claim about actual proof parser/OS regularity/authorization.",
+  "worker_summary_final_policy": "W7/S7 stays valid; W7/S9 valid only when reservedsummarypair complete/native[]/literalFalse; W7/Shalf/nonempty/truncated/aliases reject. W9 requires S9typedmatch. Unknownworkerkeys reject; unrelatedsummarymetadata unchanged."
 }

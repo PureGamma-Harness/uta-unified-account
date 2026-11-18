@@ -7,6 +7,12 @@ Unknown, half, nonempty, truncated or aliased extensions reject. This is a
 default-on diagnostic change with strict report compatibility; it does not
 repair read admission or authorize READY.
 
+Summary reserved fields are checked independently: W7/S7 remains supported,
+W7/S9 is accepted only with a complete native-empty/false summary pair, and
+W9 still requires a complete matching S9. Other existing summary metadata is
+unchanged. Earlier81a1af9 lacked that W7/S9 check; it remains NOT_RUN/zero attempts
+with its independent static finding preserved.
+
 The branch preserves PR38@17e0838, including unrelated D2 default OFF and both
 first CI failures, then merges authorb59106c and independenta202499 histories.
 The observation files `uta/writer_fence.py`, `uta/startup.py` and

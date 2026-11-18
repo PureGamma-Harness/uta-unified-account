@@ -345,6 +345,10 @@ def qualification(source_hashes, registration, *, source=None):
                 require(type(worker["lease_observations"]) is list and worker["lease_observations"] == []
                     and worker["lease_observations_truncated"] is False, "QA worker lease diagnostics must be empty and untruncated")
                 require(diagnostic_fields <= set(summary), "QA worker differs from summary")
+            if diagnostic_fields & set(summary):
+                require(diagnostic_fields <= set(summary), "QA summary lease diagnostic fields")
+                require(type(summary["lease_observations"]) is list and summary["lease_observations"] == []
+                    and summary["lease_observations_truncated"] is False, "QA summary lease diagnostics must be empty and untruncated")
             require(all(type(worker[key]) is type(summary[key]) and worker[key] == summary[key] for key in worker), "QA worker differs from summary")
             require(record["python"] in ("3.10", "3.11", "3.12", "3.13") and summary["python"].startswith(record["python"] + "."), "QA interpreter identity")
             if kind == "local":

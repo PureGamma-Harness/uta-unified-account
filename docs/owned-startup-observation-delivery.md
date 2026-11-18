@@ -83,19 +83,25 @@ Static source inspection, without executing any consumer, found:
 | --- | --- |
 | `tools/run_validation.py` parent | Spreads worker fields into summary; existing pass/count/source checks remain |
 | `tools/managed_soak_observer.py`, `tools/managed_observer_smoke.py`, `tools/run_spawn_recovery_full3.py` | Read required existing keys and compare original counts/source/exit; extra diagnostic keys are not approval input |
-| `tools/run_managed_variants.py:qualification` | Accepts exact legacy7 or exact new9 keys; new diagnostics must be a native empty list and literalFalse. Original source/count/runtime/log/CI gates remain |
+| `tools/run_managed_variants.py:qualification` | Accepts exact legacy7 or exact new9 worker keys. Either report's reserved diagnostic pair, when present, must be complete, a native empty list and literalFalse. Original source/count/runtime/log/CI gates remain |
 
 The old consumer would reject every new worker record with `QA worker result
 fields`. Its minimal adapter now admits exactly two complete grammars: the
 original seven keys, or those keys plus both diagnostic fields. Unknown keys,
 half extensions, nonempty/truncated diagnostics, collection aliases and0/None
-instead ofFalse reject. Both new fields must also occur in the summary; the
+instead ofFalse reject. A W9 worker requires both summary fields. A W7 worker
+may pair with a valid S9 summary; the summary's reserved fields are independently
+validated even with a W7 worker. Either summary half-pair or invalid value
+rejects. Unrelated summary metadata retains its original compatibility. The
 existing per-key type/value equality check is retained. No canonical projection
 or rewritten worker record is needed: original9-field artifacts stay complete.
 The adapter does not admit a passing capsule containing a lease failure and
 does not reuse old qualification for new source. All earlier qualification
 conditions, including exact-source binding, remain authoritative. Its separate
 six-method/32-case pure preparation is NOT_RUN until its own review/budget.
+The earlier81a1af9 preparation/plan was never executed; independent CODE review
+found its missing W7/S9 summary validation. That static finding and zero-attempt
+source are preserved; it is not a test RED or a runtime incident.
 No old spent job, PENDING snapshot or report is rewritten.
 Customer API consumers are unaffected because these fields are private test
 artifacts, but a whole-CI result for this delivery is still NOT_RUN.
