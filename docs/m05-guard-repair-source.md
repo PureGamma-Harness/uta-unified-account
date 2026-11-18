@@ -6,6 +6,8 @@ G `b78a28d62b334c63ef0598f95073823dbd9b7781`（tree `0a43f607532465e86cae923a082
 
 后续 alias CODE 已对 `signal` 和 `_signal` 的同一组 effectful API 同时 deny，并明确 deny `socket.socketpair` 与 `_socket.socketpair`，保持 `socket.socket` 类以供 ssl/asyncio 被动 import 使用。预检源码对应增加纯 sentinel 负控；这些新源码尚未执行，旧 28-case stub 不作为新 alias 源码通过记录。exact-six Popen 与父 SQL/UTA active guards 的 AST 仍不变；`guard-alias-source-bindings.json` 单独绑定新源码与 false policy，原 G bindings/first 证据不回写。
 
+独立只读 agent 对固定 `5983e635dbbe13a1b025368a68d62832f97898a5` / tree `47ab93a467ffef5abf2f6b57c0d65305de30a5da` 完成静态 CODE 审核，确认上述两个已知 finding 在 CODE 层关闭，绑定/AST/原件保持。agent 未写文件、未执行 target 或 stub；本 owner 将其结论记录于 `evidence/reviews/m05-guard-alias-independent/`。这不是 agent 新执行结果，也不是 hostile Python sandbox 证明。新源码仍 NOT_RUN，六 child/combined 验收仍缺，current policy 只更新 CODE 状态；whole、actualM05 与 next_run 均未授权/false。
+
 本修复仅改测试执行器，不改 controller、cold helper、测试、两 workflow、public recipient、业务 runtime 或 strict19 模板。原 C `4eabab3` 的首 4 PASS + 8 import ERROR / 0 child / exit1 及 ed55fc9 的全部 37,788 字节原件保持不变，仍是 FIRST_ERROR/NO_GO。
 
 root 新授权仅覆盖新 guard CODE 和一次 CPU2、外层 10 秒以内的纯 stub/AST 预检；没有授权新 whole suite 或六个真实 child，更无 actualM05/marker/ref/push/CI/SQL/业务/worker/OpenSSL/网络。current policy 与 next_run_permitted 保持 false，独立 guard CODE 审核暂待。
