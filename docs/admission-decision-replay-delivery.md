@@ -45,9 +45,8 @@ The corrected candidate separates the ten-field runtime valuation policy from
 the order envelope's additional admission contract. Credit-v2 keeps its original
 persisted reconstruction and exact equality; no unknown fields are dropped.
 Independent CODE54220955 verified this narrow change and the four new pure
-contract tests, which have not yet run locally. No financial formula, DDL,
-borrow mutation, format or historical archive is changed. Corrected-source
-normal CI, including the original credit helper and restart failures, is pending.
+contract tests, which passed in the three selected corrected-source CI unit logs. No financial formula, DDL,
+borrow mutation, format or historical archive is changed. Corrected-source normal CI completed; its exact remaining blockers are recorded below.
 
 The corrected runtime now also changes credit_audit_v2.py relative to PR46.
 Its artifact differs from b4151847, so original SQL4 results are not relabeled
@@ -66,3 +65,8 @@ Configured Cross valuation still uses the production numerical engine, with
 a separately derived admission predicate/manual constants. This does not
 accept an independent full Cross model, paired matching, concurrency/fault
 recovery, performance, HA, custody or production/real-funds enablement.
+
+
+Corrected first sourcef7747c10 push44306356209/PR44306368539 completed with6 successful jobs and2 failed jobs. Fixed push3.13 ran2070/0F0E, fixed PR3.13 ran2070/1F at the short-financial-writer assertion (startup_keeper_failed caused by lease_expired), and extra push3.12 ran2070/1F at partial-fanout readiness False. All three have0 errors/skips. Original17 credit/restart failure IDs,4 new policy contracts and11 original admission IDs are plain ok in each selected log (96 observations, not independent SQL4 RAW runs). The complete CI gate remains BLOCKED; causes and indirect effects are not determined.
+
+Collectorfd5c8fe2 and independent RAW3e5ad619 bind60 originals3742100B/four ZIPs28CRC,376-pin maps and source/merge-tree evidence. The small package reports7038 required paths/62 runtime files/7 checks; installed25-module/8-test/8-command output does not directly import credit_audit_v2. Binary/container and complete qualification were not independently downloaded or accepted. Sourcef774 runtime/tests/tools/benchmarks/CI remain byte-identical after this evidence-only merge. Both original137 and corrected-f774 first failures stay preserved.
