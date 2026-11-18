@@ -5,7 +5,7 @@
 `Matcher(exchange, book_selection="snapshot")` 请求新选择器；worker、HTTP、
 CLI 和产品配置均没有开启入口。本轮没有数据库迁移。
 
-当前是 CODE 候选，尚未执行新纯测试、SQLite 链路或性能测试，不能声称提高吞吐、
+源码冻结时是 CODE 候选；下文保留其未执行阶段。新首pure结果单列，SQLite链路及性能仍未执行，不能声称提高吞吐、
 通过生产验收或可用于真实资金。原 PR35 的失败与其他组的证据保持原样。
 
 ## 改动和可复算例子
@@ -107,3 +107,17 @@ Matcher 构造器与停市前段提取为 AST，在内存行和不可执行的�
 独立组另指出原排列例子没有同价逆rowid输入，无法防止误删时间键。26fa628在
 现有FIFO方法内增加双边同价逆rowid及撤首单的手工断言，12方法和384场景上界不变。
 7a计划同样未执行并原样保留，新v4记录绑定四源。
+
+## 首次纯组件运行：12/12，独立原件审查待闭合
+
+唯一调用source26fa628，Python3.12.14，实际affinity[0]（一颗CPU），exit0。
+unittest报告2.093s；driver自有时钟2.191063063990441s；外层全生命周期monotonic
+未采集，仅保留两段tool等待与秒级UTC观察，不能把driver时长标成外层E2E。
+stdout3954B/d51f6e7ac311ea8b23d422fec51d667e24164a44c77d6dadcbc1bcb785bbbffd，
+stderr0B；完整原件/intent/四源前后/exit见对应first-pure-26fa628-once01目录。
+
+12方法0FAIL/ERROR/skip，未importUTA/sqlite或执行SQL/child/network/旧suite。
+256seed、各12步与其它例子由冻结源码和方法成功绑定，未导出逐场景计数。
+内存128行/20轮的full1/point78断言通过；这不是实际SQL或TPS。
+源码与默认scan行为未再修改。实际模块导入、双侧结算、账务重开、并发故障、性能
+及产品/真实资金启用全部仍NOT_RUN或NO_GO；独立组只读核首原件后另列结论。

@@ -1,0 +1,64 @@
+{
+  "actual_affinity": [
+    0
+  ],
+  "actual_exit_status": 0,
+  "argv": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/matching-selection-snapshot/run_once.py",
+    "26fa6285afde7d38e8e811f54ac16e5816fdd79d"
+  ],
+  "attempt": 1,
+  "automatic_retries": 0,
+  "complete_first_raw_retained": true,
+  "cwd": "/workspace/uta-matching-selection-snapshot",
+  "driver_elapsed_seconds": 2.191063063990441,
+  "fixture_invocations": 1,
+  "inputs_after_sha256": {
+    "evidence/reviews/matching-selection-snapshot/run_once.py": "e07928d9fbf59bbfc33157c12e1bd3d1d59abccc88a9722ae819fa7d67c7d15a",
+    "tests/test_matching_selection_snapshot.py": "f379016c70bf3d9ae141314801cc2aeacb8c4d2d8e6faa4c9f78f083dcc328dc",
+    "uta/matching.py": "b308516497d690ec1ac53056e27bd64afcd0c13ea7ee7c49f337983377af98d9",
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+  },
+  "native_sql_children_network_execution": false,
+  "outer_monotonic_lifecycle_elapsed_ns": null,
+  "raw": {
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 3954,
+      "sha256": "d51f6e7ac311ea8b23d422fec51d667e24164a44c77d6dadcbc1bcb785bbbffd"
+    }
+  },
+  "recorded_at": "2026-11-18T04:44:24.078447+00:00",
+  "runtime": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "schema": 1,
+  "scope": "SELECTED_ACTUAL_AST_MEMORY_ONLY",
+  "source_commit": "26fa6285afde7d38e8e811f54ac16e5816fdd79d",
+  "timing_limitation": "Outer launcher has two observed tool wait segments and second-resolution UTC observations, not a full lifecycle monotonic timer. Driver2.191063063990441s is not outer E2E latency or a benchmark.",
+  "tool_observations": {
+    "completion_clock_observed": "2026-11-18 04:42:41 UTC",
+    "completion_exec": {
+      "chunk_id": "04fc3d",
+      "exit_code": 0,
+      "original_token_count": 0,
+      "output": "",
+      "wall_time_seconds": 1.6233e-05
+    },
+    "first_exec": {
+      "chunk_id": "dbd9da",
+      "original_token_count": 0,
+      "output": "",
+      "session_id": 79072,
+      "wall_time_seconds": 1.000751003
+    },
+    "start_clock": {
+      "current_time": "2026-11-18 04:42:36 UTC"
+    }
+  },
+  "unittest_reported_seconds": 2.093
+}
