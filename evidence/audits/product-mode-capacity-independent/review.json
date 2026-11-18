@@ -1,0 +1,74 @@
+{
+  "schema": "uta-product-mode-independent-static-review/v1",
+  "decision": "SAFE",
+  "decision_scope": "docs/data-only revised matrix; not runtime/capacity/production approval",
+  "reviewed_artifact": "977b4e9b541bac5aae42906b2541e77738ea70fc",
+  "original_artifact": "4fc54d933fea4af9ccc228fc80ca478cdf81deaa",
+  "frozen_source": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+  "structural_validation": {
+    "rows": 47,
+    "unique_ids": 47,
+    "markdown_rows": 47,
+    "source_files": 73,
+    "source_bytes": 1551658,
+    "all_source_sha256_and_git_blobs_match": true,
+    "all_row_reference_hashes_match": true,
+    "test_reference_entries": 82,
+    "all_test_status": "NOT_RUN",
+    "all_production_decisions": "NO_GO",
+    "runtime_manifest_files": 67,
+    "runtime_manifest_bytes": 1494225,
+    "runtime_manifest_python_files": 66,
+    "errors": []
+  },
+  "fixed_findings": [
+    {
+      "id": "MATRIX-SYMBOL-1",
+      "rows": [
+        "P1-08",
+        "P1-09"
+      ],
+      "original": "nonexistent LocalMatcher symbol",
+      "author_fix": "269e55208bd49d2ddc284b557f98695cf7784512",
+      "recheck": "actual Matcher symbol confirmed"
+    },
+    {
+      "id": "MATRIX-STATE-2",
+      "rows": [
+        "P1-32"
+      ],
+      "original": "loan-only distress did not distinguish negative equity BANKRUPT branch",
+      "author_fix": "977b4e9b541bac5aae42906b2541e77738ea70fc",
+      "recheck": "negative equity first branch and nonnegative BLOCKED conditions retained"
+    }
+  ],
+  "target_execution": "NOT_RUN",
+  "tests_run": 0,
+  "sql_run": 0,
+  "load_run": 0,
+  "network_run": 0,
+  "pid_operations": 0,
+  "production_approved": false,
+  "restrictions": {
+    "H1_Auth_DB8": "AUTO_REVIEW_REJECTED_NOT_RUN_NO_BYPASS",
+    "private_raw_accessed": false,
+    "archives_opened": false
+  },
+  "inputs": [
+    {
+      "path": "docs/product-mode-operation-acceptance-2b1b2a6d.md",
+      "bytes": 48200,
+      "sha256": "b8b5960bb985ff9ffb8d43926452c96fc653a5af88adda16e0575a9de8a0c26e"
+    },
+    {
+      "path": "evidence/audits/product-mode-acceptance-2b1b2a6d/matrix.json",
+      "bytes": 114430,
+      "sha256": "14b1fede2544a20229038ef10a6c91b72e31149e6ad472ffe228d8c63887619a"
+    },
+    {
+      "path": "evidence/audits/product-mode-acceptance-2b1b2a6d/source-manifest.json",
+      "bytes": 21460,
+      "sha256": "c95301e4a34088fe9e28d93718b5a15ffe66f70142a2198f035927d0786f19ec"
+    }
+  ]
+}
