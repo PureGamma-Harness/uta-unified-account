@@ -1,0 +1,377 @@
+{
+  "actual_committed_match_receipts": [
+    {
+      "buy_account_id": "B",
+      "buy_fill_id": "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72:b",
+      "buy_order_id": "buy-B2",
+      "buy_version": 5,
+      "market_version": 5,
+      "price": "1",
+      "quantity": "0.6",
+      "sell_account_id": "A",
+      "sell_fill_id": "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72:s",
+      "sell_order_id": "sell-A",
+      "sell_version": 4,
+      "sequence": 2,
+      "symbol": "BTC-PERP",
+      "trade_id": "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72"
+    },
+    {
+      "buy_account_id": "B",
+      "buy_fill_id": "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4:b",
+      "buy_order_id": "buy-B1",
+      "buy_version": 4,
+      "market_version": 5,
+      "price": "1",
+      "quantity": "0.4",
+      "sell_account_id": "A",
+      "sell_fill_id": "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4:s",
+      "sell_order_id": "sell-A",
+      "sell_version": 3,
+      "sequence": 1,
+      "symbol": "BTC-PERP",
+      "trade_id": "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4"
+    }
+  ],
+  "actual_final_ledger_balances": [
+    {
+      "account": "customer:A",
+      "asset": "USD",
+      "units": "10"
+    },
+    {
+      "account": "customer:B",
+      "asset": "USD",
+      "units": "998"
+    },
+    {
+      "account": "system:custody",
+      "asset": "USD",
+      "units": "-1011"
+    },
+    {
+      "account": "system:fees",
+      "asset": "USD",
+      "units": "3"
+    }
+  ],
+  "actual_final_positions": [
+    {
+      "account_id": "A",
+      "cost_basis": "-1",
+      "quantity": "-1",
+      "symbol": "BTC-PERP"
+    },
+    {
+      "account_id": "B",
+      "cost_basis": "1",
+      "quantity": "1",
+      "symbol": "BTC-PERP"
+    }
+  ],
+  "actual_final_risks": {
+    "A": {
+      "account_version": 4,
+      "available_margin": "0",
+      "catalog_version": 3,
+      "equity": "0.1",
+      "initial_margin": "0.1",
+      "maintenance_margin": "0.05",
+      "market_version": 7,
+      "open_order_margin": "0",
+      "risk_mode": "phase1_cross",
+      "rule_version": 5,
+      "status": "HEALTHY"
+    },
+    "B": {
+      "account_version": 5,
+      "available_margin": "9.88",
+      "catalog_version": 3,
+      "equity": "9.98",
+      "initial_margin": "0.1",
+      "maintenance_margin": "0.05",
+      "market_version": 7,
+      "open_order_margin": "0",
+      "risk_mode": "phase1_cross",
+      "rule_version": 5,
+      "status": "HEALTHY"
+    }
+  },
+  "actual_matches": 2,
+  "actual_paired_fills": 4,
+  "actual_partial_fill_fee_rows": [
+    {
+      "account_id": "B",
+      "fee": "0.01",
+      "fill_id": "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4:b",
+      "order_id": "buy-B1",
+      "price": "1",
+      "quantity": "0.4",
+      "realized_pnl": "0"
+    },
+    {
+      "account_id": "A",
+      "fee": "0.01",
+      "fill_id": "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4:s",
+      "order_id": "sell-A",
+      "price": "1",
+      "quantity": "-0.4",
+      "realized_pnl": "0"
+    },
+    {
+      "account_id": "B",
+      "fee": "0.01",
+      "fill_id": "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72:b",
+      "order_id": "buy-B2",
+      "price": "1",
+      "quantity": "0.6",
+      "realized_pnl": "0"
+    },
+    {
+      "account_id": "A",
+      "fee": "0",
+      "fill_id": "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72:s",
+      "order_id": "sell-A",
+      "price": "1",
+      "quantity": "-0.6",
+      "realized_pnl": "0"
+    }
+  ],
+  "actual_reopen_full_snapshot_equal": true,
+  "after_reopen": {
+    "canonical_JSON_schema_SHA256": "a6a2cf2a8aa413f9d5904905783921b0ebef7f1ab282844d375ab4efa40e6b9b",
+    "canonical_JSON_table_SHA256": {
+      "ledger_assets": "1f7d458aa15cf743f3370a98a82768dc144648594ecde0b8e78e6956600c5408",
+      "ledger_balances": "adc41cc08ad5369b83ad36c02a0f1045ef4d57f6a661218468d0a948bd1af1f4",
+      "ledger_events": "1b4914009728d6de402c263e4de1700dc3c0a508799d3a46abf0f14a5d9cff50",
+      "ledger_postings": "3f6a07b53b743acac6d4905c4391f963654810bd75458b8a13ab0788db0d0da9",
+      "ledger_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_accounts": "9e8ed62613b1627764ab3f876379cb31a9de638018ac7df38b36981cd6d0c94e",
+      "uta_audit_capability": "aa5fcae48f29facab7f3091de96724b5f1edc31d7cd4e8313e82f0730e0d732e",
+      "uta_authority": "10bb1b06879027fcc328eed590841cd66eeab59aecf88efa23aaf4ac0d90e49c",
+      "uta_code_artifacts": "b77be0e76ad72bbabff49c490b0ed23f39ccbcf446f917e579d497fe88cf4820",
+      "uta_config": "0df9c2aa1d619766898677d0dba039c09570e86224ab393bcfbc8efb4cae08d1",
+      "uta_deposits": "74aa80bb63af3a725af9e6fe46eced5e77979d36adbf533d154f951d25b68e9b",
+      "uta_events": "ef857e51f1a671d7a257664bd97988fa71e0037f6d8b7fed8a0231d51adcecdc",
+      "uta_fills": "c36af65412dc128ea40303f042d534263ed3dbf2c03c2e6bf8a47e4c4c8f94c2",
+      "uta_liabilities": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_liquidation_accounts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_market": "b84bc3330b20034633a94859213895e90edfc09285c5a00c1f56efcea4dc46ad",
+      "uta_market_history": "d093bfefbff8c1fe28139608010a38d07e0c91831d00fd6e0b304a0ca7654f92",
+      "uta_matches": "9e0c3e010852b6a12a47f08a17a08f8459b8b69e8c4a846d3f89dd29f274b97f",
+      "uta_matching_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_orders": "cb0336d14840f08434d70063a9a21cd88b7c43cc6a007d4f523501c2ed79346a",
+      "uta_positions": "88753ba2f2df067c78d208c0ed542f1b57bc1e752005c3d566171c1347d1090d",
+      "uta_risk_decisions": "8d2b0fedffbfc60642a4fb105f77cb329d959778b32678006d47daf8ab86c034",
+      "uta_risk_policies": "6db58f337b25f58c925a9257f1f85e37cdd68d595b69bbaf9bf89fe00401fe76",
+      "uta_schema": "8e34edb9e5cfda76ef0728c606ff95c2d13915b25383fd5dddee5cf8d716b3ea"
+    },
+    "ledger_events_verified": 5,
+    "settings": {
+      "journal_mode": "wal",
+      "synchronous": 2
+    },
+    "table_rows": {
+      "ledger_assets": 1,
+      "ledger_balances": 4,
+      "ledger_events": 5,
+      "ledger_postings": 10,
+      "ledger_schema": 1,
+      "uta_accounts": 2,
+      "uta_audit_capability": 1,
+      "uta_authority": 1,
+      "uta_code_artifacts": 1,
+      "uta_config": 3,
+      "uta_deposits": 2,
+      "uta_events": 24,
+      "uta_fills": 4,
+      "uta_liabilities": 0,
+      "uta_liquidation_accounts": 0,
+      "uta_market": 1,
+      "uta_market_history": 6,
+      "uta_matches": 2,
+      "uta_matching_schema": 1,
+      "uta_orders": 3,
+      "uta_positions": 2,
+      "uta_risk_decisions": 7,
+      "uta_risk_policies": 1,
+      "uta_schema": 1
+    }
+  },
+  "before_reopen": {
+    "canonical_JSON_schema_SHA256": "a6a2cf2a8aa413f9d5904905783921b0ebef7f1ab282844d375ab4efa40e6b9b",
+    "canonical_JSON_table_SHA256": {
+      "ledger_assets": "1f7d458aa15cf743f3370a98a82768dc144648594ecde0b8e78e6956600c5408",
+      "ledger_balances": "adc41cc08ad5369b83ad36c02a0f1045ef4d57f6a661218468d0a948bd1af1f4",
+      "ledger_events": "1b4914009728d6de402c263e4de1700dc3c0a508799d3a46abf0f14a5d9cff50",
+      "ledger_postings": "3f6a07b53b743acac6d4905c4391f963654810bd75458b8a13ab0788db0d0da9",
+      "ledger_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_accounts": "9e8ed62613b1627764ab3f876379cb31a9de638018ac7df38b36981cd6d0c94e",
+      "uta_audit_capability": "aa5fcae48f29facab7f3091de96724b5f1edc31d7cd4e8313e82f0730e0d732e",
+      "uta_authority": "10bb1b06879027fcc328eed590841cd66eeab59aecf88efa23aaf4ac0d90e49c",
+      "uta_code_artifacts": "b77be0e76ad72bbabff49c490b0ed23f39ccbcf446f917e579d497fe88cf4820",
+      "uta_config": "0df9c2aa1d619766898677d0dba039c09570e86224ab393bcfbc8efb4cae08d1",
+      "uta_deposits": "74aa80bb63af3a725af9e6fe46eced5e77979d36adbf533d154f951d25b68e9b",
+      "uta_events": "ef857e51f1a671d7a257664bd97988fa71e0037f6d8b7fed8a0231d51adcecdc",
+      "uta_fills": "c36af65412dc128ea40303f042d534263ed3dbf2c03c2e6bf8a47e4c4c8f94c2",
+      "uta_liabilities": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_liquidation_accounts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_market": "b84bc3330b20034633a94859213895e90edfc09285c5a00c1f56efcea4dc46ad",
+      "uta_market_history": "d093bfefbff8c1fe28139608010a38d07e0c91831d00fd6e0b304a0ca7654f92",
+      "uta_matches": "9e0c3e010852b6a12a47f08a17a08f8459b8b69e8c4a846d3f89dd29f274b97f",
+      "uta_matching_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_orders": "cb0336d14840f08434d70063a9a21cd88b7c43cc6a007d4f523501c2ed79346a",
+      "uta_positions": "88753ba2f2df067c78d208c0ed542f1b57bc1e752005c3d566171c1347d1090d",
+      "uta_risk_decisions": "8d2b0fedffbfc60642a4fb105f77cb329d959778b32678006d47daf8ab86c034",
+      "uta_risk_policies": "6db58f337b25f58c925a9257f1f85e37cdd68d595b69bbaf9bf89fe00401fe76",
+      "uta_schema": "8e34edb9e5cfda76ef0728c606ff95c2d13915b25383fd5dddee5cf8d716b3ea"
+    },
+    "ledger_events_verified": 5,
+    "settings": {
+      "journal_mode": "wal",
+      "synchronous": 2
+    },
+    "table_rows": {
+      "ledger_assets": 1,
+      "ledger_balances": 4,
+      "ledger_events": 5,
+      "ledger_postings": 10,
+      "ledger_schema": 1,
+      "uta_accounts": 2,
+      "uta_audit_capability": 1,
+      "uta_authority": 1,
+      "uta_code_artifacts": 1,
+      "uta_config": 3,
+      "uta_deposits": 2,
+      "uta_events": 24,
+      "uta_fills": 4,
+      "uta_liabilities": 0,
+      "uta_liquidation_accounts": 0,
+      "uta_market": 1,
+      "uta_market_history": 6,
+      "uta_matches": 2,
+      "uta_matching_schema": 1,
+      "uta_orders": 3,
+      "uta_positions": 2,
+      "uta_risk_decisions": 7,
+      "uta_risk_policies": 1,
+      "uta_schema": 1
+    }
+  },
+  "case": "USD2-cumulative-partial-fee",
+  "final": {
+    "canonical_JSON_schema_SHA256": "a6a2cf2a8aa413f9d5904905783921b0ebef7f1ab282844d375ab4efa40e6b9b",
+    "canonical_JSON_table_SHA256": {
+      "ledger_assets": "1f7d458aa15cf743f3370a98a82768dc144648594ecde0b8e78e6956600c5408",
+      "ledger_balances": "adc41cc08ad5369b83ad36c02a0f1045ef4d57f6a661218468d0a948bd1af1f4",
+      "ledger_events": "1b4914009728d6de402c263e4de1700dc3c0a508799d3a46abf0f14a5d9cff50",
+      "ledger_postings": "3f6a07b53b743acac6d4905c4391f963654810bd75458b8a13ab0788db0d0da9",
+      "ledger_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_accounts": "9e8ed62613b1627764ab3f876379cb31a9de638018ac7df38b36981cd6d0c94e",
+      "uta_audit_capability": "aa5fcae48f29facab7f3091de96724b5f1edc31d7cd4e8313e82f0730e0d732e",
+      "uta_authority": "10bb1b06879027fcc328eed590841cd66eeab59aecf88efa23aaf4ac0d90e49c",
+      "uta_code_artifacts": "b77be0e76ad72bbabff49c490b0ed23f39ccbcf446f917e579d497fe88cf4820",
+      "uta_config": "0df9c2aa1d619766898677d0dba039c09570e86224ab393bcfbc8efb4cae08d1",
+      "uta_deposits": "74aa80bb63af3a725af9e6fe46eced5e77979d36adbf533d154f951d25b68e9b",
+      "uta_events": "caa2b96fa0bc8343693bda47ca2a8227972ba8da6a60d86719917c465efe7525",
+      "uta_fills": "c36af65412dc128ea40303f042d534263ed3dbf2c03c2e6bf8a47e4c4c8f94c2",
+      "uta_liabilities": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_liquidation_accounts": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uta_market": "bc95412c27fd8e73c0d08de8722cc0759c937c3ea381d7ec9e6787e2518ebde1",
+      "uta_market_history": "78bc92059c77e03b7a9293a0889892296c883a32f3843325d1d243f54f10d515",
+      "uta_matches": "9e0c3e010852b6a12a47f08a17a08f8459b8b69e8c4a846d3f89dd29f274b97f",
+      "uta_matching_schema": "6d0d66361560bca58a52c4751ddf44e384586beb9d41b435a9a4a9d4d8b49f20",
+      "uta_orders": "cb0336d14840f08434d70063a9a21cd88b7c43cc6a007d4f523501c2ed79346a",
+      "uta_positions": "88753ba2f2df067c78d208c0ed542f1b57bc1e752005c3d566171c1347d1090d",
+      "uta_risk_decisions": "8d2b0fedffbfc60642a4fb105f77cb329d959778b32678006d47daf8ab86c034",
+      "uta_risk_policies": "6db58f337b25f58c925a9257f1f85e37cdd68d595b69bbaf9bf89fe00401fe76",
+      "uta_schema": "8e34edb9e5cfda76ef0728c606ff95c2d13915b25383fd5dddee5cf8d716b3ea"
+    },
+    "ledger_events_verified": 5,
+    "settings": {
+      "journal_mode": "wal",
+      "synchronous": 2
+    },
+    "table_rows": {
+      "ledger_assets": 1,
+      "ledger_balances": 4,
+      "ledger_events": 5,
+      "ledger_postings": 10,
+      "ledger_schema": 1,
+      "uta_accounts": 2,
+      "uta_audit_capability": 1,
+      "uta_authority": 1,
+      "uta_code_artifacts": 1,
+      "uta_config": 3,
+      "uta_deposits": 2,
+      "uta_events": 25,
+      "uta_fills": 4,
+      "uta_liabilities": 0,
+      "uta_liquidation_accounts": 0,
+      "uta_market": 1,
+      "uta_market_history": 7,
+      "uta_matches": 2,
+      "uta_matching_schema": 1,
+      "uta_orders": 3,
+      "uta_positions": 2,
+      "uta_risk_decisions": 7,
+      "uta_risk_policies": 1,
+      "uta_schema": 1
+    }
+  },
+  "full_case_tables_schema_and_private_capsule_exported": false,
+  "independent_cashflow": {
+    "accounts": 2,
+    "active_imports": 0,
+    "fills": 4,
+    "ledger_events": 5,
+    "matches": 2,
+    "matching_only": true,
+    "nonzero_liabilities": 0,
+    "orders": 3,
+    "paired_fills": 4,
+    "positions": 2,
+    "status": "passed",
+    "unpaired_fills": 0
+  },
+  "numeric_replay_proves_MM_admission_eligibility": false,
+  "original_numeric_replay": {
+    "artifact_id": "artifact:f55857bd7ae2f3758d0af1419be99bb6728b212d575f64e8eddfb5a4ebe63987",
+    "decision_id": "decision:c6ed75008c834a1d84df961ec5342f3aca4f1dca139f0e7961c41cfce1e479c3",
+    "differences": {},
+    "market_snapshot_id": "market:f3b1cb832756c1a64e62b4f31ac3ae06601b792c3ed3143e08ec36c575742d6b",
+    "matches": true,
+    "policy_id": "policy:18a27c7bb6205185da4ff885b6bd1970a82c18755dd02e95c8ef688ee03bdb48",
+    "scope": "numerical valuation; no historical re-execution or live freshness claim",
+    "values": {
+      "after": {
+        "available_margin": "0",
+        "equity": "0.1",
+        "initial_margin": "0.1",
+        "maintenance_margin": "0.05",
+        "open_order_margin": "0"
+      },
+      "before": {
+        "available_margin": "0",
+        "equity": "0.1",
+        "initial_margin": "0.04",
+        "maintenance_margin": "0.02",
+        "open_order_margin": "0.06"
+      }
+    }
+  },
+  "performance_accepted": false,
+  "production_approved": false,
+  "schema": 1,
+  "source_original_report": {
+    "bytes": 383395,
+    "name": "target/reports/USD2-cumulative-partial-fee.json",
+    "sha256": "cc689effcdbb45a48eb50caa2992af70680d43956c1be9d6a22585af7617db6a"
+  },
+  "strict_matching": {
+    "ledger_events": 5,
+    "matches": 2,
+    "paired_fills": 4,
+    "unpaired_fills": 0
+  }
+}

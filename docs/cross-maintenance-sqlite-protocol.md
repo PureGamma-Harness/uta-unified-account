@@ -1,9 +1,14 @@
 # Fresh SQLite maintenance-boundary validation protocol
 
-Status: **CODE_ONLY / NOT_RUN / zero SQL attempts**. This is a proposed single
-bounded run, requiring an independent code review and root's exact source and
-manifest authorization. Neither the manifest nor command-line parameters grant
-execution permission. The completed pure result is separately sealed at
+Current evidence: corrected source `e707fc55` completed its unique authorized
+first three-authority SQL run with a local functional PASS, pending independent
+RAW review. [The SAFE result](../evidence/reviews/cross-maintenance-boundary/first-sql-e707fc5-SAFE/README.md)
+records five actual matches/ten paired fills, native rejection/rollback outcomes
+and the real prefix exit0/reap. The frozen preparation plan is retained as
+preparation; old source `fafd5959` still has zero attempts. No case was rerun.
+Another execution requires its own exact reviewed source/manifest authorization;
+neither the manifest nor command-line parameters grant execution permission.
+The completed pure result is separately sealed at
 `ca0f37bf`; its original private files and its independent RAW closure are
 retained. This protocol does not reopen or modify that scope.
 
