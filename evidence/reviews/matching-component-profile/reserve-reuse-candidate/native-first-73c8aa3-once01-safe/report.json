@@ -1,0 +1,393 @@
+{
+  "CODE_close": "b25b8ce9e7fd501f28f6d7f30ab7d7cc41dfa5d7",
+  "ID_namespace": "per authority; paired authorities intentionally repeat IDs, never16 global unique capacity trades",
+  "PURE_independent_RAW_close": "bd6b1ef60e3bd30f3b2772f9021820fe3a79c5f8",
+  "actual_outer_elapsed_ns": 9179087059,
+  "actual_outer_monotonic_end_ns": 134130500460870,
+  "actual_outer_monotonic_start_ns": 134121321373811,
+  "actual_outer_prefix_exit": 0,
+  "actual_outer_reaped": true,
+  "actual_target_status": "RESERVE_REUSE_PAIR_DIFFERENTIAL_COMPLETE_PENDING_INDEPENDENT_REVIEW",
+  "audited_policy_difference": "only exact execution_options.reserve_cache_size0/128 and derived archived policy identity; remaining policy and native runtime artifact exact",
+  "driver_elapsed_seconds_self_reported_separate_from_actual_prefix": 8.962696628004778,
+  "each_authority_matches": 8,
+  "each_authority_paired_fills": 16,
+  "exact_argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "30s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-matching-risk-kernel-candidate/benchmarks/matching_profile_once.py",
+    "--reserve-reuse-pair",
+    "--profile-set",
+    "reserve-reuse",
+    "--book-size",
+    "32",
+    "--book-selection",
+    "scan",
+    "--run-root",
+    "/workspace/uta-reserve-reuse-73c8aa3-once01",
+    "--source-commit",
+    "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+    "--approved-manifest-sha256",
+    "e47c4aa8d98781acbee5fab649c7c9f3862c466d89dfac7ac8297c2ca3949e0d"
+  ],
+  "financial_exact_checks": [
+    {
+      "exact_equal": true,
+      "field": "economic_projection",
+      "stage": "before_reopen",
+      "typed_canonical_SHA256_both": "5e15a6f6659d93681f306cb2e5d9f64bc34e74d920f36b9e3eb036d72fbba965"
+    },
+    {
+      "exact_equal": true,
+      "field": "risk_financial",
+      "stage": "before_reopen",
+      "typed_canonical_SHA256_both": "94c5355a25bb0cd96065992c4a2d7f8e3e4d392f4180561bc6bbd2e636a8a48c"
+    },
+    {
+      "exact_equal": true,
+      "field": "market_financial",
+      "stage": "before_reopen",
+      "typed_canonical_SHA256_both": "a79119586f6218604b92f51e4619f80ee30756affd49e70cb446213d8f557bee"
+    },
+    {
+      "exact_equal": true,
+      "field": "accounts",
+      "stage": "before_reopen",
+      "typed_canonical_SHA256_both": "e3052fc2cd309c50eea3addb7dda67d76f7955c07939bb9c733e0c8ed07355e9"
+    },
+    {
+      "exact_equal": true,
+      "field": "economic_projection",
+      "stage": "after_reopen",
+      "typed_canonical_SHA256_both": "5e15a6f6659d93681f306cb2e5d9f64bc34e74d920f36b9e3eb036d72fbba965"
+    },
+    {
+      "exact_equal": true,
+      "field": "risk_financial",
+      "stage": "after_reopen",
+      "typed_canonical_SHA256_both": "94c5355a25bb0cd96065992c4a2d7f8e3e4d392f4180561bc6bbd2e636a8a48c"
+    },
+    {
+      "exact_equal": true,
+      "field": "market_financial",
+      "stage": "after_reopen",
+      "typed_canonical_SHA256_both": "a79119586f6218604b92f51e4619f80ee30756affd49e70cb446213d8f557bee"
+    },
+    {
+      "exact_equal": true,
+      "field": "accounts",
+      "stage": "after_reopen",
+      "typed_canonical_SHA256_both": "e3052fc2cd309c50eea3addb7dda67d76f7955c07939bb9c733e0c8ed07355e9"
+    }
+  ],
+  "independent_RAW_status": "PENDING",
+  "kind": "FIRST_NATIVE_RESERVE_REUSE_PAIR_LOCAL_COMPLETE_PENDING_INDEPENDENT_RAW",
+  "limitations": [
+    "one serial reference0-then-candidate128 fixed32 profiled synchronous batch per authority",
+    "cProfile plus SQL trace/localLINE observer overhead included; function timing does not prove complete callback cost",
+    "single paired values do not prove stable improvement/default regression/capacity/TPS/per-fill percentiles",
+    "no open-loop/30min/soak/liquidation/concurrency/fencing/fault-recovery/configured policy or stale-quote mutation acceptance",
+    "logical monitored directory sizes, not kernel quota; no blocked-C-I/O hard realtime proof",
+    "trusted before-after local source pins, not immutable remote attestation"
+  ],
+  "live_parent_raw_counters": {
+    "bytes_reserved_before_write": 53973,
+    "bytes_written": 53973,
+    "completed_full_writes": 330,
+    "read_calls": 332,
+    "stream_bytes": {
+      "stderr": 0,
+      "stdout": 53973
+    },
+    "write_attempts": 330
+  },
+  "native_manifest_sha256": "e47c4aa8d98781acbee5fab649c7c9f3862c466d89dfac7ac8297c2ca3949e0d",
+  "native_schema_and_funding": "synthetic two accounts per fresh authority; native defaults/market_cache0/WALFULL/audit preserved",
+  "new_attempts": 1,
+  "observer_lifecycle": {
+    "active": false,
+    "all_handles_attached": true,
+    "attachments_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "attempts_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "cleanup_error": null,
+    "closed": true,
+    "ever_owned_tool": true,
+    "first_fault": null,
+    "handles_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "local_LINE_events_by_phase": {
+      "matching-candidate128": 18,
+      "matching-reference0": 18,
+      "setup-candidate128": 1350,
+      "setup-reference0": 1350,
+      "verification-candidate128": 291,
+      "verification-reference0": 291
+    },
+    "monitor_instance_label": "uta-matching-sql-observer:1",
+    "owned_tool_released": true,
+    "pending_references": 0,
+    "tool_owned_after_close": false,
+    "unattached_at_close": 0
+  },
+  "old_full_aggregate_calls": 0,
+  "original_actual_capture_program": {
+    "bytes": 6367,
+    "sha256": "1bfd09f7235e433cf9c160bd26e939d5dfcc63f95904602d8b1d407bf4240469"
+  },
+  "original_file_count": 86,
+  "original_private_inventory": {
+    "bytes": 13811,
+    "sha256": "de65498bc88dc683fff435734450cfc2f89bef7b8df29d31351ad9dc0d0c93f7"
+  },
+  "original_receipt_sha256": {
+    "bytes": 1528,
+    "sha256": "8ea85f4d00e8ca5e22c90e7fdbc2934a64f5e1c856b7708329eae7cd82067821"
+  },
+  "original_sum_file_bytes": 3788579,
+  "outer_elapsed_semantics": "immediately before Popen through actual prefix wait/EOF and raw fsync; source pin reads outside this interval",
+  "outer_raw_accounting": {
+    "file_bytes": 181,
+    "file_stdout_duplicate_conservative_charged_bytes": 362,
+    "reserved_before_write": 181,
+    "stdout_bytes": 181,
+    "within_outer1KiB_even_counting_both": true,
+    "within_shared256KiB": true
+  },
+  "outer_stream_EOF_complete": true,
+  "plan_sha256": "20499f700f8dd3f6b2ec43c85751c65e31fd141511a6e3c8c117daf4744f878e",
+  "production_or_capacity_accepted": false,
+  "retry": 0,
+  "rows": [
+    {
+      "audit_policy_id": "policy:196e3e35368f13616cf2f1df331cffedd9587554cd54b943d9c4b752c66e1a69",
+      "audit_policy_payload": {
+        "catalog": null,
+        "execution_options": {
+          "market_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "fee_rate": "0.0004",
+        "format": 1,
+        "max_price_age_us": 5000000,
+        "order_precision": 8,
+        "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+        "risk_mode": "legacy_reference",
+        "rules": null,
+        "scales": {
+          "USD": 8
+        }
+      },
+      "cache_after_native_reopen_and_checks": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "financial_runtime_artifact_id": "artifact:d4e8cfbc665a98aeec854e798dd18c80afe59d3aeedca4dc03a5f178f471c749",
+      "independent_cashflow_status": "passed",
+      "label": "reference0",
+      "matching_cache_after": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "matching_cache_before": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "matching_cache_delta": {
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0
+      },
+      "matching_cpu_ns": 111796421,
+      "matching_sqlite_observation": {
+        "attach_after_connect_before_first_explicit_SQL": true,
+        "attach_attempts": 1,
+        "cProfile_coexistence_requires_native_phase_validation": true,
+        "connections": 1,
+        "counts_are_trace_events_including_trigger_repeats": true,
+        "events": {
+          "BEGIN": 1,
+          "COMMIT": 1,
+          "DELETE": 16,
+          "INSERT": 240,
+          "PRAGMA": 198,
+          "RELEASE": 24,
+          "SAVEPOINT": 24,
+          "SELECT": 1024,
+          "UPDATE": 64
+        },
+        "first_explicit_SQL_line_guard": 144,
+        "handles_observed": 1,
+        "local_LINE_events": 18,
+        "monitor_code_object": "uta.storage.Database._connect",
+        "monitor_instance_label": "uta-matching-sql-observer:1",
+        "monitor_tool_id": 3,
+        "pending_handles": 0,
+        "phase": "matching-reference0",
+        "uses_local_monitoring_not_legacy_settrace": true
+      },
+      "matching_wall_ns_including_commit_observer_cProfile": 114769067,
+      "one_archived_FILL_numeric_replay": true,
+      "reserve_cache_size": 0,
+      "setup_cache_stats": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "setup_cpu_ns": 2550296708,
+      "setup_wall_ns": 2683815725,
+      "strict_matching": {
+        "ledger_events": 18,
+        "matches": 8,
+        "paired_fills": 16,
+        "unpaired_fills": 0
+      },
+      "verification_cpu_ns": 589375708,
+      "verification_wall_ns": 591160651
+    },
+    {
+      "audit_policy_id": "policy:0c9a7c376ec064ecd0f9e13e033cb41303de48af5dcff444507f48c9eabd3e47",
+      "audit_policy_payload": {
+        "catalog": null,
+        "execution_options": {
+          "market_cache_size": 0,
+          "reserve_cache_size": 128
+        },
+        "fee_rate": "0.0004",
+        "format": 1,
+        "max_price_age_us": 5000000,
+        "order_precision": 8,
+        "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+        "risk_mode": "legacy_reference",
+        "rules": null,
+        "scales": {
+          "USD": 8
+        }
+      },
+      "cache_after_native_reopen_and_checks": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 28,
+        "misses": 4,
+        "size": 4
+      },
+      "financial_runtime_artifact_id": "artifact:d4e8cfbc665a98aeec854e798dd18c80afe59d3aeedca4dc03a5f178f471c749",
+      "independent_cashflow_status": "passed",
+      "label": "candidate128",
+      "matching_cache_after": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 1138,
+        "misses": 6,
+        "size": 6
+      },
+      "matching_cache_before": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 570,
+        "misses": 6,
+        "size": 6
+      },
+      "matching_cache_delta": {
+        "evictions": 0,
+        "hits": 568,
+        "misses": 0
+      },
+      "matching_cpu_ns": 83420288,
+      "matching_sqlite_observation": {
+        "attach_after_connect_before_first_explicit_SQL": true,
+        "attach_attempts": 1,
+        "cProfile_coexistence_requires_native_phase_validation": true,
+        "connections": 1,
+        "counts_are_trace_events_including_trigger_repeats": true,
+        "events": {
+          "BEGIN": 1,
+          "COMMIT": 1,
+          "DELETE": 16,
+          "INSERT": 240,
+          "PRAGMA": 198,
+          "RELEASE": 24,
+          "SAVEPOINT": 24,
+          "SELECT": 1024,
+          "UPDATE": 64
+        },
+        "first_explicit_SQL_line_guard": 144,
+        "handles_observed": 1,
+        "local_LINE_events": 18,
+        "monitor_code_object": "uta.storage.Database._connect",
+        "monitor_instance_label": "uta-matching-sql-observer:1",
+        "monitor_tool_id": 3,
+        "pending_handles": 0,
+        "phase": "matching-candidate128",
+        "uses_local_monitoring_not_legacy_settrace": true
+      },
+      "matching_wall_ns_including_commit_observer_cProfile": 85834410,
+      "one_archived_FILL_numeric_replay": true,
+      "reserve_cache_size": 128,
+      "setup_cache_stats": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 570,
+        "misses": 6,
+        "size": 6
+      },
+      "setup_cpu_ns": 2717775258,
+      "setup_wall_ns": 2884568764,
+      "strict_matching": {
+        "ledger_events": 18,
+        "matches": 8,
+        "paired_fills": 16,
+        "unpaired_fills": 0
+      },
+      "verification_cpu_ns": 514907688,
+      "verification_wall_ns": 516236352
+    }
+  ],
+  "safe_allowlist": [
+    "this derived report",
+    "opaque per-file byte/hash inventory",
+    "README; no raw reports/capsules/DB/nonces/copied private launcher source"
+  ],
+  "source_commit": "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+  "source_pins_before_after_unchanged": true,
+  "statistical_significance_claimed": false,
+  "warmup": 0
+}
