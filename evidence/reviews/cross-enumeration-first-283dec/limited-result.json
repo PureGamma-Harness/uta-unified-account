@@ -1,0 +1,89 @@
+{
+  "acceptance": {
+    "SQL_matching_or_real_funds": false,
+    "fault_tolerance": false,
+    "independent_RAW": "PENDING",
+    "joint_borrow": false,
+    "overall_pass": false,
+    "performance": false,
+    "production": false,
+    "service_activation": false
+  },
+  "actual_source_commit": "283dec8e16321697124a19847f103476136de683",
+  "clocks": {
+    "external_tool_reported_wall_seconds": 0.667241169,
+    "intervals_not_added_or_used_as_performance_claim": true,
+    "parent_target_interval_ns": 673916129,
+    "parent_target_interval_semantics": "before Popen through actual prefix wait/EOF/raw fsync, not full host lifetime",
+    "target_loading_and_tests_elapsed_ns": 370308485
+  },
+  "code_origin_commit": "3865c15bbf3d85c4bdf8d0a9ea0c6e86dd6e5daa",
+  "collection_added_target_runs": 0,
+  "original_attempts": 1,
+  "parent_plan_sha256": "add0f4a60bd214d930c8cee5a796ac0e87242832043d9a645c928e9420ba7f02",
+  "resources": {
+    "actual_capture_raw_reserved": 14343,
+    "actual_capture_raw_written": 14343,
+    "raw_stream_bytes": {
+      "stderr": 1332,
+      "stdout": 13011
+    },
+    "source_pins_unchanged_and_Git_matched": 70,
+    "whole_host_affinity": [
+      1
+    ]
+  },
+  "schema": 1,
+  "status": "FIRST_FAIL_PRESERVED",
+  "target_component": {
+    "Python_thread_count": 1,
+    "complete": true,
+    "completed_checks": 538,
+    "completed_counts": [
+      512,
+      6,
+      8,
+      8,
+      4
+    ],
+    "errors": 0,
+    "failures": 0,
+    "forbidden_listed_events": [],
+    "loaded_UTA_modules": [
+      "uta",
+      "uta.cross_decimal_kernel",
+      "uta.market",
+      "uta.models",
+      "uta.portfolio",
+      "uta.products",
+      "uta.risk",
+      "uta.scenario_margin"
+    ],
+    "passed": true,
+    "skipped": 0,
+    "success_IDs": [
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_512_seeded_values_and_exhaustively_maximal_quotes",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_collateral_tier_crossing_and_full_freeze",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_maintenance_equality_and_order_reserve_boundaries",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_hostile_decimal_context_uses_independent_exact_oracle",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_zero_and_equal_rate_strict_borrow_boundaries"
+    ],
+    "tests_run": 5,
+    "vector_file": {
+      "bytes": 866704,
+      "sha256": "724c13aa2a429fc83e751304926e34ae00c7ecc5e684353fb6a16030dee4a44e"
+    }
+  },
+  "target_origin_commit": "62ada25fbc4cb4f74f8615cabc11d7a890035ef3",
+  "target_plan_sha256": "f51c0f682c24febadfac5f8bb6338d26752e0bd90877843fee34f75a4efea255",
+  "terminal": {
+    "actual_external_host_exit": 1,
+    "actual_external_tool_chunk": "b9fe1f",
+    "actual_internal_host_exit_field": null,
+    "actual_prefix_exit": 1,
+    "actual_prefix_wait_reaped": true,
+    "both_EOF": true,
+    "external_observation_required_and_present": true,
+    "parent_internal_fault": null
+  }
+}

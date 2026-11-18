@@ -20,6 +20,48 @@ from uta.models import AssetSpec, InstrumentSpec
 from uta.writer_fence import WriterFence
 
 
+def _readiness_failure_message(report):
+    """Finite existing-result projection; identifiers and arbitrary text stay out."""
+    try:
+        if type(report) is not dict:
+            return '{"diagnostic_projection_failed":true}'
+        codes = {"not_observed", "observed", "ready", "market_stale", "market_future",
+                 "worker_unready", "local_halt", "supervisor_unavailable",
+                 "publication_incomplete", "router_halted", "diagnostic_timeout",
+                 "diagnostic_unavailable", "managed_authority_conflict",
+                 "decision_audit_capability_mismatch", "market_missing", "market_invalid",
+                 "market_barrier_mismatch", "market_fanout_incomplete", "halt_fanout_incomplete",
+                 "shard_unavailable", "lease_expired", "writer_fenced"}
+        def code(value):
+            return value if type(value) is str and value in codes else "other"
+        def flag(value):
+            return value if type(value) is bool else None
+        rows = report.get("workers")
+        rows = rows if type(rows) in (list, tuple) else ()
+        selected = [row for row in rows[:2] if type(row) is dict]
+        reasons = {}
+        for row in selected:
+            reason = code(row.get("reason"))
+            reasons[reason] = reasons.get(reason, 0) + 1
+        gates = {}
+        for key in ("alive", "lease_active", "market_ready", "owner_ready",
+                    "locally_active", "funding_registry_ready"):
+            gates[key] = dict(true=sum(row.get(key) is True for row in selected),
+                              false=sum(row.get(key) is False for row in selected),
+                              unknown=sum(type(row.get(key)) is not bool for row in selected))
+        state = report.get("state")
+        state = state if type(state) is dict else {}
+        return json.dumps(dict(reason=code(report.get("reason")),
+            flags={key: flag(report.get(key)) for key in
+                   ("ready", "financial_ready", "workers_alive", "supervisor_alive", "state_observed")},
+            control={key: flag(state.get(key)) for key in ("halted", "publishing")},
+            control_error=None if state.get("error") is None else code(state.get("error")),
+            worker_reasons=reasons, worker_gate_counts=gates,
+            worker_rows_included=len(selected), worker_rows_truncated=len(rows) > 2), sort_keys=True)
+    except BaseException:
+        return '{"diagnostic_projection_failed":true}'
+
+
 class ProcessReadinessTests(unittest.TestCase):
     def setUp(self):
         temporary = TemporaryDirectory()
@@ -193,7 +235,9 @@ class ProcessReadinessTests(unittest.TestCase):
         finally:
             fence.release(token)
         self.activate(snapshot)
-        self.assertTrue(self.router.diagnostics()["ready"])
+        final = self.router.diagnostics()
+        message = None if final["ready"] else _readiness_failure_message(final)
+        self.assertTrue(final["ready"], message)
 
     def test_gate_and_mutex_observations_have_one_bounded_timeout(self):
         self.activate()

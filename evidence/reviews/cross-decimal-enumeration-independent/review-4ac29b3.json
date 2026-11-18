@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_ENUMERATION_AND_RETAINED_ENTRY_CODE_REVIEW",
+  "CODE_result": "NOT_CLOSED_METADATA_ARCHIVE_BLOCKER",
+  "source_commit": "4ac29b30bfa69b2971a57d7ae2b70e287a607d72",
+  "source_tree": "8be158c90ddce93b33b77cbef2c15f3759a7f94b",
+  "source_parent": "7b449f30b417e043bf13a4f43540102b13c4d588",
+  "prior_independent_review": "2ce623c8e6cdbe4225daca6affd1a4e0933eee44",
+  "old_review_and_536_plan_unchanged": true,
+  "target_status": "NOT_RUN_0_NOT_RED",
+  "root_execution_GO": false,
+  "external_capture": "OPEN_NOT_IMPLEMENTED_NOT_REVIEWED",
+  "production_approved": false,
+  "findings": [
+    {
+      "id": "CROSS-ENUM-ENTRY-001",
+      "status": "BLOCKING_FINITE_CODE_ACCEPTANCE",
+      "path": "tests/test_cross_decimal_enumeration.py",
+      "archive_lines": [133, 137],
+      "comparison_lines": [148, 150],
+      "missing_compared_fields": ["rule_id", "rule_version", "catalog_version", "market_version", "market_id"],
+      "static_counterexample_not_executed": "Candidate financial fields correct but catalog_version8 instead of7, or wrong market_id: assertion fails while vector financial expected/actual remain identical. CountedResult retains incomplete active record and cannot supply missing actual metadata.",
+      "required_fix": "Archive expected_metadata before candidate and actual_metadata before first assertion for the five fixed fields, preserving native scalars. Do not expand538/financial logic/resources. Last method only asserts its quoted USD value and has no metadata claim.",
+      "root_acknowledged_finite_blocker": true,
+      "execution_attempts": 0
+    }
+  ],
+  "closed_subproperties": {
+    "new_equal_rate_handcases": "USD11/LTV1/IM=MM.1 step1 maximum9 because10 leaves equity1=MM1; USD11.01 permits10. Direct finite enumeration, not candidate division.",
+    "general_oracle_model_generator_AST_equal_to_parent": true,
+    "active_vector_stage_order": "Before model, expected financial values before candidate, actual financial values before first comparison. Partial stages accurately remain partial on earlier exceptions.",
+    "CountedResult": "Captures success groups plus ordinary/subtest failure active and completed records, delegates original unittest behavior, fixed failfast stops first failure.",
+    "fixed_selectors": 5,
+    "required_success_counts": [512, 6, 8, 8, 4],
+    "required_checks": 538,
+    "distinct_states_claimed": false,
+    "full_module_loader": "uta init plus7 whole modules with all relative dependencies already retained, empty UTA package path, exact final loaded set, fixed fixture and selectors, no discovery",
+    "listed_guard_scope": "SQLite import/process/network/signal/proc/tracing and thread-start denials, immutable trusted sources; not a general OS sandbox",
+    "input_binding": "Canonical regular source length/SHA and stat facts, final exact bytes/facts recheck; source commit remains invoker label until external Git proof",
+    "output_files": "New0700 directory, exclusive nofollow0600 JSON, flush/fsync, perfile4MiB, logical aggregate8MiB minus32KiB",
+    "raw": "Inherited parent descriptors;31744 with512 UNKNOWN reserve plus parent1024 overall32KiB. Overflow/short write fail125; future caller must cap unmanaged rawFD bytes.",
+    "END_does_not_prove_future_exit": true
+  },
+  "physical_binding": {
+    "canonical_regular_physical_Git_pins": 67,
+    "input_bytes": 1354314,
+    "all_source_lengths_SHA256_and_Git_objects_match": true,
+    "source_worktree_clean_at_check": true,
+    "unchanged_parent_UTA_files": 62,
+    "original536_CODE_plan_byte_equal": true,
+    "plan_sha256": "7d994d5af9eda705644ac0fa81ba1b4568fd917d778224a5437c60b0fb139bb3",
+    "runner_bytes": 12343,
+    "runner_sha256": "898b1e9bfde80a7c970655cf8834324df9c781fb393ba66fde3c6226dedda77a",
+    "expected_UTA_loaded_count": 8,
+    "expected_module_order": ["models", "market", "products", "risk", "scenario_margin", "portfolio", "cross_decimal_kernel"]
+  },
+  "remaining_OPEN": [
+    "Metadata archive fix with new frozen source/pins and independent delta review",
+    "External raw/control/resource/Git capture and real wait/reap/EOF protocol CODE review",
+    "Separate unique root GO",
+    "First actual five-method538 vector results and independent RAW review",
+    "All admission/joint-borrow/concurrency/product/production acceptance outside this pure specialization"
+  ],
+  "target_import_compile_test_SQL_native_proc_PID_CI_child_attempts": 0,
+  "main_worktree_or_index_operations_in_this_delta_review": 0,
+  "financial_runtime_or_default_service_changed": false,
+  "production_capacity_real_funds_insurance_ADL": "NO_GO",
+  "rollback": "Remove test/control-only additions while retaining original536/538 evidence and parent financial runtime; no data migration."
+}

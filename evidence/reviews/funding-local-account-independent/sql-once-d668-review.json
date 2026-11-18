@@ -1,0 +1,78 @@
+{
+  "CODE_result": "NOT_CLOSED_ONE_POSITION_ORACLE_KEY_BLOCKER",
+  "findings": [
+    {
+      "condition": "SELECT * FROM uta_positions is projected into a dict keyed only by account_id; expected dict has only account_id too. symbol and actual row inventory cardinality can be lost.",
+      "gate": "Do not execute d668. Preserve NOT_RUN0, not a test failure. Root confirmed no GO was issued.",
+      "id": "FUND-SQL-CODE-001",
+      "kind": "ACCEPTANCE_ORACLE_COMPLETENESS",
+      "line": 422,
+      "path": "tools/run_funding_sql_once.py",
+      "required_minimal_change": "Key actual rows by (account_id,symbol), and expected rows by (account,oracle[base][symbol]); retain every amount, original three methods, DB count, resource budget and financial module. Rebind control/plan pins and freeze a new source.",
+      "scope_calibration": "Current fixture/catalogue is single-symbol; this is an incomplete complete-position acceptance oracle, not a demonstrated runtime financial loss or supported extra-product operation.",
+      "static_counterexample": "The intended a/BTC-PERP quantity1 cost100 row plus an unexpected a/OTHER-PERP quantity1 cost100 row reduce to the same {a:[1,100]} dict as the intended inventory, independent of row order. No SQL was executed to construct this illustration.",
+      "status": "OPEN"
+    }
+  ],
+  "intermediate_message_correction": "A preliminary no-blocker/CLOSED message was explicitly withdrawn when the final full-inventory key review found FUND-SQL-CODE-001. No execution occurred or GO was granted. This immutable finding record is the final d668 assessment.",
+  "other_CODE_checks": {
+    "disk_limits": "Twenty named families times per-file4MiB is a trusted-source logical bound; empty publication temps remain zero, metadata observations are not continuous native monitoring. Not an aggregate OS quota, physical allocation limit or hostile-code sandbox.",
+    "failure_bounds": "Existing parent allFD reserve-before-write32KiB/512 trailer sticky125; new owned20s timeout and22s completion classification; actual wait/reap/EOF/BEGINEND/TAIL and caller actual future exit required. These are still proposed until root grants exact scope.",
+    "fixed_scope": "Original three SQL method bytes/selectors, failfast, five labels exact order/once; no discover; only explicitly declared distress pending RO native admission setup.",
+    "join_identity": "Original funding verifier retains its same-path service object; current _assert_joinable allows the same canonical path with an actual registered connection. Existing-only new service construction uses the exact Database read guard. No writer role is acquired.",
+    "manual_money": "Five cases customer/system balances, positions/costs, fees.46/custody-10002.04, matches6/fills12, journal6+6+5+4+11=32, periods3 and true treasury one-cent capital agree by manual arithmetic.",
+    "orphan": "Balanced reserved orphan deliberately remains; funding verifier must raise funding_reconciliation, while ledger/matching remain separately checkable. Not a second-leg/COMMIT failure experiment.",
+    "reopen": "New Database.read_transaction ro/query_only; original _source_arguments and ExchangeService existing-only constructor; Matcher initializeFalse and ledger/funding verification join guarded read snapshot. No repair/install is used in this final stage. The original period test public constructor remains declared unchanged fresh-authority behavior and is not a schema-tamper proof.",
+    "resources": "Audited exact five rw/ro DB URIs, native connect/handle event strong references, before-reopen closed check and post-reopen check. Leaks stay failed even after only owned handle cleanup. Only closed DB resources are hashed.",
+    "risk": "Extra -.1@100 RO has manual projected MM surplus.54 versus current.5; after mandatory debit the source supervisor should cancel it and persist cycle1/revision1 LIQUIDATING with a fresh unfilled -1@100 RO plan. Actual plan/state checks exist; no generated liquidation fill is counted.",
+    "source_closure": "All UTA loads use retained FrozenUTA/FrozenLoader; module filename/package globals and own __future__ declarations are preserved. Financial source walks read immutable physical UTA source, with pre/post checks. No sqlite3.connect assignment or financial function patch."
+  },
+  "parent_source": "745dec6f348c0fad425ac421a3fd692adde6dfd4",
+  "physical_binding": {
+    "all_canonical_regular_length_SHA_Git_equal": true,
+    "bytes": 1412844,
+    "control_sha256": "288bc98a40376f119788a56c0f1661b749514e6915c5d421eda0d0deeb1ce366",
+    "files": 67,
+    "financial_f341_seven_files_unchanged": true,
+    "oracle_sha256": "228fd0a1405a7373ed0a75a4de97ceb8446d0f853f38c4b56ea46cadf7a2d6f2",
+    "plan_sha256": "e5f5c6cda608ff49b5541653f69917933be53ac731a4e64546db85cc05c332d5",
+    "previous65pins_unchanged": true,
+    "prior_pure_SAFE12_files_unchanged": true
+  },
+  "prior_pure_RAW_review": "b9aabc0701e8e2af8b84f37cd7afe520b8ff75fe",
+  "production_approved": false,
+  "review_actions": [
+    "Git/text/JSON reads",
+    "physical canonical regular SHA/Git checks",
+    "standard-library AST parsing of runner/bootstrap/original selector declarations"
+  ],
+  "review_kind": "FUNDING_SQL_ONCE_CODE_ONLY_INDEPENDENT_REVIEW",
+  "root_execution_GO_given": false,
+  "schema": 1,
+  "scope": {
+    "DB_source_bound_logical_bytes": 83886080,
+    "committed_periods": 3,
+    "control_logical_bytes": 8388608,
+    "fixed_SQL_methods": 3,
+    "fresh_authorities": 5,
+    "ledger_events": 32,
+    "paired_fills": 12,
+    "per_file_RLIMIT_FSIZE_bytes": 4194304,
+    "proposed_parent_classification_seconds": 22,
+    "proposed_target_timeout_seconds": 20,
+    "raw_parent_shared_bytes": 32768,
+    "unique_local_matches": 6
+  },
+  "source_commit": "d6687e877faf04f90686ea257351d90745d92642",
+  "source_tree": "0b9fd9e995f2b7d173a6240654084736821f2b6c",
+  "still_OPEN": [
+    "Actual SQL first run and independent RAW",
+    "Durable funding scheduler and DUE/unsettled obligations",
+    "Operations authentication/approval and custody",
+    "Managed authority/code-bound migration/HA",
+    "Crash/COMMIT/concurrency failures and long-duration capacity",
+    "Human financial rule signature and real funds approval"
+  ],
+  "target_compile_import_SQL_tests_probes": 0,
+  "target_status": "NOT_RUN_0_NOT_RED"
+}

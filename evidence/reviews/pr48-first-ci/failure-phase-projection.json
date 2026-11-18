@@ -1,0 +1,120 @@
+{
+  "failure_count": 4,
+  "failures": [
+    {
+      "artifact_id": 14418437395,
+      "expected_call_count": 1,
+      "failure_source_line": 253,
+      "failure_source_path": "tests/test_readiness_sampling.py",
+      "footer_kind": "FAIL",
+      "frames": [
+        {
+          "function": "test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+          "line": 253,
+          "path": "tests/test_readiness_sampling.py"
+        }
+      ],
+      "full_profile_exported": false,
+      "observed_call_count": 4,
+      "phase": "after_expected_inactive_lease_assertion_was_caught_then_single_diagnostic_call_count_check",
+      "raw_failure_header_line": 2227,
+      "raw_failure_header_sha256": "8f9e4214bb709d7b0db12c9189bec20b029bc114b351505bd8e461c7ef86afd7",
+      "root_cause": "UNDETERMINED",
+      "run_id": 44283600389,
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+      "what_is_unproven": "The raw failure does not retain all four diagnostics observations or establish why more than one call occurred."
+    },
+    {
+      "artifact_id": 14418841221,
+      "clock_rollback_body_reached": false,
+      "expected_halted": false,
+      "failure_source_line": 75,
+      "failure_source_path": "tests/test_process_readiness.py",
+      "footer_kind": "FAIL",
+      "frames": [
+        {
+          "function": "test_clock_rollback_detects_future_without_relabeling_prices",
+          "line": 130,
+          "path": "tests/test_process_readiness.py"
+        },
+        {
+          "function": "activate",
+          "line": 75,
+          "path": "tests/test_process_readiness.py"
+        }
+      ],
+      "full_profile_exported": false,
+      "observed_halted": true,
+      "phase": "activate_initial_halt_clear_before_clock_rollback_scenario",
+      "raw_failure_header_line": 2287,
+      "raw_failure_header_sha256": "f69b0488dbafca4e67f86b4a4d3c1859cc475a5e7d7cd52574d1ff5adb137930",
+      "root_cause": "UNDETERMINED",
+      "run_id": 44283882268,
+      "test_id": "test_process_readiness.ProcessReadinessTests.test_clock_rollback_detects_future_without_relabeling_prices"
+    },
+    {
+      "artifact_id": 14418841221,
+      "expected_publishing": false,
+      "failure_source_line": 358,
+      "failure_source_path": "tests/test_readiness_sampling.py",
+      "footer_kind": "FAIL",
+      "frames": [
+        {
+          "function": "test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes",
+          "line": 358,
+          "path": "tests/test_readiness_sampling.py"
+        }
+      ],
+      "full_profile_exported": false,
+      "observed_error": "market_fanout_incomplete",
+      "observed_publishing": true,
+      "phase": "same_SID1_republication_after_deliberate_fence_contention_release_before_later_SID2_or_bad_quote_scenarios",
+      "raw_assertion_line_sha256": "4d93cf3f345ff20e40951f2566f6dc25e70c1912b23cea1740fc9bb01d4ae12c",
+      "raw_failure_header_line": 2298,
+      "raw_failure_header_sha256": "7551edf142fc163b08bb0075f5b33b426e17e2d75ac40749d6aadc27b543cd51",
+      "root_cause": "UNDETERMINED",
+      "run_id": 44283882268,
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes"
+    },
+    {
+      "actual_PID_values_exported": false,
+      "artifact_id": 14418841221,
+      "expected_exception_fragment": "observed inactive native lease",
+      "failure_source_line": 251,
+      "failure_source_path": "tests/test_readiness_sampling.py",
+      "footer_kind": "FAIL",
+      "frames": [
+        {
+          "function": "test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+          "line": 251,
+          "path": "tests/test_readiness_sampling.py"
+        }
+      ],
+      "full_profile_exported": false,
+      "inner_predicate": "delivered READY report pid does not match current native owner pid",
+      "observed_financial_ready": false,
+      "observed_ready": false,
+      "phase": "market_rejection_owner_identity_precondition_then_expected_exception_regex_mismatch_before_single_call_count_check",
+      "raw_failure_header_line": 2306,
+      "raw_failure_header_sha256": "8f9e4214bb709d7b0db12c9189bec20b029bc114b351505bd8e461c7ef86afd7",
+      "raw_inner_assertion_line_sha256": "a9ab47889c230607e8f4342e70a0a1f05034dc42adb85f0337bc6fcad62c0af7",
+      "root_cause": "UNDETERMINED",
+      "run_id": 44283882268,
+      "source_consistent_inner_predicate_line": 79,
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+      "worker_generation_relationships": [
+        {
+          "READY_report_generation_mismatches_owner_generation": true,
+          "READY_report_generation_precedes_owner": true,
+          "lease_active": true,
+          "owner_ready": false,
+          "report_PID_matches_owner_PID": false
+        }
+      ]
+    }
+  ],
+  "profiles_or_actual_PIDs_exported": false,
+  "schema": 1,
+  "source_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "source_of_underlying_runtime_cause": "UNDETERMINED"
+}

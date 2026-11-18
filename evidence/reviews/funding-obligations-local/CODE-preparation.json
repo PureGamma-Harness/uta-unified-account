@@ -1,0 +1,56 @@
+{
+  "CODE_delta_parent": "901700637b3bb329cbb5729227e5b654dd8a00b6",
+  "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "durable_partial_store_recovery_integration": "OPEN_NO_GUARD_OR_HISTORY_INJECTION",
+  "historical_901_copies": {
+    "CODE-preparation-901-NOT_RUN.json": {
+      "bytes": 1690,
+      "sha256": "7e70edc2c19715ad3c8b0cf9618b42a913ee8997d93a34b1becb924e005d28ed"
+    },
+    "manual-oracles-and-test-plan-901-NOT_RUN.json": {
+      "bytes": 6255,
+      "sha256": "375cb98c1290e14ab9a294938bb4edcb2a4399af360bba2398ca853e26fd79a3"
+    },
+    "runtime-inputs-901-NOT_RUN.json": {
+      "bytes": 10328,
+      "sha256": "fd71cf23615f115430737242bdbc5a36ae377be47f309ff6bd6a6427ede6f9cb"
+    }
+  },
+  "independent_account_and_risk_review": "PENDING",
+  "independent_account_review": "ed1724a43b667d039d36d87483589bfc4b0fd162",
+  "kind": "DURABLE_FUNDING_OBLIGATIONS_CODE_PREPARATION",
+  "manual_oracles_plan_sha256": "4c5b959b12437f53b38474cdd112eabb5529151c93a937f17d951e2fd667e36f",
+  "original_owner_seal32_firstCI_modified": false,
+  "production_approved": false,
+  "quote_findings_status": "PROPOSED_CODE_ONLY_PENDING_ACCOUNT_DELTA_AND_RISK_CROSS",
+  "root_execution_GO": false,
+  "runtime_manifest_sha256": "8653d8976cc7b3191fe14600a21579aac2de8cea107ce1b40d9b42228fecde98",
+  "schema": 1,
+  "source_file_sha256": {
+    "tests/test_funding_obligations_local.py": "1792c4789c06c2cc982538c49c3a9cf46fe00bc898a1897b80a40dbfd1e74f5d",
+    "uta/funding_local.py": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd",
+    "uta/funding_obligations.py": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97"
+  },
+  "spec_commit": "69f6c16bd612d775b8e1ce77ca6fd7bfdcc5649f",
+  "static_checks": {
+    "AST_only_files": [
+      "uta/funding_obligations.py",
+      "uta/funding_local.py",
+      "tests/test_funding_obligations_local.py"
+    ],
+    "deferred_initial_book_count": 1,
+    "extra_method_match_once_count": 3,
+    "first_editor_apply_patch_context_mismatch": "one rejected patch; no target operation occurred; corrected source context only",
+    "fixed_methods": 6,
+    "future_match_count_from_fixture_calls_and_extra_commands": 9,
+    "future_scenario_DB_calls": 9,
+    "immutable_tables_have_replace_guards": true,
+    "original_901_UTA_files_byte_unchanged": 63,
+    "original_UTA_files_byte_unchanged": 62,
+    "original_modified_UTA_file": "funding_local.py only adds mutual-capability rejection",
+    "source_bytes": 1414749,
+    "source_pins": 66,
+    "static_DDL_inventory_only_not_SQL_validation": 29
+  },
+  "target_compile_import_SQL_test_worker_bench_CI_attempts": 0
+}

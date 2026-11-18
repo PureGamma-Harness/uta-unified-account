@@ -1,0 +1,135 @@
+{
+  "SQL_test_methods_selected": false,
+  "caller_checks": {
+    "BEGIN": true,
+    "caller_completion_window": true,
+    "capsule": true,
+    "combined_logical_disk": true,
+    "inner_END": true,
+    "inner_binding": true,
+    "inner_intent": true,
+    "outer_END_TAIL": true,
+    "outer_intent": true,
+    "seven_tests": true,
+    "source_after": true,
+    "target_raw": true,
+    "timely_normal_capture_and_wait": true
+  },
+  "caller_delta_CODE_review": "b66560c6c2dca7681e24f75c772a29aea5f53860",
+  "caller_launcher_pipes_EOF": true,
+  "caller_observed_outer_exit": 0,
+  "caller_observed_outer_reaped": true,
+  "caller_plan_sha256": "abf192409daeb4c0a9f155eb657fb58cc67b502d880b7165c1c148c76a75dc94",
+  "cleanup_signal_attempts": 0,
+  "cleanup_signals": 0,
+  "deadline_expired": false,
+  "entry_CODE_review": "f4af44caa3a85c039a12ac12bd659bda274d202d",
+  "errors": 0,
+  "expected_failures": 0,
+  "failures": 0,
+  "forbidden_attempts": [],
+  "loaded_UTA_modules": [
+    "uta",
+    "uta.decision_audit",
+    "uta.ledger",
+    "uta.market",
+    "uta.models",
+    "uta.portfolio",
+    "uta.products",
+    "uta.reserve_kernel",
+    "uta.risk",
+    "uta.scenario_margin",
+    "uta.storage"
+  ],
+  "native_financial_case_attempts": 0,
+  "normal_capture_EOF": true,
+  "not_accepted": [
+    "actual ExchangeService admission/capture",
+    "SQL4",
+    "native workers or matching",
+    "configured Cross independent valuation",
+    "concurrent fills or recovery",
+    "performance/HA/production/real funds"
+  ],
+  "outer_target_actual_exit": 0,
+  "outer_target_actual_reaped": true,
+  "outer_target_raw_pipes_EOF": true,
+  "owned_caller_pidfd_lifecycle_executed": true,
+  "private_originals": {
+    "CRC_checked_members": 17,
+    "archive_bytes": 526926,
+    "archive_sha256": "e03ceb292f7d0f23fb60cea9c04936699c72c795cab6d0b2c215a005a48e7b48",
+    "bytes": 1860458,
+    "count": 17
+  },
+  "pure_plan_sha256": "c7c1e913d1c686202ec549b3be5e14b29451319482d9519f671174c6ecbeabb2",
+  "raw_files": {
+    "caller": {
+      "launcher.stderr.txt": {
+        "bytes": 171,
+        "sha256": "32d2e0e198f401277db69d957aee310bf5be8fe87437d3f6bc3dfe76282dce5f"
+      },
+      "launcher.stdout.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "target": {
+      "first.stderr.txt": {
+        "bytes": 1403,
+        "sha256": "303c9a13b11ec17afcdab6ad12fddeac7178f3d5323cf6bd4b14a8b8eb0702f3"
+      },
+      "first.stdout.txt": {
+        "bytes": 10181,
+        "sha256": "0b71d524b499ae76d77196472f98160ccf4ac3d4b21b176ffb2ca11f2253f3ac"
+      }
+    }
+  },
+  "resource_intervals_ns": {
+    "caller_main_start_through_validation": 840830103,
+    "caller_observed_outer_Popen_to_wait": 539654995,
+    "inner_retained_import_plus_seven_tests": 53625182,
+    "outer_target_Popen_to_wait": 281463634
+  },
+  "retries": 0,
+  "root_exec_observed_caller_exit": 0,
+  "root_exec_output_bytes": 0,
+  "root_tool_reported_wall_seconds": 0.723264705,
+  "runtime": {
+    "affinity": [
+      1
+    ],
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "schema": 1,
+  "selected_methods": [
+    "test_manual_strict_mm_and_legal_im_equality",
+    "test_full_fee_and_existing_live_order_reserves",
+    "test_reduce_only_allocation_and_surplus_are_separate",
+    "test_settlement_dust_flip_and_short_close_manual_values",
+    "test_reduce_only_requires_native_boolean_halt_state",
+    "test_missing_legacy_and_unknown_contract_never_verify",
+    "test_projection_fee_versions_and_control_tampering_fail"
+  ],
+  "skips": 0,
+  "source_before_after_equal": true,
+  "source_commit": "2bcd77270234cd91a5dd890ce3ca1171c22ad4a4",
+  "source_input_bytes": 1337823,
+  "source_inputs": 64,
+  "status": "PRODUCER_LIMITED_PURE_PASS_PENDING_INDEPENDENT_RAW",
+  "target_attempts": 1,
+  "tests_run": 7,
+  "timely_completion": true,
+  "timing_note": "Provider tool wall_time_seconds and caller process monotonic intervals are separate reported observations;0.723264705 is not substituted for0.840830103. These figures are resource evidence, not a capacity or end-to-end latency acceptance. Inner interval includes retained import before tests; unittest footer separately reports0.008s.",
+  "unexpected_successes": 0,
+  "unittest_footer_seconds_literal": "0.008"
+}

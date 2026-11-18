@@ -1,0 +1,98 @@
+{
+  "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "clock_basis": "EXPLICIT_SYNTHETIC_REFERENCE_CLOCK_NOT_NATIVE_WALLCLOCK_ACCEPTANCE",
+  "counts_are_across_independent_namespaces_not_global_business_IDs": true,
+  "data": "AUTHORIZED_SYNTHETIC_ONLY",
+  "examples": [
+    {
+      "case": "scheduled apply",
+      "cut": "period END, mark100, rate .0001, logical sequence/account versions in one writer transaction",
+      "expected": "SCHEDULED->DUE->APPLIED; a999.95/b999.97, fees.08, clearing/reserve0, one immutable product-period receipt",
+      "id": "FUND-DUE-001",
+      "initial": "a/b deposit1000, q+1/-1 after1@100 paired match, fee .04 each"
+    },
+    {
+      "case": "data missing and no fabricated late cut",
+      "cut": "attempt END with approved resolved rate but stale market -> WAITING_DATA; another attempt with missing resolved rate -> WAITING_DATA; no cut; after END+2.001s -> REVIEW_REQUIRED",
+      "expected": "obligation remains outstanding/queryable; no funding receipt/postings; a/b999.96, fees.08; current positions never claimed as historical",
+      "id": "FUND-DUE-002",
+      "initial": "positions opened at END-10s under then-fresh mark100; schedule rate unknown/NULL, not zero"
+    },
+    {
+      "case": "valid cut but current risk data missing",
+      "expected": "apply WAITING_DATA commits no cash; immutable cut survives reopen; fresh current mark101 permits a-.01/b+.01 using cut100, current risk on101",
+      "id": "FUND-DUE-003",
+      "initial": "cut END mark100/rate .0001 valid; later current quote stale"
+    },
+    {
+      "case": "actual capital arrives after cut",
+      "expected": "WAITING_CAPITAL retains cut and due liability; later treasury deposit1, new attempt transfers .01, treasury.99, a999.93/b999.97/c999.97; reserve/clearing0, proof unique and actual deposit journal verified",
+      "id": "FUND-DUE-004",
+      "initial": "q a.4/b-1/c.6, mark1, rate.015; fees a.07/b.04/c.03; treasury0/reserve0"
+    },
+    {
+      "case": "two executors and expired owner",
+      "expected": "after lease expiration B claims generation2; old owner apply FENCED/no cash; new owner applies once; old command query returns original result without extending lease; observed clock rollback rejects rather than resurrects token",
+      "id": "FUND-DUE-005",
+      "initial": "A/B contend one BEGIN IMMEDIATE authority, one valid generation1 token; other BUSY has no financial effect"
+    },
+    {
+      "case": "positions trade after boundary and unknown response",
+      "expected": "before funding a1000.91/b998.91, positions empty; apply frozen debt gives both999.91, fees.18; current fresh101 risk/positions used, no artificial position; reopen/query same committed apply ID returns identical receipt/no duplicate. Missing result is not proof of safe new-ID retry",
+      "id": "FUND-DUE-006",
+      "initial": "cut q+1/-1 mark100/rate.01 => obligation a-1/b+1; afterward real close1@101, fee .05 each and PnL a+1/b-1"
+    },
+    {
+      "case": "expected financial rejection durable review",
+      "expected": "SAVEPOINT financial rollback; REVIEW_REQUIRED command result and outstanding obligation persist; original journal/accounts/positions unchanged, no applied receipt. Not a second-leg/COMMIT fault claim",
+      "id": "FUND-DUE-007",
+      "initial": "balanced orphan reserved funding leg ID injected after trusted cut"
+    },
+    {
+      "case": "mutually exclusive capabilities and code binding",
+      "expected": "new capability rejects any old funding_local marker/used or managed authority; old prototype rejects new funding_obligations marker; loaded unknown uppercase object constant rejects; no existing source/policy/receipt is migrated, deleted or patched",
+      "id": "FUND-DUE-008"
+    }
+  ],
+  "fixed_future_tests": [
+    "test_schedule_apply_command_queries_and_reopen",
+    "test_missing_data_and_no_backdated_cut",
+    "test_real_capital_wait_and_unique_proof",
+    "test_competing_executors_expiry_and_clock_regression",
+    "test_trades_after_cut_and_unknown_response_query",
+    "test_review_rollback_code_binding_and_old_capability_rejection"
+  ],
+  "future_exact_once_runner_and_resource_scope": "OPEN; this CODE does not authorize even a target import. Exact selectors/argv/source/runtime/capture/disk/threads/timeout must be independently reviewed and separately granted.",
+  "future_test_thread_scope": "Only competitor test may use exactly2 bounded test threads; no background service/worker. Must be separately authorized in exact future GO. No thread runs in CODE stage.",
+  "kind": "DURABLE_FUNDING_OBLIGATION_CODE_ONLY_HAND_ORACLES",
+  "loaded_artifact_scope": "Existing fixed credit_artifact._MODULES plus perpetual_funding/funding_local/funding_obligations via unchanged strict _loaded_modules; no new runtime exclusions. Source pins alone do not assert loaded identity.",
+  "mode": "LOCAL_SINGLE_AUTHORITY_USD_CROSS_LINEAR_MULTIPLIER1",
+  "not_claimed": [
+    "production scheduler",
+    "cross-host clock or HA consensus",
+    "real custody/ops approval",
+    "commit/crash recovery fault proof",
+    "capacity or financial release approval",
+    "pending funding inclusion in order/admission/withdrawal reservations",
+    "exclusion of arbitrary old binaries or raw SQLite writers"
+  ],
+  "planned_fresh_scenario_DBs": 9,
+  "planned_manual_aggregate": {
+    "APPLIED": 5,
+    "custody_USD": "-15001",
+    "fees_USD": ".72",
+    "ledger_events_including_one_injected_orphan": 46,
+    "obligations": 8,
+    "outstanding": 3,
+    "scenario_DBs": 9,
+    "scenario_matches": 9,
+    "scenario_paired_fills": 18,
+    "scope": "independent synthetic namespaces; repeated business IDs allowed between scenarios; no aggregate healthy-funding-verifier claim for deliberate orphan REVIEW namespace"
+  },
+  "planned_scenario_matches": 9,
+  "planned_scenario_paired_fills": 18,
+  "production_approved": false,
+  "schema": 1,
+  "status_reopen_policy": "Constructor validates capability/schema/current code, not complete financial health; pending/query remain available for durable REVIEW. apply verifies the complete existing ledger/obligations inside its writer SAVEPOINT before financial effects.",
+  "target_compile_import_SQL_test_worker_bench_CI_attempts": 0
+}

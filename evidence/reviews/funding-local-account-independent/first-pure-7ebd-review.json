@@ -1,0 +1,168 @@
+{
+  "SAFE_commit": "745dec6f348c0fad425ac421a3fd692adde6dfd4",
+  "checks": {
+    "BEGIN_END_exact_inner_and_fixed_method_runtime_binding": true,
+    "all12_SAFE_files_match_Git": true,
+    "all_private_length_SHA_and_stable_NOFOLLOW_NOATIME_reads": true,
+    "capsule_base64_plan_and_65_Git_source_buffers_match": true,
+    "complete_host_wait_reap_EOF_END_TAIL_and_caller_exit": true,
+    "current_source_buffers_unchanged": true,
+    "limited_public_projection_matches_originals": true,
+    "normal_path_no_failure_injection": true,
+    "private_capsule_exported_by_reviewer": false,
+    "public_exported_bytes_equal_originals": true,
+    "shared32K_reserved512_trailer_counts_consistent": true,
+    "source_before_after_true_and_historical_raw_unchanged": true,
+    "three_actual_method_ok_lines_exact_once": true
+  },
+  "limitations": [
+    "Historical actual-exit/reap are checked from original trusted caller/host records; no current process probing or OS attestation.",
+    "No overflow/timeout/short-write/crash case was run; enforcement remains CODE review and this normal successful path.",
+    "No SQL, transaction settlement, account funding ledger, durable schedule, unfinished obligation registry, opsAuth, managed/HA or production acceptance.",
+    "Human financial approval and real funds remain OPEN.",
+    "SQL0 here is the fixed-source/guard and unselected-SQL-method evidence; it does not measure any funding settlement or database path."
+  ],
+  "original_digest_inventory": [
+    {
+      "bytes": 195,
+      "exported_raw_name": "outer-END.json",
+      "namespace": "outer",
+      "path": "END.json",
+      "sha256": "dc8474be1763345663ff776eca5f38b9f7b608831844e7544105c6f135daa264"
+    },
+    {
+      "bytes": 169,
+      "exported_raw_name": "outer-TAIL.json",
+      "namespace": "outer",
+      "path": "TAIL.json",
+      "sha256": "016930873a23f15d31718871ea11dc833c6f5725e768658505a66080bd5f788d"
+    },
+    {
+      "bytes": 2,
+      "exported_raw_name": "actual-host-exit.txt",
+      "namespace": "outer",
+      "path": "actual-host-exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 9221,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "execution.json",
+      "sha256": "ce345791bb6c671f63119be0f6e2ca348f5ce9fea6d1e80e584edf7a082e1c54"
+    },
+    {
+      "bytes": 756,
+      "exported_raw_name": "first.stderr.txt",
+      "namespace": "outer",
+      "path": "first.stderr.txt",
+      "sha256": "75bce23113ccfceaaf6414542c49ad483fd7b5d9fc0bd9378c38171d9a6f9105"
+    },
+    {
+      "bytes": 9745,
+      "exported_raw_name": "first.stdout.txt",
+      "namespace": "outer",
+      "path": "first.stdout.txt",
+      "sha256": "eca4b77e891e5b4d631991014e4631890628d0c445e57752856aacc147bc9f42"
+    },
+    {
+      "bytes": 1835219,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "immutable-inputs.json",
+      "sha256": "5e031c0865453a61e6b35fbd94fa850bdcf21961d0350b763994f34f03d2c876"
+    },
+    {
+      "bytes": 8526,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/execution.json",
+      "sha256": "db92c83fbcce9794e4c9501acddff6a290bc205933980da27b3dad20d4b3f9bf"
+    },
+    {
+      "bytes": 8231,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/intent.json",
+      "sha256": "818bced93aa834628bd93b01b415381ef924c2a3ed3ba8a10fd9b4b8aa84c86d"
+    },
+    {
+      "bytes": 2783,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "intent.json",
+      "sha256": "5cab4db8e73e134f591f3e26beaac8d4eccb499ef4c2a5282f1e120726b95161"
+    },
+    {
+      "bytes": 202,
+      "exported_raw_name": null,
+      "namespace": "caller",
+      "path": "CALLER_END.json",
+      "sha256": "67206c57008181e482ba339fbc5ebde8c1cf41460be857241b523ca05cd17003"
+    },
+    {
+      "bytes": 1449,
+      "exported_raw_name": "caller-actual-exit.json",
+      "namespace": "caller",
+      "path": "actual-exit.json",
+      "sha256": "952e8e8d08a8d951b0d393d52f723b5cd6bf827ecb5006f01f2520eb8f045bd4"
+    },
+    {
+      "bytes": 580,
+      "exported_raw_name": null,
+      "namespace": "caller",
+      "path": "intent.json",
+      "sha256": "2e7b57792fa8a3580fbd069a1076719ca723169e214a879580c85dd032bd0a85"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": "launcher.stderr.txt",
+      "namespace": "caller",
+      "path": "launcher.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": "launcher.stdout.txt",
+      "namespace": "caller",
+      "path": "launcher.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 417,
+      "exported_raw_name": "literal-argv.json",
+      "namespace": "caller",
+      "path": "literal-argv.json",
+      "sha256": "a5ee904fb23b9df98d0ad9ac72e8bfd8c058b8aa2369462f1ea5c9481cd2ef4d"
+    }
+  ],
+  "prior_CODE_review": "afc39acc9fefe32d79ff111ae805c6cf70a46a0b",
+  "production_approved": false,
+  "schema": 1,
+  "source_commit": "7ebd8f5fa17d4c339956bbe4e5f04a529d83a8a4",
+  "summary": {
+    "SQL_executed_by_reviewer": 0,
+    "all_failure_counts_zero": true,
+    "caller_exit": 0,
+    "capsule_input_bytes": 1361582,
+    "capsule_inputs": 65,
+    "capsule_private_bytes": 1835219,
+    "durations_ns": {
+      "caller_outer_lifetime": 552651830,
+      "inner": 10205818,
+      "owned_target_drain": 276367950
+    },
+    "exported_originals": 9,
+    "host_exit": 0,
+    "original_f341_status": "NOT_RUN0_UNCHANGED",
+    "private_original_bytes": 1877495,
+    "private_originals": 16,
+    "raw_before_trailer_bytes": 10356,
+    "raw_capture_sticky": false,
+    "raw_total_bytes": 10501,
+    "raw_trailer_bytes": 145,
+    "status": "INDEPENDENT_RAW_CLOSED_LIMITED_THREE_PURE_ONLY",
+    "target_execution_by_reviewer": 0,
+    "tests_run": 3
+  }
+}

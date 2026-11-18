@@ -1,0 +1,161 @@
+{
+  "CI": {
+    "CI_538_callback_counter_captured": false,
+    "failure": 1,
+    "fixed_unit_samples": [
+      {
+        "errors": 0,
+        "failures": 1,
+        "selection": "push313-unit",
+        "skipped": 0,
+        "tests": 2140,
+        "worker_exit": 1
+      },
+      {
+        "errors": 0,
+        "failures": 0,
+        "selection": "pr313-unit",
+        "skipped": 0,
+        "tests": 2140,
+        "worker_exit": 0
+      }
+    ],
+    "jobs": 8,
+    "lease_observations_each": [],
+    "lease_observations_truncated_each": false,
+    "new_CI_full_vector_archive": false,
+    "other_six_unit_test_counts_not_independently_collected": true,
+    "pull_request": {
+      "attempt": 1,
+      "conclusion": "success",
+      "run_id": 44313787694
+    },
+    "push": {
+      "attempt": 1,
+      "conclusion": "failure",
+      "run_id": 44313484420
+    },
+    "selected_methods_each": 20,
+    "steps": {
+      "failure": 1,
+      "skipped": 16,
+      "success": 183
+    },
+    "strict_native_worker_fields": 9,
+    "success": 7,
+    "total_plain_ok_observations": 40
+  },
+  "administrative_limits": {
+    "collector_first_derivation_key_assumption_error_and_v2_correction": "collector-recorded chronology, not target or CI retry",
+    "independent_formal_reader_first_exit": 0,
+    "originals_unchanged": true
+  },
+  "archives": {
+    "CRC_and_exact_member_bytes_verified": true,
+    "ZIPs": 2,
+    "alternate_green_or_package_substitution": false,
+    "bytes": 207904,
+    "fixed_selections": [
+      "push313-unit",
+      "pr313-unit"
+    ],
+    "members": 6
+  },
+  "base": "8262bb7226d0b110d2c89bb1c58293e7908fa420",
+  "collector": "2bbef7372fbb056cef4156129e129029d0ae7309",
+  "failure": {
+    "assertion": "AssertionError: True is not false",
+    "financial_or_failure_cause": "UNDETERMINED",
+    "first_failure_not_retried_or_replaced": true,
+    "line": 369,
+    "path": "tests/test_readiness_sampling.py",
+    "phase": "after SID2 publication reported publishing=False, halted activation assertion, before subsequent actual-stale check",
+    "selection": "push313-unit",
+    "source_SHA256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+    "storage_contents_independently_captured": false,
+    "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes"
+  },
+  "golden": {
+    "CI_reexecution_or_new_callback_instrumentation_claimed": false,
+    "SHA256": "17364d12847d5f118cc62f0e301a45180e8ccd353a38010e3cf3582a917afd97",
+    "bytes": 866704,
+    "check_counts": [
+      512,
+      6,
+      8,
+      8,
+      4
+    ],
+    "exact_Git_blob_verified": true,
+    "historical_check_records": 538,
+    "historical_source": "bb2a2cf13a7337d4b6ef9f35ce2335c5732ad85c",
+    "new_financial_oracle_recalculation_by_this_review": false,
+    "package_required_binary_or_installed_coverage": "NOT_VERIFIED",
+    "path": "evidence/golden/cross-decimal-pipe-v2/vectors.json"
+  },
+  "limits": [
+    "The successful PR run does not replace the first push failure or exclude indirect effects.",
+    "The exact golden Git blob is historical pure-run evidence, not a CI-generated vector archive.",
+    "No fixed package report, independent binary/container inspection or installed oracle execution was supplied.",
+    "No performance, native fault recovery, HA, production, capacity or real-funds approval."
+  ],
+  "originals": {
+    "before_after_original_bytes_equal": true,
+    "bytes": 1392824,
+    "files": 26,
+    "mode": "0600, directory0700",
+    "seal_SHA256": "51222c1855409c28f459d0e63ac1e66572d94d8cae25805e755546fb7df3a338",
+    "seal_bytes": 4787
+  },
+  "package": {
+    "alternate_green_package_selected": false,
+    "decimal_candidate_and_oracle_installed_execution": "NOT_VERIFIED",
+    "fixed_push313_report": "NOT_PRESENT",
+    "other_matrix_packages": "METADATA_ONLY_NOT_DOWNLOADED",
+    "qualification_result": null,
+    "reason": "failed unit skips later build/install validation"
+  },
+  "private_reader": {
+    "bytes_excluding_seal": 16911,
+    "files_excluding_seal": 3,
+    "seal_SHA256": "2c6b0a8626f28034d168e40932831dbbcb6274401bce7db847c3c21291b5e470",
+    "seal_bytes": 572,
+    "source_SHA256": "6aef9da5fd7c78f18641753842e7cd1d5de82c09959e4fab216d9de63f22ec6a",
+    "source_bytes": 14243,
+    "summary_SHA256": "1ddbfe0e08411dd7ab0cb3767cf97f91039817629ee643d73986281e5642804e",
+    "summary_bytes": 1211
+  },
+  "production_approved": false,
+  "public_export": {
+    "all_14_export_inventory_pins_verified": true,
+    "all_match_collector_Git": true,
+    "bytes": 80354,
+    "files": 15,
+    "no_raw_logs_DBs_archives_private_paths_or_signed_download_references_exported": true,
+    "only_docs_evidence_changes": true,
+    "opaque_inventory_matches_all_26_originals": true
+  },
+  "reviewer_target_import_SQL_PID_proc_download_or_CI_rerun_operations": 0,
+  "schema": 1,
+  "scope": "Independent PR55 first CI RAW review",
+  "source": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+  "source_binding": {
+    "Git_paths": 7457,
+    "all_before_after_pairs_equal": true,
+    "all_map_pins_independently_match_Git": true,
+    "forbidden_private_ancestors_absent": true,
+    "head_tree": "9d36e1fba09b4ba5a7433b5ab30074a14686caf7",
+    "local_merge_object_present": false,
+    "maps": 2,
+    "paths_each": 385,
+    "provider_merge": "dd1144023ab98f7762d14122afa920f0339a7e6b",
+    "provider_merge_metadata_tree_equals_local_H": true,
+    "provider_merge_parents": [
+      "8262bb7226d0b110d2c89bb1c58293e7908fa420",
+      "03dfa275def7ee6e5997894398f8f6de30b6f2f0"
+    ],
+    "runtime_and_CI_config_delta": [],
+    "runtime_paths": 63
+  },
+  "verdict": "FIRST_FAILURE_CONFIRMED_LIMITED_EVIDENCE_ACCEPTED"
+}

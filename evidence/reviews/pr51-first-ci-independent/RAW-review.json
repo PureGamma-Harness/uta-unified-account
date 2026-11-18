@@ -1,0 +1,80 @@
+{
+  "CI_production_acceptance": false,
+  "PR": 51,
+  "ZIP_bytes": 268694,
+  "ZIP_members": 25,
+  "ZIPs": 3,
+  "administrative_review_corrections": [
+    "A key-only inspection initially assumed result instead of connector; adaptive parsing then used the sealed wrapper schema, without refetch or original edits.",
+    "A broad checker initially required every selected outcome to be ok, then correctly honored the archived FAIL/ERROR result fields.",
+    "A checker initially selected observation02 for both PRs; PR51 observation02 was still in progress. It now verifies the first terminal observation03 and that polling stopped there.",
+    "Trace parsing initially assumed a generic lease-error message and ignored separator lines; the exact archived message and source lines were then verified.",
+    "An optional same-directory read of the other PR README failed; the two PR source trees stayed separate."
+  ],
+  "checks": {
+    "SAFE_changed_files": 16,
+    "SAFE_delta_only_docs_evidence": true,
+    "failure_traces": [],
+    "finite_privacy_scan_passed": true,
+    "private_ancestors_absent": true
+  },
+  "collector": "5593717d1b05b1c638e9ecfac316eca2a971694f",
+  "failed_jobs": [],
+  "human_real_funds_approval": false,
+  "installed_modules": 25,
+  "jobs": 8,
+  "limitations": [
+    "Six other matrix unit originals were not collected; their metadata cannot establish their exact test counts.",
+    "Package report JSON and selected CLI output were collected; wheel/sdist payloads were not downloaded or independently reconstructed.",
+    "Installed report covers 25 existing modules, eight CLI tests and eight commands; it does not establish installed execution of the new candidate.",
+    "Timing fields are CI suite wall durations, not matching/admission capacity.",
+    "No mixed load, sustained 10000/s, 30-minute qualification, HA, RPO/RTO or real-funds approval.",
+    "The nine Cross test IDs passed in each fixed unit, but these normal CI logs did not instrument 96 successful subtest callbacks. Previous retained pure receipt remains separately source-bound.",
+    "The decimal calculator remains an unused candidate: service default/reference, loaded-engine authority and production activation were not enabled by this evidence."
+  ],
+  "new_kernel_installed_direct_import_proven": false,
+  "original_collector_PENDING_files_preserved_as_historical_bytes": true,
+  "private_originals_plus_seal_and_later_administration_are_distinct": true,
+  "private_seal_sha256": "a1515ba3fcd9c06dbe3e19664051ae531b93f3605e737e35aa31e55e518a3641",
+  "qualification_result": null,
+  "required_package_paths": 7386,
+  "review_controls": {
+    "CI_rerun": false,
+    "connector_fetch_or_download": false,
+    "finite_privacy_scan_not_a_full_security_audit": true,
+    "independent_exact_source_hash_checks": true,
+    "original_reads_O_NOATIME": true,
+    "original_seals_revalidated": true,
+    "target_import_compile_test_SQL_native_proc_PID_signal": false
+  },
+  "runtime_files": 63,
+  "safe_files": 16,
+  "samples": [
+    {
+      "E": 0,
+      "F": 0,
+      "selection": "push313-unit",
+      "skip": 0,
+      "source_pins": 382,
+      "tests": 2135,
+      "worker_fields": 9
+    },
+    {
+      "E": 0,
+      "F": 0,
+      "selection": "pull313-unit",
+      "skip": 0,
+      "source_pins": 382,
+      "tests": 2135,
+      "worker_fields": 9
+    }
+  ],
+  "scope": "Immutable first CI originals, finite SAFE projections and Git bindings only; no target evaluation or CI rerun.",
+  "sealed_bytes": 2160149,
+  "sealed_originals": 43,
+  "selected_original_outcomes": 30,
+  "source": "667171d1f248f571b3f3386402bdc02f1fc0dc92",
+  "status": "RAW_EVIDENCE_VALIDATED_SELECTED_CI_PASS",
+  "steps": 200,
+  "target_or_SQL_or_CI_reruns": 0
+}

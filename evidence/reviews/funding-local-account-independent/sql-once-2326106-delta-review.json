@@ -1,0 +1,64 @@
+{
+  "SQL_CODE_result": "CLOSED_WITHIN_FIXED_FIVE_FRESH_DB_PROPOSAL",
+  "finding_commit": "c4ca14fe8c60d9d93dd76b946cb37ff0c64cba59",
+  "finding_id": "FUND-SQL-CODE-001",
+  "finding_status": "CLOSED_CODE_ONLY",
+  "finite_delta": {
+    "financial_test_oracle_resource_changes": false,
+    "old_candidate_history": "Original d668 plan/preparation copied byte-exact into NOT_RUN history. Prior c4ca finding and original assessment remain unchanged.",
+    "plan_change": "Only driver length/SHA, total input bytes and explicit preparation correction history; normalizing these makes the full plan equal the old d668 plan.",
+    "runtime_change": "Exactly two dictionary-key expressions: actual (account_id,symbol), expected (account,oracle.base.symbol). Restoring only those expressions makes the entire runner byte-identical to d668."
+  },
+  "inherited_scope_unchanged": {
+    "DB_source_bound_logical_bytes": 83886080,
+    "SQL_methods": 3,
+    "committed_periods": 3,
+    "control_logical_bytes": 8388608,
+    "failfast": true,
+    "fresh_DBs": 5,
+    "ledger_events": 32,
+    "matches": 6,
+    "paired_fills": 12,
+    "parent_classification_seconds": 22,
+    "per_file_RLIMIT_FSIZE": 4194304,
+    "proposed_OS_timeout_seconds": 20,
+    "shared_parent_raw_bytes": 32768
+  },
+  "physical_binding": {
+    "all_canonical_regular_len_SHA_Git": true,
+    "all_other66inputs_byte_equal_d668": true,
+    "bytes": 1412889,
+    "driver_bytes": 44499,
+    "driver_sha256": "da7904d0cc22debc4378b570894177f2c4b35a2501de1c2938c5c1a7f0872c9e",
+    "files": 67,
+    "plan_sha256": "fb3d1fb820f3cf4112699615a0a8ae05bae82ec945ac1c7d858a2c92fed7f241"
+  },
+  "position_key_proof": {
+    "new_inventory": "Every valid native position row has a unique account/symbol tuple, so the actual map no longer collapses another product for the same account.",
+    "old_counterexample_rejected": "Actual keys (a,BTC-PERP) and (a,OTHER-PERP), even with identical quantity1/cost100, now differ from the one-key expected inventory (a,BTC-PERP). Missing/wrong symbols and extra same-account products fail key-set equality.",
+    "proof_method": "Static source/schema/key-set reasoning only; no runtime/SQL counterexample test or target compile/import.",
+    "schema": "Existing-only original schema verification requires uta_positions PRIMARY KEY(account_id,symbol), with both columns NOT NULL. Native ledger integrity/foreign-key checks are also performed before oracle use."
+  },
+  "previous_source": "d6687e877faf04f90686ea257351d90745d92642",
+  "production_approved": false,
+  "remaining_acceptance": [
+    "Root exact unique SQL once GO and original actual first-result evidence",
+    "Independent SQL RAW/DB matching-ledger-funding reconciliation",
+    "Durable scheduler/DUE/unsettled obligation registration",
+    "Operations authentication/approval/custody",
+    "Managed/code-bound migration/HA",
+    "Crash/COMMIT/concurrency/capacity tests",
+    "Human financial approval and real funds activation"
+  ],
+  "review_actions": [
+    "Git/text/JSON/physical lenSHA reads",
+    "Standard-library AST parse only"
+  ],
+  "review_kind": "FUND_SQL_CODE_001_FINITE_DELTA",
+  "root_execution_GO": "NOT_IMPLIED_STILL_REQUIRED",
+  "schema": 1,
+  "source_commit": "2326106b3bf8cf6d2713e4cf8c7926afdf6962ab",
+  "source_tree": "6a31eee93bf6ce0368d65fab0c654d9e0771fb51",
+  "target_attempts": 0,
+  "target_compile_import_SQL_probes_executed": 0
+}

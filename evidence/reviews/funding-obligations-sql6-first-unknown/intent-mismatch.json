@@ -1,0 +1,18 @@
+{
+  "actual_has_leading_LF": true,
+  "argv_item_count": 17,
+  "bootstrap_actual_bytes": 1875,
+  "bootstrap_actual_sha256": "1d91a9e3b1893b1451469fc9427572702746f893ea97e195fab27ac8a1e04128",
+  "bootstrap_expected_bytes": 1874,
+  "bootstrap_expected_sha256": "98415072d0e6db988d6c70b23b3838d314cd01ea165c703c0cd1e653bc9f1215",
+  "caller_external_exit": 126,
+  "classification": "FIRST_UNKNOWN",
+  "mismatched_indexes": [
+    11
+  ],
+  "next_change_proposal_only": "Create a distinct CODE/plan revision preserving the exact raw literal including first LF; add static literal equality check; use fresh namespaces and separately approve any next execution. No fix/retry in this evidence task.",
+  "policy": "Strict literal comparison remains correct. No stripping/normalization or retroactive PASS.",
+  "source_proven_relation": "actual == one LF + template; all16other literal items equal after fixed placeholders",
+  "static_cause": "CODE-only metadata preparation split the source on BOOTSTRAP = r-triple-quote plus LF, consuming the first LF included in the actual raw-string value.",
+  "template_has_leading_LF": false
+}
