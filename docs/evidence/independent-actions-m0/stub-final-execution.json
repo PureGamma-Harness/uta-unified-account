@@ -1,0 +1,33 @@
+{
+  "command": [
+    "taskset",
+    "-c",
+    "4",
+    "timeout",
+    "30s",
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_controller.py",
+    "-v"
+  ],
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "started_at": "2026-11-17T18:22:00.171498+00:00",
+  "finished_at": "2026-11-17T18:22:00.499535+00:00",
+  "outer_monotonic_ns": 328041177,
+  "exit_code": 0,
+  "controller_sha256": "d656523c263ae1217da6d10acfadf7d76a3485ca068e52c4b8be727d7ed3f010",
+  "test_sha256": "04b1e157727850e9cde2982e80f6fc3d2fa00df6f39d32761fd79a5cfc120422",
+  "reason_for_additional_run": "New first-attempt-only gate and valid frozen-stdlib profile-label support; original35first result retained",
+  "stub_only": true,
+  "product_imported": false,
+  "sql_or_database_opened": false,
+  "native_compile": false,
+  "workload_or_profile_executed": false,
+  "actions_dispatched": false
+}

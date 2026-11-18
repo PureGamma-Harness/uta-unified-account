@@ -1,0 +1,98 @@
+{
+  "CPU_affinity": [
+    3
+  ],
+  "actual_SQL_native_M0_Actions_marker_push": false,
+  "actual_root_key_read": false,
+  "cases": [
+    {
+      "case": "CBC_unauthenticated_PKCS1v15",
+      "decrypt_or_parse_calls": [],
+      "error_code": "cms_protocol_parameter",
+      "observed": "REJECT_BEFORE_DECRYPT",
+      "original_cipher_bytes_unchanged": true,
+      "original_cipher_sha256": "aa21edf0c12acf2629703d1ca973275b9dd33af035c92445caba416176765c58",
+      "quarantine_created": false
+    },
+    {
+      "case": "GCM_unapproved_OAEP_SHA1",
+      "decrypt_or_parse_calls": [],
+      "error_code": "cms_der_node_or_truncated",
+      "observed": "REJECT_BEFORE_DECRYPT",
+      "original_cipher_bytes_unchanged": true,
+      "original_cipher_sha256": "11d9950ff32413173f752bdfdd63d68c740816c8214c60625207be2a8733b024",
+      "quarantine_created": false
+    },
+    {
+      "case": "new_exact_protocol_positive",
+      "observed": "ACCEPT",
+      "original_bytes_verified": true,
+      "protocol": {
+        "attributes_allowed": false,
+        "canonical_definite_DER": true,
+        "format": "CMS_AUTH_ENVELOPED_DATA_AES256GCM_RSA_OAEP_SHA256_MGF1_SHA256",
+        "nonce_bytes": 12,
+        "protocol_verified": true,
+        "recipient_count": 1,
+        "tag_bytes": 16
+      },
+      "synthetic_bytes": 129
+    },
+    {
+      "case": "MGF1_SHA1",
+      "error_code": "cms_der_node_or_truncated",
+      "observed": "REJECT"
+    },
+    {
+      "case": "DER_trailing",
+      "error_code": "cms_unexpected_field",
+      "observed": "REJECT"
+    },
+    {
+      "case": "DER_truncated",
+      "error_code": "cms_der_bounds",
+      "observed": "REJECT"
+    },
+    {
+      "case": "DER_indefinite",
+      "error_code": "cms_der_indefinite_or_length_width",
+      "observed": "REJECT"
+    },
+    {
+      "case": "DER_nonminimal_length",
+      "error_code": "cms_der_length",
+      "observed": "REJECT"
+    },
+    {
+      "case": "DER_wrong_content_OID",
+      "error_code": "cms_protocol_parameter",
+      "observed": "REJECT"
+    },
+    {
+      "case": "failed_tag_no_parse",
+      "failed_plaintext_contents_not_read": true,
+      "observed": "REJECT",
+      "parse_calls": [],
+      "protocol_is_not_authentication": true,
+      "unauthenticated_output_bytes": 648
+    },
+    {
+      "case": "wrong_run",
+      "observed": "REJECT"
+    }
+  ],
+  "control_commit": "e7a1b3ee22a957350359463da60b99d9df6c589a",
+  "elapsed_monotonic_ns": 77415624,
+  "escrow_module_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T20:03:27.758829+00:00",
+  "old_unaccepted_plaintexts_read": false,
+  "original_CBC_and_OAEP1_cipher_bytes_reused": true,
+  "previous_self_owned_toy_directory": "/workspace/uta-m0-independent-toy-7citne5m",
+  "private_fixture_directory": "/workspace/uta-m0-independent-der-xrfg9bn1",
+  "private_keys_copied": false,
+  "production_approved": false,
+  "red_count": 0,
+  "started_at_utc": "2026-11-17T20:03:27.681415+00:00",
+  "synthetic_plaintext_bytes": 129
+}

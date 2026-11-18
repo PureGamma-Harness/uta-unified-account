@@ -1,0 +1,76 @@
+{
+  "control_commit": "5d4b5c7cb02ff3c365532e16faead233093faac9",
+  "started_at_utc": "2026-11-17T19:57:31.703969+00:00",
+  "finished_at_utc": "2026-11-17T19:57:31.784071+00:00",
+  "elapsed_monotonic_ns": 80124696,
+  "input_sha256": {
+    "tools/m0_stream_escrow.py": "e894ba1c5b7c6370744dad09b9cfd7b008b0cc0002807275deaf6f9bc2d4bc9f",
+    "tools/independent_m0_controller.py": "b30dda17b8951f593a74dbf4cdf97ba6e23e88e25919cfbad27fdcc710e50daa",
+    "tests/test_independent_m0_escrow.py": "e8835f483b5823699a88bb8f7da2c5a3aec1d1b5856eb9ebe167b10a17c36407"
+  },
+  "cases": [
+    {
+      "case": "all_four",
+      "expected": "PASS",
+      "observed": "PASS",
+      "journal_precedes_each_atomic_publish": true,
+      "complete_ciphers_preserved": 4,
+      "real_crypto_performed": false,
+      "red": false
+    },
+    {
+      "case": "failure_first",
+      "expected": "UNKNOWN",
+      "observed": "UNKNOWN",
+      "journal_precedes_each_atomic_publish": true,
+      "complete_ciphers_preserved": 3,
+      "real_crypto_performed": false,
+      "red": false
+    },
+    {
+      "case": "failure_middle",
+      "expected": "UNKNOWN",
+      "observed": "UNKNOWN",
+      "journal_precedes_each_atomic_publish": true,
+      "complete_ciphers_preserved": 3,
+      "real_crypto_performed": false,
+      "red": false
+    },
+    {
+      "case": "failure_last",
+      "expected": "UNKNOWN",
+      "observed": "UNKNOWN",
+      "journal_precedes_each_atomic_publish": true,
+      "complete_ciphers_preserved": 3,
+      "real_crypto_performed": false,
+      "red": false
+    },
+    {
+      "case": "captured_prefix",
+      "expected": "UNKNOWN",
+      "observed": "UNKNOWN",
+      "journal_precedes_each_atomic_publish": true,
+      "complete_ciphers_preserved": 4,
+      "real_crypto_performed": false,
+      "red": false
+    },
+    {
+      "case": "all_three_compartments_exact_and_plus_one",
+      "observed": "PASS",
+      "red": false,
+      "disk_bytes_allocated_for_large_boundaries": false,
+      "exact_total": 201326592,
+      "minimum_fresh_free": 2348810240
+    },
+    {
+      "case": "missing_close_proof_rejected_before_crypto_owner",
+      "observed": "UNKNOWN",
+      "red": false
+    }
+  ],
+  "red_count": 0,
+  "controller_process_entry_calls": [],
+  "actual_OpenSSL_SQL_native_M0_Actions_private_key_read": false,
+  "execution_authorized": false,
+  "production_approved": false
+}

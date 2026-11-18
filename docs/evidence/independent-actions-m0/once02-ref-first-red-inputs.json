@@ -1,0 +1,26 @@
+{
+  "target_control": "5a72b6abd07c5030604b596cc74e19b18ffee23e",
+  "target_controller_sha256": "6c5656dc45a8648aff8e309f2d082f9d3e4af5f456acaeeaed4d5be447a176af",
+  "target_once_workflow_sha256": "946e6a3a3ae7b614099491d924d30f705d60176adef2ac3a5a07ed6c74764712",
+  "new_checker_test_sha256": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_checkout_ref.py",
+    "-v"
+  ],
+  "observed_tests": 4,
+  "observed_errors": 1,
+  "source_only_ref_mutation_leaves_original_source_assert_unchanged": true,
+  "actual_SQL_native_Actions": false,
+  "target_wrong_actual_checkout_ref": "909acecd153e2e89dfe2238e3ed3a3d3c9f0"
+}

@@ -1,0 +1,10 @@
+{
+  "observed_at": "2026-11-17T18:37:12.526991+00:00",
+  "partial_commit": "683591c9a04415587eb7dfce9f0ed5c3190a38c1",
+  "issue": "git add refused two paths outside initial sparse pattern; command continued to commit the already-staged controller/tests/evidence subset",
+  "tool_transcript_excerpt": "The following paths and/or pathspecs matched paths that exist outside of your sparse-checkout definition: .github/workflows/independent-m0-once.yml; docs/independent-actions-m0-once.md",
+  "excerpt_is_transcribed_from_original_tool_output_not_a_saved_stdout_file": true,
+  "correction": "add only those two exact sparse paths and commit unchanged bytes separately; keep original partial commit, do not amend",
+  "source_909_changed": false,
+  "runtime_actions_sql_benchmark_executed": false
+}

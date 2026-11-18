@@ -1,0 +1,158 @@
+{
+  "actual_SQL_native_profile_workload_Actions": false,
+  "cases": [
+    {
+      "case": "coherent_error_status_population",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "business_label_with503_receipt",
+      "expected": "REJECT",
+      "observed": "ACCEPT",
+      "original_outcome": "business_rejected",
+      "original_sequence": 0,
+      "receipt_error": {
+        "status": 503
+      },
+      "red": true
+    },
+    {
+      "case": "control_label_with400_receipt",
+      "expected": "REJECT",
+      "observed": "ACCEPT",
+      "original_outcome": "control_or_market_rejected",
+      "original_sequence": 1,
+      "receipt_error": {
+        "status": 400
+      },
+      "red": true
+    },
+    {
+      "case": "rejected_receipt_unparseable_error",
+      "expected": "REJECT",
+      "observed": "ACCEPT",
+      "original_outcome": "business_rejected",
+      "original_sequence": 0,
+      "receipt_error": "SYNTHETIC-NOT-JSON",
+      "red": true
+    },
+    {
+      "case": "rejected_receipt_missing_status",
+      "expected": "REJECT",
+      "observed": "ACCEPT",
+      "original_outcome": "business_rejected",
+      "original_sequence": 0,
+      "receipt_error": {},
+      "red": true
+    },
+    {
+      "case": "no_bulk_gzip_decompress",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "line_cap_before_JSON_decode",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "incremental_total8MiB_limit",
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_includes_hash_parser_fsync",
+      "control_result": "PASS",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "fsync:completed.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_hash",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_parser",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "owner_unknown_fsync_preserves_first_bytes",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    },
+    {
+      "case": "parent_collection_over60_quarantined",
+      "control_result": "UNKNOWN",
+      "events": [
+        "owner-start",
+        "source-hash",
+        "driver-inherited-session",
+        "complete-parser",
+        "source-hash",
+        "fsync:case-B.json",
+        "fsync:arrivals-B.json",
+        "fsync:completed.json",
+        "owner-return-cleaned-stub"
+      ],
+      "real_PID_cleanup_proven": false,
+      "real_processes_started": 0,
+      "red": false,
+      "status": "PASS"
+    }
+  ],
+  "control_commit": "deb3fc56ec249c78833b786b45a2f708fea57dd5",
+  "controller_process_entry_calls": [],
+  "controller_sha256": "bed27815344703a3180ebf08214157470d0495226571121f85c39aeb62dd455f",
+  "elapsed_monotonic_ns": 292812028,
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T19:25:36.228943+00:00",
+  "production_approved": false,
+  "red_count": 4,
+  "started_at_utc": "2026-11-17T19:25:35.938619+00:00"
+}

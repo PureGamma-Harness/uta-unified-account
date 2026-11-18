@@ -1,0 +1,458 @@
+{
+  "actual_SQL_native_profile_workload_Actions": false,
+  "cases": [
+    {
+      "case": "coherent_summary_positive",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "red": false
+    },
+    {
+      "accepted_projection": {
+        "actual_router_settings": {
+          "account_batch": 25,
+          "background_interval": 0.1,
+          "financial_batch_size": 0,
+          "lease_seconds": 5,
+          "matches_per_symbol": 10,
+          "max_attempts": 3,
+          "normal_cache_size": 0,
+          "poll_interval": 0.02
+        },
+        "actual_worker_pids": [
+          9876541,
+          9876542
+        ],
+        "all_successful_orders_open": true,
+        "capacity_10000_per_s_passed": false,
+        "close_seconds_excluded": 0.1,
+        "configuration": {
+          "accounts": 100,
+          "durable_batches": true,
+          "duration": 10,
+          "financial_batch_size": 0,
+          "normal_cache_size": 0,
+          "profile": false,
+          "rate": 20,
+          "shards": 2
+        },
+        "confirmed_fills": 0,
+        "counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "durably_enqueued": 200,
+          "enqueue_technical_errors": 0,
+          "financial_succeeded": 160,
+          "financial_success_late": 0
+        },
+        "drain_seconds": 0,
+        "duration_including_terminal_observation_drain": 10,
+        "enqueue_ack_per_s_not_financial_success": 20,
+        "latency_ms": {
+          "all": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          },
+          "enqueue_ack": {
+            "p50": 0.003,
+            "p95": 0.003,
+            "p99": 0.003,
+            "p99_9": 0.003
+          },
+          "financial_succeeded": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          }
+        },
+        "offered": 200,
+        "outcome_counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 21,
+          "financial_succeeded": 159
+        },
+        "probe_gate_passed": true,
+        "production_approved": false,
+        "profile_is_instrumented": false,
+        "read_only_reconciled": true,
+        "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+        "speedup_comparison_authorized": false,
+        "startup_seconds_excluded": 0.5,
+        "unique_observed_financial_success_per_s": 16
+      },
+      "case": "outcomes_vs_counts_disagree",
+      "expected": "REJECT",
+      "explanation": "outcomes says159 financial while counts and persistent reopen say160; each partitions200",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "accepted_projection": {
+        "actual_router_settings": {
+          "account_batch": 25,
+          "background_interval": 0.1,
+          "financial_batch_size": 0,
+          "lease_seconds": 5,
+          "matches_per_symbol": 10,
+          "max_attempts": 3,
+          "normal_cache_size": 0,
+          "poll_interval": 0.02
+        },
+        "actual_worker_pids": [
+          9876541,
+          9876542
+        ],
+        "all_successful_orders_open": true,
+        "capacity_10000_per_s_passed": false,
+        "close_seconds_excluded": 0.1,
+        "configuration": {
+          "accounts": 100,
+          "durable_batches": true,
+          "duration": 10,
+          "financial_batch_size": 0,
+          "normal_cache_size": 0,
+          "profile": false,
+          "rate": 20,
+          "shards": 2
+        },
+        "confirmed_fills": 0,
+        "counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "durably_enqueued": 200,
+          "enqueue_technical_errors": 0,
+          "financial_succeeded": 160,
+          "financial_success_late": 0
+        },
+        "drain_seconds": 0,
+        "duration_including_terminal_observation_drain": -1,
+        "enqueue_ack_per_s_not_financial_success": 20,
+        "latency_ms": {
+          "all": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          },
+          "enqueue_ack": {
+            "p50": 0.003,
+            "p95": 0.003,
+            "p99": 0.003,
+            "p99_9": 0.003
+          },
+          "financial_succeeded": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          }
+        },
+        "offered": 200,
+        "outcome_counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "financial_succeeded": 160
+        },
+        "probe_gate_passed": true,
+        "production_approved": false,
+        "profile_is_instrumented": false,
+        "read_only_reconciled": true,
+        "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+        "speedup_comparison_authorized": false,
+        "startup_seconds_excluded": 0.5,
+        "unique_observed_financial_success_per_s": 16
+      },
+      "case": "negative_elapsed_seconds",
+      "expected": "REJECT",
+      "explanation": "elapsed is negative although fixed planned duration is10 seconds",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "accepted_projection": {
+        "actual_router_settings": {
+          "account_batch": 25,
+          "background_interval": 0.1,
+          "financial_batch_size": 0,
+          "lease_seconds": 5,
+          "matches_per_symbol": 10,
+          "max_attempts": 3,
+          "normal_cache_size": 0,
+          "poll_interval": 0.02
+        },
+        "actual_worker_pids": [
+          9876541,
+          9876542
+        ],
+        "all_successful_orders_open": true,
+        "capacity_10000_per_s_passed": false,
+        "close_seconds_excluded": 0.1,
+        "configuration": {
+          "accounts": 100,
+          "durable_batches": true,
+          "duration": 10,
+          "financial_batch_size": 0,
+          "normal_cache_size": 0,
+          "profile": false,
+          "rate": 20,
+          "shards": 2
+        },
+        "confirmed_fills": 0,
+        "counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "durably_enqueued": 200,
+          "enqueue_technical_errors": 0,
+          "financial_succeeded": 160,
+          "financial_success_late": 0
+        },
+        "drain_seconds": 0,
+        "duration_including_terminal_observation_drain": 10,
+        "enqueue_ack_per_s_not_financial_success": 20,
+        "latency_ms": {
+          "all": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          },
+          "enqueue_ack": {
+            "p50": 0.003,
+            "p95": 0.003,
+            "p99": 0.003,
+            "p99_9": 0.003
+          },
+          "financial_succeeded": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          }
+        },
+        "offered": 200,
+        "outcome_counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "financial_succeeded": 160
+        },
+        "probe_gate_passed": true,
+        "production_approved": false,
+        "profile_is_instrumented": false,
+        "read_only_reconciled": true,
+        "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+        "speedup_comparison_authorized": false,
+        "startup_seconds_excluded": 0.5,
+        "unique_observed_financial_success_per_s": 9999
+      },
+      "case": "throughput_not_count_over_elapsed",
+      "expected": "REJECT",
+      "explanation": "160 confirmed admissions /10 seconds is16 per second, not9999",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "accepted_projection": {
+        "actual_router_settings": {
+          "account_batch": 25,
+          "background_interval": 0.1,
+          "financial_batch_size": 0,
+          "lease_seconds": 5,
+          "matches_per_symbol": 10,
+          "max_attempts": 3,
+          "normal_cache_size": 0,
+          "poll_interval": 0.02
+        },
+        "actual_worker_pids": [
+          9876541,
+          9876542
+        ],
+        "all_successful_orders_open": true,
+        "capacity_10000_per_s_passed": false,
+        "close_seconds_excluded": 0.1,
+        "configuration": {
+          "accounts": 100,
+          "durable_batches": true,
+          "duration": 10,
+          "financial_batch_size": 0,
+          "normal_cache_size": 0,
+          "profile": false,
+          "rate": 20,
+          "shards": 2
+        },
+        "confirmed_fills": 0,
+        "counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "durably_enqueued": 200,
+          "enqueue_technical_errors": 0,
+          "financial_succeeded": 160,
+          "financial_success_late": 0
+        },
+        "drain_seconds": 0,
+        "duration_including_terminal_observation_drain": 10,
+        "enqueue_ack_per_s_not_financial_success": 20,
+        "latency_ms": {
+          "all": {
+            "p50": 100,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          },
+          "enqueue_ack": {
+            "p50": 0.003,
+            "p95": 0.003,
+            "p99": 0.003,
+            "p99_9": 0.003
+          },
+          "financial_succeeded": {
+            "p50": 1,
+            "p95": 1,
+            "p99": 1,
+            "p99_9": 1
+          }
+        },
+        "offered": 200,
+        "outcome_counts": {
+          "business_rejected": 20,
+          "control_or_market_rejected": 20,
+          "financial_succeeded": 160
+        },
+        "probe_gate_passed": true,
+        "production_approved": false,
+        "profile_is_instrumented": false,
+        "read_only_reconciled": true,
+        "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+        "speedup_comparison_authorized": false,
+        "startup_seconds_excluded": 0.5,
+        "unique_observed_financial_success_per_s": 16
+      },
+      "case": "impossible_latency_quantile_order",
+      "expected": "REJECT",
+      "explanation": "P50 cannot exceed P95 within one population",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "case": "coherent200_population_positive",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "red": false
+    },
+    {
+      "accepted_row2": {
+        "command_id": "bench:2",
+        "deadline_exceeded": false,
+        "enqueue_ack_ns": 1100003000,
+        "enqueue_call_finished_ns": 1100004000,
+        "enqueue_started_ns": 1100002000,
+        "intended_product_rejection": false,
+        "latency_ns": 1000000,
+        "observed_completion_ns": 1101000000,
+        "offered_ns": 1100001000,
+        "outcome": "financial_succeeded",
+        "planned_ns": 1100000000,
+        "receipt_attempts": 0,
+        "receipt_last_error_present": false,
+        "receipt_state": "SUCCEEDED",
+        "sequence": 2
+      },
+      "actual_outcome_population": {
+        "business_rejected": 20,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 160
+      },
+      "case": "receipt_wrong_original_command_id",
+      "expected": "REJECT",
+      "explanation": "financial success for bench:2 carries receipt for bench:199",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "accepted_row2": {
+        "command_id": "bench:2",
+        "deadline_exceeded": false,
+        "enqueue_ack_ns": 1100003000,
+        "enqueue_call_finished_ns": 1100004000,
+        "enqueue_started_ns": 1100002000,
+        "intended_product_rejection": false,
+        "latency_ns": 1000000,
+        "observed_completion_ns": 1101000000,
+        "offered_ns": 1100001000,
+        "outcome": "financial_succeeded",
+        "planned_ns": 1100000000,
+        "receipt_attempts": 0,
+        "receipt_last_error_present": false,
+        "receipt_state": "REJECTED",
+        "sequence": 2
+      },
+      "actual_outcome_population": {
+        "business_rejected": 20,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 160
+      },
+      "case": "financial_success_with_rejected_receipt",
+      "expected": "REJECT",
+      "explanation": "financial_succeeded row has only a REJECTED receipt",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "accepted_row2": {
+        "command_id": "bench:2",
+        "deadline_exceeded": false,
+        "enqueue_ack_ns": 1099999999,
+        "enqueue_call_finished_ns": 1100004000,
+        "enqueue_started_ns": 1100002000,
+        "intended_product_rejection": false,
+        "latency_ns": 1,
+        "observed_completion_ns": 1101000000,
+        "offered_ns": 1100001000,
+        "outcome": "financial_succeeded",
+        "planned_ns": 1100000000,
+        "receipt_attempts": 0,
+        "receipt_last_error_present": false,
+        "receipt_state": "SUCCEEDED",
+        "sequence": 2
+      },
+      "actual_outcome_population": {
+        "business_rejected": 20,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 160
+      },
+      "case": "latency_not_completion_minus_planned",
+      "expected": "REJECT",
+      "explanation": "claimed latency1ns differs from actual timestamp delta1ms and ACK predates start",
+      "observed": "ACCEPT",
+      "red": true
+    },
+    {
+      "actual_rows_counts": {
+        "business_rejected": 21,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 159
+      },
+      "case": "summary_and200_rows_population_disagree",
+      "expected": "REJECT",
+      "explanation": "both public projections are accepted independently; main has no join afterwards",
+      "observed": "BOTH_ACCEPT",
+      "red": true,
+      "summary_counts": {
+        "business_rejected": 20,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 160
+      }
+    }
+  ],
+  "control_commit": "e44493f67846adbdee0ff1064743cd1444c5cb4e",
+  "controller_sha256": "4e3298532c8b40733d74f116eb06a3ab58d110cdac2d01bc27e9db59d97e37ad",
+  "elapsed_monotonic_ns": 118223779,
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T18:42:19.460382+00:00",
+  "process_entry_calls": [],
+  "production_approved": false,
+  "red_count": 8,
+  "started_at_utc": "2026-11-17T18:42:19.342162+00:00"
+}

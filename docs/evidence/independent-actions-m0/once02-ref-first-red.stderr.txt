@@ -1,0 +1,21 @@
+test_dispatch_ref_mutation_is_rejected (test_independent_m0_checkout_ref.CheckoutRefContract.test_dispatch_ref_mutation_is_rejected) ... ok
+test_each_actual_workload_checkout_is_exact_source40 (test_independent_m0_checkout_ref.CheckoutRefContract.test_each_actual_workload_checkout_is_exact_source40) ... 
+  test_each_actual_workload_checkout_is_exact_source40 (test_independent_m0_checkout_ref.CheckoutRefContract.test_each_actual_workload_checkout_is_exact_source40) (workflow='name: Root-approved once-only hosted M0 diagnostic') ... ERROR
+test_multiple_or_missing_workload_step_is_rejected (test_independent_m0_checkout_ref.CheckoutRefContract.test_multiple_or_missing_workload_step_is_rejected) ... ok
+test_once_only_ref_mutation_fails_even_unchanged_source_assert_passes (test_independent_m0_checkout_ref.CheckoutRefContract.test_once_only_ref_mutation_fails_even_unchanged_source_assert_passes) ... ok
+
+======================================================================
+ERROR: test_each_actual_workload_checkout_is_exact_source40 (test_independent_m0_checkout_ref.CheckoutRefContract.test_each_actual_workload_checkout_is_exact_source40) (workflow='name: Root-approved once-only hosted M0 diagnostic')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_checkout_ref.py", line 28, in test_each_actual_workload_checkout_is_exact_source40
+    with self.subTest(workflow=text.splitlines()[0]):self.assertEqual(checked_workload_ref(text),m.SOURCE)
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_checkout_ref.py", line 20, in checked_workload_ref
+    raise ValueError('workload checkout ref must equal exact SOURCE')
+ValueError: workload checkout ref must equal exact SOURCE
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+FAILED (errors=1)

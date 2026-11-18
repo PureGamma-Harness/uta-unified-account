@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/workspace/uta-actions-m0-escrow-review/evidence/reviews/independent-actions-m0-5d4b/pure_flow_budget_probe.py", line 119, in <module>
+    if __name__ == "__main__": main()
+                               ^^^^^^
+  File "/workspace/uta-actions-m0-escrow-review/evidence/reviews/independent-actions-m0-5d4b/pure_flow_budget_probe.py", line 112, in main
+    assert not any(name == "uta" or name.startswith("uta.") or name == "sqlite3" for name in sys.modules)
+                                                                                             ^^^
+NameError: name 'sys' is not defined. Did you forget to import 'sys'?

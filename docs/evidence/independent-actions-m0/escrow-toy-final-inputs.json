@@ -1,0 +1,27 @@
+{
+  "started_at_utc_before_command": "2026-11-17T19:37:52.308192+00:00",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "tools/test_m0_stream_escrow_fixture.py",
+    "/workspace/uta-m0-stream-escrow-toy-final-20261117T1938-private"
+  ],
+  "inputs": {
+    "tools/m0_stream_escrow.py": {
+      "bytes": 16225,
+      "sha256": "e894ba1c5b7c6370744dad09b9cfd7b008b0cc0002807275deaf6f9bc2d4bc9f"
+    },
+    "tools/test_m0_stream_escrow_fixture.py": {
+      "bytes": 5670,
+      "sha256": "a7325c90a6bf0534142e67d1cec0756df7f9d317451b7fbc4741af6ab8091afb"
+    }
+  },
+  "actual_root_recipient_private_key_read": false,
+  "only_new_toy_key": true,
+  "synthetic_plaintext_cap": 65536,
+  "no_financial_SQL_native_profile_Actions": true
+}

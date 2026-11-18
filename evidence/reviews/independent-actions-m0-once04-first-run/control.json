@@ -1,0 +1,44 @@
+{
+  "budget_spec": {
+    "case_bytes": 33554432,
+    "case_complete_outer_max_seconds": 60,
+    "case_inner_wall_seconds": 50,
+    "case_pipeline_watchdog_seconds": 56,
+    "cleanup_bytes": 33554432,
+    "escrow_bytes": 100663296,
+    "escrow_separate_postcase_wall_seconds": 20,
+    "extra_free_bytes": 2147483648,
+    "format": 2,
+    "grace_seconds": 2,
+    "kill_wait_seconds": 2,
+    "minimum_fresh_free_bytes": 2348810240,
+    "normal_aggregate_bytes": 67108864,
+    "physical_os_disk_quota": false,
+    "total_logical_bytes": 201326592,
+    "watchdog_scope": "new owned session: source checks, driver, parser, hashes, fsync and staged safe output"
+  },
+  "control_commit": "8295aaca4b4d254c438b228bb9da5591dafceee3",
+  "controller_sha256": "7a0253a0d93d64efcc3e0fc3742a1d95759471614efced66aa1f7343ffbc2cce",
+  "escrow_tool_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+  "operator_approval_id": "independent-m0-20261117-04",
+  "process_topology": "one supervisor -> owned case-worker -> one driver -> two spawn owners/native; one allowed CPU; separate sequential postcase escrow owner",
+  "qualification_is_prior_root_attestation_not_reexecuted_here": true,
+  "registration": {
+    "authorization_source": "explicit root-reviewed push of this manifest-only child; checksums alone do not grant permission",
+    "branch": "refs/heads/perf/approved-m0-20261117-04",
+    "manifest_only_child": true,
+    "manifest_parent_commit": "8295aaca4b4d254c438b228bb9da5591dafceee3",
+    "manifest_sha256": "7da0c618578e052e1c3495f6c3943fae52270c9e31db60dd38ee0163cc279bd6",
+    "registration_commit": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1"
+  },
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_qualification_evidence_commits": {
+    "ci_eight": "85e96b63813e0b993e532f054ef97740e64176cd",
+    "local_three": "841b5cc908e7e15e9461c0ecc91a173e2162cada",
+    "package_author": "721e9d02308d900cd39db2a209d0130394f78338",
+    "package_peer": "5c98110359f293413ebe561b3cb2f5683ee26863"
+  },
+  "workspace_boot_id": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+  "workspace_hostname_sha256": "35d38ca07e204ee88d8f51778aa7254be24b8dcfaf6e1d3868946a89f8d607b2",
+  "workspace_recorded_at": "2026-11-17T23:23:14.036701+00:00"
+}

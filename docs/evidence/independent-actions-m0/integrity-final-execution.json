@@ -1,0 +1,58 @@
+{
+  "git_parent": "b83b80728a3a019d1acf4e5e72a8a3c8eaabe443",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "pure unittest discovery with all subprocess entry points prohibited",
+    "-s",
+    "tests",
+    "-p",
+    "test_independent_m0_*.py"
+  ],
+  "inputs": {
+    "tools/independent_m0_controller.py": {
+      "bytes": 51230,
+      "sha256": "bed27815344703a3180ebf08214157470d0495226571121f85c39aeb62dd455f"
+    },
+    "tests/test_independent_m0_controller.py": {
+      "bytes": 17942,
+      "sha256": "95edafdd05969e3c0ce007bb994c69eea7c7a731786ac39ebc6f182ca4c907ca"
+    },
+    "tests/test_independent_m0_integrity.py": {
+      "bytes": 12923,
+      "sha256": "ee5e095f3c3f89ff5a30d261e017fb30427b079d89bfe6fcf3db9e96ba918926"
+    },
+    ".github/workflows/independent-m0.yml": {
+      "bytes": 3006,
+      "sha256": "18b82c93e16855630bfbc1ce4d345f28f743f26d5793518f53eb15f3b4143d32"
+    },
+    ".github/workflows/independent-m0-once.yml": {
+      "bytes": 4868,
+      "sha256": "fc96454a1407ed137edd0b8e522dae2c5e58ea6beca2a6358fa142026ef8c32d"
+    }
+  },
+  "actual_workload_SQL_native_profile_Actions": false,
+  "execution_authorized": false,
+  "production_approved": false,
+  "started_at_utc": "2026-11-17T19:18:47.425019+00:00",
+  "finished_at_utc": "2026-11-17T19:18:47.903367+00:00",
+  "elapsed_monotonic_ns": 478342588,
+  "tests": 75,
+  "failures": 0,
+  "errors": 0,
+  "blocked_process_entries": [],
+  "unexpected_product_SQL_modules": [],
+  "integrity-final.stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "integrity-final.stderr.txt": {
+    "bytes": 10456,
+    "sha256": "b08f83f16e5bf56979196f7189fc76d69bc61f3ded661e570c675d142d8868fa"
+  }
+}

@@ -1,0 +1,374 @@
+diff --git a/tools/independent_m0_controller.py b/tools/independent_m0_controller.py
+index 0afc23d..d7f1547 100644
+--- a/tools/independent_m0_controller.py
++++ b/tools/independent_m0_controller.py
+@@ -6,6 +6,7 @@ hashes, provider context, different host/boot, local storage and fresh space.
+ Private authority/request/stream files are never copied to the public directory.
+ """
+ from contextlib import contextmanager
++from contextvars import ContextVar
+ from datetime import datetime, timezone
+ from hashlib import sha256, sha1
+ import argparse
+@@ -102,20 +103,170 @@ def public_write(root, name, value):
+ RESOURCE_SCAN_ATTEMPTS = 3
+ RESOURCE_SCAN_RETRY_NS = 50_000_000
+ 
+-def _walk_error(error):raise error
++# D1 is explanatory only: labels never participate in an exemption decision.
++DIAGNOSTIC_PHASES=frozenset({'PREFLIGHT','CRYPTO_CAPABILITY','RUNTIME_PROBE','CASE_B','ESCROW_B','CASE_P','ESCROW_P','FINAL_PUBLIC_VERIFY'})
++DIAGNOSTIC_SCOPES=frozenset({'PRIVATE_ROOT','PRIVATE_CASE','PUBLIC_ROOT','PUBLIC_CASE','UNKNOWN'})
++DIAGNOSTIC_OPERATIONS=frozenset({'ROOT_LSTAT','ENUMERATE_DIRECTORY','ENTRY_LSTAT','VALIDATE_PARENT','VALIDATE_MAIN','RETRY_STABLE_SET','RESOURCE_LIMIT','HEALTH_VALIDATION'})
++DIAGNOSTIC_LABELS=frozenset({'UNKNOWN','AUTH_ROUTER_MAIN','AUTH_ROUTER_WAL','AUTH_ROUTER_SHM','AUTH_SHARD_0_MAIN','AUTH_SHARD_0_WAL','AUTH_SHARD_0_SHM','AUTH_SHARD_1_MAIN','AUTH_SHARD_1_WAL','AUTH_SHARD_1_SHM','RUNTIME_PROBE_MAIN','RUNTIME_PROBE_WAL','RUNTIME_PROBE_SHM','AUTH_CREATE_TEMP','ESCROW_CHECKPOINT_PART','ESCROW_CHECKPOINT','ESCROW_STAGED_CIPHER','ESCROW_PUBLIC_CIPHER'})
++DIAGNOSTIC_CODES=frozenset({'resource_root_directory','resource_entries_cap','resource_symlink','resource_special','escrow_directory_scope','escrow_file_scope','resource_compartment_cap','resource_missing_non_aux','resource_aux_parent_changed','resource_aux_main_changed','resource_aux_churn_limit','resource_aux_retry_deadline','resource_stable_type_changed','resource_stable_disappeared_during_retry','resource_scan_role','resource_case_name','tree_entries_cap','output_symlink','output_special','case_output_cap','case_metadata_file','runner_boot_changed','runner_host_changed','runner_cpu_unavailable','fresh_space','RESOURCE_PERMISSION_ERROR','RESOURCE_OS_ERROR','UNCLASSIFIED_RESOURCE_ERROR'})
++_DIAGNOSTIC_CONTEXT=ContextVar('m0_resource_diagnostic_context',default=None)
+ 
+-def _resource_entries(root, observe, allow_missing_root=False):
+-    try:info=root.lstat()
++def _diagnostic_code(error):
++    if isinstance(error,GateError) and str(error) in DIAGNOSTIC_CODES:return str(error)
++    if isinstance(error,PermissionError):return 'RESOURCE_PERMISSION_ERROR'
++    if isinstance(error,OSError):return 'RESOURCE_OS_ERROR'
++    return 'UNCLASSIFIED_RESOURCE_ERROR'
++
++def _diagnostic_path(context,path):
++    if path is None:return 'UNKNOWN',None,None
++    path=Path(path)
++    for role,anchor in (('PRIVATE_ROOT',context['private']),('PUBLIC_ROOT',context['public'])):
++        try:return role,path.relative_to(anchor).as_posix(),path
++        except ValueError:continue
++    return 'UNKNOWN',None,path
++
++def _diagnostic_label(role,relative):
++    if relative is None:return 'UNKNOWN'
++    if role=='PRIVATE_ROOT':
++        match=re.fullmatch(r'[BP]/workload/authority/(router|shard-000[01])\.sqlite3(?:-(wal|shm))?',relative)
++        if match:
++            stem={'router':'AUTH_ROUTER','shard-0000':'AUTH_SHARD_0','shard-0001':'AUTH_SHARD_1'}[match[1]]
++            return stem+'_'+(match[2].upper() if match[2] else 'MAIN')
++        match=re.fullmatch(r'runtime-probe/private\.sqlite3(?:-(wal|shm))?',relative)
++        if match:return 'RUNTIME_PROBE_'+(match[1].upper() if match[1] else 'MAIN')
++        if re.fullmatch(r'[BP]/workload/authority/\.uta-create-[a-z0-9_]{8}',relative):return 'AUTH_CREATE_TEMP'
++        if re.fullmatch(r'escrow-completed-[BP]\.json\.part',relative):return 'ESCROW_CHECKPOINT_PART'
++        if re.fullmatch(r'escrow-completed-[BP]\.json',relative):return 'ESCROW_CHECKPOINT'
++        if re.fullmatch(r'escrow-[BP]/(driver|case-owner)\.(stdout|stderr)\.cms',relative):return 'ESCROW_STAGED_CIPHER'
++    if role=='PUBLIC_ROOT' and re.fullmatch(r'escrow-[BP]-safe/(driver|case-owner)\.(stdout|stderr)\.cms',relative):return 'ESCROW_PUBLIC_CIPHER'
++    return 'UNKNOWN'
++
++def validate_resource_diagnostic(value):
++    need(type(value) is dict and set(value)=={'kind','version','phase','scope','operation','errno','catalogue_label','unknown_relative_path_sha256','primary_code'},'diagnostic_fields')
++    need(value['kind']=='M0_RESOURCE_DIAGNOSTIC' and type(value['version']) is int and value['version']==1,'diagnostic_version')
++    need(value['phase'] in DIAGNOSTIC_PHASES and value['scope'] in DIAGNOSTIC_SCOPES and value['operation'] in DIAGNOSTIC_OPERATIONS,'diagnostic_enum')
++    integer(value['errno'],0,4095)
++    need(value['catalogue_label'] in DIAGNOSTIC_LABELS and value['primary_code'] in DIAGNOSTIC_CODES,'diagnostic_label_or_code')
++    hashed=value['unknown_relative_path_sha256']
++    need(hashed is None or type(hashed) is str and re.fullmatch('[0-9a-f]{64}',hashed) is not None,'diagnostic_path_hash')
++    need(value['catalogue_label']=='UNKNOWN' or hashed is None,'diagnostic_known_path_hash')
++    return True
++
++def _mark_resource_error(error,scope,operation,path=None):
++    context=_DIAGNOSTIC_CONTEXT.get()
++    if context is None or hasattr(error,'_m0_resource_origin'):return
++    try:
++        role,relative,actual=_diagnostic_path(context,path);label=_diagnostic_label(role,relative)
++        hashed=None
++        if label=='UNKNOWN' and actual is not None:
++            raw=os.fsencode(relative if relative is not None else actual)
++            hashed=sha256(role.encode()+b'\0'+raw).hexdigest()
++        value={'kind':'M0_RESOURCE_DIAGNOSTIC','version':1,'phase':context['phase'],'scope':scope,
++            'operation':operation,'errno':error.errno if isinstance(error,OSError) and type(error.errno) is int and 0<=error.errno<=4095 else 0,
++            'catalogue_label':label,'unknown_relative_path_sha256':hashed,'primary_code':_diagnostic_code(error)}
++        validate_resource_diagnostic(value);error._m0_resource_origin=value
++    except BaseException:pass  # Optional annotation must never replace primary.
++
++def _resource_lstat(path,scope,operation):
++    try:return path.lstat()
++    except BaseException as error:
++        _mark_resource_error(error,scope,operation,path);raise
++
++def _resource_need(condition,code,scope,operation,path=None):
++    try:need(condition,code)
++    except BaseException as error:
++        _mark_resource_error(error,scope,operation,path);raise
++
++def _resource_origin(error,context):
++    current=error;seen=set()
++    while current is not None and id(current) not in seen:
++        seen.add(id(current));value=getattr(current,'_m0_resource_origin',None)
++        if value is not None:
++            result=dict(value,primary_code=_diagnostic_code(error));validate_resource_diagnostic(result);return result
++        current=current.__cause__ or current.__context__
++    _mark_resource_error(error,'UNKNOWN','RESOURCE_LIMIT' if _diagnostic_code(error) in {'resource_compartment_cap','case_output_cap','tree_entries_cap','resource_entries_cap'} else 'HEALTH_VALIDATION')
++    return getattr(error,'_m0_resource_origin',None)
++
++def _diagnostic_cleanup_bytes(private,public):
++    # Finite known cleanup slots only; no DB reads and no fallible full rescan.
++    paths=[public/f'resource-diagnostic-{phase}.json' for phase in DIAGNOSTIC_PHASES]
++    paths += [private/f'resource-diagnostic-incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES]
++    for case in ('B','P'):
++        paths += [private/f'escrow-{stem}-{case}.json{suffix}' for stem in ('context','completed') for suffix in ('','.part')]
++        paths += [private/f'escrow-owner-{case}.{suffix}' for suffix in ('stdout','stderr','owner.json')]
++        paths += [private/f'escrow-{case}'/(stream+'.openssl-private-stderr') for stream in ('driver.stdout','driver.stderr','case-owner.stdout','case-owner.stderr')]
++    total=0
++    for path in paths:
++        try:info=path.lstat()
++        except FileNotFoundError:continue
++        need(stat.S_ISREG(info.st_mode),'diagnostic_cleanup_file');total+=info.st_size
++    return total
++
++def write_resource_diagnostic(private,public,value):
++    validate_resource_diagnostic(value)
++    raw=(json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)+'\n').encode();need(len(raw)<=4096,'diagnostic_record_cap')
++    info=public.lstat();need(stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid() and stat.S_IMODE(info.st_mode)&0o077==0,'diagnostic_public_directory')
++    need(_diagnostic_cleanup_bytes(private,public)+len(raw)<=CLEANUP_RESERVE,'diagnostic_cleanup_cap')
++    path=public/f"resource-diagnostic-{value['phase']}.json"
++    incomplete=private/f"resource-diagnostic-incomplete-{value['phase']}.json"
++    if incomplete.exists():return 'UNAVAILABLE'
++    try:fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
++    except FileExistsError:return 'ALREADY_RECORDED'
++    try:
++        with os.fdopen(fd,'wb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
++    except BaseException:
++        # Keep a failed prefix privately, never publish it as a valid record.
++        try:
++            if not incomplete.exists():os.rename(path,incomplete)
++        except BaseException:pass
++        raise
++    return 'RECORDED'
++
++class ResourceHealthFailure(GateError):
++    def __init__(self,primary,status):
++        super().__init__(_diagnostic_code(primary));self.primary_error=primary;self.diagnostic_status=status
++
++def resource_health_check(private,public,phase,check,status_sink=None):
++    need(phase in DIAGNOSTIC_PHASES,'diagnostic_phase')
++    context={'private':private,'public':public,'phase':phase};token=_DIAGNOSTIC_CONTEXT.set(context)
++    try:
++        try:return check()
++        except Exception as primary:
++            status='UNAVAILABLE'
++            try:
++                value=_resource_origin(primary,context)
++                if value is not None:status=write_resource_diagnostic(private,public,value)
++            except BaseException:pass
++            if status_sink is not None:status_sink.setdefault(phase,status)
++            raise ResourceHealthFailure(primary,status) from primary
++    finally:_DIAGNOSTIC_CONTEXT.reset(token)
++
++def _resource_tree_scope(root):
++    context=_DIAGNOSTIC_CONTEXT.get()
++    if context is None:return 'UNKNOWN'
++    if root in {context['private']/'B',context['private']/'P'}:return 'PRIVATE_CASE'
++    if root in {context['public']/'case-B-safe',context['public']/'case-P-safe'}:return 'PUBLIC_CASE'
++    role,relative,path=_diagnostic_path(context,root)
++    return role
++
++def _walk_error(error,scope='UNKNOWN'):
++    _mark_resource_error(error,scope,'ENUMERATE_DIRECTORY',error.filename);raise error
++
++def _resource_entries(root, observe, allow_missing_root=False, diagnostic_scope='UNKNOWN'):
++    try:info=_resource_lstat(root,diagnostic_scope,'ROOT_LSTAT')
+     except FileNotFoundError:
+         if allow_missing_root:return
+         raise
+-    need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory')
++    _resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory',diagnostic_scope,'ROOT_LSTAT',root)
+     observe(root,info)
+-    for parent,dirs,files in os.walk(root,followlinks=False,onerror=_walk_error):
++    for parent,dirs,files in os.walk(root,followlinks=False,onerror=lambda error:_walk_error(error,diagnostic_scope)):
+         for name in dirs+files:
+             path=Path(parent)/name
+-            info=path.lstat()
+-            yield path,info,observe(path,info)
++            info=_resource_lstat(path,diagnostic_scope,'ENTRY_LSTAT')
++            try:charge=observe(path,info)
++            except BaseException as error:
++                _mark_resource_error(error,diagnostic_scope,'RETRY_STABLE_SET',path);raise
++            yield path,info,charge
+ 
+ def _sqlite_aux_location(path, anchors):
+     for role,anchor in anchors:
+@@ -137,11 +288,11 @@ def _known_missing_sqlite_aux(error, anchors):
+         # A vanished sidecar never excuses missing/replaced main or parents.
+         parent=anchor
+         for part in Path(relative).parts[:-1]:
+-            info=parent.lstat();need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed')
++            info=_resource_lstat(parent,_resource_tree_scope(anchor),'VALIDATE_PARENT');_resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed',_resource_tree_scope(anchor),'VALIDATE_PARENT',parent)
+             parent=parent/part
+-        info=parent.lstat();need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed')
+-        main=Path(str(path)[:-4]);info=main.lstat()
+-        need(stat.S_ISREG(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_main_changed')
++        info=_resource_lstat(parent,_resource_tree_scope(anchor),'VALIDATE_PARENT');_resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_parent_changed',_resource_tree_scope(anchor),'VALIDATE_PARENT',parent)
++        main=Path(str(path)[:-4]);info=_resource_lstat(main,_resource_tree_scope(anchor),'VALIDATE_MAIN')
++        _resource_need(stat.S_ISREG(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_aux_main_changed',_resource_tree_scope(anchor),'VALIDATE_MAIN',main)
+         return True
+     return False
+ 
+@@ -173,13 +324,14 @@ def _fresh_resource_scan(scan, anchors):
+ 
+ def _tree_bytes_once(root, entries_limit, byte_limit, observe):
+     total = entries = 0
+-    for path,info,charge in _resource_entries(root,observe,allow_missing_root=True):
++    scope=_resource_tree_scope(root)
++    for path,info,charge in _resource_entries(root,observe,allow_missing_root=True,diagnostic_scope=scope):
+         entries += 1
+-        need(entries <= entries_limit, 'tree_entries_cap')
+-        need(not stat.S_ISLNK(info.st_mode), 'output_symlink')
+-        need(stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'output_special')
++        _resource_need(entries <= entries_limit, 'tree_entries_cap',scope,'RESOURCE_LIMIT',path)
++        _resource_need(not stat.S_ISLNK(info.st_mode), 'output_symlink',scope,'ENTRY_LSTAT',path)
++        _resource_need(stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode), 'output_special',scope,'ENTRY_LSTAT',path)
+         if stat.S_ISREG(info.st_mode):total += charge
+-        if byte_limit is not None:need(total<=byte_limit,'case_output_cap')
++        if byte_limit is not None:_resource_need(total<=byte_limit,'case_output_cap',scope,'RESOURCE_LIMIT',path)
+     return total
+ 
+ def tree_bytes(root, entries_limit=20000, byte_limit=None, *, sqlite_aux_role=None):
+@@ -192,7 +344,7 @@ def case_bytes(private, public, name):
+     total=tree_bytes(private/name,byte_limit=CASE_CAP,sqlite_aux_role='private_case')+tree_bytes(public/f'case-{name}-safe',byte_limit=CASE_CAP)
+     for path in private.iterdir():
+         if path.name==f'context-{name}.json' or path.name.startswith(f'case-owner-{name}.'):
+-            info=path.lstat();need(stat.S_ISREG(info.st_mode),'case_metadata_file')
++            info=_resource_lstat(path,'PRIVATE_ROOT','ENTRY_LSTAT');_resource_need(stat.S_ISREG(info.st_mode),'case_metadata_file','PRIVATE_ROOT','ENTRY_LSTAT',path)
+             total+=info.st_size
+     return total
+ 
+@@ -201,23 +353,28 @@ def _resource_usage_once(private, public, observe):
+     counts={'normal':0,'escrow':0,'cleanup':0};entries=0
+     streams=r'(driver|case-owner)\.(stdout|stderr)'
+     for root in (private,public):
+-      for path,info,charge in _resource_entries(root,observe):
++      scope='PRIVATE_ROOT' if root==private else 'PUBLIC_ROOT'
++      for path,info,charge in _resource_entries(root,observe,diagnostic_scope=scope):
+         entries+=1;need(entries<=20000,'resource_entries_cap')
+-        need(not stat.S_ISLNK(info.st_mode),'resource_symlink')
+-        need(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode),'resource_special')
++        _resource_need(not stat.S_ISLNK(info.st_mode),'resource_symlink',scope,'ENTRY_LSTAT',path)
++        _resource_need(stat.S_ISDIR(info.st_mode) or stat.S_ISREG(info.st_mode),'resource_special',scope,'ENTRY_LSTAT',path)
+         rel=path.relative_to(root).as_posix()
+         if stat.S_ISDIR(info.st_mode):
+             if rel.startswith('escrow-'):need(re.fullmatch(r'escrow-[BP](-eligible|-safe)?',rel) is not None,'escrow_directory_scope')
+             continue
+         bucket='normal'
+-        if rel.startswith('escrow-'):
++        if rel.startswith('resource-diagnostic-'):
++            expected={f'resource-diagnostic-{phase}.json' for phase in DIAGNOSTIC_PHASES}
++            incomplete={f'resource-diagnostic-incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES}
++            need(root==public and rel in expected or root==private and rel in incomplete,'diagnostic_file_scope');bucket='cleanup'
++        elif rel.startswith('escrow-'):
+             if re.fullmatch(r'escrow-[BP](-eligible|-safe)?/'+streams+r'\.cms',rel):bucket='escrow'
+             elif re.fullmatch(r'escrow-[BP]/'+streams+r'\.openssl-private-stderr',rel):bucket='cleanup'
+             elif re.fullmatch(r'escrow-(context|completed)-[BP]\.json(\.part)?',rel) or re.fullmatch(r'escrow-owner-[BP]\.(stdout|stderr|owner\.json)',rel):bucket='cleanup'
+             elif re.fullmatch(r'escrow-[BP]\.json',rel):bucket='escrow'
+             else:raise GateError('escrow_file_scope')
+         counts[bucket]+=charge
+-        need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and sum(counts.values())<=TOTAL_CAP,'resource_compartment_cap')
++        _resource_need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and sum(counts.values())<=TOTAL_CAP,'resource_compartment_cap',scope,'RESOURCE_LIMIT',path)
+     counts['total']=sum(counts.values())
+     need(counts['normal']<=AGGREGATE_CAP and counts['escrow']<=ESCROW_CAP and counts['cleanup']<=CLEANUP_RESERVE and counts['total']<=TOTAL_CAP,'resource_compartment_cap')
+     return counts
+@@ -607,6 +764,9 @@ def verify_public(root):
+         path=root/name;info=path.lstat()
+         need(not path.parent.is_symlink(),'public_parent_symlink')
+         need(stat.S_ISREG(info.st_mode) and info.st_size==item['bytes'] and digest(path)==item['sha256'],'public_manifest_mismatch')
++        if Path(name).name.startswith('resource-diagnostic-'):
++            value=read_json(path,4096);validate_resource_diagnostic(value)
++            need(name==f"resource-diagnostic-{value['phase']}.json",'diagnostic_public_name')
+         if safe_cipher is not None:
+             spec=importlib.util.spec_from_file_location('m0_public_cipher_protocol',Path(__file__).resolve().with_name('m0_stream_escrow.py'))
+             module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+@@ -655,7 +815,7 @@ def case_driver(command, source, case):
+         need(code==0,'driver_exit_unknown')
+     return identity
+ 
+-def case_pipeline(source, case, staged, name, profile, snapshot, cpu_ids):
++def case_pipeline(source, case, staged, name, profile, snapshot, cpu_ids, diagnostic_public=None):
+     """Every potentially expensive case operation executes under outer owner."""
+     need(source_snapshot(source)==snapshot,'source_changed_before_case')
+     command=child_argv(source,case/'workload',profile)
+@@ -674,7 +834,9 @@ def case_pipeline(source, case, staged, name, profile, snapshot, cpu_ids):
+     for path in paths:
+         need(re.fullmatch(r'(worker-[0-9]+-pid-[0-9]+|dispatcher-[0-9]+)\.prof',path.name) is not None,'profile_filename')
+         records.append(public_write(staged,f'{name}-{path.stem}.json',profile_semantic(path,source)))
+-    need(tree_bytes(case,sqlite_aux_role='private_case')<=CASE_CAP and tree_bytes(staged)<=CASE_CAP,'case_output_cap')
++    check=lambda:need(tree_bytes(case,sqlite_aux_role='private_case')<=CASE_CAP and tree_bytes(staged)<=CASE_CAP,'case_output_cap')
++    if diagnostic_public is None:check()
++    else:resource_health_check(case.parent,diagnostic_public,f'CASE_{name}',check)
+     # All output bytes, hashes and fsyncs precede this completion record. Staged
+     # partial files stay private after UNKNOWN and cannot enter upload manifests.
+     return {'case':name,'status':'PASS','profile':profile,'source_commit':SOURCE,
+@@ -715,7 +877,7 @@ def case_worker(descriptor):
+     need(type(value['cpu_ids']) is list and len(value['cpu_ids'])==1 and {integer(v) for v in value['cpu_ids']}==os.sched_getaffinity(0),'case_cpu')
+     case=private/name;staged=case/'safe-staged'
+     case.mkdir(mode=0o700);(case/'tmp').mkdir(mode=0o700);staged.mkdir(mode=0o700)
+-    result=case_pipeline(source,case,staged,name,value['profile'],snapshot,value['cpu_ids'])
++    result=case_pipeline(source,case,staged,name,value['profile'],snapshot,value['cpu_ids'],diagnostic_public=public)
+     os.rename(staged,public/f'case-{name}-safe')
+     public_write(case,'completed.json',result)
+     print(json.dumps({'status':'CASE_STAGED','case':name}))
+@@ -772,7 +934,7 @@ def escrow_closed_case(owned,source,private,public,name,entry,approval,cpu_ids,h
+     try:
+         proof=entry.get('owner_cleanup',{})
+         need(proof.get('leader_reaped') is True,'closed_case_producers_unproven')
+-        usage=resource_usage(private,public)
++        usage=resource_health_check(private,public,f'ESCROW_{name}',lambda:resource_usage(private,public))
+         capture={name:True for name in ('driver.stdout','driver.stderr')}
+         capture.update({name:proof.get('stdout_stderr_complete') is True for name in ('case-owner.stdout','case-owner.stderr')})
+         value={'format':1,'case':name,'private':str(private),'public':str(public),'control_commit':approval['control_commit'],
+@@ -855,16 +1017,20 @@ def main(argv=None):
+         records.append(public_write(args.public,'source-manifest.json',{'source_commit':SOURCE,'source_tree':SOURCE_TREE,'files':snapshot}))
+         records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'one supervisor -> owned case-worker -> one driver -> two spawn owners/native; one allowed CPU; separate sequential postcase escrow owner','registration':registration,'budget_spec':budget_spec(),'escrow_tool_sha256':digest(Path(__file__).resolve().with_name('m0_stream_escrow.py'))}))
+         owned=load_owned_runner(args.source);cpus=[min(actual['cpu_affinity'])]
+-        def health(case_root=None):
++        health_phase={'value':'PREFLIGHT'};diagnostic_statuses={}
++        def health_conditions(case_root=None):
+             need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==actual['boot_id'],'runner_boot_changed')
+             need(sha256(socket.gethostname().encode()).hexdigest()==actual['hostname_sha256'],'runner_host_changed')
+             need(set(cpus)<=os.sched_getaffinity(0),'runner_cpu_unavailable')
+             free=os.statvfs(args.private);need(free.f_bavail*free.f_frsize>=MIN_FREE,'fresh_space')
+             resource_usage(args.private,args.public)
+             if case_root:need(case_bytes(args.private,args.public,case_root.name)<=CASE_CAP,'case_output_cap')
++        def health(case_root=None):
++            return resource_health_check(args.private,args.public,health_phase['value'],lambda:health_conditions(case_root),diagnostic_statuses)
+         # Before any financial driver, prove this runner's actual OpenSSL and
+         # fixed public recipient support the exact authenticated protocol.
+         stage='crypto_capability_probe';crypto_logs=args.private/'crypto-capability'
++        health_phase['value']='CRYPTO_CAPABILITY'
+         runner_temp=os.environ['RUNNER_TEMP']
+         with child_environment(args.private):
+             os.environ['RUNNER_TEMP']=runner_temp
+@@ -880,6 +1046,7 @@ def main(argv=None):
+         # Actual WAL/FULL and SQLite compile metadata are collected in an owned
+         # isolated child only after execute approval; no product module is used.
+         stage='runtime_probe';probe=args.private/'runtime-probe';probe.mkdir(mode=0o700)
++        health_phase['value']='RUNTIME_PROBE'
+         code="import json,sqlite3,sys; c=sqlite3.connect(sys.argv[1],isolation_level=None,timeout=2); mode=c.execute('PRAGMA journal_mode=WAL').fetchone()[0]; c.execute('PRAGMA synchronous=FULL'); sync=c.execute('PRAGMA synchronous').fetchone()[0]; options=[r[0] for r in c.execute('PRAGMA compile_options')]; c.close(); print(json.dumps({'python':sys.version,'sqlite':sqlite3.sqlite_version,'journal_mode':mode,'synchronous':sync,'compile_options':options,'replication':False}))"
+         with child_environment(probe):
+             observed=owned.owned_run([sys.executable,'-I','-c',code,str(probe/'private.sqlite3')],args.source,probe/'probe',cpu_ids=cpus,wall_seconds=10,grace_seconds=2,kill_wait_seconds=2,output_cap=65536,protected={os.getpid(),os.getppid()},health_check=health)
+@@ -888,8 +1055,10 @@ def main(argv=None):
+         need(runtime['journal_mode']=='wal' and runtime['synchronous']==2 and runtime['replication'] is False,'wal_full_required')
+         records.append(public_write(args.public,'runtime.json',runtime))
+         def run_case(name,profile):
++            health_phase['value']=f'CASE_{name}'
+             entry=supervised_case(owned,args.source,args.private,args.public,name,profile,snapshot,approval,actual,cpus,health)
+             records.extend(entry.pop('files',[]))
++            health_phase['value']=f'ESCROW_{name}'
+             escrow=escrow_closed_case(owned,args.source,args.private,args.public,name,entry,approval,cpus,health)
+             records.extend(escrow.pop('files',[]))
+             records.append(public_write(args.public,f'escrow-{name}.json',escrow))
+@@ -908,6 +1077,15 @@ def main(argv=None):
+     result.update(no_external_exchange=True,no_network_sandbox_claim=True,private_originals_uploaded=False,
+         profile_binary_uploaded=False,private_raw_retention='four closed driver/case-owner streams as authenticated CMS ciphertext; subject to explicit per-case escrow result and provider artifact retention',
+         speedup_claim=False,ha_approved=False)
++    result['resource_diagnostic_status']={phase:status for phase,status in locals().get('diagnostic_statuses',{}).items()}
++    # Diagnostics are their own typed records. Original four stream files and
++    # ordering are untouched. Unknown/invalid diagnostic data blocks publication.
++    for phase in sorted(DIAGNOSTIC_PHASES):
++        path=args.public/f'resource-diagnostic-{phase}.json'
++        if path.exists():
++            value=read_json(path,4096);validate_resource_diagnostic(value)
++            need(value['phase']==phase,'diagnostic_public_name')
++            records.append({'name':path.name,'bytes':path.stat().st_size,'sha256':digest(path)})
+     records.append(public_write(args.public,'result.json',result))
+     public_write(args.public,'manifest.json',{'files':records,'private_authorities_requests_keys_nonces_signatures_streams_not_uploaded':True,'source_commit':SOURCE})
+     print(json.dumps({'status':result['status'],'source_commit':SOURCE,'public_records':len(records),'production_approved':False}))

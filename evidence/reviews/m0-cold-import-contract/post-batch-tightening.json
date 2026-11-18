@@ -1,0 +1,30 @@
+{
+  "CPU2_second_batch": false,
+  "M05_authorized": false,
+  "actual_workflow_command_coverage": {
+    ".github/workflows/independent-m0-once.yml": {
+      "actual_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "new_test_pattern_matches": true,
+      "sparse_helper_and_test_present": true
+    },
+    ".github/workflows/independent-m0.yml": {
+      "actual_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "new_test_pattern_matches": true,
+      "sparse_helper_and_test_present": true
+    }
+  },
+  "additional_unexecuted_pure_stub_test": "test_wait_error_cannot_be_erased_by_later_zero_exit",
+  "child_program_bytes_same_as_four_real_first_children": true,
+  "child_program_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+  "final_helper_sha256": "91c4a813e4147bcdfb68cc28b3d0f0604e9ec5c6f0a94dac28f23972675223c5",
+  "final_test_sha256": "eef2eef119bed98ab701dbe24840d233028a366e1c47a9da7dbdebf4a6c31d07",
+  "first_8_methods_AST_unchanged": true,
+  "first_8_source_helper_sha256": "371fffa8397ccba2734d5b71a5c481ce0ae8dcb1611723e3bc794695b568ee72",
+  "first_8_source_test_sha256": "78085d7a709d19f2a3218909fc2d1a5eeb0b697897ae59926f1a41404a9c3ba0",
+  "four_real_children_rerun": false,
+  "independent_CODE_or_purestub_review_required": true,
+  "kind": "POST_FIRST_BATCH_FAIL_CLOSED_TIGHTENING",
+  "new_source_9_methods_run_by_author": false,
+  "only_helper_change": "Only CHILD_EXITED may enter proof acceptance; never wash prior OSerror/timeout via cleanup rc0.",
+  "version": 1
+}

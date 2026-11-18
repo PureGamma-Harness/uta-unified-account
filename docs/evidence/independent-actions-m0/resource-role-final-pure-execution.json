@@ -1,0 +1,71 @@
+{
+  "git_parent": "98666ac",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "pure unittest discovery with all subprocess prohibited",
+    "test_independent_m0_*.py"
+  ],
+  "inputs": {
+    "tools/independent_m0_controller.py": {
+      "bytes": 65438,
+      "sha256": "00606f6b05f6939d25ddc9a35bbb270e77c27ac1c09c8f6d2cd1549c97391e7b"
+    },
+    "tools/m0_stream_escrow.py": {
+      "bytes": 21543,
+      "sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+    },
+    "tests/test_independent_m0_controller.py": {
+      "bytes": 19021,
+      "sha256": "338740620d6bd38f4515e8a803fa8d03a826e7740df3de049526ccdf54ec33ef"
+    },
+    "tests/test_independent_m0_integrity.py": {
+      "bytes": 15180,
+      "sha256": "4653fd1f2856d8fb3948fb120cfc9cdb3cd8350439d3b3df5a6ca4d7472e0253"
+    },
+    "tests/test_independent_m0_escrow.py": {
+      "bytes": 14713,
+      "sha256": "f2d64f8217063e560ff07bc3befcf61e6c27b484340b5ec3a2fac5ab60ca3f11"
+    },
+    "tests/test_independent_m0_checkout_ref.py": {
+      "bytes": 2959,
+      "sha256": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58"
+    },
+    "tests/test_independent_m0_resource_race.py": {
+      "bytes": 11201,
+      "sha256": "ff63b92087f3d579b80d91feb8cba363cb378b4d3b00a3df557b737c2ea15b95"
+    },
+    ".github/workflows/independent-m0-once.yml": {
+      "bytes": 5294,
+      "sha256": "7ff0842bbc5f1be909ac9f1aa4d240340fb5bf8db35c81a8492552e0deed17f6"
+    },
+    "docs/evidence/independent-actions-m0/once-registration-template.json": {
+      "bytes": 3022,
+      "sha256": "53f146124c2df4150916623f0a7fcf51d71a0b7ac7acb495fe4268f7f27b2fdf"
+    }
+  },
+  "actual_SQL_native_crypto_profile_Actions": false,
+  "actual_root_private_key_read": false,
+  "production_approved": false,
+  "started_at_utc": "2026-11-17T21:19:29.139822+00:00",
+  "finished_at_utc": "2026-11-17T21:19:30.101514+00:00",
+  "elapsed_monotonic_ns": 961689232,
+  "tests": 135,
+  "failures": 0,
+  "errors": 0,
+  "process_calls": [],
+  "unexpected_product_SQL_modules": [],
+  "resource-role-final-pure.stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "resource-role-final-pure.stderr.txt": {
+    "bytes": 19734,
+    "sha256": "91e072267aeb844d0553b7267892725c6a3869e735a75ec55e7b0768946a53ab"
+  }
+}

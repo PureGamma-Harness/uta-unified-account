@@ -1,0 +1,35 @@
+{
+  "started_at_utc_before_command": "2026-11-17T19:33:40.667046+00:00",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "tools/test_m0_stream_escrow_fixture.py",
+    "/workspace/uta-m0-stream-escrow-toy-first-20261117T1933-private"
+  ],
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "inputs": {
+    "tools/m0_stream_escrow.py": {
+      "bytes": 14551,
+      "sha256": "085eb7d2885a88341bd7c750e14130c2661395a000fa63dd4a90f6e41156d239"
+    },
+    "tools/test_m0_stream_escrow_fixture.py": {
+      "bytes": 5670,
+      "sha256": "a7325c90a6bf0534142e67d1cec0756df7f9d317451b7fbc4741af6ab8091afb"
+    },
+    "config/m0-stream-recipient-public.pem": {
+      "bytes": 1549,
+      "sha256": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed"
+    },
+    "config/m0-stream-recipient-public-metadata.json": {
+      "bytes": 921,
+      "sha256": "f3497f05e9361c5afa6c8fd03b6e7cae4a8c92ae31f1cb10a2595d68cf4e210b"
+    }
+  },
+  "actual_workspace_recipient_private_key_read": false,
+  "toy_private_key_only": true,
+  "maximum_synthetic_plaintext_bytes": 65536,
+  "actual_financial_SQL_native_profile_Actions": false
+}

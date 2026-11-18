@@ -1,0 +1,35 @@
+{
+  "started_at_utc_before_command": "2026-11-17T19:53:40.646814+00:00",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "timeout",
+    "--kill-after=1s",
+    "15s",
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "tools/test_m0_stream_escrow_fixture.py",
+    "/workspace/uta-m0-der-profile-second-20261117T1954-private"
+  ],
+  "inputs": {
+    "tools/m0_stream_escrow.py": {
+      "sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+      "bytes": 21543
+    },
+    "tools/test_m0_stream_escrow_fixture.py": {
+      "sha256": "90a65762a6ea21141c308ffa09671a137d497b7a718e903c9616e9555cf0100e",
+      "bytes": 6804
+    },
+    "tools/independent_m0_controller.py": {
+      "sha256": "6c5656dc45a8648aff8e309f2d082f9d3e4af5f456acaeeaed4d5be447a176af",
+      "bytes": 61123
+    }
+  },
+  "original_first_fixture_FAIL_retained": true,
+  "only_fixture_truncated_contract_adapted": "cms_der_bounds and no plaintext directory; variants unchanged",
+  "actual_root_recipient_private_key_read": false,
+  "maximum_synthetic_plaintext_bytes": 65536,
+  "actual_financial_SQL_native_profile_M0_Actions": false
+}

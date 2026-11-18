@@ -1,0 +1,56 @@
+[
+  {
+    "case": "CBC_unauthenticated_PKCS1v15",
+    "structural_excerpts": [
+      "  contentType: pkcs7-envelopedData (1.2.840.113549.1.7.3)",
+      "  d.envelopedData: ",
+      "    version: 0",
+      "    originatorInfo: <ABSENT>",
+      "    recipientInfos:",
+      "        keyEncryptionAlgorithm: ",
+      "          algorithm: rsaEncryption (1.2.840.113549.1.1.1)",
+      "          parameter: NULL",
+      "        encryptedKey: ",
+      "          0000 - 46 9d 3c 64 ca 0f 44 f2-bd a6 ff f3 25 e9 e2   F.<d..D.....%..",
+      "      contentType: pkcs7-data (1.2.840.113549.1.7.1)",
+      "      contentEncryptionAlgorithm: ",
+      "        algorithm: aes-256-cbc (2.16.840.1.101.3.4.1.42)",
+      "        parameter: OCTET STRING:",
+      "          0000 - 68 09 89 f2 82 b6 ec 53-91 4b 97 9b 78 58 96   h......S.K..xX.",
+      "      contentEncryptionAlgorithm: ",
+      "        algorithm: aes-256-cbc (2.16.840.1.101.3.4.1.42)",
+      "        parameter: OCTET STRING:",
+      "          0000 - 68 09 89 f2 82 b6 ec 53-91 4b 97 9b 78 58 96   h......S.K..xX.",
+      "          000f - 73                                             s"
+    ],
+    "requested_cipher_command_in_source": "crypto_protocol_probe.py variants loop",
+    "note": "OAEP-SHA1 default params may appear as empty SEQUENCE; not inferred from presence of sha1 text"
+  },
+  {
+    "case": "GCM_unapproved_OAEP_SHA1",
+    "structural_excerpts": [
+      "  contentType: id-smime-ct-authEnvelopedData (1.2.840.113549.1.9.16.1.23)",
+      "  d.authEnvelopedData: ",
+      "    version: 0",
+      "    originatorInfo: <ABSENT>",
+      "    recipientInfos:",
+      "        keyEncryptionAlgorithm: ",
+      "          algorithm: rsaesOaep (1.2.840.113549.1.1.7)",
+      "          parameter: SEQUENCE:",
+      "    0:d=0  hl=2 l=   0 cons: SEQUENCE          ",
+      "        encryptedKey: ",
+      "      contentType: pkcs7-data (1.2.840.113549.1.7.1)",
+      "      contentEncryptionAlgorithm: ",
+      "        algorithm: aes-256-gcm (2.16.840.1.101.3.4.1.46)",
+      "        parameter: SEQUENCE:",
+      "    0:d=0  hl=2 l=  17 cons: SEQUENCE          ",
+      "      contentEncryptionAlgorithm: ",
+      "        algorithm: aes-256-gcm (2.16.840.1.101.3.4.1.46)",
+      "        parameter: SEQUENCE:",
+      "    0:d=0  hl=2 l=  17 cons: SEQUENCE          ",
+      "    2:d=1  hl=2 l=  12 prim:  OCTET STRING      [HEX DUMP]:EBE3466B06CFCE50EB83A642"
+    ],
+    "requested_cipher_command_in_source": "crypto_protocol_probe.py variants loop",
+    "note": "OAEP-SHA1 default params may appear as empty SEQUENCE; not inferred from presence of sha1 text"
+  }
+]

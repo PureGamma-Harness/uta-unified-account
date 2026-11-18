@@ -1,0 +1,80 @@
+--- immutable5f-new-four-and-boundaries
++++ b217-source-shaped-classification
+@@ -13,7 +13,7 @@
+ from types import ModuleType, SimpleNamespace
+ from unittest.mock import patch
+ 
+-C = "deb3fc56ec249c78833b786b45a2f708fea57dd5"
++C = "b2175525fa90595c530999f44140e9411421528d"
+ REPO = Path(__file__).resolve().parents[3]
+ 
+ 
+@@ -22,7 +22,7 @@
+     started = datetime.now(timezone.utc).isoformat()
+     raw = subprocess.check_output(["git", "show", C + ":tools/independent_m0_controller.py"], cwd=REPO)
+     tests = subprocess.check_output(["git", "show", "e44493f67846adbdee0ff1064743cd1444c5cb4e:tests/test_independent_m0_controller.py"], cwd=REPO)
+-    assert sha256(raw).hexdigest() == "bed27815344703a3180ebf08214157470d0495226571121f85c39aeb62dd455f"
++    assert sha256(raw).hexdigest() == "df7e8d3dfc9d22a65b197eda5cf1a0469c7e231eb1ee5ab02b03dca2869723db"
+     fixture = next(node for cls in ast.parse(tests).body if isinstance(cls, ast.ClassDef)
+                    for node in cls.body if isinstance(node, ast.FunctionDef) and node.name == "summary")
+     m = ModuleType("fixed_deb3_pure_boundaries")
+@@ -45,7 +45,7 @@
+         for sequence in range(200):
+             planned = 1_000_000_000 + sequence * 50_000_000
+             outcome = "business_rejected" if sequence % 10 == 0 else "control_or_market_rejected" if sequence % 10 == 1 else "financial_succeeded"
+-            error = None if outcome == "financial_succeeded" else {"status": 400 if outcome == "business_rejected" else 503, "code": "synthetic-only"}
++            error = None if outcome == "financial_succeeded" else {"status": 400 if outcome == "business_rejected" else 503, "code": "synthetic-only", "message": "synthetic source-shaped receipt"}
+             rows.append(dict(sequence=sequence, command_id=f"bench:{sequence}", order_id=f"order:{sequence}", outcome=outcome,
+                              planned_ns=planned, offered_ns=planned + 1000, enqueue_started_ns=planned + 2000,
+                              enqueue_ack_ns=planned + 3000, enqueue_call_finished_ns=planned + 4000,
+@@ -66,10 +66,10 @@
+ 
+             safe_rows = parse(rows)
+             observations.append(dict(case="coherent_error_status_population", status="PASS", red=False))
+-            for name, value in [("business_label_with503_receipt", {"status": 503}),
+-                                ("control_label_with400_receipt", {"status": 400}),
++            for name, value in [("business_label_with503_receipt", {"status": 503, "code": "synthetic-only", "message": "synthetic source-shaped receipt"}),
++                                ("control_label_with400_receipt", {"status": 400, "code": "synthetic-only", "message": "synthetic source-shaped receipt"}),
+                                 ("rejected_receipt_unparseable_error", "SYNTHETIC-NOT-JSON"),
+-                                ("rejected_receipt_missing_status", {})]:
++                                ("rejected_receipt_missing_status", {"code": "synthetic-only", "message": "synthetic source-shaped receipt"})]:
+                 candidate = deepcopy(rows)
+                 index = 1 if name.startswith("control") else 0
+                 candidate[index]["receipt"]["error"] = value
+@@ -81,6 +81,36 @@
+                     observations.append(dict(case=name, expected="REJECT", observed="REJECT", red=False,
+                                              error_type=type(error).__name__, error_code=str(error)))
+ 
++            for status, index in [(100, 0), (499, 0), (500, 1), (599, 1)]:
++                candidate = deepcopy(rows)
++                candidate[index]["receipt"]["error"]["status"] = status
++                projected = parse(candidate)
++                assert projected[index]["receipt_error_status"] == status
++                observations.append(dict(case="legal_status_boundary_" + str(status), status="PASS", red=False))
++            candidate = deepcopy(rows)
++            for row in candidate:
++                if row["receipt"]["error"] is not None:
++                    row["receipt"]["error"] = json.dumps(row["receipt"]["error"])
++            projected = parse(candidate)
++            assert "synthetic-only" not in json.dumps(projected)
++            assert "synthetic source-shaped receipt" not in json.dumps(projected)
++            observations.append(dict(case="legal_strict_JSON_error_projection_no_code_or_message", status="PASS", red=False))
++            for value in [True, 400.0, 99, 600, float("nan"), float("inf")]:
++                candidate = deepcopy(rows)
++                candidate[0]["receipt"]["error"]["status"] = value
++                try:
++                    parse(candidate)
++                    raise AssertionError("invalid status type/range accepted")
++                except m.GateError:
++                    observations.append(dict(case="invalid_status_" + repr(value), status="PASS", red=False))
++            for value in [{}, {"code": "extra", "message": "extra", "status": 400}]:
++                candidate = deepcopy(rows)
++                candidate[2]["receipt"]["error"] = value
++                try:
++                    parse(candidate)
++                    raise AssertionError("SUCCEEDED error accepted")
++                except m.GateError:
++                    observations.append(dict(case="success_error_must_be_None_" + str(len(value)), status="PASS", red=False))
+             with patch.object(m.gzip, "decompress", side_effect=AssertionError("bulk decompressor forbidden")):
+                 parse(rows)
+             observations.append(dict(case="no_bulk_gzip_decompress", status="PASS", red=False))
