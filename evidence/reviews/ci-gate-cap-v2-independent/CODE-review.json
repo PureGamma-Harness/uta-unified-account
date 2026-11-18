@@ -1,0 +1,85 @@
+{
+  "GO_granted": false,
+  "checks": [
+    {
+      "evidence": "collections.deque(maxlen=64) provides the storage bound instead of a separate length check authorizing append. The former two-producer63->65 list interleaving now evicts an old element and retains at most64 records.",
+      "id": "CAP-V2-001",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "capacity_reached is only changed fromFalse toTrue. A snapshot's own64-record copy also reports capacity reached. At-capacity status is explicitly possible truncation, not an exact attempted-record or eviction count, and may conservatively beTrue without proven eviction.",
+      "id": "CAP-V2-002",
+      "status": "CLOSED_LIMITED_CONSERVATIVE_OBSERVATION"
+    },
+    {
+      "evidence": "The deque retains an append-order tail; it no longer promises the first64 records or cross-thread timestamp order. Complete finite item dictionaries are constructed before append and not subsequently modified.",
+      "id": "CAP-V2-003",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "list(timeline) and snapshot construction run inside a BaseException guard. Concurrent-iteration or collection failure sets collection_failed and returns the preallocated fixed fallback with empty events, capacityNone, truncatedTrue and snapshot_failedTrue.",
+      "id": "CAP-V2-004",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Fallback does not call financial, clock, query, renewal or retry paths and does not assign the original failure. The original captured renew call remains exactly once with identical return object/bare raise; original main try/flags/thresholds/assertions remain.",
+      "id": "CAP-V2-005",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Readiness B is byte-identical to reviewed aeb5. Its one existing final diagnostics query, original ready-bool assertion, bounded two-row/six-gate anonymous projection and fixed projection-failure message are unchanged.",
+      "id": "CAP-V2-006",
+      "status": "CLOSED_INHERITED_SCOPE"
+    },
+    {
+      "evidence": "Ten source pins and the new plan match physical canonical regular files/Git blobs; the old plan is archived exactly. All61 UTA Python Git blobs and CI configuration remain unchanged.",
+      "id": "CAP-V2-007",
+      "status": "CLOSED"
+    }
+  ],
+  "delta_parent": "aeb5f23934fba8efc1ffd7b27c702a1b596bd228",
+  "historical_finding": {
+    "commit": "b0d63adeddde8608298e947f01fc75bfb6272585",
+    "id": "CI-DIAG-AEB-001",
+    "new_CODE_status": "CLOSED_STRUCTURAL_CAP_WITH_CONSERVATIVE_TRUNCATION",
+    "old_report_and_old_source_preserved": true
+  },
+  "kind": "INDEPENDENT_CI_GATE_CAP_V2_LIMITED_DELTA_CODE_REVIEW",
+  "new_financial_lock_or_SQL_or_refresh_or_retry": 0,
+  "nonblocking_limits": [
+    "Deque append capacity is structural under the supported standard CPython container semantics; no lock-free, zero-overhead or hard scheduling claim is supplied.",
+    "Recording/clock work continues at capacity to retain the tail, so unlike the old early-return design observation overhead may continue. The source and plan disclose this.",
+    "A snapshot is an observational copy, not an atomic finality or ownership receipt. Events and sticky flags can be sampled at slightly different instants; no precise drop count or final timeline completeness is claimed.",
+    "The deque and snapshot each contain at most64 events; this is not a process RSS or aggregate transient-allocation bound.",
+    "The existing describe_error message/chain behavior is unchanged and outside the new finite timeline-field classification.",
+    "This review is static only: no target import, compilation, test, SQL, thread, native/probe/PID operation, CI rerun or failure reproduction was performed.",
+    "The original f774 CI causes remain unresolved. A later instrumented result must be identified by its actual source and cannot retroactively replace first failures.",
+    "Runtime correctness, capacity, HA, production and real funds remain OPEN/NO_GO."
+  ],
+  "production_approved": false,
+  "remaining_gates": [
+    "Root separate exact execution/CI decision",
+    "Preserve first instrumented output and actual source",
+    "Independent original RAW review"
+  ],
+  "schema": 1,
+  "source": "bf75056cb238112dfa2a67595f2abaf12f5569ae",
+  "source_binding": {
+    "archived_aeb_plan": {
+      "bytes": 4034,
+      "exact_parent_Git_bytes": true,
+      "sha256": "0ac93bfd671012cce6b2771f50e194e1d6fa62f388390a1b9140cc65b15db6da"
+    },
+    "bytes": 324768,
+    "full61_physical_materialization_claimed": false,
+    "observer_function_main_business_try_and_original_assertion_text_exact_to_aeb": true,
+    "physical_canonical_regular_Git_inputs": 10,
+    "plan_sha256": "8bcc203010d23b53b4f541a68da4762ffe4a1753280679b97dce3d2f630be28e",
+    "readiness_projection_B_file_exact_to_aeb": true,
+    "runtime_CI_diff": 0,
+    "unchanged_UTA_Python_Git_count": 61
+  },
+  "status": "CODE_CLOSED_LIMITED_DELTA",
+  "target_executions": 0,
+  "workspace_scope": "Only a verified-new independent review tree/index and two SAFE reports were created; source and primary workspace indexes and authorities were not modified."
+}
