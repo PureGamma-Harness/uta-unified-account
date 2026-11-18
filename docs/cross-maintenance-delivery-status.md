@@ -35,7 +35,18 @@ all admission eligibility or record the new projected admission decision.
 
 This branch is based on PR35 `9b61e5f35dd2196ef2fdddfa03559eca3f1322ec`;
 current main does not provide this configured Cross service. First integrated
-CI is pending. Keep the PR draft and real-funds enablement blocked until
+CI at `fc2d574d` failed in all eight unit jobs (push44275550971 and
+PR44275682105). The inspected original push3.12 unit ran2055 tests with four
+errors: its new fixture assigned read-only service properties. The earlier
+selected-method harness omitted those descriptors, so its pure PASS did not
+prove normal unittest fixture compatibility. The corrected fixture initializes
+the actual backing fields, checks both real property getters and rejects
+assignment, while the revised pure scope retains both original descriptors.
+The old first plan is preserved byte-for-byte. This correction changes no
+financial runtime, database evidence or prior outcome. Its unique pure run
+passed six methods/fifteen recorded cases, actual caller exit0/reap in
+229264668ns, with independent CODE568d8c3e and RAW2f84e016. Post-fix full CI
+is pending. Keep the PR draft and real-funds enablement blocked until
 independent release review and explicit launch approval.
 
 There is no schema migration. First deploy to a new synthetic, code-bound
