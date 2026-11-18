@@ -12,8 +12,9 @@ and PR3.12 `14414244607` (101681 bytes, SHA256 d2cebe0c673359f68335aaf16e10e9b3d
 All six ZIP members pass CRC. Each368-entry source map matches the exact first
 head tree before and after testing. The PR merge87792e6d has the expected
 base/head parents and the same tree as head. Worker metadata matches its
-original seven-field baseline, by native type and value. No successful
-package step or full qualification ran; qualification is null.
+original seven-field baseline, by native type and value. Package evidence
+preservation steps succeeded, while build/install validation was skipped and
+no package artifact was produced. Full qualification did not run and is null.
 
 Both inspected units have the same four errors in the new Cross fixture:
 assignment to the actual service's read-only `product_catalog` property.
@@ -36,8 +37,10 @@ case completions, zero failures/errors/skips, actual caller exit0/reap in
 The original driver and caller output/receipts are copied exactly under
 `first-pure-descriptor-b4e1b59`; the caller standalone program was not archived,
 and its root exec input is not represented as a pinned standalone controller.
-This is a scoped pure result, pending independent RAW review; post-fix normal
-CI is not yet tested. No SQL was repeated or production approval inferred.
+Independent RAW review `2f84e016` closed the original-byte bindings and this
+scoped pure result. Post-fix normal CI is not yet tested. No SQL was repeated
+or production approval inferred. The attempt1 labels are the collector's
+recorded run labels; saved job metadata itself lacks a run_attempt field.
 
 Twenty-four full private CI files total1431017 bytes, retained separately from
 their PRIVATE-SEAL. All original unit logs, ZIPs, metadata and signed download
