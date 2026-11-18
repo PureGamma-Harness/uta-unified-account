@@ -108,6 +108,7 @@ def main(args):
     launch = [runtime["resolved_executable"], "-I", "-S", "-B", "-c", GATE, *command]
     put(caller / "intent.json", {"source_commit": args.source_commit, "plan_sha256": args.plan_sha256,
         "caller_plan_sha256": args.caller_plan_sha256, "runtime": runtime,
+        "literal_caller_argv": list(sys.orig_argv),
         "input_files": plan["input_files"], "caller_control_pin": control["caller_control_pin"],
         "outer_argv": command, "literal_popen_argv": launch, "monotonic_start_ns": started,
         "source_origin_is_not_invocation_HEAD": True, "attempt": 1})
