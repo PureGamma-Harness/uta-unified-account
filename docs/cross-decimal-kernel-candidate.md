@@ -39,6 +39,8 @@ is unchanged; no ratio field is invented.
 
 Use the existing validated immutable model classes, USD settlement/reporting,
 Cross only, collateral/borrowing and supported linear perpetual exposures.
+Pure valuation retains the reference's multiplier metadata support; this does
+not expand the service's actual multiplier-one execution capability.
 Use `market.validate` for unchanged age/clock policy and the catalog's public
 `require_risk_supported` for unchanged product capability checks. These shared
 non-arithmetic gates are not an independent validation of feed authenticity or
