@@ -8,6 +8,7 @@ import hashlib
 import json
 import math
 import unittest
+from unittest.mock import patch
 
 from funding_hold_d1_reference_cases_v3 import iter_cases
 from reference_funding_hold_d1_v3 import evaluate_request, load_request
@@ -93,9 +94,10 @@ def _response(value, case_id):
     return _canonical(value)
 
 
-def _declared_status(expected, reference, actual):
+def _declared_status(expected, reference, actual, context=""):
     if expected not in STATUSES or reference["status"] != expected or actual["status"] != expected:
-        raise DifferentialContractFailure("actual status violates independent declared case classification")
+        raise DifferentialContractFailure("actual status violates independent declared case classification " + context
+            + " declared=" + str(expected) + " reference=" + reference["status"] + " target=" + actual["status"])
 
 
 def _first_difference(left, right, path="$", depth=0):
@@ -126,43 +128,59 @@ def _frame(digest, raw):
     digest.update(raw)
 
 
+def _ordered_cases():
+    iterator = _technical_call("generator.iter_cases", lambda _: iter(iter_cases()), None)
+    for seed in range(1024):
+        yield seed, _technical_call("generator.next seed=" + str(seed), next, iterator)
+    try:
+        next(iterator)
+    except StopIteration:
+        return
+    except Exception as error:
+        raise DifferentialTechnicalFailure("generator exhaustion after seed=1023:" + type(error).__name__) from error
+    raise DifferentialContractFailure("generator emitted more than1024 cases")
+
+
 class FundingHoldFullFieldV3Tests(unittest.TestCase):
     def test_full_declared_stream_matches_complete_typed_responses(self):
         seen, operations = set(), set()
         families, partitions, declared, reference_counts, target_counts = (Counter() for _ in range(5))
         request_digest, reference_digest, target_digest = (hashlib.sha256() for _ in range(3))
         completed = 0
-        for ordinal, item in enumerate(iter_cases()):
+        for ordinal, item in _ordered_cases():
             if (type(item) is not dict or any(type(k) is not str for k in item) or set(item) != CASE_KEYS
                     or type(item["seed"]) is not int or item["seed"] != ordinal or ordinal >= 1024
                     or type(item["family"]) is not str or item["partition"] not in ("valid", "negative")
                     or type(item["expected_status"]) is not str or item["expected_status"] not in STATUSES
                     or item["hash_wire"] != CONTRACT_TAG or item["activation_permission"] is not False):
-                raise DifferentialContractFailure("complete ordered independent case stream required")
+                raise DifferentialContractFailure("complete ordered independent case stream required seed=" + str(ordinal))
             if (item["partition"] == "valid") != (item["expected_status"] == "OK"):
-                raise DifferentialContractFailure("declared valid/negative classification is inconsistent")
+                raise DifferentialContractFailure("declared valid/negative classification is inconsistent seed=" + str(ordinal))
             request = item["request"]
-            raw = _canonical(request, floats=True)
+            raw = _technical_call("stream.encode seed=" + str(ordinal), lambda value: _canonical(value, floats=True), request)
             if (type(request) is not dict or set(request) != {"schema", "case_id", "op", "input"}
                     or type(request["schema"]) is not int or request["schema"] != 3
                     or type(request["case_id"]) is not str or request["case_id"] in seen
                     or type(request["op"]) is not str or request["op"] not in OPERATIONS):
-                raise DifferentialContractFailure("unique complete version-three request required")
+                raise DifferentialContractFailure("unique complete version-three request required seed=" + str(ordinal))
             case_id = request["case_id"]
+            context = json.dumps({"seed": ordinal, "case_id_prefix": case_id[:128],
+                                  "case_id_sha256": hashlib.sha256(case_id.encode("utf-8")).hexdigest()}, sort_keys=True)
             seen.add(case_id)
             operations.add(request["op"])
-            reference_request = _technical_call("reference.load_request", load_request, raw)
-            target_request = _technical_call("target.decode_request", decode_request, raw)
-            reference_before = _canonical(reference_request, floats=True)
-            target_before = _canonical(target_request, floats=True)
-            self.assertEqual(reference_before, raw, "reference loader changed canonical request")
-            self.assertEqual(target_before, raw, "target loader changed canonical request")
-            reference = _technical_call("reference.evaluate_request", evaluate_request, reference_request)
-            actual = _technical_call("target.evaluate", evaluate, target_request)
-            reference_raw, target_raw = _response(reference, case_id), _response(actual, case_id)
+            reference_request = _technical_call("reference.load_request " + context, load_request, raw)
+            target_request = _technical_call("target.decode_request " + context, decode_request, raw)
+            reference_before = _technical_call("reference.before " + context, lambda value: _canonical(value, floats=True), reference_request)
+            target_before = _technical_call("target.before " + context, lambda value: _canonical(value, floats=True), target_request)
+            self.assertEqual(reference_before, raw, "reference loader changed canonical request " + context)
+            self.assertEqual(target_before, raw, "target loader changed canonical request " + context)
+            reference = _technical_call("reference.evaluate_request " + context, evaluate_request, reference_request)
+            actual = _technical_call("target.evaluate " + context, evaluate, target_request)
+            reference_raw = _technical_call("reference.response " + context, lambda value: _response(value, case_id), reference)
+            target_raw = _technical_call("target.response " + context, lambda value: _response(value, case_id), actual)
             reference_counts[reference["status"]] += 1
             target_counts[actual["status"]] += 1
-            _declared_status(item["expected_status"], reference, actual)
+            _declared_status(item["expected_status"], reference, actual, context)
             if reference_raw != target_raw:
                 self.fail(json.dumps({"scope": "FUNDING_HOLD_V3_FULL_FIELD", "seed": ordinal,
                     "case_id": case_id, "family": item["family"], "operation": request["op"],
@@ -171,8 +189,10 @@ class FundingHoldFullFieldV3Tests(unittest.TestCase):
                     "target_response_sha256": hashlib.sha256(target_raw).hexdigest(),
                     "first_difference": _first_difference(reference, actual),
                     "reference_observed": dict(reference_counts), "target_observed": dict(target_counts)}, sort_keys=True))
-            self.assertEqual(_canonical(reference_request, floats=True), reference_before, "reference mutated request")
-            self.assertEqual(_canonical(target_request, floats=True), target_before, "target mutated request")
+            reference_after = _technical_call("reference.after " + context, lambda value: _canonical(value, floats=True), reference_request)
+            target_after = _technical_call("target.after " + context, lambda value: _canonical(value, floats=True), target_request)
+            self.assertEqual(reference_after, reference_before, "reference mutated request " + context)
+            self.assertEqual(target_after, target_before, "target mutated request " + context)
             families[item["family"]] += 1
             partitions[item["partition"]] += 1
             declared[item["expected_status"]] += 1
@@ -209,6 +229,12 @@ class FundingHoldFullFieldV3Tests(unittest.TestCase):
     def test_matching_rejection_cannot_pass_a_declared_valid_case(self):
         with self.assertRaises(DifferentialContractFailure):
             _declared_status("OK", {"status": "REJECT"}, {"status": "REJECT"})
+
+    def test_missing_stream_case_is_technical_with_seed_context(self):
+        with patch(__name__ + ".iter_cases", return_value=iter(())):
+            with self.assertRaises(DifferentialTechnicalFailure) as captured:
+                next(_ordered_cases())
+        self.assertIn("seed=0", str(captured.exception))
 
 
 if __name__ == "__main__":

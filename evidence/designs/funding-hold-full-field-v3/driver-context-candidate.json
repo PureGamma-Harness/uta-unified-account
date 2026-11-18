@@ -1,0 +1,30 @@
+{
+  "schema": "funding-hold-full-field-v3-context/v2",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "previous_driver_source": "9da76b4dba71b71cba507ca342be0ef4cc3a8c92",
+  "pins": [
+    {
+      "path": "tests/test_funding_hold_full_field_v3.py",
+      "bytes": 14215,
+      "sha256": "b6c82ad93093c4c67d55ef3945924b779a36cf86b45e6fc5fc28176199f43dd9"
+    },
+    {
+      "path": "docs/funding-hold-full-field-v3-code.md",
+      "bytes": 2805,
+      "sha256": "d442fa0652344dd82c83391a2099caad7988623eef7ce4478623ef687f71a906"
+    }
+  ],
+  "test_definitions": [
+    "test_comparison_preserves_native_types_array_order_and_all_fields",
+    "test_escaped_implementation_exception_is_technical",
+    "test_full_declared_stream_matches_complete_typed_responses",
+    "test_matching_rejection_cannot_pass_a_declared_valid_case",
+    "test_missing_stream_case_is_technical_with_seed_context"
+  ],
+  "case_input_API": "iter_cases wrappers/seed0..1023/valid|negative/OK|REJECT|UNSUPPORTED declarations",
+  "reference_financial_algorithm_or_answers_read": false,
+  "reference_target_generator_import_compile_run_attempts": 0,
+  "full_field_execution": "NOT_RUN",
+  "activation_permission": false,
+  "D2": "BLOCKED"
+}

@@ -24,12 +24,18 @@ On full completion only, a summary records actual classifications and framed
 input/reference/target response stream hashes. This is correctness evidence,
 not an open-loop capacity or sustained-throughput result.
 
-Four unittest definitions cover the complete stream and the comparison,
-technical-exception and reject-all negative controls. They are NOT_RUN at this
+Five unittest definitions cover the complete stream and the comparison,
+technical-exception, reject-all and missing-input negative controls. They are NOT_RUN at this
 freeze; unresolved reference imports become runnable only after the exact V3
 source export is integrated. No target, reference, generator, validator, test,
 SQL, actor or CI ran while preparing this source. Independent CODE review and
 a separately recorded first execution remain necessary.
+
+Generator, loader, evaluator, response and mutation failures carry their actual
+seed and bounded case-ID context. Premature exhaustion and extra inputs fail
+before any successful full-stream summary; a matching business rejection cannot
+conceal a missing case. The first candidate9da76b4d remains historical; current
+pins are in driver-context-candidate.json.
 
 Only synthetic supplied-data D1 is covered. Real acknowledgement/outbox,
 global history, durable CAS, financial settlement, risk/admission integration,
