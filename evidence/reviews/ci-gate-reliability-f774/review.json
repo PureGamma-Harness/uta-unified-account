@@ -1,0 +1,139 @@
+{
+  "CI_reruns": 0,
+  "PID_proc_or_worker_operations": 0,
+  "SQL_operations": 0,
+  "base_head": "10ec28331eae46f4cf8aa7bcd36054b4daac73a6",
+  "failures": [
+    {
+      "assertion_line": 74,
+      "assessment": "The0.08s sleep is not a measured bound on the entire held interval or the remaining live lease. Failure origin remains unresolved; the observed expiry rejection itself is fail-closed.",
+      "id": "STARTUP_SHORT_WRITER",
+      "matrix": "3.13",
+      "not_observed": [
+        "Actual writer entry-to-gate-release duration",
+        "Lease remaining when the writer entered",
+        "Renew request-to-gate-acquisition duration",
+        "Last successful renewal timing and its commit duration",
+        "Scheduling, connection setup, guard/commit/fsync or suspend contribution"
+      ],
+      "observed": {
+        "error_codes": [
+          "startup_keeper_failed",
+          "lease_expired"
+        ],
+        "keeper_error_code": "lease_expired",
+        "phases": {
+          "constructed": true,
+          "entered": true,
+          "finished": false,
+          "renewal_requested": true,
+          "writer_held": true
+        },
+        "sqlite_errorcode": null
+      },
+      "proposal": "Add bounded monotonic-only stage records to the test's existing renew wrapper and existing main-thread phases, preserving each original call, all thresholds, original exception and all assertions. Do not add SQL, lease refresh, token substitution, registry/proc reads or a retry.",
+      "run_id": 44306368539,
+      "source_facts": [
+        "Fixture lease_seconds is0.4; keeper's SQLite timeout is min(database.timeout, lease_seconds/12,0.1).",
+        "The owned financial and control roles acquire the same process-local RLock before connection setup, BEGIN, COMMIT and connection close.",
+        "The test sets held only after entering a real financial transaction and executing its no-op update.",
+        "The existing renewal observer sets requested before invoking original WriterFence.renew; it does not witness gate acquisition or a committed renewal.",
+        "The financial transaction waits up to0.3s for requested, then asks sleep0.08s before transaction exit.",
+        "Successful lease check precedes remaining guard validation and physical commit; gate release includes connection close.",
+        "WriterFence rejects an expired token rather than reviving it, and the keeper stores its first failure."
+      ],
+      "test": "test_startup_write_contention.StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal"
+    },
+    {
+      "assertion_line": 196,
+      "assessment": "Success from an earlier live observation does not make readiness persistent. The single False without its returned report cannot identify the failing predicate or justify changing runtime safety checks.",
+      "id": "PARTIAL_FANOUT_READY",
+      "matrix": "3.12",
+      "not_observed": [
+        "The failing query's reason/worker predicates/control booleans",
+        "The passing readiness sample and failing query elapsed spans",
+        "Quote age or lease residual at the failed observation",
+        "Whether failure was market, owner, deadline, supervisor, local control or another read condition"
+      ],
+      "observed": {
+        "assertion": "False is not true",
+        "final_diagnostics_reason": "NOT_CAPTURED",
+        "final_diagnostics_returned_ready": false
+      },
+      "proposal": "Store the same line196 diagnostics result once, preserve the original assertTrue, and attach an identity-free finite aggregate of its existing booleans/reasons. Keep the original snapshot, exact query count, deadlines and assertions.",
+      "run_id": 44306356209,
+      "source_facts": [
+        "Fixture max_price_age is2s; worker lease_seconds is1; diagnostics default budget is1s.",
+        "The test first publishes an exact snapshot while a shard is blocked and requires publication_incomplete.",
+        "After releasing the blocking owner it activates the same original snapshot; no new timestamp is created.",
+        "activate completes publication and activation, then calls wait_ready successfully before returning.",
+        "Line196 makes a separate live diagnostics query, discards the returned details and asserts its ready field.",
+        "Each diagnostics query checks the current supervisor, control completion, owner identity/liveness/lease, local activation, funding registry, market freshness and shared diagnostic deadline.",
+        "The end of diagnostics rechecks freshness and expiry against the same observed lease/market snapshot; a later successful renewal does not refresh that snapshot."
+      ],
+      "test": "test_process_readiness.ProcessReadinessTests.test_partial_fanout_is_unready_until_exact_generation_finishes"
+    }
+  ],
+  "inspected_source_pins": {
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7",
+      "unchanged_from_base": true
+    },
+    "tests/test_process_readiness.py": {
+      "bytes": 15799,
+      "sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+      "unchanged_from_base": true
+    },
+    "tests/test_readiness_sampling.py": {
+      "bytes": 21783,
+      "sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+      "unchanged_from_base": true
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 8761,
+      "sha256": "bd07f4e2c855bd948d8d47db5b45376d963d8b76cd77967fdb54adc8fcfeb3ce",
+      "unchanged_from_base": true
+    },
+    "uta/durable_process.py": {
+      "bytes": 106136,
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+      "unchanged_from_base": true
+    },
+    "uta/sharding.py": {
+      "bytes": 51451,
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "unchanged_from_base": true
+    },
+    "uta/startup.py": {
+      "bytes": 18728,
+      "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+      "unchanged_from_base": true
+    },
+    "uta/storage.py": {
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "unchanged_from_base": true
+    },
+    "uta/writer_fence.py": {
+      "bytes": 46393,
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c",
+      "unchanged_from_base": true
+    }
+  },
+  "limits": [
+    "Unchanged source bytes do not rule out indirect effects from the corrected policy, suite order or host conditions.",
+    "No root cause is attributed to flaky scheduling or the new policy.",
+    "Neither an increased TTL nor a second quote/diagnostic retry is proposed.",
+    "No acceptance, production enablement or real-funds authorization is granted."
+  ],
+  "private_source_seal": {
+    "bytes": 11814,
+    "sha256": "692e5c8ae4c83a3fee9925fc13882fd351d922332db8ed1ae811cfc78455f328"
+  },
+  "proposal_gate": "No runtime or test instrumentation was changed. Parent approval of the bounded diagnostic proposal is required before writing a diagnostic patch; this is a task coordination gate, not a user permission request.",
+  "schema": 1,
+  "source_head": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "status": "READ_ONLY_REVIEW_CAUSE_UNRESOLVED",
+  "target_executions": 0
+}

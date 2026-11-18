@@ -1,0 +1,138 @@
+{
+  "CI_reruns": 0,
+  "SQL_operations": 0,
+  "base_target_source": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "code_delta_parent": "aeb5f23934fba8efc1ffd7b27c702a1b596bd228",
+  "independent_finding": {
+    "commit": "b0d63adeddde8608298e947f01fc75bfb6272585",
+    "id": "CI-DIAG-AEB-001"
+  },
+  "input_files": {
+    "docs/ci-gate-reliability-cap-v2.md": {
+      "bytes": 3426,
+      "sha256": "5ad5bb7f3f348263ae83e5ac63d6bf750080a78e422f714b9408ac4adafaace6"
+    },
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7"
+    },
+    "tests/test_process_readiness.py": {
+      "bytes": 18382,
+      "sha256": "82afb046a74e6a2210fa04eecaf06a6c4ff2ba4f2c115e7b442f94b4e8c8c3d8"
+    },
+    "tests/test_readiness_sampling.py": {
+      "bytes": 21783,
+      "sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba"
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 12463,
+      "sha256": "4cdeec91fd4f722097e771dcf6f0e3e756311b6589f32e32c717f4e9709ab706"
+    },
+    "uta/durable_process.py": {
+      "bytes": 106136,
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    "uta/sharding.py": {
+      "bytes": 51451,
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    "uta/startup.py": {
+      "bytes": 18728,
+      "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d"
+    },
+    "uta/storage.py": {
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 46393,
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+    }
+  },
+  "modified_test_methods": [
+    "StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal",
+    "ProcessReadinessTests.test_partial_fanout_is_unready_until_exact_generation_finishes"
+  ],
+  "next_gates": [
+    "independent CODE review",
+    "root explicit new execution/CI decision",
+    "preserve first result and original source",
+    "independent evidence review"
+  ],
+  "observation_limits": [
+    "Clock and append overhead can perturb timing.",
+    "No new authoritative lease or physical commit observation.",
+    "No root-cause or runtime safety conclusion.",
+    "No new test execution or failure reproduction.",
+    "Deque capacity is structural; snapshot fields do not claim atomic finality.",
+    "truncated is conservative and can be true without a proven eviction."
+  ],
+  "original_failures_preserved": true,
+  "preserved_plan": {
+    "bytes": 4034,
+    "path": "evidence/reviews/ci-gate-reliability-f774/diagnostic-CODE-plan-aeb5-NOT_RUN.json",
+    "sha256": "0ac93bfd671012cce6b2771f50e194e1d6fa62f388390a1b9140cc65b15db6da",
+    "status": "NOT_RUN"
+  },
+  "proc_PID_worker_operations": 0,
+  "read_only_review": "16ac950c5d8fc160026c0947f991f9b409ee6ba9",
+  "readiness": {
+    "counts": "true/false/unknown by exact bool type",
+    "existing_diagnostics_calls_at_final_assertion": 1,
+    "maximum_worker_rows": 2,
+    "no_identities": true,
+    "original_assertion": "assertTrue(final ready)",
+    "projection_failure": "fixed JSON message",
+    "projection_only_when_ready_false": true,
+    "unchanged_market_snapshot": true,
+    "unknown_reason": "other",
+    "worker_gate_fields": [
+      "alive",
+      "lease_active",
+      "market_ready",
+      "owner_ready",
+      "locally_active",
+      "funding_registry_ready"
+    ]
+  },
+  "schema": 1,
+  "startup": {
+    "clock": "time.monotonic_ns",
+    "clock_value_type": "exact int in0..2**63-1",
+    "fixed_stage_labels": [
+      "renew_request",
+      "held_renewal_requested",
+      "renew_raise",
+      "renew_return",
+      "enter_before",
+      "enter_return",
+      "construct_before",
+      "construct_return",
+      "writer_before",
+      "writer_body_enter",
+      "writer_held",
+      "requested_wait_return",
+      "sleep_return",
+      "writer_return_and_held_cleared",
+      "finish_before",
+      "finish_return",
+      "main_raise"
+    ],
+    "fixture_lease_seconds": 0.4,
+    "new_explicit_financial_locks": 0,
+    "observer_failure": "collection_failed sticky; original flow continues",
+    "original_exception_bare_raise": true,
+    "original_return_identity_preserved": true,
+    "original_sleep_seconds": 0.08,
+    "original_wait_seconds": 0.3,
+    "overflow": "capacity_reached sticky; capacity64 or collection failure means possible truncation; no exact eviction count",
+    "recording_at_capacity": "continues retaining append-order tail; observation work may continue",
+    "renew_original_calls_per_observer": 1,
+    "retention": "at most64-record tail by append order; no first64 or chronological-order claim",
+    "snapshot": "guarded list copy; exception returns preallocated finite snapshot_failed fallback without replacing original outcome",
+    "timeline_limit": 64,
+    "timeline_storage": "collections.deque(maxlen=64)"
+  },
+  "status": "CODE_ONLY_NOT_RUN",
+  "target_executions": 0
+}

@@ -1,0 +1,44 @@
+{
+  "limits": {
+    "new_runtime_liveness_fix": false,
+    "no_failure_log_is_not_evidence_of_root_cause_fix": true,
+    "no_production_or_capacity_acceptance": true,
+    "observer_timing_perturbation_possible": true,
+    "old_PR52_failure_scopes_preserved_separately": true
+  },
+  "runtime_observation": {
+    "actual_event_count_or_capacity_eviction": "NOT_MEASURED",
+    "anonymous_readiness_failure_reasons_or_gatefacts": "NOT_OBSERVED_FROM_PASSING_CASES",
+    "failure_branch_timeline": "NOT_OBSERVED_FROM_PASSING_CASES",
+    "two_target_cases_pass_in_fixed_logs": true
+  },
+  "source_contract": {
+    "cap_and_snapshot_handling": "independently reviewed CODE, not exercised cap proof from these logs",
+    "original_fixture_lease_seconds": 0.4,
+    "original_renew_call_and_assertions": "preserved by reviewed source",
+    "original_sleep_seconds": 0.08,
+    "original_wait_seconds": 0.3,
+    "retention": "bounded append-order tail; not first64 or chronological/atomic claim",
+    "stage_label_count": 17,
+    "startup_fixed_stage_labels": [
+      "renew_request",
+      "held_renewal_requested",
+      "renew_raise",
+      "renew_return",
+      "enter_before",
+      "enter_return",
+      "construct_before",
+      "construct_return",
+      "writer_before",
+      "writer_body_enter",
+      "writer_held",
+      "requested_wait_return",
+      "sleep_return",
+      "writer_return_and_held_cleared",
+      "finish_before",
+      "finish_return",
+      "main_raise"
+    ],
+    "timeline_limit": 64
+  }
+}
