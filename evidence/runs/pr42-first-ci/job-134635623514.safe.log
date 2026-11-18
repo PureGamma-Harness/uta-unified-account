@@ -1,0 +1,361 @@
+﻿2026-11-18T06:59:07.0243165Z Current runner version: '2.338.2'
+2026-11-18T06:59:07.0270106Z ##[group]Runner Image Provisioner
+2026-11-18T06:59:07.0271665Z Hosted Compute Agent
+2026-11-18T06:59:07.0272602Z Version: 20261103.629
+2026-11-18T06:59:07.0273407Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T06:59:07.0274201Z Build Date: 2026-11-03T17:26:59Z
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T06:59:07.0275835Z Region: northcentralus
+2026-11-18T06:59:07.0276459Z Cloud: Azure
+2026-11-18T06:59:07.0277087Z ##[endgroup]
+2026-11-18T06:59:07.0278788Z ##[group]Operating System
+2026-11-18T06:59:07.0279548Z Ubuntu
+2026-11-18T06:59:07.0280258Z 26.04.1
+2026-11-18T06:59:07.0281302Z LTS
+2026-11-18T06:59:07.0281929Z ##[endgroup]
+2026-11-18T06:59:07.0282587Z ##[group]Runner Image
+2026-11-18T06:59:07.0283269Z Image: ubuntu-26.04
+2026-11-18T06:59:07.0283977Z Version: 20261111.196.1
+2026-11-18T06:59:07.0285268Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-18T06:59:07.0286967Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-18T06:59:07.0287997Z ##[endgroup]
+2026-11-18T06:59:07.0289229Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T06:59:07.0291538Z Contents: read
+2026-11-18T06:59:07.0292385Z Metadata: read
+2026-11-18T06:59:07.0292998Z ##[endgroup]
+2026-11-18T06:59:07.0295435Z Secret source: Actions
+2026-11-18T06:59:07.0296505Z Cache mode: write
+2026-11-18T06:59:07.0297357Z Prepare workflow directory
+2026-11-18T06:59:07.0680372Z Prepare all required actions
+2026-11-18T06:59:07.0735023Z Getting action download info
+2026-11-18T06:59:07.3040317Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-18T06:59:07.5010985Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-18T06:59:07.6657583Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-11-18T06:59:08.0197708Z Complete job name: test (3.13)
+2026-11-18T06:59:08.1319783Z ##[group]Run actions/checkout@v4
+2026-11-18T06:59:08.1321081Z with:
+2026-11-18T06:59:08.1321654Z   repository: PureGamma-Harness/uta-unified-account
+2026-11-18T06:59:08.1326712Z   token: ***
+2026-11-18T06:59:08.1327188Z   ssh-strict: true
+2026-11-18T06:59:08.1327639Z   ssh-user: git
+2026-11-18T06:59:08.1328101Z   persist-credentials: true
+2026-11-18T06:59:08.1328617Z   clean: true
+2026-11-18T06:59:08.1329087Z   sparse-checkout-cone-mode: true
+2026-11-18T06:59:08.1329631Z   fetch-depth: 1
+2026-11-18T06:59:08.1330075Z   fetch-tags: false
+2026-11-18T06:59:08.1330795Z   show-progress: true
+2026-11-18T06:59:08.1331293Z   lfs: false
+2026-11-18T06:59:08.1331716Z   submodules: false
+2026-11-18T06:59:08.1332181Z   set-safe-directory: true
+2026-11-18T06:59:08.1332707Z   allow-unsafe-pr-checkout: false
+2026-11-18T06:59:08.1333608Z ##[endgroup]
+2026-11-18T06:59:08.7744055Z Syncing repository: PureGamma-Harness/uta-unified-account
+2026-11-18T06:59:08.7748638Z ##[group]Getting Git version info
+2026-11-18T06:59:08.7751244Z Working directory is '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-18T06:59:08.7754821Z [command]/usr/bin/git version
+2026-11-18T06:59:08.7760368Z git version 2.56.1
+2026-11-18T06:59:08.7793569Z ##[endgroup]
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T06:59:08.7805396Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T06:59:08.7808753Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T06:59:08.8019210Z Deleting the contents of '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-18T06:59:08.8024671Z ##[group]Initializing the repository
+2026-11-18T06:59:08.8030407Z [command]/usr/bin/git init /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T06:59:08.8184898Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-18T06:59:08.8187804Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-18T06:59:08.8191242Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-18T06:59:08.8193631Z hint: call:
+2026-11-18T06:59:08.8194863Z hint:
+2026-11-18T06:59:08.8196889Z hint: 	git config --global init.defaultBranch <name>
+2026-11-18T06:59:08.8199367Z hint:
+2026-11-18T06:59:08.8202082Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-18T06:59:08.8206072Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-18T06:59:08.8209226Z hint:
+2026-11-18T06:59:08.8212408Z hint: 	git branch -m <name>
+2026-11-18T06:59:08.8214254Z hint:
+2026-11-18T06:59:08.8216055Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-18T06:59:08.8219402Z Initialized empty Git repository in /home/runner/work/uta-unified-account/uta-unified-account/.git/
+2026-11-18T06:59:08.8226690Z [command]/usr/bin/git remote add origin https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-18T06:59:08.8614999Z ##[endgroup]
+2026-11-18T06:59:08.8617363Z ##[group]Disabling automatic garbage collection
+2026-11-18T06:59:08.8619890Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-18T06:59:08.8660200Z ##[endgroup]
+2026-11-18T06:59:08.8662405Z ##[group]Setting up auth
+2026-11-18T06:59:08.8669851Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T06:59:08.8714016Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+[REDACTED private authentication/control line; original retained by SHA]
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T06:59:08.9971841Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T06:59:09.0017011Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T06:59:09.0500737Z ##[endgroup]
+2026-11-18T06:59:09.0502655Z ##[group]Fetching the repository
+2026-11-18T06:59:09.0518329Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +fea8353daf2df005dc1a06f3ee767df2b8c558a0:refs/remotes/pull/42/merge
+2026-11-18T06:59:10.6773125Z From https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-18T06:59:10.6773891Z  * [new ref]         fea8353daf2df005dc1a06f3ee767df2b8c558a0 -> pull/42/merge
+2026-11-18T06:59:10.6777137Z ##[endgroup]
+2026-11-18T06:59:10.6777681Z ##[group]Determining the checkout info
+2026-11-18T06:59:10.6779962Z ##[endgroup]
+2026-11-18T06:59:10.6786865Z [command]/usr/bin/git sparse-checkout disable
+2026-11-18T06:59:10.6853772Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-18T06:59:10.6884662Z ##[group]Checking out the ref
+2026-11-18T06:59:10.6888655Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/42/merge
+2026-11-18T06:59:11.3473947Z Note: switching to 'refs/remotes/pull/42/merge'.
+2026-11-18T06:59:11.3474442Z 
+2026-11-18T06:59:11.3474792Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-18T06:59:11.3475389Z changes and commit them, and you can discard any commits you make in this
+2026-11-18T06:59:11.3475885Z state without impacting any branches by switching back to a branch.
+2026-11-18T06:59:11.3476201Z 
+2026-11-18T06:59:11.3476814Z If you want to create a new branch to retain commits you create, you may
+2026-11-18T06:59:11.3477271Z do so (now or later) by using -c with the switch command. Example:
+2026-11-18T06:59:11.3477530Z 
+2026-11-18T06:59:11.3477639Z   git switch -c <new-branch-name>
+2026-11-18T06:59:11.3477827Z 
+2026-11-18T06:59:11.3477941Z Or undo this operation with:
+2026-11-18T06:59:11.3478106Z 
+2026-11-18T06:59:11.3478192Z   git switch -
+2026-11-18T06:59:11.3478355Z 
+2026-11-18T06:59:11.3478574Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-18T06:59:11.3478882Z 
+2026-11-18T06:59:11.3479226Z HEAD is now at fea8353 Merge f510bf5fea852ca04c87930077861c312320141f into 17e0838ff0c153f36ec53a03e4db219e5948ab33
+2026-11-18T06:59:11.3566894Z ##[endgroup]
+2026-11-18T06:59:11.3623674Z [command]/usr/bin/git log -1 --format=%H
+2026-11-18T06:59:11.3653366Z fea8353daf2df005dc1a06f3ee767df2b8c558a0
+2026-11-18T06:59:11.3962367Z ##[group]Run actions/setup-python@v5
+2026-11-18T06:59:11.3962703Z with:
+2026-11-18T06:59:11.3962918Z   python-version: 3.13
+2026-11-18T06:59:11.3963144Z   check-latest: false
+2026-11-18T06:59:11.3965769Z   token: ***
+2026-11-18T06:59:11.3965991Z   update-environment: true
+2026-11-18T06:59:11.3966238Z   allow-prereleases: false
+2026-11-18T06:59:11.3966480Z   freethreaded: false
+2026-11-18T06:59:11.3966700Z ##[endgroup]
+2026-11-18T06:59:11.5391655Z ##[group]Installed versions
+2026-11-18T06:59:11.6377043Z (node:2386) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T06:59:11.6378491Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T06:59:11.6381389Z Successfully set up CPython (3.13.18)
+2026-11-18T06:59:11.6388568Z ##[endgroup]
+2026-11-18T06:59:11.6585285Z ##[group]Run python - <<'PY'
+2026-11-18T06:59:11.6585676Z [36;1mpython - <<'PY'[0m
+2026-11-18T06:59:11.6585946Z [36;1mfrom contextlib import closing[0m
+2026-11-18T06:59:11.6586330Z [36;1mimport json, os, pathlib, platform, sqlite3, subprocess, sys[0m
+2026-11-18T06:59:11.6586801Z [36;1mwith closing(sqlite3.connect(':memory:')) as connection:[0m
+2026-11-18T06:59:11.6587288Z [36;1m    options = [row[0] for row in connection.execute('PRAGMA compile_options')][0m
+2026-11-18T06:59:11.6587747Z [36;1mcpu = pathlib.Path('/sys/fs/cgroup/cpu.max')[0m
+2026-11-18T06:59:11.6588309Z [36;1mprint(json.dumps({'checkout_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),[0m
+2026-11-18T06:59:11.6588930Z [36;1m                  'python': sys.version, 'sqlite': sqlite3.sqlite_version,[0m
+2026-11-18T06:59:11.6589430Z [36;1m                  'sqlite_compile_options': options, 'platform': platform.platform(),[0m
+2026-11-18T06:59:11.6589888Z [36;1m                  'cpu_count': os.cpu_count(),[0m
+2026-11-18T06:59:11.6590823Z [36;1m                  'cpu_affinity': sorted(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else None,[0m
+2026-11-18T06:59:11.6591571Z [36;1m                  'cgroup_cpu_max': cpu.read_text().strip() if cpu.exists() else None}, indent=2))[0m
+2026-11-18T06:59:11.6592007Z [36;1mPY[0m
+2026-11-18T06:59:11.6841679Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:59:11.6841957Z env:
+2026-11-18T06:59:11.6842253Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:11.6842713Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib/pkgconfig
+2026-11-18T06:59:11.6843148Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:11.6843541Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:11.6843930Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:11.6844318Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib
+2026-11-18T06:59:11.6844673Z ##[endgroup]
+2026-11-18T06:59:12.4952758Z {
+2026-11-18T06:59:12.4953242Z   "checkout_commit": "fea8353daf2df005dc1a06f3ee767df2b8c558a0",
+2026-11-18T06:59:12.4953704Z   "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+2026-11-18T06:59:12.4954391Z   "sqlite": "3.46.1",
+2026-11-18T06:59:12.4954684Z   "sqlite_compile_options": [
+2026-11-18T06:59:12.4954947Z     "ALLOW_ROWID_IN_VIEW",
+2026-11-18T06:59:12.4955192Z     "ATOMIC_INTRINSICS=1",
+2026-11-18T06:59:12.4955437Z     "COMPILER=gcc-15.2.0",
+2026-11-18T06:59:12.4955679Z     "DEFAULT_AUTOVACUUM",
+2026-11-18T06:59:12.4955926Z     "DEFAULT_CACHE_SIZE=-2000",
+2026-11-18T06:59:12.4956191Z     "DEFAULT_FILE_FORMAT=4",
+2026-11-18T06:59:12.4956447Z     "DEFAULT_JOURNAL_SIZE_LIMIT=-1",
+2026-11-18T06:59:12.4956720Z     "DEFAULT_MMAP_SIZE=0",
+2026-11-18T06:59:12.4956963Z     "DEFAULT_PAGE_SIZE=4096",
+2026-11-18T06:59:12.4957221Z     "DEFAULT_PCACHE_INITSZ=20",
+2026-11-18T06:59:12.4957482Z     "DEFAULT_RECURSIVE_TRIGGERS",
+2026-11-18T06:59:12.4957794Z     "DEFAULT_SECTOR_SIZE=4096",
+2026-11-18T06:59:12.4958048Z     "DEFAULT_SYNCHRONOUS=2",
+2026-11-18T06:59:12.4958308Z     "DEFAULT_WAL_AUTOCHECKPOINT=1000",
+2026-11-18T06:59:12.4958598Z     "DEFAULT_WAL_SYNCHRONOUS=2",
+2026-11-18T06:59:12.4958871Z     "DEFAULT_WORKER_THREADS=0",
+2026-11-18T06:59:12.4959127Z     "DIRECT_OVERFLOW_READ",
+2026-11-18T06:59:12.4959377Z     "ENABLE_COLUMN_METADATA",
+2026-11-18T06:59:12.4959624Z     "ENABLE_DBPAGE_VTAB",
+2026-11-18T06:59:12.4959857Z     "ENABLE_DBSTAT_VTAB",
+2026-11-18T06:59:12.4960084Z     "ENABLE_FTS3",
+2026-11-18T06:59:12.4960304Z     "ENABLE_FTS3_PARENTHESIS",
+2026-11-18T06:59:12.4960899Z     "ENABLE_FTS4",
+2026-11-18T06:59:12.4961261Z     "ENABLE_FTS5",
+2026-11-18T06:59:12.4961577Z     "ENABLE_LOAD_EXTENSION",
+2026-11-18T06:59:12.4961829Z     "ENABLE_MATH_FUNCTIONS",
+2026-11-18T06:59:12.4962071Z     "ENABLE_PREUPDATE_HOOK",
+2026-11-18T06:59:12.4962306Z     "ENABLE_RTREE",
+2026-11-18T06:59:12.4962518Z     "ENABLE_SESSION",
+2026-11-18T06:59:12.4962977Z     "ENABLE_STMTVTAB",
+2026-11-18T06:59:12.4963213Z     "ENABLE_UNLOCK_NOTIFY",
+2026-11-18T06:59:12.4963457Z     "ENABLE_UPDATE_DELETE_LIMIT",
+2026-11-18T06:59:12.4963709Z     "HAVE_ISNAN",
+2026-11-18T06:59:12.4963930Z     "LIKE_DOESNT_MATCH_BLOBS",
+2026-11-18T06:59:12.4964184Z     "MALLOC_SOFT_LIMIT=1024",
+2026-11-18T06:59:12.4964422Z     "MAX_ATTACHED=10",
+2026-11-18T06:59:12.4964637Z     "MAX_COLUMN=2000",
+2026-11-18T06:59:12.4964861Z     "MAX_COMPOUND_SELECT=500",
+2026-11-18T06:59:12.4965117Z     "MAX_DEFAULT_PAGE_SIZE=32768",
+2026-11-18T06:59:12.4965380Z     "MAX_EXPR_DEPTH=1000",
+2026-11-18T06:59:12.4965618Z     "MAX_FUNCTION_ARG=127",
+2026-11-18T06:59:12.4965857Z     "MAX_LENGTH=1000000000",
+2026-11-18T06:59:12.4966109Z     "MAX_LIKE_PATTERN_LENGTH=50000",
+2026-11-18T06:59:12.4966383Z     "MAX_MMAP_SIZE=0x7fff0000",
+2026-11-18T06:59:12.4966648Z     "MAX_PAGE_COUNT=0xfffffffe",
+2026-11-18T06:59:12.4966903Z     "MAX_PAGE_SIZE=65536",
+2026-11-18T06:59:12.4967139Z     "MAX_SCHEMA_RETRY=25",
+2026-11-18T06:59:12.4967382Z     "MAX_SQL_LENGTH=1000000000",
+2026-11-18T06:59:12.4967632Z     "MAX_TRIGGER_DEPTH=1000",
+2026-11-18T06:59:12.4967885Z     "MAX_VARIABLE_NUMBER=250000",
+2026-11-18T06:59:12.4968141Z     "MAX_VDBE_OP=250000000",
+2026-11-18T06:59:12.4968383Z     "MAX_WORKER_THREADS=8",
+2026-11-18T06:59:12.4968616Z     "MUTEX_PTHREADS",
+2026-11-18T06:59:12.4968833Z     "SECURE_DELETE",
+2026-11-18T06:59:12.4969044Z     "SOUNDEX",
+2026-11-18T06:59:12.4969251Z     "SYSTEM_MALLOC",
+2026-11-18T06:59:12.4969459Z     "TEMP_STORE=1",
+2026-11-18T06:59:12.4969666Z     "THREADSAFE=1",
+2026-11-18T06:59:12.4969868Z     "USE_URI"
+2026-11-18T06:59:12.4970059Z   ],
+2026-11-18T06:59:12.4970686Z   "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+2026-11-18T06:59:12.4971112Z   "cpu_count": 4,
+2026-11-18T06:59:12.4971319Z   "cpu_affinity": [
+2026-11-18T06:59:12.4971515Z     0,
+2026-11-18T06:59:12.4971680Z     1,
+2026-11-18T06:59:12.4971841Z     2,
+2026-11-18T06:59:12.4972002Z     3
+2026-11-18T06:59:12.4972165Z   ],
+2026-11-18T06:59:12.4972354Z   "cgroup_cpu_max": null
+2026-11-18T06:59:12.4972571Z }
+2026-11-18T06:59:12.5048711Z ##[group]Run python tools/run_validation.py --output "$RUNNER_TEMP/uta-validation"
+2026-11-18T06:59:12.5049329Z [36;1mpython tools/run_validation.py --output "$RUNNER_TEMP/uta-validation"[0m
+2026-11-18T06:59:12.5099114Z shell: /usr/bin/bash -e {0}
+2026-11-18T06:59:12.5099360Z env:
+2026-11-18T06:59:12.5099627Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:12.5100070Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib/pkgconfig
+2026-11-18T06:59:12.5100735Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:12.5101139Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:12.5101535Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T06:59:12.5101949Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib
+2026-11-18T06:59:12.5102277Z ##[endgroup]
+2026-11-18T07:04:07.3196646Z {
+2026-11-18T07:04:07.3198992Z   "code_commit": "fea8353daf2df005dc1a06f3ee767df2b8c558a0",
+2026-11-18T07:04:07.3199841Z   "started_at": "2026-11-18T06:59:12.922602+00:00",
+2026-11-18T07:04:07.3202313Z   "finished_at": "2026-11-18T07:04:07.315514+00:00",
+2026-11-18T07:04:07.3203273Z   "command_argv": [
+2026-11-18T07:04:07.3203941Z     "/opt/hostedtoolcache/Python/3.13.18/x64/bin/python",
+2026-11-18T07:04:07.3205046Z     "/home/runner/work/uta-unified-account/uta-unified-account/tools/run_validation.py",
+2026-11-18T07:04:07.3205816Z     "--output",
+2026-11-18T07:04:07.3206177Z     "/home/runner/work/_temp/uta-validation"
+2026-11-18T07:04:07.3206612Z   ],
+2026-11-18T07:04:07.3207020Z   "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+2026-11-18T07:04:07.3207553Z   "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+2026-11-18T07:04:07.3207913Z   "sqlite": "3.46.1",
+2026-11-18T07:04:07.3208132Z   "tests_run": 2102,
+2026-11-18T07:04:07.3208341Z   "failures": 0,
+2026-11-18T07:04:07.3208543Z   "errors": 25,
+2026-11-18T07:04:07.3208743Z   "skipped": 0,
+2026-11-18T07:04:07.3208964Z   "expected_failures": 0,
+2026-11-18T07:04:07.3209208Z   "unexpected_successes": 0,
+2026-11-18T07:04:07.3209452Z   "unittest_passed": false,
+2026-11-18T07:04:07.3209702Z   "lease_observations": [],
+2026-11-18T07:04:07.3209946Z   "lease_observations_truncated": false,
+2026-11-18T07:04:07.3210222Z   "duration_seconds": 294.286690903,
+2026-11-18T07:04:07.3210754Z   "worker_exit_code": 1,
+2026-11-18T07:04:07.3211046Z   "passed": false,
+2026-11-18T07:04:07.3211259Z   "source_unchanged": true,
+2026-11-18T07:04:07.3211500Z   "tracked_source_clean_before": true,
+2026-11-18T07:04:07.3211774Z   "tracked_source_clean_after": true,
+2026-11-18T07:04:07.3212499Z   "test_log_sha256": "79585b53da295b6909bd25368fd559f7b1fd06953492a4e41eb515994d9f99f5",
+2026-11-18T07:04:07.3213306Z   "production_approved": false
+2026-11-18T07:04:07.3213707Z }
+2026-11-18T07:04:07.3323249Z ##[error]Process completed with exit code 1.
+2026-11-18T07:04:07.3428072Z ##[group]Run actions/upload-artifact@v4
+2026-11-18T07:04:07.3428383Z with:
+2026-11-18T07:04:07.3428606Z   name: uta-unit-validation-python-3.13
+2026-11-18T07:04:07.3429347Z   path: /home/runner/work/_temp/uta-validation/summary.json
+/home/runner/work/_temp/uta-validation/worker-result.json
+/home/runner/work/_temp/uta-validation/unittest.txt
+
+2026-11-18T07:04:07.3430089Z   if-no-files-found: warn
+2026-11-18T07:04:07.3430323Z   retention-days: 30
+2026-11-18T07:04:07.3430821Z   compression-level: 6
+2026-11-18T07:04:07.3431046Z   overwrite: false
+2026-11-18T07:04:07.3431262Z   include-hidden-files: false
+2026-11-18T07:04:07.3431494Z env:
+2026-11-18T07:04:07.3431740Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:07.3432173Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib/pkgconfig
+2026-11-18T07:04:07.3432595Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:07.3433006Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:07.3433387Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:07.3433785Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib
+2026-11-18T07:04:07.3434105Z ##[endgroup]
+2026-11-18T07:04:07.5185940Z (node:6527) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T07:04:07.5187579Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T07:04:07.5253249Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-18T07:04:07.5255962Z The least common ancestor is /home/runner/work/_temp/uta-validation. This will be the root directory of the artifact
+2026-11-18T07:04:07.5257143Z With the provided path, there will be 3 files uploaded
+2026-11-18T07:04:07.5261289Z Artifact name is valid!
+2026-11-18T07:04:07.5262048Z Root directory input is valid!
+2026-11-18T07:04:07.8430732Z Beginning upload of artifact content to blob storage
+2026-11-18T07:04:07.8845377Z (node:6527) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-11-18T07:04:08.0496731Z Uploaded bytes 101075
+2026-11-18T07:04:08.0846271Z Finished uploading artifact content to blob storage!
+2026-11-18T07:04:08.0847704Z SHA256 digest of uploaded artifact zip is a9dd7a68909d67ff05625a7a97f943799a87786e4b9448ea8812f03e84490108
+2026-11-18T07:04:08.0850012Z Finalizing artifact upload
+2026-11-18T07:04:08.5696844Z Artifact uta-unit-validation-python-3.13.zip successfully finalized. Artifact ID 14406490371
+2026-11-18T07:04:08.5698146Z Artifact uta-unit-validation-python-3.13 has been successfully uploaded! Final size is 101075 bytes. Artifact ID is 14406490371
+2026-11-18T07:04:08.5703865Z Artifact download URL: https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44255350395/artifacts/14406490371
+2026-11-18T07:04:08.5922461Z ##[group]Run actions/upload-artifact@v4
+2026-11-18T07:04:08.5922772Z with:
+2026-11-18T07:04:08.5923007Z   name: uta-package-validation-python-3.13
+2026-11-18T07:04:08.5924394Z   path: /home/runner/work/_temp/uta-package-artifact-manifest.json
+/home/runner/work/_temp/uta-installed-validation/installed-report.json
+/home/runner/work/_temp/uta-installed-validation/installed-cli-tests.txt
+/home/runner/work/_temp/uta-installed-validation/uta*.stdout.txt
+/home/runner/work/_temp/uta-installed-validation/uta*.stderr.txt
+
+2026-11-18T07:04:08.5925763Z   if-no-files-found: warn
+2026-11-18T07:04:08.5925996Z   retention-days: 30
+2026-11-18T07:04:08.5926222Z   compression-level: 6
+2026-11-18T07:04:08.5926440Z   overwrite: false
+2026-11-18T07:04:08.5926656Z   include-hidden-files: false
+2026-11-18T07:04:08.5926894Z env:
+2026-11-18T07:04:08.5927158Z   pythonLocation: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:08.5927620Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib/pkgconfig
+2026-11-18T07:04:08.5928057Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:08.5928442Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:08.5928831Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.13.18/x64
+2026-11-18T07:04:08.5929237Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.13.18/x64/lib
+2026-11-18T07:04:08.5929567Z ##[endgroup]
+2026-11-18T07:04:08.7754609Z (node:6539) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T07:04:08.7755934Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T07:04:08.7802356Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-11-18T07:04:08.7804885Z The least common ancestor is /home/runner/work/_temp. This will be the root directory of the artifact
+2026-11-18T07:04:08.7821531Z ##[warning]No files were found with the provided path: /home/runner/work/_temp/uta-package-artifact-manifest.json
+/home/runner/work/_temp/uta-installed-validation/installed-report.json
+/home/runner/work/_temp/uta-installed-validation/installed-cli-tests.txt
+/home/runner/work/_temp/uta-installed-validation/uta*.stdout.txt
+/home/runner/work/_temp/uta-installed-validation/uta*.stderr.txt. No artifacts will be uploaded.
+2026-11-18T07:04:08.8091391Z Post job cleanup.
+2026-11-18T07:04:08.9057233Z [command]/usr/bin/git version
+2026-11-18T07:04:08.9107339Z git version 2.56.1
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T07:04:08.9154076Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T07:04:08.9158078Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T07:04:08.9222319Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T07:04:08.9252100Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+[REDACTED private authentication/control line; original retained by SHA]
+[REDACTED private authentication/control line; original retained by SHA]
+[REDACTED private authentication/control line; original retained by SHA]
+[REDACTED private authentication/control line; original retained by SHA]
+2026-11-18T07:04:09.0035897Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T07:04:09.0093098Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T07:04:09.0571829Z Cleaning up orphan processes
+2026-11-18T07:04:09.1027663Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
