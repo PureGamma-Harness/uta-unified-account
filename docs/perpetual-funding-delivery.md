@@ -44,7 +44,20 @@ Target/drain1.904235790s, inner-with-oracles1.644386558s and selected tests
 cleanup0. Logical file-size observations do not prove a continuous disk quota.
 Full databases, source capsules, nonces and original archives remain private;
 public evidence is limited to checked exports, finite summaries and hashes.
-First integrated CI for this delivery is pending.
+First CI for source6ba5ba2e failed in both runs44283600389/44283882268,
+each in Python3.12 readiness/lease tests. In the three inspected units, all
+six new funding methods passed (18 per-ID observations). The successful fixed
+PR3.13 unit ran2055 tests without failures/errors/skips. The four failure
+observations occur at distinct activation, publication and owner-observation
+preconditions; their causes remain UNDETERMINED. Independent RAWd5ccc4cb
+preserves both whole-run failures. Report-only package checks succeeded, but
+the installed25-module list does not include the two new funding modules;
+installed funding operation and full qualification remain unverified.
+
+The public CI export contains relationship booleans and hashes. Independent
+deltaad75536c checked the exact redactions; the earlier local-only candidate
+with concrete binding ordinals is not a public ancestor. Original private
+artifacts and all first outcomes remain unchanged.
 
 ## Deployment and rollback
 
