@@ -1,5 +1,9 @@
 # M05 fixed combined source：仅合成低量诊断准备
 
+当前结论：**FIRST_ERROR / NO_GO**。冻结源码 C `4eabab317fd9ec7a4e9c068c42ac4935a26fcac4`（tree `72355557841427da0890ab08094b89dbc3535940`）于 2026-11-18T01:07:19.374512Z 在 CPU2 / CPython3.12.14 首次执行一次，外层 30 秒，实际 monotonic 129,017,241 ns，退出 1。discovery 选择九个模块，unittest 记录 12 条：checkout_ref 四个方法 PASS，其余八个模块导入 ERROR；这不是九模块通过或完整方法数。六个预期真实冷 child 均未到达，实际 child=0，无 child exit/reap 或正负控证明；hard_guard_acceptance=false。
+
+直接原因是本轮执行器把标准库 `concurrent` 的导入一起拒绝，`unittest.mock → asyncio → concurrent.futures` 因此失败。首 stderr 原件 23,993 字节、SHA256 `ea3cff7cd38818eaee7b727daa810921d4ded38312da3450156a6474929640be`，stdout 为空，完整 metadata、outer exit 与首输出在 `evidence/preparations/m05-first-combined-4eabab3/`。这确定了 harness 过宽的 import gate；未加载的产品/FS 测试没有形成新通过或失败结论。失败后没有改 runner、重跑同源、改旧证据、signal 任何任务或补 child/P。当前 policy 标记 FIRST_RUN_ERROR_NO_RERUN，next_run_permitted=false；C 的 source-bindings 保存冻结时 policy，postfirst-bindings 另绑定当前失败 policy，不能混淆时间点。
+
 本 CODE 合入独立 OWN `837bd0ac8c43550590d8637000dea18db746d3ff` 和 `d49e85e73f629b44a0a980d5a75d8a83f6530cae`。single-use token/proof 组件 CODE 已独立关闭；a365 原 pending、c524 的原 19 PASS / 1 RED、M01–M04 首 FAIL/UNKNOWN 均保留。
 
 只给 manual dispatch 的 sparse checkout 补一条 `/.github/workflows/independent-m0-once.yml`，满足两个测试模块对两份 YAML 的实际读取。once workflow、controller、escrow、公共 recipient、B/P argv、05 namespace、预算均不改。controller 的 61 个 function/class AST 继续等于固定 FS，仅两 namespace 常量相对 spent04 更新。`combined-source-bindings.json` 绑定 controller、两 workflow、九测试、helper、证书、policy、strict false 模板与执行器 SHA256。模板严格 19 字段，execution_authorized=false，control_commit 零值；next_run_permitted 只在外层 policy，持续 false。

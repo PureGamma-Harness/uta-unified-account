@@ -1,0 +1,361 @@
+test_dispatch_ref_mutation_is_rejected (test_independent_m0_checkout_ref.CheckoutRefContract.test_dispatch_ref_mutation_is_rejected) ... ok
+test_each_actual_workload_checkout_is_exact_source40 (test_independent_m0_checkout_ref.CheckoutRefContract.test_each_actual_workload_checkout_is_exact_source40) ... ok
+test_multiple_or_missing_workload_step_is_rejected (test_independent_m0_checkout_ref.CheckoutRefContract.test_multiple_or_missing_workload_step_is_rejected) ... ok
+test_once_only_ref_mutation_fails_even_unchanged_source_assert_passes (test_independent_m0_checkout_ref.CheckoutRefContract.test_once_only_ref_mutation_fails_even_unchanged_source_assert_passes) ... ok
+test_independent_m0_cold_import (unittest.loader._FailedTest.test_independent_m0_cold_import) ... ERROR
+test_independent_m0_controller (unittest.loader._FailedTest.test_independent_m0_controller) ... ERROR
+test_independent_m0_diagnostics (unittest.loader._FailedTest.test_independent_m0_diagnostics) ... ERROR
+test_independent_m0_entry_types (unittest.loader._FailedTest.test_independent_m0_entry_types) ... ERROR
+test_independent_m0_escrow (unittest.loader._FailedTest.test_independent_m0_escrow) ... ERROR
+test_independent_m0_integrity (unittest.loader._FailedTest.test_independent_m0_integrity) ... ERROR
+test_independent_m0_resource_race (unittest.loader._FailedTest.test_independent_m0_resource_race) ... ERROR
+test_independent_m0_scan_proof (unittest.loader._FailedTest.test_independent_m0_scan_proof) ... ERROR
+
+======================================================================
+ERROR: test_independent_m0_cold_import (unittest.loader._FailedTest.test_independent_m0_cold_import)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_cold_import
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_cold_import.py", line 10, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_controller (unittest.loader._FailedTest.test_independent_m0_controller)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_controller
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_controller.py", line 15, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_diagnostics (unittest.loader._FailedTest.test_independent_m0_diagnostics)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_diagnostics
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_diagnostics.py", line 9, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_entry_types (unittest.loader._FailedTest.test_independent_m0_entry_types)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_entry_types
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_entry_types.py", line 10, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_escrow (unittest.loader._FailedTest.test_independent_m0_escrow)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_escrow
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_escrow.py", line 14, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_integrity (unittest.loader._FailedTest.test_independent_m0_integrity)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_integrity
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_integrity.py", line 13, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_resource_race (unittest.loader._FailedTest.test_independent_m0_resource_race)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_resource_race
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_resource_race.py", line 10, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+======================================================================
+ERROR: test_independent_m0_scan_proof (unittest.loader._FailedTest.test_independent_m0_scan_proof)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_independent_m0_scan_proof
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 396, in _find_test_path
+    module = self._get_module_from_name(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 339, in _get_module_from_name
+    __import__(name)
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/workspace/uta-m05-first-combined-4eabab3/control/tests/test_independent_m0_scan_proof.py", line 10, in <module>
+    from unittest.mock import patch
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 26, in <module>
+    import asyncio
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/__init__.py", line 8, in <module>
+    from .base_events import *
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "/workspace/uta-m05-first-combined-4eabab3/runner.py", line 138, in load
+    original_loader(loader,module)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 18, in <module>
+    import concurrent.futures
+  File "<string>", line 11, in _scope_audit
+  File "<string>", line 8, in _scope_deny
+ScopeDenied: import:concurrent
+
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.002s
+
+FAILED (errors=8)

@@ -1,0 +1,92 @@
+{
+  "HA_approved": false,
+  "SQL_business_worker_crypto_network_signal_execution": false,
+  "actual_M05_or_marker_ref_push_dispatch_CI": false,
+  "actual_stdlib_children": 0,
+  "actual_test_methods_passed": 4,
+  "capacity_approved": false,
+  "cause": "Harness import guard rejects standard-library concurrent, required by unittest.mock -> asyncio -> concurrent.futures; product tests outside checkout_ref did not load.",
+  "child_exit_and_reap_records": [],
+  "complete_nine_module_acceptance": false,
+  "discovery_selected_modules": 9,
+  "elapsed_ns": 129017241,
+  "execution_command": "timeout --signal=KILL 30s taskset -c 2 python3 -I -S runner.py CONTROL PRIVATE identity.json",
+  "expected_stdlib_children": 6,
+  "failed_module_import_entries": 8,
+  "followup_execution_authorized": false,
+  "guard_selfchecks": [
+    "sqlite3.connect",
+    "socket.connect",
+    "os.kill",
+    "os.fork",
+    "subprocess.Popen"
+  ],
+  "kind": "M05_FIRST_COMBINED_FAILURE_SEAL",
+  "measured_source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+  "measured_source_tree": "72355557841427da0890ab08094b89dbc3535940",
+  "next_run_permitted": false,
+  "orchestration_scope": "timeout/taskset/initial interpreter are outside suite child count; measured suite requested only cold helper children; ordinary Git/metadata reads before/after are not claimed to be zero processes.",
+  "outer_exit": 1,
+  "production_approved": false,
+  "raw_files": {
+    "first.execution.json": {
+      "bytes": 7668,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-4eabab3/private/first.execution.json",
+      "sha256": "07525ef44bb28366362f0508e2ac5b7504f1fcaeb0771d146201bb74bab54176"
+    },
+    "first.stderr.txt": {
+      "bytes": 23993,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-4eabab3/private/first.stderr.txt",
+      "sha256": "ea3cff7cd38818eaee7b727daa810921d4ded38312da3450156a6474929640be"
+    },
+    "first.stdout.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-4eabab3/private/first.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "outer.exit.txt": {
+      "bytes": 2,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-4eabab3/private/outer.exit.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "preflight.identity.json": {
+      "bytes": 6125,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-4eabab3/identity.json",
+      "sha256": "5cccaeab374c630dedd8d6b376a8abc18b9f138efac49f76a60e961a624c2c10"
+    }
+  },
+  "real_child_positive_negative_proofs": "NOT_REACHED",
+  "runner_modified_after_failure": false,
+  "runtime": {
+    "affinity": [
+      2
+    ],
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "implementation": "CPython",
+    "isolated": 1,
+    "no_site": 1,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "same_source_rerun_performed": false,
+  "started_at_utc": "2026-11-18T01:07:19.374512+00:00",
+  "status": "FIRST_ERROR_NO_GO",
+  "test_method_failures": 0,
+  "unexpected_denials": [
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent",
+    "import:concurrent"
+  ],
+  "unittest_entries": 12,
+  "version": 1
+}
