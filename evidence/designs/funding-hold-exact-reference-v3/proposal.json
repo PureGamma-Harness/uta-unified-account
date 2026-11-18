@@ -1,6 +1,18 @@
 {
   "D2": "BLOCKED",
   "activation_permission": false,
+  "all_operations_in_declared_seed_domain": [
+    "action_identity",
+    "aggregate",
+    "decompose",
+    "duty_identity",
+    "payment_precondition",
+    "policy_identity",
+    "stage_advance",
+    "unsupported",
+    "wait_preview",
+    "wait_records"
+  ],
   "base_independent_CODE": "04dfc2d2bc136b6770913e32c1cd6d4d0f1e7ad4",
   "base_reference_commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
   "case_ids": "D1V3-SEED-0000..1023",
@@ -8,9 +20,17 @@
   "financial_expected_values": "No numeric changes, publicgivenU600/P246 etc remain slices only",
   "forward_rule": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
   "generator": "Own raw v3 builders take explicit lineage only for newpositiveviaU fixtures; oldnull or partial retainedasnegative, never bridge autorepair",
-  "kind": "INDEPENDENT_REFERENCE_V3_FINAL_LINEAGE_CODE_PLAN",
+  "kind": "INDEPENDENT_REFERENCE_V3_FINAL_LINEAGE_CODE_ONLY",
   "limited_rule_review": "54af0876ab48b5a5fb50627062f753ac0128c288",
   "lineage_delta": "Context-free stage validates none-or-pair; contextual registered/final absentpair and U/final equality topriorU; immutable history andcapbound retained",
+  "manual_data_copy": {
+    "bytes": 13853,
+    "comparison": "BYTE_IDENTICAL_GIT_DATA_ONLY",
+    "destination_path": "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+    "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c",
+    "source_commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+    "source_path": "evidence/designs/funding-hold-exact-reference/manual-slices.json"
+  },
   "new_production_or_adapter_core_read": false,
   "new_sources": [
     "tests/reference_funding_hold_d1_v3.py",
@@ -29,7 +49,16 @@
     ],
     "valid": 512
   },
+  "source_freeze": "Source commit C, then separate manifest-only commit F; immutable IDs supplied at handoff",
+  "source_status": "SOURCE_DEFINED_PENDING_OTHER_GROUP_CODE_REVIEW_NOT_RUN",
+  "target_adapter": "SEPARATE_ROOT_OWNED_NOT_INCLUDED",
+  "test_methods_defined": 33,
   "test_methods_proposed": 33,
+  "valid_identity_definitions": {
+    "action_identity": 16,
+    "duty_identity": 32,
+    "policy_identity": 16
+  },
   "wire_bytes": 33268,
   "wire_protocol": "PFH-D1-INDEPENDENT-WIRE-v3",
   "wire_sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
