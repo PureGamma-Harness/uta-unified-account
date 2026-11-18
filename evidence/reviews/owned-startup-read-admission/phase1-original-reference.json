@@ -61,6 +61,51 @@
     "require_trading_schema": "FunctionDef(name='require_trading_schema', args=arguments(posonlyargs=[], args=[arg(arg='self'), arg(arg='database'), arg(arg='audit_required')], kwonlyargs=[], kw_defaults=[], defaults=[]), body=[Expr(value=Call(func=Attribute(value=Name(id='self', ctx=Load()), attr='require_database', ctx=Load()), args=[Name(id='database', ctx=Load())], keywords=[])), With(items=[withitem(context_expr=Call(func=Attribute(value=Name(id='database', ctx=Load()), attr='read_transaction', ctx=Load()), args=[], keywords=[]), optional_vars=Name(id='connection', ctx=Store()))], body=[Assign(targets=[Name(id='versions', ctx=Store())], value=ListComp(elt=Subscript(value=Name(id='row', ctx=Load()), slice=Constant(value=0), ctx=Load()), generators=[comprehension(target=Name(id='row', ctx=Store()), iter=Call(func=Attribute(value=Name(id='connection', ctx=Load()), attr='execute', ctx=Load()), args=[Constant(value='SELECT version FROM uta_schema')], keywords=[]), ifs=[], is_async=0)])), Assign(targets=[Name(id='columns', ctx=Store())], value=SetComp(elt=Subscript(value=Name(id='row', ctx=Load()), slice=Constant(value=1), ctx=Load()), generators=[comprehension(target=Name(id='row', ctx=Store()), iter=Call(func=Attribute(value=Name(id='connection', ctx=Load()), attr='execute', ctx=Load()), args=[Constant(value='PRAGMA table_info(uta_orders)')], keywords=[]), ifs=[], is_async=0)])), If(test=BoolOp(op=Or(), values=[Compare(left=Name(id='versions', ctx=Load()), ops=[NotEq()], comparators=[List(elts=[IfExp(test=Name(id='audit_required', ctx=Load()), body=Constant(value=3), orelse=Constant(value=2))], ctx=Load())]), UnaryOp(op=Not(), operand=Compare(left=Set(elts=[Constant(value='fee_notional'), Constant(value='charged_fee')]), ops=[LtE()], comparators=[Name(id='columns', ctx=Load())]))]), body=[Raise(exc=Call(func=Name(id='StartupError', ctx=Load()), args=[Constant(value='startup_offline_upgrade_required'), Constant(value='managed startup cannot migrate a historical trading schema')], keywords=[]))], orelse=[])])], decorator_list=[], type_params=[])",
     "take_worker": "FunctionDef(name='take_worker', args=arguments(posonlyargs=[], args=[arg(arg='self'), arg(arg='exchange')], kwonlyargs=[arg(arg='account_batch'), arg(arg='matches_per_symbol'), arg(arg='normal_cache_size')], kw_defaults=[None, None, Constant(value=0)], defaults=[]), body=[ImportFrom(module='supervisor', names=[alias(name='ExchangeWorker')], level=1), Expr(value=Call(func=Attribute(value=Name(id='self', ctx=Load()), attr='require_ledger', ctx=Load()), args=[Name(id='exchange', ctx=Load())], keywords=[])), If(test=BoolOp(op=Or(), values=[Compare(left=Attribute(value=Name(id='self', ctx=Load()), attr='_credit', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)]), Attribute(value=Name(id='self', ctx=Load()), attr='_worker_taken', ctx=Load()), Compare(left=Attribute(value=Name(id='self', ctx=Load()), attr='_prepared_worker', ctx=Load()), ops=[Is()], comparators=[Constant(value=None)])]), body=[Raise(exc=Call(func=Name(id='StartupError', ctx=Load()), args=[Constant(value='startup_not_verified'), Constant(value='prepared worker is single-use after complete credit verification')], keywords=[]))], orelse=[]), If(test=BoolOp(op=Or(), values=[Compare(left=Call(func=Name(id='type', ctx=Load()), args=[Name(id='account_batch', ctx=Load())], keywords=[]), ops=[IsNot()], comparators=[Name(id='int', ctx=Load())]), UnaryOp(op=Not(), operand=Compare(left=Constant(value=1), ops=[LtE(), LtE()], comparators=[Name(id='account_batch', ctx=Load()), Constant(value=1000)])), Compare(left=Call(func=Name(id='type', ctx=Load()), args=[Name(id='matches_per_symbol', ctx=Load())], keywords=[]), ops=[IsNot()], comparators=[Name(id='int', ctx=Load())]), UnaryOp(op=Not(), operand=Compare(left=Constant(value=1), ops=[LtE(), LtE()], comparators=[Name(id='matches_per_symbol', ctx=Load()), Constant(value=1000)]))]), body=[Raise(exc=Call(func=Name(id='ValueError', ctx=Load()), args=[Constant(value='worker scheduling bounds require integers in 1..1000')], keywords=[]))], orelse=[]), If(test=BoolOp(op=Or(), values=[Compare(left=Call(func=Name(id='type', ctx=Load()), args=[Name(id='normal_cache_size', ctx=Load())], keywords=[]), ops=[IsNot()], comparators=[Name(id='int', ctx=Load())]), UnaryOp(op=Not(), operand=Compare(left=Constant(value=0), ops=[LtE(), LtE()], comparators=[Name(id='normal_cache_size', ctx=Load()), Constant(value=65536)]))]), body=[Raise(exc=Call(func=Name(id='ValueError', ctx=Load()), args=[Constant(value='normal_cache_size requires an integer in 0..65536')], keywords=[]))], orelse=[]), Assign(targets=[Name(id='worker', ctx=Store())], value=Attribute(value=Name(id='self', ctx=Load()), attr='_prepared_worker', ctx=Load())), If(test=BoolOp(op=Or(), values=[Compare(left=Call(func=Name(id='type', ctx=Load()), args=[Name(id='worker', ctx=Load())], keywords=[]), ops=[IsNot()], comparators=[Name(id='ExchangeWorker', ctx=Load())]), Compare(left=Attribute(value=Name(id='worker', ctx=Load()), attr='exchange', ctx=Load()), ops=[IsNot()], comparators=[Name(id='exchange', ctx=Load())]), Compare(left=Attribute(value=Name(id='worker', ctx=Load()), attr='_normal_capacity', ctx=Load()), ops=[NotEq()], comparators=[Attribute(value=Name(id='self', ctx=Load()), attr='_normal_cache_size', ctx=Load())]), Compare(left=Name(id='normal_cache_size', ctx=Load()), ops=[NotEq()], comparators=[Attribute(value=Name(id='self', ctx=Load()), attr='_normal_cache_size', ctx=Load())]), Compare(left=Attribute(value=Name(id='worker', ctx=Load()), attr='_thread', ctx=Load()), ops=[IsNot()], comparators=[Constant(value=None)]), Compare(left=Attribute(value=Name(id='worker', ctx=Load()), attr='last_report', ctx=Load()), ops=[NotEq()], comparators=[Dict(keys=[Constant(value='state')], values=[Constant(value='not_started')])]), Compare(left=Subscript(value=Call(func=Attribute(value=Name(id='worker', ctx=Load()), attr='normal_cache_stats', ctx=Load()), args=[], keywords=[]), slice=Constant(value='size'), ctx=Load()), ops=[NotEq()], comparators=[Constant(value=0)])]), body=[Raise(exc=Call(func=Name(id='StartupError', ctx=Load()), args=[Constant(value='startup_worker_configuration_conflict'), Constant(value='the native prepared worker configuration or lifecycle changed')], keywords=[]))], orelse=[]), Assign(targets=[Tuple(elts=[Attribute(value=Name(id='worker', ctx=Load()), attr='account_batch', ctx=Store()), Attribute(value=Name(id='worker', ctx=Load()), attr='matches_per_symbol', ctx=Store())], ctx=Store())], value=Tuple(elts=[Name(id='account_batch', ctx=Load()), Name(id='matches_per_symbol', ctx=Load())], ctx=Load())), Assign(targets=[Attribute(value=Name(id='self', ctx=Load()), attr='_worker_taken', ctx=Store())], value=Constant(value=True)), Return(value=Name(id='worker', ctx=Load()))], decorator_list=[], type_params=[])"
   },
+  "normal_fake_load": {
+    "ordered_SQL_and_parameters": [
+      {
+        "parameters": [],
+        "sql": "SELECT name,type FROM sqlite_master WHERE (type='table' AND name LIKE 'writer_fence_%') OR name LIKE 'credit_native_%' OR name LIKE 'credit_v2_%'"
+      },
+      {
+        "parameters": [],
+        "sql": "SELECT singleton,format,authority_id,canonical_path FROM writer_fence_authority"
+      },
+      {
+        "parameters": [],
+        "sql": "SELECT singleton,generation,owner_nonce,owner_pid,boot_id,expires_ns,observed_ns FROM writer_fence_lease"
+      },
+      {
+        "parameters": [],
+        "sql": "PRAGMA database_list"
+      },
+      {
+        "parameters": [],
+        "sql": "SELECT sequence,kind,authority_id,generation,owner_nonce,owner_pid FROM writer_fence_events WHERE sequence<=3 ORDER BY sequence"
+      },
+      {
+        "parameters": [],
+        "sql": "SELECT singleton,format FROM writer_fence_guard_config"
+      },
+      {
+        "parameters": [],
+        "sql": "SELECT 1 FROM writer_fence_events WHERE kind='batches_enabled' LIMIT 1"
+      }
+    ],
+    "reference_source": "Manually reviewed source9b4fcf5 _load normal managed guard1/no credit/no batch branch, not computed by current production core.",
+    "returned_state": {
+      "authority_id": "synthetic-authority",
+      "batch_format": 0,
+      "boot_id": "synthetic-boot",
+      "canonical_path": "fake-authority.sqlite3",
+      "expires_ns": 1000,
+      "generation": 1,
+      "guard_format": 1,
+      "observed_ns": 0,
+      "owner_nonce": "synthetic-binding-tag",
+      "owner_pid": 17
+    }
+  },
   "source_base": "9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439",
   "unchanged_test_SHA256": {
     "tests/test_owned_startup.py": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7",

@@ -1,4 +1,5 @@
 {
+  "acceptance_requires_actual_host_exit_and_complete_raw_evidence": true,
   "actual_target_code_compiled_or_executed": false,
   "all_read_timing_overhead_is_zero": false,
   "fake_boundaries": [
@@ -9,19 +10,61 @@
     "loaded module registry for collector"
   ],
   "first_run_permitted": false,
+  "host_orchestration": {
+    "actual_host_argv_exit_and_completion_record_required": true,
+    "argv_template": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "10s",
+      "/usr/bin/taskset",
+      "-c",
+      "1",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/run_phase1_once.py",
+      "--plan-sha256",
+      "<FROZEN_PLAN_SHA256>",
+      "--source-commit",
+      "<FROZEN_SOURCE_COMMIT>",
+      "--private-directory",
+      "<NEW_O_EXCL_PRIVATE_DIRECTORY>"
+    ],
+    "driver_does_not_launch_subprocess": true,
+    "expected_actual_affinity": [
+      1
+    ],
+    "expected_runtime": {
+      "executable_bytes": 30894944,
+      "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "flags": {
+        "dont_write_bytecode": 1,
+        "isolated": 1,
+        "no_site": 1
+      },
+      "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+    },
+    "hard_exit_may_omit_inner_receipt": true,
+    "not_self_attested_by_driver": true,
+    "outer_KILL_status": "Preserve the actual host status, including signal/UNKNOWN; do not infer124 from a137 or incomplete receipt.",
+    "substitutions": "Only the three named placeholders are expanded once by root and recorded verbatim outside this Git plan; no shell evaluation."
+  },
   "independent_fixture_review": "PENDING",
   "input_files": {
     "evidence/reviews/owned-startup-read-admission/phase1-original-reference.json": {
-      "bytes": 34305,
-      "sha256": "d365a24e2446405fb9ee18ec2c0368593f657de68af1ae02cd4fbb407891cb45"
+      "bytes": 35908,
+      "sha256": "70226148595cb6890e3e2879f5e75303a0b474a633f1910f022f5a4b89cf085a"
     },
     "evidence/reviews/owned-startup-read-admission/phase1_focused_fake.py": {
-      "bytes": 31183,
-      "sha256": "09314e39b1b76f16ff2c726090ad4eebbf6a0af3b4320626660a21f8b43ae946"
+      "bytes": 32681,
+      "sha256": "6a9af01f9bf35d320382eeb5ccb10822278c691d52cc9723fe6f609f8bfdca19"
     },
     "evidence/reviews/owned-startup-read-admission/run_phase1_once.py": {
-      "bytes": 5746,
-      "sha256": "25c5f119b51d0070ab7a2c2e925ac2bdd309cc2c1cbf27f2be342c104d7bc6eb"
+      "bytes": 10309,
+      "sha256": "b722da19bf4e783e9c08d67c27c239d4021327175373a33c49588ad90ff62cee"
     },
     "tests/test_owned_startup.py": {
       "bytes": 15781,
@@ -45,11 +88,31 @@
     }
   },
   "native_or_financial_approved": false,
+  "new_target_compilation_or_execution_attempts": 0,
   "phase2_authorized": false,
   "planned_methods": 12,
   "planned_small_traces": 48,
+  "preparation_history": {
+    "both_NOT_RUN_attempts": 0,
+    "finding_record": "evidence/reviews/owned-startup-read-admission/phase1-preparation-CODE-fixes.json",
+    "finding_type": "Independent static source findings only; not observed RED/ERROR or a retry.",
+    "original_frozen_fixture_commit": "72dcebf9d6a7f4f5755489afb6bc6329c1f9f3b0",
+    "prior_docs_commit": "166ddf92f5c0c0459cdea522aa7f43c9d23ee747"
+  },
   "production_approved": false,
-  "reference_independence": "Hand-coded expected field maps, original SQL-call AST from source9b4, unchanged lifecycle/test hashes, exact error identity/codes and independently calculated output-size bound; no expectation computed by the helper under test.",
+  "raw_capture": {
+    "boundary": "Trusted reviewed pure Python stream writes; not an OS sandbox against arbitrary direct FD/native code.",
+    "complete_requires": "Host completion/actualexit plus END and inner receipt; hard stop or missing evidence is UNKNOWN, neverPASS.",
+    "first_files": "O_EXCL0600 FD1/2 files in new0700 namespace; stream writes have no user buffering",
+    "partial_write_retains_full_reservation": true,
+    "pattern_commit": "19eebff7fe2585bbc153b70529b67b2344da3e0d",
+    "pattern_driver_sha256": "a0c92912e9eb1045f529cba111ce9c0432423d70ffb7cdb77f4dcb09b82877ec",
+    "protocol": "reserve-before-FD-write shared Python RawStream, inherited from independently reviewed19eebff pattern",
+    "reserved_trailer_bytes": 512,
+    "stdout_stderr_shared_limit_bytes": 262144,
+    "zero_error_oversize_capture": "sticky UNKNOWN, exit125, no retry"
+  },
+  "reference_independence": "Hand-coded expected field maps plus source9b4 hand-recorded normal-load ordered SQL, all parameters and returned state; original SQL-call AST/lifecycle/test hashes retained; no current production core function generates expected values.",
   "relative_imports": "Selected source AST is unchanged; in-memory virtual writer_fence import provider. No real product module import.",
   "requires_root_exact_once_budget": true,
   "reviewed_CODE": "6303ed46d946138c08551e30387abd3de18ab146",
@@ -59,7 +122,9 @@
     "small_traces": 48,
     "wall_seconds": 10
   },
+  "runtime_input_binding": "Driver retains immutable verified bytes for every selected actual AST/reference/test hash; the exact fixture bytes are SHA/len checked immediately before compile. After physical checks are supplementary.",
   "scope": "ONE_SELECTED_ACTUAL_PHASE1_OBSERVATION_FAKE_TRACE_RUN_ONLY",
+  "selected_dependency_closure": "Actual unchanged writer_fence._ttl AST and passive math are included; fake SQL/schema/transaction/clock boundaries remain explicit.",
   "source_base": "9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439",
-  "source_input_policy": "All eight project inputs are materialized regular files with exact length/SHA; root independently checks frozen Git blobs before the one execution. Python/stdlib are external execution inputs, not claimed Git QA."
+  "source_input_policy": "All eight project inputs are materialized regular files with exact length/SHA and frozen Git-blob comparison before the one execution. The interpreter binary/version/flags are separately pinned; all stdlib/shared libraries are not claimed Git QA."
 }

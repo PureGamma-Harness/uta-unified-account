@@ -14,6 +14,7 @@ from io import StringIO
 from itertools import islice
 import builtins
 import json
+import math
 from pathlib import Path
 import re
 from types import MappingProxyType, ModuleType, SimpleNamespace
@@ -23,6 +24,18 @@ import unittest
 ROOT = Path(__file__).resolve().parents[3]
 TRACES = 0
 INPUT_NAMES = ("uta/writer_fence.py", "uta/startup.py", "tools/run_validation.py")
+
+
+def input_bytes(name):
+    # The once driver passes only bytes whose materialized length/SHA it has
+    # just verified. Selected AST must not reread a potentially different file.
+    values = globals().get("_FROZEN_INPUT_BYTES")
+    if type(values) is not MappingProxyType:
+        raise RuntimeError("focused fixture requires the reviewed materialized-input driver")
+    raw = values.get(name)
+    if type(raw) is not bytes:
+        raise RuntimeError("frozen source-byte input is absent")
+    return raw
 
 
 class Error(Exception):
@@ -166,11 +179,11 @@ class Environment:
         self.clock_calls = 0
         self.optional_import_error = None
         self.events = []
-        self.writer_raw = (ROOT / "uta/writer_fence.py").read_bytes()
-        self.startup_raw = (ROOT / "uta/startup.py").read_bytes()
-        self.tool_raw = (ROOT / "tools/run_validation.py").read_bytes()
+        self.writer_raw = input_bytes("uta/writer_fence.py")
+        self.startup_raw = input_bytes("uta/startup.py")
+        self.tool_raw = input_bytes("tools/run_validation.py")
         self.namespace = {"__name__": "_selected_phase1", "__package__": "_selected_phase1",
-            "MappingProxyType": MappingProxyType, "ModuleType": ModuleType,
+            "MappingProxyType": MappingProxyType, "ModuleType": ModuleType, "math": math,
             "contextmanager": contextmanager, "Database": Database, "WriterToken": Token,
             "WriterFenceError": Error, "time": self.clock, "re": re,
             "RLock": Lock, "get_ident": lambda: 1, "os": SimpleNamespace(getpid=lambda: 17),
@@ -204,7 +217,7 @@ class Environment:
                 and any(isinstance(target, ast.Name) and target.id in names for target in node.targets)]
         functions = {"_lease_observation", "_lease_note_time", "_lease_set", "_lease_annotation",
                      "_observed_load", "_read_guard_observation", "_lease_load_note",
-                     "_load", "_observed", "_assert_token", "_require_guard_format"}
+                     "_load", "_observed", "_assert_token", "_require_guard_format", "_ttl"}
         body += [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in functions]
         body += [selected_class(tree, "WriterFence", {"__init__", "renew", "assert_writer"}),
                  selected_class(tree, "_TransactionGuard", {"__init__"})]
@@ -323,8 +336,10 @@ class Phase1FocusedFakeTests(unittest.TestCase):
         for mode in ("trace", "timing", "clock_exception", "sql_primary"):
             self.mark()
             env = Environment()
-            plain, observed = Connection(), Connection()
-            original = env.namespace["_load"](plain)
+            observed = Connection()
+            reference = json.loads(input_bytes(
+                "evidence/reviews/owned-startup-read-admission/phase1-original-reference.json"))["normal_fake_load"]
+            expected_trace = [(item["sql"], tuple(item["parameters"])) for item in reference["ordered_SQL_and_parameters"]]
             if mode == "clock_exception":
                 env.clock.fault_at, env.clock.fault = 1, ValueError("optional clock")
             if mode == "sql_primary":
@@ -333,11 +348,11 @@ class Phase1FocusedFakeTests(unittest.TestCase):
                 with self.assertRaises(OSError) as caught:
                     env.namespace["_observed_load"](observed, "guard")
                 self.assertIs(caught.exception, failure)
-                self.assertEqual(len(observed.trace), 1)
+                self.assertEqual(observed.trace, expected_trace[:1])
                 continue
             actual, fields = env.namespace["_observed_load"](observed, "guard")
-            self.assertEqual(actual, original)
-            self.assertEqual(observed.trace, plain.trace)
+            self.assertEqual(actual, reference["returned_state"])
+            self.assertEqual(observed.trace, expected_trace)
             self.assertIs(fields["snapshot_time_known"], False)
             if mode == "timing":
                 self.assertLess(fields["guard_lease_fetch_started_ns"], fields["guard_lease_fetch_finished_ns"])
@@ -404,6 +419,14 @@ class Phase1FocusedFakeTests(unittest.TestCase):
         for mode in ("plumbing", "annotation_call_fault", "metadata_clock_fault", "nonread"):
             self.mark()
             env, database = Environment(), Database()
+            originals = []
+            original_cause, original_context = LookupError("cause"), OSError("context")
+            class RecordingError(Error):
+                def __init__(self, code, message):
+                    super().__init__(code, message)
+                    self.__cause__, self.__context__ = original_cause, original_context
+                    originals.append(self)
+            env.namespace["WriterFenceError"] = RecordingError
             if mode == "nonread":
                 env.namespace["_REGISTRY"][id(database.connection)] = SimpleNamespace(
                     connection=database.connection, role="financial")
@@ -416,7 +439,11 @@ class Phase1FocusedFakeTests(unittest.TestCase):
             database.now = database.connection.expires
             with self.assertRaises(Error) as caught:
                 env.fence_class(database).assert_writer(database.connection)
+            self.assertIs(caught.exception, originals[-1])
             self.assertEqual(caught.exception.code, "lease_expired")
+            self.assertEqual(caught.exception.args, ("writer lease expired; renew cannot revive it",))
+            self.assertIs(caught.exception.__cause__, original_cause)
+            self.assertIs(caught.exception.__context__, original_context)
             if mode == "plumbing":
                 fields = env.annotation(caught.exception)
                 self.assertIn("guard_validation_finished_ns", fields)
@@ -558,13 +585,13 @@ class Phase1FocusedFakeTests(unittest.TestCase):
                 self.assertIs(output["lease_observations_truncated"], True)
 
     def test_12_static_sql_and_original_lifecycle_reference(self):
-        reference = json.loads((ROOT / "evidence/reviews/owned-startup-read-admission/phase1-original-reference.json").read_text())
+        reference = json.loads(input_bytes("evidence/reviews/owned-startup-read-admission/phase1-original-reference.json"))
         for mode in ("sql", "lifecycle", "original_tests", "publication_filter"):
             self.mark()
             env = Environment()
             if mode == "sql":
                 for name in INPUT_NAMES:
-                    tree = ast.parse((ROOT / name).read_bytes())
+                    tree = ast.parse(input_bytes(name))
                     observed = sorted(ast.dump(node.args[0], include_attributes=False)
                         for node in ast.walk(tree) if isinstance(node, ast.Call)
                         and isinstance(node.func, ast.Attribute) and node.func.attr in ("execute", "executemany")
@@ -578,7 +605,7 @@ class Phase1FocusedFakeTests(unittest.TestCase):
                     self.assertEqual(ast.dump(method, include_attributes=False), expected)
             elif mode == "original_tests":
                 for name, expected in reference["unchanged_test_SHA256"].items():
-                    self.assertEqual(sha256((ROOT / name).read_bytes()).hexdigest(), expected)
+                    self.assertEqual(sha256(input_bytes(name)).hexdigest(), expected)
             else:
                 namespace = env.collector()
                 self.assertEqual(env.namespace["_LEASE_OBSERVATION_INTS"], namespace["_LEASE_CAPTURE_INTS"])

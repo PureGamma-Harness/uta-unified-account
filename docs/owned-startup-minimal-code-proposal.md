@@ -3,8 +3,11 @@
 Baseline witness `5af6cb0eead28c3fd23c921143bbda5a53ac53ea` is sealed first.
 The three conditional RED do not prove the two real errors' histories. Phase1
 below is now implemented at6303ed4, CODE-only reviewed and **NOT_RUN**; it is not
-a permission to ignore expiry. The12/48 pure closure/driver at72dcebf still
-requires its own static review and exact root once budget. Phase2 is not applied.
+a permission to ignore expiry. The12/48 pure closure/driver identified by the
+current `phase1-focused-plan.json` still requires its own static review and exact
+root once budget. Preparations72dcebf/166ddf9 were NOT_RUN, with zero attempts;
+their static findings are retained in `phase1-preparation-CODE-fixes.json`.
+Phase2 is not applied.
 
 ## Phase1: observation-only patch, unchanged fencing
 
@@ -56,6 +59,26 @@ COMMIT-unknown, post-COMMIT wrapper error, preserved primary exceptions,
 nonfinite/bool/extra-field filtering, immutable observation copying and absence
 of nonce values. No native, worker, signal, process, network or real sleep.
 Retain the first result even if RED. This budget is a proposal, not yet used.
+
+The revised once driver binds the exact fixture and selected-source AST bytes
+to the same eight materialized input pins before execution. Its independent
+normal-load oracle records the original ordered SQL, complete parameters and
+returned state rather than calling the current production helper to produce
+an expectation. The source-selected renewal closure includes the unchanged
+original `_ttl` with its passive `math` dependency. These are static preparation
+fixes, not observed test results.
+
+The frozen host argv uses `timeout --signal=KILL 10s`, CPU1 `taskset` and the
+specified Python binary with `-I -S -B`. The driver independently records and
+checks actual affinity, Python version/flags and executable length/SHA. Its
+reviewed-stream capture reserves each UTF-8 write before writing FD1/FD2, with
+one shared256KiB limit including a512-byte failure-trailer reserve. Oversize,
+zero/failed writes become sticky incomplete capture and exit125. A Python trace
+deadline exits124; the outer host deadline covers blocking/native interpreter
+work and its actual termination status must be retained separately. No complete
+test result can be inferred from an absent END/receipt or an UNKNOWN capture.
+This is a guard for the reviewed pure closure, not an arbitrary-code OS sandbox.
+See `owned-startup-phase1-focused-protocol.md` for the exact acceptance protocol.
 
 ## Phase2: behavior change remains behind a separate proof gate
 
