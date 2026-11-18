@@ -75,46 +75,114 @@ def write_new(path, value):
 def timed(start, end, status, limit, child):
     return {"monotonic_start_ns": start, "monotonic_end_ns": end, "elapsed_ns": end - start,
             ("actual_exit_status" if child else "actual_return_status"): status, "late": end - start > limit * 1000000000,
-            "process_completion_observed": type(status) is int, "reaped": child and type(status) is int}
+            ("process_completion_observed" if child else "function_completion_observed"): type(status) is int,
+            "reaped": child and type(status) is int}
 
 
-def child_phase(name, argv, root, host, control, manifest, limit, raw_cap):
-    outputs = [host / (name + ".stdout"), host / (name + ".stderr")]
-    fds = [os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600) for path in outputs]
-    start = monotonic_ns()
-    process, pidfd, status, timeout = None, None, None, False
+def remaining_budget(scope_start, phases):
+    now = monotonic_ns()
+    used = sum(value["elapsed_ns"] for value in phases.values())
+    require(now - scope_start <= 120000000000 and 0 <= now - scope_start - used <= 5000000000,
+            "host/total budget exhausted before next phase; no new target started")
+
+
+PROTECTED_PIDS = frozenset({4471,8784,122905,122907,123007,123009,310035,310039,310266,310269})
+
+
+def child_phase(name, argv, root, host, control, manifest, limit, raw_cap, scope_start, completed_phases):
     require(callable(getattr(os, "pidfd_open", None)) and callable(getattr(signal, "pidfd_send_signal", None)),
             "required held-child handle APIs unavailable; no target started")
+    remaining_budget(scope_start, completed_phases)
+    outputs = [host / (name + ".stdout"), host / (name + ".stderr")]
+    fds, gate_read, gate_write = [], None, None
+    process, pidfd, status, timeout = None, None, None, False
+    gate_released, handle_ready = False, False
+    errors = {key: None for key in ("start_error", "owner_record_error", "held_handle_error", "signal_error", "gate_error", "cleanup_error")}
+    start = monotonic_ns()
     try:
-        process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=fds[0], stderr=fds[1], close_fds=True)
-        # The owned unreaped child PID cannot be recycled before this handle is
-        # obtained. No raw-PID signal or lookup is used, including on timeout.
-        handle_error = None
+        fds = [os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600) for path in outputs]
+        gate_read, gate_write = os.pipe2(os.O_CLOEXEC)
+        remaining_budget(scope_start, completed_phases)
         try:
-            pidfd = os.pidfd_open(process.pid, 0)
-        except OSError as error:
-            handle_error = type(error).__name__
-        try:
-            status = process.wait(timeout=max(0, limit - (monotonic_ns() - start) / 1000000000))
-        except subprocess.TimeoutExpired:
-            timeout = True
-            if pidfd is not None:
-                signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+            process = subprocess.Popen(argv, stdin=gate_read, stdout=fds[0], stderr=fds[1], close_fds=True)
+        except Exception as error:
+            errors["start_error"] = type(error).__name__
+        os.close(gate_read)
+        gate_read = None
+        if process is not None:
+            try:
+                write_new(host / (name + "-owned-child.json"), {"kind": "NEW_OWNED_GATED_CHILD_FACT",
+                    "source_commit": control, "profile_set": name, "argv": argv, "owned_child_pid": process.pid,
+                    "gate": "stdin_fd0_pipe_closed_until_release", "gate_released": False,
+                    "monotonic_start_ns": start, "actual_exit_status": None})
+            except Exception as error:
+                errors["owner_record_error"] = type(error).__name__
+            if process.pid in PROTECTED_PIDS:
+                errors["held_handle_error"] = "PROTECTED_PID_COLLISION_NO_HANDLE_OR_SIGNAL"
+            elif errors["owner_record_error"] is None:
+                try:
+                    pidfd = os.pidfd_open(process.pid, 0)
+                    handle_ready = True
+                    write_new(host / (name + "-held-handle.json"), {"kind": "OWNED_CHILD_HELD_PIDFD_FACT",
+                        "source_commit": control, "profile_set": name, "owned_child_pid": process.pid,
+                        "held_pidfd": pidfd, "gate_released": False})
+                except Exception as error:
+                    errors["held_handle_error"] = type(error).__name__
+            if handle_ready and all(value is None for value in errors.values()):
+                try:
+                    require(os.write(gate_write, b"G") == 1, "incomplete one-byte startgate release")
+                    gate_released = True
+                except Exception as error:
+                    errors["gate_error"] = type(error).__name__
+        # Any pre-release failure closes the gate: EOF makes the script exit
+        # before UTA/business/SQL. Numeric collision never opens a pidfd.
+        os.close(gate_write)
+        gate_write = None
+        if process is not None:
+            try:
+                status = process.wait(timeout=max(0, limit - (monotonic_ns() - start) / 1000000000))
+            except subprocess.TimeoutExpired:
+                timeout = True
+                if gate_released and pidfd is not None and process.pid not in PROTECTED_PIDS:
+                    try:
+                        signal.pidfd_send_signal(pidfd, signal.SIGKILL)
+                    except Exception as error:
+                        errors["signal_error"] = type(error).__name__
+    except Exception as error:
+        errors["cleanup_error"] = type(error).__name__
+    finally:
+        for descriptor in (gate_read, gate_write):
+            if descriptor is not None:
+                try:
+                    os.close(descriptor)
+                except Exception as error:
+                    errors["cleanup_error"] = type(error).__name__
+        # Always try to reap the child we created, even after handle/signal/raw
+        # failures. Never substitute a naked-PID signal or query an old process.
+        if process is not None and status is None:
             try:
                 status = process.wait(timeout=1)
-            except subprocess.TimeoutExpired:
-                status = None
-    finally:
+            except Exception as error:
+                errors["cleanup_error"] = type(error).__name__
         end = monotonic_ns()
         if pidfd is not None:
-            os.close(pidfd)
-        for fd in fds:
-            os.fsync(fd)
-            os.close(fd)
+            try:
+                os.close(pidfd)
+            except Exception as error:
+                errors["cleanup_error"] = type(error).__name__
+        for descriptor in fds:
+            try:
+                os.fsync(descriptor)
+            except Exception as error:
+                errors["cleanup_error"] = type(error).__name__
+            finally:
+                os.close(descriptor)
     receipt = {"kind": "ROOT_HOST_COMPLETION_RECEIPT", "source_commit": control, "profile_set": name,
-               "argv": argv, "manifest_sha256": manifest, **timed(start, end, status, limit, True),
-               "timeout_observed": timeout, "held_handle_error": handle_error, "raw_capture_complete": type(status) is int,
-               "stdout": pin(outputs[0], raw_cap), "stderr": pin(outputs[1], raw_cap)}
+        "argv": argv, "manifest_sha256": manifest, **timed(start, end, status, limit, True), **errors,
+        "timeout_observed": timeout, "owned_child_pid": process.pid if process is not None else None,
+        "gate_released_once": gate_released, "held_pidfd_ready_before_gate": handle_ready,
+        "raw_capture_complete": type(status) is int,
+        "stdout": pin(outputs[0], raw_cap), "stderr": pin(outputs[1], raw_cap)}
     require(receipt["stdout"]["bytes"] + receipt["stderr"]["bytes"] <= raw_cap, "target raw cap exceeded")
     result = root / "reports/result.json"
     receipt["result"] = {key: value for key, value in pin(result).items() if key != "path"} if result.is_file() else None
@@ -128,7 +196,7 @@ class BoundedText:
 
     def write(self, text):
         raw = text.encode("utf-8", "backslashreplace")
-        require(self.shared[0] + len(raw) <= 16 * 1024, "aggregate raw cap exceeded")
+        require(self.shared[0] + len(raw) <= 15 * 1024, "aggregate raw cap exceeded")
         self.shared[0] += len(raw)
         return self.handle.write(text)
 
@@ -159,14 +227,18 @@ def main():
     for name, limit, raw_cap in (("current", 60, 320 * 1024), ("original-scan", 45, 176 * 1024)):
         argv = plan["commands"][name]
         expected = [sys.executable, "-I", "-S", "-B", str(Path(__file__).resolve().with_name("matching_profile_once.py")),
-            "--profile-set", name, "--run-root", str(roots[name]), "--source-commit", control,
+            "--host-start-gate-stdin", "--profile-set", name, "--run-root", str(roots[name]), "--source-commit", control,
             "--approved-manifest-sha256", plan["manifests"][name]["sha256"]]
         require(argv == expected, "host target argv differs from fixed invocation")
-        phases[name] = child_phase(name, argv, roots[name], host, control, plan["manifests"][name]["sha256"], limit, raw_cap)
+        phases[name] = child_phase(name, argv, roots[name], host, control, plan["manifests"][name]["sha256"],
+                                   limit, raw_cap, scope_start, phases)
         require(phases[name]["actual_exit_status"] == 0 and phases[name]["reaped"] is True
                 and phases[name]["late"] is False and phases[name]["timeout_observed"] is False
-                and phases[name]["held_handle_error"] is None,
+                and phases[name]["gate_released_once"] is True and phases[name]["held_pidfd_ready_before_gate"] is True
+                and all(phases[name][key] is None for key in ("start_error", "owner_record_error", "held_handle_error",
+                                                             "signal_error", "gate_error", "cleanup_error")),
                 "first target failure/late/unknown: stop, retain all raw, no retry")
+    remaining_budget(scope_start, phases)
     aggregate_start = monotonic_ns()
     context = {"kind": "ROOT_HOST_SEQUENCE_AGGREGATE_CONTEXT", "source_commit": control,
                "monotonic_start_ns": scope_start, "aggregate_start_ns": aggregate_start, "phases": phases}
@@ -234,10 +306,51 @@ def main():
     return 0
 
 
+HOST_RAW_RESERVED = 0
+HOST_RAW_FAILED = False
+
+
+class HostRaw:
+    encoding, errors = "utf-8", "backslashreplace"
+
+    def __init__(self, descriptor):
+        self.descriptor = descriptor
+
+    def write(self, value):
+        global HOST_RAW_RESERVED, HOST_RAW_FAILED
+        raw = value.encode(self.encoding, self.errors)
+        if HOST_RAW_FAILED or HOST_RAW_RESERVED + len(raw) > 1024:
+            HOST_RAW_FAILED = True
+            raise RuntimeError("host raw budget exhausted; unwind owned-child cleanup")
+        HOST_RAW_RESERVED += len(raw)
+        remaining = memoryview(raw)
+        while remaining:
+            try:
+                count = os.write(self.descriptor, remaining)
+            except BaseException as error:
+                HOST_RAW_FAILED = True
+                raise RuntimeError("host raw write failed; unwind owned-child cleanup") from error
+            if type(count) is not int or not 0 < count <= len(remaining):
+                HOST_RAW_FAILED = True
+                raise RuntimeError("host raw write failed; unwind owned-child cleanup")
+            remaining = remaining[count:]
+        return len(value)
+
+    def flush(self):
+        pass
+
+
 if __name__ == "__main__":
+    sys.stdout = sys.__stdout__ = HostRaw(1)
+    sys.stderr = sys.__stderr__ = HostRaw(2)
     try:
         raise SystemExit(main())
-    except Exception as error:
-        print(json.dumps({"event": "MATCHING_PROFILE_HOST_FAILED_OR_UNKNOWN", "error_type": type(error).__name__,
-                          "message": str(error)[:400], "production_approved": False}), flush=True)
-        raise SystemExit(1)
+    except BaseException as error:
+        if isinstance(error, SystemExit) and error.code == 0:
+            raise
+        try:
+            print(json.dumps({"event": "MATCHING_PROFILE_HOST_FAILED_OR_UNKNOWN", "error_type": type(error).__name__,
+                              "message": str(error)[:200], "production_approved": False}), flush=True)
+        except BaseException:
+            pass
+        raise SystemExit(125 if HOST_RAW_FAILED else 1)

@@ -272,6 +272,7 @@ def install_scope_audit(business, reports):
 def main():
     global RUN_ROOT, CHECKPOINTS, DEADLINE, RAW_CAP, DATA_CAP
     parser = argparse.ArgumentParser()
+    parser.add_argument("--host-start-gate-stdin", action="store_true", required=True)
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--approved-manifest-sha256", required=True)
@@ -439,6 +440,13 @@ def main():
 
 
 def script_entry():
+    # No main/mini materialization, UTA import or SQL before the root-owned
+    # host has durably recorded this new child and its held pidfd. EOF rejects.
+    if sys.argv.count("--host-start-gate-stdin") != 1:
+        return 126
+    if os.read(0, 1) != b"G" or os.read(0, 1) != b"":
+        return 126
+    os.close(0)
     sys.stdout = sys.__stdout__ = BoundedRaw(1)
     sys.stderr = sys.__stderr__ = BoundedRaw(2)
     sys.settrace(application_trace)

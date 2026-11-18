@@ -9,7 +9,7 @@ from time import monotonic, monotonic_ns
 
 STARTED = monotonic()
 DEADLINE = STARTED + 10
-RAW_CAP = 16 * 1024
+RAW_CAP = 15 * 1024
 RAW_RESERVE = 512
 RAW_RESERVED = 0
 RAW_FAILED = False
@@ -102,7 +102,8 @@ def phase_timing(value, seconds, needs_child=True):
     require(value["monotonic_start_ns"] > 0 and value["monotonic_end_ns"] >= value["monotonic_start_ns"]
             and value["elapsed_ns"] == value["monotonic_end_ns"] - value["monotonic_start_ns"]
             and value["elapsed_ns"] <= seconds * 1000000000 and value[status_key] == 0
-            and value.get("late") is False and value.get("process_completion_observed") is True
+            and value.get("late") is False
+            and value.get("process_completion_observed" if needs_child else "function_completion_observed") is True
             and value.get("reaped") is needs_child, "late/incomplete/unknown host phase")
     return value["elapsed_ns"]
 
@@ -254,10 +255,16 @@ def target(root, host_receipt, other_root, expected_set, expected_control):
             and host.get("process_completion_observed") is True and host.get("raw_capture_complete") is True,
             "missing actual host exit/completion; inner status cannot replace it")
     phase_timing(host, 60 if expected_set == "current" else 45)
+    require(type(host.get("owned_child_pid")) is int and host["owned_child_pid"] > 0
+            and host.get("gate_released_once") is True and host.get("held_pidfd_ready_before_gate") is True
+            and host.get("owned_child_pid") not in {4471,8784,122905,122907,123007,123009,310035,310039,310266,310269}
+            and all(host.get(key) is None for key in ("start_error", "owner_record_error", "held_handle_error",
+                                                      "signal_error", "gate_error", "cleanup_error")),
+            "child gate/handle ownership incomplete or forbidden PID")
     require(host.get("result") == {"bytes": len(result_raw), "sha256": sha256(result_raw).hexdigest()}
             and host.get("manifest_sha256") == result["manifest_sha256"], "host result/manifest binding differs")
     expected_argv = [result["runtime_descriptor"]["python_executable"]["resolved_path"], "-I", "-S", "-B",
-        str(Path(__file__).resolve().with_name("matching_profile_once.py")), "--profile-set", expected_set,
+        str(Path(__file__).resolve().with_name("matching_profile_once.py")), "--host-start-gate-stdin", "--profile-set", expected_set,
         "--run-root", str(root), "--source-commit", expected_control,
         "--approved-manifest-sha256", result["manifest_sha256"]]
     require(host.get("argv") == expected_argv and all(type(value) is str for value in host["argv"]),

@@ -21,8 +21,8 @@ The first diagnostic budget is split before execution:
 | --- | --- | --- | --- |
 | Current C, 32/128 books × scan/snapshot |60s|78MiB|320KiB|
 | Original B, 32/128 books × original-scan |45s|40MiB|176KiB|
-| Read-only JSON aggregation |10s|8MiB|16KiB|
-| Root host records/captures |remaining5s intended|2MiB|included above|
+| Read-only JSON aggregation |10s|8MiB|15KiB|
+| Root host records/captures |remaining5s intended|2MiB|1KiB|
 
 The total is at most120s of the planned active sequence,128MiB logical data
 and512KiB raw. All phases use one allowed CPU and record its actual number.
@@ -184,7 +184,15 @@ captures. Missing handles, timeouts, late completion, incomplete raw or unknown
 results stop the sequence. A held pidfd is obtained only for an unreaped child
 created by this producer; timeout handling uses that handle, never a raw PID.
 There is no capability probe. Missing required APIs reject before starting a
-child. An OS failure obtaining a child handle is retained and cannot qualify;
+child. Each target is held at an explicit stdin FD0 startgate before main, UTA
+imports or SQL. The host first records its own new child PID and closed gate,
+rejects the fixed ten-number protected set before any pidfd/signal, obtains and
+records a held pidfd, then sends exactly one G byte and EOF. A pre-release error
+or protected number closes the gate without release, causing the new child to
+exit on EOF. Only this owned child may be waited/reaped. Acquisition, signal or
+raw-output errors unwind through gate closure, bounded own-child wait, UNKNOWN
+receipt and held-handle closure; there is no naked-PID fallback or host raw-cap
+os._exit. An OS failure obtaining a child handle is retained and cannot qualify;
 blocked/unreapable C I/O has no hard realtime guarantee.
 
 The JSON aggregate runs in the host interpreter through its explicit main
@@ -214,3 +222,10 @@ Controls53739d1 and final materialization3b28fa1, their exact old plan/manifests
 and earlier870 preparations are retained as NOT_RUN_ZERO_TARGET_ATTEMPTS. This
 revision corrects an exact status mismatch and the explicitly identified quote
 provenance comparison; it does not turn a prior attempted failure into a pass.
+
+Before every new Popen and before aggregation, the host rechecks the same
+continuous120s and control5s remaining budgets. It does not start another phase
+after known exhaustion. Host stdout/stderr share a hard1KiB reserve-before-write
+cap with sticky exceptions; aggregation is hard15KiB, sharing the original16KiB
+allocation, so the joint raw cap stays512KiB. Controllercd7 was also never run
+and is preserved as an unexecuted preparation snapshot, not a failed sample.
