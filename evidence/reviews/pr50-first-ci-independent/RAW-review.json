@@ -1,0 +1,119 @@
+{
+  "CI_production_acceptance": false,
+  "PR": 50,
+  "ZIP_bytes": 361298,
+  "ZIP_members": 28,
+  "ZIPs": 4,
+  "administrative_review_corrections": [
+    "A key-only inspection initially assumed result instead of connector; adaptive parsing then used the sealed wrapper schema, without refetch or original edits.",
+    "A broad checker initially required every selected outcome to be ok, then correctly honored the archived FAIL/ERROR result fields.",
+    "A checker initially selected observation02 for both PRs; PR51 observation02 was still in progress. It now verifies the first terminal observation03 and that polling stopped there.",
+    "Trace parsing initially assumed a generic lease-error message and ignored separator lines; the exact archived message and source lines were then verified.",
+    "An optional same-directory read of the other PR README failed; the two PR source trees stayed separate."
+  ],
+  "checks": {
+    "SAFE_changed_files": 16,
+    "SAFE_delta_only_docs_evidence": true,
+    "failure_traces": [
+      {
+        "canonical_test_id": "test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused",
+        "cause": "UNRESOLVED",
+        "kind": "FAIL",
+        "source_sites": [
+          "tests/test_process_readiness.py:158"
+        ]
+      },
+      {
+        "canonical_test_id": "test_owned_startup.OwnedStartupTests.test_additional_guarded_schema_after_full_replay_cannot_extend_frozen_manifest",
+        "cause": "UNRESOLVED",
+        "kind": "ERROR",
+        "source_sites": [
+          "tests/test_owned_startup.py:229",
+          "uta/startup.py:211",
+          "uta/writer_fence.py:533",
+          "uta/writer_fence.py:295"
+        ]
+      }
+    ],
+    "finite_privacy_scan_passed": true,
+    "private_ancestors_absent": true
+  },
+  "collector": "f73f564e25b464bffbdea3fdca234a4d2f29ffd3",
+  "failed_jobs": [
+    {
+      "event": "push",
+      "id": 134774479890,
+      "name": "test (3.12)"
+    },
+    {
+      "event": "pull_request",
+      "id": 134774662858,
+      "name": "test (3.13)"
+    }
+  ],
+  "human_real_funds_approval": false,
+  "installed_modules": 25,
+  "jobs": 8,
+  "limitations": [
+    "Six other matrix unit originals were not collected; their metadata cannot establish their exact test counts.",
+    "Package report JSON and selected CLI output were collected; wheel/sdist payloads were not downloaded or independently reconstructed.",
+    "Installed report covers 25 existing modules, eight CLI tests and eight commands; it does not establish installed execution of the new candidate.",
+    "Timing fields are CI suite wall durations, not matching/admission capacity.",
+    "No mixed load, sustained 10000/s, 30-minute qualification, HA, RPO/RTO or real-funds approval.",
+    "Four reserve-reuse benchmark tests live outside tests discovery; this CI does not replace their separate retained pure/native evidence.",
+    "First readiness failure and startup lease error are preserved; neither root cause nor reserve-reuse causality is established. Failed jobs skipped their downstream build/installed stages."
+  ],
+  "original_collector_PENDING_files_preserved_as_historical_bytes": true,
+  "private_originals_plus_seal_and_later_administration_are_distinct": true,
+  "private_seal_sha256": "d1c75df9a8b7ab35d33351119fcf8d1303dbb23f8acaeac0fc42f9e1264ec4b6",
+  "qualification_result": null,
+  "required_package_paths": 7094,
+  "review_controls": {
+    "CI_rerun": false,
+    "connector_fetch_or_download": false,
+    "finite_privacy_scan_not_a_full_security_audit": true,
+    "independent_exact_source_hash_checks": true,
+    "original_reads_O_NOATIME": true,
+    "original_seals_revalidated": true,
+    "target_import_compile_test_SQL_native_proc_PID_signal": false
+  },
+  "runtime_files": 62,
+  "safe_files": 16,
+  "samples": [
+    {
+      "E": 0,
+      "F": 0,
+      "selection": "push313-unit",
+      "skip": 0,
+      "source_pins": 373,
+      "tests": 2061,
+      "worker_fields": 7
+    },
+    {
+      "E": 0,
+      "F": 1,
+      "selection": "pull313-unit",
+      "skip": 0,
+      "source_pins": 373,
+      "tests": 2061,
+      "worker_fields": 7
+    },
+    {
+      "E": 1,
+      "F": 0,
+      "selection": "push312-unit",
+      "skip": 0,
+      "source_pins": 373,
+      "tests": 2061,
+      "worker_fields": 7
+    }
+  ],
+  "scope": "Immutable first CI originals, finite SAFE projections and Git bindings only; no target evaluation or CI rerun.",
+  "sealed_bytes": 2623125,
+  "sealed_originals": 46,
+  "selected_original_outcomes": 6,
+  "source": "2cf04629e3b724ea3d9a46ae83e6ff10ea6750ee",
+  "status": "RAW_EVIDENCE_VALIDATED_CI_STILL_BLOCKED",
+  "steps": 200,
+  "target_or_SQL_or_CI_reruns": 0
+}
