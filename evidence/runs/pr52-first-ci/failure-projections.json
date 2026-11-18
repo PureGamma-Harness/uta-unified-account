@@ -1,0 +1,382 @@
+{
+  "classification": "FIRST_CI_FAILURE_PRESERVED_NO_RETRY",
+  "error_ID_sets_identical_across_eight": true,
+  "exact_raw_traceback_bytes_private": true,
+  "not_assumed_to_be_timing_or_SH_or_candidate_attribution": true,
+  "precise_schema_or_policy_root_cause": "NOT_DETERMINED_BY_THIS_COLLECTION",
+  "runtime_policy_mismatch_observed": true,
+  "samples": [
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "pr310-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "pr311-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "pr312-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "pr313-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "push310-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "push311-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "push312-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    },
+    {
+      "errors": [
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive",
+        "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls",
+        "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit",
+        "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back",
+        "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure",
+        "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue",
+        "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+      ],
+      "failures": [
+        "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+      ],
+      "repository_traceback_frames_bound_to_Git": 78,
+      "sample": "push313-unit",
+      "subprocess_actual_exit": 1,
+      "subprocess_expected_exit": 73,
+      "terminal_error": "CreditAuditError/credit_audit_policy_mismatch",
+      "terminal_message": "runtime credit rules differ from authoritative persisted policy",
+      "unittest_footer_matches": true
+    }
+  ],
+  "unique_repository_source_lines": [
+    {
+      "line": 35,
+      "path": "tests/credit_v2_process_worker.py",
+      "source": "install_internal_credit_v2(database, bootstrap.exchange, bootstrap.credit, Path(envelope_path).read_text())"
+    },
+    {
+      "line": 79,
+      "path": "tests/credit_v2_process_worker.py",
+      "source": "main()"
+    },
+    {
+      "line": 87,
+      "path": "tests/credit_v2_runtime_fixture.py",
+      "source": "self.installed = install_internal_credit_v2(self.db, self.bootstrap, self.bootstrap_credit, self.envelope)"
+    },
+    {
+      "line": 102,
+      "path": "tests/test_credit_audit_v2_helpers.py",
+      "source": "policy = audit_policy(self.service, connection)"
+    },
+    {
+      "line": 120,
+      "path": "tests/test_credit_audit_v2_helpers.py",
+      "source": "policy = audit_policy(self.service, connection)"
+    },
+    {
+      "line": 140,
+      "path": "tests/test_credit_audit_v2_helpers.py",
+      "source": "policy = audit_policy(self.service, connection)"
+    },
+    {
+      "line": 153,
+      "path": "tests/test_credit_audit_v2_helpers.py",
+      "source": "payload = canonical(audit_policy(self.service, connection))"
+    },
+    {
+      "line": 166,
+      "path": "tests/test_credit_audit_v2_helpers.py",
+      "source": "policy = audit_policy(self.service, connection)"
+    },
+    {
+      "line": 79,
+      "path": "tests/test_credit_v2_legacy_and_lease_runtime.py",
+      "source": "installed = install_internal_credit_v2(fixture.db, fixture.bootstrap, fixture.bootstrap_credit, fixture.envelope)"
+    },
+    {
+      "line": 137,
+      "path": "tests/test_credit_v2_legacy_and_lease_runtime.py",
+      "source": "fixture = SyntheticCreditAuthority().install_and_open()"
+    },
+    {
+      "line": 17,
+      "path": "tests/test_credit_v2_native_history_boundary.py",
+      "source": "return fixture.install_and_open()"
+    },
+    {
+      "line": 26,
+      "path": "tests/test_credit_v2_native_history_boundary.py",
+      "source": "fixture = self.authority(additional_accounts=(\"bob\",))"
+    },
+    {
+      "line": 41,
+      "path": "tests/test_credit_v2_native_history_boundary.py",
+      "source": "fixture = self.authority()"
+    },
+    {
+      "line": 17,
+      "path": "tests/test_credit_v2_native_late_boundaries.py",
+      "source": "self._exercise((\"lost_context_after_closing\", \"stale_before_closing\", \"stale_before_commit\", \"unrelated_account\"))"
+    },
+    {
+      "line": 20,
+      "path": "tests/test_credit_v2_native_late_boundaries.py",
+      "source": "self._exercise((\"lost_operation_before_closing\",))"
+    },
+    {
+      "line": 26,
+      "path": "tests/test_credit_v2_native_late_boundaries.py",
+      "source": "fixture.install_and_open()"
+    },
+    {
+      "line": 25,
+      "path": "tests/test_credit_v2_process_restart.py",
+      "source": "self.assertEqual(crashed.returncode, 73, crashed.stderr.decode())"
+    },
+    {
+      "line": 22,
+      "path": "tests/test_credit_v2_realtime_clock.py",
+      "source": "fixture.install_and_open()"
+    },
+    {
+      "line": 23,
+      "path": "tests/test_credit_v2_runtime_chain.py",
+      "source": "return fixture.install_and_open()"
+    },
+    {
+      "line": 26,
+      "path": "tests/test_credit_v2_runtime_chain.py",
+      "source": "fixture = self.authority()"
+    },
+    {
+      "line": 62,
+      "path": "tests/test_credit_v2_runtime_chain.py",
+      "source": "fixture = self.authority()"
+    },
+    {
+      "line": 131,
+      "path": "tests/test_credit_v2_runtime_chain.py",
+      "source": "fixture = self.authority()"
+    },
+    {
+      "line": 150,
+      "path": "tests/test_credit_v2_runtime_chain.py",
+      "source": "fixture = self.authority(opening_interest=True)"
+    },
+    {
+      "line": 220,
+      "path": "uta/credit_audit_v2.py",
+      "source": "raise CreditAuditError(\"credit_audit_policy_mismatch\", \"runtime credit rules differ from authoritative persisted policy\")"
+    },
+    {
+      "line": 539,
+      "path": "uta/credit_audit_v2.py",
+      "source": "policy = audit_policy(self.exchange, connection)"
+    },
+    {
+      "line": 234,
+      "path": "uta/credit_native_v2.py",
+      "source": "evidence = audit.CreditAuditV2(exchange, credit).runtime_evidence(con)"
+    }
+  ]
+}
