@@ -1,0 +1,41 @@
+{
+  "failures": [
+    {
+      "failure_line": 162,
+      "intentional_bad_quote_mutations_reached": false,
+      "method": "test_malformed_missing_and_oversize_persistent_quotes_fail_closed",
+      "observed_exception": "ReadinessSamplingTests.wait_ready rejects non-transient market_stale.",
+      "observed_phase": "Initial activate(), before the malformed/missing/oversize payload loop.",
+      "root_cause_proven": false,
+      "test_file": "tests/test_process_readiness.py"
+    },
+    {
+      "diagnostic_payload_at_this_assertion_retained": false,
+      "failure_line": 158,
+      "method": "test_same_version_changed_persistent_content_is_not_reused",
+      "observed_phase": "After original same-version-content fault assertions and activate(market2), immediate financial_ready assertion is False.",
+      "root_cause_proven": false,
+      "same_cause_as_other_failure_proven": false,
+      "test_file": "tests/test_process_readiness.py"
+    }
+  ],
+  "interpretation_limit": "Unchanged failing test source is a scope fact; no baseline rerun or proof of causality/harmlessness. No scheduling, TTL or test-relaxation cause is inferred.",
+  "source_head": "8d6e7852689851f56801768de65506242f9d4c46",
+  "sources": {
+    "tests/test_process_readiness.py": {
+      "base_sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+      "bytes_identical_to_base": true,
+      "candidate_sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af"
+    },
+    "tests/test_readiness_sampling.py": {
+      "base_sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+      "bytes_identical_to_base": true,
+      "candidate_sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba"
+    },
+    "uta/durable_batches.py": {
+      "base_sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32",
+      "bytes_identical_to_base": false,
+      "candidate_sha256": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+    }
+  }
+}
