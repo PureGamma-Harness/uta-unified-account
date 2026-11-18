@@ -209,7 +209,7 @@ def audit_policy(exchange, connection):
     """Pin actual runtime rules to the authoritative persisted bootstrap policy."""
     from .decision_audit import DecisionAudit
     from .service import _text
-    base = DecisionAudit.policy(exchange)
+    base = DecisionAudit.valuation_policy(exchange)
     base["fee_rate"] = _text(exchange.fee_rate)
     if (base["risk_mode"] != "phase1_cross" or base["catalog"] is None or base["rules"] is None
             or base["scales"] != {"USD": 8, "BTC": 8} or Decimal(base["fee_rate"]) != 0
