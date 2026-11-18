@@ -1,8 +1,8 @@
 """One explicitly authorized in-memory credit-artifact/tag suite, never SQL.
 
-The caller binds actual Git/argv/exit/reap and supplies the hard20s/CPU1 envelope.
-Target imports execute only retained verified bytes. This is trusted-source
-verification, not an OS sandbox, native-library attestation or financial gate.
+The fixed outer entry binds Git, captures both OS pipes, and supplies the hard20s
+CPU1 envelope. This inner entry requires its retained capsule and never redirects
+FD1/2. This is trusted-source verification, not an OS sandbox or financial gate.
 """
 import argparse
 from hashlib import sha256
@@ -120,27 +120,34 @@ class FrozenUTA(importlib.abc.MetaPathFinder):
             submodule_search_locations=[str(ROOT / "uta")] if fullname == "uta" else None)
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--plan-sha256", required=True)
     parser.add_argument("--private-directory", required=True, type=Path)
-    args = parser.parse_args()
+    parser.add_argument("--parent-captured-stdio", action="store_true")
+    args = parser.parse_args(argv)
+    capsule = globals().get("_PARENT_CAPTURE_CAPSULE")
+    if not args.parent_captured_stdio or type(capsule) is not dict:
+        raise ValueError("fixed parent-captured mode requires the retained input capsule")
     output = args.private_directory
     if not output.is_absolute() or output.resolve() != output:
         raise ValueError("private output must be a new canonical absolute directory")
     output.mkdir(mode=0o700)
-    for descriptor, name in ((1, "first.stdout.txt"), (2, "first.stderr.txt")):
-        target = os.open(output / name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
-        os.dup2(target, descriptor)
-        os.close(target)
+    # Never redirect FD1/2 to inner files: native writes must reach parent pipes.
     sys.stdout, sys.stderr = RawStream(1), RawStream(2)
     plan_path = ROOT / "evidence/reviews/credit-observation-tag/once-plan.json"
-    raw = read_regular(plan_path)
+    raw = capsule["plan_raw"]
     if sha256(raw).hexdigest() != args.plan_sha256:
         raise ValueError("unapproved plan")
     plan = json.loads(raw)
-    frozen = inputs(plan)
+    frozen = capsule["inputs"]
+    if type(frozen) is not dict or set(frozen) != set(plan["input_files"]):
+        raise ValueError("retained capsule inputs differ from approved plan")
+    for name, expected in plan["input_files"].items():
+        value = frozen[name]
+        if type(value) is not bytes or {"bytes": len(value), "sha256": sha256(value).hexdigest()} != expected:
+            raise ValueError("retained input differs from approved pin")
     executable = Path(sys.executable).resolve()
     binary = read_regular(executable, 64 * 1024 * 1024)
     runtime = {"sys_executable": sys.executable, "resolved_executable": str(executable),
@@ -176,6 +183,9 @@ def main():
     namespace = ModuleType("credit_observation_tag_once")
     namespace.__file__ = str(ROOT / "tests/test_credit_lease_observation_tag.py")
     namespace.__dict__["_FROZEN_VALIDATION_SOURCE"] = frozen["tools/run_validation.py"]
+    namespace.__dict__["_RETAINED_UTA_SOURCE_PINS"] = {
+        name[4:]: pin["sha256"] for name, pin in plan["input_files"].items()
+        if name.startswith("uta/") and name.endswith(".py")}
     sys.modules[namespace.__name__] = namespace
     print(json.dumps({"event": "CREDIT_TAG_BEGIN", "source_commit": args.source_commit,
         "runtime": runtime, "selected_methods": plan["methods"], "input_count": len(frozen)}), flush=True)

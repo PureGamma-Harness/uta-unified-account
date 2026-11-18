@@ -3,7 +3,7 @@
   "bounded_case_groups": {
     "changed_enum_value_or_type": 2,
     "collector_reject_alias_or_unknown": 6,
-    "full_artifact_and_validator": 1,
+    "full_artifact_and_validator": 3,
     "original_error_and_typed_payload": 1,
     "unchanged_unsupported_policy": 4,
     "unknown_existing_annotation_sources": 6
@@ -12,19 +12,24 @@
     "CPU": 1,
     "SQL_connect": 0,
     "network": 0,
-    "outer_hard_KILL_seconds": 20,
+    "outer_owned_timeout_and_interpreter_only": true,
+    "parent_drain_after_hard_timeout_seconds": 2,
+    "parent_payload_limit": 261632,
+    "parent_pipe_raw_shared_including_native_FD1_FD2": true,
+    "parent_target_plus_drain_seconds": 22,
+    "parent_trailer_reserved_bytes": 512,
     "proc_PID_actions": 0,
     "shared_raw_bytes": 262144,
+    "target_hard_KILL_seconds": 20,
     "target_subprocesses": 0,
     "thread_starts": 0,
     "trailer_reserved_bytes": 512
   },
   "caller_required": [
-    "O_EXCL intent/fullargv/monotonic record",
-    "hard KILL20s and CPU1",
-    "first launcher stdout/stderr retained",
-    "actual host exit/reap/elapsed, never inferred from END",
-    "any missing/timeout/unknown remains UNKNOWN, no retry"
+    "O_EXCL outermost intent/fullargv/monotonic record",
+    "observe actual outer process exit/reap, never infer future exit from its END",
+    "preserve first stdout/stderr/inner+parent END and full private control files",
+    "any missing, nonzero, late, drift, timeout or incomplete remains FAIL/UNKNOWN; no retry"
   ],
   "expected_runtime": {
     "affinity": [
@@ -42,34 +47,33 @@
     "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
   },
   "host_argv_template": [
-    "/usr/bin/timeout",
-    "--signal=KILL",
-    "20s",
-    "/usr/bin/taskset",
-    "-c",
-    "1",
     "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
     "-I",
     "-S",
     "-B",
-    "/workspace/uta-credit-artifact-diag-compat/tools/run_credit_observation_tag_once.py",
+    "/workspace/uta-credit-artifact-diag-compat/tools/run_credit_observation_tag_outer_once.py",
+    "--execute",
     "--source-commit",
     "<ROOT_ACTUAL_GIT_HEAD_FULL_COMMIT>",
     "--plan-sha256",
     "<FROZEN_PLAN_SHA256>",
-    "--private-directory",
+    "--output",
     "<NEW_PRIVATE_DIRECTORY>"
   ],
-  "input_bytes": 1326122,
-  "input_count": 64,
+  "input_bytes": 1342330,
+  "input_count": 65,
   "input_files": {
     "tests/test_credit_lease_observation_tag.py": {
-      "bytes": 7924,
-      "sha256": "c0fe6c130c32c2f4e4193817f19ab665511b5b5b17fd05aac85b66602235d922"
+      "bytes": 8784,
+      "sha256": "110277b10cf6a48ed5c48ddb889497d448198f878c35ecf34e2747ba1e4b847c"
     },
     "tools/run_credit_observation_tag_once.py": {
-      "bytes": 9120,
-      "sha256": "9b5decd7a40b811e644b1be3da391341d104219d6aca7dc59fe763eee02eb0c4"
+      "bytes": 9883,
+      "sha256": "7cf624069e4ba2becd9b57860cdb3eaf9564ccf2bc59034a9e94fb8366deb239"
+    },
+    "tools/run_credit_observation_tag_outer_once.py": {
+      "bytes": 14585,
+      "sha256": "72ec79172394924336e5817ae161f18af3fde8c79eb70a95866ffa0de8de03c0"
     },
     "tools/run_validation.py": {
       "bytes": 12185,
@@ -320,7 +324,7 @@
       "sha256": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41"
     }
   },
-  "kind": "CREDIT_LEASE_OBSERVATION_ENUM_IDENTITY_FOCUSED_PURE_ONCE",
+  "kind": "CREDIT_LEASE_OBSERVATION_ENUM_IDENTITY_PARENT_CAPTURED_PURE_ONCE",
   "limitations": [
     "First CI did not record the unsupported attribute; its historical cause stays unclassified beyond the captured exception/frames.",
     "The old object tag is a static identified candidate; a new focused source can establish its conditional rejection, not backfill old CI telemetry.",
@@ -336,12 +340,39 @@
     "test_original_error_and_native_typed_observation_filter_are_preserved",
     "test_publication_filter_keeps_original_rejection_of_aliases_and_unknown_fields"
   ],
+  "parent_capture_contract": {
+    "actual_host_exit_reap_EOF_END_required": true,
+    "final_publication_late_exit": "126 and UNKNOWN even if earlier END existed; caller actual outer exit mandatory",
+    "full_artifact_source_map": "exact equality with all61 retained UTA Python SHA pins; explicit added/missing map cases reject",
+    "inner_compiles_exec_from_retained_pinned_bytes_only": true,
+    "inner_entry": "tools/run_credit_observation_tag_once.py --parent-captured-stdio; requires retained injected capsule",
+    "inner_no_dup2_or_raw_files": true,
+    "one_target_attempt_no_retry": true,
+    "parent_entry": "tools/run_credit_observation_tag_outer_once.py",
+    "parent_reserve_before_single_write": true,
+    "parent_reserved_trailer": 512,
+    "parent_shared_raw_limit": 262144,
+    "pipe_sources": "native/stdio/bootstrap/taskset/timeout FD1 andFD2",
+    "short_write": "sticky125, no refund or continuation, no further payload"
+  },
   "planned_methods": 6,
+  "preparation_history": {
+    "financial_enum_runtime_unchanged": true,
+    "old_exact_copy": "once-plan-7030d121-NOT_RUN.json",
+    "old_plan_sha256": "2e9c9a91d56435949158131d740a6680c74e0f946fd41f73a1d2a9dc13afb6cd",
+    "old_source": "7030d121ba311274a3259917dffb8daa18ae75c7",
+    "old_status": "NOT_RUN_NOT_RED",
+    "old_target_execution_attempts": 0,
+    "static_findings": [
+      "full source_files map was not asserted",
+      "inner FD dup2 bypassed caller pipe capture"
+    ]
+  },
   "production_approved": false,
   "requires_root_exact_once_GO": true,
   "schema": 1,
-  "scope": "Actual loaded credit identity and validation predicates, entirely in memory; constructor imports/native module metadata are allowed but SQL connect, product execution, real authorization or archived-code execution are not. The only whole-artifact calculation uses current loaded source; unknown historical artifact never chooses imports.",
-  "source_binding": "Caller verifies actual full Git HEAD and each physical/Git byte pin before once; interpreter executes UTA imports only from retained immutable verified buffers through a scoped loader. Artifact source reads are supplemental pinned-file reads and final pins must remain equal. Supplied commit is an invoker label, not election or remote attestation.",
+  "scope": "Actual loaded whole credit identity/validator and diagnostic provenance predicates in memory only. Inner imports execute retained approved source; current source_files must exactly equal61retained UTA pins. No SQL connect, product execution, worker, network, old PID/proc operation or archived-code execution. Fixed parent owns only its new timeout/taskset interpreter and read-only Git preparation.",
+  "source_binding": "Parent validates actual HEAD, plan and65physical/Git input bytes, builds immutable SHA-bound capsule; bootstrap verifies allpins before compiling inner. Full artifact source_files exact-retained61-map assertion plus before/after pins rejects missing/extra/changed source. Source reads after retaining are checks, never execution inputs.",
   "status": "NOT_RUN",
   "target_attempts": 0
 }

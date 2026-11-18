@@ -1,6 +1,6 @@
 # Credit identity and the private lease-observation tag
 
-Status: CODE_ONLY / NOT_RUN. This change does not authorize financial activity,
+Status: revised CODE_ONLY / NOT_RUN. This change does not authorize financial activity,
 recovery, whole-CI acceptance, or production. Its base is published PR42 source
 `f510bf5fea852ca04c87930077861c312320141f`.
 
@@ -49,11 +49,11 @@ authority or isolation against plugins, the service OS user, or arbitrary code.
 
 ## Focused verification plan
 
-The six selected methods have twenty bounded source cases:
+The six selected methods have twenty-two bounded source cases:
 
 | Test | Independent expectation |
 | --- | --- |
-| `test_complete_artifact_includes_tag_member_and_loaded_class_code` | Complete current artifact and validator include the exact Enum descriptor, member, loaded class code, source and original exclusions; activation remains false |
+| `test_complete_artifact_includes_tag_member_and_loaded_class_code` | Complete current artifact and validator include the exact Enum descriptor, member, loaded class code and original exclusions; its entire source map equals61 retained pins, added/missing source maps reject, activation remains false |
 | `test_unsupported_objects_and_financial_code_constants_still_reject` | Plain object, patched tag object, unrelated uppercase object and unsupported financial code constant all reject |
 | `test_enum_value_and_same_value_other_type_change_loaded_identity` | Changing either the value or Enum type changes the constant fingerprint; test mutations restore |
 | `test_unknown_existing_payload_sources_are_never_upgraded_or_published` | Six old/wrong tag or tuple/mapping shapes remain untouched and unpublishable |
@@ -65,21 +65,47 @@ hand recorded. The real current `credit_code_artifact` and its validator execute
 in memory, covering the whole artifact rather than only a direct `_static`
 call. The actual validation predicates are selected from the unchanged pinned
 source AST; the validation process runner is never imported or invoked.
+The expected complete source map comes from the retained plan inputs, not from
+the production artifact function. The focused control guards and its resulting
+loaded identity do not qualify an uninstrumented financial writer.
 
-`evidence/reviews/credit-observation-tag/once-plan.json` binds64 inputs:61 UTA
-Python sources, the new test and driver, and the unchanged validation source.
-The caller must verify their Git and physical bytes plus the final source
-commit. The driver imports UTA modules only from the retained verified buffers;
-artifact source-file reads and final checks must also match those pins.
+`evidence/reviews/credit-observation-tag/once-plan.json` binds65 inputs:61 UTA
+Python sources, the test, inner and outer entries, and the unchanged validation
+source. The fixed outer entry verifies their Git and physical bytes plus actual
+source HEAD and the approved plan SHA. Its retained SHA-bound capsule supplies
+every target compilation/import; later physical reads are checks only.
 
-The proposed first run is one CPU1, outer hard KILL20seconds, shared256KiB raw
-stdout/stderr with512bytes reserved, fresh0700/O_EXCL0600 evidence, and no SQL
-connect, target subprocess, worker thread, network, PID/proc action or archived
-code execution. Imports and runtime metadata are allowed. The caller separately
-records literal argv, actual host exit/reap and elapsed time. Missing receipts,
-timeout, drift, or incomplete output are UNKNOWN, never inferred successful.
-This is a reviewed trusted-source guard, not an OS sandbox. Twenty cases are
-source bounds; actual method/subcase observations must be reported separately.
+The independent CODE review found that the7030d121 preparation checked only one
+artifact source digest and its inner `dup2` sent native output around caller
+pipes. That preparation and exact2e9c9a91 plan remain NOT_RUN/zero attempts,
+never RED, in Git and the retained `once-plan-7030d121-NOT_RUN.json` copy.
+The revised complete-map check and fixed parent-captured mode close the proposed
+CODE gaps; they require independent review before any execution.
+
+The fixed outer entry is `tools/run_credit_observation_tag_outer_once.py`. It
+binds CPU1, then owns one new timeout/taskset interpreter with hard KILL20seconds
+and at most two seconds for pipe drain/reap/completion checks. The inner requires
+`--parent-captured-stdio` plus the verified injected capsule and never redirects
+FD1/2. All native and Python target/bootstrap/taskset/timeout output reaches the
+parent selector through two pipes. Shared256KiB capacity includes a512byte
+trailer reserve; the parent charges before each single FD write. A short write
+or overflow is sticky125 with no refund, continuation or later payload.
+
+Fresh output is0700 with O_EXCL0600 files. Complete inner END, both pipe EOFs,
+actual host wait/reap/exit0, complete source post-checks, no cap failure and a
+timely outer completion are all necessary. The caller must still observe actual
+outer process exit: an earlier END cannot attest that future event. Late final
+receipt publication returns126/UNKNOWN even if an earlier record existed.
+Source/Git preparation is separately visible and never credited as test time.
+
+No SQL connect, application subprocess, worker thread, network, old PID/proc
+operation or archived-code execution is permitted. Imports and runtime metadata
+are allowed; only the parent's new timeout/interpreter and read-only Git
+preparation are orchestration processes. The caller separately retains literal
+outer argv, first launcher streams, actual outer exit/reap and elapsed time.
+Missing receipts, timeout, drift, or incomplete output remain UNKNOWN. This is a
+reviewed trusted-source guard, not an OS sandbox. Twenty-two cases are source
+bounds; actual method/subcase observations must be reported separately.
 
 ## Deployment, compatibility, and rollback
 

@@ -38,6 +38,20 @@ def collector():
 class LeaseObservationTagArtifactTests(unittest.TestCase):
     def test_complete_artifact_includes_tag_member_and_loaded_class_code(self):
         artifact = credit_code_artifact()
+        retained = globals().get("_RETAINED_UTA_SOURCE_PINS")
+        if retained is None:
+            plan = json.loads((Path(__file__).resolve().parents[1]
+                / "evidence/reviews/credit-observation-tag/once-plan.json").read_bytes())
+            retained = {name[4:]: pin["sha256"] for name, pin in plan["input_files"].items()
+                        if name.startswith("uta/") and name.endswith(".py")}
+        self.assertEqual(len(retained), 61)
+        self.assertEqual(artifact["source_files"], retained)
+        with self.assertRaises(AssertionError):
+            self.assertEqual({**artifact["source_files"], "unreviewed.py": "0" * 64}, retained)
+        incomplete = dict(artifact["source_files"])
+        incomplete.pop("writer_fence.py")
+        with self.assertRaises(AssertionError):
+            self.assertEqual(incomplete, retained)
         tag = writer_fence._LEASE_OBSERVATION_TAG
         expected = {"enum": "uta.writer_fence._LeaseObservationTag", "name": "V1",
                     "value": "uta_lease_observation_v1"}
