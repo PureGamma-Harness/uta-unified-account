@@ -15,7 +15,11 @@ from time import monotonic
 from types import CodeType
 
 
-RUNTIME_SHA256 = "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+# The wire/SH protocol remains v1. Its source binding is explicitly revised
+# for the reviewed market-CAS runtime; the prior frozen fixture stays in Git.
+RUNTIME_BINDING_REVISION = 2
+PREVIOUS_RUNTIME_SHA256 = "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+RUNTIME_SHA256 = "9b346b3888a162141699926f6c4505b6804a5982a82af7ef3c017cac6ed1053e"
 BINDING_KEYS = ("pid", "start_ticks", "boot_id", "uid", "generation")
 PROFILE = "development_exact_worker_callsite_sh_v1"
 CASE = "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"

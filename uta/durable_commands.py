@@ -392,12 +392,17 @@ class QueueStore:
         receipt = self._record(connection.execute("SELECT * FROM uta_command_inbox WHERE command_id=?", (row["command_id"],)).fetchone())
         return receipt, new_order
 
-    def process_one(self, exchange, *, guard=None, credit=None):
+    def process_one(self, exchange, *, guard=None, credit=None, allow_submit=True):
         """Execute one eligible account head; return only after outer COMMIT.
 
         Router users must supply its guard and hold its outer publication lock
         through this call. A technical exception leaves the command PENDING.
+        A false allow_submit skips SUBMIT_ORDER without changing any inbox row.
+        All account predecessors still participate in the FIFO test, so this
+        does not let cancellation or repayment overtake a paused account head.
         """
+        if type(allow_submit) is not bool:
+            raise ValueError("allow_submit must be a boolean")
         self._check_exchange(exchange)
         command_id = sequence = attempt = None
         try:
@@ -406,10 +411,11 @@ class QueueStore:
                 now = _stamp(self.clock())
                 row = connection.execute("""SELECT c.* FROM uta_command_inbox c
                     WHERE c.state='PENDING' AND (c.next_attempt_at IS NULL OR c.next_attempt_at<=?)
+                    AND (? OR c.kind!='SUBMIT_ORDER')
                     AND NOT EXISTS (SELECT 1 FROM uta_command_inbox p WHERE p.state='PENDING'
                         AND p.sequence<c.sequence AND (p.account_id=c.account_id OR
                             (p.account_id IS NULL AND c.account_id IS NULL)))
-                    ORDER BY CASE WHEN c.kind IN ('PUBLISH_MARKET','SET_HALT') THEN 0 ELSE 1 END,c.sequence LIMIT 1""", (now,)).fetchone()
+                    ORDER BY CASE WHEN c.kind IN ('PUBLISH_MARKET','SET_HALT') THEN 0 ELSE 1 END,c.sequence LIMIT 1""", (now, allow_submit)).fetchone()
                 if row is None:
                     return None
                 command_id, sequence = row["command_id"], row["sequence"]
