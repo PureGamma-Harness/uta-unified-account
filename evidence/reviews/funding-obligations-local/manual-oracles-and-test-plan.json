@@ -1,5 +1,6 @@
 {
   "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "clock_basis": "EXPLICIT_SYNTHETIC_REFERENCE_CLOCK_NOT_NATIVE_WALLCLOCK_ACCEPTANCE",
   "counts_are_across_independent_namespaces_not_global_business_IDs": true,
   "data": "AUTHORIZED_SYNTHETIC_ONLY",
   "examples": [
@@ -12,10 +13,10 @@
     },
     {
       "case": "data missing and no fabricated late cut",
-      "cut": "attempt END with stale trusted market -> WAITING_DATA, no cut; after END+2.001s -> REVIEW_REQUIRED",
+      "cut": "attempt END with approved resolved rate but stale market -> WAITING_DATA; another attempt with missing resolved rate -> WAITING_DATA; no cut; after END+2.001s -> REVIEW_REQUIRED",
       "expected": "obligation remains outstanding/queryable; no funding receipt/postings; a/b999.96, fees.08; current positions never claimed as historical",
       "id": "FUND-DUE-002",
-      "initial": "positions opened at END-10s under then-fresh mark100"
+      "initial": "positions opened at END-10s under then-fresh mark100; schedule rate unknown/NULL, not zero"
     },
     {
       "case": "valid cut but current risk data missing",
@@ -61,20 +62,37 @@
     "test_trades_after_cut_and_unknown_response_query",
     "test_review_rollback_code_binding_and_old_capability_rejection"
   ],
+  "future_exact_once_runner_and_resource_scope": "OPEN; this CODE does not authorize even a target import. Exact selectors/argv/source/runtime/capture/disk/threads/timeout must be independently reviewed and separately granted.",
   "future_test_thread_scope": "Only competitor test may use exactly2 bounded test threads; no background service/worker. Must be separately authorized in exact future GO. No thread runs in CODE stage.",
   "kind": "DURABLE_FUNDING_OBLIGATION_CODE_ONLY_HAND_ORACLES",
+  "loaded_artifact_scope": "Existing fixed credit_artifact._MODULES plus perpetual_funding/funding_local/funding_obligations via unchanged strict _loaded_modules; no new runtime exclusions. Source pins alone do not assert loaded identity.",
   "mode": "LOCAL_SINGLE_AUTHORITY_USD_CROSS_LINEAR_MULTIPLIER1",
   "not_claimed": [
     "production scheduler",
     "cross-host clock or HA consensus",
     "real custody/ops approval",
     "commit/crash recovery fault proof",
-    "capacity or financial release approval"
+    "capacity or financial release approval",
+    "pending funding inclusion in order/admission/withdrawal reservations",
+    "exclusion of arbitrary old binaries or raw SQLite writers"
   ],
   "planned_fresh_scenario_DBs": 9,
+  "planned_manual_aggregate": {
+    "APPLIED": 5,
+    "custody_USD": "-15001",
+    "fees_USD": ".72",
+    "ledger_events_including_one_injected_orphan": 46,
+    "obligations": 8,
+    "outstanding": 3,
+    "scenario_DBs": 9,
+    "scenario_matches": 9,
+    "scenario_paired_fills": 18,
+    "scope": "independent synthetic namespaces; repeated business IDs allowed between scenarios; no aggregate healthy-funding-verifier claim for deliberate orphan REVIEW namespace"
+  },
   "planned_scenario_matches": 9,
   "planned_scenario_paired_fills": 18,
   "production_approved": false,
   "schema": 1,
+  "status_reopen_policy": "Constructor validates capability/schema/current code, not complete financial health; pending/query remain available for durable REVIEW. apply verifies the complete existing ledger/obligations inside its writer SAVEPOINT before financial effects.",
   "target_compile_import_SQL_test_worker_bench_CI_attempts": 0
 }

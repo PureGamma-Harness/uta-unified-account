@@ -30,6 +30,14 @@ period全局唯一，稳定obligation业务ID唯一；任意command ID跨所有�
 提交WAITING/REVIEW原因和命令结果。存储不可用导致整个事务失败时，先前已提交的DUE/cut
 保留，调用者结果UNKNOWN；不能声称写不进去的错误已经持久化。
 
+`pending(after_id, limit<=100)`允许重启后发现所有未履行义务，包括REVIEW；不需猜测旧ID。
+构造器只核capability/schema/code以允许已记录金融拒绝后的状态查询，不宣称账务健康；
+`verify`显式完整核对，`apply`在writer事务内必须先完整核对。坏账务库可查询REVIEW但不能
+因此通过金融验收。claim命令原结果含私有nonce，只供可信内部executor恢复，禁止公开。
+schedule允许rate未知，任务以NULL保留，绝不当作0；准时capture可接收经内部批准的resolved
+rate并绑定该命令和cut。缺rate/mark仍WAITING_DATA，超窗且无cut转REVIEW。原schedule
+rate身份不改写；query另返回不可变cut中的实际已批准费率及应付分解。
+
 ## 准时cut及延期应用
 
 cut只能在原政策0..2秒窗口内，由本authority `BEGIN IMMEDIATE` 的financial writer事务
@@ -63,11 +71,18 @@ claim状态与经济状态分开，等待不会被claim动作清空。过期旧o
 过期后新generation接管，原receipt和cap证明不变。同步 `execute_once` 只是一轮显式调用，
 无后台循环或自动重试；失败需查询原ID和新授权attempt。未来两executor竞争测试需独立
 授权恰好两个有界测试线程，CODE阶段不运行任何线程。
+所有trading/资金writer仍须部署同一冻结版本；旧binary隔离由部署边界保证，本地claim
+不具备排除任意旧binary或raw SQLite写入者的managed fence能力。DUE金额也尚未接入
+统一订单前/提现/划转预占，等待期间的额外风险限制是生产资金启用前的独立OPEN门槛。
 
 旧prototype安装/打开看到新marker明确拒绝；新安装看到旧funding_local、其他已用金融
 数据或managed marker也拒绝。新增模块的实际函数/默认值/闭包/常量必须进入独立固定
 artifact覆盖，不改credit `_MODULES`、unknown constant拒绝或live-state排除。当前源码
 变化使旧artifact不匹配时走原拒绝，不静默重绑旧authority。
+
+新artifact复用现有credit固定平台module closure并加三个funding模块，覆盖实际loaded
+函数/默认值/闭包/常量，包括schema和transaction fencing helpers；不以source_files替代
+loaded覆盖。仍保留1MiB capability/cut/receipt归档限制；超额拒绝，不临时扩大旧规则。
 
 ## 人工例子、验收及回滚
 
@@ -78,6 +93,7 @@ artifact覆盖，不改credit `_MODULES`、unknown constant拒绝或live-state�
 无cut的迟到、两executor/过期fence、原ID查询、rollback、旧cap互斥及未知金融常量分别验。
 跨9个合成scenario DB计划9次撮合/18侧成交；业务ID可跨独立scenario重复，不能当全局
 唯一交易或吞吐。未来exact runner/资源/SQL scope与独立CODE审核及root GO另行冻结。
+固定未来测试全部使用显式合成reference clock，不是native wallclock lease精度验收。
 
 部署只允许新合成本地authority。回滚停止显式调用并保留task、cut、claims、全部命令结果、
 receipt、journal及事件；未支付义务和REVIEW不能删除。源码/规则变更必须停写、复核并通过
