@@ -2,10 +2,11 @@
 
 Baseline witness `5af6cb0eead28c3fd23c921143bbda5a53ac53ea` is sealed first.
 The three conditional RED do not prove the two real errors' histories. Phase1
-below is now implemented at6303ed4, CODE-only reviewed and **NOT_RUN**; it is not
-a permission to ignore expiry. The12/48 pure closure/driver identified by the
-current `phase1-focused-plan.json` still requires its own static review and exact
-root once budget. Preparations72dcebf/166ddf9 were NOT_RUN, with zero attempts;
+below is implemented at6303ed4 and CODE-only reviewed; it is not a permission
+to ignore expiry. The first authorized pure closure at88da96f returned RED:
+11/12 methods passed, one failed,45/48 bounded traces entered, zero errors and
+no retry. See the immutable [first result](../evidence/reviews/owned-startup-read-admission/phase1-first/README.md).
+Preparations72dcebf/166ddf9 were NOT_RUN, with zero attempts;
 their static findings are retained in `phase1-preparation-CODE-fixes.json`.
 Phase2 is not applied.
 
@@ -58,7 +59,8 @@ SQL strings/call order/count, unchanged current-token rejection, known COMMIT,
 COMMIT-unknown, post-COMMIT wrapper error, preserved primary exceptions,
 nonfinite/bool/extra-field filtering, immutable observation copying and absence
 of nonce values. No native, worker, signal, process, network or real sleep.
-Retain the first result even if RED. This budget is a proposal, not yet used.
+Retain the first result even if RED. This proposed budget was used once at88da96f;
+the first RED and incomplete selector coverage remain retained without retry.
 
 The revised once driver binds the exact fixture and selected-source AST bytes
 to the same eight materialized input pins before execution. Its independent
@@ -115,9 +117,9 @@ mathematical witness and proposed watermark policy do not supply this approval.
 ## Delivery and rollback
 
 Current delivery contains phase1 observation code, docs, model/fixture source
-and immutable first baseline output. Original tests, SQL operations, schema,
-lease and financial decisions remain unchanged; phase1 pure/native/whole-suite
-and packaging acceptance is not granted. Added guard/load/fetch/validation
+and immutable first baseline/phase1 output. Original tests, SQL operations,
+schema, lease and financial decisions remain unchanged; the first phase1 pure
+run is RED and native/whole-suite/packaging acceptance is not granted. Added guard/load/fetch/validation
 timings affect all read TransactionGuards, so no timing/performance equivalence
 is claimed. The original ERRORs and baseline RED remain original results.
 

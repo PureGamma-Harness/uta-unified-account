@@ -1,7 +1,10 @@
 # Phase1 focused pure closure: frozen preparation, not a test result
 
-Status: **NOT_RUN / zero attempts**. This source-only revision addresses the
-independent review of preparations72dcebf/166ddf9. Runtime observation source
+Preparation status at88da96f: **NOT_RUN / zero attempts**. Its subsequent unique
+authorized first run is preserved in the [first-result report](../evidence/reviews/owned-startup-read-admission/phase1-first/README.md):
+11/12 methods passed, one failed,45 traces entered, zero errors, no retry.
+The source-only preparation addressed independent review of72dcebf/166ddf9;
+those earlier preparations remain zero attempts. Runtime observation source
 remains exactly6303ed46d946138c08551e30387abd3de18ab146. Independent runtime CODE
 review does not sign this driver, an execution, native fencing or production.
 
