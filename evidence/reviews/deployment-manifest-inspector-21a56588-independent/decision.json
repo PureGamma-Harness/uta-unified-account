@@ -1,0 +1,194 @@
+{
+  "schema": "deployment-manifest-inspector-independent-review/v1",
+  "reviewed_commit": "21a565889356c17ee7ea77dbf0454b01a28884a9",
+  "author_base": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+  "decision": "SAFE_FOR_BOUNDED_OFFLINE_ENGINEERING_PREFLIGHT",
+  "production_decision": "NO_GO",
+  "findings_requiring_author_change": [],
+  "source_files": [
+    {
+      "path": "docs/deployment/offline-manifest.md",
+      "bytes": 6907,
+      "git_blob": "9e74acbc0f72d971f7d729a4dad71935009a05b0",
+      "sha256": "f30539a78d6f826d1b6106244caa0970814f30979cc9ea24fda33e226543a330"
+    },
+    {
+      "path": "tests/fixtures/deployment_manifest_inspector/README.md",
+      "bytes": 1552,
+      "git_blob": "766020f64a033be2a587f226723c0eac82c57d2a",
+      "sha256": "a812d805c37dd67316c62283f70587ee4ce8852e984d4f6b6b7c508d9683f6c7"
+    },
+    {
+      "path": "tests/fixtures/deployment_manifest_inspector/manifest.json",
+      "bytes": 638,
+      "git_blob": "73c10d30318deeae775db4029a1998e9006c25e2",
+      "sha256": "8942ab3d487b46b66a7cc568cf44edb3a4e3171185d18af6966525efae63ca78"
+    },
+    {
+      "path": "tests/fixtures/deployment_manifest_inspector/source/abc.txt",
+      "bytes": 3,
+      "git_blob": "f2ba8f84ab5c1bce84a7b441cb1959cfc7093b7f",
+      "sha256": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    },
+    {
+      "path": "tests/fixtures/deployment_manifest_inspector/source/empty.txt",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "tests/test_inspect_deployment_manifest.py",
+      "bytes": 15068,
+      "git_blob": "f5e05cc5d69c1489e8f4aee597727b0b9971960d",
+      "sha256": "51344a9bd8255798e2128b47eece5a14966e44ef80bdbc02797364d5181b2974"
+    },
+    {
+      "path": "tools/inspect_deployment_manifest.py",
+      "bytes": 20098,
+      "git_blob": "1c8f418fea79f0c1a7984f60c995b1d187a39964",
+      "sha256": "928d7984d78c74275797149facf618353d442ee8fa56b8ccc72ca12320804be1"
+    }
+  ],
+  "source_file_count": 7,
+  "source_bytes": 44266,
+  "checks": [
+    {
+      "area": "native JSON integer vs bool",
+      "source": "tools/inspect_deployment_manifest.py#_integer,_validate_manifest",
+      "conclusion": "type(value) is int rejects bool; all combined bool fields require exact bool; author tests plus independent every-fixture-integer True/False first run PASS"
+    },
+    {
+      "area": "closed schemas and duplicate keys",
+      "source": "tools/inspect_deployment_manifest.py#_keys,_unique_pairs,_decode_manifest",
+      "conclusion": "unknown/missing fields and ordinary/escaped duplicate decoded JSON names rejected; unknown currency precision is rejected rather than financially interpreted"
+    },
+    {
+      "area": "bounded JSON and streams",
+      "source": "tools/inspect_deployment_manifest.py#constants,_decode_manifest,_pins,_Source.read",
+      "conclusion": "128 explicit files incl manifest; per runtime2MiB; manifest256KiB; combined stream16MiB; depth12, object keys64, nodes4096, strings512. Exact node/string/key/depth boundaries independently PASS; exceeded stream/file bounds covered by author first run"
+    },
+    {
+      "area": "external expected SHA and manifest trust",
+      "source": "tools/inspect_deployment_manifest.py#inspect,_result,main",
+      "conclusion": "expected lower-case64hex native string validated before opening source; compare before JSON parse; no sidecar/env substitution. Program verifies supplied equality only; both trust/authentication stay NOT_VERIFIED"
+    },
+    {
+      "area": "relative paths and symlink traversal",
+      "source": "tools/inspect_deployment_manifest.py#_relative_path,_Source.__init__,_Source.read",
+      "conclusion": "ASCII canonical paths reject absolute/dot/dotdot/empty/backslash; descriptor-relative O_NOFOLLOW across source-root ancestors and relative directories; stable symlinks refused. Additional ancestor-symlink control PASS"
+    },
+    {
+      "area": "regular files / nonblocking handling",
+      "source": "tools/inspect_deployment_manifest.py#_Source.read",
+      "conclusion": "lstat-like nofollow selection and opened fstat must be regular, signature-identical; O_NONBLOCK prevents FIFO writer wait; directory/file-as-root refusal covered; descriptors close in finally"
+    },
+    {
+      "area": "TOCTOU scope",
+      "source": "tools/inspect_deployment_manifest.py#_signature,_Source.read,assert_directories_unchanged",
+      "conclusion": "selected/opened device+inode+mode+nlink+size+mtime+ctime checked; bounded reads and after-read fstat; traversed directories checked. Independent same-byte leaf replacement before open and parent replacement during stream both never STATIC_PIN_MATCH"
+    },
+    {
+      "area": "missing, changed and extra files",
+      "source": "tools/inspect_deployment_manifest.py#_validate_manifest,inspect,_result",
+      "conclusion": "missing pin ->nonzero/missing; mutation ->nonzero/mismatch; exact combined67-path set structurally required. Unlisted actual files deliberately not enumerated and remain unverified; verification_source_pin contents are never claimed verified"
+    },
+    {
+      "area": "CLI and private argument output",
+      "source": "tools/inspect_deployment_manifest.py#_Parser,main,_result",
+      "conclusion": "fixed JSON errors hide untrusted CLI arguments/OS exception text; synthetic CLI first run exit0 with all no-production/no-trust qualifiers; source code does not import UTA, SQL, sockets or subprocess"
+    }
+  ],
+  "execution": {
+    "python": "3.12.14; isolated -I -S -B standard library",
+    "author_unit_first": {
+      "command": "python3 -I -S -B -m unittest discover -s tests -p test_inspect_deployment_manifest.py -v",
+      "start_utc": "2026-11-18T18:53:42.741394+00:00",
+      "stop_utc": "2026-11-18T18:53:42.930053+00:00",
+      "exit": 0,
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "streams": {
+        "stdout.txt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr.txt": {
+          "bytes": 5046,
+          "sha256": "e18abd2f4bb5ec850323b7f7894dd8984ffeb574155392c629293a6d79b5fe78"
+        }
+      }
+    },
+    "independent_unit_first": {
+      "scope": "8 independent pure synthetic boundary tests; original harness retained privately",
+      "start_utc": "2026-11-18T18:56:42.343372+00:00",
+      "stop_utc": "2026-11-18T18:56:42.578805+00:00",
+      "exit": 0,
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "harness_sha256": "4ba4be7d0ba1cf73045a51b052bbcc4b8531982be3038983f2b3ca615a497b37",
+      "streams": {
+        "independent-boundaries.stdout.txt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "independent-boundaries.stderr.txt": {
+          "bytes": 1258,
+          "sha256": "114364059afbc42229c4fdd6dbc0073e8c29d63136c66a3c24e04e07a30e5c2e"
+        }
+      }
+    },
+    "synthetic_cli_first": {
+      "command": "python3 -I -S -B tools/inspect_deployment_manifest.py --source-root tests/fixtures/deployment_manifest_inspector --manifest manifest.json --expected-manifest-sha256 8942ab3d487b46b66a7cc568cf44edb3a4e3171185d18af6966525efae63ca78",
+      "start_utc": "2026-11-18T18:56:55.362215+00:00",
+      "stop_utc": "2026-11-18T18:56:55.408083+00:00",
+      "exit": 0,
+      "status": "STATIC_PIN_MATCH",
+      "source_scope": "SYNTHETIC_FIXTURE_ONLY",
+      "counts": {
+        "bytes_read_including_manifest": 641,
+        "declared_runtime_bytes": 3,
+        "declared_runtime_files": 2,
+        "explicit_file_open_attempts": 3,
+        "matched_runtime_files": 2,
+        "mismatched_runtime_files": 0,
+        "missing_runtime_files": 0
+      },
+      "production_approval": "NOT_PRODUCTION_APPROVAL",
+      "expected_digest_trust": "NOT_VERIFIED_EXTERNAL_TRUST_REQUIRED",
+      "manifest_authentication": "NOT_VERIFIED",
+      "streams": {
+        "cli-first.stdout.json": {
+          "bytes": 1347,
+          "sha256": "4f211ca5f8c60a8b94fe476a2d23e429d939613f687673a2fd927cebcfb7dab9"
+        },
+        "cli-first.stderr.txt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  },
+  "raw_policy": "Original first-run streams, exact invocation records and independent harness retained in a new private local directory; no overwrite/relabel/retry was needed; hashes above support review. No private contents or absolute private paths copied into public artifacts.",
+  "not_run": [
+    "UTA imports or execution",
+    "combined runtime inventory inspection with checker",
+    "financial SQL/database or replay",
+    "worker/benchmark/observer/soak",
+    "network or process/proc lookup/signal",
+    "deployment/activation/rollback",
+    "full repository suite or other Python runtimes"
+  ],
+  "limitations": [
+    "Supplied expected digest authenticity requires external trust; checker does not verify signatures or Git origins",
+    "67 explicit combined runtime paths are a recognized inventory declaration, not discovered import or installation completeness",
+    "Verification pin content, extra actual files, active binary, configuration, health, lease, journal/replay, restore/RPO and deployment/rollback readiness stay unverified",
+    "Source files must be owned/quiescent; directory metadata changes, including unrelated ancestor changes, can conservatively reject",
+    "Sequential reads are not an atomic source snapshot; no lock or protection against later modification",
+    "Synthetic tests and static engineering review do not authorize production, real funds, HA, sustained load or the frozen combined first-CI gate"
+  ],
+  "delivery": "docs/data-only review; source and tests unchanged; remove review with a documentation revert only"
+}
