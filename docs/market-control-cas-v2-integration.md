@@ -1,6 +1,6 @@
 # Market control CAS revision2 integration candidate
 
-This new candidate overlays exactly three runtime modules and two test files from reviewed component source e1c38cfe onto the public first-phase combined delivery ef7508be. It retains all other65-Python-module/HTML runtime bytes from that base, including writer fencing, ledger sequence integrity, admission/credit policy separation and the inactive local funding modules. Default reference risk, fees, accounting, capability activation and installed-component status are unchanged.
+This new candidate overlays exactly three runtime modules and two test files from reviewed component source e1c38cfe onto the public first-phase combined delivery ef7508be. The runtime still has65 Python modules and one HTML file; the other63 runtime files (62 Python and one HTML) retain their base bytes, including writer fencing, ledger sequence integrity, admission/credit policy separation and the inactive local funding modules. Default reference risk, fees, accounting, capability activation and installed-component status are unchanged.
 
 Newly queued SUBMIT commands remain PENDING during a recognized temporary publication/activation transition. Polling them does not spend an attempt or manufacture a financial acceptance/reserve receipt. Explicit operator halt and integrity stop remain distinct. Existing account FIFO is preserved: same-account cancel/repay behind a paused order is an OPEN head-of-line limitation, not a reserved-capacity claim.
 
