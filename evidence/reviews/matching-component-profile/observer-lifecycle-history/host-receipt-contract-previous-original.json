@@ -1,0 +1,81 @@
+{
+  "aggregate_host_shared_raw_pool_bytes": 16384,
+  "aggregate_raw_cap_bytes": 15360,
+  "cryptographic_remote_attestation": false,
+  "file_mode": 384,
+  "host_raw_cap_bytes": 1024,
+  "kind": "HOST_RECEIPT_SHAPE_NOT_AN_ACTUAL_RUNTIME_RECEIPT",
+  "missing_nonzero_late_or_incomplete_rejects_aggregate": true,
+  "mode": 448,
+  "no_self_attestation_from_target": true,
+  "outside_both_target_write_roots": true,
+  "private_namespace": "/workspace/uta-matching-profile-host-2548647-once01",
+  "producer": "benchmarks/matching_profile_host.py; CODE only, no execution approval",
+  "protected_numeric_PID_set": [
+    4471,
+    8784,
+    122905,
+    122907,
+    123007,
+    123009,
+    310035,
+    310039,
+    310266,
+    310269
+  ],
+  "raw_files_do_not_trim_or_rewrite": true,
+  "raw_host_completion_reserved_bytes": 1024,
+  "required_shape": {
+    "actual_exit_status": "typed actual host integer, not inferred",
+    "argv": "Exact corresponding plan.commands argv array without shell evaluation",
+    "cleanup_error": null,
+    "elapsed_ns": "strict integer exactly end-start; target current<=60s/original<=45s",
+    "gate_error": null,
+    "gate_released_once": "literal true after durable owned/held facts and exactly one G+EOF release",
+    "held_handle_error": null,
+    "held_pidfd_ready_before_gate": "literal true",
+    "kind": "ROOT_HOST_COMPLETION_RECEIPT",
+    "late": "literal false",
+    "manifest_sha256": "Exact approved corresponding manifest digest",
+    "monotonic_end_ns": "strict integer >=start from same uninterrupted timer",
+    "monotonic_start_ns": "strict integer >0 from host monotonic_ns",
+    "owned_child_pid": "strict positive integer outside finite protected set",
+    "owner_record_error": null,
+    "process_completion_observed": "literal true only after observed completion/reap",
+    "profile_set": "current or original-scan",
+    "raw_capture_complete": "literal true only if all original stdout/stderr captured",
+    "reaped": "literal true from actual child wait",
+    "result": {
+      "bytes": "actual original result length",
+      "sha256": "actual original result digest"
+    },
+    "signal_error": null,
+    "source_commit": "25486476244ac7b86b5f16b894501f5db8afb208",
+    "start_error": null,
+    "stderr": {
+      "bytes": "actual raw length",
+      "path": "new O_EXCL host file outside both target roots",
+      "sha256": "actual raw digest"
+    },
+    "stdout": {
+      "bytes": "actual raw length",
+      "path": "new O_EXCL host file outside both target roots",
+      "sha256": "actual raw digest"
+    }
+  },
+  "schema": 1,
+  "sequence_shape": {
+    "actual_outer_exit_status": null,
+    "aggregate_status": "actual_return_status strict0, in-process not reaped child",
+    "complete": true,
+    "elapsed_ns": "strict integer end-start <=120e9",
+    "host_control_elapsed_ns": "strict integer sequence elapsed minus three disjoint measured phases <=5e9",
+    "kind": "ROOT_HOST_SEQUENCE_COMPLETION_RECEIPT",
+    "late": false,
+    "measurement_boundary": "final receipt publication follows recorded timestamp; same-cap tail guard reported in complete END, root actual process exit0 mandatory",
+    "monotonic_end_ns": "strict integer, after two targets and aggregate durable outputs",
+    "monotonic_start_ns": "strict integer, main entry",
+    "outer_exit_requires_caller_observation": true,
+    "phases": "exactly current<=60e9, original-scan<=45e9, aggregate<=10e9; no overlap/reorder"
+  }
+}

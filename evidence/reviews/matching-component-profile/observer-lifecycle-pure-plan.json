@@ -1,0 +1,66 @@
+{
+  "budget_proposal": {
+    "actual_CPU": 1,
+    "children": 0,
+    "drain_max_seconds": 2,
+    "explicit_proc_PID_pidfd_signals": 0,
+    "hard_timeout_seconds": 10,
+    "logical_bytes": 8388608,
+    "network": 0,
+    "raw_trailer_reserve": 512,
+    "real_SQLite_UTA_import_SQL_monitor_registration": 0,
+    "shared_raw_bytes_including_reserve": 32768,
+    "thread_starts": 0
+  },
+  "exact_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-matching-profile-observer-fix/benchmarks/test_matching_profile_observer.py",
+    "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal",
+    "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references",
+    "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete",
+    "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal",
+    "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten",
+    "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+  ],
+  "execution_authorized": false,
+  "historical_H254_cause": "UNKNOWN_UNCHANGED",
+  "invocations": 0,
+  "kind": "EXACT_SIX_PURE_MODEL_PLAN_NOT_NATIVE_PROOF",
+  "manifest": {
+    "bytes": 1713,
+    "path": "evidence/reviews/matching-component-profile/observer-lifecycle-pure-manifest.json",
+    "sha256": "00563df0db2c49c075e49cc14866aa1697d67a7f13da36b49517853c0b8e524f",
+    "sources": 2
+  },
+  "manual_expected": {
+    "bytes": 5677,
+    "git_blob": "8662fd3babf0986319c8b5d79b96f5bb708037bd",
+    "origin_relative_path": "evidence/reviews/matching-component-profile/observer-lifecycle-manual-cases.json",
+    "sha256": "56a8ea586220900575c12a012ffe4199cb744e6c701da16f4b497d0ae0195c22"
+  },
+  "method_count": 6,
+  "methods": [
+    "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal",
+    "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references",
+    "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete",
+    "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal",
+    "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten",
+    "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+  ],
+  "production_approved": false,
+  "proposed_prefix": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1"
+  ],
+  "runtime_limits": "Models assume frame/LINE delivery and ready state; no CPython readiness or real cProfile proof",
+  "schema": 1,
+  "source_commit": "4d0e2563479a5839a77c174ee82096c1290f55d9",
+  "status": "CODE_ONLY_NOT_RUN_PENDING_FORMAL_PEER_AND_EXPLICIT_ROOT_GO"
+}

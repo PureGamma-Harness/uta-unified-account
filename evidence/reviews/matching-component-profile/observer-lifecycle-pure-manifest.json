@@ -1,0 +1,35 @@
+{
+  "actual_executions": 0,
+  "execution_authorized": false,
+  "inputs": {
+    "benchmarks/matching_profile_case.py": {
+      "bytes": 41040,
+      "git_blob": "6073a1f5e89bd64e30a472295aeccf0a6341a709",
+      "origin_relative_path": "benchmarks/matching_profile_case.py",
+      "sha256": "33fc9cd6daca89b5020d84337544d924e95969f932b7b9d80557777854e42d31"
+    },
+    "benchmarks/test_matching_profile_observer.py": {
+      "bytes": 12001,
+      "git_blob": "4e5a4172ffe9438b6e4ad21f95c9921c453b0543",
+      "origin_relative_path": "benchmarks/test_matching_profile_observer.py",
+      "sha256": "8dffe043e1cb31fd059ce17508f9d0a0fb929c9556d5650ab75bbb9e25815ffa"
+    }
+  },
+  "kind": "SIX_PURE_MODELS_NO_REAL_SQLITE_UTA_OR_MONITORING_REGISTRATION",
+  "manual_expected": {
+    "bytes": 5677,
+    "git_blob": "8662fd3babf0986319c8b5d79b96f5bb708037bd",
+    "origin_relative_path": "evidence/reviews/matching-component-profile/observer-lifecycle-manual-cases.json",
+    "sha256": "56a8ea586220900575c12a012ffe4199cb744e6c701da16f4b497d0ae0195c22"
+  },
+  "methods": [
+    "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal",
+    "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references",
+    "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete",
+    "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal",
+    "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten",
+    "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+  ],
+  "schema": 1,
+  "source_commit": "4d0e2563479a5839a77c174ee82096c1290f55d9"
+}
