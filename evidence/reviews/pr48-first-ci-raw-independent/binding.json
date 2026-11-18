@@ -1,0 +1,364 @@
+{
+  "CRC_total_members": 28,
+  "additional_finite_projection_checks": {
+    "all_legacy_worker_schema_fields": true,
+    "fixed_artifact_metadata_slot_and_run": true,
+    "installed_cli_eight_actual_ok": true,
+    "package_projection_all_counts_and_declared_limits": true,
+    "provider_declared_digests_and_size": true,
+    "units_and_funding_runtime_and_source_fields": true
+  },
+  "archives": [
+    {
+      "CRC_members": 3,
+      "bytes": 100239,
+      "name": "push-failed-unit-14418437395",
+      "sha256": "776de65784c69ac0e73fad9c75e3bf6d007bbfeb684028a756196af14a474239"
+    },
+    {
+      "CRC_members": 3,
+      "bytes": 101641,
+      "name": "pr-failed-unit-14418841221",
+      "sha256": "c0e0775de71f6f657f25d6e67693a584efa6258e004660e62bec3c82ed4a4e6c"
+    },
+    {
+      "CRC_members": 3,
+      "bytes": 99697,
+      "name": "pr-success-313-unit-14418413338",
+      "sha256": "f5a4b2fc5db214270033b51571395f5a7c7c4cd01caafc4cf3260dda70f48983"
+    },
+    {
+      "CRC_members": 19,
+      "bytes": 59346,
+      "name": "pr-success-313-package-14418113095",
+      "sha256": "ab0b0c1d0ac891fa54675aab43512818513b54aaccc8842aa9ef16d542528584"
+    }
+  ],
+  "base": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "failed_decoded_logs_exact_connector_copies": true,
+  "failures": [
+    {
+      "all_four_diagnostics_contents_available": false,
+      "artifact_id": 14418437395,
+      "cause": "UNDETERMINED",
+      "expected_call_count": 1,
+      "expected_inactive_lease_assertion_caught": true,
+      "frames": [
+        {
+          "file_sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+          "function": "test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+          "line": 253,
+          "path": "tests/test_readiness_sampling.py",
+          "source_line_sha256": "6b943435bee9912180643781dffb23241c55fa255d89807edf17340166e991b9"
+        }
+      ],
+      "observed_call_count": 4,
+      "observed_failure_line": 253,
+      "phase": "after_expected_inactive_lease_assertion_was_caught_then_single_diagnostic_call_count_check",
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry"
+    },
+    {
+      "artifact_id": 14418841221,
+      "cause": "UNDETERMINED",
+      "clock_rollback_body_reached": false,
+      "frames": [
+        {
+          "file_sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+          "function": "test_clock_rollback_detects_future_without_relabeling_prices",
+          "line": 130,
+          "path": "tests/test_process_readiness.py",
+          "source_line_sha256": "53a7bb040ba258b939ebd31a27046b469a897434f470ef4f926a70f70be21827"
+        },
+        {
+          "file_sha256": "76b047376ac9551cc4add91b8d81bbd98d36aa68c2f1cf0e13dbea78bb2ca3af",
+          "function": "activate",
+          "line": 75,
+          "path": "tests/test_process_readiness.py",
+          "source_line_sha256": "7e373e95814d85aec14f4a415db6869d9cf32058b6a738225316d6c55854e779"
+        }
+      ],
+      "observed_failure_line": 75,
+      "observed_halted": true,
+      "phase": "activate_initial_halt_clear_before_clock_rollback_scenario",
+      "test_id": "test_process_readiness.ProcessReadinessTests.test_clock_rollback_detects_future_without_relabeling_prices"
+    },
+    {
+      "artifact_id": 14418841221,
+      "cause": "UNDETERMINED",
+      "error": "market_fanout_incomplete",
+      "frames": [
+        {
+          "file_sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+          "function": "test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes",
+          "line": 358,
+          "path": "tests/test_readiness_sampling.py",
+          "source_line_sha256": "9439904ee0e53942800be6cab32b81566319474668f86036dac16fc47ce1af53"
+        }
+      ],
+      "later_SID2_reached": false,
+      "observed_failure_line": 358,
+      "observed_publishing": true,
+      "phase": "same_SID1_republication_after_deliberate_fence_contention_release_before_later_SID2_or_bad_quote_scenarios",
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes"
+    },
+    {
+      "artifact_id": 14418841221,
+      "call_count_assertion_L253_reached": false,
+      "candidate_finite_generation_ordinals_present": true,
+      "cause": "UNDETERMINED",
+      "frames": [
+        {
+          "file_sha256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+          "function": "test_market_probe_rejects_a_real_expired_owner_lease_without_retry",
+          "line": 251,
+          "path": "tests/test_readiness_sampling.py",
+          "source_line_sha256": "3f4f125f9d9870996a3c04684fef8c5eb59705f75861d44c9be465b7bfa1f927"
+        }
+      ],
+      "helper_predicate_line79_basis": "source-consistent assertion text, not an independently captured helper stack frame",
+      "identity_precondition_mismatch_relations": [
+        {
+          "READY_report_generation_precedes_owner": true,
+          "report_PID_matches_owner_PID": false
+        }
+      ],
+      "observed_failure_line": 251,
+      "phase": "market_rejection_owner_identity_precondition_then_expected_exception_regex_mismatch_before_single_call_count_check",
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_market_probe_rejects_a_real_expired_owner_lease_without_retry"
+    }
+  ],
+  "jobs": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "job_id": 134730411004,
+      "name": "test (3.12)",
+      "run_id": 44283600389
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "job_id": 134730411587,
+      "name": "test (3.11)",
+      "run_id": 44283600389
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "job_id": 134730411593,
+      "name": "test (3.13)",
+      "run_id": 44283600389
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "job_id": 134730411767,
+      "name": "test (3.10)",
+      "run_id": 44283600389
+    },
+    {
+      "conclusion": "success",
+      "event": "pr",
+      "job_id": 134731388900,
+      "name": "test (3.11)",
+      "run_id": 44283882268
+    },
+    {
+      "conclusion": "success",
+      "event": "pr",
+      "job_id": 134731389281,
+      "name": "test (3.13)",
+      "run_id": 44283882268
+    },
+    {
+      "conclusion": "failure",
+      "event": "pr",
+      "job_id": 134731389378,
+      "name": "test (3.12)",
+      "run_id": 44283882268
+    },
+    {
+      "conclusion": "success",
+      "event": "pr",
+      "job_id": 134731389386,
+      "name": "test (3.10)",
+      "run_id": 44283882268
+    }
+  ],
+  "local_SQL_or_selected_passes_override_whole_CI": false,
+  "merge": "e211e4b3d2b7e91db54a45baaae2cfd73331f539",
+  "merge_parents": [
+    "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+    "6ba5ba2e9334f30be949f368d036c96fe9857c30"
+  ],
+  "merge_tree": "6ead209181fded3d164aa70a57bd2c928f0c73f8",
+  "overall_public_evidence_gate": "NOT_CLOSED_UNTIL_SEPARATE_RELATION_ONLY_SAFE_EXPORT",
+  "package_report": {
+    "artifact_id": 14418113095,
+    "changed_paths_covered": 58,
+    "checks": {
+      "entry_points": true,
+      "legacy_fixture_licensed": true,
+      "legacy_fixture_pinned": true,
+      "sdist_required_files_exact": true,
+      "sdist_runtime_exact": true,
+      "version": true,
+      "wheel_runtime_exact": true
+    },
+    "command_all_returncode0": true,
+    "commands": 8,
+    "evidence_level": "PROVIDER_SMALL_REPORT_ONLY",
+    "full_qualification": null,
+    "installed_funding_operation_qualification": null,
+    "installed_modules": 25,
+    "installed_tests": {
+      "errors": 0,
+      "failures": 0,
+      "run": 8,
+      "skipped": 0
+    },
+    "large_binary_independently_verified": false,
+    "new_funding_modules_imported_by_report": false,
+    "reported_sdist_members": 6930,
+    "required_exact_C": true,
+    "required_paths": 6923,
+    "runtime_paths": 64
+  },
+  "private_bytes": 2715344,
+  "private_files": 60,
+  "private_headers_signedrefs_parsed": false,
+  "private_seal_bytes": 12768,
+  "private_seal_sha256": "944b5c59d817b62199437940637ef5ff84b171ef2a51eda64b238d8ed868e9f5",
+  "production_gate": "NO_GO",
+  "public_scope": {
+    "MANIFEST_selection": "static docs *.md and evidence *.json match; no build/install executed",
+    "candidate_contains_controlled_generation_ordinals": true,
+    "candidate_not_in_new_own_ancestry": true,
+    "candidate_relation_only_wording_boundary": "candidate retains finite generation integers and shard alongside relation; this review exports relation booleans only, no raw identity tuple",
+    "finite_patterns": {
+      "credential_assignment": 0,
+      "private_key": 0,
+      "signed_query": 0,
+      "standalone32hex": 0,
+      "unmasked_auth": 0,
+      "uuid": 0
+    },
+    "new_own_report_based_directly_on_public_C": true,
+    "new_review_exports_actual_PID_nonce_boot_generation_tuple": false,
+    "owner_bytes": 48506,
+    "owner_files": 5,
+    "physical_Git_exact": true,
+    "public_relation_only_export_gate": "NOT_CLOSED_EXPORT_BOUNDARY_DIFFERENCE"
+  },
+  "review_execution": {
+    "method": "strict JSON, read-only stable NOFOLLOW/NOATIME bytes, Git, CRC and source text/AST-literal parse only",
+    "originals_modified": false,
+    "reader_schema_assumptions_corrected": [
+      "raw REST PR has head.sha/base.sha",
+      "both_whole_run_conclusions is scalar",
+      "package report evidence_level carries NOT_RAW_BUILD_VERIFICATION suffix"
+    ],
+    "target_import_compile_tests_SQL_PID_proc_signal_network_API_downloads_target_children": 0
+  },
+  "reviewed_seal": "a1b9a90cf66b5b96685042f48f049b6d79be0fdc",
+  "runs": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "failure_jobs": 1,
+      "id": 44283600389,
+      "run_attempt": 1,
+      "single_collector_sample": true,
+      "success_jobs": 3
+    },
+    {
+      "conclusion": "failure",
+      "event": "pull_request",
+      "failure_jobs": 1,
+      "id": 44283882268,
+      "run_attempt": 1,
+      "single_collector_sample": true,
+      "success_jobs": 3
+    }
+  ],
+  "schema": 1,
+  "six_funding_methods_three_units_total_observations": 18,
+  "source_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "unique_funding_methods": 6,
+  "units": [
+    {
+      "artifact_id": 14418437395,
+      "code_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+      "errors": 0,
+      "failures": 1,
+      "funding_six_unique_actual_ok": [
+        "test_perpetual_funding_local.FundingArithmeticTests.test_invalid_inventory_and_decimal_context_do_not_change_policy",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_three_accounts_need_real_segregated_rounding_capital",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_two_sides_negative_and_zero_rates_use_manual_cash",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_fresh_period_retry_reopen_and_period_uniqueness",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_mandatory_debit_uses_cash_deficit_and_real_risk_state"
+      ],
+      "legacy_worker_exact_native_types_values": true,
+      "python": "3.12.16 (main, Oct 26 2026, 02:48:44) [GCC 15.2.0]",
+      "skipped": 0,
+      "source_before_after_equals_Git_C": true,
+      "source_map_entries": 371,
+      "sqlite": "3.46.1",
+      "tests_run": 2055,
+      "unit_bytes": 400968,
+      "unit_sha256": "65276feb48dcf19c118ec605f4dd04eb3578ad08f72d2666434eebf32b7ac370",
+      "worker_exit_code": 1
+    },
+    {
+      "artifact_id": 14418841221,
+      "code_commit": "e211e4b3d2b7e91db54a45baaae2cfd73331f539",
+      "errors": 0,
+      "failures": 3,
+      "funding_six_unique_actual_ok": [
+        "test_perpetual_funding_local.FundingArithmeticTests.test_invalid_inventory_and_decimal_context_do_not_change_policy",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_three_accounts_need_real_segregated_rounding_capital",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_two_sides_negative_and_zero_rates_use_manual_cash",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_fresh_period_retry_reopen_and_period_uniqueness",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_mandatory_debit_uses_cash_deficit_and_real_risk_state"
+      ],
+      "legacy_worker_exact_native_types_values": true,
+      "python": "3.12.16 (main, Oct 26 2026, 02:48:44) [GCC 15.2.0]",
+      "skipped": 0,
+      "source_before_after_equals_Git_C": true,
+      "source_map_entries": 371,
+      "sqlite": "3.46.1",
+      "tests_run": 2055,
+      "unit_bytes": 411209,
+      "unit_sha256": "78be410626ebdee6d1d3dc26f60c185a4d81ae5b3f314143c1d1299d08576e7e",
+      "worker_exit_code": 1
+    },
+    {
+      "artifact_id": 14418413338,
+      "code_commit": "e211e4b3d2b7e91db54a45baaae2cfd73331f539",
+      "errors": 0,
+      "failures": 0,
+      "funding_six_unique_actual_ok": [
+        "test_perpetual_funding_local.FundingArithmeticTests.test_invalid_inventory_and_decimal_context_do_not_change_policy",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_three_accounts_need_real_segregated_rounding_capital",
+        "test_perpetual_funding_local.FundingArithmeticTests.test_two_sides_negative_and_zero_rates_use_manual_cash",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_fresh_period_retry_reopen_and_period_uniqueness",
+        "test_perpetual_funding_local.FundingLocalSQLTests.test_mandatory_debit_uses_cash_deficit_and_real_risk_state"
+      ],
+      "legacy_worker_exact_native_types_values": true,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "skipped": 0,
+      "source_before_after_equals_Git_C": true,
+      "source_map_entries": 371,
+      "sqlite": "3.46.1",
+      "tests_run": 2055,
+      "unit_bytes": 399431,
+      "unit_sha256": "fbada475c210779d11433a646d234e58530e447a10fe30aacd70ee76cd5a7b69",
+      "worker_exit_code": 0
+    }
+  ],
+  "verdict": "RAW_EVIDENCE_BINDING_PASS_WITH_EXPLICIT_LIMITATIONS",
+  "whole_runs": "failure"
+}
