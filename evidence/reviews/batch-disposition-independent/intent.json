@@ -1,0 +1,40 @@
+{
+  "actual_UTA_module_SQL_worker_or_network": false,
+  "candidate_head": "46072191a265acfccee932e7e0bb5e9ea8dd2404",
+  "command": [
+    "timeout",
+    "10s",
+    "taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "evidence/reviews/batch-disposition-independent/reference_once.py"
+  ],
+  "requested_cpu_ids": [
+    1
+  ],
+  "requested_wall_seconds": 10,
+  "root_authorized": true,
+  "scope": "ONE_INDEPENDENT_PURE_HISTORY_DIFFERENTIAL",
+  "source_before": {
+    "evidence/reviews/batch-disposition-independent/reference_once.py": {
+      "bytes": 8093,
+      "sha256": "9087ae727350f960b8f36118c4fb3436ffc8b687877df0edba5f7accc4cfdd1e"
+    },
+    "uta/durable_batches.py": {
+      "bytes": 27968,
+      "sha256": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+    },
+    "uta/durable_commands.py": {
+      "bytes": 29291,
+      "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8"
+    },
+    "uta/service.py": {
+      "bytes": 85864,
+      "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+    }
+  }
+}

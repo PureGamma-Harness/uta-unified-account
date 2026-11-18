@@ -30,7 +30,7 @@ review does not execute or newly establish their SQL enforcement. It does not
 claim that any rejected historical record or duplicate financial effect has
 actually occurred.
 
-## Independent finite reference, not yet run
+## Independent finite reference
 
 The new reference uses four synthetic members and six possible per-visit
 events: observe existing P/S/R/Q or complete a new S/R business action. It
@@ -48,9 +48,31 @@ wire rejections. Explicit manual examples retain a valid nonprefix execution
 and reject its reversal. This is new independent coverage; the author's tests
 and baseline fixture will not run again.
 
-Source is frozen before a requested single CPU1 / 10s pure batch. No target
-execution has occurred at this preparation commit. Actual SQL/native recovery,
-module-import, full-suite, capacity and production acceptance remain open.
+Preparation froze the source before one separately root-authorized CPU1 / 10s
+pure batch. Commit `46072191a265acfccee932e7e0bb5e9ea8dd2404` corrected the
+preparation's check-count arithmetic from 1,794 to 1,694 before any execution;
+the reference source itself did not change. The first execution ran all eight
+methods and **1,694 checks successfully**, with zero failures/errors and exit 0.
+Unittest reported 0.048s; measured outer elapsed was 120,249,199ns. All four
+source pins matched before and after. CPU1 was requested through the saved
+taskset command; this review did not independently sample child affinity.
+
+The exact original stdout (299B, SHA256
+`06cd025e9ddce45d8cab7b0f6a53a2a57b761e6efff667156ae288c2d1e73e1b`),
+stderr (1,384B, SHA256
+`75531b1c5c6a4bed616c842bb1498f1e910e1918ee4f164c5a4c116066b5205c`),
+intent and execution are retained in this review's evidence directory. The
+first private originals used exclusive creation and 0700/0600 protection.
+No author or baseline test was rerun. The existing fixed-source manifest's five
+payloads match their size/SHA pins, all four original source pins match frozen
+Git blobs, and all eight baseline rows still retain six controls and two RED.
+
+This closes independent CODE and bounded pure-contract verification of these
+two added checks. Actual SQL/native recovery, UTA module-import, full-suite,
+capacity and production acceptance remain open. The model assumes immutable,
+fully established, unique member order and aligned current rows supplied by
+the reviewed callers. It is not a general malformed-container parser proof,
+arbitrary runtime callback proof or new test of SQL terminal immutability.
 
 ## Deployment and rollback boundary
 
