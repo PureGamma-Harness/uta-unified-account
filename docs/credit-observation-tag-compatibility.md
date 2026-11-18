@@ -1,7 +1,12 @@
 # Credit identity and the private lease-observation tag
 
-Status: revised CODE_ONLY / NOT_RUN. This change does not authorize financial activity,
-recovery, whole-CI acceptance, or production. Its base is published PR42 source
+The frozen834ad6e source completed its unique first six-method in-memory run:
+PASS_LIMITED_PURE_ONLY, zero failures/errors/skips, actual host and outer exit0
+and reap, complete EOF/END and timely TAIL. Independent RAW review is pending.
+[First evidence](../evidence/reviews/credit-observation-tag/first-834ad6e/README.md)
+retains the separate source/host/raw bindings and limits. This result does not
+authorize financial activity, recovery, whole-CI acceptance, or production.
+The change's base is published PR42 source
 `f510bf5fea852ca04c87930077861c312320141f`.
 
 ## Problem, evidence, and uncertainty
@@ -18,8 +23,9 @@ A static comparison identifies a concrete incompatible new binding:
 existing uppercase-constant scan, it is outside the unchanged finite live-state
 exclusion list, and `_static` rejects a plain object. The other new observation
 constants contain supported primitive/container types. The focused tests are
-designed to establish this conditional path on a separately frozen source; they
-have not executed at this commit.
+designed to establish this conditional path on a separately frozen source. The
+first834ad6e focused run passed those methods; the original CI's telemetry gap
+remains unchanged.
 
 ## Local rule and implementation
 
