@@ -25,6 +25,19 @@ spot, options, inverse products, external execution ingestion, HA and production
 activation are outside this run. REST/WebSocket routing and permissions do not
 execute in this functional native-API scope.
 
+Independent CODE review of the original prepared source `fafd5959` found one
+proof-completeness gap: the cancellation allowlist compared A and B account
+rows without comparing the complete account set. It did not establish that
+matching actually creates an extra account. The corrected assertion compares
+the complete new account map with the complete prior map after only A's one
+version increment; it rejects any added, removed or otherwise changed account.
+The exact prior plan and manifest are preserved as
+`sqlite-source-plan-fafd595-NOT_RUN.json` and
+`sqlite-source-manifest-fafd595-NOT_RUN.json`, with the static finding separate.
+The prior source had zero SQL/target attempts and remains NOT_RUN, not RED.
+All other case code, rollback rows/schema, financial examples, native API
+operations, fees, margins, runtime files and resource budgets remain unchanged.
+
 Only three new `.sqlite3` files may exist under the new private business
 directory. The full 61-file source plus two control scripts is pinned to Git
 blobs and copied into a read-only mini checkout before import. The original

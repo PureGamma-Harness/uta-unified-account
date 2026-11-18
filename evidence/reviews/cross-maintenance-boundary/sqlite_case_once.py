@@ -224,8 +224,9 @@ def rollback_case(directory, checkpoint):
     require(before["schema"] == after["schema"], "matching rejection changed schema")
     old_accounts = {row["account_id"]: row for row in before["tables"]["uta_accounts"]}
     new_accounts = {row["account_id"]: row for row in after["tables"]["uta_accounts"]}
-    require(new_accounts["B"] == old_accounts["B"] and new_accounts["A"] == dict(old_accounts["A"], version=old_accounts["A"]["version"] + 1),
-            "buyer mutation survived or seller cancellation version differs")
+    expected_accounts = {**old_accounts, "A": dict(old_accounts["A"], version=old_accounts["A"]["version"] + 1)}
+    require(new_accounts == expected_accounts,
+            "matching rejection changed accounts beyond seller cancellation")
     old_orders = {(row["account_id"], row["order_id"]): row for row in before["tables"]["uta_orders"]}
     new_orders = {(row["account_id"], row["order_id"]): row for row in after["tables"]["uta_orders"]}
     require(set(new_orders) == set(old_orders), "matching rejection created/deleted an order")
