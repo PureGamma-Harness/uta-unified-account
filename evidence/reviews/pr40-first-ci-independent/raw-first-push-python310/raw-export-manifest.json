@@ -1,0 +1,132 @@
+{
+  "PR_event_unit_raw_counts_claimed": false,
+  "ci_rerun_fix_or_new_push_performed": false,
+  "collection_head": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "files": [
+    {
+      "bytes": 89541,
+      "path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-unit-3.10-14400281526-connector.zip",
+      "role": "original_provider_unit_zip_bytes",
+      "sha256": "f40438ac07ed26de922157137dc0fceb00f50436238623add809b7db6883b906"
+    },
+    {
+      "bytes": 27619,
+      "path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-job-134589520971-connector-decoded.log",
+      "role": "first_saved_connector_decoded_job_log_bytes",
+      "sha256": "c911b71b643d460dea097873f9e210be370d0f25d946b9b70c8ec6a9b1ed2cc4"
+    },
+    {
+      "bytes": 80243,
+      "path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/summary.json",
+      "role": "byte_exact_extracted_unit_zip_member",
+      "sha256": "ac3f0ede54fc5f019d463d0647d63f01fcbc9d13bcd2f2b4c35b63a9e38b4f27"
+    },
+    {
+      "bytes": 155,
+      "path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/worker-result.json",
+      "role": "byte_exact_extracted_unit_zip_member",
+      "sha256": "0c8503f66f4de51d3b519a3890b3af183021f5237b44835d9ebfc5d8de0b2ba1"
+    },
+    {
+      "bytes": 273154,
+      "path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/unittest.txt",
+      "role": "byte_exact_extracted_unit_zip_member",
+      "sha256": "c7cd2e91627f7151e6d152ee9b160d84c3f8753184ec41d5f16c0d1a27877058"
+    },
+    {
+      "bytes": 4975,
+      "path": "docs/pr40-first-ci-raw-export.md",
+      "role": "follow_up_export_scope_and_offline_integrity_instructions",
+      "sha256": "552adbb9275e92e092e6567fae04145d7920e88b2b91b08b7a09f2d633319064"
+    }
+  ],
+  "first_safe_five_files_modified": false,
+  "first_safe_seal": "f9702630a0edd95469a9c03de8c93c75a2810451",
+  "job_id": 134589520971,
+  "job_log": {
+    "bytes": 27619,
+    "export_path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-job-134589520971-connector-decoded.log",
+    "original_HTTP_wire_bytes_claimed": false,
+    "representation": "exact_first_saved_connector_decoded_UTF8_bytes_including_BOM_and_newlines",
+    "sha256": "c911b71b643d460dea097873f9e210be370d0f25d946b9b70c8ec6a9b1ed2cc4"
+  },
+  "manifest_excludes_itself": true,
+  "members": [
+    {
+      "archive_member": "summary.json",
+      "bytes": 80243,
+      "crc32": "67c97866",
+      "export_path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/summary.json",
+      "extracted_bytes_equal_archive_member": true,
+      "sha256": "ac3f0ede54fc5f019d463d0647d63f01fcbc9d13bcd2f2b4c35b63a9e38b4f27"
+    },
+    {
+      "archive_member": "worker-result.json",
+      "bytes": 155,
+      "crc32": "d893818b",
+      "export_path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/worker-result.json",
+      "extracted_bytes_equal_archive_member": true,
+      "sha256": "0c8503f66f4de51d3b519a3890b3af183021f5237b44835d9ebfc5d8de0b2ba1"
+    },
+    {
+      "archive_member": "unittest.txt",
+      "bytes": 273154,
+      "crc32": "1269a6b7",
+      "export_path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/unittest.txt",
+      "extracted_bytes_equal_archive_member": true,
+      "sha256": "c7cd2e91627f7151e6d152ee9b160d84c3f8753184ec41d5f16c0d1a27877058"
+    }
+  ],
+  "new_network_read_or_download_performed": false,
+  "old_zero_byte_failed_download_overwritten": false,
+  "payload_bytes_excluding_doc_and_manifest": 470712,
+  "private_transport_headers_redirects_signed_references_403_receipts_ledger_exported": false,
+  "production_or_real_funds_approved": false,
+  "push_failure_reclassified": false,
+  "qualification": "EXACT_HEAD_PUSH_ATTEMPT1_FAILED_UNIT_RAW_DIRECTED_EXPORT",
+  "run_attempt": 1,
+  "schema": 1,
+  "sensitive_pattern_check": {
+    "finite_pattern_check_only": true,
+    "match_count": 0,
+    "other_private_files_scanned": false,
+    "pattern_engine": "Python standard-library re on bytes",
+    "patterns": {
+      "credential_header": "(?im)(?:^|[\\r\\n])\\s*(?:authorization|proxy-authorization|x-api-key|x-auth-token)\\s*:\\s*\\S+",
+      "credential_json_header": "(?i)[\\\"\\x27](?:authorization|proxy-authorization|x-api-key|x-auth-token)[\\\"\\x27]\\s*:\\s*[\\\"\\x27][^\\\"\\x27]+",
+      "github_classic_token": "\\bgh[pousr]_[A-Za-z0-9]{20,}\\b",
+      "github_fine_grained_token": "\\bgithub_pat_[A-Za-z0-9_]{20,}\\b",
+      "github_token_assignment": "(?im)^\\s*(?:GH_TOKEN|GITHUB_TOKEN)\\s*[:=]\\s*(?!\\*\\*\\*|\\$|\\{)[A-Za-z0-9_/-]{12,}",
+      "nonce_value_field": "(?i)(?:[\\\"\\x27]nonce[\\\"\\x27]\\s*:\\s*[\\\"\\x27][^\\\"\\x27]+|\\bnonce\\s*=\\s*[\\\"\\x27][^\\\"\\x27]+)",
+      "private_key_json_value": "(?i)[\\\"\\x27]private[_-]?key[\\\"\\x27]\\s*:\\s*[\\\"\\x27](?![\\\"\\x27]|null)[^\\\"\\x27]+",
+      "private_key_pem": "-----BEGIN[ A-Z0-9_-]*PRIVATE KEY-----",
+      "signed_url_query": "(?i)https?://[^\\s\\\"\\x27<>]*[?&](?:x-amz-(?:signature|credential|security-token)|x-goog-(?:signature|credential)|signature|sig|access_token|token)=[^\\s\\\"\\x27<>]+"
+    },
+    "performed_before_copy": true,
+    "scope": [
+      "push-unit-3.10-14400281526-connector.zip",
+      "push-job-134589520971-connector-decoded.log",
+      "summary.json",
+      "worker-result.json",
+      "unittest.txt"
+    ]
+  },
+  "successful_package_archive_or_wheel_sdist_exported": false,
+  "target_import_test_SQL_process_PID_or_signal_performed": false,
+  "unit_artifact": {
+    "artifact_id": 14400281526,
+    "bytes": 89541,
+    "export_path": "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-unit-3.10-14400281526-connector.zip",
+    "name": "uta-unit-validation-python-3.10",
+    "original_zip_bytes_preserved": true,
+    "provider_digest_algorithm": "sha256",
+    "provider_digest_matches": true,
+    "provider_sha256": "f40438ac07ed26de922157137dc0fceb00f50436238623add809b7db6883b906"
+  },
+  "workflow_run_id": 44241282705,
+  "write_policy": {
+    "new_paths_only": true,
+    "open_flags": "O_WRONLY | O_CREAT | O_EXCL",
+    "post_write_byte_equality_checked": true
+  }
+}
