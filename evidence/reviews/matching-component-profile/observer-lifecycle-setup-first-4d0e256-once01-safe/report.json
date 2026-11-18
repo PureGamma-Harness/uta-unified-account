@@ -1,0 +1,133 @@
+{
+  "actual_capture_process_affinity": [
+    1
+  ],
+  "actual_prefix_exit_status": 0,
+  "aggregate_calls": 0,
+  "all_source_before_after_equal": true,
+  "cProfile_enabled": false,
+  "capture_controller_tool_exit_status": 0,
+  "diagnostic_outcome": "FAULT_NOT_REPRODUCED",
+  "elapsed_ns": 3310013716,
+  "faults": [],
+  "financial_or_matching_acceptance": false,
+  "fresh_authorities": 1,
+  "frozen_own": "f786753b08735a17ee20237c9cea4e34f0e7208a",
+  "historical_H254_cause": "UNKNOWN_UNCHANGED",
+  "kind": "SAFE_FIRST_REAL_POST_CONNECT_SETUP_SMOKE_NOT_MATCHING_PROFILE",
+  "logical_bytes_at_capture": {
+    "business": 557056,
+    "outer": 43999,
+    "reports": 47615,
+    "source": 1380967
+  },
+  "manifest": {
+    "bytes": 22847,
+    "sha256": "fc34147774c61dce11409973e8132d466a8c24185105eb32ec5e62947b6eb3f9"
+  },
+  "matching_calls": 0,
+  "measurement_boundary": "outer entry through capture/reap/fsync; final source checks and receipt publication follow",
+  "monotonic_end_ns": 129225075980667,
+  "monotonic_start_ns": 129221765966951,
+  "native_cProfile_matching_coexistence_validated": false,
+  "observation": {
+    "attach_after_connect_before_first_explicit_SQL": true,
+    "attach_attempts": 74,
+    "cProfile_coexistence_requires_native_phase_validation": true,
+    "connections": 74,
+    "counts_are_trace_events_including_trigger_repeats": true,
+    "events": {
+      "ALTER": 4,
+      "BEGIN": 74,
+      "COMMIT": 74,
+      "CREATE": 56,
+      "INSERT": 395,
+      "PRAGMA": 692,
+      "RELEASE": 2,
+      "SAVEPOINT": 2,
+      "SELECT": 2104,
+      "UPDATE": 40
+    },
+    "first_explicit_SQL_line_guard": 144,
+    "handles_observed": 74,
+    "local_LINE_events": 1332,
+    "monitor_code_object": "uta.storage.Database._connect",
+    "monitor_instance_label": "uta-matching-sql-observer:1",
+    "monitor_tool_id": 3,
+    "pending_handles": 0,
+    "phase": "setup-32-scan",
+    "uses_local_monitoring_not_legacy_settrace": true
+  },
+  "observer_complete": true,
+  "observer_lifecycle": {
+    "active": false,
+    "all_handles_attached": true,
+    "attachments_by_phase": {
+      "setup-32-scan": 74
+    },
+    "attempts_by_phase": {
+      "setup-32-scan": 74
+    },
+    "cleanup_error": null,
+    "closed": true,
+    "ever_owned_tool": true,
+    "first_fault": null,
+    "handles_by_phase": {
+      "setup-32-scan": 74
+    },
+    "local_LINE_events_by_phase": {
+      "setup-32-scan": 1332
+    },
+    "monitor_instance_label": "uta-matching-sql-observer:1",
+    "owned_tool_released": true,
+    "pending_references": 0,
+    "tool_owned_after_close": false,
+    "unattached_at_close": 0
+  },
+  "old_baseline_calls": 0,
+  "performance_capacity_accepted": false,
+  "plan": {
+    "bytes": 6168,
+    "sha256": "41986b3cb14c983f2328775e1081c4343845ab6cf5e361be017213ad1f78ab52"
+  },
+  "prefix_reaped": true,
+  "prior_H33_actual_fault_bytes_unchanged": true,
+  "private_archive_sha256": "588154f3f6302c67154bdbc1127b077c522b26090d117883dfd3eee20f7f0461",
+  "private_completion_sha256": "6d572d8cbbadf49daf592ad6a2e5a9ecd42064edcd2feb5bc740d59c69141a29",
+  "private_original_files": 77,
+  "private_result_sha256": "169e5583f383b7da5da78735d481010deab20f3190695f72ac49d6f8104ea636",
+  "process_completion_observed": true,
+  "production_approved": false,
+  "publication_filter": {
+    "no_DB_WAL_SHM_nonce_fullcapsule_private_original_path_or_stack_published": true,
+    "observer_metadata_fields_and_fixed_labels_only": true,
+    "raw_fixed_event_key_schema_and_synthetic_labels_allowlisted": true,
+    "raw_not_trimmed_or_rewritten": true
+  },
+  "raw": {
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 21765,
+      "sha256": "08e2a74184c73795091ca7cdf15fda63ee31fc08619496413344e062a7113778"
+    }
+  },
+  "raw_capture_complete": true,
+  "raw_captured_bytes": 21765,
+  "raw_dropped_bytes": 0,
+  "raw_json_frames": 142,
+  "raw_reserved_bytes": 21765,
+  "raw_short_write_seen": false,
+  "retries": 0,
+  "schema": 1,
+  "setup_orders": 32,
+  "source_commit": "4d0e2563479a5839a77c174ee82096c1290f55d9",
+  "source_inputs": 63,
+  "status": "LOCAL_SETUP_OBSERVER_COMPLETE_PENDING_INDEPENDENT_RAW_REVIEW",
+  "timed_matching_calls": 0,
+  "trace_counts_are_not_logical_SQL_or_throughput": true,
+  "trace_events_total": 3443,
+  "warmup": 0
+}
