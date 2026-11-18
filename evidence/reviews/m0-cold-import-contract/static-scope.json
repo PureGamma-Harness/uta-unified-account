@@ -1,0 +1,62 @@
+{
+  "M05_authorized": false,
+  "SQL_or_financial_worker_crypto_network_CI_run": false,
+  "actual_general_CI_first_evidence": "dc9e42ababfd29106129d85ecd00ae4c38ebbb8c",
+  "all_four_CI_runtimes_retested": false,
+  "base_commit": "1d727b9d8e121611d0227dbee162192c13a76769",
+  "first_summary_list_is_first_four_case_results_not_four_actual_children": true,
+  "initial_sparse_hydration": "Selected existing control files restored by exact paths before edits; no complete tree restore/deletions committed.",
+  "kind": "COLD_IMPORT_STATIC_SCOPE",
+  "local_static_inspection_python": "3.12.14",
+  "original_common_no_SQL_tests_retained": true,
+  "original_native_SH_failure_fixed": false,
+  "probe_is_test_only": true,
+  "production_approved": false,
+  "real_child_proofs": [
+    {
+      "blocked_cache_count": 0,
+      "events": [],
+      "mode": "controller",
+      "stdout_sha256": "84153cab8b6ddd662d1f55ad5f9549b0f4c505f3651ef69ba87cb48da15ef401",
+      "tag": "real-controller"
+    },
+    {
+      "blocked_cache_count": 0,
+      "events": [],
+      "mode": "escrow",
+      "stdout_sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3",
+      "tag": "real-escrow"
+    },
+    {
+      "blocked_cache_count": 0,
+      "events": [
+        "SQLITE3",
+        "_SQLITE3"
+      ],
+      "mode": "deny_sqlite3",
+      "stdout_sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83",
+      "tag": "negative-sqlite"
+    },
+    {
+      "blocked_cache_count": 0,
+      "events": [
+        "UTA"
+      ],
+      "mode": "deny_uta",
+      "stdout_sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf",
+      "tag": "negative-uta"
+    }
+  ],
+  "source_bound_first_observation_sha256": "1a2559a78ffa042d5fa0d133710cf524ef973889702994afd92f8dcbbe34306a",
+  "source_runtime_directory_materialized": false,
+  "stub_UNKNOWN_cases_expected_not_actual_child_failures": true,
+  "unchanged_source_bytes": {
+    "tools/independent_m0_controller.py": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+  },
+  "version": 1,
+  "workflows_only_add_helper_and_test_sparse_paths": {
+    ".github/workflows/independent-m0-once.yml": "07592e600fc2d7143f42856905f75070fc92c984d719ceef0e1fce93f9e4ee10",
+    ".github/workflows/independent-m0.yml": "d0902f2ec214a4371e8a2aed8fddd58880341a13d2f95e40a5d5c13041fbd336"
+  }
+}

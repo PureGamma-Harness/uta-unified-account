@@ -73,6 +73,7 @@ jobs:
           sparse-checkout: |
             /tools/independent_m0_controller.py
             /tools/m0_stream_escrow.py
+            /tools/cold_import_contract.py
             /config/m0-stream-recipient-public.pem
             /config/m0-stream-recipient-public-metadata.json
             /tests/test_independent_m0_controller.py
@@ -81,6 +82,7 @@ jobs:
             /tests/test_independent_m0_checkout_ref.py
             /tests/test_independent_m0_resource_race.py
             /tests/test_independent_m0_diagnostics.py
+            /tests/test_independent_m0_cold_import.py
             /.github/workflows/independent-m0.yml
             /.github/workflows/independent-m0-once.yml
       - name: Checkout exact qualified workload source separately

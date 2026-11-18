@@ -18,6 +18,7 @@ def load(name,path):
     spec=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 e=load('pure_escrow',ROOT/'tools/m0_stream_escrow.py')
 c=load('pure_escrow_controller',ROOT/'tools/independent_m0_controller.py')
+import_contract=load('escrow_cold_import_contract',ROOT/'tools/cold_import_contract.py')
 
 def tlv(tag,value):
     length=len(value)
@@ -105,7 +106,7 @@ class EscrowContract(unittest.TestCase):
         self.assertEqual(c.TOTAL_CAP,192*1024**2);self.assertEqual(c.AGGREGATE_CAP,64*1024**2)
         self.assertEqual(c.ESCROW_CAP,96*1024**2);self.assertEqual(c.CLEANUP_RESERVE,32*1024**2)
     def test_no_sql_or_product_import(self):
-        self.assertFalse(any(n=='uta' or n.startswith('uta.') or n=='sqlite3' for n in sys.modules))
+        self.assertEqual(import_contract.probe_import('escrow',ROOT)['status'],'PASS')
     def helper_fixture(self, failed_stream=None):
         private=self.root/'private';public=self.root/'public';private.mkdir();public.mkdir();(private/'B').mkdir()
         for stream in e.STREAMS:

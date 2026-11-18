@@ -1,4 +1,4 @@
-"""Pure synthetic closure of immutable e444 review; never starts a process."""
+"""Pure synthetic closure; only the guarded cold-import probe spawns Python."""
 from collections import Counter
 from contextlib import nullcontext
 from copy import deepcopy
@@ -16,6 +16,8 @@ ROOT=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('m0_fixture',ROOT/'tests/test_independent_m0_controller.py')
 fixture=importlib.util.module_from_spec(spec);spec.loader.exec_module(fixture)
 m=fixture.m
+spec=importlib.util.spec_from_file_location('integrity_cold_import_contract',ROOT/'tools/cold_import_contract.py')
+import_contract=importlib.util.module_from_spec(spec);spec.loader.exec_module(import_contract)
 
 class IntegrityClosure(unittest.TestCase):
     def setUp(self):
@@ -138,7 +140,7 @@ class IntegrityClosure(unittest.TestCase):
             terminal_observation_finished_monotonic_ns=10_960_000_000,planned_duration_ns=10_000_000_000,setup_and_close_excluded=True)
         with self.assertRaises(m.GateError):m.verify_timing_footer(summary,rows,footer)
     def test_no_workload_or_sql_import(self):
-        self.assertFalse(any(n=='uta' or n.startswith('uta.') or n=='sqlite3' for n in sys.modules))
+        self.assertEqual(import_contract.probe_import('controller',ROOT)['status'],'PASS')
     def exercise_owner(self, fail_phase=None, late_ns=None):
         root=Path(self.tmp.name);private=root/'private';public=root/'public'
         private.mkdir();public.mkdir();case=private/'B';staged=case/'safe-staged'

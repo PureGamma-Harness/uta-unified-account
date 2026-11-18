@@ -1,0 +1,379 @@
+{
+  "M05_created": false,
+  "actual_SQL_UTA_import_in_children": false,
+  "actual_financial_owner_crypto_network": false,
+  "base_commit": "1d727b9d8e121611d0227dbee162192c13a76769",
+  "case_results": [
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "CHILD_PROOF_INVALID",
+        "expected_target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": 0,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 50,
+          "sha256": "afdfb30671b1fadc0378df3236160b774d721b07681975f47e060a468a591243"
+        },
+        "version": 1
+      },
+      "tag": "stub-bad-output"
+    },
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": null,
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "deny_sqlite3",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [
+            "SQLITE3",
+            "_SQLITE3"
+          ],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "deny_sqlite3",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "GUARD_BLOCKED",
+          "target_sha256": null,
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 251,
+          "sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83"
+        },
+        "version": 1
+      },
+      "tag": "negative-sqlite"
+    },
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": null,
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "deny_uta",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [
+            "UTA"
+          ],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "deny_uta",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "GUARD_BLOCKED",
+          "target_sha256": null,
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 231,
+          "sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf"
+        },
+        "version": 1
+      },
+      "tag": "negative-uta"
+    },
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "controller",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 293,
+          "sha256": "84153cab8b6ddd662d1f55ad5f9549b0f4c505f3651ef69ba87cb48da15ef401"
+        },
+        "version": 1
+      },
+      "tag": "real-controller"
+    },
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "escrow",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "escrow",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 289,
+          "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+        },
+        "version": 1
+      },
+      "tag": "real-escrow"
+    },
+    {
+      "result": {
+        "child_reaped": false,
+        "code": "CHILD_OS_ERROR",
+        "expected_target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": null,
+        "spawned": false,
+        "status": "UNKNOWN",
+        "stderr": null,
+        "stdout": null,
+        "version": 1
+      },
+      "tag": "stub-spawn-error"
+    },
+    {
+      "result": {
+        "child_reaped": true,
+        "code": "CHILD_TIMEOUT",
+        "expected_target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+        "killed": true,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": -9,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": {
+          "bytes": 31,
+          "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+        },
+        "stdout": {
+          "bytes": 31,
+          "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+        },
+        "version": 1
+      },
+      "tag": "stub-timeout"
+    },
+    {
+      "result": {
+        "child_reaped": false,
+        "code": "CHILD_REAP_UNKNOWN",
+        "expected_target_sha256": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+        "killed": true,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": null,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": null,
+        "stdout": null,
+        "version": 1
+      },
+      "tag": "stub-unreaped"
+    }
+  ],
+  "closed_private_streams": [
+    {
+      "bytes": 0,
+      "relative_path": "negative-sqlite/deny_sqlite3/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 251,
+      "relative_path": "negative-sqlite/deny_sqlite3/stdout.bin",
+      "sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "negative-uta/deny_uta/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 231,
+      "relative_path": "negative-uta/deny_uta/stdout.bin",
+      "sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "real-controller/controller/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 293,
+      "relative_path": "real-controller/controller/stdout.bin",
+      "sha256": "84153cab8b6ddd662d1f55ad5f9549b0f4c505f3651ef69ba87cb48da15ef401"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "real-escrow/escrow/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 289,
+      "relative_path": "real-escrow/escrow/stdout.bin",
+      "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "stub-bad-output/controller/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 50,
+      "relative_path": "stub-bad-output/controller/stdout.bin",
+      "sha256": "afdfb30671b1fadc0378df3236160b774d721b07681975f47e060a468a591243"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "stub-spawn-error/controller/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "stub-spawn-error/controller/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 31,
+      "relative_path": "stub-timeout/controller/stderr.bin",
+      "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+    },
+    {
+      "bytes": 31,
+      "relative_path": "stub-timeout/controller/stdout.bin",
+      "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "stub-unreaped/controller/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "relative_path": "stub-unreaped/controller/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "cpu_affinity": [
+    2
+  ],
+  "elapsed_monotonic_ns": 294614682,
+  "errors": 0,
+  "failures": 0,
+  "finished_at": "2026-11-18T00:05:13.780253+00:00",
+  "input_sha256": {
+    ".github/workflows/independent-m0-once.yml": "07592e600fc2d7143f42856905f75070fc92c984d719ceef0e1fce93f9e4ee10",
+    ".github/workflows/independent-m0.yml": "d0902f2ec214a4371e8a2aed8fddd58880341a13d2f95e40a5d5c13041fbd336",
+    "tests/test_independent_m0_cold_import.py": "78085d7a709d19f2a3218909fc2d1a5eeb0b697897ae59926f1a41404a9c3ba0",
+    "tests/test_independent_m0_escrow.py": "15766e0764b7d7e583657d80b37afab8621e8faaaa597c3f8ec5f386154c8fae",
+    "tests/test_independent_m0_integrity.py": "143999e83903157664887cbc4adee63d1edf13f2459be50fdfa9540ee06b3ed9",
+    "tools/cold_import_contract.py": "371fffa8397ccba2734d5b71a5c481ce0ae8dcb1611723e3bc794695b568ee72",
+    "tools/independent_m0_controller.py": "8cc1116d81ab2833ebd44088076f57e4756593bfba28106bc32138ad3677745a",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+  },
+  "kind": "COLD_IMPORT_FIRST_PURE_INTERPRETERS",
+  "original_CI_rerun": false,
+  "prior_general_CI_evidence_owned": "dc9e42ababfd29106129d85ecd00ae4c38ebbb8c",
+  "production_approved": false,
+  "real_child_spawn_events": [
+    {
+      "child_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "flags": [
+        "-I",
+        "-S"
+      ],
+      "mode": "deny_sqlite3"
+    },
+    {
+      "child_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "flags": [
+        "-I",
+        "-S"
+      ],
+      "mode": "deny_uta"
+    },
+    {
+      "child_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "flags": [
+        "-I",
+        "-S"
+      ],
+      "mode": "controller"
+    },
+    {
+      "child_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "flags": [
+        "-I",
+        "-S"
+      ],
+      "mode": "escrow"
+    }
+  ],
+  "runner_sha256": "ef79ee46b4c88f265b89d2146591505b266f07cbacf1ca95fc58623a6f797cc3",
+  "skipped": 0,
+  "started_at": "2026-11-18T00:05:13.485639+00:00",
+  "tests_run": 8,
+  "version": 1
+}
