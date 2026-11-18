@@ -1,0 +1,201 @@
+{
+  "CODE_review": "16323e8629c46c012955bb1f3919c259758c4af4",
+  "actual_completion": {
+    "all_caller_checks": {
+      "BEGIN": true,
+      "SQL4_oracle": true,
+      "caller_completion_window": true,
+      "capsule": true,
+      "closed_SQL_handles": true,
+      "combined_logical_disk": true,
+      "four_tests": true,
+      "inner_END": true,
+      "inner_binding": true,
+      "inner_intent": true,
+      "outer_END_TAIL": true,
+      "outer_intent": true,
+      "source_after": true,
+      "target_raw": true,
+      "timely_normal_capture_and_wait": true
+    },
+    "caller_launcher_EOF": true,
+    "caller_observed_outer_exit": 0,
+    "caller_observed_outer_reaped": true,
+    "cleanup_signal_attempts": 0,
+    "cleanup_signals": 0,
+    "deadline_expired": false,
+    "normal_capture_EOF": true,
+    "outer_TAIL_late": false,
+    "outer_observed_target_exit": 0,
+    "outer_observed_target_reaped": true,
+    "outer_raw_EOF": true,
+    "root_observed_caller_exit": 0,
+    "timely_completion": true
+  },
+  "actual_local_fill_rows": 1,
+  "actual_matching_or_paired_fill_claim": false,
+  "caller_launcher_raw_files": {
+    "launcher.stderr.txt": {
+      "bytes": 171,
+      "sha256": "32d2e0e198f401277db69d957aee310bf5be8fe87437d3f6bc3dfe76282dce5f"
+    },
+    "launcher.stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "caller_plan_sha256": "b9624f6fcabead23ae47a9721d5f76716d6575a71699f49b2352b8e45f1030b6",
+  "declared_source_supported_Matcher_calls": 0,
+  "disk_observations": {
+    "RLIMIT_FSIZE_each_file": [
+      4194304,
+      4194304
+    ],
+    "count": 114,
+    "disk_problem": null,
+    "final_DB_family_files": 12,
+    "final_SHM_files": 4,
+    "final_main_DB_files": 4,
+    "final_zero_WAL_files": 4,
+    "not_a_continuous_native_write_monitor_or_hard_aggregate_quota": true,
+    "peak_DB_files": 12,
+    "peak_logical_DB_bytes": 1077248
+  },
+  "finite_actual_artifact_metadata": {
+    "app_version": "0.5.0a1",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "signed": false,
+    "source_digest": "fa05bd13678f37e5dfc6c758b9b5c1207f39ea10595efb83240f7eb269643504",
+    "sqlite_version": "3.53.1"
+  },
+  "forbidden_attempts": [],
+  "four_case_totals": {
+    "accepted_order_replays": 3,
+    "decision_replays": 4,
+    "decision_rows": 4,
+    "fill_admission_unsupported": 1,
+    "fill_rows": 1,
+    "fresh_authorities": 4,
+    "ledger_events": 5,
+    "order_rows": 3,
+    "policy_rows": 5,
+    "read_only_guard_negative_cases": 4,
+    "source_arguments_expected_rejections": 1
+  },
+  "fresh_authority_count": 4,
+  "intervals_ns": {
+    "caller_main_start_through_validation": 1555341844,
+    "caller_observing_outer_Popen_to_actual_wait": 1209342466,
+    "inner_import_plus_four_tests": 397088601,
+    "inner_import_tests_and_RO_oracle": 719354757,
+    "outer_target_Popen_to_wait": 940216051
+  },
+  "loaded_UTA_modules": [
+    "uta",
+    "uta.decision_audit",
+    "uta.examples",
+    "uta.existing_services",
+    "uta.ledger",
+    "uta.market",
+    "uta.market_cache",
+    "uta.models",
+    "uta.portfolio",
+    "uta.products",
+    "uta.reserve_kernel",
+    "uta.risk",
+    "uta.scenario_margin",
+    "uta.service",
+    "uta.startup",
+    "uta.storage",
+    "uta.writer_fence"
+  ],
+  "native_handles": {
+    "after_RO_before_cleanup": {
+      "all_observed_handles_already_closed": true,
+      "observed_handles": 105,
+      "open_handles_before_cleanup": 0
+    },
+    "before_RO": {
+      "all_observed_handles_already_closed": true,
+      "observed_handles": 67,
+      "open_handles_before_cleanup": 0
+    },
+    "event_handle_and_four_path_accounting_match": true,
+    "leaked_handles_closed_to_rescue_qualification": 0,
+    "native_connect_events": 105
+  },
+  "once_plan_sha256": "a7b8919a75bc056e5131257b12af9ab5e2c53c77dcedb6474d2479710703864e",
+  "privacy": "Full actual rows/decisions/artifact/capsule/process bindings/DBs/ZIP remain private.",
+  "retained_input_bytes": 1368223,
+  "retained_inputs": 66,
+  "retries": 0,
+  "root_tool_observations": {
+    "actual_final_exit_code": 0,
+    "final_poll_reported_seconds": 2.2634e-05,
+    "initial_and_final_output_bytes": [
+      0,
+      0
+    ],
+    "initial_yield_reported_seconds": 1.000695808,
+    "no_whole_process_wall_from_summing_fragments": true
+  },
+  "runtime": {
+    "affinity": [
+      1
+    ],
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "schema": 1,
+  "scope_limits": [
+    "one local unpaired apply_fill, not Matcher/complete trading chain/paired settlement throughput",
+    "risk and reserve values reuse production numerical replay; not an independent Cross model",
+    "test-module directory adapter retains evidence instead of standard deletion",
+    "fresh synthetic only; existing-authority migration unsupported",
+    "no concurrency/crash/HA/capacity/production/real-funds acceptance"
+  ],
+  "selected_methods": [
+    "test_ordinary_capture_and_known_id_retry_preserve_original_decision",
+    "test_mm_equality_rejection_has_no_fabricated_accepted_evidence",
+    "test_configured_projection_and_reduce_only_have_explicit_coverage",
+    "test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+  ],
+  "separate_caller_control_pin": 1,
+  "source_argument_rejections": {
+    "no_full_automatic_reopen_or_migration_acceptance": true,
+    "original_method_expected_assertion_passed": true,
+    "post_RO_counter": 1,
+    "two_separate_source_scopes_expected": 2
+  },
+  "source_commit": "b41518479ff9c561c68806ffb4adee5d06941098",
+  "source_unchanged": true,
+  "status": "PRODUCER_LIMITED_SQL_PASS_PENDING_INDEPENDENT_RAW",
+  "target_attempts": 1,
+  "target_raw_files": {
+    "first.stderr.txt": {
+      "bytes": 1018,
+      "sha256": "2c848434cce141ec9a124604926779ed1511f6c6d714d5ff2f877fc41f975f73"
+    },
+    "first.stdout.txt": {
+      "bytes": 10773,
+      "sha256": "623e9c5afbc322506d302efdb3113c31aa0457670456b1d55779836c6eef9cd8"
+    }
+  },
+  "test_counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "skipped": 0,
+    "tests_run": 4,
+    "unexpected_successes": 0
+  },
+  "unittest_footer_seconds_literal": "0.324"
+}
