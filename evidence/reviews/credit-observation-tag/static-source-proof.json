@@ -1,0 +1,22 @@
+{
+  "all_identity_checks_and_annotation_functions_unchanged": true,
+  "base_commit": "f510bf5fea852ca04c87930077861c312320141f",
+  "credit_artifact_and_validation_bytes_unchanged": true,
+  "first_CI_specific_unsupported_attribute": "NOT_RECORDED_UNKNOWN",
+  "input_bytes": 1326122,
+  "input_files": 64,
+  "kind": "STATIC_AST_SOURCE_COMPARISON_NOT_EXECUTION",
+  "new_target_execution_attempts": 0,
+  "new_test_and_driver_AST_parsed_only": true,
+  "normalization": [
+    "from enum import Enum",
+    "class _LeaseObservationTag(Enum)",
+    "singleton assignment restored to old object()"
+  ],
+  "normalized_entire_writer_AST_equal": true,
+  "plan_bytes": 13045,
+  "plan_sha256": "2e9c9a91d56435949158131d740a6680c74e0f946fd41f73a1d2a9dc13afb6cd",
+  "production_approved": false,
+  "runtime_diff_only": "uta/writer_fence.py Enum import, finite private enum declaration, tag singleton binding",
+  "static_new_unsupported_candidate": "uta.writer_fence._LEASE_OBSERVATION_TAG = object()"
+}
