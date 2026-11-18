@@ -1,0 +1,71 @@
+{
+  "current_business_preservation": {
+    "current_exception_handler_ends_with_bare_raise": true,
+    "cwd_env_and_business_assertions_unchanged": true,
+    "explicit_existing_io_observation_changes": [
+      "text=True removed",
+      "bufsize=0 added"
+    ],
+    "fallback_communicate_timeout": 5,
+    "health_timeout": 3,
+    "method_lines": [
+      146,
+      210
+    ],
+    "new_io_changes_in_05c3": 0,
+    "path": "tests/test_runtime_review.py",
+    "popen_business_argv_unchanged": true,
+    "shutdown_wait_timeout": 5,
+    "startup_timeout": 5
+  },
+  "frozen_source_exact": true,
+  "historical_failures": {
+    "prior_ci_evidence_commit": "c61ee1ba577d981ca0de2cbdc26de502f8519d59",
+    "prior_fixed_ast_sha256": "a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128",
+    "prior_real_cli_error": "Original real CLI shutdown ERROR remains unexplained; this AST representation fix is not a shutdown-cause fix.",
+    "prior_six_ci_failures_remain_preserved": true
+  },
+  "inherited_normalization_coverage_limit": {
+    "consequence": "The two negative controls do not establish detection of arbitrary exception-path, cleanup or observation-code mutations. In particular, changing a bare raise in an excluded handler can evade this comparator. Current excluded code was read separately and its final bare raise is retained.",
+    "disposition": "Scope boundary of the inherited comparator; do not describe it as universal business equivalence or proof that observation code is harmless.",
+    "excluded_regions": [
+      "Top-level Try handlers, orelse and finalbody; only body is retained.",
+      "Entire cleanup definition and its allowed addCleanup registration.",
+      "Observation import, evidence/primary_error assignments and evidence.* calls.",
+      "Popen text and bufsize keywords."
+    ],
+    "introduced_by_reviewed_commit": false,
+    "lines": [
+      56,
+      86
+    ],
+    "path": "tests/test_cli_sigterm_failure_evidence.py"
+  },
+  "negative_controls": [
+    {
+      "current_source_match_count": 1,
+      "line": 213,
+      "mutation": "self.assertEqual(process.wait(timeout=5), 0) -> timeout=6",
+      "name": "test_business_preservation_rejects_changed_shutdown_deadline",
+      "static_reason": "Changes a retained wait assertion constant, outside excluded observation nodes."
+    },
+    {
+      "current_source_match_count": 1,
+      "line": 221,
+      "mutation": "--automate --port 0 -> --automate --port 8080",
+      "name": "test_business_preservation_rejects_changed_business_argv",
+      "static_reason": "Changes a retained Popen argv constant, outside the two IO keyword exclusions."
+    }
+  ],
+  "reviewed_commit": "05c3e4d5a4124e4a2185c621071f1a9890d10d0b",
+  "same_interpreter_contract": {
+    "comparison": "Both frozen original method source and current method source are parsed and dumped by the actual running interpreter; no version-specific digest table is introduced.",
+    "frozen_method_hash_checked_before_comparison": true,
+    "lines": [
+      198,
+      204
+    ],
+    "path": "tests/test_cli_sigterm_failure_evidence.py"
+  },
+  "verdict": "No blocker found for this bounded same-interpreter AST representation fix. This is not CLI shutdown acceptance."
+}
