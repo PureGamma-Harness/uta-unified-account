@@ -17,14 +17,14 @@ from uta.models import AssetSpec, InstrumentSpec
 from uta.perpetual_funding import FundingError, FundingPolicy
 from uta.portfolio import CollateralRule, CollateralTier, LinearMarginRule, PortfolioRules
 from uta.products import ProductCatalog, ProductKind, ProductSpec, TradingStatus
-from uta.service import ExchangeService
+from uta.service import ExchangeService, ServiceError
 from uta.storage import Database
 
 
 END = datetime(2026, 1, 1, 8, tzinfo=timezone.utc)
 
 
-def scenario(test, label, *, offset=1, empty=False, old=False):
+def scenario(test, label, *, offset=1, empty=False, old=False, defer_positions=False):
     retained = os.environ.get("UTA_FUNDING_OBLIGATION_CASE_ROOT")
     if retained:
         base = Path(retained)
@@ -57,18 +57,19 @@ def scenario(test, label, *, offset=1, empty=False, old=False):
             exchange.create_account(account)
             if account != "treasury":
                 exchange.deposit(account, "synthetic-deposit", "USD", D(1000))
-        publish(data, 1, "100")
+        publish(data, 1, None if defer_positions else "100")
         exchange.set_kill_switch(False)
         data.matcher = Matcher(exchange)
-        exchange.submit_order("a", "open-a", "BTC-PERP", D(1), D(100))
-        exchange.submit_order("b", "open-b", "BTC-PERP", D(-1), D(100))
-        test.assertEqual(data.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
+        if not defer_positions:
+            exchange.submit_order("a", "open-a", "BTC-PERP", D(1), D(100))
+            exchange.submit_order("b", "open-b", "BTC-PERP", D(-1), D(100))
+            test.assertEqual(data.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
     return data
 
 
 def publish(data, version, mark):
     market = MarketSnapshot(version, data.clock["now"], {"USD": AssetSpec(D(1), D(1))},
-        {"BTC-PERP": InstrumentSpec(D(mark), D(".1"), D(".05"))})
+        {} if mark is None else {"BTC-PERP": InstrumentSpec(D(mark), D(".1"), D(".05"))})
     data.service.publish_market(market)
     return "sha256:" + sha256(market.to_json().encode()).hexdigest()
 
@@ -107,16 +108,29 @@ class FundingObligationTests(unittest.TestCase):
         self.assertTrue(restored.verify()["reconciled"])
 
     def test_missing_data_and_no_backdated_cut(self):
-        missing = scenario(self, "missing", offset=10)
+        # Cash-only state permits a USD-only publication through the real API.
+        missing = scenario(self, "missing", offset=10, defer_positions=True)
         missing.funding.schedule("schedule", "btc-end", "BTC-PERP", END, rate=None)
         missing.clock["now"] = END
+        partial_id = publish(missing, 2, None)
+        before_partial = missing.service.ledger.journal()
         token = missing.funding.claim("claim", "btc-end", "a")["token"]
         outcome = missing.funding.capture("cut-missing", "btc-end", token,
-            market_snapshot_id="sha256:" + "0" * 64, resolved_rate=D(".0001"))
+            market_snapshot_id=partial_id, resolved_rate=D(".0001"))
         self.assertEqual(outcome["state_at_commit"], "WAITING_DATA")
+        self.assertEqual(missing.funding.query("btc-end")["reason"], "funding_required_quote_unavailable")
+        self.assertIsNone(missing.funding.query("btc-end")["cut_sha"])
+        self.assertEqual(missing.service.ledger.journal(), before_partial)
+        # Restore the mark and create exactly the original one paired trade.
+        # The independent missing-rate gate still prevents an unsafe cut.
+        publish(missing, 3, "100")
+        missing.service.submit_order("a", "open-a", "BTC-PERP", D(1), D(100))
+        missing.service.submit_order("b", "open-b", "BTC-PERP", D(-1), D(100))
+        self.assertEqual(missing.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
         token = missing.funding.claim("rate-claim", "btc-end", "b")["token"]
         self.assertEqual(missing.funding.capture("rate-missing", "btc-end", token,
             market_snapshot_id=None)["state_at_commit"], "WAITING_DATA")
+        self.assertEqual(missing.funding.query("btc-end")["reason"], "funding_rate_unavailable")
         restored = FundingObligations(missing.reopen(), missing.policy)
         self.assertTrue(restored.query("btc-end")["outstanding"])
         self.assertIsNone(restored.query("btc-end")["cut_sha"])
@@ -133,7 +147,22 @@ class FundingObligationTests(unittest.TestCase):
         result = live.funding.apply("stale-apply", "btc-end", token)
         self.assertEqual(result["state_at_commit"], "WAITING_DATA")
         self.assertEqual(live.service.ledger.balance("customer:a", "USD"), D("999.96"))
-        market_id = publish(live, 3, "101")
+        saved_cut = live.funding.query("btc-end")["cut_sha"]
+        before_partial = live.service.ledger.journal()
+        partial = MarketSnapshot(3, live.clock["now"], {"USD": AssetSpec(D(1), D(1))}, {})
+        # The public publisher correctly rejects removing live BTC coverage.
+        with self.assertRaisesRegex(ServiceError, "cannot remove a live instrument"):
+            live.service.publish_market(partial)
+        # Decision-only negative control in a real read snapshot. No market
+        # store/history/guard is patched; durable partial-store recovery is OPEN.
+        with live.service.database.read_transaction() as connection:
+            with self.assertRaises(ServiceError) as unavailable:
+                live.funding._check_current_quotes(connection, "a", partial)
+        self.assertEqual(unavailable.exception.code, "funding_required_quote_unavailable")
+        self.assertEqual(live.service.ledger.journal(), before_partial)
+        self.assertEqual(live.funding.query("btc-end")["cut_sha"], saved_cut)
+        self.assertEqual(live.funding.query("btc-end")["state"], "WAITING_DATA")
+        market_id = publish(live, 4, "101")
         token = live.funding.claim("fresh-claim", "btc-end", "c")["token"]
         result = live.funding.apply("fresh-apply", "btc-end", token)
         self.assertEqual(result["receipt"]["risk_market_snapshot_id"], market_id)
@@ -213,11 +242,15 @@ class FundingObligationTests(unittest.TestCase):
         self.assertEqual(data.matcher.match_once("BTC-PERP")["confirmed_trades"], 1)
         self.assertEqual(data.service.ledger.balance("customer:a", "USD"), D("1000.91"))
         self.assertEqual(data.service.ledger.balance("customer:b", "USD"), D("998.91"))
+        # Once both real positions are flat, the public publisher legitimately
+        # permits USD-only current quotes; historical cut BTC is not live risk.
+        cash_only_id = publish(data, 4, None)
         data.funding.apply("lost-response", "btc-end", token)  # Deliberately discard local return, no network fault claimed.
         before = data.service.ledger.journal()
         data.clock["now"] = END + timedelta(seconds=4)
         restored = FundingObligations(data.reopen(), data.policy)
         known = restored.command("lost-response")
+        self.assertEqual(known["receipt"]["risk_market_snapshot_id"], cash_only_id)
         self.assertEqual(restored.apply("lost-response", "btc-end", token), known)
         self.assertIsNone(restored.command("not-committed-visible"))
         self.assertEqual(data.service.ledger.journal(), before)

@@ -1,5 +1,7 @@
 {
+  "CODE_delta_parent": "901700637b3bb329cbb5729227e5b654dd8a00b6",
   "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "claim_limit": "Only final observed clock/generation within serialized writer is checked; receipt/task/command/event writes and actual COMMIT/fsync follow. No physical COMMIT-before-until promise.",
   "clock_basis": "EXPLICIT_SYNTHETIC_REFERENCE_CLOCK_NOT_NATIVE_WALLCLOCK_ACCEPTANCE",
   "counts_are_across_independent_namespaces_not_global_business_IDs": true,
   "data": "AUTHORIZED_SYNTHETIC_ONLY",
@@ -13,14 +15,14 @@
     },
     {
       "case": "data missing and no fabricated late cut",
-      "cut": "attempt END with approved resolved rate but stale market -> WAITING_DATA; another attempt with missing resolved rate -> WAITING_DATA; no cut; after END+2.001s -> REVIEW_REQUIRED",
+      "cut": "END fresh USD-only v2 is legitimately published with no live BTC: approved rate capture WAITING_DATA/missing required mark, no cut/journal; restore complete BTC v3 and perform original1match/2fills, then independent missing-rate WAITING_DATA; after END+3s no-cut attempt REVIEW_REQUIRED",
       "expected": "obligation remains outstanding/queryable; no funding receipt/postings; a/b999.96, fees.08; current positions never claimed as historical",
       "id": "FUND-DUE-002",
-      "initial": "positions opened at END-10s under then-fresh mark100; schedule rate unknown/NULL, not zero"
+      "initial": "USD accounts/deposits exist but no BTC positions at END-10s; defer exactly the original one matched trade until full quote restoration; schedule rate unknown/NULL"
     },
     {
       "case": "valid cut but current risk data missing",
-      "expected": "apply WAITING_DATA commits no cash; immutable cut survives reopen; fresh current mark101 permits a-.01/b+.01 using cut100, current risk on101",
+      "expected": "valid original cut and no cash under stale quote WAITING_DATA; fresh USD-only v3 publish with live BTC is correctly rejected market_incomplete; read-only helper negative control identifies its specific missing mark without changing persisted market; cut and existing WAITING state/cash remain; complete current quote v4 mark101 permits frozen a-.01/b+.01. Durable partial-store apply recovery integration is OPEN, no injection or bypass.",
       "id": "FUND-DUE-003",
       "initial": "cut END mark100/rate .0001 valid; later current quote stale"
     },
@@ -38,7 +40,7 @@
     },
     {
       "case": "positions trade after boundary and unknown response",
-      "expected": "before funding a1000.91/b998.91, positions empty; apply frozen debt gives both999.91, fees.18; current fresh101 risk/positions used, no artificial position; reopen/query same committed apply ID returns identical receipt/no duplicate. Missing result is not proof of safe new-ID retry",
+      "expected": "before funding a1000.91/b998.91, real positions empty; legally publish USD-only current snapshot v4, apply frozen a-1/b+1 to both999.91 with fees.18, no need for historical BTC quote as current risk; reopen/original-ID result unchanged; missing result still not a safe new-ID retry proof",
       "id": "FUND-DUE-006",
       "initial": "cut q+1/-1 mark100/rate.01 => obligation a-1/b+1; afterward real close1@101, fee .05 each and PnL a+1/b-1"
     },
@@ -64,6 +66,7 @@
   ],
   "future_exact_once_runner_and_resource_scope": "OPEN; this CODE does not authorize even a target import. Exact selectors/argv/source/runtime/capture/disk/threads/timeout must be independently reviewed and separately granted.",
   "future_test_thread_scope": "Only competitor test may use exactly2 bounded test threads; no background service/worker. Must be separately authorized in exact future GO. No thread runs in CODE stage.",
+  "independent_account_review": "ed1724a43b667d039d36d87483589bfc4b0fd162",
   "kind": "DURABLE_FUNDING_OBLIGATION_CODE_ONLY_HAND_ORACLES",
   "loaded_artifact_scope": "Existing fixed credit_artifact._MODULES plus perpetual_funding/funding_local/funding_obligations via unchanged strict _loaded_modules; no new runtime exclusions. Source pins alone do not assert loaded identity.",
   "mode": "LOCAL_SINGLE_AUTHORITY_USD_CROSS_LINEAR_MULTIPLIER1",
@@ -74,7 +77,9 @@
     "commit/crash recovery fault proof",
     "capacity or financial release approval",
     "pending funding inclusion in order/admission/withdrawal reservations",
-    "exclusion of arbitrary old binaries or raw SQLite writers"
+    "exclusion of arbitrary old binaries or raw SQLite writers",
+    "durable apply integration after partial current-market store corruption",
+    "physical COMMIT/fsync completion before lease expiry"
   ],
   "planned_fresh_scenario_DBs": 9,
   "planned_manual_aggregate": {
@@ -92,6 +97,11 @@
   "planned_scenario_matches": 9,
   "planned_scenario_paired_fills": 18,
   "production_approved": false,
+  "quote_gap_delta_findings": {
+    "FUND-OBL-001": "PROPOSED_EXPLICIT_REQUIRED_BOUNDARY_MARK_CHECK_PENDING_REVIEW",
+    "FUND-OBL-002": "PROPOSED_PRE_FINANCIAL_NATIVE_CURRENT_RISK_MISSING_QUOTE_CLASSIFICATION_PENDING_REVIEW"
+  },
+  "quote_gap_test_boundary": "No production publisher change. Capture fresh-partial is public/legitimate before BTC positions exist. For live BTC, assert normal publisher rejection; helper-only negative control in read snapshot, no persisted-market fault injection. Add cash-only current positive control after real flatting. No DB/match/journal/task budget increase.",
   "schema": 1,
   "status_reopen_policy": "Constructor validates capability/schema/current code, not complete financial health; pending/query remain available for durable REVIEW. apply verifies the complete existing ledger/obligations inside its writer SAVEPOINT before financial effects.",
   "target_compile_import_SQL_test_worker_bench_CI_attempts": 0

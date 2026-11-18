@@ -17,6 +17,7 @@ from .market import MarketSnapshot
 from .perpetual_funding import (FundingError, FundingPolicy, FundingPosition,
     canonical, decimal_text, name, number, period_time, plan_funding, units_decimal)
 from .products import ProductKind
+from .portfolio import PortfolioError
 from .service import ServiceError
 
 
@@ -95,6 +96,12 @@ def _artifact():
 
 
 class FundingObligations:
+    """Inactive local slice; pending cash is not an admission/withdrawal hold.
+
+    No whole-authority old-binary fence, production timer, custody or HA claim.
+    Claim checks observe the serialized writer clock/generation; they do not
+    prove that physical COMMIT/fsync finishes before the lease timestamp.
+    """
     def __init__(self, service, policy: FundingPolicy):
         FundingLocal._native(service, policy)
         self.service, self.policy, self.artifact = service, policy, _artifact()
@@ -309,6 +316,42 @@ class FundingObligations:
     def _wait(self, connection, obligation_id, state, reason):
         self._change(connection, obligation_id, state=state, reason=reason, owner=None, nonce=None, until_at=None)
 
+    def _require_mark(self, market, symbol):
+        product = self.service.product_catalog.require_risk_supported(symbol)
+        if (product.kind is not ProductKind.LINEAR_PERPETUAL or product.multiplier != 1
+                or product.risk_tier not in self.service.portfolio_rules.linear_margin):
+            raise FundingError("funding_current_inventory_unsupported", "required instrument has unsupported product or margin rules")
+        if symbol not in market.instruments:
+            raise ServiceError("funding_required_quote_unavailable", "required instrument mark is missing", 503)
+
+    def _check_current_quotes(self, connection, account, market):
+        # Keep native inventory/rule validation. Only its precise missing-price
+        # causes, confirmed against the actual snapshot, become retryable data.
+        try:
+            self.service._risk(connection, account, market)
+        except ServiceError as error:
+            cause = error.__cause__
+            if error.code == "risk_unavailable" and type(cause) is PortfolioError:
+                message = str(cause)
+                if message.startswith("missing_instrument_price: "):
+                    symbol = message.removeprefix("missing_instrument_price: ")
+                    if symbol in self.service._positions(connection, account) and symbol not in market.instruments:
+                        self._require_mark(market, symbol)
+                if message.startswith("missing_price: "):
+                    asset = message.removeprefix("missing_price: ")
+                    if asset not in market.assets:
+                        balance = self.service.ledger.balance(self.service._customer(account), asset, connection=connection)
+                        debt = connection.execute("SELECT principal,interest FROM uta_liabilities WHERE account_id=? AND asset=?", (account, asset)).fetchone()
+                        if ((balance > 0 and asset not in self.service.portfolio_rules.collaterals)
+                                or debt is not None and (Decimal(debt[0]) or Decimal(debt[1])) and asset not in self.service.portfolio_rules.borrow_limits):
+                            raise FundingError("funding_current_inventory_unsupported", "required asset has no collateral/borrowing rule") from error
+                        raise ServiceError("funding_required_quote_unavailable", "required current asset quote is missing", 503) from error
+            if error.code == "market_incomplete" and type(cause) is KeyError and len(cause.args) == 1:
+                symbol = cause.args[0]
+                if symbol not in market.instruments and any(order["symbol"] == symbol for order in self.service._live_orders(connection, account)):
+                    self._require_mark(market, symbol)
+            raise
+
     def capture(self, command_id, obligation_id, token, *, market_snapshot_id, resolved_rate: Decimal | None = None):
         name(obligation_id, "obligation")
         token = self._checked_token(token)
@@ -341,6 +384,7 @@ class FundingObligations:
                 rate = resolved_rate if row["rate"] is None else Decimal(row["rate"])
                 product = self._product(row["symbol"], period_time(end)[1])
                 market = self.service._market(connection)
+                self._require_mark(market, row["symbol"])
                 if market_snapshot_id != "sha256:" + sha256(market.to_json().encode()).hexdigest():
                     raise ServiceError("market_unavailable", "expected trusted boundary market differs", 503)
                 rows = connection.execute("SELECT p.account_id,p.quantity,p.cost_basis,a.version FROM uta_positions p JOIN uta_accounts a ON a.account_id=p.account_id WHERE p.symbol=? ORDER BY p.account_id LIMIT ?",
@@ -417,7 +461,7 @@ class FundingObligations:
                 self._clock(connection)
                 reason = getattr(error, "code", "funding_application_rejected")
                 capital = reason.startswith("funding_capital") or reason == "funding_rounding_capital_insufficient"
-                state = "WAITING_CAPITAL" if capital else "WAITING_DATA" if reason in ("market_unavailable", "funding_risk_unavailable", "funding_claim_expired") else "REVIEW_REQUIRED"
+                state = "WAITING_CAPITAL" if capital else "WAITING_DATA" if reason in ("market_unavailable", "funding_required_quote_unavailable", "funding_risk_unavailable", "funding_claim_expired") else "REVIEW_REQUIRED"
                 self._wait(connection, obligation_id, state, reason)
                 result = {"reason": reason, "successful_receipt_emitted": False}
             return self._record(connection, command_id, "apply", request, obligation_id, result)
@@ -457,6 +501,8 @@ class FundingObligations:
     def _cash(self, connection, row, cut, config, command_id, capital_reference):
         market = self.service._market(connection)  # Current state, never the historical cut as live risk.
         participants = [leg["account_id"] for leg in cut["plan"]["legs"]]
+        for account in participants:
+            self._check_current_quotes(connection, account, market)
         before = {account: self.service._audit_state(connection, account) for account in participants}
         reserve = self.service.ledger.balance(_RESERVE, "USD", connection=connection)
         needed = max(Fraction(), -Fraction(reserve) * 10 ** config["usd_scale"] - int(cut["plan"]["clearing_units"]))

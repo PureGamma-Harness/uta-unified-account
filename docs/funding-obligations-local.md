@@ -6,6 +6,9 @@
 原件、历史policy/receipt、first-CI来源不修改。参考政策仍是原有限公开资料摘述及明确的
 本系统规则；没有新的外部交易所精度或边界行为证据。
 
+**能力边界仍OPEN：pending资金费尚未进入订单/提现/划转预占，本接口不保护这些外围路径；
+旧binary排除不是managed fence；最终claim检查不承诺物理COMMIT/fsync早于leaseUntil。**
+
 ## 权威、状态与查询
 
 新fresh-only capability与旧 `FundingLocal` 互斥，不在旧authority热装。新schema有不可变
@@ -94,6 +97,32 @@ loaded覆盖。仍保留1MiB capability/cut/receipt归档限制；超额拒绝�
 跨9个合成scenario DB计划9次撮合/18侧成交；业务ID可跨独立scenario重复，不能当全局
 唯一交易或吞吐。未来exact runner/资源/SQL scope与独立CODE审核及root GO另行冻结。
 固定未来测试全部使用显式合成reference clock，不是native wallclock lease精度验收。
+
+## 901独立审查后的报价缺口修订（仍CODE）
+
+账户审查 `ed1724a43b667d039d36d87483589bfc4b0fd162` 对901提出
+FUND-OBL-001/002，原901及其NOT_RUN计划保留精确副本。新修订先校验必要产品/规则，
+只将确实缺少必要mark或原生current-risk计算明确报告、且与snapshot缺key相符的缺价
+归为`funding_required_quote_unavailable`/WAITING_DATA。没有把所有ValueError或
+`risk_unavailable`改为可恢复；其他库存、配置、规则及账务错误仍走原REVIEW/拒绝。
+
+`apply`在既有SAVEPOINT内、金融修改前增加一次每参与账户的原生current-risk检查。
+这是额外重估成本，不提供准入授权或加速主张；原supervisor、最后fresh market与claim
+观察检查全部保留。它按当前库存/订单实际需要报价，不盲目要求历史cut的产品mark。
+最后观察之后仍有receipt/task/command/event与COMMIT/fsync，未提供硬提交期限保证。
+
+真实publisher不能移除live仓位/订单的BTC mark。固定六方法/九库的missing场景先在
+USD账户已入金、尚无BTC仓位时合法发布fresh USD-only，准时capture缺mark应WAITING_DATA
+且无cash/cut。恢复完整行情后执行原1次撮合/2侧成交，再保留独立missing-rate及
+late-without-cut REVIEW断言，未改为猜测历史持仓。current-data场景先断言真实publisher
+拒绝live BTC下的partial发布，只在只读快照中给精确helper一个typed partial作为负控，
+不注入/替换持久行情、不改history/hash/guards；该异常存储路径的持久恢复集成仍OPEN。
+恢复完整fresh行情后继续已有stale→APPLIED流程。changed-positions场景真实平仓后合法
+发布USD-only当前行情并应用历史cut，防止错误地把历史BTC当作当前仍需报价的风险。
+
+上述子步骤仍计划9个scenario matches/18侧成交、46journal、fee.72/custody-15001、
+8义务/5APPLIED/3outstanding，没有新的DB、撮合或金融分录预算。所有目标执行仍0；
+新delta还须账户复审、独立风险cross及独立入口/root GO，不能由本修订自行签闭合。
 
 部署只允许新合成本地authority。回滚停止显式调用并保留task、cut、claims、全部命令结果、
 receipt、journal及事件；未支付义务和REVIEW不能删除。源码/规则变更必须停写、复核并通过
