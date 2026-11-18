@@ -58,17 +58,17 @@
       "-B",
       "/workspace/uta-matching-component-profile/benchmarks/matching_profile_aggregate.py",
       "--control-source-commit",
-      "87090c6b9ab39a301a8179432769cf52008d7e05",
+      "53739d1efdb6a1df3e33d9493eb2b1db50aee92d",
       "--current-root",
-      "/workspace/uta-matching-profile-current-87090c6-once01",
+      "/workspace/uta-matching-profile-current-53739d1-once01",
       "--original-root",
-      "/workspace/uta-matching-profile-original-87090c6-once01",
+      "/workspace/uta-matching-profile-original-53739d1-once01",
       "--current-host-receipt",
-      "/workspace/uta-matching-profile-host-87090c6-once01/current-host.json",
+      "/workspace/uta-matching-profile-host-53739d1-once01/current-host.json",
       "--original-host-receipt",
-      "/workspace/uta-matching-profile-host-87090c6-once01/original-host.json",
+      "/workspace/uta-matching-profile-host-53739d1-once01/original-host.json",
       "--output-root",
-      "/workspace/uta-matching-profile-comparison-87090c6-once01"
+      "/workspace/uta-matching-profile-comparison-53739d1-once01"
     ],
     "current": [
       "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
@@ -79,11 +79,11 @@
       "--profile-set",
       "current",
       "--run-root",
-      "/workspace/uta-matching-profile-current-87090c6-once01",
+      "/workspace/uta-matching-profile-current-53739d1-once01",
       "--source-commit",
-      "87090c6b9ab39a301a8179432769cf52008d7e05",
+      "53739d1efdb6a1df3e33d9493eb2b1db50aee92d",
       "--approved-manifest-sha256",
-      "16dddb281ddf3021c86b6f32a121396faf343e758ce889b239c51723707bfa36"
+      "1dc7a5ce7778ea86a2005c31febb51be9b4bc1f027594bdac88a3ada0319c56d"
     ],
     "original-scan": [
       "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
@@ -94,20 +94,20 @@
       "--profile-set",
       "original-scan",
       "--run-root",
-      "/workspace/uta-matching-profile-original-87090c6-once01",
+      "/workspace/uta-matching-profile-original-53739d1-once01",
       "--source-commit",
-      "87090c6b9ab39a301a8179432769cf52008d7e05",
+      "53739d1efdb6a1df3e33d9493eb2b1db50aee92d",
       "--approved-manifest-sha256",
-      "e79d1ee0191f077e0008a484d4f97312cd951826076c9c8033371fee649af05c"
+      "21522efdd9b42d9aa741b69d3aaeb0b51613ddef4a52a24cad9de6a25d576421"
     ]
   },
-  "control_source_commit": "87090c6b9ab39a301a8179432769cf52008d7e05",
+  "control_source_commit": "53739d1efdb6a1df3e33d9493eb2b1db50aee92d",
   "default_scan_regression_accepted": false,
   "fresh_namespaces": {
-    "aggregate": "/workspace/uta-matching-profile-comparison-87090c6-once01",
-    "current": "/workspace/uta-matching-profile-current-87090c6-once01",
-    "host": "/workspace/uta-matching-profile-host-87090c6-once01",
-    "original-scan": "/workspace/uta-matching-profile-original-87090c6-once01"
+    "aggregate": "/workspace/uta-matching-profile-comparison-53739d1-once01",
+    "current": "/workspace/uta-matching-profile-current-53739d1-once01",
+    "host": "/workspace/uta-matching-profile-host-53739d1-once01",
+    "original-scan": "/workspace/uta-matching-profile-original-53739d1-once01"
   },
   "hardware_metadata_plan": {
     "CPU_model": null,
@@ -135,8 +135,8 @@
     "current": {
       "bytes": 22538,
       "path": "evidence/reviews/matching-component-profile/source-manifest-current.json",
-      "sha256": "16dddb281ddf3021c86b6f32a121396faf343e758ce889b239c51723707bfa36",
-      "source_bytes": 1336097,
+      "sha256": "1dc7a5ce7778ea86a2005c31febb51be9b4bc1f027594bdac88a3ada0319c56d",
+      "source_bytes": 1336284,
       "source_files": 63,
       "target_repository_uta_tree_oid": "05075e8b51c8b365e46a7f5f520a625a791fd6ad",
       "target_runtime_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2"
@@ -144,8 +144,8 @@
     "original-scan": {
       "bytes": 22605,
       "path": "evidence/reviews/matching-component-profile/source-manifest-original-scan.json",
-      "sha256": "e79d1ee0191f077e0008a484d4f97312cd951826076c9c8033371fee649af05c",
-      "source_bytes": 1328257,
+      "sha256": "21522efdd9b42d9aa741b69d3aaeb0b51613ddef4a52a24cad9de6a25d576421",
+      "source_bytes": 1328444,
       "source_files": 63,
       "target_repository_uta_tree_oid": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
       "target_runtime_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec"
@@ -154,6 +154,12 @@
   "open_loop": false,
   "origin_capsule_exact_old_matching": true,
   "performance_claims_accepted": false,
+  "preparation_history": {
+    "control_source_870": "87090c6b9ab39a301a8179432769cf52008d7e05",
+    "original_manifests_and_plan": "*-87090c6-preparation.json, exact original bytes; old materialization-first.json retained",
+    "reason": "Explicit __main__ entry guards keep controller imports passive; no runtime source or workload change",
+    "status": "NOT_RUN_ZERO_TARGET_ATTEMPTS"
+  },
   "prod_or_financial_activation_approved": false,
   "profile_scope": "Single-node synchronous matching component with profiler/counter overhead, not order-admission or liquidation E2E",
   "root_separate_explicit_go_each_required": true,
