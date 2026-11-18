@@ -1,0 +1,404 @@
+{
+  "CODE_review": "e29d2b763b02bad5d879c4b2411c7375f03fe338",
+  "SAFE_commit": "4bfc8908dd22ae78aa8a3c09493a60ef49b1e43e",
+  "completion_checks": {
+    "128_handles_closed_before5_new_RO_snapshots_133_closed_final_cleanup0": true,
+    "144_observations_peak15_files1994752_bytes": true,
+    "32K_allFD_cap_512_reserve_no_sticky_or_truncation": true,
+    "BEGIN_END_match_inner_source_runtime_and_fixed3_methods": true,
+    "TAIL_inside22s_and_monotonic_order": true,
+    "all67_capsule_sources_equal_Git_and_current_materialization": true,
+    "first_d668_and_f341_history_preserved": true,
+    "observations_not_continuous_or_hard_aggregate_quota": true,
+    "owned_host_wait_reap_EOF_and_caller_actual_future_exit_closed": true
+  },
+  "independent_byte_reference": {
+    "cases": [
+      {
+        "committed_periods": 1,
+        "custody_units": -200000,
+        "decoded_pages_touched": 36,
+        "deposit_original_sealed_double_entries_checked": true,
+        "expected_orphan_count": 0,
+        "fee_units": 8,
+        "funding_receipt_rational_cash_and_capital_postings_checked": true,
+        "independent_full_materialized_balances_and_composite_positions_equal": true,
+        "independent_ledger_hash_chain_and_postings_balanced": true,
+        "label": "period",
+        "ledger_events": 6,
+        "main_pages": 88,
+        "matches": 1,
+        "matching_fill_fee_PnL_and_ledger_links_checked": true,
+        "paired_fills": 2
+      },
+      {
+        "committed_periods": 1,
+        "custody_units": -100104,
+        "decoded_pages_touched": 37,
+        "deposit_original_sealed_double_entries_checked": true,
+        "expected_orphan_count": 0,
+        "fee_units": 8,
+        "funding_receipt_rational_cash_and_capital_postings_checked": true,
+        "independent_full_materialized_balances_and_composite_positions_equal": true,
+        "independent_ledger_hash_chain_and_postings_balanced": true,
+        "label": "distress",
+        "ledger_events": 6,
+        "main_pages": 91,
+        "matches": 1,
+        "matching_fill_fee_PnL_and_ledger_links_checked": true,
+        "paired_fills": 2
+      },
+      {
+        "committed_periods": 0,
+        "custody_units": -200000,
+        "decoded_pages_touched": 35,
+        "deposit_original_sealed_double_entries_checked": true,
+        "expected_orphan_count": 1,
+        "fee_units": 8,
+        "funding_receipt_rational_cash_and_capital_postings_checked": true,
+        "independent_full_materialized_balances_and_composite_positions_equal": true,
+        "independent_ledger_hash_chain_and_postings_balanced": true,
+        "label": "rollback",
+        "ledger_events": 5,
+        "main_pages": 87,
+        "matches": 1,
+        "matching_fill_fee_PnL_and_ledger_links_checked": true,
+        "paired_fills": 2
+      },
+      {
+        "committed_periods": 0,
+        "custody_units": -200000,
+        "decoded_pages_touched": 35,
+        "deposit_original_sealed_double_entries_checked": true,
+        "expected_orphan_count": 0,
+        "fee_units": 8,
+        "funding_receipt_rational_cash_and_capital_postings_checked": true,
+        "independent_full_materialized_balances_and_composite_positions_equal": true,
+        "independent_ledger_hash_chain_and_postings_balanced": true,
+        "label": "late",
+        "ledger_events": 4,
+        "main_pages": 87,
+        "matches": 1,
+        "matching_fill_fee_PnL_and_ledger_links_checked": true,
+        "paired_fills": 2
+      },
+      {
+        "committed_periods": 1,
+        "custody_units": -300100,
+        "decoded_pages_touched": 38,
+        "deposit_original_sealed_double_entries_checked": true,
+        "expected_orphan_count": 0,
+        "fee_units": 14,
+        "funding_receipt_rational_cash_and_capital_postings_checked": true,
+        "independent_full_materialized_balances_and_composite_positions_equal": true,
+        "independent_ledger_hash_chain_and_postings_balanced": true,
+        "label": "capital",
+        "ledger_events": 11,
+        "main_pages": 94,
+        "matches": 2,
+        "matching_fill_fee_PnL_and_ledger_links_checked": true,
+        "paired_fills": 4
+      }
+    ],
+    "checks": [
+      "Independent32 journal sequence/fingerprint/hash-chain replay and per-asset double-entry conservation",
+      "Exact full materialized balances and complete(account,symbol) positions/costs against manual oracle",
+      "Confirmed original deposit rows paired with sealed custody/customer journal postings",
+      "Each6 match joins both12 fill/order sides, exact prices/quantities/ceil fee and zero realizedPnL, and each fill journal",
+      "Funding receipt/request hashes, rational exact cash/toward-zero amounts/waiver, bound policy/artifact digest, actual treasury deposit1 and one-cent customer-to-reserve capital transfer",
+      "Persisted LIQUIDATING cycle1/revision1; old pendingRO actually CANCELLED unfilled, replacement -1@100 RO OPEN unfilled and receipt references consistent",
+      "Rollback has one balanced orphan funding journal and no committed period; independent reader identifies it instead of calling that authority healthy"
+    ],
+    "final_state_proof": "All5 WAL files byte-length0, no rollback journal or extra family files; all closed handle/EOF records complete, main headers current and exact sealed before/after hashes match. SHM is only hashed, never used as a source of row data or interpreted as process state. No restore/checkpoint/repair was performed.",
+    "first_reader_error_preserved": {
+      "cases_completed": 0,
+      "fixed_delta": "Two-line bounded table-constraint-keyword guard only; removing those lines reconstructs original first-reader source.",
+      "raw_stderr_bytes": 851,
+      "raw_stderr_sha256": "f5fd13c6515ec53cf1c10d421466014f61d29370afc2be86b22f47b517c2a364",
+      "reason": "Column-declaration parser did not recognize the table-level UNIQUE(...) spelling without whitespace.",
+      "source_and_first_outputs_retained_private": true,
+      "source_bytes": 22098,
+      "source_sha256": "3764b6d36beddd11fe80eea1034f908e5d74b9d346eb1cd106ff0824130e4dda",
+      "target_rerun_or_target_failure": false
+    },
+    "layout_limits": [
+      "Only5 exact sealed main files, each<=4MiB and<=4096 records/table",
+      "SQLite3 UTF8 rowid table btree pages5/13 and overflow; no index/freelist semantic verification, WAL recovery, UTF16, WITHOUTROWID or sparse ALTER/default row layouts",
+      "Current file-header pagecount and change/version counters required; only fixed scenario table definitions supported"
+    ],
+    "read_only_standard_library_no_SQLite_or_target_import": true,
+    "reader_bytes": 22212,
+    "reader_path": "evidence/reviews/funding-local-account-independent/sqlite_fixed_funding_raw_reader.py",
+    "reader_sha256": "d3b6fd683285c8167a44614026dd0485cbde1ac00cc56c982e7974dbbb35022f"
+  },
+  "limitations": [
+    "Recorded historical wait/reap facts are not current OS process attestation; reviewer made no process probe.",
+    "Six matches and three funding period commits are authority-qualified scenario totals. Only two distinct raw trade IDs and one symbol/time pair recur across separate DBs; no global ID, calendar-period or TPS claim.",
+    "No first-target retry, SQL rerun, extra SQL query, native target import/compile or repair occurred. Only offline immutable-byte decoding followed the original run.",
+    "Reader is a bounded independent row decoder, not a complete SQLite integrity checker or WAL recovery implementation. Native integrity/schema checks are evidenced by original source-bound run, not repeated here.",
+    "Commit/crash/concurrency/stale-second-leg faults, actual process restart, DUE/scheduler/unfinished obligations, opsAuth/custody, managed/HA, calibration/capacity and human financial/real-funds approval remain OPEN."
+  ],
+  "original_digest_inventory": [
+    {
+      "bytes": 193,
+      "exported_raw_name": "outer-END.json",
+      "namespace": "outer",
+      "path": "END.json",
+      "sha256": "086a6dbb449796fa66d272bb97444f777b221027f71b789a914c1abd14dd3844"
+    },
+    {
+      "bytes": 169,
+      "exported_raw_name": "outer-TAIL.json",
+      "namespace": "outer",
+      "path": "TAIL.json",
+      "sha256": "afa7e22efd1d00e1fa3788102b49bf40470d56350d1f4fd47ca6c5ee8c154d77"
+    },
+    {
+      "bytes": 2,
+      "exported_raw_name": "actual-host-exit.txt",
+      "namespace": "outer",
+      "path": "actual-host-exit.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 10170,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "execution.json",
+      "sha256": "90125045aa867f50199ce697c11ab1087e22627c32892dc74352b2b5a8376c2f"
+    },
+    {
+      "bytes": 769,
+      "exported_raw_name": "first.stderr.txt",
+      "namespace": "outer",
+      "path": "first.stderr.txt",
+      "sha256": "f0f4101731c5afdb126ba304252a05919d1498b15910a8bb705351b891b7879c"
+    },
+    {
+      "bytes": 10753,
+      "exported_raw_name": "first.stdout.txt",
+      "namespace": "outer",
+      "path": "first.stdout.txt",
+      "sha256": "6ffca12981e5bf15ad76205210f710127470f6251ed3e5ceac3283cd349ef951"
+    },
+    {
+      "bytes": 1912853,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "immutable-inputs.json",
+      "sha256": "79af900b76f594ba53279f0df9fce65d1fe363c820e25b15d54a7da441d1e111"
+    },
+    {
+      "bytes": 385024,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/capital/funding.sqlite3",
+      "sha256": "29d52ed029761939529e0d0e0a43d64637e0300428803185e6918e12d2526dce"
+    },
+    {
+      "bytes": 32768,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/capital/funding.sqlite3-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/capital/funding.sqlite3-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 372736,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/distress/funding.sqlite3",
+      "sha256": "5f4db55dc942878593bbfa08c204f34fdd053f49850a175a96717c2ea5a08ef0"
+    },
+    {
+      "bytes": 32768,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/distress/funding.sqlite3-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/distress/funding.sqlite3-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 356352,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/late/funding.sqlite3",
+      "sha256": "12d3492c5c070f1beed0d55ebbb5a25ab818cbf6184f592649813a8044eada42"
+    },
+    {
+      "bytes": 32768,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/late/funding.sqlite3-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/late/funding.sqlite3-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 360448,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/period/funding.sqlite3",
+      "sha256": "5305d8a5173327048d505502e300c59875c335693d5d6fb0d05aca9ae311d321"
+    },
+    {
+      "bytes": 32768,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/period/funding.sqlite3-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/period/funding.sqlite3-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 356352,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/rollback/funding.sqlite3",
+      "sha256": "f7dba6f82434de81be29d97aff8a9f067277194e6441a1f09f4c14a6477e7d6c"
+    },
+    {
+      "bytes": 32768,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/rollback/funding.sqlite3-shm",
+      "sha256": "fd4c9fda9cd3f9ae7c962b0ddf37232294d55580e1aa165aa06129b8549389eb"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/cases/rollback/funding.sqlite3-wal",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 9474,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/execution.json",
+      "sha256": "e9083d6dafa2afef6ad077252c8f2059f40e622c02025247872dd2e4bf3ddcec"
+    },
+    {
+      "bytes": 10256,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/intent.json",
+      "sha256": "b1b7f22f55ea10a862899b688951d5d6a3d433ca804a3bf0d11e76d3cc14d542"
+    },
+    {
+      "bytes": 5906,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "inner/oracle-details.json",
+      "sha256": "0dd9f891d2a1ebb2f7190a80d3e6690b5b751b54a11e3a9df2dc57c22efcc24c"
+    },
+    {
+      "bytes": 2813,
+      "exported_raw_name": null,
+      "namespace": "outer",
+      "path": "intent.json",
+      "sha256": "e652b989da292e01c3bd5e2b44753a660346bb874526f596806046c697ada2da"
+    },
+    {
+      "bytes": 203,
+      "exported_raw_name": null,
+      "namespace": "caller",
+      "path": "CALLER_END.json",
+      "sha256": "5ece645b89ed6df24c2ba1ab367fb00b6a3eca9518b71f3b9722cda9e261de20"
+    },
+    {
+      "bytes": 1420,
+      "exported_raw_name": "caller-actual-exit.json",
+      "namespace": "caller",
+      "path": "actual-exit.json",
+      "sha256": "0a280db7bdfd6ea0ac4bc6204ff539791cb2fd2ff3e8c2b1da0b3b0858f602c3"
+    },
+    {
+      "bytes": 689,
+      "exported_raw_name": null,
+      "namespace": "caller",
+      "path": "intent.json",
+      "sha256": "4532f5807532b3107ad79fde613f040346d4546155d360a2950e6d9c74a211da"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": "launcher.stderr.txt",
+      "namespace": "caller",
+      "path": "launcher.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "exported_raw_name": "launcher.stdout.txt",
+      "namespace": "caller",
+      "path": "launcher.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 415,
+      "exported_raw_name": "literal-argv.json",
+      "namespace": "caller",
+      "path": "literal-argv.json",
+      "sha256": "09850c9f8f7a28984ee990af57c0432cc229ac5bb027d5b9208d4f45a6868ce2"
+    }
+  ],
+  "private_DB_capsule_nonce_ZIP_exported": false,
+  "production_approved": false,
+  "schema": 1,
+  "source_commit": "2326106b3bf8cf6d2713e4cf8c7926afdf6962ab",
+  "summary": {
+    "all12_SAFE_Git_and9_original_exports_exact": true,
+    "all_failure_counts_zero": true,
+    "authority_qualified_committed_periods": 3,
+    "authority_qualified_matches": 6,
+    "capsule_input_bytes": 1412889,
+    "capsule_input_files": 67,
+    "custody_USD": "-10002.04",
+    "distinct_raw_symbol_period_count": 1,
+    "distinct_raw_trade_id_count": 2,
+    "fee_USD": ".46",
+    "five_independent_byte_reference_cases_passed": true,
+    "ledger_events": 32,
+    "paired_fills": 12,
+    "private_original_bytes": 3960837,
+    "private_originals": 32,
+    "private_seal_bytes": 7214,
+    "private_seal_sha256": "f342c5becad8bbd0f2e7ffeba4e457f97d1fbc80af9755f1786fdf3ca91de99f",
+    "raw_payload_bytes": 11379,
+    "raw_total_bytes": 11522,
+    "raw_trailer_bytes": 143,
+    "recorded_caller_outer_exit": 0,
+    "recorded_host_exit": 0,
+    "reviewer_SQL_or_target_execution": 0,
+    "status": "INDEPENDENT_RAW_AND_OFFLINE_BYTE_LEDGER_REFERENCE_CLOSED_LIMITED_SQL_ONLY",
+    "tests_run": 3
+  },
+  "timings_ns": {
+    "caller_outer_lifetime": 2162771041,
+    "fixed_tests": 1308923454,
+    "inner_with_RO_checks": 1644386558,
+    "owned_target_drain": 1904235790
+  }
+}

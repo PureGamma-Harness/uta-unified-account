@@ -1,0 +1,27 @@
+# First funding SQL evidence: independent closure
+
+The fixed three-method functional SQL scope at source `2326106b3bf8cf6d2713e4cf8c7926afdf6962ab` is independently **RAW CLOSED, LIMITED SQL ONLY**. Evidence source is SAFE `4bfc8908dd22ae78aa8a3c09493a60ef49b1e43e`; CODE closure is `e29d2b763b02bad5d879c4b2411c7375f03fe338`. No SQL connection, target import/compile/execution, process probe, repair or target rerun occurred during this review.
+
+All32 private originals (3,960,837 bytes), the separate7,214-byte PRIVATE-SEAL, nine exported originals and all12 SAFE Git files matched exact lengths/SHA. All67 retained source buffers (1,412,889 bytes) matched plan, Git and materialized source. Raw contains the three fixed method names each once as actual ok, zero failure/error/skip/EF/US counts, matching BEGIN/END and full runtime. Recorded native host and caller both exited0 with wait/reap/EOF, timely TAIL and empty launcher streams. Historical actual-exit records are checked as evidence, not replaced by current OS process probing.
+
+## Independent main-file byte accounting
+
+The original oracle-details contains pass flags rather than row payloads. With root's explicit read-only authorization, the companion bounded stdlib decoder independently parsed the five sealed main-file bytes without importing sqlite3 or using a SQL engine. All five WAL files have length0; only main/WAL/SHM family files exist, no rollback journal. Main headers have matching current version/change counters and exact pagecounts. This makes the sealed main files complete for these observed final states; no checkpoint/recovery/write was performed. SHM is only hashed and never interpreted as process state. Original32 hashes remained identical after parsing.
+
+The independent decoder checks32 journal sequences/fingerprints/hash-chain entries, per-asset balanced postings and exact materialized balances; complete (account,symbol) quantities/costs; every original deposit's sealed custody/customer pair; six match references, twelve fill/order sides, actual quantities/prices/ceil fees/zero realizedPnL and fill journal links; three funding request/receipt hashes, rational exact cash, toward-zero units and waived subunit differences, artifact/policy digest binding and actual treasury deposit/capital postings. It separately verifies persisted LIQUIDATING cycle1/revision1, cancellation of the old pendingRO and the unfilled replacement -1@100 RO plan.
+
+The deliberate rollback authority has one balanced orphan funding journal and no period receipt. Both original funding rejection and independent orphan detection are expected; this authority is not called healthy. The other four have no orphan funding journal. Aggregate hand values agree: fees0.46 USD and custody-10002.04 USD, with clearing/reserve ending zero.
+
+Counts are qualified by the five separate scenario authorities:6 matches,12 paired fills,32 journals and3 funding-period commits. There are only2 distinct raw trade IDs and1 distinct raw symbol/time pair across those separate DBs. These are scenario totals, not6 globally unique IDs,3 calendar periods or a TPS result. No liquidation execution was fabricated or counted.
+
+The reader is22,212 bytes, SHA `d3b6fd683285c8167a44614026dd0485cbde1ac00cc56c982e7974dbbb35022f`. It supports only the fixed UTF8 SQLite3 rowid-table leaf/interior and overflow layout, bounded to4MiB/main file and4,096 rows/table. It does not implement general index/freelist validation, WAL recovery, UTF16, WITHOUTROWID or sparse ALTER/default rows; unsupported layouts reject. Native integrity/schema verification remains evidenced by the original source-bound run. No product calculation helper is imported or reused.
+
+The independent reader's first source (`3764b6d36beddd11fe80eea1034f908e5d74b9d346eb1cd106ff0824130e4dda`) stopped before completing a case because its column parser did not recognize UNIQUE(...) without whitespace. Its source,851-byte traceback and first outputs remain private originals. Only a two-line table-constraint keyword guard changed; removing those lines reconstructs the first source. The corrected reader independently decoded all five sealed files successfully. This was an analysis-tool error and subsequent fixed reader run, not a funding-target retry or failed target run.
+
+## Bounds and remaining gates
+
+Raw11,522 bytes equals11,379 payload plus143 trailer, below32KiB including512 reserved bytes; no sticky truncation. Original128 test-stage handles were already closed before5 new RO snapshots; cumulative133 handles were closed with cleanup0. The144 metadata observations found peak/final15 files and1,994,752 logical DB bytes. These observations are not continuous native monitoring or aggregate OS quota.
+
+Timing boundaries remain separate: fixed tests1,308,923,454ns; inner including RO checks1,644,386,558ns; owned target/drain1,904,235,790ns; caller outer lifetime2,162,771,041ns. None is a trading capacity result. Old d668 NOT_RUN/finding and f341/49407/d7e0 history remain unchanged. DB/capsule/nonce/full row data remain private; only finite results, source and digest inventories are public.
+
+Actual process restart, stale/second-leg/COMMIT/crash/concurrency faults, durable DUE/scheduler/unfinished obligations, operations authentication/custody, managed migration/HA, parameter calibration/capacity and human financial/real-funds approval remain OPEN. Existing synthetic-only deployment and rollback constraints apply; this closes only the declared functional SQL scope.
