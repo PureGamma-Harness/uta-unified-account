@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "CI_attempts_unchanged": true,
+  "original_archives_unchanged": true,
+  "preparation_incidents": [
+    {
+      "observed_error": "Error: save private",
+      "original_inner_stderr": "not retained by the first wrapper; UNKNOWN",
+      "source_review": "First private base64 writer applied strict validation to the here-document framing newline; v2 strips only framing whitespace before decode.",
+      "first_source_retained": "/workspace/pr44-ci-first-private/parser/write_oexcl.py",
+      "corrected_source": "/workspace/pr44-ci-first-private/parser/write_oexcl_v2.py",
+      "archive_bytes_not_written_at_incident": true,
+      "CI_retries": 0
+    },
+    {
+      "observed_error": "SyntaxError: Unexpected token '?'",
+      "phase": "outer JavaScript source construction before archive inspector file creation",
+      "archive_read_or_modified": false,
+      "correction": "Use String.raw for the trusted Python parser source; no CI or artifact retry."
+    },
+    {
+      "phase": "analysis input preparation",
+      "observed_error": "Error: runtime inventory",
+      "reason": "Unit source capture contains61 UTA Python files, not dashboard.html. Package contract separately covers62 runtime Python/HTML files.",
+      "correction": "Add the exact-C Git dashboard.html SHA explicitly; do not claim it was in the371 CI source map.",
+      "archive_or_CI_results_changed": false
+    }
+  ],
+  "complete_archive_parsers_first_executions_success": true,
+  "unknown_inner_writer_diagnostic_remains_UNKNOWN": true,
+  "limit": "Collector preparation incidents are not CI/test failures or retries. No specific old f510 unsupported attribute is inferred from current Enum code or these incidents."
+}
