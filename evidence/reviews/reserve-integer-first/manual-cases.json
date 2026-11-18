@@ -1,0 +1,199 @@
+{
+  "cases": [
+    {
+      "expected_decimal": "10.1",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "100",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "flat_buy"
+    },
+    {
+      "expected_decimal": "21.11",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "110",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "adverse_buy"
+    },
+    {
+      "expected_decimal": "20.09",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "90",
+        "mark_price": "100",
+        "quantity": "-1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "adverse_sell"
+    },
+    {
+      "expected_decimal": "10.09",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "90",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "favorable_buy"
+    },
+    {
+      "expected_decimal": "11.11",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "110",
+        "mark_price": "100",
+        "quantity": "-1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "favorable_sell"
+    },
+    {
+      "expected_decimal": "10.11",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "110",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": true,
+        "usd_scale": 2
+      },
+      "name": "reduce_only_adverse_buy"
+    },
+    {
+      "expected_decimal": "15.15",
+      "inputs": {
+        "charged_fee": "0.05",
+        "fee_notional": "50",
+        "fee_rate": "0.001",
+        "filled_quantity": "0.5",
+        "initial_margin_rate": "0.1",
+        "limit_price": "100",
+        "mark_price": "100",
+        "quantity": "2",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "partial_cumulative_fee"
+    },
+    {
+      "expected_decimal": "0.0101",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "0.001",
+        "mark_price": "0.001",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "tiny_fee_ceil"
+    },
+    {
+      "expected_decimal": "0",
+      "inputs": {
+        "charged_fee": "0.1",
+        "fee_notional": "100",
+        "fee_rate": "0.001",
+        "filled_quantity": "1",
+        "initial_margin_rate": "0.1",
+        "limit_price": "100",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "already_filled"
+    },
+    {
+      "expected_decimal": "0.01",
+      "inputs": {
+        "charged_fee": "0.1",
+        "fee_notional": "100.001",
+        "fee_rate": "0.001",
+        "filled_quantity": "1",
+        "initial_margin_rate": "0.1",
+        "limit_price": "100",
+        "mark_price": "100",
+        "quantity": "1",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "prior_fee_unpaid"
+    },
+    {
+      "expected_decimal": "0",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.1",
+        "limit_price": "0",
+        "mark_price": "0",
+        "quantity": "-0",
+        "reduce_only": false,
+        "usd_scale": 2
+      },
+      "name": "negative_zero"
+    },
+    {
+      "expected_decimal": "0.000000135",
+      "inputs": {
+        "charged_fee": "0",
+        "fee_notional": "0",
+        "fee_rate": "0.0001",
+        "filled_quantity": "0",
+        "initial_margin_rate": "0.125",
+        "limit_price": "100",
+        "mark_price": "100",
+        "quantity": "0.00000001",
+        "reduce_only": false,
+        "usd_scale": 8
+      },
+      "name": "eight_decimal_fee_unit"
+    }
+  ],
+  "policy": "existing exact reserve expression; arithmetic only, no admission permission",
+  "production_activated": false,
+  "source_reference": "6010e920a168b35fccfc9ef9ee34e030b28b11d9:uta/reserve_kernel.py"
+}

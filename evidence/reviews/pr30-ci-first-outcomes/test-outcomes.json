@@ -1,0 +1,118 @@
+{
+  "failure_excerpts": [
+    {
+      "file": "run-44201524202-failure.sanitized.txt",
+      "redaction": "URLs, credential assignments and private key blocks are redacted; no such values occurred in this selected failure block.",
+      "scope": "Complete unittest failure section through final suite result.",
+      "sha256": "bf382ae1b218da5e2a82124c22fce932309c1d655d7924128896ea78f6096668"
+    },
+    {
+      "file": "run-44202048314-failure.sanitized.txt",
+      "redaction": "URLs, credential assignments and private key blocks are redacted; no such values occurred in this selected failure block.",
+      "scope": "Complete unittest failure section through final suite result.",
+      "sha256": "9d876a260e426b59b7253828a46bafdf200fc53eb028f8bc37d20801ba889848"
+    }
+  ],
+  "provenance": "Derived from the two original summary.json and unittest.txt members after provider digest, size and CRC validation. No tests were rerun by this reviewer.",
+  "summaries": [
+    {
+      "artifact_id": 14381483625,
+      "code_commit": "b5a68dc29122d5b07a2dccc0500125b48a902a96",
+      "duration_seconds": 420.908896442,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 1,
+      "finished_at": "2026-11-17T23:48:22.387447+00:00",
+      "integer_tests": [
+        {
+          "name": "test_fast_domain_boundaries_and_exact_decimal_wire_shape (test_reserve_integer.IntegerReserveTests.test_fast_domain_boundaries_and_exact_decimal_wire_shape)",
+          "status": "ok"
+        },
+        {
+          "name": "test_frozen_manual_examples (test_reserve_integer.IntegerReserveTests.test_frozen_manual_examples)",
+          "status": "ok"
+        },
+        {
+          "name": "test_reference_fallback_values_and_exception_types (test_reserve_integer.IntegerReserveTests.test_reference_fallback_values_and_exception_types)",
+          "status": "ok"
+        },
+        {
+          "name": "test_seeded_signed_decimal_differential_and_context_independence (test_reserve_integer.IntegerReserveTests.test_seeded_signed_decimal_differential_and_context_independence)",
+          "status": "ok"
+        },
+        {
+          "name": "test_subclasses_delegate_without_reading_unused_margin (test_reserve_integer.IntegerReserveTests.test_subclasses_delegate_without_reading_unused_margin)",
+          "status": "ok"
+        }
+      ],
+      "job_id": 134456555145,
+      "passed": false,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "run_id": 44201524202,
+      "skipped": 0,
+      "source_manifest_count": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:41:21.377973+00:00",
+      "test_log_sha256": "7851f7e050c01712ddf2a989dfd33703e1da844b37ff19dd5552a21ed97d0859",
+      "test_log_sha256_matches": true,
+      "tests_run": 1835,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": false,
+      "worker_exit_code": 1
+    },
+    {
+      "artifact_id": 14383105502,
+      "code_commit": "47302fc4250ac14adac51ab7a4ac7307d13d8f71",
+      "duration_seconds": 372.61760197700005,
+      "errors": 0,
+      "expected_failures": 0,
+      "failures": 1,
+      "finished_at": "2026-11-17T23:51:14.229362+00:00",
+      "integer_tests": [
+        {
+          "name": "test_fast_domain_boundaries_and_exact_decimal_wire_shape (test_reserve_integer.IntegerReserveTests.test_fast_domain_boundaries_and_exact_decimal_wire_shape)",
+          "status": "ok"
+        },
+        {
+          "name": "test_frozen_manual_examples (test_reserve_integer.IntegerReserveTests.test_frozen_manual_examples)",
+          "status": "ok"
+        },
+        {
+          "name": "test_reference_fallback_values_and_exception_types (test_reserve_integer.IntegerReserveTests.test_reference_fallback_values_and_exception_types)",
+          "status": "ok"
+        },
+        {
+          "name": "test_seeded_signed_decimal_differential_and_context_independence (test_reserve_integer.IntegerReserveTests.test_seeded_signed_decimal_differential_and_context_independence)",
+          "status": "ok"
+        },
+        {
+          "name": "test_subclasses_delegate_without_reading_unused_margin (test_reserve_integer.IntegerReserveTests.test_subclasses_delegate_without_reading_unused_margin)",
+          "status": "ok"
+        }
+      ],
+      "job_id": 134458366604,
+      "passed": false,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "run_id": 44202048314,
+      "skipped": 0,
+      "source_manifest_count": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:45:01.487253+00:00",
+      "test_log_sha256": "959bafbe271df63a2d8a9f35e90d985cdc03b5165c379c6c41f5c95f7e7982bb",
+      "test_log_sha256_matches": true,
+      "tests_run": 1835,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": false,
+      "worker_exit_code": 1
+    }
+  ],
+  "verdict": "CI remains failed; the two identical SH process recovery failures do not implicate an integer arithmetic test, and root cause is not established."
+}
