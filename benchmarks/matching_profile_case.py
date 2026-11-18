@@ -5,6 +5,7 @@ No worker, account-mode change, custom clock, native method patch or network.
 """
 from collections import Counter
 import cProfile
+import dis
 from datetime import datetime, timezone
 from decimal import Decimal
 from fractions import Fraction
@@ -14,6 +15,7 @@ from pathlib import Path
 import pstats
 import random
 import resource
+import sqlite3
 import sys
 import traceback
 from time import perf_counter_ns, process_time_ns
@@ -134,29 +136,116 @@ def reference_matches(original):
 
 
 class SqlObserver:
-    """Observation only; no SQL text retained and no application mutation."""
+    """Run-owned diagnostic: audit captures, local LINE attaches after connect.
+
+    Only original Database._connect is supported. No native method is replaced.
+    Unknown/unattached handles are fatal; observers never own/close connections.
+    """
+    TOOL_ID = 3
+    TOOL_NAME = "uta-matching-sql-observer"
+    INSTANCE_SEQUENCE = 0
+    MAX_PENDING = 16
+
     def __init__(self):
+        type(self).INSTANCE_SEQUENCE += 1
+        self.tool_name = self.TOOL_NAME + ":" + str(type(self).INSTANCE_SEQUENCE)
         self.phase = "setup"
-        self.events = Counter()
-        self.connections = Counter()
-        self.total_events = 0
-        self.failure = None
+        self.events, self.connections, self.handles, self.attempts, self.lines = (Counter() for unused in range(5))
+        self.total_events, self.total_lines = 0, 0
+        self.failure, self.monitoring, self.line_event = None, None, None
+        self.pending, self.unretained_pending = [], 0
+        self.active, self.started, self.closed = False, False, False
+        self.tool_owned, self.ever_owned, self.slot_released = False, False, False
+        self.connect_code = Database._connect.__code__
+        self.first_sql_line = None
+        self.line_callback = self._line
+        self.cleanup_error = None
 
     def install(self):
-        def audit(event, arguments):
-            if event == "sqlite3.connect/handle":
-                try:
-                    connection = arguments[0]
-                    connection.set_trace_callback(self._trace)
-                    self.connections[self.phase] += 1
-                except BaseException as error:
-                    self._first_fault("sqlite_trace_install_failed", "sqlite3.connect/handle", error)
-        sys.addaudithook(audit)
+        try:
+            require(not self.started and not self.closed, "observer cannot be installed twice")
+            self.started = True
+            sql_lines = [item.positions.lineno for item in dis.get_instructions(self.connect_code)
+                         if item.opname in {"LOAD_METHOD", "LOAD_ATTR"} and item.argval == "execute"
+                         and type(item.positions.lineno) is int]
+            require(sql_lines, "supported connect code must expose its explicit SQL boundary")
+            self.first_sql_line = min(sql_lines)
+            self.monitoring = getattr(sys, "monitoring", None)
+            require(self.monitoring is not None and all(callable(getattr(self.monitoring, name, None)) for name in
+                    ("get_tool", "use_tool_id", "register_callback", "set_local_events", "free_tool_id"))
+                    and callable(getattr(sys, "_getframe", None)), "Python3.12 monitoring/frame APIs are required")
+            self.line_event = getattr(getattr(self.monitoring, "events", None), "LINE", None)
+            require(type(self.line_event) is int and self.line_event > 0, "supported local LINE event is required")
+            if self.monitoring.get_tool(self.TOOL_ID) is not None:
+                self._first_fault("sqlite_monitor_slot_occupied", "sys.monitoring.use_tool_id")
+                raise RuntimeError("observer tool3 is occupied; no foreign tool is changed")
+            self.monitoring.use_tool_id(self.TOOL_ID, self.tool_name)
+            self.tool_owned = self.ever_owned = True
+            self.monitoring.register_callback(self.TOOL_ID, self.line_event, self.line_callback)
+            self.monitoring.set_local_events(self.TOOL_ID, self.connect_code, self.line_event)
+            sys.addaudithook(self._audit)
+            self.active = True
+        except BaseException as error:
+            self._first_fault("sqlite_monitor_install_failed", "sys.monitoring.install", error)
+            self.close()
+            self.raise_fault()
+
+    def _audit(self, event, arguments):
+        if not self.active or event != "sqlite3.connect/handle":
+            return
+        try:
+            require(type(arguments) is tuple and len(arguments) == 1, "unexpected connection audit shape")
+            connection = arguments[0]
+            self.handles[self.phase] += 1
+            caller = sys._getframe(1)
+            if len(self.pending) >= self.MAX_PENDING:
+                self.unretained_pending += 1
+                self._first_fault("sqlite_pending_capacity_exceeded", event)
+                return
+            if any(item[0] is connection for item in self.pending):
+                self.unretained_pending += 1
+                self._first_fault("sqlite_duplicate_pending_handle", event)
+                return
+            self.pending.append((connection, caller, self.phase))
+            if caller.f_code is not self.connect_code or type(connection) is not sqlite3.Connection:
+                self._first_fault("sqlite_unknown_connect_callsite", event)
+            # This is deliberately capture-only. Connection.__init__ may still
+            # be running here; no SQLite method or SQL is invoked by this hook.
+        except BaseException as error:
+            self._first_fault("sqlite_handle_capture_failed", event, error)
+
+    def _line(self, code, line):
+        if not self.active:
+            return
+        try:
+            self.lines[self.phase] += 1
+            self.total_lines += 1
+            require(code is self.connect_code, "unexpected local monitoring code object")
+            if self.total_lines > 1000000:
+                self._first_fault("sqlite_monitor_event_budget_exceeded", "sys.monitoring.LINE")
+            if self.failure is not None or not self.pending:
+                return
+            caller = sys._getframe(1)
+            require(caller.f_code is code, "local LINE caller code differs")
+            require(type(line) is int and line <= self.first_sql_line,
+                    "pending connection reached a line after first explicit SQL; reject late attach")
+            require(all(item[1] is caller and item[2] == self.phase for item in self.pending),
+                    "pending handle belongs to another frame or phase")
+            pending, self.pending = self.pending, []
+            # A native C connect call cannot deliver a local Python LINE until
+            # it has returned. This runs before storage's first explicit PRAGMA.
+            for connection, owner, phase in pending:
+                self.attempts[phase] += 1
+                connection.set_trace_callback(self._trace)
+                self.connections[phase] += 1
+        except BaseException as error:
+            # No retry/replacement: attempts/count mismatch stays fatal.
+            self._first_fault("sqlite_trace_install_failed", "post_connect_local_LINE", error)
 
     def _trace(self, statement):
+        if not self.active:
+            return
         try:
-            # SQLite can repeat expanded statements for triggers. These are
-            # explicitly trace events, never logical execute/confirmed counts.
             beginning = statement[:256].lstrip()
             prefix = beginning.split(None, 1)[0].upper() if beginning else "EMPTY"
             category = prefix if prefix in {"SELECT", "INSERT", "UPDATE", "DELETE", "BEGIN", "COMMIT",
@@ -166,8 +255,6 @@ class SqlObserver:
             if self.total_events > 1000000:
                 self._first_fault("sqlite_trace_event_budget_exceeded", "sqlite_trace_counter_limit")
         except BaseException as error:
-            # SQLite swallows trace callback errors. Preserve the first fault,
-            # never SQL text, and keep the original incomplete-observation gate.
             self._first_fault("sqlite_trace_callback_failed", "sqlite_trace_callback", error)
 
     @staticmethod
@@ -181,6 +268,8 @@ class SqlObserver:
             return
         fault = {"category": category, "phase": self.phase, "event": event,
             "total_trace_events": self.total_events, "connections_in_phase": self.connections[self.phase],
+            "handles_in_phase": self.handles[self.phase], "pending_references": len(self.pending),
+            "unretained_pending": self.unretained_pending,
             "trace_events_in_phase": {name: count for (phase, name), count in self.events.items() if phase == self.phase},
             "exception": None, "expanded_SQL_statement_copied": False, "first_fault_never_overwritten": True}
         # Latch before formatting so even diagnostics failures cannot erase the
@@ -189,19 +278,73 @@ class SqlObserver:
         if error is not None:
             try:
                 fault["exception"] = {"type": self._bounded(type(error).__module__ + "." + type(error).__qualname__, 128),
-                    "message": self._bounded(str(error), 512), "stack_limit_frames": 6,
-                    "stack": [{"file": self._bounded(frame.filename, 256), "function": self._bounded(frame.name, 128),
-                               "line": frame.lineno} for frame in traceback.extract_tb(error.__traceback__, limit=6)]}
+                                      "message": None, "stack_limit_frames": 6, "stack": []}
+                fault["exception"]["message"] = self._bounded(str(error), 512)
+                fault["exception"]["stack"] = [{"file": self._bounded(frame.filename, 256),
+                    "function": self._bounded(frame.name, 128), "line": frame.lineno}
+                    for frame in traceback.extract_tb(error.__traceback__, limit=6)]
             except BaseException as detail_error:
                 fault["detail_capture_failed"] = self._bounded(type(detail_error).__name__, 128)
 
-    def snapshot(self):
+    def raise_fault(self):
         if self.failure is not None:
             raise AssertionError("SQLite trace observation became incomplete; first_fault="
                                  + canonical(self.failure).decode("ascii"))
+
+    def snapshot(self):
+        try:
+            require(self.active and self.tool_owned and self.monitoring.get_tool(self.TOOL_ID) == self.tool_name,
+                    "observer is inactive or monitor tool identity changed")
+        except BaseException as error:
+            self._first_fault("sqlite_observer_inactive_or_tool_lost", "observer.snapshot", error)
+        if self.pending or self.unretained_pending:
+            self._first_fault("sqlite_unattached_pending_handle", "observer.snapshot")
+        if self.handles != self.connections or self.attempts != self.connections or not self.handles:
+            self._first_fault("sqlite_handle_attachment_count_mismatch", "observer.snapshot")
+        if self.events[(self.phase, "PRAGMA")] < self.connections[self.phase]:
+            self._first_fault("sqlite_connection_setup_trace_incomplete", "observer.snapshot")
+        self.raise_fault()
         return {"phase": self.phase, "events": {category: count for (phase, category), count in self.events.items()
                 if phase == self.phase}, "connections": self.connections[self.phase],
-                "counts_are_trace_events_including_trigger_repeats": True}
+                "handles_observed": self.handles[self.phase], "attach_attempts": self.attempts[self.phase],
+                "pending_handles": 0, "local_LINE_events": self.lines[self.phase],
+                "monitor_tool_id": self.TOOL_ID, "monitor_instance_label": self.tool_name,
+                "monitor_code_object": "uta.storage.Database._connect",
+                "first_explicit_SQL_line_guard": self.first_sql_line,
+                "counts_are_trace_events_including_trigger_repeats": True,
+                "attach_after_connect_before_first_explicit_SQL": True,
+                "uses_local_monitoring_not_legacy_settrace": True,
+                "cProfile_coexistence_requires_native_phase_validation": True}
+
+    def close(self):
+        self.active = False  # Unremovable old audit hooks become inert first.
+        pending_count = len(self.pending) + self.unretained_pending
+        if pending_count or self.handles != self.connections or self.attempts != self.connections:
+            self._first_fault("sqlite_incomplete_on_close", "observer.close")
+        self.pending.clear()  # Drop connection/frame strong references, never close a native connection.
+        self.unretained_pending = 0
+        if self.tool_owned:
+            try:
+                require(self.monitoring.get_tool(self.TOOL_ID) == self.tool_name,
+                        "owned monitor slot identity changed; do not touch a foreign tool")
+                self.monitoring.set_local_events(self.TOOL_ID, self.connect_code, 0)
+                self.monitoring.register_callback(self.TOOL_ID, self.line_event, None)
+                self.monitoring.free_tool_id(self.TOOL_ID)
+                self.tool_owned, self.slot_released = False, True
+                require(self.monitoring.get_tool(self.TOOL_ID) is None, "tool slot was not empty after own release")
+            except BaseException as error:
+                self.cleanup_error = {"type": self._bounded(type(error).__name__, 128),
+                                      "message": self._bounded(str(error), 512)}
+                self._first_fault("sqlite_monitor_cleanup_failed", "observer.close", error)
+        self.closed = True
+        return {"active": self.active, "closed": self.closed, "pending_references": len(self.pending),
+                "unattached_at_close": pending_count, "monitor_instance_label": self.tool_name,
+                "ever_owned_tool": self.ever_owned,
+                "owned_tool_released": self.slot_released, "tool_owned_after_close": self.tool_owned,
+                "all_handles_attached": self.handles == self.connections and self.attempts == self.connections,
+                "handles_by_phase": dict(self.handles), "attachments_by_phase": dict(self.connections),
+                "attempts_by_phase": dict(self.attempts), "local_LINE_events_by_phase": dict(self.lines),
+                "first_fault": self.failure, "cleanup_error": self.cleanup_error}
 
 
 def profile_rows(profiler):
@@ -237,6 +380,9 @@ def profile_rows(profiler):
     return {"all_functions": sorted(rows, key=lambda row: (-row["cumulative_seconds"], row["file"], row["line"], row["function"])),
             "nonoverlapping_self_seconds_by_group": dict(groups), "profiler_total_self_seconds": stats.total_tt,
             "cumulative_function_times_overlap_do_not_sum": True,
+            "observer_wall_cost_includes_audit_SQLtrace_and_local_LINE": True,
+            "monitor_callback_time_separately_proven_by_cProfile": False,
+            "monitor_callback_time_note": "Runtime profiling can suppress events inside monitoring callbacks; wall includes all overhead but function rows do not prove a separate complete observer duration.",
             "sqlite_commit_seconds": None, "fsync_seconds": None,
             "unidentified_costs": "stdlib cProfile exposes combined Connection.execute C time; trace event counts cannot isolate COMMIT/fsync duration"}
 
@@ -366,16 +512,14 @@ class Fixture:
 
 
 
-def run_observer_setup(business, checkpoint, save_report, *, book_size, mode):
+def _run_observer_setup_observed(business, checkpoint, *, book_size, mode, observer):
     """One fresh authority, setup and snapshot only; never calls run_profile.
 
     A captured observer fault remains a failed incomplete observation (exit1).
     Non-reproduction exits after setup and grants no matching/profile acceptance.
     """
     require(type(book_size) is int and book_size == 32 and mode == "scan", "setup-only requires exactly32 scan")
-    observer = SqlObserver()
     observer.phase = "setup-32-scan"
-    observer.install()
     wall, cpu = perf_counter_ns(), process_time_ns()
     fixture = Fixture(business, 32, "scan", checkpoint, observer)
     fixture.setup(workload(32))
@@ -400,17 +544,44 @@ def run_observer_setup(business, checkpoint, save_report, *, book_size, mode):
         "all_functional_checks_passed": False, "component_profile_passed": False,
         "default_scan_regression_accepted": False, "throughput_capacity_accepted": False,
         "production_approved": False, "visibility": "PRIVATE_LOCAL_NO_AUTOMATIC_PUBLICATION"}
-    save_report("observer-setup.json", result)
     # There is no next quote, verify, profiler, matching, alternate mode or
     # continuation even when the observer fault is not reproduced.
     return result
 
 
+
+def run_observer_setup(business, checkpoint, save_report, *, book_size, mode):
+    observer = SqlObserver()
+    try:
+        observer.install()
+        result = _run_observer_setup_observed(business, checkpoint, book_size=book_size, mode=mode, observer=observer)
+    finally:
+        lifecycle = observer.close()
+        save_report("observer-lifecycle.json", lifecycle)
+    if observer.failure is not None:
+        result.update(diagnostic_outcome="OBSERVER_FAULT_CAPTURED", exit_status=1, observer_complete=False,
+                      observer_first_fault=observer.failure)
+    result["observer_lifecycle"] = lifecycle
+    save_report("observer-setup.json", result)
+    return result
+
+
 def run_profile(business, checkpoint, save_report, profiling_window, profile_set):
+    observer = SqlObserver()
+    try:
+        observer.install()
+        result = _run_profile_observed(business, checkpoint, save_report, profiling_window, profile_set, observer)
+    finally:
+        lifecycle = observer.close()
+        save_report("observer-lifecycle.json", lifecycle)
+    observer.raise_fault()
+    result["observer_lifecycle"] = lifecycle
+    return result
+
+
+def _run_profile_observed(business, checkpoint, save_report, profiling_window, profile_set, observer):
     require(profile_set in {"current", "original-scan"}, "unknown exact profile set")
     schedule = SCHEDULE if profile_set == "current" else ((32, "original-scan"), (128, "original-scan"))
-    observer = SqlObserver()
-    observer.install()
     reports = {}
     for size, mode in schedule:
         key = str(size) + "-" + mode

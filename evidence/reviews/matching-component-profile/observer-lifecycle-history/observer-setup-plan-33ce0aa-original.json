@@ -1,0 +1,144 @@
+{
+  "budget_proposal": {
+    "CPU_ID": "root records actual ID, no assumption CPU1",
+    "Python_boundary_seconds": 20,
+    "SQL_authorities": "only new fixed32 scan authority under fresh business scope",
+    "application_thread_starts": 0,
+    "blocked_C_IO_hard_realtime_guarantee": false,
+    "drain_max_seconds_external": 2,
+    "explicit_proc_PID_pidfd_signal": 0,
+    "hard_timeout_seconds_external": 20,
+    "kernel_quota_proven": false,
+    "logical_allocations_bytes": {
+      "business": 16777216,
+      "external_capture_cleanup_reserved": 5242880,
+      "reports": 1048576,
+      "source": 2097152
+    },
+    "logical_total_bytes": 25165824,
+    "network_socket_TLS_AuthDB": 0,
+    "one_actual_allowed_CPU": true,
+    "raw_outer_bytes": 1024,
+    "raw_target_bytes_including_trailer": 130048,
+    "shared_raw_bytes": 131072,
+    "target_children": 0,
+    "target_raw_trailer_reserve": 512,
+    "worker_starts": 0
+  },
+  "deployment": "diagnostic source only; no runtime or mode change",
+  "entry": {
+    "book_size": 32,
+    "cannot_call_run_profile": true,
+    "cannot_fallthrough_on_nonreproduction": true,
+    "case_function": "run_observer_setup",
+    "driver": "benchmarks/matching_profile_once.py",
+    "exact_argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-profile-observer-fix/benchmarks/matching_profile_once.py",
+      "--setup-only",
+      "--profile-set",
+      "observer-setup",
+      "--book-size",
+      "32",
+      "--book-selection",
+      "scan",
+      "--run-root",
+      "/workspace/uta-observer-setup-33ce0aa-once01",
+      "--source-commit",
+      "33ce0aabb9a9a5d9061707f71cea97e7c8763995",
+      "--approved-manifest-sha256",
+      "4c795dcc684e2ac188cd0659554ff4ba2c6b4069b3d7e2ea4c0ecc7e8d8e7f02"
+    ],
+    "fixed_setup_only": true,
+    "outer_startgate": "none; independent root timeout/taskset scope, refuses full-profile host gate flag",
+    "selection": "scan"
+  },
+  "execution_authorized": false,
+  "fresh_run_root": "/workspace/uta-observer-setup-33ce0aa-once01",
+  "historical_H254_cause": "UNKNOWN_UNCHANGED",
+  "kind": "PROPOSED_SINGLE_FRESH_OBSERVER_SETUP_NATIVE_SCOPE_NOT_PROFILE",
+  "manifest": {
+    "bytes": 22691,
+    "path": "evidence/reviews/matching-component-profile/source-manifest-observer-setup.json",
+    "sha256": "4c795dcc684e2ac188cd0659554ff4ba2c6b4069b3d7e2ea4c0ecc7e8d8e7f02",
+    "source_bytes": 1347669,
+    "source_count": 63
+  },
+  "native_invocations": 0,
+  "outcomes": {
+    "FAULT_NOT_REPRODUCED": {
+      "actual_target_exit_required": 0,
+      "profile_pass": false,
+      "stop_after_setup": true
+    },
+    "OBSERVER_FAULT_CAPTURED": {
+      "actual_target_exit_required": 1,
+      "first_real_new_fault_retained": true,
+      "observation_complete": false,
+      "profile_pass": false
+    },
+    "timeout_or_unknown_or_unexpected_error": {
+      "acceptance": false,
+      "retry": false,
+      "stop_and_preserve": true
+    }
+  },
+  "production_approved": false,
+  "public_base": "c7a266002fb7db996e1b7bedc1b86bc0364e32dd",
+  "pure_plan_separate": "observer-pure-plan.json",
+  "required_external_evidence": [
+    "full exact argv",
+    "actual outer monotonic start/end/elapsed",
+    "actual target exit and reap, not inferred from result",
+    "original complete raw stdout/stderr under shared cap",
+    "source/manifest before and after",
+    "all new DB/nonce payload private local only; no automatic publication"
+  ],
+  "rollback": "stop plan, retain original private outputs, remove only diagnostic source additions",
+  "runtime_contract_expected_only": {
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "expected_only_not_observed_by_this_preparation": true,
+    "sqlite_version": "3.53.1",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "runtime_current_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "schema": 1,
+  "source_commit": "33ce0aabb9a9a5d9061707f71cea97e7c8763995",
+  "status": "CODE_ONLY_NOT_RUN_PENDING_PEER_CLOSURE_AND_SEPARATE_EXPLICIT_ROOT_GO",
+  "throughput_capacity_accepted": false,
+  "workload": {
+    "SQLite_journal": "WAL",
+    "SQLite_synchronous": "FULL",
+    "TTL_seconds": 5,
+    "USD_deposit_per_account": "1000000",
+    "USD_unit_digits": 8,
+    "accounts": 2,
+    "aggregate_calls": 0,
+    "clock": "original native UTC",
+    "decision_audit": true,
+    "fee_rate": "original0.0004",
+    "fresh_authorities": 1,
+    "future_skew_seconds": 1,
+    "matching_calls": 0,
+    "modes": [
+      "scan"
+    ],
+    "old_baseline_calls": 0,
+    "orders": 32,
+    "profiler_enabled": false,
+    "quantity_distribution": [
+      1,
+      2,
+      5
+    ],
+    "quote_cadence": "original initial quote plus one before each submit; no post-setup quote",
+    "retries": 0,
+    "seed": 17055,
+    "symbol": "BTC-PERP",
+    "timed_matching_calls": 0,
+    "warmup": 0
+  }
+}

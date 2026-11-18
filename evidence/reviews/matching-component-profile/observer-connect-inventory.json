@@ -1,7 +1,7 @@
 {
   "SQL_probes": 0,
   "UTA_files_AST_scanned": 61,
-  "candidate_implementation_status": "WAIT_INDEPENDENT_NATIVE_RAW_CLOSE_BEFORE_FREEZE",
+  "candidate_implementation_status": "CODE_ONLY_POST_CONNECT_LOCAL_LINE_CANDIDATE_NOT_EXECUTED",
   "diagnostic_source_commit": "33ce0aabb9a9a5d9061707f71cea97e7c8763995",
   "direct_connect_sites": [
     {
@@ -109,9 +109,16 @@
     "first explicit Python SQL: PRAGMA foreign_keys = ON"
   ],
   "fixture_connect_codeobject": "uta.storage.Database._connect",
+  "independent_prior_native_RAW": "6903909c388cc882e3ec822f07438987207e9588: CAPTURE_VERIFIED/OBSERVER_INCOMPLETE, not a profile pass",
   "kind": "STATIC_CONNECT_COVERAGE_INVENTORY_NOT_ATTACH_IMPLEMENTATION",
   "private_H254_cause": "UNKNOWN_UNCHANGED",
   "publish_private_database": "tempfile.mkstemp/fchmod/fsync/link/unlink only, zero SQLite connect calls",
   "runtime_current_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "supported_native_SQL_boundary": {
+    "connect_end_line": 137,
+    "connect_start_line": 136,
+    "first_explicit_execute_line": 144,
+    "source": "uta/storage.py pinned runtime C; candidate derives guard from original code instruction positions"
+  },
   "unexercised_connect_sites_policy": "Audit every handle; any unknown/unattached pending handle must fail snapshot. No silent uncounted source acceptance. Do not monitor unexercised services for this component."
 }

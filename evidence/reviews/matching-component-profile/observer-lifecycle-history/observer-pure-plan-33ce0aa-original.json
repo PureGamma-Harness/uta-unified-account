@@ -1,0 +1,49 @@
+{
+  "budget_proposal": {
+    "SQL": 0,
+    "UTA_or_SQLite_import": 0,
+    "children": 0,
+    "drain_max_seconds_external": 2,
+    "hard_timeout_seconds_external": 10,
+    "logical_total_bytes": 8388608,
+    "network": 0,
+    "new_threads": 0,
+    "one_CPU_external_taskset": true,
+    "proc_PID_operations": 0,
+    "raw_total_bytes_external_cap": 32768
+  },
+  "cases": 4,
+  "claims": "Fault record semantics and unchanged fake success shape only; not native lifecycle validation or historical root cause",
+  "exact_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-matching-profile-observer-fix/benchmarks/test_matching_profile_observer.py",
+    "ObserverContracts.test_attach_fault_bounded_and_snapshot_still_rejects",
+    "ObserverContracts.test_callback_fault_is_first_and_cannot_be_overwritten",
+    "ObserverContracts.test_event_budget_fault_remains_fatal",
+    "ObserverContracts.test_success_counts_and_snapshot_unchanged"
+  ],
+  "execution_authorized": false,
+  "invocations": 0,
+  "kind": "SEPARATE_EXACT_FOUR_PURE_FAKE_CONTRACT_PLAN",
+  "manifest": {
+    "bytes": 1145,
+    "inputs": 2,
+    "path": "evidence/reviews/matching-component-profile/observer-pure-manifest.json",
+    "sha256": "5e6d9db16a7c234a6c397561701d5eb732443536e9d2be000ee8fbf9a1b3be63"
+  },
+  "method_names": [
+    "ObserverContracts.test_attach_fault_bounded_and_snapshot_still_rejects",
+    "ObserverContracts.test_callback_fault_is_first_and_cannot_be_overwritten",
+    "ObserverContracts.test_event_budget_fault_remains_fatal",
+    "ObserverContracts.test_success_counts_and_snapshot_unchanged"
+  ],
+  "native_plan_separate": "observer-setup-plan.json",
+  "production_approved": false,
+  "schema": 1,
+  "source_commit": "33ce0aabb9a9a5d9061707f71cea97e7c8763995",
+  "source_usage": "AST extraction compiles only SqlObserver class with synthetic hook/connection/event objects; no actual sqlite3 capability probe",
+  "status": "CODE_ONLY_NOT_RUN_PENDING_INDEPENDENT_REVIEW_AND_ROOT_GO"
+}

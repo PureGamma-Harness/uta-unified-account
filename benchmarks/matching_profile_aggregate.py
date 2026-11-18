@@ -234,6 +234,48 @@ def outside(path, root):
         return True
 
 
+
+def observer_evidence(result, loaded):
+    """Independent metadata contract; no observer/SQLite import or execution."""
+    life = result.get("observer_lifecycle")
+    require(type(life) is dict and life.get("active") is False and life.get("closed") is True
+            and type(life.get("pending_references")) is int and life["pending_references"] == 0
+            and type(life.get("unattached_at_close")) is int and life["unattached_at_close"] == 0
+            and life.get("ever_owned_tool") is True and life.get("owned_tool_released") is True
+            and life.get("tool_owned_after_close") is False and life.get("all_handles_attached") is True
+            and life.get("first_fault") is None and life.get("cleanup_error") is None,
+            "observer lifecycle was incomplete or its own monitor was not released")
+    expected = {phase + "-" + str(size) + "-" + mode for size, mode in loaded
+                for phase in ("setup", "matching", "verification")}
+    handles, attachments, attempts = (life.get(name) for name in
+        ("handles_by_phase", "attachments_by_phase", "attempts_by_phase"))
+    require(all(type(value) is dict and set(value) == expected
+                and all(type(count) is int and count > 0 for count in value.values())
+                for value in (handles, attachments, attempts))
+            and canonical(handles) == canonical(attachments) == canonical(attempts),
+            "not every known native connection handle has one successful attachment")
+    for (size, mode), (unused_raw, report) in loaded.items():
+        for stage in ("setup", "matching", "verification"):
+            snapshot = report[stage]["sqlite_observation"]
+            phase = stage + "-" + str(size) + "-" + mode
+            values = [snapshot.get(key) for key in ("connections", "handles_observed", "attach_attempts")]
+            require(snapshot.get("phase") == phase and all(type(value) is int and value > 0 for value in values)
+                    and values[0] == values[1] == values[2] and values[0] <= handles[phase]
+                    and (stage == "setup" or values[0] == handles[phase])
+                    and type(snapshot.get("pending_handles")) is int and snapshot["pending_handles"] == 0
+                    and type(snapshot.get("monitor_tool_id")) is int and snapshot["monitor_tool_id"] == 3
+                    and snapshot.get("monitor_code_object") == "uta.storage.Database._connect"
+                    and snapshot.get("monitor_instance_label") == life.get("monitor_instance_label")
+                    and type(snapshot.get("first_explicit_SQL_line_guard")) is int
+                    and snapshot["first_explicit_SQL_line_guard"] == 144
+                    and type(snapshot.get("local_LINE_events")) is int and snapshot["local_LINE_events"] >= values[0]
+                    and snapshot.get("counts_are_trace_events_including_trigger_repeats") is True
+                    and snapshot.get("uses_local_monitoring_not_legacy_settrace") is True
+                    and type(snapshot.get("events")) is dict
+                    and type(snapshot["events"].get("PRAGMA")) is int and snapshot["events"]["PRAGMA"] >= values[0],
+                    "incomplete per-phase connection/first-SQL trace observation")
+
+
 def target(root, host_receipt, other_root, expected_set, expected_control):
     require(root.is_absolute() and root.parent == Path("/workspace") and root.resolve() == root,
             "target must be the declared direct fresh run namespace")
@@ -317,7 +359,8 @@ def target(root, host_receipt, other_root, expected_set, expected_control):
             for point in ("before_reopen", "after_reopen"):
                 financial_risk(report["verification"][point])
             loaded[(size, mode)] = (raw, report)
-    return result, loaded, {"host_completion": {"bytes": len(host_raw), "sha256": sha256(host_raw).hexdigest()},
+    observer_evidence(result, loaded)
+    return result, loaded, {"observer_metadata_contract_verified": True, "host_completion": {"bytes": len(host_raw), "sha256": sha256(host_raw).hexdigest()},
                             "result": {"bytes": len(result_raw), "sha256": sha256(result_raw).hexdigest()},
                             "inventory": {"bytes": len(inventory_raw), "sha256": sha256(inventory_raw).hexdigest()}}
 
