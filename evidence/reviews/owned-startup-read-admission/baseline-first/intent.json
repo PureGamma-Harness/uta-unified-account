@@ -1,0 +1,62 @@
+{
+  "CPU1_requested": true,
+  "command": [
+    "timeout",
+    "10s",
+    "taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-I",
+    "-S",
+    "-B",
+    "evidence/reviews/owned-startup-read-admission/baseline_snapshot_model.py"
+  ],
+  "expected_conditional_baseline_RED": 3,
+  "first_and_only": true,
+  "scope": "PURE_SOURCE_CORRESPONDING_MODEL_NO_SQL_NATIVE_THREAD_PROCESS_SIGNAL_NETWORK_OR_SLEEP",
+  "source_head": "a95838bc8a3595be98aa0092eb73cd69162768a4",
+  "source_pins_before": {
+    "evidence/reviews/owned-startup-read-admission/baseline_snapshot_model.py": {
+      "bytes": 10694,
+      "sha256": "322b2d14b3a6d6bfa76fec492eb432bc561746d378c7fc804776a2ef3046afa2"
+    },
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7"
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 8761,
+      "sha256": "bd07f4e2c855bd948d8d47db5b45376d963d8b76cd77967fdb54adc8fcfeb3ce"
+    },
+    "uta/credit.py": {
+      "bytes": 31349,
+      "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+    },
+    "uta/durable_batches.py": {
+      "bytes": 27476,
+      "sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32"
+    },
+    "uta/durable_process.py": {
+      "bytes": 106136,
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    "uta/service.py": {
+      "bytes": 85864,
+      "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+    },
+    "uta/startup.py": {
+      "bytes": 18728,
+      "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d"
+    },
+    "uta/storage.py": {
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 46393,
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+    }
+  },
+  "wall_seconds": 10
+}

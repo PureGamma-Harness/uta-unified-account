@@ -1,0 +1,40 @@
+test_clock_regression_and_expiry_equality_still_refuse (__main__.BaselineSnapshotModelTests.test_clock_regression_and_expiry_equality_still_refuse) ... ok
+test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) ... 
+  test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=0, renew=200000000, assertion=400000000) ... FAIL
+  test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=100000000, renew=300000000, assertion=450000000) ... FAIL
+  test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=300000000, renew=350000000, assertion=700000000) ... FAIL
+test_current_identity_changes_cannot_be_mixed_into_old_certificate (__main__.BaselineSnapshotModelTests.test_current_identity_changes_cannot_be_mixed_into_old_certificate) ... ok
+test_final_freshness_and_full_verification_are_not_cached (__main__.BaselineSnapshotModelTests.test_final_freshness_and_full_verification_are_not_cached) ... ok
+test_financial_watermark_policy_has_an_explicit_stability_obligation (__main__.BaselineSnapshotModelTests.test_financial_watermark_policy_has_an_explicit_stability_obligation) ... ok
+test_genuinely_expired_token_never_renews_or_revives (__main__.BaselineSnapshotModelTests.test_genuinely_expired_token_never_renews_or_revives) ... ok
+test_keeper_unknown_failure_or_revocation_never_reaches_ready (__main__.BaselineSnapshotModelTests.test_keeper_unknown_failure_or_revocation_never_reaches_ready) ... ok
+test_snapshot_identity_changes_are_not_authorized_by_live_current_owner (__main__.BaselineSnapshotModelTests.test_snapshot_identity_changes_are_not_authorized_by_live_current_owner) ... ok
+
+======================================================================
+FAIL: test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=0, renew=200000000, assertion=400000000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/baseline_snapshot_model.py", line 139, in test_committed_same_token_renewal_can_leave_old_snapshot_expired
+    self.assertTrue(baseline_admitted,
+AssertionError: False is not true : conditional baseline false rejection: lease_expired
+
+======================================================================
+FAIL: test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=100000000, renew=300000000, assertion=450000000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/baseline_snapshot_model.py", line 139, in test_committed_same_token_renewal_can_leave_old_snapshot_expired
+    self.assertTrue(baseline_admitted,
+AssertionError: False is not true : conditional baseline false rejection: lease_expired
+
+======================================================================
+FAIL: test_committed_same_token_renewal_can_leave_old_snapshot_expired (__main__.BaselineSnapshotModelTests.test_committed_same_token_renewal_can_leave_old_snapshot_expired) (snapshot=300000000, renew=350000000, assertion=700000000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/baseline_snapshot_model.py", line 139, in test_committed_same_token_renewal_can_leave_old_snapshot_expired
+    self.assertTrue(baseline_admitted,
+AssertionError: False is not true : conditional baseline false rejection: lease_expired
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.012s
+
+FAILED (failures=3)

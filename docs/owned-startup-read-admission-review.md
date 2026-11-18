@@ -122,6 +122,25 @@ keeper uncertainty, revocation, full verification, watermark change and final
 freshness. All numeric lease values stay0.4s. The model is NOT_RUN at source
 freeze; it supplies no native, financial or original-cause approval.
 
+### First baseline result retained
+
+The separately root-authorized first execution used frozen source
+`a95838bc8a3595be98aa0092eb73cd69162768a4` once: eight methods/30 small traces,
+27 matching controls and three expected conditional RED, zero errors, exit1.
+Unittest reported0.012s; outer elapsed76,146,311ns. All ten source pins match
+before and after. CPU1 was requested through taskset; child affinity was not
+independently sampled. Complete stdout391B/SHA256
+`c3dcbaf5cf926db6168f706f08083649776cbd21f984940971166dc5f18fc358` and
+stderr4,402B/SHA256
+`76b19794a73a69af207dda7eb01226a68418ef7feb0382240b4637e6fd06fd47`,
+intent and execution are preserved under baseline-first. The preparation plan's
+NOT_RUN field remains the original source-freeze state, not the current result.
+
+The three RED are conditional source-admissible witnesses, not observed native
+failures or a proof of either original CI error's cause. No original test or
+runtime, TTL, keeper interval, deadline or expected rejection was changed. The
+first result is not rerun or converted into a successful baseline.
+
 ## Next implementation gate and rollback
 
 After the first witness is sealed, a minimal CODE proposal may add a private
