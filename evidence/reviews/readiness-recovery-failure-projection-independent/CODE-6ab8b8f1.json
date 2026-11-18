@@ -1,0 +1,90 @@
+{
+  "CI_authorized_by_this_report": false,
+  "activity": {
+    "CI": 0,
+    "SQL_or_DB_open": 0,
+    "actors_or_signals": 0,
+    "actual_diagnostics_call": 0,
+    "candidate_source_or_main_index_edits": 0,
+    "network": 0,
+    "new_quote": 0,
+    "proc_or_PID_query": 0,
+    "target_compile": 0,
+    "target_import": 0,
+    "target_test_or_formatter_execution": 0
+  },
+  "both_candidate_author_physical_equal_Git": true,
+  "candidate_pins": {
+    "docs/readiness-recovery-failure-projection.md": {
+      "bytes": 2300,
+      "sha256": "68344061cb4e9111cd742b03e800cff0faa03b631c1f98982c07d39609729c35"
+    },
+    "tests/test_process_readiness.py": {
+      "bytes": 18451,
+      "sha256": "fd0e20e858fef5bdcfa7542d037a3b6d4c937550dd55f7fe9dd8cc40e2101d7d"
+    }
+  },
+  "exact_parent": "16f64fec1d2fba638ea99a6414cf8778f9638537",
+  "execution_authorized": false,
+  "formatter_source_review": {
+    "actual_formatter_execution": "NOT_RUN",
+    "arbitrary_input_text_or_unknown_objects_serialized": false,
+    "control_bool_or_None_flags": 2,
+    "gate_counts_range": [
+      0,
+      2
+    ],
+    "identity_path_timestamp_nonce_or_raw_exception_fields_copied": false,
+    "projection_failure": "FIXED_CONSTANT_JSON_WITH_NO_EXCEPTION_CONTENT",
+    "reason_value_type": "EXACT_NATIVE_STR_IN_FIXED_SET_ELSE_LITERAL_OTHER",
+    "reason_whitelist_count": 22,
+    "row_truncation_boolean": true,
+    "top_bool_or_None_flags": 5,
+    "unchanged": true,
+    "worker_gate_keys": 6,
+    "worker_rows_maximum": 2
+  },
+  "historical_evidence": {
+    "failure_reason": "UNDETERMINED_MISSING_ORIGINAL_FINAL_REPORT",
+    "first_PR": "SUCCESS_RETAINED",
+    "first_push": "FAIL_RETAINED",
+    "future_pass_explains_old_failure": false,
+    "historical_logs_provenance": "ROOT_COLLECTION_AND_DELIVERY_DOCUMENT_NOT_RECOLLECTED_HERE",
+    "independent_RAW_review": "SEPARATE",
+    "prior_wait_observation_substitutes_for_missing_snapshot": false
+  },
+  "kind": "independent_same_observation_readiness_message_static_CODE_review",
+  "production_approved": false,
+  "recommendation": "No static CODE blocker to root deciding a separate first normal CI. No readiness correctness fix or historical cause is established.",
+  "review_document": {
+    "bytes": 3165,
+    "path": "docs/readiness-recovery-failure-projection-independent-review.md",
+    "sha256": "19b60c80ed5c9b2d97c48067fac7216cbca88bf45624e0a730dcbd2f2e418079"
+  },
+  "reviewed_commit": "6ab8b8f10e2ebcc63ef190a1652576eec8942db2",
+  "rollback": "Revert two assertion instrumentation lines and new document only; no runtime, fixture, authority or financial history change.",
+  "schema": 1,
+  "semantic_checks": {
+    "all_other_methods_imports_and_formatter_AST_equal_parent": true,
+    "formatter_eager_message_evaluation_does_not_resample_or_change_report": true,
+    "method_diagnostics_calls_after": 2,
+    "method_diagnostics_calls_before": 2,
+    "new_wait_retry_predicate_quote_TTL_lease_timeout_cleanup_or_CI_change": false,
+    "original_diagnostics_expression_AST_equal": true,
+    "other_repository_paths_changed": 0,
+    "post_recovery_observation_calls_after": 1,
+    "post_recovery_observation_calls_before": 1,
+    "runtime67_and_financial29_tests": "UNCHANGED_BY_EXACT_TWO_PATH_DIFF_NOT_REREAD",
+    "same_financial_ready_assertion_value": true,
+    "same_local_report_object_used_for_message": true,
+    "whole_module_AST_equal_after_only_tail_restoration": true
+  },
+  "source_boundary": {
+    "exact_two_paths_plus_parent_test_blob_only": true,
+    "isolated_exact_path_sparse_checkout": true,
+    "primary_source_blob_bytes": 39133,
+    "review_source_limit_bytes": 1048576,
+    "whole_tree_blob_reads": 0
+  },
+  "status": "PASS_STATIC_NO_BLOCKER"
+}

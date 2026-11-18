@@ -1,0 +1,108 @@
+{
+  "collector_formatter_calls": 0,
+  "contract": {
+    "allowed_reason_codes": [
+      "decision_audit_capability_mismatch",
+      "diagnostic_timeout",
+      "diagnostic_unavailable",
+      "halt_fanout_incomplete",
+      "lease_expired",
+      "local_halt",
+      "managed_authority_conflict",
+      "market_barrier_mismatch",
+      "market_fanout_incomplete",
+      "market_future",
+      "market_invalid",
+      "market_missing",
+      "market_stale",
+      "not_observed",
+      "observed",
+      "other",
+      "publication_incomplete",
+      "ready",
+      "router_halted",
+      "shard_unavailable",
+      "supervisor_unavailable",
+      "worker_unready",
+      "writer_fenced"
+    ],
+    "control_keys": [
+      "halted",
+      "publishing"
+    ],
+    "expected_recovery_assertion_lines": [
+      201
+    ],
+    "expected_test_method": "test_same_version_changed_persistent_content_is_not_reused",
+    "failure_branch_execution": "NOT_PROVEN_BY_STATIC_SOURCE",
+    "fallback_exact": {
+      "diagnostic_projection_failed": true
+    },
+    "flag_keys": [
+      "ready",
+      "financial_ready",
+      "workers_alive",
+      "supervisor_alive",
+      "state_observed"
+    ],
+    "formatter_AST_sha256": "e23e5de227ac588ffe5e3e85f88011145e378317913e0df7d7a35af28ca9ab8a",
+    "gate_counter_keys": [
+      "true",
+      "false",
+      "unknown"
+    ],
+    "gate_keys": [
+      "alive",
+      "lease_active",
+      "market_ready",
+      "owner_ready",
+      "locally_active",
+      "funding_registry_ready"
+    ],
+    "included_rows_max": 2,
+    "included_rows_min": 0,
+    "local_collector_target_or_formatter_calls_at_contract_freeze": 0,
+    "main_exact_keys": [
+      "reason",
+      "flags",
+      "control",
+      "control_error",
+      "worker_reasons",
+      "worker_gate_counts",
+      "worker_rows_included",
+      "worker_rows_truncated"
+    ],
+    "message_status_at_contract_freeze": "PENDING_ORIGINAL_CI_ARTIFACT",
+    "public_path": "tests/test_process_readiness.py",
+    "public_source_sha256": "fd0e20e858fef5bdcfa7542d037a3b6d4c937550dd55f7fe9dd8cc40e2101d7d",
+    "source": "d128ee6e40802482162dbc1f7716441ba91e5e0f"
+  },
+  "contract_projection": "Finite renamed status fields distinguish original source-preparation state from final CI observations",
+  "earlier_PR63_failure_cause": "UNDETERMINED_NOT_RESOLVED",
+  "emitted_recovery_failure_JSON": "NOT_OBSERVED",
+  "observations": {
+    "failure_root_cause_of_old_PR63": "UNDETERMINED_NOT_RESOLVED_BY_THIS_DIAGNOSTIC_ONLY_SOURCE",
+    "finite_new_recovery_failure_message_count": 0,
+    "recovery_failure_message_branch": "NOT_OBSERVED_IN_FIXED_COMPLETE_LOGS",
+    "views": [
+      {
+        "first_failure_cause": "UNDETERMINED",
+        "lease_observation_count": 0,
+        "lease_observations_truncated": false,
+        "observations": [],
+        "raw_failure_tracebacks_retained_privately": true,
+        "role": "fixed-push313-unit"
+      },
+      {
+        "first_failure_cause": "UNDETERMINED",
+        "lease_observation_count": 0,
+        "lease_observations_truncated": false,
+        "observations": [],
+        "raw_failure_tracebacks_retained_privately": true,
+        "role": "fixed-pr313-unit"
+      }
+    ]
+  },
+  "recovery_failure_rendering_path": "NOT_VERIFIED",
+  "successful_assertion_observed": true
+}

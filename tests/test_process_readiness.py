@@ -197,7 +197,8 @@ class ProcessReadinessTests(unittest.TestCase):
         self.assertEqual(result["workers"][0]["reason"], "market_barrier_mismatch")
         self.assertEqual(self.payload(0), changed.to_json())
         self.activate(self.market(2, mark="102"))
-        self.assertTrue(self.router.diagnostics()["financial_ready"])
+        recovered = self.router.diagnostics()
+        self.assertTrue(recovered["financial_ready"], _readiness_failure_message(recovered))
 
     def test_malformed_missing_and_oversize_persistent_quotes_fail_closed(self):
         self.development_fault_profile()
