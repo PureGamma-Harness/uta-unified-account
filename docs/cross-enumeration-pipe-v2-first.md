@@ -1,0 +1,11 @@
+# Cross enumeration pipe-v2: finite pure component result
+
+The unique sourcebb2a run completed five ordered methods and538 exact checks, with0 failures/errors/skips. Actual timeout/taskset prefix exit0, actual reap/both EOF and external root432dc7 host exit0 were observed. Internal receipt future-host-exit stays null; the external observation supplies that distinct terminal evidence. Parent regular-file fsync persists raw capture; target pipe fsync has been removed without swallowing general errors.
+
+All538 expected/candidate archives agree, including534 five-field provenance records. Their vector_groups exactly equal the old source283dec first failure data; only top invocation source/plan labels differ. The old exit1/FIRST_FAIL,13 originals and independent RAW2eeda6da remain unchanged. New success never reclassifies that failure.
+
+New13 originals957060B and a107745B/13-member archive are privately sealed. Only the exact new866704B vector original/SHA17364d is cleared for full public export, after author and independent peer fixed-schema review, canonical raw-byte validation, public input regeneration and exclusion of private bindings. All other originals and archives remain private. The public golden artifact is evidence/golden/cross-decimal-pipe-v2/vectors.json; its SHA and original byte identity must remain intact.
+
+Both70-source maps match actualbb2a Git. Independent CODE924eca04 is merged after execution as evidence; it does not change actual executed source. Timing fields cover distinct loading/comparison, prefix/capture and tool wall intervals; they are not added or used for capacity. Independent final RAW report is pending. Scope remains two collateral assets and one linear product, finite counterfactual quotes, not joint borrowing or a complete Cross model.
+
+Deploy only this test-only synthetic validation scope. No financial module, default calculator, account authority, schema or product mode is activated. Rollback removes validation controls and the optional static dataset while retaining original failure/success history and confirmed financial records. SQL/matching, concurrency/crash recovery, HA, liquidity, production/real funds and10000/s remain NO_GO.
