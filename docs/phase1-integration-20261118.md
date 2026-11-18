@@ -37,8 +37,9 @@ regular source files using a versioned61-path inventory, bounded no-follow
 reads and matching hashes/metadata before and after artifact calculation.
 They do not call production source-enumeration helpers to form expectations.
 Historical plans, financial runtime, validators, exclusions and unknown-object
-negative controls are unchanged. This test correction is NOT_RUN pending
-independent delta review; the combined suite remains unaccepted. Future module
+negative controls are unchanged. Independent delta97cfee21 closed this CODE
+defect before execution; first integrated CI is pending and the combined suite
+remains unaccepted. Future module
 inventory changes require an explicit test-inventory version update.
 
 Known first failures remain visible: PR45's ordinary publication router_busy
