@@ -1,0 +1,345 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "administrative_data_checks": {
+    "direct_integer_bound_equalities": 3,
+    "identity_payload_key_counts": [
+      9,
+      7,
+      7
+    ],
+    "new_policy_files": 2,
+    "old_DTO_field_declarations_AST_match": 13,
+    "old_public_signatures_AST_match": 15,
+    "production_function_bodies_evaluated_or_reused": false,
+    "runtime_delta_files": 0
+  },
+  "blocking_policy_contradictions_found": [],
+  "deployment": "Two SAFE rule-review files only; no runtime capability, inventory change or database migration",
+  "execution_GO": false,
+  "financial_consistency": {
+    "H": "P_PLUS_U_WITH_NO_N_OFFSET_UNCHANGED",
+    "WAIT_default": "NO_CASH_HOLD_DEBT_FORFEIT_OR_FAKE_APPLIED",
+    "accounting": "BASE_ACCOUNTING_MINUS_P_PLUS_N_UNCHANGED",
+    "available": "RISK_MINUS_SUPPLIED_IM_AND_ORDER_RESERVE_UNCHANGED",
+    "base": "EXPLICIT_FUNDING_EXCLUDED_UNCHANGED",
+    "ordinary_spend": "C_MINUS_F_MINUS_H_RAW_AND_ZERO_CLAMP_UNCHANGED",
+    "payment": "CONDITIONAL_OWN_P_BACKING_PROJECTION_ONLY_OTHER_H_RETAINED_F0_NEGATIVE_CASH_ALLOWED",
+    "risk": "BASE_RISK_MINUS_H_NO_SECOND_F_UNCHANGED"
+  },
+  "frozen_old_reference": {
+    "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+    "status": "CODE_ONLY_PARTIAL_WIRE_NOT_RUN",
+    "unchanged_by_review": true,
+    "v2_conformance": "NOT_CLAIMED"
+  },
+  "hash_or_financial_program_results": "NOT_RUN",
+  "important_boundary_interpretations": [
+    {
+      "decision": "Only truly unchanged fields may no-op. If deadline/budget newly sets default, even same-time observation is changed and rejects atMAX.",
+      "topic": "Same-time/MAX revision"
+    },
+    {
+      "decision": "Not proof of no canonical action. D1 local collection checks cannot establish durable authority or initialize a budget.",
+      "topic": "Empty history/collection"
+    },
+    {
+      "decision": "Mismatch is conflict, not second action; D1 compares supplied scope, external approved-scale provenance staysD2.",
+      "topic": "Scale outside identity"
+    },
+    {
+      "decision": "First approved effective policy is immutable; later different policy conflicts, even if another duty/product is attached; no maximum-budget selection.",
+      "topic": "Action product-policy interaction"
+    },
+    {
+      "decision": "All physical children share root budget and each physical query counts; true new reservations need confirmed separate origin.",
+      "topic": "Allocation split/rename"
+    },
+    {
+      "decision": "Complete precondition is a pure representation check, not persistedCAS or content provenance. Future supported reachable-state domain must be explicit; do not infer extra rules from production validators.",
+      "topic": "Provided Stage/history"
+    },
+    {
+      "decision": "Typed payload/hash decision is not an implemented JSON/REST/WS codec. Exact tuple/JSONarray conversion and known exception mapping require separate reviewed bridge.",
+      "topic": "No transport yet"
+    }
+  ],
+  "independent_reference_delta_plan": [
+    {
+      "change": "New immutable branch/version based e6, preserve e6/75358 bytes and NOT_RUN; freeze next API/support slice and seed semantic version before execution",
+      "id": "REF-V2-01"
+    },
+    {
+      "change": "Own canonical9/7/7 hash payloads, typed bare policy digest and external duty/action prefixes; ordered six-string natural-slot array; new identity checks without production helpers",
+      "id": "REF-V2-02"
+    },
+    {
+      "change": "Add adopted >=1970 UTC epoch and exact whole-second period alignment; avoid binary64 timestamp; version seed data and add preepoch/misalignment negatives",
+      "id": "REF-V2-03"
+    },
+    {
+      "change": "Full expected_active_stage validation and equality; malformed/legacy/CAS conflict rejection, no mutation; no active_ref helper dependence",
+      "id": "REF-V2-04"
+    },
+    {
+      "change": "Own expected policy digest; propose all nonrevision fields first, no-op unchanged, otherwise single checked revision increment",
+      "id": "REF-V2-05"
+    },
+    {
+      "change": "Shared root action ID stable under scale/policy/duty/claim changes; supplied duplicate/conflict rejection, all global ownership/history facts externalD2",
+      "id": "REF-V2-06"
+    },
+    {
+      "change": "Retain original manual finance units and limited27 matrix, closed512+512 intent and false activation; no source financial expectations learned from target results",
+      "id": "REF-V2-07"
+    },
+    {
+      "change": "Separate complete target bridge CODE review, declared full supported-value/hash/error fields, no selective drops or technical-to-business washing",
+      "id": "REF-V2-08"
+    }
+  ],
+  "kind": "INDEPENDENT_FINANCIAL_AND_VERIFICATION_RULE_REVIEW",
+  "minimum_boundary_test_groups": [
+    {
+      "actual": "NOT_RUN",
+      "group": "Canonical duty nine fields",
+      "id": "V2-ID-01",
+      "required_rule": "Existing8008 duty hash/typed identifiers; no alias/claim/cut in economic key"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "UTC and alignment",
+      "id": "V2-ID-02",
+      "required_rule": "Pre1970 rejected; exact integer epoch seconds divisible by interval; no Z/fraction/alternate offset"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Natural slot",
+      "id": "V2-ID-03",
+      "required_rule": "Exact six-string positional order; changed interval/rule changes duty but not natural slot"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Policy content identity",
+      "id": "V2-HASH-04",
+      "required_rule": "Seven fields bare lowercase SHA; exact bounds/types/no keys omitted; digest is not authorization"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Action identity",
+      "id": "V2-HASH-05",
+      "required_rule": "Seven fields plus external prefix, no schema/scale/policy/duty/claim; root lineage supplied externally"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Complete active stage",
+      "id": "V2-CAS-06",
+      "required_rule": "Same CAP/different EXPOSURE, same refs/different amount, well-formed final P/N kind mismatch, wrong duty refs reject"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Revision and legacy API",
+      "id": "V2-CAS-07",
+      "required_rule": "Stale revision, old single-ref keyword and malformed expected stage reject without mutation or replacement"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Normal no-op",
+      "id": "V2-WAIT-08",
+      "required_rule": "Same highwater, no eligible dispatch and no default transition returns same revision/query_counted false, including MAX revision"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Default no-op",
+      "id": "V2-WAIT-09",
+      "required_rule": "Same nonrevision fields retains default and same revision; later highwater changes once, never clears default"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Revision exhaustion",
+      "id": "V2-WAIT-10",
+      "required_rule": "MAX revision permits genuinely unchanged only; highwater/dispatch/default changes reject before result and preserve input"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Deadline equality",
+      "id": "V2-WAIT-11",
+      "required_rule": "At first deadline no query and sticky default; prior nondefault at MAX cannot misclassify transition as no-op"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Interval and cap equality",
+      "id": "V2-WAIT-12",
+      "required_rule": "Exact interval eligible strictly before deadline/belowcap; last permitted query counts then defaults"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Time and arithmetic",
+      "id": "V2-WAIT-13",
+      "required_rule": "Clock regression, start+maxwait overflow, strict bool/int limits and policy mismatch reject"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Policy/scale duplicates",
+      "id": "V2-SHARE-14",
+      "required_rule": "Same root/action cannot select larger policy or different scale budget within supplied collection; no global guarantee"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "Unchanged financial slices",
+      "id": "V2-FIN-15",
+      "required_rule": "H=P+U, N not risk credit, base excludes funding once, F backing WAIT/negativecash/otherH and accrual continuity retain original expected units"
+    },
+    {
+      "actual": "NOT_RUN",
+      "group": "External authority unsupported",
+      "id": "V2-GATE-16",
+      "required_rule": "No fake ACK/APPLIED/outbox/root-history/firstpolicy/globalCAS/recovery proof; all activationfalse and original27 slice limits"
+    }
+  ],
+  "not_approved": [
+    "4e2b implementation conforms tov2",
+    "new production implementation",
+    "reference implementation correctness",
+    "reference/target/hash execution",
+    "JSON transport implemented",
+    "realACK/outbox/ledger/APPLIED",
+    "globalrootlineage/actionhistory/approvedfirstpolicy",
+    "wholeperiodatomicity/oldwriterfence/restartreconciliation",
+    "performance/HA/realfunds/production"
+  ],
+  "production": "NO_GO",
+  "qualification": "Specification-level review only; no production/reference correctness or execution authorization is implied",
+  "resolved_decisions": [
+    {
+      "id": "POLICY-D1-V2-01",
+      "rule": "Adopt explicit typed canonical policy/action bytes as new version2 local policy, never retroactively attribute them to8008",
+      "spec_lines": [
+        11,
+        18,
+        20,
+        23
+      ]
+    },
+    {
+      "id": "POLICY-D1-V2-02",
+      "rule": "Complete Stage and revision precondition, typed same-duty/scope validation, all refs/kind/amount equality and explicit old-keyword refusal",
+      "spec_lines": [
+        35,
+        36,
+        38,
+        39,
+        41,
+        43
+      ]
+    },
+    {
+      "id": "POLICY-D1-V2-03",
+      "rule": "Only nonrevision record changes increment once; same no-op rule normal/default, unchanged MAX permitted and changed MAX rejected",
+      "spec_lines": [
+        51,
+        53,
+        55,
+        56,
+        57
+      ]
+    },
+    {
+      "id": "POLICY-D1-V2-04",
+      "rule": "Deadline equality forbids query; interval equality conditional on predeadline and belowcap; last query counts before sticky default",
+      "spec_lines": [
+        60,
+        61,
+        62,
+        63,
+        65
+      ]
+    },
+    {
+      "id": "POLICY-D1-V2-05",
+      "rule": "Root encumbrance lineage/action identity includes stable financial/account/USD scope, excludes scale/policy/duty/claim; relabel/split share one count",
+      "spec_lines": [
+        28,
+        30,
+        79,
+        81,
+        82
+      ]
+    },
+    {
+      "id": "POLICY-D1-V2-06",
+      "rule": "Approved first immutable policy and unique action history are D2 requirements; conflicts preserve old state, unknown history restricts, migration imports full mapping/history",
+      "spec_lines": [
+        71,
+        73,
+        75,
+        88,
+        91,
+        93
+      ]
+    }
+  ],
+  "rollback": "Revert this review commit only; leave8008/895/4e2/e6 and all original financial history immutable",
+  "schema": 1,
+  "source_commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+  "source_pins": [
+    {
+      "bytes": 6921,
+      "commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+      "path": "docs/funding-hold-d1-contract-v2.md",
+      "purpose": "NEW_LOCAL_POLICY",
+      "sha256": "9103e84dff6f2d93cf9daf226a57cdb1e274a7d99dfaf0cf3a98b6b0f7f80b96"
+    },
+    {
+      "bytes": 2037,
+      "commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+      "path": "evidence/designs/funding-hold-contract-v2/decision.json",
+      "purpose": "NEW_LOCAL_POLICY_DECISION",
+      "sha256": "16644260ecb43351b047a0786174f09b038ff950581bc0d4f104ec5876709275"
+    },
+    {
+      "bytes": 5263,
+      "commit": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+      "path": "docs/funding-hold-wire-contract-proposal.md",
+      "purpose": "SCHEMA_PROPOSAL_ADOPTED_BY_NEW_POLICY",
+      "sha256": "e69d66b244fa45505079afbe65f824a2cb876f5703fbd8c362e8fc962372d1bf"
+    },
+    {
+      "bytes": 34543,
+      "commit": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+      "path": "evidence/designs/funding-hold-wire-contract-proposal/contract.json",
+      "purpose": "EXACT_TYPED_PAYLOADS_AND_SCALAR_DOMAIN",
+      "sha256": "287cf5f5fe73cc3d9a22f33dd82c4283f933d86c2c476c965f11724d7bc96f20"
+    },
+    {
+      "bytes": 13454,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "docs/pending-funding-risk-hold-b1-b2-amendment.md",
+      "purpose": "UNCHANGED_GOVERNING_SPEC",
+      "sha256": "a664661a0da506d88e9b3c193faa7e983bea5e029c4769becca4b078efed98eb"
+    },
+    {
+      "bytes": 17604,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-contract.json",
+      "purpose": "UNCHANGED_GOVERNING_RULE_DATA",
+      "sha256": "041fa3abc54b3881086049fe5963d321aafd0f3421f95a9c53c5f8e8e63da29b"
+    },
+    {
+      "bytes": 8280,
+      "commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+      "path": "docs/pending-funding-hold-rev2-independent-review.md",
+      "purpose": "PRIOR_SPEC_REVIEW",
+      "sha256": "1ef2d84ee5ad3a719563dfa19ea543a17c9c0dc274bd2a7b1c032397be50ff39"
+    },
+    {
+      "bytes": 23278,
+      "commit": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+      "path": "uta/funding_hold_pure.py",
+      "purpose": "RAW_PIN_AND_AST_FIELDS_SIGNATURES_ONLY_NO_FORMULA_REUSE",
+      "sha256": "5c41504f58ae97c4437e7887985ef71bf65ce11b34b5d1bf923b08b6c529e67f"
+    }
+  ],
+  "status": "ACCEPT_FOR_CODE_ONLY_LIMITED_PURE_D1_V2",
+  "target_reference_import_compile_execution_SQL_proc_actor_network_CI": 0
+}
