@@ -1,0 +1,47 @@
+{
+  "body_utf8_sha256": "c90af435695edc89293210e34cf2162df5b8687bb676182d3df36938251bb679",
+  "collector_first_derivation_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "correction": "compare explicitly rooted uta/<name> to Git UTA paths; retain exact tuple count/order/type and all61 hashes; no producer/test/plan edits",
+    "exception_type": "AssertionError",
+    "finding": "tag test inventory61 names are relative to uta directory, not repository-root-prefixed paths",
+    "public_output_written": false,
+    "schema": "pr49-administrative-derivation-first-stop-v1",
+    "script": "derive_safe.py",
+    "script_sha256": "9dddd127b56e5c90cac79986c4c8e9b188efe312ed83b5fd0e4845bb4d9f3788",
+    "source_line": 158,
+    "target_invocations": 0
+  },
+  "collector_read_preparation_events": [
+    {
+      "event": "sed missing sparse phase1 doc before materialization; later command in same administrative shell completed",
+      "operation": "initial sparse documentation read",
+      "shell_actual_exit": 0,
+      "target_invocations": 0
+    },
+    {
+      "event": "rg named nonexistent optional tools/run_managed_acceptance.py; remaining source search continued without target execution",
+      "operation": "static D2 text search",
+      "shell_actual_exit": 2,
+      "target_invocations": 0
+    }
+  ],
+  "not_a_CI_failure_cause_or_new_test_result": true,
+  "old_component_first_failures_or_pure_results_rewritten": false,
+  "original_pr_connector": {
+    "bytes": 45612,
+    "mode": "0600",
+    "private_basename": "first-pr.connector.json",
+    "sha256": "7e29835dc7710a59162ec7f5b8bd83f86fe5f6ec982af5b6073508ce501a874c"
+  },
+  "reported_facts": {
+    "completed_suffix_aware_check_found_no_credential": true,
+    "initial_scanner_literal_token_pattern_false_positive": true,
+    "shell_continued_commit_push_after_administrative_assertion": true,
+    "source_tree_bytes_changed_during_correction": false,
+    "target_executed_during_correction": false
+  },
+  "schema": "pr49-root-release-facts-v1",
+  "source_kind": "root statement already recorded in captured PR49 body; not a new target execution or independent replay of root shell"
+}
