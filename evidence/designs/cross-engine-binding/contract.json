@@ -1,0 +1,488 @@
+{
+  "schema": 1,
+  "kind": "SOURCE_ONLY_CROSS_ENGINE_BINDING_ACTIVATION_PROPOSAL",
+  "status": "DESIGN_ONLY",
+  "production_approved": false,
+  "runtime_implemented": false,
+  "target_execution_attempts": 0,
+  "financial_authority_modified": false,
+  "policy_attribution": "LOCAL_SYSTEM_CHOICE_NOT_EXTERNAL_EXCHANGE_BEHAVIOR",
+  "recommended_option": "B_VERSIONED_EXPERIMENTAL_ENVELOPE",
+  "default": {
+    "engine": "cross_fraction_v1",
+    "risk_policy_shapes": {
+      "legacy_reference": [
+        "mode"
+      ],
+      "phase1_cross": [
+        "mode",
+        "catalog",
+        "rules"
+      ]
+    },
+    "valuation_policy_format": 1,
+    "valuation_policy_exact_fields": [
+      "format",
+      "risk_mode",
+      "catalog",
+      "rules",
+      "scales",
+      "fee_rate",
+      "max_price_age_us",
+      "order_precision",
+      "reserve_formula",
+      "execution_options"
+    ],
+    "order_policy_exact_fields": [
+      "format",
+      "risk_mode",
+      "catalog",
+      "rules",
+      "scales",
+      "fee_rate",
+      "max_price_age_us",
+      "order_precision",
+      "reserve_formula",
+      "execution_options",
+      "admission_contract"
+    ],
+    "execution_options_exact_fields": [
+      "reserve_cache_size",
+      "market_cache_size"
+    ],
+    "credit_v2_base_policy_fields_unchanged": true,
+    "historical_artifacts_mutable": false,
+    "new_source_is_same_historical_code_artifact": false
+  },
+  "experimental": {
+    "allowed_contracts": [
+      "UTA-CROSS-SHADOW-v1"
+    ],
+    "reserved_but_rejected_contracts": [
+      "UTA-CROSS-DECIMAL-AUTH-v1"
+    ],
+    "fresh_database_and_authority_generation_required": true,
+    "synthetic_data_only": true,
+    "deployment": "LOCAL_EXCLUSIVE_SINGLE_WRITER",
+    "risk_policy": {
+      "exact_fields": [
+        "format",
+        "mode",
+        "catalog",
+        "rules",
+        "valuation_contract"
+      ],
+      "format": 2,
+      "mode": "phase1_cross",
+      "catalog_type": "CANONICAL_EXISTING_PRODUCT_CATALOG_OBJECT",
+      "rules_type": "CANONICAL_EXISTING_PORTFOLIO_RULES_OBJECT"
+    },
+    "valuation_contract": {
+      "format": 1,
+      "id": "UTA-CROSS-SHADOW-v1",
+      "authoritative_engine": "cross_fraction_v1",
+      "shadow_engine": "cross_decimal_v1",
+      "numeric_contract": "UTA-CROSS-LOAN-v1",
+      "input_domain": "UTA-CROSS-DECIMAL-DOMAIN-v1",
+      "comparison": "exact_value_and_canonical_text_v1",
+      "failure_policy": "freeze_new_risk_preserve_settlement_v1",
+      "dispatch_contract": "fixed_callable_binding_v1"
+    },
+    "valuation_contract_all_values_fixed": true,
+    "order_policy_envelope": {
+      "format": 2,
+      "exact_fields": [
+        "format",
+        "valuation_policy",
+        "valuation_contract",
+        "admission_contract"
+      ],
+      "valuation_policy": "EXACT_EXISTING_TEN_FIELD_FORMAT_1_OBJECT",
+      "valuation_contract": "EXACT_FIXED_SHADOW_CONTRACT",
+      "admission_contract": "UTA-LINEAR-ADMISSION-v1"
+    },
+    "unknown_fields_versions_engines_types_or_duplicate_json_keys": "REJECT",
+    "bool_as_integer_version": "REJECT",
+    "existing_authority_implicit_upgrade": "REJECT",
+    "hot_change": "REJECT",
+    "silent_fallback": "FORBIDDEN",
+    "decision_input_valuation_evaluation": {
+      "format": 1,
+      "exact_fields": [
+        "format",
+        "evaluated_at",
+        "max_age_us",
+        "market_snapshot_id",
+        "contract_id",
+        "binding_id"
+      ],
+      "evaluated_at": "SINGLE_CAPTURED_UTC_TIME_USED_BY_BOTH_CALCULATORS_AND_BOTH_DECISION_STATES",
+      "max_age_us": "EXACT_POLICY_VALUE",
+      "market_snapshot_id": "EXACT_ARCHIVED_MARKET_SNAPSHOT",
+      "contract_id": "UTA-CROSS-SHADOW-v1",
+      "binding_id": "CONTENT_ADDRESSED_EXACT_ENGINE_BINDING"
+    },
+    "legacy_replay_does_not_reprove_historical_freshness_lease_or_matching": true
+  },
+  "binding": {
+    "module_proposal": "uta/risk_engine.py",
+    "function_proposals": [
+      "resolve_valuation_contract",
+      "capture_engine_binding",
+      "assert_engine_binding",
+      "evaluate_cross_contract"
+    ],
+    "fixed_registry": {
+      "cross_fraction_v1": "uta.portfolio.calculate_cross_risk",
+      "cross_decimal_v1": "uta.cross_decimal_kernel.calculate_cross_risk_decimal"
+    },
+    "artifact_envelope": {
+      "format": 2,
+      "exact_fields": [
+        "format",
+        "base_artifact",
+        "engine_binding"
+      ]
+    },
+    "engine_binding_format": 1,
+    "engine_binding_exact_fields": [
+      "format",
+      "contract_id",
+      "callable_graph",
+      "constants_and_aliases",
+      "class_layouts",
+      "runtime_capsule",
+      "digest_algorithm"
+    ],
+    "digest_algorithm": "sha256",
+    "coverage": [
+      "ACTUALLY_CALLED_FUNCTION_IDENTITY_TO_FIXED_MODULE_AND_REGISTRY",
+      "SERVICE_AND_REPLAY_DISPATCH_ALIAS_IDENTITY",
+      "CODE_DEFAULTS_KWDEFAULTS_CLOSURES_UNWRAP_HELPERS",
+      "REFERENCE_INPUT_AND_EXACT_CONVERSION_HELPERS",
+      "DECIMAL_EXACT_TYPE_DISCOUNTED_ARITHMETIC_METHODS_ENTRYPOINT",
+      "ZERO_ONE_MAX_POWER_MAX_SCALAR_CACHE_AND_OTHER_RUNTIME_LIMITS",
+      "ACTUAL_GLOBAL_MODEL_DECIMAL_HELPER_ENUM_ALIASES",
+      "OWN_CLASS_BASES_SLOTS_METHODS_PROPERTIES_DATACLASS_LAYOUT",
+      "PINNED_INTERPRETER_DECIMAL_STDLIB_IMAGE_AND_SOURCE_DIGESTS"
+    ],
+    "checks": [
+      "BEFORE_AUTHORITY_OPEN_OR_CREATE",
+      "READ_ONLY_REOPEN",
+      "BEFORE_EVALUATION",
+      "BEFORE_ADMISSION_AND_RESERVATION_COMMIT"
+    ],
+    "unknown_objects_dynamic_import_reflection_callable_injection": "REJECT",
+    "legacy_credit_artifact_format_or_live_exclusions_weakened": false,
+    "artifact_confers_activation_or_writer_permission": false,
+    "assumptions": [
+      "TRUSTED_IMMUTABLE_OS_PROCESS_IMAGE_AND_SOURCE",
+      "NO_ADVERSARY_PATCHING_BOTH_CHECKER_AND_CALLEE_OR_ARBITRARY_MEMORY_BETWEEN_CHECKS"
+    ],
+    "not_a_sandbox_signature_or_remote_attestation": true,
+    "candidate_exact_functions": [
+      "_exact_type",
+      "_discounted",
+      "calculate_cross_risk_decimal"
+    ],
+    "candidate_exact_arithmetic_methods": [
+      "__init__",
+      "power",
+      "read",
+      "nonnegative",
+      "positive",
+      "rate",
+      "negative",
+      "absolute",
+      "add",
+      "subtract",
+      "multiply",
+      "compare",
+      "floor_ratio",
+      "ceiling_ratio",
+      "decimal"
+    ],
+    "candidate_exact_constants": {
+      "_ZERO": [
+        0,
+        0
+      ],
+      "_ONE": [
+        1,
+        0
+      ],
+      "_MAX_POWER": 1000,
+      "_MAX_SCALAR_CACHE": 2048
+    },
+    "candidate_imported_class_aliases": [
+      "MarketSnapshot",
+      "AssetSpec",
+      "InstrumentSpec",
+      "BorrowLimits",
+      "CollateralRule",
+      "CollateralTier",
+      "CrossRisk",
+      "LinearExposure",
+      "LinearMarginRule",
+      "LoanAccount",
+      "PortfolioError",
+      "PortfolioRules",
+      "AccountMode",
+      "ProductCatalog",
+      "ProductKind",
+      "ProductSpec",
+      "UnsupportedProduct",
+      "Decimal",
+      "datetime",
+      "timedelta"
+    ],
+    "candidate_builtin_execution_lookups_to_verify": [
+      "type",
+      "isinstance",
+      "len",
+      "abs",
+      "min",
+      "max",
+      "set",
+      "sorted",
+      "int",
+      "tuple",
+      "map",
+      "str"
+    ],
+    "function_globals_and_builtins_lookup_identity_required": true,
+    "unknown_new_execution_lookup": "REJECT_UNTIL_FIXED_INVENTORY_REVIEWED"
+  },
+  "domain": {
+    "mode": [
+      "CROSS"
+    ],
+    "service_products": [
+      "EXISTING_PHASE1_USD_LINEAR_PERPETUAL_MULTIPLIER_1"
+    ],
+    "valuation_model": [
+      "EXACT_EXISTING_MODEL_TYPES",
+      "FINITE_DECIMAL",
+      "GROSS_ASSETS_AND_PRINCIPAL_INTEREST_CASH_DEFICIT_SEPARATE",
+      "EXISTING_TIER_COLLATERAL_LTV_AND_FROZEN_SEMANTICS"
+    ],
+    "candidate_bounds_to_revalidate": {
+      "decimal_digits": 80,
+      "absolute_exponent": 100,
+      "tiers": 64,
+      "power": 1000,
+      "call_local_scalar_cache": 2048,
+      "nonzero_absolute_adjusted": 100,
+      "entries_per_model_map": 4096
+    },
+    "unsupported": [
+      "REAL_FUNDS",
+      "EXISTING_AUTHORITY_IN_PLACE_MIGRATION",
+      "MANAGED_SHARDED_NATIVE_WRITER",
+      "NEW_CREDIT_CAPABILITY_OR_BORROW",
+      "AUTO_BORROW",
+      "CREDIT_MUTATIONS",
+      "WITHDRAW_TRANSFER_COLLATERAL_OR_MODE_CHANGE",
+      "CANDIDATE_AUTHORITY_LIQUIDATION_INSURANCE_OR_ADL",
+      "ISOLATED",
+      "PM",
+      "OPTIONS",
+      "INVERSE",
+      "DATED",
+      "MULTI_SETTLEMENT",
+      "NEW_MARKET_CONDITIONAL_BATCH_OR_MULTI_LEG_ORDER_TYPE",
+      "MODEL_SUBCLASSES_FLOAT_BOOL_NAN_INFINITY_OUT_OF_BOUNDS"
+    ],
+    "must_not_broaden_service_domain_to_pure_model_domain": true,
+    "debt_fixture_import_without_credit_activation": "UNIMPLEMENTED_REQUIRES_REVIEWED_IMPORT_CONTRACT_OR_PURE_OFFLINE_VALUATION_ONLY"
+  },
+  "transaction_semantics": {
+    "same_account_market_catalog_rules_and_single_now": true,
+    "comparison": "ALL_CROSSRISK_FIELDS_EXACT_NUMERIC_VALUE_CANONICAL_TEXT_BORROWABLE_KEYS_AND_ALL_METADATA",
+    "incremental_risk_shadow_failure": "ROLLBACK_ADMISSION_AND_RESERVATION_THEN_DURABLY_FREEZE_NEW_RISK_WITH_CORRELATED_CONTROL_RECORD",
+    "confirmed_settlement_shadow_failure": "REFERENCE_REMAINS_AUTHORITY_SETTLE_IDEMPOTENTLY_RECORD_FAILURE_FREEZE_NEW_RISK",
+    "cannot_distinguish_risk_and_mandatory_settlement": "READ_ONLY_OR_OFFLINE_SHADOW_ONLY",
+    "cancel_without_ack_releases_reservation": false,
+    "confirmed_fill_discarded_because_shadow_failed": false,
+    "fee_reserve_settlement_rounding_rewritten": false
+  },
+  "proposed_errors_not_implemented": {
+    "valuation_contract_unsupported": 400,
+    "valuation_migration_required": 409,
+    "valuation_binding_unavailable": 503,
+    "valuation_shadow_mismatch": 503,
+    "valuation_domain_unsupported": 422
+  },
+  "implementation_files": {
+    "D1": [
+      "uta/risk_engine.py (new)",
+      "uta/decision_audit.py: code_artifact/new engine envelope",
+      "new bounded binding tests"
+    ],
+    "D2": [
+      "uta/service.py: __init__/_risk/_policy_versions",
+      "uta/decision_audit.py: policy/install/_replay_state/replay",
+      "uta/existing_services.py: _source_arguments/exchange-only opener",
+      "uta/credit_audit_v2.py and credit entrypoints: explicit experimental rejection"
+    ],
+    "D3_SEPARATE_APPROVAL": [
+      "uta/durable_process.py: _options/initialize/takeover",
+      "uta/sharding.py: ShardRouter",
+      "uta/supervisor.py: dependency/cache/precommit contract",
+      "new dedicated credit model/policy version"
+    ]
+  },
+  "test_gates": [
+    {
+      "id": "EBD-001",
+      "stage": "D1",
+      "requirement": "Fixed callable identity; same-name same-output monkeypatch and unchanged source cannot bypass binding"
+    },
+    {
+      "id": "EBD-002",
+      "stage": "D1",
+      "requirement": "Code/defaults/kwdefaults/closures/unwrap mutation rejected"
+    },
+    {
+      "id": "EBD-003",
+      "stage": "D1",
+      "requirement": "Constants/class layout/global Decimal or model/helper alias mutation rejected"
+    },
+    {
+      "id": "EBD-004",
+      "stage": "D1",
+      "requirement": "Unknown engine/registry/import path/reflection/object rejected before authority effect"
+    },
+    {
+      "id": "EBD-005",
+      "stage": "D2",
+      "requirement": "Default valuation10/order11 unchanged; experimental exact fields, values, duplicate keys, versions and bool typing checked"
+    },
+    {
+      "id": "EBD-006",
+      "stage": "D2",
+      "requirement": "CreditV2 baseline positive retained; experimental install/new borrow rejected before any financial/capability effect"
+    },
+    {
+      "id": "EBD-007",
+      "stage": "D2",
+      "requirement": "Pinned old binaries constructor/opener/managed takeover/direct financial paths cannot mutate experimental financial state; separately report control lease effects"
+    },
+    {
+      "id": "EBD-008",
+      "stage": "D2",
+      "requirement": "Exact read-only reopen without DDL, archive insertion, config repair or capability creation"
+    },
+    {
+      "id": "EBD-009",
+      "stage": "D2",
+      "requirement": "Historical v1 reference and v2 shadow replay use matching pinned artifacts; unknown/missing/mismatched code or contract rejected"
+    },
+    {
+      "id": "EBD-010",
+      "stage": "D2",
+      "requirement": "One captured account/market/now input; failure rollback for new risk and durable freeze; mandatory confirmed settlement preserved"
+    },
+    {
+      "id": "EBD-011",
+      "stage": "D2",
+      "requirement": "Gross debt/frozen/deficit/dust and original cumulative fees/reserve/reduce-only/cancel/partial-fill invariants"
+    },
+    {
+      "id": "EBD-012",
+      "stage": "D1_D2",
+      "requirement": "Independent human cases, published finite corpus, domain boundaries, hostile contexts and sample-outside-corpus differential checks; no core production function reuse in oracle"
+    },
+    {
+      "id": "EBD-013",
+      "stage": "D3_D4",
+      "requirement": "Real independent matching, four-side order/trade/position/journal reconciliation, restart and unknown-result recovery"
+    },
+    {
+      "id": "EBD-014",
+      "stage": "D4",
+      "requirement": "Independent open-loop 10k/s accepted durable orders and 10k/s complete unique liquidation fills >=30m plus soak/mixed/fault/liquidity scenarios; no compute-only substitution"
+    },
+    {
+      "id": "EBD-015",
+      "stage": "D2_D4",
+      "requirement": "Fresh-generation allowlist, immutable policy, old-writer exclusion, in-flight settlement and rollback/forward-compensation drills"
+    }
+  ],
+  "test_gate_status": "ALL_NOT_RUN_BY_THIS_COMMIT",
+  "independent_signoff": "PENDING_NO_SIGNATURE_CREATED",
+  "rollback": {
+    "automatic_reference_fallback_from_candidate_authority": false,
+    "delete_or_rewrite_config_archive_schema_to_open_old_binary": false,
+    "halt_new_risk_preserve_confirmed_settlement": true,
+    "no_financial_events": "RECREATE_SYNTHETIC_INSTANCE_FROM_APPROVED_REFERENCE_IMAGE",
+    "financial_events_exist": "RECONCILE_AND_EXPLICITLY_MIGRATE_OR_COMPENSATE_TO_NEW_GENERATION",
+    "real_funds": "REQUIRES_INDEPENDENT_REVIEW_AND_EXPLICIT_LAUNCH_APPROVAL"
+  },
+  "manual_cases": [
+    {
+      "id": "EBD-M02",
+      "upstream_id": "M02",
+      "scope": "PURE_VALUATION",
+      "expected": {
+        "accounting_equity": "70",
+        "collateral_value": "160",
+        "risk_equity": "30",
+        "loan_value": "80",
+        "principal_value": "125",
+        "interest_value": "5",
+        "debt_value": "130",
+        "initial_margin": "13",
+        "maintenance_margin": "6.5",
+        "available_margin": "17",
+        "borrowable_BTC": "0"
+      }
+    },
+    {
+      "id": "EBD-M01",
+      "upstream_id": "M01",
+      "scope": "PURE_VALUATION_MULTIPLIER_2_NOT_SERVICE_ACTIVATION",
+      "expected": {
+        "accounting_equity": "1128",
+        "collateral_value": "1105",
+        "risk_equity": "1033",
+        "loan_value": "852.5",
+        "debt_value": "112",
+        "unrealized_pnl": "40",
+        "initial_margin": "56.3",
+        "maintenance_margin": "28.15",
+        "order_margin": "10",
+        "available_margin": "966.7",
+        "independent_not_additive_borrowable_USD": "388",
+        "independent_not_additive_borrowable_BTC": "3.88"
+      }
+    },
+    {
+      "id": "EBD-M09",
+      "upstream_id": "M09",
+      "scope": "STRICT_MAINTENANCE_BOUNDARY",
+      "expected": {
+        "gross_USD_11_quote": "9",
+        "gross_USD_11_01_quote": "10"
+      },
+      "other_limits_must_also_hold": true
+    },
+    {
+      "id": "EBD-M04",
+      "scope": "PROPOSED_SERVICE_FEE_RESERVE_FIXTURE_REQUIRES_INDEPENDENT_RECALCULATION",
+      "expected": {
+        "cash_after_half_fill": "99.98",
+        "position_quantity": "0.5",
+        "position_cost": "50",
+        "remaining_original_reserve": "5.02",
+        "reduce_only_reserve": "0.02",
+        "total_order_margin": "5.04",
+        "current_initial_margin": "5",
+        "current_maintenance_margin": "2.5",
+        "current_available_margin": "89.94",
+        "projected_close_cash": "99.96",
+        "projected_close_available_margin": "94.94"
+      }
+    }
+  ]
+}
