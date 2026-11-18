@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from contextlib import contextmanager
+from copy import copy
 from decimal import Decimal
 import fcntl
 from hashlib import sha256
@@ -416,7 +417,14 @@ def _registry_schema(connection):
 
 def _record_process(control, kind, shard, nonce, generation, identity, coordinator):
     authority = "layout:" + sha256(control._descriptor.encode()).hexdigest() if shard is None else _authority(control._descriptor, shard)
-    with control.control.transaction() as connection:
+    database = control.control
+    if kind == "SPAWNED":
+        # Registration runs in the only supervisor, which must keep scanning
+        # other owners for expiry. Bound its SQLite busy-handler wait without
+        # changing the shared control DB or claiming a native wall-clock bound.
+        database = copy(database)
+        database.timeout = min(database.timeout, .1)
+    with database.transaction() as connection:
         connection.execute("""INSERT INTO router_process_owners
             (kind,authority_id,shard,nonce,generation,pid,start_ticks,boot_id,coordinator,observed_at)
             VALUES (?,?,?,?,?,?,?,?,?,?)""", (kind, authority, shard, nonce, generation, identity["pid"],
