@@ -26,11 +26,15 @@
     "total_logical_bytes": 201326592,
     "watchdog_scope": "new owned session: source checks, driver, parser, hashes, fsync and staged safe output"
   },
-  "candidate_phase": "GUARD_CODE_CLOSED_WAIT_NEW_SOURCE_WHOLE_BUDGET",
+  "candidate_phase": "COMBINED_FIRST_PASS_INDEPENDENT_ARTIFACT_REVIEW_PENDING",
   "capacity_approved": false,
   "combined_PURE_process_permission_requires_root_explicit_scope": true,
   "combined_PURE_real_stdlib_child_spawn_expected_by_source": 6,
-  "combined_complete_nine_module_acceptance": false,
+  "combined_complete_nine_module_acceptance": true,
+  "combined_current_actual_children": 6,
+  "combined_current_evidence": "evidence/preparations/m05-first-combined-d58e244/seal.json",
+  "combined_current_exit": 0,
+  "combined_current_independent_artifact_review": "PENDING",
   "combined_first_actual_children": 0,
   "combined_first_authorized_scope": {
     "actual_M05_authorized": false,
@@ -51,7 +55,25 @@
   },
   "combined_first_evidence": "evidence/preparations/m05-first-combined-4eabab3/seal.json",
   "combined_first_exit": 1,
-  "combined_new_tree_PURE": "FIRST_RUN_ERROR_NO_RERUN",
+  "combined_first_source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+  "combined_new_tree_PURE": "PASS_FIRST_RUN_D58_219_TESTS_6_GUARDED_CHILDREN",
+  "combined_runs": [
+    {
+      "actual_children": 0,
+      "evidence": "evidence/preparations/m05-first-combined-4eabab3/seal.json",
+      "exit": 1,
+      "source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+      "status": "FIRST_ERROR_NO_GO"
+    },
+    {
+      "actual_children": 6,
+      "evidence": "evidence/preparations/m05-first-combined-d58e244/seal.json",
+      "exit": 0,
+      "source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
+      "status": "FIRST_GUARDED_PURE_PASS_REVIEW_PENDING"
+    }
+  ],
+  "combined_specific_authorization_consumed": true,
   "command_spec": {
     "argv_templates": [
       [
@@ -134,7 +156,7 @@
   "escrow_tool_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
   "execution_authorized": false,
   "external_persistent_spent_registry": false,
-  "guard_alias_fix_execution": "NOT_RUN_NO_REMAINING_STUB_OR_WHOLE_BUDGET",
+  "guard_alias_fix_execution": "FIRST_D58_COMBINED_PASSED_NOT_RERUN",
   "guard_repair_CODE_review": "INDEPENDENT_STATIC_CODE_CLOSED",
   "guard_repair_review_record": "evidence/reviews/m05-guard-alias-independent/review-record.json",
   "guard_repair_reviewed_commit": "5983e635dbbe13a1b025368a68d62832f97898a5",
@@ -153,7 +175,7 @@
     "runs": 1
   },
   "kind": "M05_INTEGRATION_PREP_ONLY",
-  "measured_combined_source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+  "measured_combined_source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
   "new_guard_whole_suite_authorized": false,
   "next_run_permitted": false,
   "preview_review": {
@@ -178,7 +200,7 @@
     "04"
   ],
   "trigger_ref_created": false,
-  "version": 7,
+  "version": 8,
   "workflow_sha256": {
     ".github/workflows/independent-m0-once.yml": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
     ".github/workflows/independent-m0.yml": "b6e6caca4d472e107f41b20b58e49294f07c16bf685a5c5300a7888b543a21ed"

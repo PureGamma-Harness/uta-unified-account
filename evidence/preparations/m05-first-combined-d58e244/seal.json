@@ -1,0 +1,515 @@
+{
+  "HA_approved": false,
+  "SQL_business_native_worker_crypto_network_signal_execution": false,
+  "actual_M05_marker_ref_push_dispatch_CI": false,
+  "actual_stdlib_children": 6,
+  "blocked_SQL_UTA_module_cache": [],
+  "capacity_approved": false,
+  "discovery_modules": 9,
+  "elapsed_ns": 1360591174,
+  "errors": 0,
+  "execution_command": "timeout --signal=KILL 30s taskset -c 2 python3 -I -S runner.py CONTROL PRIVATE identity.json",
+  "expected_stub_UNKNOWN_results": [
+    {
+      "case": "malformed_child_output",
+      "code": "CHILD_PROOF_INVALID",
+      "probe_number": 1
+    },
+    {
+      "case": "missing_source",
+      "code": "SOURCE_OR_EVIDENCE_IO",
+      "probe_number": 2
+    },
+    {
+      "case": "spawn_OS_error",
+      "code": "CHILD_OS_ERROR",
+      "probe_number": 7
+    },
+    {
+      "case": "timeout_kill_reap",
+      "code": "CHILD_TIMEOUT",
+      "probe_number": 8
+    },
+    {
+      "case": "unreaped_child_UNKNOWN",
+      "code": "CHILD_REAP_UNKNOWN",
+      "probe_number": 9
+    },
+    {
+      "case": "wait_error_later_zero",
+      "code": "CHILD_OS_ERROR",
+      "probe_number": 10
+    }
+  ],
+  "failures": 0,
+  "hard_guard_acceptance": true,
+  "kind": "M05_D58_FIRST_COMBINED_SAFE_SEAL",
+  "materialized_source_bytes": 236296,
+  "materialized_source_files": 16,
+  "measured_source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
+  "measured_source_tree": "d3fdcd099acb3199a03a1108238f69cbed5913c8",
+  "next_run_permitted": false,
+  "old4e_first_error_and_e9_stub_unchanged": true,
+  "orchestration_scope": "timeout/taskset/initial interpreter and ordinary source metadata outside suite child count; exactly six guarded child interpreters during measured suite.",
+  "outer_exit": 0,
+  "production_approved": false,
+  "raw_files": {
+    "children/child-01.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-01.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "children/child-02.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-02.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "children/child-03.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-03.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "children/child-04.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-04.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "children/child-05.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-05.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "children/child-06.guard.json": {
+      "bytes": 145,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/children/child-06.guard.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "3402411e1673e844b6fc1817e538cbaa35ff26d7cb2dc713806148d7c61f60f3"
+    },
+    "first.execution.json": {
+      "bytes": 21426,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/first.execution.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "80593f469d2ea1a85235448f5e4648be2743d563d77a8e7b5867a67a2df43310"
+    },
+    "first.stderr.txt": {
+      "bytes": 33504,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/first.stderr.txt",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "acd68adfeb53c07e3e52126e213d981ce355390cbe09f51657037a752e97e94b"
+    },
+    "first.stdout.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/first.stdout.txt",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "independent-preflight.json": {
+      "bytes": 923,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/independent-preflight.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "4b88cc927155479dabf61f1abcf4b889c794b1a84b69ece5c57a46af25c883b2"
+    },
+    "outer.exit.txt": {
+      "bytes": 2,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/outer.exit.txt",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "preflight.identity.json": {
+      "bytes": 5510,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/identity.json",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "ae890907e9f0655357808d5e83fb75df94396f40f4ae3669a33f89db3e6d00d1"
+    },
+    "probes/probe-01/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-01/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-01/controller/stdout.txt": {
+      "bytes": 50,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-01/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "afdfb30671b1fadc0378df3236160b774d721b07681975f47e060a468a591243"
+    },
+    "probes/probe-03/deny_sqlite3/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-03/deny_sqlite3/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-03/deny_sqlite3/stdout.txt": {
+      "bytes": 251,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-03/deny_sqlite3/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83"
+    },
+    "probes/probe-04/deny_uta/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-04/deny_uta/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-04/deny_uta/stdout.txt": {
+      "bytes": 231,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-04/deny_uta/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf"
+    },
+    "probes/probe-05/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-05/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-05/controller/stdout.txt": {
+      "bytes": 293,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-05/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+    },
+    "probes/probe-06/escrow/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-06/escrow/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-06/escrow/stdout.txt": {
+      "bytes": 289,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-06/escrow/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+    },
+    "probes/probe-07/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-07/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-07/controller/stdout.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-07/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-08/controller/stderr.txt": {
+      "bytes": 31,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-08/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+    },
+    "probes/probe-08/controller/stdout.txt": {
+      "bytes": 31,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-08/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+    },
+    "probes/probe-09/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-09/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-09/controller/stdout.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-09/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-10/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-10/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-10/controller/stdout.txt": {
+      "bytes": 292,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-10/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "1e81203ff62f196d52131d1644c6f44bafcfcaaed91044701868d0c88f72ae92"
+    },
+    "probes/probe-11/escrow/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-11/escrow/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-11/escrow/stdout.txt": {
+      "bytes": 289,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-11/escrow/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+    },
+    "probes/probe-12/controller/stderr.txt": {
+      "bytes": 0,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-12/controller/stderr.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "probes/probe-12/controller/stdout.txt": {
+      "bytes": 293,
+      "original_mode": "0o600",
+      "original_path": "/workspace/uta-m05-first-combined-d58e244/private/probes/probe-12/controller/stdout.bin",
+      "safe_text_copy_original_bytes": true,
+      "sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+    }
+  },
+  "real_child_proofs": [
+    {
+      "child_index": 1,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "deny_sqlite3",
+      "pid": 757596,
+      "probe_number": 3,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [
+          "SQLITE3",
+          "_SQLITE3"
+        ],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "deny_sqlite3",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "GUARD_BLOCKED",
+        "target_sha256": null,
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83"
+    },
+    {
+      "child_index": 2,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "deny_uta",
+      "pid": 757597,
+      "probe_number": 4,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [
+          "UTA"
+        ],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "deny_uta",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "GUARD_BLOCKED",
+        "target_sha256": null,
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf"
+    },
+    {
+      "child_index": 3,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "controller",
+      "pid": 757598,
+      "probe_number": 5,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "controller",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "PASS_IMPORT_COLD",
+        "target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+    },
+    {
+      "child_index": 4,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "escrow",
+      "pid": 757599,
+      "probe_number": 6,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "escrow",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "PASS_IMPORT_COLD",
+        "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+    },
+    {
+      "child_index": 5,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "escrow",
+      "pid": 757600,
+      "probe_number": 11,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "escrow",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "PASS_IMPORT_COLD",
+        "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+    },
+    {
+      "child_index": 6,
+      "hard_guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "mode": "controller",
+      "pid": 757601,
+      "probe_number": 12,
+      "proof": {
+        "blocked_cache_count": 0,
+        "guard_events": [],
+        "isolated": true,
+        "kind": "COLD_IMPORT_PROOF",
+        "mode": "controller",
+        "no_site": true,
+        "sitecustomize_loaded": false,
+        "status": "PASS_IMPORT_COLD",
+        "target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "version": 1
+      },
+      "reaped": true,
+      "returncode": 0,
+      "stdout_sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+    }
+  ],
+  "runner_sha256": "de279b69c3d57ac694ad02ccab3c923b3ab565f61baaa3b581eb4c24ef958304",
+  "runtime": {
+    "affinity": [
+      2
+    ],
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "implementation": "CPython",
+    "isolated": 1,
+    "no_site": 1,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "same_source_rerun_performed": false,
+  "skipped": 0,
+  "started_at_utc": "2026-11-18T01:23:06.256185+00:00",
+  "status": "PASS_FIRST_SOURCE_GUARDED_PURE_PENDING_INDEPENDENT_ARTIFACT_REVIEW",
+  "stub_results_are_not_actual_child_counts": true,
+  "test_methods": 219,
+  "unexpected_parent_or_child_denials": [],
+  "version": 1
+}
