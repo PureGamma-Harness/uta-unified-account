@@ -1,0 +1,105 @@
+{
+  "SQL": 0,
+  "actual_capture_process_affinity": [
+    1
+  ],
+  "actual_full_argv_sha256": "d218703d580ea7e810829977b867f29936d8ed1ba0b87ecf446938e23fe975eb",
+  "actual_prefix_exit_status": 0,
+  "capacity_accepted": false,
+  "closed_test_source_contains_real_UTA_SQLite_or_monitor_import_registration": false,
+  "elapsed_ns": 187925157,
+  "faults": [],
+  "frame_LINE_ready_are_fake_model_inputs": true,
+  "frozen_own": "f786753b08735a17ee20237c9cea4e34f0e7208a",
+  "frozen_prefix": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1"
+  ],
+  "historical_H254_cause": "UNKNOWN_UNCHANGED",
+  "kind": "SAFE_FIRST_EXACT_SIX_LIFECYCLE_PURE_MODEL_RESULT",
+  "manifest": {
+    "bytes": 1713,
+    "sha256": "00563df0db2c49c075e49cc14866aa1697d67a7f13da36b49517853c0b8e524f"
+  },
+  "manual_after": {
+    "bytes": 5677,
+    "sha256": "56a8ea586220900575c12a012ffe4199cb744e6c701da16f4b497d0ae0195c22"
+  },
+  "manual_before": {
+    "bytes": 5677,
+    "sha256": "56a8ea586220900575c12a012ffe4199cb744e6c701da16f4b497d0ae0195c22"
+  },
+  "manual_unchanged": true,
+  "measurement_boundary": "outer entry through capture/reap/fsync plus source and metadata after-checks; final receipt publication follows",
+  "method_names": [
+    "ObserverLifecycleContracts.test_return_attach_before_first_SQL_and_budget_stays_fatal",
+    "ObserverLifecycleContracts.test_unknown_callsite_remains_pending_and_close_drops_references",
+    "ObserverLifecycleContracts.test_owned_handle_without_return_LINE_or_late_LINE_is_not_complete",
+    "ObserverLifecycleContracts.test_unsupported_occupied_and_registration_failure_do_not_steal",
+    "ObserverLifecycleContracts.test_attach_error_is_bounded_first_fault_not_overwritten",
+    "ObserverLifecycleContracts.test_close_then_new_observer_leaves_old_hook_inert"
+  ],
+  "monotonic_end_ns": 128532671612318,
+  "monotonic_start_ns": 128532483687161,
+  "native_CPython_frame_readiness_or_cProfile_proven": false,
+  "native_setup_executed": false,
+  "plan": {
+    "bytes": 2911,
+    "sha256": "b63bcca3eb4ae66dcfdb5dd8c6d2524380912216b9075a5e62116f4600d367b9"
+  },
+  "prefix_reaped": true,
+  "prior_H33_actual_capture_unchanged": true,
+  "private_completion_sha256": "00940a5ad358ac7b178b5fb228a12671d0261dbaac018fa311671ef228d9294a",
+  "process_completion_observed": true,
+  "production_approved": false,
+  "publication_filter": {
+    "private_original_paths_receipts_launcher_capsules_DB_nonce_not_published": true,
+    "raw_not_trimmed_or_rewritten": true,
+    "stderr_exact_six_dot_unittest_success_grammar": true,
+    "stdout_empty": true
+  },
+  "raw": {
+    "stderr": {
+      "bytes": 104,
+      "sha256": "b25dd9dad702234073562c665a42ebd534c1579e10dfc3be59e11ee26e746f92"
+    },
+    "stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "raw_capture_complete": true,
+  "raw_captured_bytes": 104,
+  "raw_dropped_bytes": 0,
+  "raw_reserved_bytes": 104,
+  "raw_short_write_seen": false,
+  "retries": 0,
+  "schema": 1,
+  "source_after": {
+    "benchmarks/matching_profile_case.py": {
+      "bytes": 41040,
+      "sha256": "33fc9cd6daca89b5020d84337544d924e95969f932b7b9d80557777854e42d31"
+    },
+    "benchmarks/test_matching_profile_observer.py": {
+      "bytes": 12001,
+      "sha256": "8dffe043e1cb31fd059ce17508f9d0a0fb929c9556d5650ab75bbb9e25815ffa"
+    }
+  },
+  "source_before": {
+    "benchmarks/matching_profile_case.py": {
+      "bytes": 41040,
+      "sha256": "33fc9cd6daca89b5020d84337544d924e95969f932b7b9d80557777854e42d31"
+    },
+    "benchmarks/test_matching_profile_observer.py": {
+      "bytes": 12001,
+      "sha256": "8dffe043e1cb31fd059ce17508f9d0a0fb929c9556d5650ab75bbb9e25815ffa"
+    }
+  },
+  "source_commit": "4d0e2563479a5839a77c174ee82096c1290f55d9",
+  "source_unchanged": true,
+  "status": "LOCAL_SIX_PURE_MODELS_PASS_PENDING_INDEPENDENT_RAW_REVIEW"
+}
