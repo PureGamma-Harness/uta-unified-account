@@ -1,0 +1,44 @@
+{
+  "actual_active_seconds": 19443.305304647,
+  "cold_error_digest": "4a5ed95de5ca7c7837583d12ce1ff661d7aa5b80428619cfa19821d19f1cf37b",
+  "cold_error_type": "ValueError",
+  "complete_6h_gate_passed": false,
+  "error_digest_expression_lines": [
+    894,
+    878
+  ],
+  "financial_6h_passed": false,
+  "interpretation": "The original cold attempt rejected its final-check precondition; this is a source-bound digest comparison, not an executed audit or proof of corruption.",
+  "matching_error_digest_expression": "sha256(str(error).encode()).hexdigest()",
+  "matching_source_literal": "producer_audit_requires_other_final_checks_passed",
+  "measured_excess_bytes": 9775749,
+  "minimum_required_active_seconds": 21600,
+  "new_sql_audit_or_service_executed": false,
+  "observation_only": true,
+  "observer_source_sha256": "6d2aa9bdaafc905dbdd192f024fc0d25d3b814ceddd2a165c65585d19a2fc7e1",
+  "original_measured_output_bytes": 2157259397,
+  "original_output_budget_bytes": 2147483648,
+  "original_source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "partial_expected": {
+    "account_commands": 26142,
+    "fills": 17428,
+    "ledger_events": 21791,
+    "matches": 8714,
+    "orders": 17428,
+    "partial_cancelled_orders": 4357,
+    "remaining_principal_satoshi": 2086,
+    "risk_decisions": 34856
+  },
+  "partial_golden_is_not_cold_reopen_or_full_replay": true,
+  "partial_round_count": 4357,
+  "producer_ended_utc_seconds": "2026-11-18T00:53:08+00:00",
+  "producer_ended_wall_ns": 1794963188132241315,
+  "production_approved": false,
+  "resource_financial_corruption_inferred": false,
+  "resource_measurement_scope": "control_and_observer_except_validated_private_clones",
+  "shortfall_seconds": 2156.6946953529987,
+  "synthetic": true,
+  "unique_exact_literal_occurrences_in_observer_module": [
+    704
+  ]
+}

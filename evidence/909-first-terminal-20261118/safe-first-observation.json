@@ -1,0 +1,555 @@
+{
+  "boot_id": "6339d4fc-a9e7-4c10-a591-1e70a14322ff",
+  "collection_error_events": [
+    {
+      "action": "RESOURCE_NO_GO_OFFICIAL_DRIVER_DRAIN",
+      "at_wall_ns": 1794963184619903145,
+      "code": "observer_output_budget_exceeded",
+      "financial_drain_requested": false,
+      "measured_output_bytes": 2157259397,
+      "output_budget_bytes": 2147483648,
+      "signal_sent": true,
+      "synthetic": true
+    }
+  ],
+  "collection_errors": {
+    "known_format_codes": [
+      "observer_output_budget_exceeded"
+    ],
+    "unexported_items": 0
+  },
+  "coverage": {
+    "actual_completed_active_seconds": 19443.305304647,
+    "counts": {
+      "active_round_inflight_unknown_samples": 272,
+      "alerted_samples": 285,
+      "elapsed_or_span_unavailable_samples": 0,
+      "fatal_financial_samples": 0,
+      "financial_unknown_or_failed_samples": 305,
+      "inconsistent_stable_boundary_samples": 0,
+      "planned_fault_inflight_unknown_samples": 2,
+      "stable_golden_cross_block_samples": 0,
+      "stable_golden_uncredited_timing_samples": 0,
+      "technical_read_unknown_samples": 0,
+      "unproven_logical_point_samples": 33
+    },
+    "coverage_status": "NO_GO",
+    "fatal_financial_code_counts": {},
+    "financial_golden_counts": {
+      "not_compared_inflight_or_unproven": 305,
+      "stable_compared_passed": 16
+    },
+    "maximum_observed_consecutive_technical_read_unknown": 0,
+    "measurement_status": "OBSERVED",
+    "preregistered_duration_seconds": 21600,
+    "preregistered_interval_seconds": 61,
+    "samples_observed": 321,
+    "technical_read_unknown_budget": 3
+  },
+  "coverage_no_go": {
+    "known_format_codes": [
+      "actual_active_duration_incomplete_or_unknown",
+      "closed_block_2_missing_stable_golden",
+      "closed_block_3_missing_stable_golden",
+      "closed_block_4_missing_stable_golden",
+      "closed_block_5_missing_stable_golden",
+      "closed_block_6_missing_stable_golden",
+      "closed_block_7_missing_stable_golden",
+      "closed_block_8_missing_stable_golden",
+      "closed_block_9_missing_stable_golden",
+      "final_block_11_missing_stable_golden",
+      "final_block_2_missing_stable_golden",
+      "final_block_3_missing_stable_golden",
+      "final_block_4_missing_stable_golden",
+      "final_block_5_missing_stable_golden",
+      "final_block_6_missing_stable_golden",
+      "final_block_7_missing_stable_golden",
+      "final_block_8_missing_stable_golden",
+      "final_block_9_missing_stable_golden",
+      "observer_output_budget_exceeded"
+    ],
+    "unexported_items": 0
+  },
+  "final_summary": {
+    "actual_fault_signals": {
+      "parent": 14,
+      "worker": 145
+    },
+    "capacity_10000_per_s_passed": false,
+    "continuous_24h_stability_passed": false,
+    "continuous_6h_stability_passed": false,
+    "expected_fault_signals": {
+      "parent": 18,
+      "worker": 180
+    },
+    "fault_schedule_complete": false,
+    "financial_final_evidence_eligible": false,
+    "no_automatic_resume_or_next_job": true,
+    "official_driver_drain_requested": true,
+    "overall_engineering_evidence_within_gates": false,
+    "production_approved": false,
+    "status": "COLLECTION_FINISHED",
+    "synthetic": true
+  },
+  "historical_financial_alerts": {
+    "known_format_codes": [],
+    "unexported_items": 0
+  },
+  "inventory": {
+    "after": {
+      "bytes": 12772119,
+      "ctime_ns": 1794963214045567434,
+      "device": 27,
+      "inode": 786439,
+      "mtime_ns": 1794963214033567660,
+      "relative": "control/final-after-cold.json",
+      "sha256": "b7745b7e708e164d26e46d7a78f94e32f5f653ad6229253bbbe9b8ee4d59aebd",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "baseline": {
+      "bytes": 6836,
+      "ctime_ns": 1794943747294327890,
+      "device": 27,
+      "inode": 795341,
+      "mtime_ns": 1794943747289960322,
+      "relative": "observer/baseline.json",
+      "sha256": "a149b6040a6e137b3a93e6cbfad34f753c1780c27cd9adb9ec604a65c97b2b0b",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "before": {
+      "bytes": 12772116,
+      "ctime_ns": 1794963197237964190,
+      "device": 27,
+      "inode": 786450,
+      "mtime_ns": 1794963197225964406,
+      "relative": "control/final-before-cold.json",
+      "sha256": "37f3f915d6ecd3c54b0d8f39263d6a678c19ce18d756654d2eebb07ec2b021d0",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "cold": {
+      "bytes": 956,
+      "ctime_ns": 1794963205698185835,
+      "device": 27,
+      "inode": 786481,
+      "mtime_ns": 1794963205698185835,
+      "relative": "control/strict-producer-cold-result.json",
+      "sha256": "cac9fe02f437503f6e9a0a03530947cf038ec46e313e463088a115fbb5012b62",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "cold_receipt": {
+      "relative": "observer/producer-cold-audit-receipt.json",
+      "state": "MISSING"
+    },
+    "collection_errors": {
+      "bytes": 414,
+      "ctime_ns": 1794963184620085493,
+      "device": 27,
+      "inode": 787493,
+      "mtime_ns": 1794963184620085493,
+      "relative": "control/collection-errors.jsonl",
+      "sha256": "de22885b024158a602e6dafd2e44833573b79ce3bb5dfbaf42fc6a32533d4bcd",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "coverage": {
+      "bytes": 4381,
+      "ctime_ns": 1794963214171249973,
+      "device": 27,
+      "inode": 786466,
+      "mtime_ns": 1794963214171249973,
+      "relative": "control/live-coverage.json",
+      "sha256": "16e3b91d4c8ea7482543f24d1e9f17ff3ffadfd21b426d47961e0343adae47a5",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "final": {
+      "bytes": 5647,
+      "ctime_ns": 1794963214172444569,
+      "device": 27,
+      "inode": 786500,
+      "mtime_ns": 1794963214172444569,
+      "relative": "control/final-summary.json",
+      "sha256": "7e8a571a9af3c774b969bc057442451d8d5aacda460c028a824864eea069f8d6",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "job": {
+      "bytes": 9188,
+      "ctime_ns": 1794943744121182649,
+      "device": 27,
+      "inode": 795291,
+      "mtime_ns": 1794943744120611186,
+      "relative": "job/job.json",
+      "sha256": "d66ad0b598292ebc61aa095c92abc826720e67c5c96dea5eda24670349418edd",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "launch": {
+      "bytes": 284,
+      "ctime_ns": 1794943743082160330,
+      "device": 27,
+      "inode": 795228,
+      "mtime_ns": 1794943743079142271,
+      "relative": "control/launch.json",
+      "sha256": "e00fb28277d3f5ce6603348f801c31b7bcd365c2eab8dec08d31c2a1b1807d9b",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "observer_identity": {
+      "bytes": 108,
+      "ctime_ns": 1794943747115163255,
+      "device": 27,
+      "inode": 795339,
+      "mtime_ns": 1794943747115163255,
+      "relative": "control/observer-identity.json",
+      "sha256": "d7b22ecf20a36454ccce4b4658a2c7e42de0c77275de673f350f2d63a1b07d97",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "producer": {
+      "bytes": 1039,
+      "ctime_ns": 1794963188132752497,
+      "device": 27,
+      "inode": 787539,
+      "mtime_ns": 1794963188132752497,
+      "relative": "control/producer-result.json",
+      "sha256": "3654004d9634f1c5358b25823069aef7a97042e8626d69502ed1c61aa1a2edb1",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "progress": {
+      "bytes": 1975,
+      "ctime_ns": 1794963187958127530,
+      "device": 27,
+      "inode": 787482,
+      "mtime_ns": 1794963187958127530,
+      "relative": "job/progress.json",
+      "sha256": "3a3921de0f8250c771a2e68f62cc2f5704521cc33d277a090b97ec8645ba148a",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "supervisor_failure": {
+      "relative": "control/supervisor-failure.json",
+      "state": "MISSING"
+    },
+    "supervisor_heartbeat": {
+      "bytes": 184,
+      "ctime_ns": 1794963184623841731,
+      "device": 27,
+      "inode": 786661,
+      "mtime_ns": 1794963184623841731,
+      "relative": "control/supervisor-heartbeat.json",
+      "sha256": "be1231334e8e8998a9dff0abd66002fd2b33a45943b5e31040b3d7ac08272e43",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    },
+    "supervisor_identity": {
+      "bytes": 60,
+      "ctime_ns": 1794943743083767059,
+      "device": 27,
+      "inode": 795262,
+      "mtime_ns": 1794943743083767059,
+      "relative": "control/supervisor-identity.json",
+      "sha256": "ef460ba428f4e226559b7228aea4302dd3a955df7582cc8e4b62041b4154b417",
+      "stable_during_read": true,
+      "state": "OBSERVED"
+    }
+  },
+  "observation_only": true,
+  "observed_at_utc": "2026-11-18T00:59:55.042034+00:00",
+  "progress": {
+    "capacity_10000_per_s_passed": false,
+    "continuous_24h_stability_passed": false,
+    "continuous_6h_stability_passed": false,
+    "controller_sessions": 1,
+    "elapsed_seconds": 19443.305304647,
+    "error": null,
+    "fault_signals": {
+      "parent": 14,
+      "worker": 145
+    },
+    "final_audit": null,
+    "logs_verified": true,
+    "planned_rounds": 5400,
+    "production_approved": false,
+    "rounds": {
+      "DONE": 4357
+    },
+    "status": "paused",
+    "unresolved_faults": 0,
+    "unresolved_steps": 0,
+    "verified_tls": true
+  },
+  "protected_processes": {
+    "310035": {
+      "birth": "8086947",
+      "exit_code_encoded": 0,
+      "expected_birth": "8086947",
+      "identity_matches": true,
+      "ppid": 1,
+      "state": "Z"
+    },
+    "310039": {
+      "expected_birth": "8086955",
+      "state": "ABSENT"
+    },
+    "310266": {
+      "expected_birth": "8087358",
+      "state": "ABSENT"
+    },
+    "310269": {
+      "expected_birth": "8087359",
+      "state": "ABSENT"
+    }
+  },
+  "results": {
+    "after": {
+      "observation": {
+        "alerts": {
+          "known_format_codes": [
+            "worker_lease_inactive_or_unknown",
+            "driver_missing_zombie_or_birth_changed"
+          ],
+          "unexported_items": 0
+        },
+        "final_reconciliation": {},
+        "final_reconciliation_errors": {
+          "state": "NOT_A_LIST"
+        },
+        "finance_retry_alert_count": 0,
+        "financial_counts": {
+          "control_commands": 8714,
+          "credit_account_limits": 1,
+          "credit_asset_limits": 1,
+          "credit_commands": 4359,
+          "ledger_assets": 2,
+          "ledger_balances": 11,
+          "ledger_events": 21791,
+          "ledger_postings": 52298,
+          "partial_cancelled_orders": 4357,
+          "terminal_account_commands": 26142,
+          "uta_accounts": 3,
+          "uta_audit_capability": 1,
+          "uta_code_artifacts": 1,
+          "uta_command_inbox": 34856,
+          "uta_events": 82796,
+          "uta_fills": 17428,
+          "uta_liabilities": 1,
+          "uta_market_history": 4358,
+          "uta_matches": 8714,
+          "uta_orders": 17428,
+          "uta_positions": 0,
+          "uta_risk_decisions": 34856,
+          "uta_risk_policies": 1,
+          "uta_schema": 1
+        },
+        "financial_golden": {
+          "compared": true,
+          "completed_rounds": 4357,
+          "passed": true,
+          "remaining_principal_satoshi": 2086
+        },
+        "financial_golden_errors": {
+          "known_format_codes": [],
+          "unexported_items": 0
+        },
+        "log_verification": {},
+        "observer": {
+          "active_elapsed_seconds": 19464.005389611,
+          "active_rounds": [],
+          "completed_rounds": 4357,
+          "contract_sha256": "90fb9a298410893258b50d86c07a45b6b0fd19d7344234925d3024b7131f6327",
+          "final_evidence_eligible": false,
+          "financial_ready": "unknown_independent_observer_has_no_readiness_authority",
+          "frozen_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+          "logical_point": "stable_boundary",
+          "original_deadline_boottime_ns": 102471129103044,
+          "original_start_boottime_ns": 80871129103044,
+          "planned_rounds": 5400,
+          "unresolved_faults": 0,
+          "unresolved_steps": 0
+        },
+        "position_residual_count": 0,
+        "residuals": {
+          "live_orders": 0
+        }
+      },
+      "outer": {
+        "ended_wall_ns": 1794963213965248041,
+        "exit_code": 0,
+        "identity": {
+          "birth": "10033217",
+          "pid": 754835,
+          "started_boottime_ns": 100332178135391,
+          "started_wall_ns": 1794963205700823716
+        },
+        "stderr_present": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_complete": true,
+        "stdout_sha256": "f64f7eea3535f06c6897b60aad10eff5f29d8dfe48a1e735346bebe5d7fc204e"
+      },
+      "response_present": true,
+      "response_status": {
+        "final_evidence_eligible": false,
+        "planned_rounds": 5400,
+        "unresolved_faults": 0,
+        "unresolved_steps": 0
+      }
+    },
+    "before": {
+      "observation": {
+        "alerts": {
+          "known_format_codes": [
+            "worker_lease_inactive_or_unknown",
+            "driver_missing_zombie_or_birth_changed"
+          ],
+          "unexported_items": 0
+        },
+        "final_reconciliation": {},
+        "final_reconciliation_errors": {
+          "state": "NOT_A_LIST"
+        },
+        "finance_retry_alert_count": 0,
+        "financial_counts": {
+          "control_commands": 8714,
+          "credit_account_limits": 1,
+          "credit_asset_limits": 1,
+          "credit_commands": 4359,
+          "ledger_assets": 2,
+          "ledger_balances": 11,
+          "ledger_events": 21791,
+          "ledger_postings": 52298,
+          "partial_cancelled_orders": 4357,
+          "terminal_account_commands": 26142,
+          "uta_accounts": 3,
+          "uta_audit_capability": 1,
+          "uta_code_artifacts": 1,
+          "uta_command_inbox": 34856,
+          "uta_events": 82796,
+          "uta_fills": 17428,
+          "uta_liabilities": 1,
+          "uta_market_history": 4358,
+          "uta_matches": 8714,
+          "uta_orders": 17428,
+          "uta_positions": 0,
+          "uta_risk_decisions": 34856,
+          "uta_risk_policies": 1,
+          "uta_schema": 1
+        },
+        "financial_golden": {
+          "compared": true,
+          "completed_rounds": 4357,
+          "passed": true,
+          "remaining_principal_satoshi": 2086
+        },
+        "financial_golden_errors": {
+          "known_format_codes": [],
+          "unexported_items": 0
+        },
+        "log_verification": {},
+        "observer": {
+          "active_elapsed_seconds": 19447.243590024,
+          "active_rounds": [],
+          "completed_rounds": 4357,
+          "contract_sha256": "90fb9a298410893258b50d86c07a45b6b0fd19d7344234925d3024b7131f6327",
+          "final_evidence_eligible": false,
+          "financial_ready": "unknown_independent_observer_has_no_readiness_authority",
+          "frozen_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+          "logical_point": "stable_boundary",
+          "original_deadline_boottime_ns": 102471129103044,
+          "original_start_boottime_ns": 80871129103044,
+          "planned_rounds": 5400,
+          "unresolved_faults": 0,
+          "unresolved_steps": 0
+        },
+        "position_residual_count": 0,
+        "residuals": {
+          "live_orders": 0
+        }
+      },
+      "outer": {
+        "ended_wall_ns": 1794963197161523880,
+        "exit_code": 0,
+        "identity": {
+          "birth": "10031468",
+          "pid": 754798,
+          "started_boottime_ns": 100314682045254,
+          "started_wall_ns": 1794963188204733429
+        },
+        "stderr_present": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_complete": true,
+        "stdout_sha256": "4dd9a3ab0d45528309999204bf95b3c89d57b6b0182efe94fc9c0f4a4027a6f2"
+      },
+      "response_present": true,
+      "response_status": {
+        "final_evidence_eligible": false,
+        "planned_rounds": 5400,
+        "unresolved_faults": 0,
+        "unresolved_steps": 0
+      }
+    },
+    "cold": {
+      "outer": {
+        "ended_wall_ns": 1794963205697248526,
+        "exit_code": 1,
+        "identity": {
+          "birth": "10032383",
+          "pid": 754816,
+          "started_boottime_ns": 100323836601684,
+          "started_wall_ns": 1794963197359289819
+        },
+        "stderr_present": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_complete": true,
+        "stdout_sha256": "408851d943596eef7b9f679c726bcbbfcb3235e6ea679ebff812e1f544f56097"
+      },
+      "response_present": true,
+      "response_status": {
+        "final_evidence_eligible": false
+      }
+    },
+    "producer": {
+      "outer": {
+        "ended_wall_ns": 1794963188132241315,
+        "exit_code": 2,
+        "identity": {
+          "birth": "8086955",
+          "pid": 310039,
+          "started_boottime_ns": 80869553387520,
+          "started_wall_ns": 1794943743076076205
+        },
+        "stderr_present": false,
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_complete": true,
+        "stdout_sha256": "3cca4b1f2db7244a8247a696bffd042f2fc4795c18079f223a1a85a71a20053d"
+      },
+      "response_present": true,
+      "response_status": {
+        "controller_sessions": 1,
+        "elapsed_seconds": 19443.305304647,
+        "fault_signals": {
+          "parent": 14,
+          "worker": 145
+        },
+        "final_audit": null,
+        "logs_verified": true,
+        "mode": "managed-process-required-audit-native-tls-hmac",
+        "planned_rounds": 5400,
+        "rounds": {
+          "DONE": 4357
+        },
+        "status": "paused",
+        "unresolved_faults": 0,
+        "unresolved_steps": 0,
+        "verified_tls": true
+      }
+    }
+  },
+  "source_commit_expected": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "synthetic": true
+}
