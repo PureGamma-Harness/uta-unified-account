@@ -26,7 +26,7 @@ fills reduce remaining quantity; native reduction invalidation and STP/rejection
 cancel orders. Point reloads detect those cancellations and partial fills.
 The new selector is outside the unchanged two-leg savepoint block: no head is
 advanced while either leg can be rolled back. A second-leg ServiceError restores
-first-leg fills and collateral cancellations before the next peek. Unexpected
+first-leg fills and associated order cancellations before the next peek. Unexpected
 exceptions still abort the encompassing transaction. Fee, trade identity, maker
 price, audit/receipt creation and both authorization legs are unchanged.
 
