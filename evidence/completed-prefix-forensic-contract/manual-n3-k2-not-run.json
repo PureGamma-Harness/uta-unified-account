@@ -1,0 +1,98 @@
+{
+  "completed_prefix_rounds": 2,
+  "execution_status": "NOT_RUN",
+  "expected_counts": {
+    "account_commands": 12,
+    "fills": 8,
+    "ledger_events": 16,
+    "matches": 4,
+    "orders": 8,
+    "partial_cancellations": 2,
+    "risk_decisions": 16
+  },
+  "expected_gross_balances": [
+    {
+      "asset": "USD",
+      "minor_units": 99999999840000,
+      "owner": "customer:managed-soak-alice"
+    },
+    {
+      "asset": "USD",
+      "minor_units": 99999999840000,
+      "owner": "customer:managed-soak-bob"
+    },
+    {
+      "asset": "USD",
+      "minor_units": 100000000000000,
+      "owner": "customer:managed-soak-credit"
+    },
+    {
+      "asset": "USD",
+      "minor_units": 320000,
+      "owner": "system:fees"
+    },
+    {
+      "asset": "USD",
+      "minor_units": -300000000000000,
+      "owner": "system:custody"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": 100000002,
+      "owner": "customer:managed-soak-credit"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": 99999998,
+      "owner": "system:credit-pool"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": -2,
+      "owner": "liability:principal:managed-soak-credit"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": 2,
+      "owner": "system:credit-principal-receivable"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": -100000000,
+      "owner": "system:custody"
+    },
+    {
+      "asset": "BTC",
+      "minor_units": -100000000,
+      "owner": "system:credit-capital"
+    }
+  ],
+  "expected_open_orders": 0,
+  "expected_per_currency_sum": {
+    "BTC": 0,
+    "USD": 0
+  },
+  "expected_positions": 0,
+  "independent_validation_status": "PENDING",
+  "interest_satoshi": 0,
+  "minor_unit_scales": {
+    "BTC": 8,
+    "USD": 8
+  },
+  "original_principal_satoshi": 6,
+  "planned_rounds": 3,
+  "qualification": {
+    "capacity_10000_per_s_passed": false,
+    "complete_original_job": false,
+    "continuous_24h_stability_passed": false,
+    "continuous_6h_stability_passed": false,
+    "financial_6h_passed": false,
+    "full_risk_engine_reexecution_passed": false,
+    "production_approved": false,
+    "whole_business_event_reexecution_passed": false
+  },
+  "remaining_principal_satoshi": 2,
+  "repaid_principal_satoshi": 4,
+  "schema": "uta.completed_prefix_forensic_manual_case.v1",
+  "source": "hand-computable synthetic profile, not an executed SQL/audit result"
+}

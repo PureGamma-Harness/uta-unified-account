@@ -1,0 +1,75 @@
+{
+  "actual_forensic_audit_or_quiescence_proven": false,
+  "code_commit": "0c04590c8e8bcf75c7fb7e5b69b430031a24160e",
+  "existing_debt_accounts_not_generalized": true,
+  "known_four_findings": "CLOSED_IN_CLOSED_ZERO_GENESIS_PROFILE",
+  "new_author_first_outcome": {
+    "exit_code": 0,
+    "methods": 10,
+    "outer_elapsed_ns": 114441964,
+    "reported_seconds": "0.011",
+    "source": "EXISTING_RAW_NOT_REEXECUTED"
+  },
+  "new_first_files": {
+    "first-execution.json": {
+      "bytes": 979,
+      "sha256": "b275e64259cb3f2d6b8e5106c6de02c15e38900724e133b3a973d2332ce18dbc"
+    },
+    "stage-status.json": {
+      "bytes": 630,
+      "sha256": "f0269dfab2ecd2d81fd06c40b1cf35e2b510526dc40ec094bb08af64fc334d1b"
+    },
+    "unittest.stderr": {
+      "bytes": 1701,
+      "sha256": "6ef9ae484a065e22534255d5d812d773e94dfa045995eb74106ccc8672ac1fa4"
+    },
+    "unittest.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "original_strict_gates_runtime_and_v1_receipt_schema_unchanged": true,
+  "preserved_first_evidence": {
+    "17e4542f3c69a61feaa421b4284183d323ff4e19": {
+      "all_bytes_equal": true,
+      "files": 7,
+      "scope": "evidence/reviews/prefix-pure-independent"
+    },
+    "3b0a9ab0d9b8ed9719dad0328076aa5b17a1bdc0": {
+      "all_bytes_equal": true,
+      "files": 4,
+      "scope": "evidence/completed-prefix-pure-validation"
+    }
+  },
+  "production_approved": false,
+  "review_type": "CODE_AND_EXISTING_RAW_ONLY",
+  "reviewed_tip": "b363a8ac84870c8c73ea5de4e27a2993217cc0a9",
+  "reviewer_tests_executed": false,
+  "schema": "uta.prefix-causality-independent-code.v1",
+  "source_bindings": {
+    "docs/completed-prefix-causality-design.md": {
+      "bytes": 4881,
+      "git_blob": "91af03caa3c07bdafb93ae07cc2c870817bebd15",
+      "same_at_evidence_tip": false,
+      "sha256": "f7259440c0bfe9eb991aad290b486e0013bb7086fb441ac2de2a88aac14cf129"
+    },
+    "evidence/reviews/prefix-pure-independent/reference_causality_once.py": {
+      "bytes": 13973,
+      "git_blob": "973aa7f4942acface63a6a8a13830ccf57576700",
+      "same_at_evidence_tip": true,
+      "sha256": "becbe5517b4cc87fcb62f55c94846e36379df44980f7cc583d47926c7fa89c88"
+    },
+    "tests/test_prefix_causality_fix.py": {
+      "bytes": 4300,
+      "git_blob": "28cab116ac80215078f27507874915c42f181ae0",
+      "same_at_evidence_tip": true,
+      "sha256": "813c169866d1a13f237614d6f75d640d119061bb9d5577cbc26c60976d14d993"
+    },
+    "tools/prefix_contract.py": {
+      "bytes": 27834,
+      "git_blob": "c91d55fedd9265b3ac0128c4d6a7b84999a26886",
+      "same_at_evidence_tip": true,
+      "sha256": "3cc97cc62df1d161bc6e5eef0999e3a390596db7e85c3c0b109cb73b06961853"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+test_control_unknown_ownership_does_not_become_real_audit (__main__.IndependentPrefixCausalTests.test_control_unknown_ownership_does_not_become_real_audit) ... ok
+test_fee_before_customer_genesis_funding_is_refused (__main__.IndependentPrefixCausalTests.test_fee_before_customer_genesis_funding_is_refused) ... FAIL
+test_independent_genesis_deposits_may_commute (__main__.IndependentPrefixCausalTests.test_independent_genesis_deposits_may_commute) ... ok
+test_legal_manual_profile_preserves_all_real_authority_false (__main__.IndependentPrefixCausalTests.test_legal_manual_profile_preserves_all_real_authority_false) ... ok
+test_no_numeric_alias_may_replace_gross_balance_integer (__main__.IndependentPrefixCausalTests.test_no_numeric_alias_may_replace_gross_balance_integer) ... ok
+test_only_genesis_loan_before_pool_capital_is_refused (__main__.IndependentPrefixCausalTests.test_only_genesis_loan_before_pool_capital_is_refused) ... FAIL
+test_repayment_before_only_genesis_loan_is_refused (__main__.IndependentPrefixCausalTests.test_repayment_before_only_genesis_loan_is_refused) ... FAIL
+test_unknown_limitation_in_declared_v1_receipt_is_refused (__main__.IndependentPrefixCausalTests.test_unknown_limitation_in_declared_v1_receipt_is_refused) ... FAIL
+
+======================================================================
+FAIL: test_fee_before_customer_genesis_funding_is_refused (__main__.IndependentPrefixCausalTests.test_fee_before_customer_genesis_funding_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 188, in test_fee_before_customer_genesis_funding_is_refused
+    self.assert_refused(value)
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 166, in assert_refused
+    self.assertIs(result["contract_consistent"], False)
+AssertionError: True is not False
+
+======================================================================
+FAIL: test_only_genesis_loan_before_pool_capital_is_refused (__main__.IndependentPrefixCausalTests.test_only_genesis_loan_before_pool_capital_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 184, in test_only_genesis_loan_before_pool_capital_is_refused
+    self.assert_refused(value)
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 166, in assert_refused
+    self.assertIs(result["contract_consistent"], False)
+AssertionError: True is not False
+
+======================================================================
+FAIL: test_repayment_before_only_genesis_loan_is_refused (__main__.IndependentPrefixCausalTests.test_repayment_before_only_genesis_loan_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 180, in test_repayment_before_only_genesis_loan_is_refused
+    self.assert_refused(value)
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 166, in assert_refused
+    self.assertIs(result["contract_consistent"], False)
+AssertionError: True is not False
+
+======================================================================
+FAIL: test_unknown_limitation_in_declared_v1_receipt_is_refused (__main__.IndependentPrefixCausalTests.test_unknown_limitation_in_declared_v1_receipt_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 192, in test_unknown_limitation_in_declared_v1_receipt_is_refused
+    self.assert_refused(value)
+  File "/workspace/uta-prefix-pure-independent/evidence/reviews/prefix-pure-independent/reference_causality_once.py", line 166, in assert_refused
+    self.assertIs(result["contract_consistent"], False)
+AssertionError: True is not False
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.011s
+
+FAILED (failures=4)
