@@ -203,6 +203,15 @@ class SnapshotSelectionTests(unittest.TestCase):
                     current = next(value for value in connection.rows.values() if value["book_sequence"] == target)
                     current["status"] = "CANCELLED"
                     self.compare(connection, book)
+        # Stable insertion order alone is insufficient: both sides arrive in
+        # reverse rowid order at one exact price, so the time key is essential.
+        connection, book = self.book([row(2, 1, 100), row(1, 1, 100),
+                                      row(4, -1, 100), row(3, -1, 100)])
+        self.compare(connection, book)
+        self.assertEqual((book.best(1)["book_sequence"], book.best(-1)["book_sequence"]), (1, 3))
+        connection.rows[("account-1", "order-1")]["status"] = "CANCELLED"
+        connection.rows[("account-3", "order-3")]["status"] = "CANCELLED"
+        self.compare(connection, book)
 
     def test_empty_one_sided_uncrossed_and_zero_remaining_books(self):
         for values in ([], [row(1, 1, 90)], [row(1, 1, 90), row(2, -1, 110)],
