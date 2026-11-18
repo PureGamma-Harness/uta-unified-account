@@ -12,6 +12,7 @@ RAW_TRAILER_RESERVE = 512
 RAW_RESERVED = 0
 RAW_FAILED = False
 DATA_CAP = 8 * 1024 * 1024
+SUBTREE_CAPS = None
 RUN_ROOT = None
 LAST_SCAN = STARTED
 MAX_OBSERVED_BYTES = 0
@@ -117,6 +118,12 @@ def check_budget():
     LAST_SCAN = now
     observed = tree_bytes(RUN_ROOT) if RUN_ROOT is not None else 0
     MAX_OBSERVED_BYTES = max(MAX_OBSERVED_BYTES, observed)
+    if RUN_ROOT is not None and SUBTREE_CAPS is not None:
+        for name, limit in SUBTREE_CAPS.items():
+            path = RUN_ROOT / name
+            if path.exists() and tree_bytes(path) > limit:
+                emit("OBSERVER_SETUP_SUBTREE_CAP_EXCEEDED", subtree=name, limit_bytes=limit, exit_status=124)
+                os._exit(124)
     if observed > DATA_CAP:
         emit("MATCHING_PROFILE_LOGICAL_DATA_BUDGET_EXCEEDED", observed_bytes=observed, limit_bytes=DATA_CAP, exit_status=124)
         os._exit(124)
@@ -211,6 +218,8 @@ def verify_sources(root, manifest, *, use_frozen_origins=False):
 
 
 def write_new_json(path, value, cap=4 * 1024 * 1024):
+    if SUBTREE_CAPS is not None:
+        cap = min(cap, SUBTREE_CAPS["reports"])
     data = (json.dumps(value, sort_keys=True, ensure_ascii=True, indent=2, allow_nan=False) + "\n").encode()
     if len(data) > cap or check_budget() + len(data) > DATA_CAP:
         raise ValueError("new mandatory report would exceed the declared logical budget")
@@ -270,18 +279,33 @@ def install_scope_audit(business, reports):
 
 
 def main():
-    global RUN_ROOT, CHECKPOINTS, DEADLINE, RAW_CAP, DATA_CAP
+    global RUN_ROOT, CHECKPOINTS, DEADLINE, RAW_CAP, DATA_CAP, SUBTREE_CAPS
     parser = argparse.ArgumentParser()
-    parser.add_argument("--host-start-gate-stdin", action="store_true", required=True)
+    parser.add_argument("--host-start-gate-stdin", action="store_true")
+    parser.add_argument("--setup-only", action="store_true")
+    parser.add_argument("--book-size", type=int)
+    parser.add_argument("--book-selection", choices=("scan",))
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--approved-manifest-sha256", required=True)
-    parser.add_argument("--profile-set", choices=("current", "original-scan"), required=True)
+    parser.add_argument("--profile-set", choices=("current", "original-scan", "observer-setup"), required=True)
     args = parser.parse_args()
-    seconds = 60 if args.profile_set == "current" else 45
+    if args.setup_only:
+        if (args.profile_set != "observer-setup" or args.book_size != 32 or args.book_selection != "scan"
+                or args.host_start_gate_stdin or sys.argv.count("--setup-only") != 1):
+            raise ValueError("setup-only requires exactly observer-setup/32/scan, no host gate or profile fallthrough")
+        seconds, RAW_CAP, DATA_CAP = 20, 127 * 1024, 24 * 1024 * 1024
+        SUBTREE_CAPS = {"business": 16 * 1024 * 1024, "source": 2 * 1024 * 1024, "reports": 1024 * 1024}
+        book_sizes, authority_count = [32], 1
+    else:
+        if (args.profile_set == "observer-setup" or args.book_size is not None or args.book_selection is not None
+                or not args.host_start_gate_stdin):
+            raise ValueError("full profile and setup-only invocation contracts cannot be mixed")
+        seconds = 60 if args.profile_set == "current" else 45
+        RAW_CAP = (320 if args.profile_set == "current" else 176) * 1024
+        DATA_CAP = (78 if args.profile_set == "current" else 40) * 1024 * 1024
+        book_sizes, authority_count = [32, 128], 4 if args.profile_set == "current" else 2
     DEADLINE = STARTED + seconds
-    RAW_CAP = (320 if args.profile_set == "current" else 176) * 1024
-    DATA_CAP = (78 if args.profile_set == "current" else 40) * 1024 * 1024
     if (len(args.source_commit) != 40 or any(value not in "0123456789abcdef" for value in args.source_commit)
             or len(args.approved_manifest_sha256) != 64
             or any(value not in "0123456789abcdef" for value in args.approved_manifest_sha256)):
@@ -345,7 +369,8 @@ def main():
     write_new_json(reports / "intent.json", {"source_commit": args.source_commit, "manifest_sha256": args.approved_manifest_sha256,
                    "runtime": sys.version, "affinity_before_pinning": affinity_before,
                    "actual_affinity": sorted(os.sched_getaffinity(0)), "source_pins": pins,
-                   "book_sizes": [32, 128], "authority_count": 4 if args.profile_set == "current" else 2,
+                   "book_sizes": book_sizes, "authority_count": authority_count, "setup_only": args.setup_only,
+                   "subtree_caps": SUBTREE_CAPS,
                    "profile_set": args.profile_set, "wall_seconds": seconds, "raw_cap_bytes": RAW_CAP,
                    "target_runtime_commit": manifest["target_runtime_commit"],
                    "target_repository_uta_tree_oid": manifest["target_repository_uta_tree_oid"],
@@ -358,7 +383,7 @@ def main():
                    "execution_approval_source": "separate root scope; manifest/CLI alone do not authorize execution"})
     install_scope_audit(business, reports)
     sys.path.insert(0, str(source))
-    emit("BEGIN_MATCHING_PROFILE_ONCE", source_commit=args.source_commit, actual_affinity=sorted(os.sched_getaffinity(0)),
+    emit("BEGIN_OBSERVER_SETUP_ONCE" if args.setup_only else "BEGIN_MATCHING_PROFILE_ONCE", source_commit=args.source_commit, actual_affinity=sorted(os.sched_getaffinity(0)),
          manifest_sha256=args.approved_manifest_sha256, source_files=len(pins), child_processes=0,
          raw_cap_bytes=RAW_CAP, logical_data_cap_bytes=DATA_CAP, kernel_directory_quota_proven=False)
 
@@ -366,7 +391,7 @@ def main():
         global CHECKPOINTS
         observed = check_budget()
         CHECKPOINTS += 1
-        emit("MATCHING_PROFILE_CHECKPOINT", case=case, mode=mode, label=label, phase=phase, observed_logical_bytes=observed)
+        emit("OBSERVER_SETUP_CHECKPOINT" if args.setup_only else "MATCHING_PROFILE_CHECKPOINT", case=case, mode=mode, label=label, phase=phase, observed_logical_bytes=observed)
 
     def save_report(name, value):
         if "/" in name or not name.endswith(".json"):
@@ -385,7 +410,16 @@ def main():
 
     case_path = source / "benchmarks/matching_profile_case.py"
     values = runpy.run_path(str(case_path), run_name="matching_component_profile_once")
-    result = values["run_profile"](business, checkpoint, save_report, profiling_window, args.profile_set)
+    if args.setup_only:
+        result = values["run_observer_setup"](business, checkpoint, save_report, book_size=args.book_size, mode=args.book_selection)
+        exit_status = result["exit_status"]
+        if type(exit_status) is not int or exit_status not in (0, 1) or result["matching_calls"] != 0:
+            raise AssertionError("invalid setup-only termination")
+        status = ("OBSERVER_SETUP_FAULT_CAPTURED_INCOMPLETE_NO_MATCHING" if exit_status == 1
+                  else "OBSERVER_SETUP_FAULT_NOT_REPRODUCED_NO_MATCHING")
+    else:
+        result = values["run_profile"](business, checkpoint, save_report, profiling_window, args.profile_set)
+        exit_status, status = 0, "LOCAL_MATCHING_COMPONENT_PROFILE_PASS_PENDING_INDEPENDENT_REVIEW"
     import threading
     if threading.active_count() != 1:
         raise AssertionError("unexpected additional live thread")
@@ -421,7 +455,7 @@ def main():
                    "data_cap_limitation": "Python report bytes reserve before write; SQLite C files are checked at application boundaries. Python line tracing is disabled only in the finite matching profiling region, then restored. The declared phase deadline is checked at boundaries; no kernel quota, blocked-I/O interruption or hard realtime completion guarantee.",
                    "forbidden_imports": forbidden, "active_threads_at_end": 1,
                    "thread_observation_limit": "No application thread start in reviewed source; Python end-state is not kernel thread enumeration.",
-                   "status": "LOCAL_MATCHING_COMPONENT_PROFILE_PASS_PENDING_INDEPENDENT_REVIEW"})
+                   "status": status})
     write_new_json(reports / "result.json", result)
     inventory = {}
     # All native transactions/connections have ended before reading DB bytes.
@@ -432,21 +466,28 @@ def main():
     write_new_json(reports / "inventory.json", {"files": inventory, "excludes_this_inventory": True,
                    "sum_file_bytes": sum(value["bytes"] for value in inventory.values()), "source_unchanged": True})
     check_budget()
-    emit("END_MATCHING_PROFILE_ONCE", status=result["status"], authorities=result["authorities"], book_sizes=[32, 128],
+    emit("END_OBSERVER_SETUP_ONCE" if args.setup_only else "END_MATCHING_PROFILE_ONCE",
+         status=result["status"], authorities=result["authorities"], book_sizes=book_sizes,
          profile_set=args.profile_set, driver_elapsed_seconds=monotonic() - STARTED,
          max_observed_logical_bytes=MAX_OBSERVED_BYTES, source_unchanged=True,
-         all_financial_production_and_performance_approvals=False, exit_status=0)
-    return 0
+         all_financial_production_and_performance_approvals=False, exit_status=exit_status)
+    return exit_status
 
 
 def script_entry():
     # No main/mini materialization, UTA import or SQL before the root-owned
     # host has durably recorded this new child and its held pidfd. EOF rejects.
-    if sys.argv.count("--host-start-gate-stdin") != 1:
-        return 126
-    if os.read(0, 1) != b"G" or os.read(0, 1) != b"":
-        return 126
-    os.close(0)
+    if "--setup-only" in sys.argv:
+        # The separately authorized root timeout/taskset scope owns this one
+        # diagnostic process. No child, thread or gate operation occurs here.
+        if sys.argv.count("--setup-only") != 1 or "--host-start-gate-stdin" in sys.argv:
+            return 126
+    else:
+        if sys.argv.count("--host-start-gate-stdin") != 1:
+            return 126
+        if os.read(0, 1) != b"G" or os.read(0, 1) != b"":
+            return 126
+        os.close(0)
     sys.stdout = sys.__stdout__ = BoundedRaw(1)
     sys.stderr = sys.__stderr__ = BoundedRaw(2)
     sys.settrace(application_trace)

@@ -365,6 +365,47 @@ class Fixture:
                 "sampled_historical_replay": replay, "historical_replay_sample_count": 1}
 
 
+
+def run_observer_setup(business, checkpoint, save_report, *, book_size, mode):
+    """One fresh authority, setup and snapshot only; never calls run_profile.
+
+    A captured observer fault remains a failed incomplete observation (exit1).
+    Non-reproduction exits after setup and grants no matching/profile acceptance.
+    """
+    require(type(book_size) is int and book_size == 32 and mode == "scan", "setup-only requires exactly32 scan")
+    observer = SqlObserver()
+    observer.phase = "setup-32-scan"
+    observer.install()
+    wall, cpu = perf_counter_ns(), process_time_ns()
+    fixture = Fixture(business, 32, "scan", checkpoint, observer)
+    fixture.setup(workload(32))
+    observation, snapshot_failure = None, None
+    try:
+        observation = observer.snapshot()
+    except AssertionError as error:
+        if observer.failure is None:
+            raise
+        snapshot_failure = {"type": observer._bounded(type(error).__module__ + "." + type(error).__qualname__, 128),
+                            "message": observer._bounded(str(error), 512)}
+    captured = observer.failure is not None
+    result = {"kind": "SINGLE_AUTHORITY_OBSERVER_SETUP_DIAGNOSTIC_NOT_A_PROFILE", "profile_set": "observer-setup",
+        "setup_only": True, "book_sizes": [32], "mode": "scan", "authorities": 1, "setup_orders": 32,
+        "diagnostic_outcome": "OBSERVER_FAULT_CAPTURED" if captured else "FAULT_NOT_REPRODUCED",
+        "observer_first_fault": observer.failure, "snapshot_failure": snapshot_failure, "observation": observation,
+        "exit_status": 1 if captured else 0, "observer_complete": not captured,
+        "setup_wall_ns": perf_counter_ns() - wall, "setup_cpu_ns": process_time_ns() - cpu,
+        "actions": fixture.actions, "database_path": str(fixture.path),
+        "matching_calls": 0, "timed_matching_calls": 0, "old_baseline_calls": 0, "aggregate_calls": 0,
+        "warmup": 0, "retries": 0, "historical_H254_cause": "UNKNOWN_UNCHANGED",
+        "all_functional_checks_passed": False, "component_profile_passed": False,
+        "default_scan_regression_accepted": False, "throughput_capacity_accepted": False,
+        "production_approved": False, "visibility": "PRIVATE_LOCAL_NO_AUTOMATIC_PUBLICATION"}
+    save_report("observer-setup.json", result)
+    # There is no next quote, verify, profiler, matching, alternate mode or
+    # continuation even when the observer fault is not reproduced.
+    return result
+
+
 def run_profile(business, checkpoint, save_report, profiling_window, profile_set):
     require(profile_set in {"current", "original-scan"}, "unknown exact profile set")
     schedule = SCHEDULE if profile_set == "current" else ((32, "original-scan"), (128, "original-scan"))

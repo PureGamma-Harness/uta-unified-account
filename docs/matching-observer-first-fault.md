@@ -31,10 +31,38 @@ UTA or SQLite or execute SQL. Their source is prepared but has not been run.
 They validate diagnostics behavior; they cannot identify the original native
 cause or validate CPython connection readiness.
 
-Next native work requires a new frozen source, independent review and separate
-root GO for one fresh32-order scan setup only. Its entry must stop before any
-matching even if the fault does not reproduce. Neither the original four-case
+The new native entry is fixed to --setup-only, profile-set observer-setup,
+book-size32 and book-selection scan. It needs a new frozen source, independent
+review and separate root GO. It calls only run_observer_setup, which installs
+the unchanged observer, builds one fresh native authority with the original two
+accounts/deposits and32 orders, then calls snapshot and terminates. It never calls
+run_profile, verify, a second quote after setup, profiler enable or match_once.
+A captured fault remains incomplete and exits1 with OBSERVER_FAULT_CAPTURED.
+Without a fault it exits0 with FAULT_NOT_REPRODUCED; this means only that setup
+finished without the fault, never that matching or finance acceptance passed.
+Both outcomes retain the new own structured evidence and leave historical H254
+cause UNKNOWN. The controller finishes source/runtime verification and byte
+inventory for either result; it grants no profile acceptance.
+
+Native proposal: one allowed CPU, boundary guard20s plus root's independently
+observed hard timeout20s/drain at most2s. The target creates no child/thread,
+network, proc or PID action and may connect only inside its new authority scope.
+Its old host startgate path remains required for full profiles; setup-only uses
+root's separate timeout/taskset orchestration and refuses the host gate flag.
+Logical total24MiB splits authority16MiB, mini2MiB, reports1MiB and5MiB reserved
+for outer capture/cleanup. Target raw127KiB includes its512-byte trailer reserve;
+root outer raw1KiB shares the128KiB pool. Length checks are not a kernel quota;
+native I/O cannot be guaranteed to stop by a Python line guard. Late/missing
+completion is failed or unknown and never justifies another run. Neither the original four-case
 profile entry nor a benchmark retry is authorized by this plan. Deployment is
 limited to diagnostic controls. Rollback is removal of these additions; financial
 runtime and default scan remain unchanged. Original failed evidence is never
 rewritten, repaired or retroactively relabeled.
+
+
+The pure plan remains separate: exactly four explicitly named fake methods in
+one test command, with its own two-source manifest. It has no native setup entry,
+UTA/SQLite import or SQL. Neither plan authorizes execution and their raw/results
+must not be combined. All actual diagnostic artifacts are private until a
+separately reviewed filter excludes nonce payloads, DB/WAL/SHM binaries and
+private original absolute paths. Private failed commits are not public ancestors.
