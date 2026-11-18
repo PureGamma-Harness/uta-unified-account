@@ -116,3 +116,11 @@ synthetic, code-bound authorities first; an existing authority must follow its
 code/layout handoff policy. Rollback retains all commands, accepted receipts,
 confirmed fills and journal entries. It cannot erase confirmed effects or retry
 an unknown result under a new business ID.
+
+Independent review caught a preparation defect before execution at source7c8bf60:
+the selected service AST omitted its original future annotations import. The
+driver now retains that exact AST node, preserving annotation semantics without
+loading SQL/native imports. The original plan is retained byte-for-byte as
+`once-plan-7c8bf60-NOT_RUN.json`; it had zero target attempts and was not a test
+failure. The new plan rebinds only the corrected driver. Financial service code,
+six model modules and all manual expectations are unchanged by this correction.

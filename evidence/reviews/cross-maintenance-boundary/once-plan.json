@@ -72,8 +72,8 @@
       "sha256": "605b7a5462abbf50cad6cbce518aa8d9fc50bf72629659ab066578a077d3cbfd"
     },
     "tools/run_cross_maintenance_once.py": {
-      "bytes": 8873,
-      "sha256": "0d23708f8c4d1bf278b8692b719e7e49fe9a2cf3e2ab257739142b3e10aa6fd8"
+      "bytes": 9181,
+      "sha256": "072423d077d6bd11129939800f27a7a63b5b4877177164fe4f8c331676ec3d8b"
     },
     "uta/market.py": {
       "bytes": 8465,
@@ -203,6 +203,15 @@
   "performance_accepted": false,
   "planned_case_completions": 15,
   "planned_methods": 6,
+  "preparation_history": {
+    "correction": "Retain exact original future annotations AST node before selected definitions; no financial code or tests changed.",
+    "finding": "Selected service AST dropped original future annotations; MarketSnapshot annotation would evaluate without a binding before methods run.",
+    "old_plan_copy": "once-plan-7c8bf60-NOT_RUN.json",
+    "old_plan_sha256": "f9836976c789f6208b7fe98e7c6979219168e474677f412e4040cabab7b0d065",
+    "source": "7c8bf6055db86ff8267831c80bd75ca837a60dbd",
+    "status": "NOT_RUN_CODE_BLOCKED_NOT_RED",
+    "target_attempts": 0
+  },
   "production_approved": false,
   "raw_policy": "Shared reserve-before-FD-write 256KiB including512 failure trailer; any incomplete write sticky125/no retry; no child can be orphaned by fail_raw.",
   "root_once_GO_required": true,

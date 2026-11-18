@@ -102,6 +102,10 @@ def selected_service(source, plan):
     from uta.models import RiskInputError
     from uta.products import ProductKind
     parsed = ast.parse(source, filename=str(ROOT / "uta/service.py"))
+    futures = [node for node in parsed.body
+               if isinstance(node, ast.ImportFrom) and node.module == "__future__"]
+    if len(futures) != 1 or [alias.name for alias in futures[0].names] != ["annotations"]:
+        raise ValueError("selected service future annotations are incomplete")
     wanted = set(plan["selected_service_methods"])
     classes = [node for node in parsed.body if isinstance(node, ast.ClassDef) and node.name == "ExchangeService"]
     if len(classes) != 1:
@@ -115,7 +119,7 @@ def selected_service(source, plan):
         and isinstance(node.targets[0], ast.Name) and node.targets[0].id in ("_ZERO", "_MAX_INPUT")]
     if len(globals_) != 4:
         raise ValueError("selected service globals are incomplete")
-    selected = ast.Module(body=[*globals_, ast.ClassDef(name="ExchangeService", bases=[], keywords=[],
+    selected = ast.Module(body=[*futures, *globals_, ast.ClassDef(name="ExchangeService", bases=[], keywords=[],
         body=methods, decorator_list=[], type_params=[])], type_ignores=[])
     ast.fix_missing_locations(selected)
     result = ModuleType("uta.service")
