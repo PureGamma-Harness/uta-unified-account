@@ -41,7 +41,7 @@ or copy its subsequence algorithm. The actual selected method AST is evaluated
 only as the differential target, with an independently implemented canonical
 JSON wire encoder and independently specified terminal state vocabulary.
 
-Eight new methods plan 1,794 checks, also covering future progression of all
+Eight new methods plan 1,694 checks, also covering future progression of all
 four recorded-PENDING members (256 combinations), immutable terminal mismatch,
 preexisting quarantine, claimed quarantine, duplicate/foreign CIDs and existing
 wire rejections. Explicit manual examples retain a valid nonprefix execution
