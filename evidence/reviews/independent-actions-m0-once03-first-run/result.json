@@ -1,0 +1,62 @@
+{
+  "capacity_10000_per_s_passed": false,
+  "cases": [
+    {
+      "case": "B",
+      "case_execution_status": "UNKNOWN",
+      "complete_outer_monotonic_ns": 1811314430,
+      "error_code": "whole_case_unknown",
+      "error_type": "GateError",
+      "owner_cleanup": {
+        "leader_reaped": true,
+        "outcome": "UNKNOWN",
+        "returncode": -15,
+        "stdout_stderr_complete": true,
+        "watchdog_reason": "health_or_resource_gate:resource_missing_non_aux"
+      },
+      "pipeline_owner_birth_ticks": 9112,
+      "pipeline_owner_pid": 2621,
+      "private_originals_uploaded": false,
+      "production_approved": false,
+      "profile": false,
+      "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "status": "UNKNOWN",
+      "stop_reason": "stream_escrow_not_complete",
+      "stream_escrow": {
+        "all_transitive_native_streams_claimed": false,
+        "case": "B",
+        "error_code": "escrow_owner_unknown",
+        "error_type": "GateError",
+        "failures": [],
+        "four_closed_streams_retained": false,
+        "origin_authenticated_by_recipient_encryption": false,
+        "owner_cleanup": {
+          "leader_reaped": true,
+          "outcome": "UNKNOWN",
+          "returncode": -15,
+          "stdout_stderr_complete": true,
+          "watchdog_reason": "health_or_resource_gate:resource_missing_non_aux"
+        },
+        "recipient_spki_sha256": "de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1",
+        "status": "UNKNOWN"
+      }
+    },
+    {
+      "case": "P",
+      "production_approved": false,
+      "profile": true,
+      "reason": "first_case_not_passed",
+      "status": "NOT_RUN"
+    }
+  ],
+  "ha_approved": false,
+  "no_external_exchange": true,
+  "no_network_sandbox_claim": true,
+  "private_originals_uploaded": false,
+  "private_raw_retention": "four closed driver/case-owner streams as authenticated CMS ciphertext; subject to explicit per-case escrow result and provider artifact retention",
+  "production_approved": false,
+  "profile_binary_uploaded": false,
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "speedup_claim": false,
+  "status": "UNKNOWN_OR_NO_GO"
+}

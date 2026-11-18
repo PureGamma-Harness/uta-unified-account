@@ -1,0 +1,212 @@
+{
+  "CI_first_docs_only_cherry": "ed929d38648486ec01a01094b772b2c9c1072573",
+  "CI_original_owner": "dc9e42ababfd29106129d85ecd00ae4c38ebbb8c",
+  "CI_true_marker_parent_not_merged": true,
+  "HA_approved": false,
+  "M04_safe": "69d2c069fadd446a6a84648dc8fcbb8d6a8ce7ad",
+  "actual_M05_push_authorized": false,
+  "actual_SQL_native_owner_crypto_network_or_CI": false,
+  "actual_marker_created": false,
+  "all_component_CODE_reviews_closed": true,
+  "branch": "refs/heads/perf/approved-m0-20261117-05",
+  "budgets": {
+    "case_bytes": 33554432,
+    "case_complete_outer_max_seconds": 60,
+    "case_inner_wall_seconds": 50,
+    "case_pipeline_watchdog_seconds": 56,
+    "cleanup_bytes": 33554432,
+    "escrow_bytes": 100663296,
+    "escrow_separate_postcase_wall_seconds": 20,
+    "extra_free_bytes": 2147483648,
+    "format": 2,
+    "grace_seconds": 2,
+    "kill_wait_seconds": 2,
+    "minimum_fresh_free_bytes": 2348810240,
+    "normal_aggregate_bytes": 67108864,
+    "physical_os_disk_quota": false,
+    "total_logical_bytes": 201326592,
+    "watchdog_scope": "new owned session: source checks, driver, parser, hashes, fsync and staged safe output"
+  },
+  "candidate_phase": "COMBINED_REVIEW_CLOSED_LOCAL_C_M_PREPARATION_ONLY",
+  "capacity_approved": false,
+  "combined_PURE_process_permission_requires_root_explicit_scope": true,
+  "combined_PURE_real_stdlib_child_spawn_expected_by_source": 6,
+  "combined_complete_nine_module_acceptance": true,
+  "combined_current_actual_children": 6,
+  "combined_current_evidence": "evidence/preparations/m05-first-combined-d58e244/seal.json",
+  "combined_current_exit": 0,
+  "combined_current_independent_artifact_review": "CLOSED_SOURCE_BOUND_PURE_ONLY",
+  "combined_current_independent_review_record": "evidence/preparations/m05-local-registration-prep/combined-independent-review-record.json",
+  "combined_first_actual_children": 0,
+  "combined_first_authorized_scope": {
+    "actual_M05_authorized": false,
+    "cpu": 2,
+    "discovery_pattern": "test_independent_m0_*.py",
+    "outer_seconds": 30,
+    "real_stdlib_children_max": 6,
+    "required_guards": [
+      "parent_and_child_process",
+      "SQL_import_and_connect",
+      "UTA_import",
+      "network",
+      "signals",
+      "threads",
+      "native_execution"
+    ],
+    "test_modules": 9
+  },
+  "combined_first_evidence": "evidence/preparations/m05-first-combined-4eabab3/seal.json",
+  "combined_first_exit": 1,
+  "combined_first_source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+  "combined_new_tree_PURE": "PASS_FIRST_RUN_D58_219_TESTS_6_GUARDED_CHILDREN",
+  "combined_runs": [
+    {
+      "actual_children": 0,
+      "evidence": "evidence/preparations/m05-first-combined-4eabab3/seal.json",
+      "exit": 1,
+      "source_commit": "4eabab317fd9ec7a4e9c068c42ac4935a26fcac4",
+      "status": "FIRST_ERROR_NO_GO"
+    },
+    {
+      "actual_children": 6,
+      "evidence": "evidence/preparations/m05-first-combined-d58e244/seal.json",
+      "exit": 0,
+      "source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
+      "status": "FIRST_GUARDED_PURE_PASS_REVIEW_PENDING"
+    }
+  ],
+  "combined_specific_authorization_consumed": true,
+  "command_spec": {
+    "argv_templates": [
+      [
+        "PYTHON",
+        "WORKLOAD/benchmarks/run_managed_benchmark.py",
+        "--output",
+        "PRIVATE/B/workload",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "1",
+        "--durable-batches",
+        "--financial-batch-size",
+        "0",
+        "--normal-cache-size",
+        "0"
+      ],
+      [
+        "PYTHON",
+        "WORKLOAD/benchmarks/run_managed_benchmark.py",
+        "--output",
+        "PRIVATE/P/workload",
+        "--duration",
+        "10",
+        "--rate",
+        "20",
+        "--accounts",
+        "100",
+        "--shards",
+        "2",
+        "--cpu-limit",
+        "1",
+        "--durable-batches",
+        "--financial-batch-size",
+        "0",
+        "--normal-cache-size",
+        "0",
+        "--profile"
+      ]
+    ],
+    "case_order": [
+      [
+        "B",
+        false
+      ],
+      [
+        "P",
+        true
+      ]
+    ],
+    "placeholder_resolution": "PYTHON=current recorded executable;WORKLOAD=exact909 checkout;PRIVATE=new exclusive RUNNER_TEMP root; no variable workload flags"
+  },
+  "component_review": {
+    "FS": {
+      "code": "4f316a89da1a001a9670a41cfeca754e67de1401",
+      "old_c524_19PASS1RED_preserved": true,
+      "review": "837bd0ac8c43550590d8637000dea18db746d3ff",
+      "status": "INDEPENDENT_CODE_CLOSED",
+      "tip": "3cc254db1d59f805a6d64825d75360a7f31aad41"
+    },
+    "cold": {
+      "code": "87c9675d9852d709782d7f461661c66f2e0ba80d",
+      "review": "173accf5472e49bd7dcec4a18fbd7383960654a3",
+      "scope": "original4coldchildtargets+6newparentstub only"
+    },
+    "packaging": {
+      "integrated": "8735668289ff739894b0318d391ce5409b7e6df4",
+      "peer": "0c1808a8ee8a5914286e4bbadde8046f343c72e1",
+      "scope": "actualf3a build7checks; not integratedtree build"
+    }
+  },
+  "control_commit": "0000000000000000000000000000000000000000",
+  "control_commit_binding": "Exact C is recorded as sole parent of local manifest-only M outside C tree",
+  "controller_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+  "escrow_tool_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+  "execution_authorized": false,
+  "external_persistent_spent_registry": false,
+  "guard_alias_fix_execution": "FIRST_D58_COMBINED_PASSED_NOT_RERUN",
+  "guard_repair_CODE_review": "INDEPENDENT_STATIC_CODE_CLOSED",
+  "guard_repair_review_record": "evidence/reviews/m05-guard-alias-independent/review-record.json",
+  "guard_repair_reviewed_commit": "5983e635dbbe13a1b025368a68d62832f97898a5",
+  "guard_repair_scope": "Harness capability guards only; controller/helper/tests/workflows/runtime unchanged",
+  "guard_signal_alias_finding_preserved": true,
+  "guard_stub_authorized_once_consumed": true,
+  "guard_stub_first_evidence": "evidence/preparations/m05-guard-stub-b78a28d/seal.json",
+  "guard_stub_first_source_commit": "b78a28d62b334c63ef0598f95073823dbd9b7781",
+  "guard_stub_first_status": "PASS_STUB_AST_ONLY",
+  "guard_stub_preflight_authorized": {
+    "actual_children": 0,
+    "cpu": 2,
+    "outer_seconds": 10,
+    "product_or_test_imports": false,
+    "raw_effect_APIs": "pure sentinels before guard installation",
+    "runs": 1
+  },
+  "kind": "M05_INTEGRATION_PREP_ONLY",
+  "local_registration_object_preparation_authorized": true,
+  "measured_combined_source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
+  "new_guard_whole_suite_authorized": false,
+  "next_run_permitted": false,
+  "preview_review": {
+    "commit": "d49e85e73f629b44a0a980d5a75d8a83f6530cae",
+    "dispatch_sparse_dependency": "FIXED_EXACT_SINGLE_LINE",
+    "original_a365_first_pending_preserved": true
+  },
+  "production_approved": false,
+  "public_recipient_spki": "de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1",
+  "push_or_dispatch_performed": false,
+  "registration_id": "independent-m0-20261117-05",
+  "runtime_same_as_delivered_ff814": true,
+  "runtime_uta_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+  "runtime_zero_diff_to6010": true,
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_runtime_base": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+  "source_tree": "cee60bc0b5413551030300e065d0dcaac6a7ff55",
+  "spent_registrations": [
+    "01",
+    "02",
+    "03",
+    "04"
+  ],
+  "trigger_ref_created": false,
+  "version": 9,
+  "workflow_sha256": {
+    ".github/workflows/independent-m0-once.yml": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
+    ".github/workflows/independent-m0.yml": "b6e6caca4d472e107f41b20b58e49294f07c16bf685a5c5300a7888b543a21ed"
+  }
+}

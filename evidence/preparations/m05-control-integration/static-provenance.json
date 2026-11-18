@@ -1,0 +1,72 @@
+{
+  "MANIFEST_sha256": "a4e10f4a9f99498882e0b57533f649cc477a2f17772a68416d760fbed2f0a1d0",
+  "actualMe643_not_ancestor": true,
+  "actual_marker_absent": true,
+  "actual_marker_ancestor_path_changes_absent": true,
+  "base": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+  "combined_PURE_or_build_or_load_executed": false,
+  "controller_function_AST_count": 61,
+  "controller_only_namespace_constants_changed_from_fixedFS": true,
+  "full_restore": false,
+  "kind": "M05_STATIC_SOURCE_SCOPE",
+  "merge_stage_commit": "ed929d38648486ec01a01094b772b2c9c1072573",
+  "next_run_permitted": false,
+  "no_business_or_controller_imports_by_preparation": true,
+  "runtime_directory_materialized": false,
+  "runtime_uta_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+  "runtime_zero_diff": true,
+  "test_sha256": {
+    "test_independent_m0_checkout_ref.py": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58",
+    "test_independent_m0_cold_import.py": "eef2eef119bed98ab701dbe24840d233028a366e1c47a9da7dbdebf4a6c31d07",
+    "test_independent_m0_controller.py": "6de39ade0b01126404c594100a0f6d789cdc03b2b3a5050d6c1ea802b6a33c27",
+    "test_independent_m0_diagnostics.py": "d464bd2814b0d75f98c40b7f0c17e534071b8ad8923ba463eb916c35063d64df",
+    "test_independent_m0_entry_types.py": "12355208fa1699e8667aea34291899741dfd0cce447bf94a9130996489bd6f04",
+    "test_independent_m0_escrow.py": "15766e0764b7d7e583657d80b37afab8621e8faaaa597c3f8ec5f386154c8fae",
+    "test_independent_m0_integrity.py": "143999e83903157664887cbc4adee63d1edf13f2459be50fdfa9540ee06b3ed9",
+    "test_independent_m0_resource_race.py": "1042f80a12f1e262bdb0452d4a74803e01309cc212bae318b64aaeede6b7e515",
+    "test_independent_m0_scan_proof.py": "8cc1ceb30977434774dfb16fa974a7c1bbd0ae00c8c4308c6390d13ec89af49a"
+  },
+  "unaffected_assets_sha256": {
+    "config/m0-stream-recipient-public-metadata.json": "f3497f05e9361c5afa6c8fd03b6e7cae4a8c92ae31f1cb10a2595d68cf4e210b",
+    "config/m0-stream-recipient-public.pem": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed",
+    "docs/evidence/independent-actions-m0/once-registration-template.json": "53f146124c2df4150916623f0a7fcf51d71a0b7ac7acb495fe4268f7f27b2fdf",
+    "docs/evidence/independent-actions-m0/once04-registration-template.json": "a51f16e92aa798e9a3b3f8589ca297af83fde7a85157af870fb2accf5e2bbc1c",
+    "tools/cold_import_contract.py": "91c4a813e4147bcdfb68cc28b3d0f0604e9ec5c6f0a94dac28f23972675223c5",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+  },
+  "version": 1,
+  "workflow_discovery": {
+    ".github/workflows/independent-m0-once.yml": {
+      "actual_pure_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "sha256": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
+      "source40": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "tests": [
+        "test_independent_m0_checkout_ref.py",
+        "test_independent_m0_cold_import.py",
+        "test_independent_m0_controller.py",
+        "test_independent_m0_diagnostics.py",
+        "test_independent_m0_entry_types.py",
+        "test_independent_m0_escrow.py",
+        "test_independent_m0_integrity.py",
+        "test_independent_m0_resource_race.py",
+        "test_independent_m0_scan_proof.py"
+      ]
+    },
+    ".github/workflows/independent-m0.yml": {
+      "actual_pure_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "sha256": "05b658ad482537b54f1040136cfba3d7934e2b0396c90b1dc29f480ab90eb7d9",
+      "source40": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "tests": [
+        "test_independent_m0_checkout_ref.py",
+        "test_independent_m0_cold_import.py",
+        "test_independent_m0_controller.py",
+        "test_independent_m0_diagnostics.py",
+        "test_independent_m0_entry_types.py",
+        "test_independent_m0_escrow.py",
+        "test_independent_m0_integrity.py",
+        "test_independent_m0_resource_race.py",
+        "test_independent_m0_scan_proof.py"
+      ]
+    }
+  }
+}

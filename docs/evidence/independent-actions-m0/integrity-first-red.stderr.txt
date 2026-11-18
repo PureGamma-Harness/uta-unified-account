@@ -1,0 +1,182 @@
+test_ack_cannot_precede_enqueue (test_independent_m0_integrity.IntegrityClosure.test_ack_cannot_precede_enqueue) ... FAIL
+test_bool_counts_are_not_ints (test_independent_m0_integrity.IntegrityClosure.test_bool_counts_are_not_ints) ... ok
+test_coherent_original_review_positive (test_independent_m0_integrity.IntegrityClosure.test_coherent_original_review_positive) ... ERROR
+test_decompress_whole_file_is_never_used (test_independent_m0_integrity.IntegrityClosure.test_decompress_whole_file_is_never_used) ... FAIL
+test_false_ordered_quantiles_do_not_match_rows (test_independent_m0_integrity.IntegrityClosure.test_false_ordered_quantiles_do_not_match_rows) ... ERROR
+test_gzip_line_memory_bound_before_decode (test_independent_m0_integrity.IntegrityClosure.test_gzip_line_memory_bound_before_decode) ... ok
+test_latency_exact_difference_and_deadline (test_independent_m0_integrity.IntegrityClosure.test_latency_exact_difference_and_deadline) ... FAIL
+test_no_workload_or_sql_import (test_independent_m0_integrity.IntegrityClosure.test_no_workload_or_sql_import) ... ok
+test_nonfinite_and_negative_quantiles (test_independent_m0_integrity.IntegrityClosure.test_nonfinite_and_negative_quantiles) ... 
+  test_nonfinite_and_negative_quantiles (test_independent_m0_integrity.IntegrityClosure.test_nonfinite_and_negative_quantiles) (value=-1) ... FAIL
+  test_nonfinite_and_negative_quantiles (test_independent_m0_integrity.IntegrityClosure.test_nonfinite_and_negative_quantiles) (value=True) ... FAIL
+test_original_1_outcomes_vs_counts (test_independent_m0_integrity.IntegrityClosure.test_original_1_outcomes_vs_counts) ... FAIL
+test_original_2_negative_elapsed (test_independent_m0_integrity.IntegrityClosure.test_original_2_negative_elapsed) ... FAIL
+test_original_3_false_rate (test_independent_m0_integrity.IntegrityClosure.test_original_3_false_rate) ... FAIL
+test_original_4_quantile_order (test_independent_m0_integrity.IntegrityClosure.test_original_4_quantile_order) ... FAIL
+test_original_5_wrong_receipt_cid (test_independent_m0_integrity.IntegrityClosure.test_original_5_wrong_receipt_cid) ... FAIL
+test_original_6_rejected_financial (test_independent_m0_integrity.IntegrityClosure.test_original_6_rejected_financial) ... FAIL
+test_original_7_latency_and_ack (test_independent_m0_integrity.IntegrityClosure.test_original_7_latency_and_ack) ... FAIL
+test_original_8_cross_file_population (test_independent_m0_integrity.IntegrityClosure.test_original_8_cross_file_population) ... ERROR
+
+======================================================================
+ERROR: test_coherent_original_review_positive (test_independent_m0_integrity.IntegrityClosure.test_coherent_original_review_positive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 44, in test_coherent_original_review_positive
+    self.assertEqual(len(self.checked()[1]),200)
+                         ^^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 41, in checked
+    m.verify_population(summary,rows)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'm0_controller_under_pure_test' has no attribute 'verify_population'
+
+======================================================================
+ERROR: test_false_ordered_quantiles_do_not_match_rows (test_independent_m0_integrity.IntegrityClosure.test_false_ordered_quantiles_do_not_match_rows)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 81, in test_false_ordered_quantiles_do_not_match_rows
+    with self.assertRaises(m.GateError):self.checked()
+                                        ^^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 41, in checked
+    m.verify_population(summary,rows)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'm0_controller_under_pure_test' has no attribute 'verify_population'
+
+======================================================================
+ERROR: test_original_8_cross_file_population (test_independent_m0_integrity.IntegrityClosure.test_original_8_cross_file_population)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 68, in test_original_8_cross_file_population
+    with self.assertRaises(m.GateError):self.checked()
+                                        ^^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 41, in checked
+    m.verify_population(summary,rows)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'm0_controller_under_pure_test' has no attribute 'verify_population'
+
+======================================================================
+FAIL: test_ack_cannot_precede_enqueue (test_independent_m0_integrity.IntegrityClosure.test_ack_cannot_precede_enqueue)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 84, in test_ack_cannot_precede_enqueue
+    with self.assertRaises(m.GateError):self.parsed()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_decompress_whole_file_is_never_used (test_independent_m0_integrity.IntegrityClosure.test_decompress_whole_file_is_never_used)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 93, in test_decompress_whole_file_is_never_used
+    self.assertEqual(len(self.parsed()),200)
+                         ^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 37, in parsed
+    return m.project_arrivals(self.path)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-actions-independent-m0/tools/independent_m0_controller.py", line 318, in project_arrivals
+    raw=gzip.decompress(Path(path).read_bytes());need(len(raw)<=8*1024**2,'arrival_unpacked_cap')
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: unbounded allocation
+
+======================================================================
+FAIL: test_latency_exact_difference_and_deadline (test_independent_m0_integrity.IntegrityClosure.test_latency_exact_difference_and_deadline)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 87, in test_latency_exact_difference_and_deadline
+    with self.assertRaises(m.GateError):self.parsed()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_nonfinite_and_negative_quantiles (test_independent_m0_integrity.IntegrityClosure.test_nonfinite_and_negative_quantiles) (value=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 78, in test_nonfinite_and_negative_quantiles
+    with self.assertRaises(m.GateError):m.project_summary(row,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_nonfinite_and_negative_quantiles (test_independent_m0_integrity.IntegrityClosure.test_nonfinite_and_negative_quantiles) (value=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 78, in test_nonfinite_and_negative_quantiles
+    with self.assertRaises(m.GateError):m.project_summary(row,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_1_outcomes_vs_counts (test_independent_m0_integrity.IntegrityClosure.test_original_1_outcomes_vs_counts)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 47, in test_original_1_outcomes_vs_counts
+    with self.assertRaises(m.GateError):m.project_summary(self.summary,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_2_negative_elapsed (test_independent_m0_integrity.IntegrityClosure.test_original_2_negative_elapsed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 50, in test_original_2_negative_elapsed
+    with self.assertRaises(m.GateError):m.project_summary(self.summary,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_3_false_rate (test_independent_m0_integrity.IntegrityClosure.test_original_3_false_rate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 53, in test_original_3_false_rate
+    with self.assertRaises(m.GateError):m.project_summary(self.summary,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_4_quantile_order (test_independent_m0_integrity.IntegrityClosure.test_original_4_quantile_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 56, in test_original_4_quantile_order
+    with self.assertRaises(m.GateError):m.project_summary(self.summary,False)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_5_wrong_receipt_cid (test_independent_m0_integrity.IntegrityClosure.test_original_5_wrong_receipt_cid)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 59, in test_original_5_wrong_receipt_cid
+    with self.assertRaises(m.GateError):self.parsed()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_6_rejected_financial (test_independent_m0_integrity.IntegrityClosure.test_original_6_rejected_financial)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 62, in test_original_6_rejected_financial
+    with self.assertRaises(m.GateError):self.parsed()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+======================================================================
+FAIL: test_original_7_latency_and_ack (test_independent_m0_integrity.IntegrityClosure.test_original_7_latency_and_ack)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-actions-independent-m0/tests/test_independent_m0_integrity.py", line 65, in test_original_7_latency_and_ack
+    with self.assertRaises(m.GateError):self.parsed()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: GateError not raised
+
+----------------------------------------------------------------------
+Ran 17 tests in 0.105s
+
+FAILED (failures=12, errors=3)

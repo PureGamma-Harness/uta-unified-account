@@ -1,0 +1,38 @@
+--- f605/first_prefix_boundary.py
++++ fixed/d1-prefix-fix-original-adapted.py
+@@ -9,7 +9,7 @@
+ 
+ ROOT = Path(__file__).resolve().parents[3]
+ SOURCE = ROOT / "tools/independent_m0_controller.py"
+-assert sha256(SOURCE.read_bytes()).hexdigest() == "66cd5dd05a080cfde3e08614be2cc8cbbaef36e7c93689b592c7775be2e0e3be"
++assert sha256(SOURCE.read_bytes()).hexdigest() == "bcb5428091ce5b1888ead3496bb150e00aa3c8124bb32f11f7f818e71b41427d"
+ spec = importlib.util.spec_from_file_location("independent_d1_3e586", SOURCE)
+ m = importlib.util.module_from_spec(spec)
+ spec.loader.exec_module(m)
+@@ -51,7 +51,8 @@
+         primary_preserved = str(failure) == "resource_missing_non_aux" and isinstance(failure.primary_error.__context__, FileNotFoundError)
+         assert primary_preserved
+         path = public / "resource-diagnostic-CASE_B.json"
+-        contents = path.read_bytes()
++        published = path.exists()
++        contents = (path if published else private / "resource-diagnostic-incomplete-CASE_B.json").read_bytes()
+         assert b"SYNTHETIC_KEY_NONCE_REQUEST" not in contents
+         assert str(private).encode() not in contents
+         assert [p.read_bytes() for p in streams] == before
+@@ -62,11 +63,15 @@
+         m.public_write(public, "manifest.json", {"files": records, "source_commit": m.SOURCE,
+                        "private_authorities_requests_keys_nonces_signatures_streams_not_uploaded": True})
+         accepted = m.verify_public(public)
++        if inject_failure:
++            assert not published and records == [] and failure.diagnostic_status == "UNAVAILABLE"
++        else:
++            assert published and len(records) == 1 and failure.diagnostic_status == "RECORDED"
+         red = inject_failure and failure.diagnostic_status == "UNAVAILABLE" and collected == "COMPLETE" and accepted and len(records) == 1
+         return {"name": "failed_full_prefix_recollected" if inject_failure else "normal_committed_record",
+                 "status": "RED" if red else "PASS", "primary_preserved": primary_preserved,
+                 "write_diagnostic_status": failure.diagnostic_status,
+-                "leftover_complete_json_prefix": True, "collected_status": collected,
++                "leftover_complete_json_prefix": True, "prefix_location": "PUBLIC_COMMITTED" if published else "PRIVATE_INCOMPLETE", "collected_status": collected,
+                 "manifest_record_count": len(records), "verify_public_accepted": accepted,
+                 "raw_secret_or_path_copied": False, "four_streams_unchanged": True,
+                 "modified_prefix_to_malformed_after_write": False}

@@ -1,0 +1,237 @@
+{
+  "kind": "PREP_ONLY_SOURCE_CATALOGUE_AND_SAFE_DIAGNOSTIC_PLAN_NOT_RUNTIME_PATCH",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "actual_failed_control": "39151b745418e70c23fc786a484beee3dc429594",
+  "observed_first_run": 44179679904,
+  "specific_M03_missing_path_or_exact_operation_recorded": false,
+  "causal_assignment_to_any_catalogue_entry_proved": false,
+  "inputs": [
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "benchmarks/run_managed_benchmark.py",
+      "git_blob_oid": "9c36a27ff6ad0ec8846223a01ef9fb4ec04dde5f",
+      "bytes": 51977,
+      "sha256": "03ae79654c26520f0e95fb85ecfd41cb49f527a0d7cdff92c49df67e4e091746"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "uta/durable_process.py",
+      "git_blob_oid": "47c7e521e0a8cd19b40addfcaaa28261719e3a34",
+      "bytes": 98314,
+      "sha256": "de2b055ea87d9f6a8f5f79bf2f1528f56328149a1a4887b75e0b8a94b5631d70"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "uta/sharding.py",
+      "git_blob_oid": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "bytes": 51451,
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "uta/durable_batches.py",
+      "git_blob_oid": "d37a15f8dea126e6057510a6dfab18ffee78a538",
+      "bytes": 27476,
+      "sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "uta/matching.py",
+      "git_blob_oid": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+      "bytes": 21921,
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "uta/storage.py",
+      "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    {
+      "commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "path": "benchmarks/run_matched_liquidation.py",
+      "git_blob_oid": "d1ef783cac1e16ed60d64384f34e464a296c56a4",
+      "bytes": 21014,
+      "sha256": "3cb6d2917aa99b3cd30facd3d1ebb7872bd41740607062c3de05bb0dd6403d7b"
+    },
+    {
+      "commit": "39151b745418e70c23fc786a484beee3dc429594",
+      "path": "tools/independent_m0_controller.py",
+      "git_blob_oid": "0afc23d3032eacb67c322fe005e916daac4666c3",
+      "bytes": 65438,
+      "sha256": "00606f6b05f6939d25ddc9a35bbb270e77c27ac1c09c8f6d2cd1549c97391e7b"
+    },
+    {
+      "commit": "39151b745418e70c23fc786a484beee3dc429594",
+      "path": "tools/m0_stream_escrow.py",
+      "git_blob_oid": "9bee647a935ac405ab111c36ac77210a364ba780",
+      "bytes": 21543,
+      "sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+    }
+  ],
+  "fixed_M0_argv_scope": "run_managed_benchmark only, B/P sequential,2shards; no other benchmark entrypoint implied",
+  "active_database_main_slots": [
+    {
+      "label": "AUTH_ROUTER_MAIN",
+      "relative_private_path": "{B|P}/workload/authority/router.sqlite3",
+      "active_in_fixed_M0_argv": true,
+      "main_semantics": "may be not-yet-published during bootstrap; once observed/READY, missing main must fail closed",
+      "source_refs": [
+        "uta/sharding.py:149",
+        "benchmarks/run_managed_benchmark.py:586"
+      ]
+    },
+    {
+      "label": "AUTH_SHARD_0_MAIN",
+      "relative_private_path": "{B|P}/workload/authority/shard-0000.sqlite3",
+      "active_in_fixed_M0_argv": true,
+      "source_refs": [
+        "uta/sharding.py:180",
+        "uta/sharding.py:212",
+        "fixed M0 --shards 2"
+      ]
+    },
+    {
+      "label": "AUTH_SHARD_1_MAIN",
+      "relative_private_path": "{B|P}/workload/authority/shard-0001.sqlite3",
+      "active_in_fixed_M0_argv": true,
+      "source_refs": [
+        "uta/sharding.py:180",
+        "uta/sharding.py:212",
+        "fixed M0 --shards 2"
+      ]
+    },
+    {
+      "label": "RUNTIME_PROBE_MAIN",
+      "relative_private_path": "runtime-probe/private.sqlite3",
+      "active_in_fixed_M0_argv": true,
+      "source_refs": [
+        "tools/independent_m0_controller.py:882-885"
+      ]
+    }
+  ],
+  "active_database_slot_count_per_case": 3,
+  "runtime_probe_slot_count": 1,
+  "sidecars_for_future_explicit_review": [
+    "router.sqlite3-wal",
+    "router.sqlite3-shm",
+    "shard-0000.sqlite3-wal",
+    "shard-0000.sqlite3-shm",
+    "shard-0001.sqlite3-wal",
+    "shard-0001.sqlite3-shm",
+    "runtime-probe/private.sqlite3-wal",
+    "runtime-probe/private.sqlite3-shm"
+  ],
+  "matching_facts": {
+    "active_matching_uses_same_exchange_transaction": "uta/matching.py:38-50; no independent matching DB name is introduced",
+    "inactive_other_entrypoint": "benchmarks/run_matched_liquidation.py:118-126 uses shard-{index}.sqlite3 outside M0 authority subtree",
+    "inactive_entrypoint_not_permission_for_M0_paths": true
+  },
+  "other_source_observed_lifecycles_for_review_only": [
+    {
+      "label": "AUTH_DB_CREATE_TEMP",
+      "source_refs": [
+        "uta/storage.py:36-53"
+      ],
+      "lifecycle": "mkstemp .uta-create- in exact DB parent; chmod0600/fsync/close; os.link main without replacing; finally unlink temp",
+      "grant_new_exemption_now": false
+    },
+    {
+      "label": "ESCROW_CHECKPOINT_PUBLICATION",
+      "source_refs": [
+        "tools/m0_stream_escrow.py:300-307"
+      ],
+      "lifecycle": "new0600 escrow-completed-{case}.json.part -> fsync -> os.replace final JSON",
+      "grant_new_exemption_now": false
+    },
+    {
+      "label": "ESCROW_CIPHER_PUBLICATION",
+      "source_refs": [
+        "tools/m0_stream_escrow.py:309-319"
+      ],
+      "lifecycle": "journal validated cipher -> rename private staged stream.cms to exact public eligible path",
+      "grant_new_exemption_now": false
+    },
+    {
+      "label": "CASE_SAFE_DIRECTORY_PUBLICATION",
+      "source_refs": [
+        "tools/independent_m0_controller.py:716-719"
+      ],
+      "lifecycle": "safe-staged private directory -> atomic public case-safe directory after complete validation",
+      "grant_new_exemption_now": false
+    }
+  ],
+  "proposed_diagnostic_contract": {
+    "new_separate_record_not_original_four_streams": true,
+    "scope_enum": [
+      "PRIVATE_ROOT",
+      "PRIVATE_CASE",
+      "PUBLIC_ROOT",
+      "PUBLIC_CASE",
+      "ESCROW_PRIVATE",
+      "ESCROW_PUBLIC"
+    ],
+    "phase_enum": [
+      "PREFLIGHT",
+      "RUNTIME_PROBE",
+      "CASE_B",
+      "ESCROW_B",
+      "CASE_P",
+      "ESCROW_P",
+      "FINAL_PUBLIC_VERIFY"
+    ],
+    "operation_enum": [
+      "ROOT_LSTAT",
+      "ENUMERATE_DIRECTORY",
+      "ENTRY_LSTAT",
+      "VALIDATE_PARENT",
+      "VALIDATE_MAIN",
+      "RETRY_STABLE_SET",
+      "RESOURCE_LIMIT"
+    ],
+    "errno_type": "exact int 0..4095, never bool, no exception str",
+    "catalogue_label_type": "closed source-bound enum; UNKNOWN otherwise",
+    "unknown_relative_path_sha256": "64lowerhex hash of role-domain-separated relative path, or null when historical path unavailable; no arbitrary actual path fields",
+    "never_public": [
+      "exception_message",
+      "absolute_path",
+      "basename_or_random_suffix",
+      "headers",
+      "key",
+      "nonce",
+      "request",
+      "arbitrary_path_components"
+    ],
+    "first_failure_per_phase": "bounded direct O_EXCL/no-follow fixed JSON, at most4096 bytes, fsync, cleanup reserve charged; no rename temp or appended stdout",
+    "failure_to_write_diagnostic": "remain UNKNOWN, constant diagnostic-unavailable marker; never convert to PASS"
+  },
+  "implementation_order_proposed": [
+    "safe first-failure diagnostic schema + pure sentinel canaries; no behavior relaxation",
+    "independent review actual four-main catalogue and bootstrap/READY lifecycle; typed router/shard/probe aux only if separately approved",
+    "model owned create/checkpoint/cipher/directory publication transitions with conservative logical-object accounting before considering precise transient policy; never blanket ignore ENOENT",
+    "only after independent review and separate root authority, consider any new R&D run; none authorized here"
+  ],
+  "nonnegotiable_guards": [
+    "explicit role grant, public never borrows private context",
+    "stable main/parent/permission/EIO/symlink remain fail closed",
+    "per-call3attempt/50ms cooperative retry and original outer deadlines not reset",
+    "retain observed stable paths/types and partial size high-water",
+    "all resource limits apply to escrow worker too; no archival bypass",
+    "four-closed-stream contract unchanged; missing fourth never fabricated",
+    "old M01/M02/M03 first state unchanged"
+  ],
+  "future_pure_acceptance_cases": [
+    "known router+2shards+runtimeprobe label matrix and excluded other benchmark path",
+    "diagnostic rejects extra/raw message/path/key/nonce fields and bool errno; sentinel never appears in encoded output",
+    "first diagnostic once-per-phase and bounded/fail-unavailable path",
+    "unknown paths hash-only, no absolute/suffix leak; historical unknown stays unavailable",
+    "known aux with missing main or symlink/EIO/permission never recovers",
+    "bounded publication interleavings never hide resource growth or drop stable required main",
+    "escrow3of4 remains incomplete even if separate diagnostic exists"
+  ],
+  "actual_SQL_native_crypto_CI_actions_rerun_or_04_policy_created": false,
+  "controller_module_workflow_source_runtime_changed": false,
+  "production_approved": false,
+  "overall_acceptance": "NO_GO"
+}

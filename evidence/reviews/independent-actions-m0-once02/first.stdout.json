@@ -1,0 +1,114 @@
+{
+  "control_commit": "e466b67faba5fb586d68f8bd35fb7f9c7a63336e",
+  "started_at_utc": "2026-11-17T20:38:21.436429+00:00",
+  "finished_at_utc": "2026-11-17T20:38:21.514281+00:00",
+  "elapsed_monotonic_ns": 77868872,
+  "input_sha256": {
+    "tools/independent_m0_controller.py": "74bbe8c67ef976cdfa04d7a90d5ce72dec3b3e2d15740d3db4acf785b666a196",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+    ".github/workflows/independent-m0-once.yml": "3d45991aa87caa7bbe052205a4457c8943bd7c7782318a277a2d309b9972ed84",
+    ".github/workflows/independent-m0.yml": "6cfd990b5914cfa67a307fad84a456e886969f2d1d7dd9579bbae06a30a13650",
+    "docs/evidence/independent-actions-m0/once-registration-template.json": "69aed62f1f94fb7cd834897e668fa5d12b354cf901ed7e3f6d96b82fe78f0fd3"
+  },
+  "crypto_bytes_unchanged": true,
+  "other_controller_function_AST_unchanged": true,
+  "cases": [
+    {
+      "case": "positive_.github/workflows/independent-m0-once.yml",
+      "observed": "ACCEPT",
+      "actual_ref": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "exact_action": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0-once.yml_909acecd153e2e89dfe2238e3ed3a3d3c9f0",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": true
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0-once.yml_ffffffffffffffffffffffffffffffffffffffff",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": true
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0-once.yml_main",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": true
+    },
+    {
+      "case": "duplicate_.github/workflows/independent-m0-once.yml",
+      "observed": "REJECT",
+      "reason": "exactly one workload step"
+    },
+    {
+      "case": "missing_.github/workflows/independent-m0-once.yml",
+      "observed": "REJECT",
+      "reason": "exactly one workload step"
+    },
+    {
+      "case": "other_action40_.github/workflows/independent-m0-once.yml",
+      "observed": "REJECT",
+      "reason": "exact reviewed checkout action pin"
+    },
+    {
+      "case": "positive_.github/workflows/independent-m0.yml",
+      "observed": "ACCEPT",
+      "actual_ref": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+      "exact_action": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0.yml_909acecd153e2e89dfe2238e3ed3a3d3c9f0",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": false
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0.yml_ffffffffffffffffffffffffffffffffffffffff",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": false
+    },
+    {
+      "case": "ref_only_.github/workflows/independent-m0.yml_main",
+      "observed": "REJECT",
+      "reason": "actual workload ref != exact SOURCE40",
+      "source_assert_unchanged": false
+    },
+    {
+      "case": "duplicate_.github/workflows/independent-m0.yml",
+      "observed": "REJECT",
+      "reason": "exactly one workload step"
+    },
+    {
+      "case": "missing_.github/workflows/independent-m0.yml",
+      "observed": "REJECT",
+      "reason": "exactly one workload step"
+    },
+    {
+      "case": "other_action40_.github/workflows/independent-m0.yml",
+      "observed": "REJECT",
+      "reason": "exact reviewed checkout action pin"
+    },
+    {
+      "case": "new02_synthetic_policy_only",
+      "observed": "ACCEPT",
+      "actual_M_created": false
+    },
+    {
+      "case": "old_registration_id_not_reused",
+      "observed": "REJECT",
+      "reason": "registration_id"
+    },
+    {
+      "case": "old_branch_not_reused",
+      "observed": "REJECT",
+      "reason": "exact_once_branch"
+    }
+  ],
+  "red_count": 0,
+  "actual_native_SQL_crypto_M_Actions_push": false,
+  "execution_authorized": false,
+  "production_approved": false
+}

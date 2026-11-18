@@ -1,0 +1,80 @@
+{
+  "git_parent": "a325988",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "cwd": "/workspace/uta-actions-independent-m0",
+  "command": [
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "pure unittest discovery with all subprocess entry points prohibited",
+    "test_independent_m0_*.py"
+  ],
+  "inputs": {
+    "tools/independent_m0_controller.py": {
+      "bytes": 60714,
+      "sha256": "b30dda17b8951f593a74dbf4cdf97ba6e23e88e25919cfbad27fdcc710e50daa"
+    },
+    "tools/m0_stream_escrow.py": {
+      "bytes": 16225,
+      "sha256": "e894ba1c5b7c6370744dad09b9cfd7b008b0cc0002807275deaf6f9bc2d4bc9f"
+    },
+    "tools/test_m0_stream_escrow_fixture.py": {
+      "bytes": 5670,
+      "sha256": "a7325c90a6bf0534142e67d1cec0756df7f9d317451b7fbc4741af6ab8091afb"
+    },
+    "tests/test_independent_m0_controller.py": {
+      "bytes": 18187,
+      "sha256": "0f4a05559671991f65f85cbfa7a20578c22c573e5b8d52ce934f82b9e6c74adf"
+    },
+    "tests/test_independent_m0_integrity.py": {
+      "bytes": 15027,
+      "sha256": "4744e54388eaa9abe5ac8901afc1b6a9b2b2dd6fc0bbe25bc519e9d14fb76f16"
+    },
+    "tests/test_independent_m0_escrow.py": {
+      "bytes": 10797,
+      "sha256": "e8835f483b5823699a88bb8f7da2c5a3aec1d1b5856eb9ebe167b10a17c36407"
+    },
+    ".github/workflows/independent-m0.yml": {
+      "bytes": 3321,
+      "sha256": "2cef68e5acf02a2a1d90d4e1ffec46bdee67b3105d7e45cbbba3f52001d8ea73"
+    },
+    ".github/workflows/independent-m0-once.yml": {
+      "bytes": 5183,
+      "sha256": "946e6a3a3ae7b614099491d924d30f705d60176adef2ac3a5a07ed6c74764712"
+    },
+    "config/m0-stream-recipient-public.pem": {
+      "bytes": 1549,
+      "sha256": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed"
+    },
+    "config/m0-stream-recipient-public-metadata.json": {
+      "bytes": 921,
+      "sha256": "f3497f05e9361c5afa6c8fd03b6e7cae4a8c92ae31f1cb10a2595d68cf4e210b"
+    },
+    "docs/evidence/independent-actions-m0/once-registration-template.json": {
+      "bytes": 3026,
+      "sha256": "de5de0ff895ca48201acc5b1be64118987ec86006d00536d4165177ae53cb47e"
+    }
+  },
+  "actual_financial_SQL_native_profile_Actions": false,
+  "actual_workspace_recipient_private_key_read": false,
+  "only_separate_tiny_crypto_fixture_authorized": true,
+  "production_approved": false,
+  "started_at_utc": "2026-11-17T19:41:14.386683+00:00",
+  "finished_at_utc": "2026-11-17T19:41:14.954352+00:00",
+  "elapsed_monotonic_ns": 567649683,
+  "tests": 102,
+  "failures": 0,
+  "errors": 0,
+  "process_calls": [],
+  "unexpected_product_SQL_modules": [],
+  "escrow-final-pure.stdout.txt": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "escrow-final-pure.stderr.txt": {
+    "bytes": 14250,
+    "sha256": "f37d758f256e346a78ee7684a140adee8e1abaa8fb4a6dfc83a48717c0d80db7"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "actual_financial_native_owner_crypto_SQL_network": false,
+  "base": "fe9a9249647b6c15c4c74a38a7e8ea0c153f306c",
+  "blocked_execution_events": [],
+  "cpu_affinity": [
+    2
+  ],
+  "elapsed_monotonic_ns": 872245715,
+  "errors": 0,
+  "failures": 0,
+  "finished_at": "2026-11-17T23:03:04.752797+00:00",
+  "first_red_preserved": "f605b96c4714c744b65403bbfe3861f68f62d768",
+  "forbidden_modules_after": [],
+  "input_sha256": {
+    "docs/evidence/independent-actions-m0/d1-prefix-fix-second-adapted.py": "0e216d366c0af334fe5aecc72b9c8d9dd0acf4bd32a3ca67fa9f3f49101d3922",
+    "docs/evidence/independent-actions-m0/d1-prefix-fix-second-adapter.patch": "874a5f7102e4500da0339d76996fa8f834d117a04993f71d57bbd5890f4147b9",
+    "evidence/reviews/m0-d1-3e586/first_prefix_boundary.py": "e4643f1f973b89b1478caa47346b263a4ed815ee03ab5c72b2cce5ceb9bef71f",
+    "tests/test_independent_m0_checkout_ref.py": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58",
+    "tests/test_independent_m0_controller.py": "338740620d6bd38f4515e8a803fa8d03a826e7740df3de049526ccdf54ec33ef",
+    "tests/test_independent_m0_diagnostics.py": "c6bbb497e061eb57d9a9e7b0596bdf6fe1045712eeb33569cce79503182ef34a",
+    "tests/test_independent_m0_escrow.py": "f2d64f8217063e560ff07bc3befcf61e6c27b484340b5ec3a2fac5ab60ca3f11",
+    "tests/test_independent_m0_integrity.py": "4653fd1f2856d8fb3948fb120cfc9cdb3cd8350439d3b3df5a6ca4d7472e0253",
+    "tests/test_independent_m0_resource_race.py": "ff63b92087f3d579b80d91feb8cba363cb378b4d3b00a3df557b737c2ea15b95",
+    "tools/independent_m0_controller.py": "b5dd83d95ddae3708d2d48f2ab20d909747d64fcb8ac9ce7501be74cad810761",
+    "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+  },
+  "kind": "D1_PREFIX_FIX_PURE",
+  "original_boundary_cases": [
+    {
+      "collected_status": "COMPLETE",
+      "four_streams_unchanged": true,
+      "leftover_complete_json_prefix": true,
+      "manifest_record_count": 1,
+      "modified_prefix_to_malformed_after_write": false,
+      "name": "normal_committed_record",
+      "prefix_location": "PUBLIC_COMMITTED",
+      "primary_preserved": true,
+      "raw_secret_or_path_copied": false,
+      "status": "PASS",
+      "verify_public_accepted": true,
+      "write_diagnostic_status": "RECORDED"
+    },
+    {
+      "collected_status": "COMPLETE",
+      "four_streams_unchanged": true,
+      "leftover_complete_json_prefix": true,
+      "manifest_record_count": 0,
+      "modified_prefix_to_malformed_after_write": false,
+      "name": "failed_full_prefix_recollected",
+      "prefix_location": "PRIVATE_INCOMPLETE",
+      "primary_preserved": true,
+      "raw_secret_or_path_copied": false,
+      "status": "PASS",
+      "verify_public_accepted": true,
+      "write_diagnostic_status": "UNAVAILABLE"
+    }
+  ],
+  "production_approved": false,
+  "rejected_controller": "3e586f99c4ed750766461d4212cd17d9501cea84",
+  "runner_sha256": "ff265d40ffdea68124497002aefefe1fca6d824112a30d7a79bfa6565d33a115",
+  "skipped": 0,
+  "started_at": "2026-11-17T23:03:03.880551+00:00",
+  "tests_run": 158,
+  "version": 1
+}

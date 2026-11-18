@@ -1,0 +1,176 @@
+"""One bounded independent archive reader; standard-library and Git data only."""
+from collections import Counter
+from hashlib import sha256
+import json
+import os
+from pathlib import Path, PurePosixPath
+import subprocess
+import tarfile
+import time
+import zipfile
+
+
+START = time.monotonic()
+SOURCE = "f3a45ade08e63bc99f224017d79b31da9236d840"
+PARENT = "1d727b9d8e121611d0227dbee162192c13a76769"
+AUTHOR_EVIDENCE = "650296dd9dc1ce07256746fcbbe1d4d9bca669b0"
+REPO = Path("/workspace/uta-unified-account")
+PRIVATE = Path("/workspace/uta-m0-public-package-once-private")
+OUT = Path("/workspace/uta-m0-public-package-cross-review-private/first-reader-result.json")
+PUBLIC = [".github/workflows/independent-m0.yml", ".github/workflows/independent-m0-once.yml", "config/m0-stream-recipient-public.pem"]
+EXPECTED_ARTIFACTS = {
+    "uta_reference_exchange-0.5.0a1-py3-none-any.whl": {"bytes": 357465, "sha256": "53ab818ba6225de89b74c3a8a047a93aca905df6d7d7a31c54814835267ad178"},
+    "uta_reference_exchange-0.5.0a1.tar.gz": {"bytes": 43733261, "sha256": "a6b0d24cb9c3fe25023e97281774c3caa54eeda7afd1c3cd1e75e5dbca113ad4"},
+}
+
+
+def git(*args):
+    return subprocess.check_output(["git", "-C", str(REPO), *args])
+
+
+def digest(data):
+    return sha256(data).hexdigest()
+
+
+def require(value, message):
+    if not value:
+        raise AssertionError(message)
+
+
+report = {"source_commit": SOURCE, "parent_commit": PARENT,
+          "author_evidence_commit": AUTHOR_EVIDENCE, "reader_invocation_ordinal": 1,
+          "reader_cpu_affinity": sorted(os.sched_getaffinity(0)),
+          "reader_wall_budget_seconds": 15, "production_approved": False,
+          "all_5839_sdist_payloads_independently_compared": False,
+          "full_sdist_payload_verification_attribution": "Original existing verifier only; not rerun by independent reviewer."}
+try:
+    require(report["reader_cpu_affinity"] == [3], "reader must use CPU 3")
+    require(git("rev-parse", SOURCE + "^").decode().strip() == PARENT, "unexpected code parent")
+    changed = git("diff-tree", "--no-commit-id", "--name-only", "-r", SOURCE).decode().splitlines()
+    require(changed == ["MANIFEST.in"], "code scope differs from MANIFEST.in only")
+    before_manifest = git("show", PARENT + ":MANIFEST.in")
+    after_manifest = git("show", SOURCE + ":MANIFEST.in")
+    first_line, remainder = before_manifest.split(b"\n", 1)
+    additions = b"".join(("include " + p + "\n").encode() for p in PUBLIC)
+    require(after_manifest == first_line + b"\n" + additions + remainder, "not exactly three expected includes")
+    report["code_scope"] = {"changed_paths": changed, "added_exact_include_paths": PUBLIC, "insertions": 3, "deletions": 0, "exact_expected_manifest_change": True, "general_pem_or_private_key_glob_added": False}
+
+    tree = {}
+    paths = []
+    for row in git("ls-tree", "-r", "-l", "-z", SOURCE).split(b"\0"):
+        if not row:
+            continue
+        meta, name = row.split(b"\t", 1)
+        mode, kind, blob, size = meta.split()
+        require(kind == b"blob", "unexpected non-blob tracked input")
+        name = name.decode()
+        paths.append(name)
+        tree[name] = {"git_blob": blob.decode(), "bytes": int(size)}
+    require(len(paths) == 5839, "unexpected required input count")
+    runtime = [p for p in paths if p.startswith("uta/") and p.endswith((".py", ".html"))]
+    require(len(runtime) == 62 and sum(p.endswith(".py") for p in runtime) == 61 and sum(p.endswith(".html") for p in runtime) == 1, "unexpected runtime inventory")
+    selected = sorted(set(runtime + PUBLIC))
+    require(len(selected) == 65, "unexpected selected payload count")
+    batch = subprocess.run(["git", "-C", str(REPO), "cat-file", "--batch"], input=b"".join((tree[p]["git_blob"] + "\n").encode() for p in selected), stdout=subprocess.PIPE, check=True).stdout
+    git_payloads = {}
+    offset = 0
+    for name in selected:
+        end = batch.index(b"\n", offset)
+        header = batch[offset:end].split()
+        require(header == [tree[name]["git_blob"].encode(), b"blob", str(tree[name]["bytes"]).encode()], "unexpected Git batch header")
+        size = tree[name]["bytes"]
+        payload = batch[end + 1:end + 1 + size]
+        require(len(payload) == size and batch[end + 1 + size:end + 2 + size] == b"\n", "bad Git payload framing")
+        git_payloads[name] = payload
+        offset = end + 2 + size
+    require(offset == len(batch), "unconsumed Git batch bytes")
+
+    evidence = {}
+    evidence_hashes = {}
+    author_bindings = {}
+    for name in ["artifact-manifest.json", "first-result.json", "admission.json", "input-before.json", "input-after.json"]:
+        data = (PRIVATE / name).read_bytes()
+        evidence[name] = json.loads(data)
+        evidence_hashes[name] = {"sha256": digest(data), "bytes": len(data)}
+        if name not in ("input-before.json", "input-after.json"):
+            committed = git("show", AUTHOR_EVIDENCE + ":evidence/m0-public-package-f3a45ad-first/" + name)
+            author_bindings[name] = committed == data
+    require(all(author_bindings.values()), "committed author evidence differs from private originals")
+    before, after = evidence["input-before.json"], evidence["input-after.json"]
+    require(evidence_hashes["input-before.json"] == evidence_hashes["input-after.json"] and before == after, "before/after recorded input maps differ")
+    require(set(before) == set(after) == set(paths), "recorded input path inventory differs from Git")
+    require(all(before[p]["git_blob"] == tree[p]["git_blob"] and before[p]["bytes"] == tree[p]["bytes"] for p in paths), "recorded Git blob or size metadata differs")
+    manifest = evidence["artifact-manifest.json"]
+    first = evidence["first-result.json"]
+    admission = evidence["admission.json"]
+    require(manifest["source_commit"] == first["source_commit"] == admission["source_commit"] == SOURCE, "author evidence source labels differ")
+    require(manifest["sdist_required_files"] == paths, "required list differs from ordered Git tree list")
+    require(manifest["artifacts"] == EXPECTED_ARTIFACTS, "expected archive identity differs from root manifest")
+    require(len(manifest["checks"]) == 7 and all(v is True for v in manifest["checks"].values()), "original verifier did not report seven checks true")
+    require(first["checks"] == manifest["checks"] and first["passed"] is True and first["all_tracked_inputs_unchanged"] is True, "first result flags disagree")
+    require(first["production_approved"] is False and manifest["production_approved"] is False and admission["production_approved"] is False, "production flag changed")
+    require(admission["cpu_ids"] == [4] and admission["whole_budget_seconds"] == 180, "original invocation resource labels differ")
+    require([r["label"] for r in first["records"]] == ["materialize", "restore_full_input", "build", "verify"] and all(r["exit_code"] == 0 and r["timed_out"] is False for r in first["records"]), "original first invocation stage labels or outcomes differ")
+    report["recorded_inputs"] = {"tracked_count": len(paths), "before_after_raw_bytes_same_sha256": True, "before_after_maps_equal": True, "paths_exact_git_tree": True, "all_recorded_blob_ids_and_byte_sizes_match_git_tree": True, "independent_all_input_payload_hash_recomputation": False}
+    report["author_evidence_bindings"] = author_bindings
+    report["evidence_file_identities"] = evidence_hashes
+    report["original_existing_verifier_report"] = {"checks": manifest["checks"], "passed": manifest["passed"], "source_commit": SOURCE, "required_list_exact_ordered_git_tree": True, "sdist_missing": manifest["sdist_missing"], "sdist_mismatched": manifest["sdist_mismatched"], "elapsed_seconds": next(r["elapsed_seconds"] for r in first["records"] if r["label"] == "verify"), "full_payload_result_is_reported_original_evidence": True}
+    report["original_first_invocation"] = {"elapsed_seconds": first["elapsed_seconds"], "cpu_ids": admission["cpu_ids"], "whole_budget_seconds": admission["whole_budget_seconds"], "free_bytes_after": first["free_bytes_after"], "original_failure_preserved": first["original_failure_preserved"]}
+
+    actual_artifacts = {}
+    for name, expected in EXPECTED_ARTIFACTS.items():
+        data = (PRIVATE / "dist" / name).read_bytes()
+        actual = {"sha256": digest(data), "bytes": len(data)}
+        require(actual == expected, "archive bytes/hash mismatch: " + name)
+        actual_artifacts[name] = actual
+    report["artifacts"] = actual_artifacts
+
+    wheel_path = PRIVATE / "dist" / next(n for n in EXPECTED_ARTIFACTS if n.endswith(".whl"))
+    with zipfile.ZipFile(wheel_path) as wheel:
+        names = wheel.namelist()
+        require(len(names) == len(set(names)), "duplicate wheel member")
+        runtime_names = {n for n in names if n.startswith("uta/") and n.endswith((".py", ".html"))}
+        require(runtime_names == set(runtime), "wheel runtime inventory differs")
+        require(all(wheel.read(n) == git_payloads[n] for n in runtime), "wheel runtime differs from Git bytes")
+        wheel_public_counts = {p: names.count(p) for p in PUBLIC}
+    require(all(v == 0 for v in wheel_public_counts.values()), "unexpected wheel public support member")
+
+    sdist_path = PRIVATE / "dist" / next(n for n in EXPECTED_ARTIFACTS if n.endswith(".tar.gz"))
+    member_names = []
+    file_counts = Counter()
+    selected_payloads = {}
+    prefix = None
+    with tarfile.open(sdist_path, "r|gz") as archive:
+        for item in archive:
+            member_names.append(item.name)
+            p = PurePosixPath(item.name)
+            require(not p.is_absolute() and ".." not in p.parts and (item.isdir() or item.isfile()), "unsafe sdist member")
+            if prefix is None:
+                prefix = item.name.split("/")[0] + "/"
+            require(item.name == prefix[:-1] or item.name.startswith(prefix), "sdist root mismatch")
+            if item.isfile():
+                name = item.name.removeprefix(prefix)
+                file_counts[name] += 1
+                if name in git_payloads:
+                    selected_payloads[name] = archive.extractfile(item).read()
+    require(len(member_names) == len(set(member_names)), "duplicate source member")
+    require(all(file_counts[p] == 1 for p in PUBLIC), "public support member not unique")
+    sdist_runtime = {n for n in file_counts if n.startswith("uta/") and n.endswith((".py", ".html"))}
+    require(sdist_runtime == set(runtime), "sdist runtime inventory differs")
+    require(set(paths) <= set(file_counts), "tracked path missing from source archive")
+    require(all(selected_payloads[p] == git_payloads[p] for p in selected), "selected sdist payload differs from exact Git bytes")
+    require(set(manifest["runtime_files"]) == set(runtime) and all(manifest["runtime_files"][p] == digest(git_payloads[p]) for p in runtime), "root runtime hashes differ from independent Git payload hashes")
+    report["archive_read_checks"] = {"wheel_archive_members_unique": True, "sdist_archive_members_unique": True, "sdist_archive_members_safe": True, "sdist_all_required_5839_paths_present_once": all(file_counts[p] == 1 for p in paths), "sdist_regular_member_count": len(file_counts), "runtime_count": len(runtime), "python_module_count": 61, "html_asset_count": 1, "wheel_runtime_inventory_exact_git": True, "wheel_runtime_62_exact_git_payloads": True, "sdist_runtime_inventory_exact_git": True, "sdist_runtime_62_exact_git_payloads": True, "sdist_public_3_exact_git_payloads": True, "sdist_public_member_counts": {p: file_counts[p] for p in PUBLIC}, "wheel_public_member_counts": wheel_public_counts, "root_report_runtime_hashes_match_independent_git_payloads": True, "unique_selected_git_payloads_compared": len(selected)}
+    require(report["archive_read_checks"]["sdist_all_required_5839_paths_present_once"], "tracked path not unique")
+    report["non_actions"] = ["No build or original verifier rerun", "No unit or installed-CLI execution", "No SQL, owner, financial, certificate cryptography, network, CI, service or long-running operation", "No old-source reconstruction", "No approval, push or production authorization"]
+    report["passed"] = True
+except Exception as exc:
+    report["passed"] = False
+    report["error"] = {"type": type(exc).__name__, "message": str(exc)}
+finally:
+    report["reader_elapsed_seconds"] = time.monotonic() - START
+    OUT.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n")
+    print(json.dumps({k: report[k] for k in ["source_commit", "passed", "reader_cpu_affinity", "reader_elapsed_seconds", "all_5839_sdist_payloads_independently_compared", "production_approved"]}, sort_keys=True))
+    if not report["passed"]:
+        print(json.dumps(report.get("error"), sort_keys=True))
+raise SystemExit(0 if report["passed"] else 1)

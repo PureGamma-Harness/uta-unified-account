@@ -1,0 +1,260 @@
+{
+  "head_sha": "cad6e2b8e5efbb13da66376f69ce9dca39e522ba",
+  "job_id": 134510349533,
+  "job_name": "test (3.13)",
+  "kind": "GENERAL_CI_FIRST_JOB_CONSOLE_EXTRACTION",
+  "log_bytes": 2236580,
+  "log_sha256": "4cf0ed24c86eb71440f2c577bf16b8238a2867ef984fec6cad62817700dcb99a",
+  "package_report": {
+    "checks": {
+      "entry_points": true,
+      "legacy_fixture_licensed": true,
+      "legacy_fixture_pinned": true,
+      "sdist_required_files_exact": false,
+      "sdist_runtime_exact": true,
+      "version": true,
+      "wheel_runtime_exact": true
+    },
+    "passed": false,
+    "runtime_tree_sha256": "41573fd3c12c18833d2da7dcb3b918faf3799f8f7088a4ef2ff06c9e29bd6268",
+    "sdist_missing": [
+      "evidence/independent-m0-entry-type-provenance/pure-once01/inputs.sha256",
+      "evidence/independent-m0-scan-proof/pure-once01/inputs.sha256"
+    ],
+    "source_commit": "cad6e2b8e5efbb13da66376f69ce9dca39e522ba"
+  },
+  "run_attempt": 1,
+  "run_id": 44217339023,
+  "source": "Console reports parsed from complete decoded connector job log; no local test or archive build executed",
+  "steps": [
+    {
+      "completed_at": "2026-11-18T01:38:31Z",
+      "conclusion": "success",
+      "name": "Set up job",
+      "number": 1,
+      "started_at": "2026-11-18T01:38:30Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:38:33Z",
+      "conclusion": "success",
+      "name": "Run actions/checkout@v4",
+      "number": 2,
+      "started_at": "2026-11-18T01:38:31Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:38:33Z",
+      "conclusion": "success",
+      "name": "Run actions/setup-python@v5",
+      "number": 3,
+      "started_at": "2026-11-18T01:38:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:38:34Z",
+      "conclusion": "success",
+      "name": "Record actual runtime and SQLite build before tests",
+      "number": 4,
+      "started_at": "2026-11-18T01:38:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:22Z",
+      "conclusion": "success",
+      "name": "Run unit tests",
+      "number": 5,
+      "started_at": "2026-11-18T01:38:34Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:23Z",
+      "conclusion": "success",
+      "name": "Preserve complete unit validation evidence",
+      "number": 6,
+      "started_at": "2026-11-18T01:44:22Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:23Z",
+      "conclusion": "success",
+      "name": "Compile source",
+      "number": 7,
+      "started_at": "2026-11-18T01:44:23Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Run demo",
+      "number": 8,
+      "started_at": "2026-11-18T01:44:23Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Preserve and replay research scenario",
+      "number": 9,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Run transactional acceptance scenario",
+      "number": 10,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Explore bounded reservation model",
+      "number": 11,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Explore bounded paired settlement model",
+      "number": 12,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Explore bounded grouped receipt protocol",
+      "number": 13,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Explore bounded shard scheduling and commit retry models",
+      "number": 14,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:24Z",
+      "conclusion": "success",
+      "name": "Explore durable command receipt and recovery protocol",
+      "number": 15,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:26Z",
+      "conclusion": "success",
+      "name": "Explore bounded managed writer and liquidation receipt models",
+      "number": 16,
+      "started_at": "2026-11-18T01:44:24Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:27Z",
+      "conclusion": "success",
+      "name": "Explore proposed market epoch and financial batch protocols",
+      "number": 17,
+      "started_at": "2026-11-18T01:44:26Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:44:33Z",
+      "conclusion": "success",
+      "name": "Build installable wheel",
+      "number": 18,
+      "started_at": "2026-11-18T01:44:27Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:07Z",
+      "conclusion": "failure",
+      "name": "Build and verify exact source distribution and wheel",
+      "number": 19,
+      "started_at": "2026-11-18T01:44:33Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:07Z",
+      "conclusion": "skipped",
+      "name": "Verify installed package outside source tree",
+      "number": 20,
+      "started_at": "2026-11-18T01:45:07Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:08Z",
+      "conclusion": "success",
+      "name": "Preserve exact package and installed validation evidence",
+      "number": 21,
+      "started_at": "2026-11-18T01:45:07Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:08Z",
+      "conclusion": "skipped",
+      "name": "Retain installable review artifact",
+      "number": 22,
+      "started_at": "2026-11-18T01:45:08Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:08Z",
+      "conclusion": "skipped",
+      "name": "Post Run actions/setup-python@v5",
+      "number": 43,
+      "started_at": "2026-11-18T01:45:08Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:08Z",
+      "conclusion": "success",
+      "name": "Post Run actions/checkout@v4",
+      "number": 44,
+      "started_at": "2026-11-18T01:45:08Z",
+      "status": "completed"
+    },
+    {
+      "completed_at": "2026-11-18T01:45:08Z",
+      "conclusion": "success",
+      "name": "Complete job",
+      "number": 45,
+      "started_at": "2026-11-18T01:45:08Z",
+      "status": "completed"
+    }
+  ],
+  "unit_report": {
+    "code_commit": "cad6e2b8e5efbb13da66376f69ce9dca39e522ba",
+    "command_argv": [
+      "/opt/hostedtoolcache/Python/3.13.18/x64/bin/python",
+      "/home/runner/work/uta-unified-account/uta-unified-account/tools/run_validation.py",
+      "--output",
+      "/home/runner/work/_temp/uta-validation"
+    ],
+    "duration_seconds": 347.45734772500003,
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "finished_at": "2026-11-18T01:44:22.645507+00:00",
+    "passed": true,
+    "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+    "production_approved": false,
+    "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+    "skipped": 0,
+    "source_unchanged": true,
+    "sqlite": "3.46.1",
+    "started_at": "2026-11-18T01:38:35.046691+00:00",
+    "test_log_sha256": "6ca98fcbe0acab409662ed316aca0be2e1fd498b4e820d05261f16ffd4d89e50",
+    "tests_run": 2049,
+    "tracked_source_clean_after": true,
+    "tracked_source_clean_before": true,
+    "unexpected_successes": 0,
+    "unittest_passed": true,
+    "worker_exit_code": 0
+  }
+}

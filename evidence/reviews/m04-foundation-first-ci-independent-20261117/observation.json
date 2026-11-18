@@ -1,0 +1,531 @@
+{
+  "actual_package_missing_report_observed": false,
+  "capacity_10000_per_s_passed": false,
+  "ci_rerun_or_dispatch_performed": false,
+  "distinct_hosted_M04_run_id": 44199787770,
+  "first_unit_artifacts": [
+    {
+      "all_members_crc_verified": true,
+      "artifact_id": 14381880672,
+      "artifact_name": "uta-unit-validation-python-3.13",
+      "bytes": 96404,
+      "code_commit": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1",
+      "duration_seconds": 422.604327145,
+      "errors": 0,
+      "failures": 2,
+      "finished_at": "2026-11-17T23:36:34.595260+00:00",
+      "first_unit_failures": [
+        {
+          "case": "FAIL: test_no_sql_or_product_import (test_independent_m0_escrow.EscrowContract.test_no_sql_or_product_import)",
+          "log_line": 2116,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        },
+        {
+          "case": "FAIL: test_no_workload_or_sql_import (test_independent_m0_integrity.IntegrityClosure.test_no_workload_or_sql_import)",
+          "log_line": 2125,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77975,
+          "crc32": 526859943,
+          "name": "summary.json",
+          "sha256": "68c48e847151a877b50c02c228eae64b951cbc7e452cf6899abaac6b333a29d5"
+        },
+        {
+          "bytes": 155,
+          "crc32": 3479312023,
+          "name": "worker-result.json",
+          "sha256": "4abf4745a8a4004222444ddf62644a7dff85c38bddcf4643051760ecd6b86988"
+        },
+        {
+          "bytes": 383633,
+          "crc32": 869721840,
+          "name": "unittest.txt",
+          "sha256": "c72213d9b08a81268d43589a9033b5dbe1fb7c46be4ac7298fc5dc25a41037b1"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "sha256": "5197c24d66294e2beaa1615eeed855d09b133843b4ee92f86d549b90bb07883e",
+      "skipped": 0,
+      "source_git_blobs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:29:31.801628+00:00",
+      "test_log_sha256": "c72213d9b08a81268d43589a9033b5dbe1fb7c46be4ac7298fc5dc25a41037b1",
+      "tests_run": 1959,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_id": 14381711097,
+      "artifact_name": "uta-unit-validation-python-3.11",
+      "bytes": 98139,
+      "code_commit": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1",
+      "duration_seconds": 387.313177142,
+      "errors": 0,
+      "failures": 3,
+      "finished_at": "2026-11-17T23:35:55.262339+00:00",
+      "first_unit_failures": [
+        {
+          "case": "FAIL: test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover (test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover)",
+          "log_line": 2138,
+          "terminal_error_lines": [
+            "AssertionError: [] is not true : original bound PID did not exit within the unchanged five-second recovery horizon"
+          ]
+        },
+        {
+          "case": "FAIL: test_no_sql_or_product_import (test_independent_m0_escrow.EscrowContract.test_no_sql_or_product_import)",
+          "log_line": 2146,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        },
+        {
+          "case": "FAIL: test_no_workload_or_sql_import (test_independent_m0_integrity.IntegrityClosure.test_no_workload_or_sql_import)",
+          "log_line": 2154,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77975,
+          "crc32": 1963266241,
+          "name": "summary.json",
+          "sha256": "5ee6c350da3df275e488abdfd7687aa5e97e14a07999ab08e78b97959c4be954"
+        },
+        {
+          "bytes": 155,
+          "crc32": 4245990022,
+          "name": "worker-result.json",
+          "sha256": "8400ac087920257244640dee01ae8803c8557712c4a3fa45a6cb768f602369e5"
+        },
+        {
+          "bytes": 392004,
+          "crc32": 1733854398,
+          "name": "unittest.txt",
+          "sha256": "ef5b8f647b27d52187741cf3e46a7b5096af13f67ddced05fdb7c3e71cab4682"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+      "sha256": "d311e5d9d4804afc2bab866c1f40af3b5807ebdc0aa0d59ea8085e8575fd063b",
+      "skipped": 0,
+      "source_git_blobs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:29:27.874319+00:00",
+      "test_log_sha256": "ef5b8f647b27d52187741cf3e46a7b5096af13f67ddced05fdb7c3e71cab4682",
+      "tests_run": 1959,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_id": 14381516198,
+      "artifact_name": "uta-unit-validation-python-3.10",
+      "bytes": 85788,
+      "code_commit": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1",
+      "duration_seconds": 394.612613673,
+      "errors": 0,
+      "failures": 2,
+      "finished_at": "2026-11-17T23:36:09.187113+00:00",
+      "first_unit_failures": [
+        {
+          "case": "FAIL: test_no_sql_or_product_import (test_independent_m0_escrow.EscrowContract)",
+          "log_line": 2097,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        },
+        {
+          "case": "FAIL: test_no_workload_or_sql_import (test_independent_m0_integrity.IntegrityClosure)",
+          "log_line": 2105,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77975,
+          "crc32": 2932183979,
+          "name": "summary.json",
+          "sha256": "0018ebd844f925e960a7ad66f580e3955f519ffa62cdf3c4118ce06851bb2ac0"
+        },
+        {
+          "bytes": 155,
+          "crc32": 3479312023,
+          "name": "worker-result.json",
+          "sha256": "4abf4745a8a4004222444ddf62644a7dff85c38bddcf4643051760ecd6b86988"
+        },
+        {
+          "bytes": 259388,
+          "crc32": 3390408661,
+          "name": "unittest.txt",
+          "sha256": "78d76e9c0bf591bb439dac1c7e00a88e707d4127de59a970ab38a31f3e6cbcbf"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+      "sha256": "80b1f28e4db794541a65b2e75d74a6f9a22b89af981cb2eeab7365eda4812ec8",
+      "skipped": 0,
+      "source_git_blobs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:29:34.510398+00:00",
+      "test_log_sha256": "78d76e9c0bf591bb439dac1c7e00a88e707d4127de59a970ab38a31f3e6cbcbf",
+      "tests_run": 1959,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_id": 14380094836,
+      "artifact_name": "uta-unit-validation-python-3.12",
+      "bytes": 96219,
+      "code_commit": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1",
+      "duration_seconds": 401.46508125500003,
+      "errors": 0,
+      "failures": 2,
+      "finished_at": "2026-11-17T23:36:09.106896+00:00",
+      "first_unit_failures": [
+        {
+          "case": "FAIL: test_no_sql_or_product_import (test_independent_m0_escrow.EscrowContract.test_no_sql_or_product_import)",
+          "log_line": 2131,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        },
+        {
+          "case": "FAIL: test_no_workload_or_sql_import (test_independent_m0_integrity.IntegrityClosure.test_no_workload_or_sql_import)",
+          "log_line": 2139,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77980,
+          "crc32": 203417322,
+          "name": "summary.json",
+          "sha256": "bf23215ceef28e114b6c178f877646c330f99d2ec79e3ac50024fbe01b917b55"
+        },
+        {
+          "bytes": 155,
+          "crc32": 3479312023,
+          "name": "worker-result.json",
+          "sha256": "4abf4745a8a4004222444ddf62644a7dff85c38bddcf4643051760ecd6b86988"
+        },
+        {
+          "bytes": 384941,
+          "crc32": 1777330605,
+          "name": "unittest.txt",
+          "sha256": "09b2a33826f31839a94c2eea16e525ccf7700a36dc302dea87e2e9a808f30c29"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "production_approved": false,
+      "python": "3.12.16 (main, Oct 26 2026, 02:48:44) [GCC 15.2.0]",
+      "sha256": "8669d7f323dcd22da9483f79998cd3f559072bc101567b92f1ee168f113ac503",
+      "skipped": 0,
+      "source_git_blobs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-17T23:29:27.532072+00:00",
+      "test_log_sha256": "09b2a33826f31839a94c2eea16e525ccf7700a36dc302dea87e2e9a808f30c29",
+      "tests_run": 1959,
+      "unittest_passed": false
+    }
+  ],
+  "gate": "NO_GO",
+  "jobs": [
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run unit tests",
+          "number": 5
+        }
+      ],
+      "id": 134450613641,
+      "name": "test (3.12)",
+      "package_step": [
+        {
+          "conclusion": "skipped",
+          "name": "Build and verify exact source distribution and wheel",
+          "number": 19
+        }
+      ],
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run unit tests",
+          "number": 5
+        }
+      ],
+      "id": 134450613896,
+      "name": "test (3.13)",
+      "package_step": [
+        {
+          "conclusion": "skipped",
+          "name": "Build and verify exact source distribution and wheel",
+          "number": 19
+        }
+      ],
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run unit tests",
+          "number": 5
+        }
+      ],
+      "id": 134450614318,
+      "name": "test (3.10)",
+      "package_step": [
+        {
+          "conclusion": "skipped",
+          "name": "Build and verify exact source distribution and wheel",
+          "number": 19
+        }
+      ],
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Run unit tests",
+          "number": 5
+        }
+      ],
+      "id": 134450614340,
+      "name": "test (3.11)",
+      "package_step": [
+        {
+          "conclusion": "skipped",
+          "name": "Build and verify exact source distribution and wheel",
+          "number": 19
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "limits": [
+    "General foundation CI is a separate workflow from hosted diagnostic M04; their statuses and evidence must not be combined.",
+    "All four new unit ZIPs were each downloaded once and verified against provider SHA/size, each member CRC and all 357 standard runner source-map Git blobs.",
+    "Four unit suites failed before package step. Static file selection gaps are not an observed package failure report.",
+    "No prior failing source was rebuilt or retested, and no existing M04 controller or marker was changed.",
+    "No SQL, owner, crypto helper, private key or production operation was accessed."
+  ],
+  "new_native_failure": {
+    "assertion": "original bound PID did not exit within the unchanged five-second recovery horizon",
+    "case": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+    "different_assertion_from_previous_capture_and_undo_failures": true,
+    "root_cause_verified": false,
+    "runtime": "3.11",
+    "source_line": 1525
+  },
+  "observed_at": "2026-11-17T23:50:24.761110+00:00",
+  "package_execution_status": "NOT_RUN_ALL_FOUR_JOBS",
+  "private_original_digests": [
+    {
+      "bytes": 77980,
+      "name": "artifact-14380094836-summary.original.json",
+      "sha256": "bf23215ceef28e114b6c178f877646c330f99d2ec79e3ac50024fbe01b917b55"
+    },
+    {
+      "bytes": 384941,
+      "name": "artifact-14380094836-unittest.original.txt",
+      "sha256": "09b2a33826f31839a94c2eea16e525ccf7700a36dc302dea87e2e9a808f30c29"
+    },
+    {
+      "bytes": 96219,
+      "name": "artifact-14380094836.original.zip",
+      "sha256": "8669d7f323dcd22da9483f79998cd3f559072bc101567b92f1ee168f113ac503"
+    },
+    {
+      "bytes": 77975,
+      "name": "artifact-14381516198-summary.original.json",
+      "sha256": "0018ebd844f925e960a7ad66f580e3955f519ffa62cdf3c4118ce06851bb2ac0"
+    },
+    {
+      "bytes": 259388,
+      "name": "artifact-14381516198-unittest.original.txt",
+      "sha256": "78d76e9c0bf591bb439dac1c7e00a88e707d4127de59a970ab38a31f3e6cbcbf"
+    },
+    {
+      "bytes": 85788,
+      "name": "artifact-14381516198.original.zip",
+      "sha256": "80b1f28e4db794541a65b2e75d74a6f9a22b89af981cb2eeab7365eda4812ec8"
+    },
+    {
+      "bytes": 77975,
+      "name": "artifact-14381711097-summary.original.json",
+      "sha256": "5ee6c350da3df275e488abdfd7687aa5e97e14a07999ab08e78b97959c4be954"
+    },
+    {
+      "bytes": 392004,
+      "name": "artifact-14381711097-unittest.original.txt",
+      "sha256": "ef5b8f647b27d52187741cf3e46a7b5096af13f67ddced05fdb7c3e71cab4682"
+    },
+    {
+      "bytes": 98139,
+      "name": "artifact-14381711097.original.zip",
+      "sha256": "d311e5d9d4804afc2bab866c1f40af3b5807ebdc0aa0d59ea8085e8575fd063b"
+    },
+    {
+      "bytes": 77975,
+      "name": "artifact-14381880672-summary.original.json",
+      "sha256": "68c48e847151a877b50c02c228eae64b951cbc7e452cf6899abaac6b333a29d5"
+    },
+    {
+      "bytes": 383633,
+      "name": "artifact-14381880672-unittest.original.txt",
+      "sha256": "c72213d9b08a81268d43589a9033b5dbe1fb7c46be4ac7298fc5dc25a41037b1"
+    },
+    {
+      "bytes": 96404,
+      "name": "artifact-14381880672.original.zip",
+      "sha256": "5197c24d66294e2beaa1615eeed855d09b133843b4ee92f86d549b90bb07883e"
+    },
+    {
+      "bytes": 2957,
+      "name": "artifacts-first-response.json",
+      "sha256": "626b1a8d564019d68406050fbe198f3c2b6f6d8665a9c9958c6e22bb5930368a"
+    },
+    {
+      "bytes": 5987,
+      "name": "build-safe-observation.py",
+      "sha256": "e431e546c202f92f3e5a42d3413f446508f79136b549127f272eb15fb7dd5296"
+    },
+    {
+      "bytes": 26679,
+      "name": "job-134450613641-first-response.json",
+      "sha256": "33b155c8bf746d174795fc6cadb57af5d9067dd95714c7195eecb80e97dd4bb7"
+    },
+    {
+      "bytes": 26666,
+      "name": "job-134450613896-first-response.json",
+      "sha256": "9644c7d39e75c59e430ebd0c9fd86f3648b090e0c9efd18f42cd227d2a314a41"
+    },
+    {
+      "bytes": 28493,
+      "name": "job-134450614318-first-response.json",
+      "sha256": "df03868344544b5373a735f9ef18232f0ba6ba94d7fecb764584abac87da3413"
+    },
+    {
+      "bytes": 26673,
+      "name": "job-134450614340-first-response.json",
+      "sha256": "9d32deaf3f679d1f0bcae8e7941e960ea9800923796173ae537399470c3db8b1"
+    },
+    {
+      "bytes": 10936,
+      "name": "jobs-first-response.json",
+      "sha256": "2d350c366344291071c9970e8353d121e9db29383c8c30e36e40dfd0982fe214"
+    },
+    {
+      "bytes": 3009,
+      "name": "read-unit-artifacts-once.py",
+      "sha256": "b89fda2bbf5c6b0efe9c3174559e81aaa7cb3d06add87052f0fe811f8c416c08"
+    },
+    {
+      "bytes": 30426,
+      "name": "run-first-response.json",
+      "sha256": "96e265e750c1dd7fe3617d093e76ada2e2c6162dcad2b25d114ca76652fd1b84"
+    },
+    {
+      "bytes": 8704,
+      "name": "unit-artifact-safe-first-observations.json",
+      "sha256": "0161e20b723c2bec37ee92612c1e9eeb6083e12ba4ea1fc89cb93334bacb6403"
+    },
+    {
+      "bytes": 0,
+      "name": "unit-reader-first.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2653,
+      "name": "unit-reader-first.stdout",
+      "sha256": "7959b1d8f803825878d9c25b5037c2ab9e991d64b61a9145d2e2679d8ffdff9d"
+    }
+  ],
+  "production_approved": false,
+  "run": {
+    "conclusion": "failure",
+    "created_at": "2026-11-17T23:29:20Z",
+    "event": "push",
+    "head_sha": "e643661dbafdff76e66c50d20eecc2fdef4bf9e1",
+    "id": 44199787800,
+    "run_attempt": 1,
+    "status": "completed",
+    "updated_at": "2026-11-17T23:36:37Z"
+  },
+  "source_build_or_test_executed_in_this_review": false,
+  "source_parent_C": "8295aaca4b4d254c438b228bb9da5591dafceee3",
+  "static_package_selection_gap": {
+    "current_rules": [
+      "include LICENSE CONTRIBUTING.md .gitignore .github/workflows/ci.yml",
+      "recursive-include config *.json *.md"
+    ],
+    "manifest_sha256": "386d8205d5f89319339da1dda8b159027e18aedf88d52f6e36db32249961cdb1",
+    "pem_is_public_certificate_as_header_checked": true,
+    "private_key_content_read_or_included": false,
+    "public_files_without_explicit_manifest_selection": [
+      {
+        "bytes": 5348,
+        "explicitly_selected_by_current_manifest_rules": false,
+        "path": ".github/workflows/independent-m0-once.yml",
+        "sha256": "0b11f63ecf1b1bc62301bed8900398ef8e8484a3bc8e2536b1abe30c3815cf43"
+      },
+      {
+        "bytes": 3486,
+        "explicitly_selected_by_current_manifest_rules": false,
+        "path": ".github/workflows/independent-m0.yml",
+        "sha256": "9e32d083055960b799609f44ecdba77e424679a78e26dfe2636207421a06f860"
+      },
+      {
+        "bytes": 1549,
+        "explicitly_selected_by_current_manifest_rules": false,
+        "path": "config/m0-stream-recipient-public.pem",
+        "sha256": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed"
+      }
+    ],
+    "status": "STATIC_ONLY_NOT_BUILT"
+  },
+  "static_test_isolation_finding": {
+    "files": [
+      {
+        "line": 108,
+        "path": "tests/test_independent_m0_escrow.py"
+      },
+      {
+        "line": 141,
+        "path": "tests/test_independent_m0_integrity.py"
+      }
+    ],
+    "limitation": "An entire discovery suite legitimately imports UTA elsewhere; the global assertion does not attribute imports to the controller or helper.",
+    "predicate": "assert no uta, uta.* or sqlite3 anywhere in shared sys.modules",
+    "remediation_scope": "Preserve no-SQL/product-import constraint and validate the exact target imports in a clean bounded process or equivalent causal import boundary; no fix or extra execution performed here."
+  }
+}

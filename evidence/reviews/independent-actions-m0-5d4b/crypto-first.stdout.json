@@ -1,0 +1,83 @@
+{
+  "actual_SQL_native_M0_profile_Actions_marker_push": false,
+  "actual_root_key_read": false,
+  "all_private_keys_are_new_self_owned_toys": true,
+  "cases": [
+    {
+      "body_bytes": 129,
+      "body_sha256": "2ae909ec33d2d97c16736112a003e1f915899171187ae795b920e8dd23352291",
+      "case": "correct_GCM_OAEP_SHA256_roundtrip",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "red": false
+    },
+    {
+      "accepted_binding": true,
+      "actual_protocol": {
+        "aes-256-cbc": true,
+        "aes-256-gcm": false,
+        "id-smime-ct-authEnvelopedData": false,
+        "pkcs7-envelopedData": true,
+        "rsaEncryption": true,
+        "rsaesOaep": false,
+        "sha1": false,
+        "sha256": false
+      },
+      "case": "CBC_unauthenticated_PKCS1v15",
+      "expected": "REJECT_PROTOCOL",
+      "observed": "ACCEPT",
+      "plaintext_body_hash_matches": true,
+      "red": true,
+      "returned_authenticated_flag": true
+    },
+    {
+      "accepted_binding": true,
+      "actual_protocol": {
+        "aes-256-cbc": false,
+        "aes-256-gcm": true,
+        "id-smime-ct-authEnvelopedData": true,
+        "pkcs7-envelopedData": false,
+        "rsaEncryption": false,
+        "rsaesOaep": true,
+        "sha1": false,
+        "sha256": false
+      },
+      "case": "GCM_unapproved_OAEP_SHA1",
+      "expected": "REJECT_PROTOCOL",
+      "observed": "ACCEPT",
+      "plaintext_body_hash_matches": true,
+      "red": true,
+      "returned_authenticated_flag": true
+    },
+    {
+      "case": "failed_tag_never_parsed",
+      "expected": "REJECT_BEFORE_PARSE",
+      "failed_plaintext_contents_not_read": true,
+      "observed": "REJECT_BEFORE_PARSE",
+      "parse_calls": [],
+      "red": false,
+      "unauthenticated_output_bytes": 648
+    },
+    {
+      "case": "wrong_run_rejected",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    }
+  ],
+  "control_commit": "5d4b5c7cb02ff3c365532e16faead233093faac9",
+  "cpu_affinity": [
+    3
+  ],
+  "elapsed_monotonic_ns": 221024894,
+  "escrow_module_sha256": "e894ba1c5b7c6370744dad09b9cfd7b008b0cc0002807275deaf6f9bc2d4bc9f",
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T19:46:22.189678+00:00",
+  "original_binaries_not_published": true,
+  "original_fixture_files_retained": true,
+  "private_fixture_directory": "/workspace/uta-m0-independent-toy-7citne5m",
+  "production_approved": false,
+  "red_count": 2,
+  "started_at_utc": "2026-11-17T19:46:21.968653+00:00",
+  "synthetic_plaintext_bytes": 129
+}

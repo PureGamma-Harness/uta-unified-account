@@ -1,0 +1,99 @@
+"""Four real cold interpreters plus pure timeout/error stubs, no actual SQL."""
+import importlib.util
+import json
+import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from types import ModuleType
+import sys
+import unittest
+from unittest.mock import patch
+
+ROOT=Path(__file__).resolve().parents[1]
+spec=importlib.util.spec_from_file_location('cold_import_test_helper',ROOT/'tools/cold_import_contract.py')
+m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+RETAIN_ROOT=None
+RESULTS=[]
+
+def probe(mode,tag):
+    root=None
+    if RETAIN_ROOT is not None:root=RETAIN_ROOT/tag;root.mkdir(mode=0o700)
+    value=m.probe_import(mode,ROOT,evidence_root=root);RESULTS.append(dict(tag=tag,result=value));return value
+
+class ColdImportContract(unittest.TestCase):
+    def test_real_tools_cold_import_despite_parent_cache_and_pythonpath(self):
+        with TemporaryDirectory(prefix='cold-import-poison-') as directory:
+            poison=Path(directory);(poison/'sitecustomize.py').write_text("raise RuntimeError('SYNTHETIC_PRIVATE_PATH_SENTINEL')\n")
+            modules={name:ModuleType(name) for name in ('sqlite3','_sqlite3','uta')}
+            with patch.dict(sys.modules,modules),patch.dict(os.environ,{'PYTHONPATH':str(poison),'PYTHONHOME':str(poison)}):
+                self.assertTrue(any(n in sys.modules for n in modules))
+                for mode in ('controller','escrow'):
+                    with self.subTest(mode=mode):
+                        result=probe(mode,'real-'+mode);self.assertEqual(result['status'],'PASS',result)
+                        self.assertEqual(result['proof']['guard_events'],[]);self.assertTrue(result['child_reaped'])
+    def test_negative_sqlite_and_native_extension_denied_before_import(self):
+        result=probe('deny_sqlite3','negative-sqlite');self.assertEqual(result['status'],'PASS',result)
+        self.assertEqual(result['proof']['guard_events'],['SQLITE3','_SQLITE3']);self.assertEqual(result['proof']['blocked_cache_count'],0)
+    def test_negative_uta_denied_before_import(self):
+        result=probe('deny_uta','negative-uta');self.assertEqual(result['status'],'PASS',result)
+        self.assertEqual(result['proof']['guard_events'],['UTA']);self.assertEqual(result['proof']['blocked_cache_count'],0)
+    def test_timeout_kills_reaps_and_never_echoes_raw(self):
+        calls=[]
+        class Child:
+            returncode=None
+            def __init__(self,argv,**kwargs):
+                self.asserted=argv[1:3]==['-I','-S'];kwargs['stdout'].write(b'SYNTHETIC_PRIVATE_PATH_SENTINEL');kwargs['stderr'].write(b'SYNTHETIC_PRIVATE_PATH_SENTINEL')
+            def wait(self,timeout):
+                calls.append(('wait',timeout))
+                if len(calls)==1:raise m.subprocess.TimeoutExpired('SYNTHETIC_PRIVATE_PATH_SENTINEL',timeout)
+                self.returncode=-9;return -9
+            def kill(self):calls.append(('kill',None))
+        with patch.object(m.subprocess,'Popen',Child):result=probe('controller','stub-timeout')
+        self.assertEqual(result['code'],'CHILD_TIMEOUT');self.assertTrue(result['killed']);self.assertTrue(result['child_reaped'])
+        self.assertEqual(calls,[('wait',1),('kill',None),('wait',1)])
+        self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+    def test_spawn_error_never_echoes_exception_filename(self):
+        with patch.object(m.subprocess,'Popen',side_effect=OSError(2,'SYNTHETIC_PRIVATE_PATH_SENTINEL','SYNTHETIC_PRIVATE_PATH_SENTINEL')):
+            result=probe('controller','stub-spawn-error')
+        self.assertEqual(result['code'],'CHILD_OS_ERROR');self.assertFalse(result['spawned']);self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+    def test_unreaped_child_remains_unknown(self):
+        calls=[]
+        class Child:
+            returncode=None
+            def __init__(self,argv,**kwargs):pass
+            def wait(self,timeout):calls.append(('wait',timeout));raise m.subprocess.TimeoutExpired('SYNTHETIC_PRIVATE_PATH_SENTINEL',timeout)
+            def kill(self):calls.append(('kill',None))
+        with patch.object(m.subprocess,'Popen',Child):result=probe('controller','stub-unreaped')
+        self.assertEqual(result['code'],'CHILD_REAP_UNKNOWN');self.assertEqual(result['status'],'UNKNOWN');self.assertFalse(result['child_reaped'])
+        self.assertEqual(calls,[('wait',1),('kill',None),('wait',1)]);self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+    def test_malformed_child_output_is_hashed_not_echoed(self):
+        class Child:
+            returncode=0
+            def __init__(self,argv,**kwargs):kwargs['stdout'].write(b'{"private_path":"SYNTHETIC_PRIVATE_PATH_SENTINEL"}')
+            def wait(self,timeout):return 0
+        with patch.object(m.subprocess,'Popen',Child):result=probe('controller','stub-bad-output')
+        self.assertEqual(result['code'],'CHILD_PROOF_INVALID');self.assertTrue(result['child_reaped']);self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+    def test_missing_source_is_safe_unknown(self):
+        with TemporaryDirectory(prefix='cold-import-missing-') as directory:
+            result=m.probe_import('controller',Path(directory)/'SYNTHETIC_PRIVATE_PATH_SENTINEL')
+        self.assertEqual(result['code'],'SOURCE_OR_EVIDENCE_IO');self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+    def test_wait_error_cannot_be_erased_by_later_zero_exit(self):
+        calls=[]
+        class Child:
+            returncode=None
+            def __init__(self,argv,**kwargs):
+                from hashlib import sha256
+                proof=dict(kind='COLD_IMPORT_PROOF',version=1,mode='controller',status='PASS_IMPORT_COLD',isolated=True,no_site=True,
+                    sitecustomize_loaded=False,guard_events=[],blocked_cache_count=0,target_sha256=sha256((ROOT/'tools/independent_m0_controller.py').read_bytes()).hexdigest())
+                kwargs['stdout'].write(json.dumps(proof).encode())
+            def wait(self,timeout):
+                calls.append(('wait',timeout))
+                if len(calls)==1:raise OSError('SYNTHETIC_PRIVATE_PATH_SENTINEL')
+                self.returncode=0;return 0
+            def kill(self):calls.append(('kill',None))
+        with patch.object(m.subprocess,'Popen',Child):result=probe('controller','stub-wait-error')
+        self.assertTrue(result['child_reaped']);self.assertEqual(result['returncode'],0)
+        self.assertEqual(result['status'],'UNKNOWN');self.assertEqual(result['code'],'CHILD_OS_ERROR');self.assertIsNone(result['proof'])
+        self.assertNotIn('SYNTHETIC_PRIVATE_PATH_SENTINEL',json.dumps(result))
+
+if __name__=='__main__':unittest.main()

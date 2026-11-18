@@ -1,0 +1,49 @@
+{
+  "archive_input_directory": "/workspace/uta-m0-public-package-once-private/dist",
+  "argv": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=1s",
+    "15s",
+    "taskset",
+    "-c",
+    "3",
+    "python3",
+    "-B",
+    "/workspace/uta-m0-public-package-cross-review-private/independent-reader.py"
+  ],
+  "attempts": 1,
+  "author_evidence_commit": "650296dd9dc1ce07256746fcbbe1d4d9bca669b0",
+  "cpu_affinity": [
+    3
+  ],
+  "exit_code": 0,
+  "invocation_ordinal": 1,
+  "original_build_rerun": false,
+  "original_verifier_rerun": false,
+  "private_original_directory": "/workspace/uta-m0-public-package-cross-review-private",
+  "private_original_identities": {
+    "first-reader-result.json": {
+      "bytes": 4771,
+      "sha256": "dd41bf66de8a5b59bc0d76824f2930414a86700bb8078699d95b0cb8211d6000"
+    },
+    "first-reader.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first-reader.stdout": {
+      "bytes": 239,
+      "sha256": "01a9668c0b1252d3d183cdee53bf4e90c3284fb951284a48fcfeeb62ab15666f"
+    },
+    "independent-reader.py": {
+      "bytes": 12764,
+      "sha256": "65456943719bbd30a022cf1b3bc8d96b07448391bc2f6157a8f7b446dc108963"
+    }
+  },
+  "production_approved": false,
+  "reader_elapsed_seconds": 0.9355049099976895,
+  "source_commit": "f3a45ade08e63bc99f224017d79b31da9236d840",
+  "source_execution": "Git object data and standard-library archive/JSON reading only",
+  "timed_out": false,
+  "whole_budget_seconds": 15
+}

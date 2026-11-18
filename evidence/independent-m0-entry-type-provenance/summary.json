@@ -1,0 +1,52 @@
+{
+  "scope": "NEW_SOURCE_PURE_AND_OWN_TEMPORARY_FILESYSTEM_METADATA_ONLY",
+  "system_qualification": "NO_GO",
+  "base_commit": "1d727b9d8e121611d0227dbee162192c13a76769",
+  "code_commit": "be7755008782db045a03ce113aa58e6d1e84ee43",
+  "controller_sha256": "f0795cdb4d5992eeaa744f5088f7d476de773a1bb40d885f6bfcb6f80f9e33bb",
+  "original_independent_first_red_commit": "93060e8e4d2272ada812dfcc2aaba555879dedc7",
+  "original_independent_first_batch": {"cases": 27, "pass": 25, "red": 2, "exit": 1, "elapsed_ns": 271191472},
+  "original_actual_M04_run": 44199787770,
+  "original_results_preserved": true,
+  "independent_new_source_review": "PENDING",
+  "source_committed_before_execution": true,
+  "new_source_batch_count": 1,
+  "run": {
+    "id": "pure-once01",
+    "started_utc": "2026-11-18T00:05:17Z",
+    "argv": ["taskset", "-c", "1", "timeout", "--signal=KILL", "10s", "python", "-B", "tests/test_independent_m0_entry_types.py", "-v"],
+    "superseded_CPU4_proposal_not_used": true,
+    "output_limit_each_KiB": 40,
+    "exit": 0,
+    "unittest_methods": 14,
+    "failures": 0,
+    "errors": 0,
+    "unittest_reported_seconds": "0.049",
+    "original_files_bytes": 2730,
+    "source_input_hashes_unchanged_after": true,
+    "old_27_case_batch_rerun": false,
+    "old_186_test_suite_rerun": false,
+    "selected_existing_strict_contracts_on_fresh_fixtures": 13
+  },
+  "preserved": {
+    "business_source909": true,
+    "uta_config_workflow_escrow_git_diff_empty": true,
+    "retry_scans": 3,
+    "retry_clock_ns": 50000000,
+    "entry_and_byte_caps": true,
+    "stable_path_type_and_size_lower_bounds": true,
+    "spent04_namespace_no_new_authorization": true
+  },
+  "new_provenance_contract": {
+    "literal_true_DirEntry_is_file_nofollow_required_for_missing_retry": true,
+    "same_entry_lstat_ENOENT_and_exact_path_required": true,
+    "unprovenanced_handler_defaults_to_reject": true,
+    "router_shard_runtime_probe_share_requirement": true,
+    "unknown_nonregular_symlink_rejected": true,
+    "Permission_EIO_not_swallowed": true,
+    "same_type_dev_ino_replacement_protection_added": false,
+    "DT_UNKNOWN_forced_on_real_filesystem": false
+  },
+  "SQL_financial_owner_crypto_network_CI_M05_ref_push": "NOT_RUN",
+  "protected_long_processes_keys_quarantines_touched": false
+}

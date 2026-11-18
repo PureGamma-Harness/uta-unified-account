@@ -1,0 +1,620 @@
+{
+  "actual_stdlib_children": 6,
+  "blocked_module_cache": [],
+  "child_details": [
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "4299a5cd925ff2884c1cf39aa0f576b6143bbbd088a9c37b4a6ccb9d59731679",
+      "index": 1,
+      "mode": "deny_sqlite3",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757596,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102112887599949
+    },
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "bde37d45839d5489b8ab89a6fff429a1c1e6b18c950b4c7c3561e0d868ec5261",
+      "index": 2,
+      "mode": "deny_uta",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757597,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102112920607904
+    },
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "fa088b93a69fd3ce1eb754839a11acaca471aa7a69ccb016b18124daed0d5272",
+      "index": 3,
+      "mode": "controller",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757598,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102112957332591
+    },
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "5f1dddb5b5bd2a23a2588f2df02f70bdba9fb5f58cce5ec4ba97e48858d1bf34",
+      "index": 4,
+      "mode": "escrow",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757599,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102113022065710
+    },
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "349f780fc0b2fa389838df7e26a789097bccdb9861bb4b0c07952cfaf7662484",
+      "index": 5,
+      "mode": "escrow",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757600,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102113581912083
+    },
+    {
+      "guard": {
+        "checks": [
+          "sqlite3.connect",
+          "socket.connect",
+          "os.kill",
+          "os.fork",
+          "subprocess.Popen"
+        ],
+        "kind": "CHILD_HARD_GUARD",
+        "unexpected_denials": []
+      },
+      "guarded_code_sha256": "856838e00f98d2fc172191b34e172e55a51e015c284e8917ee7f5f22dfab649d",
+      "index": 6,
+      "mode": "controller",
+      "original_code_sha256": "45eb3b18b0e5e36deefefbf1698d1b4402d649909d0f6cd75e2423590018e931",
+      "pid": 757601,
+      "reaped": true,
+      "returncode": 0,
+      "start_monotonic_ns": 102113730036391
+    }
+  ],
+  "discovery_pattern": "test_independent_m0_*.py",
+  "elapsed_ns": 1360591174,
+  "financial_workload_executed": false,
+  "finished_monotonic_ns": 102114094080176,
+  "guard_checks": [
+    "sqlite3.connect",
+    "socket.connect",
+    "os.kill",
+    "os.fork",
+    "subprocess.Popen"
+  ],
+  "hard_guard_acceptance": true,
+  "kind": "M05_FIRST_GUARDED_COMBINED_PURE",
+  "outcome": {
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "successful": true,
+    "tests": 219
+  },
+  "probe_results": [
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": true,
+        "code": "CHILD_PROOF_INVALID",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": 0,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 50,
+          "sha256": "afdfb30671b1fadc0378df3236160b774d721b07681975f47e060a468a591243"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": false,
+        "code": "SOURCE_OR_EVIDENCE_IO",
+        "expected_target_sha256": null,
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": null,
+        "spawned": false,
+        "status": "UNKNOWN",
+        "stderr": null,
+        "stdout": null,
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "deny_sqlite3",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": null,
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "deny_sqlite3",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [
+            "SQLITE3",
+            "_SQLITE3"
+          ],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "deny_sqlite3",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "GUARD_BLOCKED",
+          "target_sha256": null,
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 251,
+          "sha256": "13b4a7a4d54b1fcce1c2517ca56bada67a76d846d8dc8852376a56b582fefe83"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "deny_uta",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": null,
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "deny_uta",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [
+            "UTA"
+          ],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "deny_uta",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "GUARD_BLOCKED",
+          "target_sha256": null,
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 231,
+          "sha256": "c2430a77422e8b027e87ba52f81830f21278fc885c4e728dc955f1fce7654dbf"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "controller",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 293,
+          "sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "escrow",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "escrow",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "escrow",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 289,
+          "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": false,
+        "code": "CHILD_OS_ERROR",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": null,
+        "spawned": false,
+        "status": "UNKNOWN",
+        "stderr": null,
+        "stdout": null,
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": true,
+        "code": "CHILD_TIMEOUT",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": true,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": -9,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": {
+          "bytes": 31,
+          "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+        },
+        "stdout": {
+          "bytes": 31,
+          "sha256": "50d7600d601c478709e6b142b99045be7eae3b357354971e8e7c578b9b58f110"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": false,
+        "code": "CHILD_REAP_UNKNOWN",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": true,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": null,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": null,
+        "stdout": null,
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": true,
+        "code": "CHILD_OS_ERROR",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": true,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": null,
+        "returncode": 0,
+        "spawned": true,
+        "status": "UNKNOWN",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 292,
+          "sha256": "1e81203ff62f196d52131d1644c6f44bafcfcaaed91044701868d0c88f72ae92"
+        },
+        "version": 1
+      },
+      "source_module": "cold_import_test_helper"
+    },
+    {
+      "mode": "escrow",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "escrow",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "escrow",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 289,
+          "sha256": "6a8c0d807be674dd704d4461e76f2799eb608cb95714dd50ad4a077d60baa2d3"
+        },
+        "version": 1
+      },
+      "source_module": "escrow_cold_import_contract"
+    },
+    {
+      "mode": "controller",
+      "result": {
+        "child_reaped": true,
+        "code": "COLD_IMPORT_VERIFIED",
+        "expected_target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+        "killed": false,
+        "kind": "COLD_IMPORT_RESULT",
+        "mode": "controller",
+        "proof": {
+          "blocked_cache_count": 0,
+          "guard_events": [],
+          "isolated": true,
+          "kind": "COLD_IMPORT_PROOF",
+          "mode": "controller",
+          "no_site": true,
+          "sitecustomize_loaded": false,
+          "status": "PASS_IMPORT_COLD",
+          "target_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+          "version": 1
+        },
+        "returncode": 0,
+        "spawned": true,
+        "status": "PASS",
+        "stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stdout": {
+          "bytes": 293,
+          "sha256": "77f16a80401f067589887ff220f511c57b2a18251fa7c83c7f42b9e9f928d06c"
+        },
+        "version": 1
+      },
+      "source_module": "integrity_cold_import_contract"
+    }
+  ],
+  "runtime": {
+    "affinity": [
+      2
+    ],
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "implementation": "CPython",
+    "isolated": 1,
+    "no_site": 1,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "source": {
+    "actualMe643_not_ancestor": true,
+    "actual_marker_absent": true,
+    "authorized_runner_sha256": "de279b69c3d57ac694ad02ccab3c923b3ab565f61baaa3b581eb4c24ef958304",
+    "controller_function_class_AST_equal_FS": 61,
+    "exact_six_Popen_allowlist_AST_equal_original4e": true,
+    "free_bytes": 17729142784,
+    "frozen_policy_sha256": "01c97226535d7b4d0029b62d172ca3fd72b4a822692c6a31acf9f79eadf1ab61",
+    "guard_source_review_record": {
+      "actual_M05_authorized": false,
+      "additional_execution_authorized": false,
+      "checked": [
+        "signal and _signal same 13 effectful API denials",
+        "socket and _socket socketpair explicit denial without replacing socket class",
+        "_thread/cache aliases/Pool/rawfork/audit capability guards retained",
+        "exact-six Popen/ProductFinder/parent_audit AST equal first source4eabab3",
+        "controller/helper/tests/workflows/config/runtime unchanged; uta zero diff6010",
+        "strict19 false template unchanged",
+        "all three alias binding SHA match",
+        "ed55 failure and e9a0862 stub evidence unchanged",
+        "clean worktree and no actual marker"
+      ],
+      "closed_findings": [
+        "concurrent passive stdlib import falsely rejected",
+        "_signal effectful aliases bypassed signal module-only monkeyguard"
+      ],
+      "conclusion": "KNOWN_FINDINGS_CLOSED_CODE_ONLY",
+      "kind": "RECORDED_INDEPENDENT_READ_ONLY_GUARD_CODE_REVIEW",
+      "new_source_execution": "NOT_RUN",
+      "next_run_permitted": false,
+      "old_stub_results_transferred": false,
+      "recorded_by": "/root/m05_final_integration",
+      "reviewed_commit": "5983e635dbbe13a1b025368a68d62832f97898a5",
+      "reviewed_tree": "47ab93a467ffef5abf2f6b57c0d65305de30a5da",
+      "reviewer_agent": "/root/m05_final_integration/first_failure_artifact_review",
+      "reviewer_executed_no_target_or_stub": true,
+      "reviewer_wrote_no_files": true,
+      "runner_sha256": "de279b69c3d57ac694ad02ccab3c923b3ab565f61baaa3b581eb4c24ef958304",
+      "scope_limit": "Trusted reviewed source test harness, not hostile Python sandbox; CODE closure does not establish runtime containment or test success.",
+      "version": 1,
+      "whole_or_six_child_acceptance": false
+    },
+    "kind": "M05_FIRST_COMBINED_D58_PREFLIGHT",
+    "materialized_sha256": {
+      ".github/workflows/independent-m0-once.yml": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
+      ".github/workflows/independent-m0.yml": "b6e6caca4d472e107f41b20b58e49294f07c16bf685a5c5300a7888b543a21ed",
+      "config/m0-stream-recipient-public-metadata.json": "f3497f05e9361c5afa6c8fd03b6e7cae4a8c92ae31f1cb10a2595d68cf4e210b",
+      "config/m0-stream-recipient-public.pem": "3140279eb39d7873fdcbd23fb46b71f987d43a12184087a791c5b2073b5f1fed",
+      "tests/test_independent_m0_checkout_ref.py": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58",
+      "tests/test_independent_m0_cold_import.py": "eef2eef119bed98ab701dbe24840d233028a366e1c47a9da7dbdebf4a6c31d07",
+      "tests/test_independent_m0_controller.py": "6de39ade0b01126404c594100a0f6d789cdc03b2b3a5050d6c1ea802b6a33c27",
+      "tests/test_independent_m0_diagnostics.py": "d464bd2814b0d75f98c40b7f0c17e534071b8ad8923ba463eb916c35063d64df",
+      "tests/test_independent_m0_entry_types.py": "12355208fa1699e8667aea34291899741dfd0cce447bf94a9130996489bd6f04",
+      "tests/test_independent_m0_escrow.py": "15766e0764b7d7e583657d80b37afab8621e8faaaa597c3f8ec5f386154c8fae",
+      "tests/test_independent_m0_integrity.py": "143999e83903157664887cbc4adee63d1edf13f2459be50fdfa9540ee06b3ed9",
+      "tests/test_independent_m0_resource_race.py": "1042f80a12f1e262bdb0452d4a74803e01309cc212bae318b64aaeede6b7e515",
+      "tests/test_independent_m0_scan_proof.py": "8cc1ceb30977434774dfb16fa974a7c1bbd0ae00c8c4308c6390d13ec89af49a",
+      "tools/cold_import_contract.py": "91c4a813e4147bcdfb68cc28b3d0f0604e9ec5c6f0a94dac28f23972675223c5",
+      "tools/independent_m0_controller.py": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+      "tools/m0_stream_escrow.py": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e"
+    },
+    "materialized_source_bytes": 236296,
+    "materialized_source_files": 16,
+    "next_run_permitted": false,
+    "orchestration_binaries": {
+      "taskset": {
+        "path": "/usr/bin/taskset",
+        "sha256": "0c34de807bc9c617406360836fca2c7505eb86ede4df5a34854bde6eeddad9f3"
+      },
+      "timeout": {
+        "path": "/usr/bin/timeout",
+        "sha256": "6ca1891dfc0b05d7680770c2884c0391b92467c7bb6500a5c84677e6481739f1"
+      }
+    },
+    "original4e_failure_preserved": true,
+    "originalG_stub_preserved": true,
+    "parent_active_SQL_UTA_guards_AST_equal_original4e": true,
+    "preflight_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "root_specific_authorization": {
+      "SQL_native_service_network_crypto_probe": false,
+      "actual_M05_marker_ref_push": false,
+      "cpu": 2,
+      "guarded_stdlib_children_max": 6,
+      "module_pattern": "test_independent_m0_*.py",
+      "modules": 9,
+      "outer_seconds": 30,
+      "single_new_source_combined": true
+    },
+    "runner_same_reviewed5983": true,
+    "runtime_directory_materialized": false,
+    "runtime_uta_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+    "runtime_zero_diff_to6010": true,
+    "source_closure_same_original4e": true,
+    "source_commit": "d58e2445a851c11c9cb7f06eebd0cf496da1d268",
+    "source_tree": "d3fdcd099acb3199a03a1108238f69cbed5913c8",
+    "source_worktree_clean": true,
+    "strict_false_template_sha256": "912ac29f080ab5660a277b9c636bf52041680299144648fecf625a3d757e9dce"
+  },
+  "sql_or_crypto_or_network_executed": false,
+  "started_at_utc": "2026-11-18T01:23:06.256185+00:00",
+  "started_monotonic_ns": 102112733489002,
+  "unexpected_denials": []
+}

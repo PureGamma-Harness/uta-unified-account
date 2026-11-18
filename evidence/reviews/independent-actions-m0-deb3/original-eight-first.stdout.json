@@ -1,0 +1,93 @@
+{
+  "actual_SQL_native_profile_workload_Actions": false,
+  "cases": [
+    {
+      "case": "coherent_summary_positive",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "red": false
+    },
+    {
+      "case": "outcomes_vs_counts_disagree",
+      "error_code": "summary_outcome_counts_disagree",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "negative_elapsed_seconds",
+      "error_code": "negative_numeric",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "throughput_not_count_over_elapsed",
+      "error_code": "financial_rate_identity",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "impossible_latency_quantile_order",
+      "error_code": "quantile_order",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "coherent200_population_positive",
+      "expected": "ACCEPT",
+      "observed": "ACCEPT",
+      "red": false
+    },
+    {
+      "case": "receipt_wrong_original_command_id",
+      "error_code": "receipt_original_cid",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "financial_success_with_rejected_receipt",
+      "error_code": "receipt_outcome_identity",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "case": "latency_not_completion_minus_planned",
+      "error_code": "latency_time_identity",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false
+    },
+    {
+      "actual_rows_counts": {
+        "business_rejected": 21,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 159
+      },
+      "adapter": "call new actual cross-file join; original200 row mutation unchanged",
+      "case": "summary_and200_rows_population_disagree",
+      "error_code": "cross_file_outcomes",
+      "expected": "REJECT",
+      "observed": "REJECT",
+      "red": false,
+      "summary_counts": {
+        "business_rejected": 20,
+        "control_or_market_rejected": 20,
+        "financial_succeeded": 160
+      }
+    }
+  ],
+  "control_commit": "deb3fc56ec249c78833b786b45a2f708fea57dd5",
+  "controller_sha256": "bed27815344703a3180ebf08214157470d0495226571121f85c39aeb62dd455f",
+  "elapsed_monotonic_ns": 89026478,
+  "execution_authorized": false,
+  "finished_at_utc": "2026-11-17T19:21:26.084340+00:00",
+  "process_entry_calls": [],
+  "production_approved": false,
+  "red_count": 0,
+  "started_at_utc": "2026-11-17T19:21:25.995312+00:00"
+}

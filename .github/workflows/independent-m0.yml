@@ -1,0 +1,83 @@
+name: Independent hosted M0 diagnostic (manual only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      approval_json:
+        description: 'Reviewed non-secret approval JSON: exact control commit/controller SHA and fresh workspace host/boot reference. Never include keys or nonces.'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: independent-m0-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  diagnostic:
+    if: github.event_name == 'workflow_dispatch' && github.repository == 'PureGamma-Harness/uta-unified-account'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout reviewed control code separately
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: control
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/independent_m0_controller.py
+            /tools/m0_stream_escrow.py
+            /tools/cold_import_contract.py
+            /config/m0-stream-recipient-public.pem
+            /config/m0-stream-recipient-public-metadata.json
+            /tests/test_independent_m0_controller.py
+            /tests/test_independent_m0_integrity.py
+            /tests/test_independent_m0_escrow.py
+            /tests/test_independent_m0_checkout_ref.py
+            /tests/test_independent_m0_resource_race.py
+            /tests/test_independent_m0_diagnostics.py
+            /tests/test_independent_m0_cold_import.py
+            /tests/test_independent_m0_entry_types.py
+            /tests/test_independent_m0_scan_proof.py
+            /.github/workflows/independent-m0.yml
+            /.github/workflows/independent-m0-once.yml
+      - name: Checkout exact qualified workload
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: 909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0
+          path: workload
+          persist-credentials: false
+      - name: Set exact Python minor/patch and report actual version in controller
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12.14'
+      - name: Run pure control tests (no workload)
+        run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v
+      - name: Run two serial source-pinned diagnostics only after all controller gates
+        env:
+          M0_APPROVAL_JSON: ${{ inputs.approval_json }}
+        run: |
+          python control/tools/independent_m0_controller.py --execute \
+            --source "$GITHUB_WORKSPACE/workload" \
+            --private "$RUNNER_TEMP/uta-m0-private-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --public "$RUNNER_TEMP/uta-m0-public-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Verify complete public allowlist after all owned children stop
+        id: public_check
+        if: always()
+        run: python control/tools/independent_m0_controller.py --verify-public "$RUNNER_TEMP/uta-m0-public-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+      - name: Preserve only explicitly constructed public evidence
+        if: always() && steps.public_check.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: independent-m0-safe-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.json
+            ${{ runner.temp }}/uta-m0-public-${{ github.run_id }}-${{ github.run_attempt }}/**/*.cms
+          if-no-files-found: warn
+          retention-days: 30

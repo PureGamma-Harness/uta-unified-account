@@ -1,0 +1,45 @@
+{
+  "started_at_utc": "2026-11-17T19:52:04.169723+00:00",
+  "module_sha256": "89f48b50d22a1b8c5898ed9413ad6bc2567f6cd30c0a58626d0921f5e91ec83e",
+  "synthetic_only": true,
+  "actual_recipient_private_key_read": false,
+  "actual_financial_SQL_native_profile_Actions": false,
+  "production_approved": false,
+  "checks": [
+    {
+      "case": "authenticated_roundtrip_exact_binary",
+      "passed": true
+    },
+    {
+      "case": "actual_AuthEnvelopedData_AES256GCM_RSAOAEP_SHA256",
+      "passed": true
+    },
+    {
+      "case": "CBC-PKCS1v15",
+      "passed": true,
+      "protocol_rejected_before_plaintext": true
+    },
+    {
+      "case": "GCM-OAEP-SHA1",
+      "passed": true,
+      "protocol_rejected_before_plaintext": true
+    },
+    {
+      "case": "GCM-MGF1-SHA1",
+      "passed": true,
+      "protocol_rejected_before_plaintext": true
+    },
+    {
+      "case": "tampered-tag",
+      "passed": true,
+      "private_unaccepted_output_bytes": 799,
+      "plaintext_parsed_or_published": false
+    }
+  ],
+  "openssl_version": "OpenSSL 3.5.7 9 Jun 2026 (Library: OpenSSL 3.5.7 9 Jun 2026)",
+  "status": "FAIL",
+  "error_type": "FileNotFoundError",
+  "error_code": "private_fixture_failure",
+  "finished_at_utc": "2026-11-17T19:52:04.331290+00:00",
+  "elapsed_monotonic_ns": 161584618
+}

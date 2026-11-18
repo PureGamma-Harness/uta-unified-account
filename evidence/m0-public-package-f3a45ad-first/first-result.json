@@ -1,0 +1,86 @@
+{
+  "all_tracked_inputs_unchanged": true,
+  "checks": {
+    "entry_points": true,
+    "legacy_fixture_licensed": true,
+    "legacy_fixture_pinned": true,
+    "sdist_required_files_exact": true,
+    "sdist_runtime_exact": true,
+    "version": true,
+    "wheel_runtime_exact": true
+  },
+  "elapsed_seconds": 34.87172696000198,
+  "free_bytes_after": 18294833152,
+  "original_failure_preserved": "dc9e42a actual unit FAIL and package NOT_RUN; no old-source rebuild",
+  "passed": true,
+  "production_approved": false,
+  "records": [
+    {
+      "actual_timeout_seconds": 120,
+      "argv": [
+        "git",
+        "sparse-checkout",
+        "disable"
+      ],
+      "elapsed_seconds": 1.0190543819917366,
+      "exit_code": 0,
+      "label": "materialize",
+      "pid": 689081,
+      "timed_out": false
+    },
+    {
+      "actual_timeout_seconds": 120,
+      "argv": [
+        "git",
+        "restore",
+        "--source=f3a45ade08e63bc99f224017d79b31da9236d840",
+        "--worktree",
+        "--",
+        "."
+      ],
+      "elapsed_seconds": 0.17541930900188163,
+      "exit_code": 0,
+      "label": "restore_full_input",
+      "pid": 689084,
+      "timed_out": false
+    },
+    {
+      "actual_timeout_seconds": 120,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "-c",
+        "import setuptools.build_meta as b; print(b.build_wheel('/workspace/uta-m0-public-package-once-private/dist')); print(b.build_sdist('/workspace/uta-m0-public-package-once-private/dist'))"
+      ],
+      "elapsed_seconds": 8.756833553008619,
+      "exit_code": 0,
+      "label": "build",
+      "pid": 689115,
+      "timed_out": false
+    },
+    {
+      "actual_timeout_seconds": 120,
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-B",
+        "/workspace/uta-m0-public-package-fix/tools/verify_release_archives.py",
+        "--source",
+        "/workspace/uta-m0-public-package-fix",
+        "--commit",
+        "f3a45ade08e63bc99f224017d79b31da9236d840",
+        "--wheel",
+        "/workspace/uta-m0-public-package-once-private/dist/uta_reference_exchange-0.5.0a1-py3-none-any.whl",
+        "--sdist",
+        "/workspace/uta-m0-public-package-once-private/dist/uta_reference_exchange-0.5.0a1.tar.gz",
+        "--output",
+        "/workspace/uta-m0-public-package-once-private/artifact-manifest.json"
+      ],
+      "elapsed_seconds": 24.031178587989416,
+      "exit_code": 0,
+      "label": "verify",
+      "pid": 689301,
+      "timed_out": false
+    }
+  ],
+  "source_commit": "f3a45ade08e63bc99f224017d79b31da9236d840"
+}
