@@ -95,3 +95,22 @@ source-bound authorities require a separate compatible writer handoff; no live
 hot swap or migration is supplied. Rollback keeps the unchanged reference as
 the default and preserves all confirmed financial history. Production,
 capacity, HA, product activation and financial human approval remain NO_GO.
+
+## Source inventory and activation limitation
+
+Adding the candidate module changes the package source set from61 to62. This
+branch explicitly advances the ordinary artifact test's inventory toV2 and
+requires the exact62 keys for both normal and injected retained-source checks.
+It does not edit historical61-file plans or weaken their validators. Those
+plans remain valid only at their original source; they are not executable
+approval for this candidate. The original61 UTA files and credit loaded-module
+set remain byte-identical. In particular, no credit/authority adapter calls this
+new module: future activation must separately review the loaded-engine binding,
+policy/code artifact and source inventory for the new callable. At-rest source
+coverage alone is not a claim that this optional callable has live authority.
+
+Two edit attempts combined an unrelated documentation context with a test edit;
+apply_patch rejected the missing documentation context before either edit was
+written. These are preparation-only errors, not target executions or test
+failures. The subsequent isolated patch and static source checks bind the actual
+files; no historical source or result was rewritten.
