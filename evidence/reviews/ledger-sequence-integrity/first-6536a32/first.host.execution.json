@@ -1,0 +1,39 @@
+{
+  "actual_exit": 0,
+  "actual_reaped": true,
+  "argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-account-ledger-sequence/tools/run_ledger_sequence_once.py",
+    "--plan-sha256",
+    "56391a2e51ad82442c16ea669ec15aaca56a7a21fe3eb99847889e73dce8d32b",
+    "--source-commit",
+    "6536a32cbbd44c2ad7509e8eba26fd1a520f0dd0",
+    "--private-directory",
+    "/workspace/uta-ledger-native-sequence-6536a32-once01"
+  ],
+  "attempted": true,
+  "elapsed_ns": 236704477,
+  "error_type": null,
+  "launcher_raw": {
+    "first.launcher.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first.launcher.stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "monotonic_end_ns": 122375366404624,
+  "monotonic_start_ns": 122375129700147,
+  "production_approved": false
+}

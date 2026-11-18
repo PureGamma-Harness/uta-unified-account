@@ -1,0 +1,155 @@
+{
+  "END_stage_driver_elapsed_seconds": 3.7586436639976455,
+  "END_stage_max_observed_logical_bytes": 4893058,
+  "active_threads_at_end": 1,
+  "actual_affinity": [
+    1
+  ],
+  "actual_expected_direct_command_rejections": 3,
+  "actual_explicit_cleanup_cancels": 1,
+  "actual_known_accepted_ID_replays": 2,
+  "actual_matches": 5,
+  "actual_matching_attempts": 6,
+  "actual_matching_rejection_attempts": 1,
+  "actual_native_matching_auto_cancels": 1,
+  "actual_paired_fills": 10,
+  "actual_prefix": {
+    "actual_prefix_elapsed_ns": 3796115108,
+    "actual_prefix_exit": 0,
+    "actual_prefix_reaped": true,
+    "argv": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "30s",
+      "/usr/bin/taskset",
+      "-c",
+      "1",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-risk-linear-cost-sign/evidence/reviews/cross-maintenance-boundary/sqlite_once.py",
+      "--run-root",
+      "/workspace/uta-cross-maintenance-sqlite-e707fc5-once01",
+      "--source-commit",
+      "e707fc55e83f53d79aa27610ea8f7b6386f6c713",
+      "--approved-manifest-sha256",
+      "2bfda9eed7530fdfd0f462648e86cbcb3bf546b1fc2c3971894338ce81d51b4c"
+    ],
+    "launch_monotonic_ns": 128277369537733,
+    "wait_return_monotonic_ns": 128281165652841
+  },
+  "actual_top_level_step_invocations": {
+    "DecisionAudit.replay": 3,
+    "ExchangeService.apply_fill": 3,
+    "ExchangeService.cancel_order": 1,
+    "ExchangeService.create_account": 6,
+    "ExchangeService.deposit": 6,
+    "ExchangeService.publish_market": 25,
+    "ExchangeService.risk": 6,
+    "ExchangeService.set_kill_switch": 3,
+    "ExchangeService.submit_order": 13,
+    "Matcher.match_once": 5,
+    "Matcher.verify": 3,
+    "reconcile_exchange": 3
+  },
+  "actual_unique_match_keys": [
+    [
+      "maintenance-equality-rollback",
+      "match:d7515d0c827d1a416343f94d56e0454715b0dd2819489a992d7c2ddc4319f95f"
+    ],
+    [
+      "IM-equality-lower-MM",
+      "match:fd16213fed559a15036c133399d0db5bc1ba8faaf909e7e0063c42f5390be6f8"
+    ],
+    [
+      "IM-equality-lower-MM",
+      "match:d792730d21690c123d666283f70a66791eec3d53ea4bfb0666ef2ae456a0aefc"
+    ],
+    [
+      "USD2-cumulative-partial-fee",
+      "match:3bc49c336273d9e8fbfdadc94e21583b595408cc53323b66dcae4e8bc5479a72"
+    ],
+    [
+      "USD2-cumulative-partial-fee",
+      "match:945f19cc98fccabe98a1dbd84d2def5ed3a524a5702dddcb06b311c5482940d4"
+    ]
+  ],
+  "additional_SQL_financial_or_test_runs": 0,
+  "authorities": 3,
+  "checkpoints": 154,
+  "classification": "LOCAL_NATIVE_SQLITE_FUNCTIONAL_PASS_PENDING_INDEPENDENT_RAW_REVIEW",
+  "forbidden_imports": [],
+  "full_audit_admission_eligibility_model": "OPEN; original numerical replay does not certify strict-MM eligibility",
+  "independent_RAW_review": "PENDING",
+  "kernel_directory_quota_proven": false,
+  "loaded_uta_origin_count": 18,
+  "manifest_sha256": "2bfda9eed7530fdfd0f462648e86cbcb3bf546b1fc2c3971894338ce81d51b4c",
+  "native_runtime_commit": "402c78412df53cb91e0f7f7d463fdd7026cf7cac",
+  "outer_tool_evidence": "exec_command 1857c1 then write_stdin aa69fb returned exit_code0",
+  "outer_tool_observed_exit": 0,
+  "performance_accepted": false,
+  "perpetual_funding_API": "NOT_IMPLEMENTED; existing genuine market publication used",
+  "private_originals": {
+    "PRIVATE_archive_CRC_entries": 80,
+    "PRIVATE_archive_bytes": 1087363,
+    "PRIVATE_archive_sha256": "08736915ac57a5f225b61a2aa8a63946e91740832284b513f6ee047bc15d4d54",
+    "PRIVATE_seal": {
+      "bytes": 22765,
+      "sha256": "ed7ffdfdf41e4c22a03521367f829f9e607092befbf157ae585b65fd063e2de3"
+    },
+    "archive_local_private_only": true,
+    "sealed_file_bytes": 4939245,
+    "sealed_files": 80
+  },
+  "production_approved": false,
+  "public_data": "synthetic customer/account/market data plus allowed runtime and byte metadata",
+  "raw_capture": {
+    "allowed_raw_key_sets_verified": true,
+    "original_raw_JSONL_records": 156,
+    "reserved_failure_trailer_bytes": 512,
+    "shared_raw_limit_bytes": 524288,
+    "stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "stdout": {
+      "bytes": 26972,
+      "sha256": "56a9f75499a0a65c6cef7397cb8b7b440e25b470a93ad3d895de14d8ab5c6f45"
+    }
+  },
+  "result_stage_driver_elapsed_seconds": 3.696681132001686,
+  "result_stage_observed_logical_bytes": 4857651,
+  "runtime_descriptor": {
+    "loaded_libraries": null,
+    "loaded_libraries_status": "NOT_OBSERVED",
+    "python_executable": {
+      "bytes": 30894944,
+      "declared_path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "resolved_path": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+    },
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "runtime_attestation_complete": false,
+    "scope": "current interpreter and SQLite module descriptor; no proc/maps or complete loaded-library attestation",
+    "sqlite_module": {
+      "bytes": null,
+      "declared_path": null,
+      "in_builtin_module_names": true,
+      "kind": "builtin",
+      "loader": "importlib.machinery.BuiltinImporter",
+      "resolved_path": null,
+      "sha256": null,
+      "spec_name": "_sqlite3",
+      "spec_origin": "built-in"
+    },
+    "sqlite_version": "3.53.1"
+  },
+  "schema": 1,
+  "source_commit": "e707fc55e83f53d79aa27610ea8f7b6386f6c713",
+  "source_origin_map_SHA256": "ebf59a5bb2ee79c3c3a951dd8426573fbe2d258a9949cefe9e2680fbd2508bc4",
+  "source_pin_map_SHA256": "9e0f3ec41df41b831915ddcf30a2f5b2fbf3a0eb465afe124c1269cd553426be",
+  "source_pins_before_after_equal_files": 63,
+  "source_unchanged": true,
+  "status": "LOCAL_MM_SQLITE_FUNCTIONAL_PASS_PENDING_INDEPENDENT_REVIEW"
+}

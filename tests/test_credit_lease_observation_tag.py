@@ -3,6 +3,8 @@ import ast
 from enum import Enum
 from hashlib import sha256
 import json
+import os
+import stat
 from pathlib import Path
 import sys
 from types import MappingProxyType, ModuleType
@@ -12,6 +14,100 @@ from unittest.mock import patch
 from uta import credit, writer_fence
 from uta.credit_artifact import (CreditArtifactError, _hash, _loaded_modules,
                                  _static, credit_artifact_id, credit_code_artifact)
+
+
+# Versioned test inventory: byte expectations come from the current immutable
+# deployment, while frozen runs must still supply their exact retained pins.
+_SOURCE_INVENTORY_V1 = (
+    '__init__.py',
+    '__main__.py',
+    'acceptance.py',
+    'admission.py',
+    'api.py',
+    'bridge.py',
+    'configuration.py',
+    'credit.py',
+    'credit_artifact.py',
+    'credit_audit_v2.py',
+    'credit_audit_v2_replay.py',
+    'credit_fifo_v2.py',
+    'credit_native.py',
+    'credit_native_v2.py',
+    'credit_policy.py',
+    'credit_transition.py',
+    'credit_v2_payload_contract.py',
+    'cutover.py',
+    'decision_audit.py',
+    'durable_batches.py',
+    'durable_cli.py',
+    'durable_commands.py',
+    'durable_gateway.py',
+    'durable_liquidation.py',
+    'durable_process.py',
+    'durable_views.py',
+    'examples.py',
+    'existing_services.py',
+    'failure_diagnostics.py',
+    'gateway.py',
+    'ledger.py',
+    'liquidation.py',
+    'market.py',
+    'market_cache.py',
+    'matching.py',
+    'migration.py',
+    'models.py',
+    'ops.py',
+    'portfolio.py',
+    'private_stream_codec.py',
+    'products.py',
+    'reconciliation.py',
+    'request_signing.py',
+    'reservations.py',
+    'reserve_kernel.py',
+    'risk.py',
+    'scenario_margin.py',
+    'server.py',
+    'service.py',
+    'shadow_adapter.py',
+    'shard_admission.py',
+    'sharding.py',
+    'simulator.py',
+    'spot.py',
+    'startup.py',
+    'storage.py',
+    'store.py',
+    'supervisor.py',
+    'vertical.py',
+    'worker.py',
+    'writer_fence.py',
+)
+
+
+def current_source_snapshot():
+    """Independent test read; never call production artifact source helpers."""
+    root = Path(writer_fence.__file__).resolve().parent
+    names = tuple(sorted(path.relative_to(root).as_posix()
+                         for path in root.rglob("*.py")))
+    if names != _SOURCE_INVENTORY_V1:
+        raise AssertionError("current source inventory differs from test inventory v1")
+    hashes, metadata = {}, {}
+    fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
+    for name in names:
+        path = root / name
+        if path.resolve() != path or not stat.S_ISREG(path.lstat().st_mode):
+            raise AssertionError("source must be canonical regular and not a symlink")
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        with os.fdopen(descriptor, "rb") as stream:
+            before = os.fstat(stream.fileno())
+            raw = stream.read(2 * 1024 * 1024 + 1)
+            after = os.fstat(stream.fileno())
+        observed = tuple(getattr(before, field) for field in fields)
+        if (not stat.S_ISREG(before.st_mode) or len(raw) > 2 * 1024 * 1024
+                or observed != tuple(getattr(after, field) for field in fields)):
+            raise AssertionError("source changed during bounded test read")
+        hashes[name] = sha256(raw).hexdigest()
+        metadata[name] = observed
+    return hashes, metadata
 
 
 def collector():
@@ -37,13 +133,13 @@ def collector():
 
 class LeaseObservationTagArtifactTests(unittest.TestCase):
     def test_complete_artifact_includes_tag_member_and_loaded_class_code(self):
-        artifact = credit_code_artifact()
         retained = globals().get("_RETAINED_UTA_SOURCE_PINS")
+        ordinary_snapshot = None
         if retained is None:
-            plan = json.loads((Path(__file__).resolve().parents[1]
-                / "evidence/reviews/credit-observation-tag/once-plan.json").read_bytes())
-            retained = {name[4:]: pin["sha256"] for name, pin in plan["input_files"].items()
-                        if name.startswith("uta/") and name.endswith(".py")}
+            retained, ordinary_snapshot = current_source_snapshot()
+        artifact = credit_code_artifact()
+        if ordinary_snapshot is not None:
+            self.assertEqual((retained, ordinary_snapshot), current_source_snapshot())
         self.assertEqual(len(retained), 61)
         self.assertEqual(artifact["source_files"], retained)
         with self.assertRaises(AssertionError):

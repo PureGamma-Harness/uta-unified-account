@@ -1,0 +1,148 @@
+{
+  "checks": {
+    "both_original_property_decorators_and_getters_retained": true,
+    "bounds_runtime_and_host_template_unchanged": true,
+    "driver_byte_identical_to_original_pure_source": true,
+    "exact_original_future_annotations_retained": true,
+    "fixture_initializes_backing_fields_only": true,
+    "fixture_verifies_getter_identity_and_setter_rejection": true,
+    "native_runtime_diff_from_first_public_source": [],
+    "no_property_setter_introduced": true,
+    "original_plan_copy_byte_identical_to_first_public_plan": true,
+    "same_fifteen_case_completion_IDs": true,
+    "same_six_test_method_ASTs": true
+  },
+  "comparison_public_first_source": "fc2d574d7ac434a214bf332649edf0d2effc2a8c",
+  "limitations": [
+    "No native normal unittest execution, selected pure execution or raw review was performed.",
+    "The old402c784 PASS remains limited to its descriptor-omitting extracted service class; this review does not change the old outcome.",
+    "The once driver relies on the caller for exact physical/Git source binding, hard timeout/CPU and actual exit/reap/monotonic completion.",
+    "No service admission, fill, SQL, matching, performance, HA or production acceptance is established.",
+    "CI failure counts/phase are contextual reports from root and the delivery document; private original CI evidence was not independently inspected here."
+  ],
+  "original_plan_sha256": "92fc36f7c1ea2f98d91f518fe93667c4a8ad907600a8e32c0070631c34fdcdc6",
+  "original_pure_source": "402c78412df53cb91e0f7f7d463fdd7026cf7cac",
+  "pin_bytes": 170187,
+  "pin_count": 9,
+  "pins": {
+    "tests/test_cross_maintenance_boundary.py": {
+      "bytes": 8963,
+      "physical_owner_matches_git": true,
+      "sha256": "953776fe76bb80d80d34afea6e78f917d64a1d7959bde6f9a62eab670b2c279c"
+    },
+    "tools/run_cross_maintenance_once.py": {
+      "bytes": 9181,
+      "physical_owner_matches_git": true,
+      "sha256": "072423d077d6bd11129939800f27a7a63b5b4877177164fe4f8c331676ec3d8b"
+    },
+    "uta/market.py": {
+      "bytes": 8465,
+      "physical_owner_matches_git": true,
+      "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+    },
+    "uta/models.py": {
+      "bytes": 6034,
+      "physical_owner_matches_git": true,
+      "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+    },
+    "uta/portfolio.py": {
+      "bytes": 24042,
+      "physical_owner_matches_git": true,
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+    },
+    "uta/products.py": {
+      "bytes": 12043,
+      "physical_owner_matches_git": true,
+      "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+    },
+    "uta/risk.py": {
+      "bytes": 7535,
+      "physical_owner_matches_git": true,
+      "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+    },
+    "uta/scenario_margin.py": {
+      "bytes": 7092,
+      "physical_owner_matches_git": true,
+      "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+    },
+    "uta/service.py": {
+      "bytes": 86832,
+      "physical_owner_matches_git": true,
+      "sha256": "d3ed342c4adfca7960957d3d4579adb13974aa676bc1e5cfaa20261261bd8910"
+    }
+  },
+  "plan_sha256": "021639834b185c8e944d180919d082e5301d6d6b0d0397b2e49f036961d39416",
+  "private_CI_artifacts_read": 0,
+  "retained_module_import_inventory": {
+    "uta/market.py": [
+      "__future__",
+      "dataclasses",
+      "datetime",
+      "decimal",
+      "json",
+      "models",
+      "re",
+      "types",
+      "typing"
+    ],
+    "uta/models.py": [
+      "dataclasses",
+      "decimal",
+      "re",
+      "types",
+      "typing"
+    ],
+    "uta/portfolio.py": [
+      "__future__",
+      "dataclasses",
+      "datetime",
+      "decimal",
+      "fractions",
+      "json",
+      "market",
+      "models",
+      "products",
+      "risk",
+      "scenario_margin",
+      "types",
+      "typing"
+    ],
+    "uta/products.py": [
+      "__future__",
+      "dataclasses",
+      "datetime",
+      "decimal",
+      "enum",
+      "fractions",
+      "json",
+      "models",
+      "re",
+      "types",
+      "typing"
+    ],
+    "uta/risk.py": [
+      "dataclasses",
+      "decimal",
+      "fractions",
+      "models",
+      "typing"
+    ],
+    "uta/scenario_margin.py": [
+      "dataclasses",
+      "decimal",
+      "fractions",
+      "models",
+      "risk",
+      "typing"
+    ]
+  },
+  "review_kind": "INDEPENDENT_CODE_ONLY",
+  "reviewed_source_commit": "b4e1b5907e6b64578d39614f87c866d7f4f65631",
+  "schema": 1,
+  "status": "CODE_CLOSED_FOR_SCOPED_PURE_ONCE",
+  "target_SQL": 0,
+  "target_attempts": 0,
+  "target_compilations": 0,
+  "target_imports": 0,
+  "target_process_probes": 0
+}
