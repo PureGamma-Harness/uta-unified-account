@@ -1,0 +1,1136 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_PENDING_FUNDING_HOLD_REV2_SPEC_REVIEW",
+  "reviewed_commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "reviewed_parent": "ade10972b8044e3c753113970db34b3c85950ca4",
+  "original_spec_commit": "bac842516abc8f1e8af42f8624b5cf28f31b5972",
+  "decision": "B1_B2_SPEC_REMEDIES_AND_SUPPLEMENTAL_ARITHMETIC_ACCEPTED_ONLY_D2_REMAINS_BLOCKED",
+  "new_D0_rule_definition_blockers": [],
+  "runtime_or_financial_signoff": false,
+  "production_approved": false,
+  "new_execution_authorized": false,
+  "original_review_rewritten": false,
+  "reviewed_revision_files": [
+    {
+      "file": "docs/pending-funding-risk-hold-b1-b2-amendment.md",
+      "bytes": 13454,
+      "sha256": "a664661a0da506d88e9b3c193faa7e983bea5e029c4769becca4b078efed98eb",
+      "git_blob_oid": "f01fab7c6a793f76ccf241e93a69a843617cc005",
+      "git_mode": "100644",
+      "physical_Git_equal": true
+    },
+    {
+      "file": "docs/pending-funding-risk-hold-spec.md",
+      "bytes": 22315,
+      "sha256": "cef53873bd46936414526d84101280c5d08e56a07f4a2bfe30c4b6cc3d79f2f8",
+      "git_blob_oid": "28de5dce6325b88d54bcefdc46aa8f194b98e46f",
+      "git_mode": "100644",
+      "physical_Git_equal": true
+    },
+    {
+      "file": "evidence/designs/pending-funding-risk-hold/amendment-cases.json",
+      "bytes": 14119,
+      "sha256": "b98321db286028edc05cc2cc4a69c14b250038b2a6ab6066fcaf5610022bdb59",
+      "git_blob_oid": "101fd7b54e13566cf6247392d61bd72a83a09ae6",
+      "git_mode": "100644",
+      "physical_Git_equal": true
+    },
+    {
+      "file": "evidence/designs/pending-funding-risk-hold/amendment-contract.json",
+      "bytes": 17604,
+      "sha256": "041fa3abc54b3881086049fe5963d321aafd0f3421f95a9c53c5f8e8e63da29b",
+      "git_blob_oid": "b0f1cb96bd064f7b6ce89a3225e629e824919d08",
+      "git_mode": "100644",
+      "physical_Git_equal": true
+    },
+    {
+      "file": "evidence/designs/pending-funding-risk-hold/rule-traceability.json",
+      "bytes": 86816,
+      "sha256": "12b4dd4d3b57ff6a000797393d377f75511070ca80126a5e1dec89abc764df93",
+      "git_blob_oid": "30ff43fb1404be3a34b078e1777600ce458b088b",
+      "git_mode": "100644",
+      "physical_Git_equal": true
+    }
+  ],
+  "protected_originals": [
+    {
+      "file": "evidence/designs/pending-funding-risk-hold/manual-cases.json",
+      "bytes": 16106,
+      "sha256": "0b2b27c0c2020cab320fb9844907149e4163b63cefeec6ab44d0d1fe85c72d6e",
+      "same_as_ade10972": true,
+      "original_manual_or_source_pin_same_as_bac842": true
+    },
+    {
+      "file": "evidence/designs/pending-funding-risk-hold/source-pins.json",
+      "bytes": 7420,
+      "sha256": "c463ec99ecf526ee421d048411d4faee7d1a09e6916dac169ef7be5cb26872f1",
+      "same_as_ade10972": true,
+      "original_manual_or_source_pin_same_as_bac842": true
+    },
+    {
+      "file": "docs/pending-funding-risk-hold-independent-review.md",
+      "bytes": 8852,
+      "sha256": "061c78ffd2470880732369ecb16ecbc2994f326adeaf133df335ad397068d543",
+      "same_as_ade10972": true,
+      "original_manual_or_source_pin_same_as_bac842": false
+    },
+    {
+      "file": "evidence/reviews/pending-funding-risk-hold-independent/arithmetic-and-source-review.json",
+      "bytes": 13108,
+      "sha256": "8fd703aab283aa0221af18415edbd5c45ad56573601b79ceed8e45e2fcde2e57",
+      "same_as_ade10972": true,
+      "original_manual_or_source_pin_same_as_bac842": false
+    }
+  ],
+  "source_pins_verified": [
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/funding_obligations.py",
+      "bytes": 63141,
+      "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97",
+      "git_blob_oid": "6c942e9659c45460410eb681e9dfc128e7eaa407",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/perpetual_funding.py",
+      "bytes": 7981,
+      "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd",
+      "git_blob_oid": "d4ace9ab45c65c3daa9036eb30e3c05a0ccb6d0e",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/funding_local.py",
+      "bytes": 34952,
+      "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd",
+      "git_blob_oid": "f35351b8a0c3d1d4d1adaa900b0e5eca73e1ea45",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/service.py",
+      "bytes": 85864,
+      "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+      "git_blob_oid": "676ff1a43c4477cc7eec397cc3b053b0c89521c7",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/portfolio.py",
+      "bytes": 24042,
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+      "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/credit.py",
+      "bytes": 31349,
+      "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+      "git_blob_oid": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/decision_audit.py",
+      "bytes": 27494,
+      "sha256": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6",
+      "git_blob_oid": "a2c8f364dadbf272648723f2c6deed789538c791",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/spot.py",
+      "bytes": 37264,
+      "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26",
+      "git_blob_oid": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/matching.py",
+      "bytes": 21921,
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d",
+      "git_blob_oid": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/storage.py",
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "uta/ledger.py",
+      "bytes": 7272,
+      "sha256": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66",
+      "git_blob_oid": "e99ab683649d4869f0e748a0957939157f96aeb9",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "tests/test_funding_obligations_local.py",
+      "bytes": 18145,
+      "sha256": "1792c4789c06c2cc982538c49c3a9cf46fe00bc898a1897b80a40dbfd1e74f5d",
+      "git_blob_oid": "5579a347b1b3839c289ce58dbaacc1d7a87a1620",
+      "verified": true
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "file": "docs/durable-funding-obligations-delivery.md",
+      "bytes": 5585,
+      "sha256": "1884bebd873fc3bf3cf637953a85a8061ea6579037557d52b66081801b8ed6e9",
+      "git_blob_oid": "7c5042434700e4b5b256b80d4b3aca6a8007ec78",
+      "verified": true
+    }
+  ],
+  "source_pin_count": 13,
+  "original_manual_case_count": 17,
+  "supplemental_case_count": 10,
+  "rules": 25,
+  "test_gates": 32,
+  "invariants": 12,
+  "all_declared_test_gates": "NOT_RUN",
+  "arithmetic_method": "STANDARD_LIBRARY_FRACTION_FROM_IMMUTABLE_SYNTHETIC_DECIMAL_STRINGS_NO_PRODUCTION_CORE_IMPORT_REUSE",
+  "numeric_field_comparisons": 105,
+  "numeric_mismatches": 0,
+  "case_results": [
+    {
+      "id": "PFH-M18",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [],
+      "independent_notes": [
+        {
+          "canonical_json_matches": true,
+          "independent_duty_id": "funding-duty:v1:3608a7a0ec99683dd080f6663ad9283a965df92c46878e569c3a8c467d3f7779",
+          "natural_slot_same_when_scope_or_interval_changes": true,
+          "natural_unique_constraint_required_to_reject_second_hashed_duty": true,
+          "runtime_unique_constraint_executed": false
+        }
+      ]
+    },
+    {
+      "id": "PFH-M19",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected_allowed_committed_states.0.revision",
+          "expected": "1",
+          "independent_fraction": "1",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.0.U",
+          "expected": "6",
+          "independent_fraction": "6",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.0.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.0.N",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.0.H",
+          "expected": "6",
+          "independent_fraction": "6",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.1.revision",
+          "expected": "2",
+          "independent_fraction": "2",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.1.U",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.1.P",
+          "expected": "123/50",
+          "independent_fraction": "123/50",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.1.N",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_allowed_committed_states.1.H",
+          "expected": "123/50",
+          "independent_fraction": "123/50",
+          "matches": true
+        },
+        {
+          "field": "expected.negative_rate_resolution.U",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.negative_rate_resolution.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.negative_rate_resolution.N",
+          "expected": "123/50",
+          "independent_fraction": "123/50",
+          "matches": true
+        },
+        {
+          "field": "expected.negative_rate_resolution.H",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.negative_rate_resolution.cash_credit_before_APPLIED",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.zero_rate_resolution.U",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.zero_rate_resolution.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.zero_rate_resolution.N",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.zero_rate_resolution.H",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "exact_debit": "2469/1000",
+          "toward_zero_minor_debit": "123/50",
+          "ceil_minor_cap": "6",
+          "released_buffer": "177/50",
+          "simultaneous_old_U_plus_new_P_would_be": "423/50",
+          "CAS_and_crash_atomicity_executed": false
+        }
+      ]
+    },
+    {
+      "id": "PFH-M20",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected_sequence.0.cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.F",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.effective_risk",
+          "expected": "-7",
+          "independent_fraction": "-7",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.F",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.effective_risk",
+          "expected": "-7",
+          "independent_fraction": "-7",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.H",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.base_risk",
+          "expected": "5",
+          "independent_fraction": "5",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.0.accrual_equity",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.F",
+          "expected": "85",
+          "independent_fraction": "85",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.effective_risk",
+          "expected": "3",
+          "independent_fraction": "3",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.accrual_equity",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.cash",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.F",
+          "expected": "85",
+          "independent_fraction": "85",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.H",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.effective_risk",
+          "expected": "3",
+          "independent_fraction": "3",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.accrual_equity",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.receiver_cash",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.receiver_N",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "waiting_effective_risk": "-7",
+          "after_real_release_effective_risk": "3",
+          "after_own_payment_effective_risk": "3",
+          "payer_accrual_all_stages": "88",
+          "combined_payer_receiver_wealth_conserved": true
+        }
+      ]
+    },
+    {
+      "id": "PFH-M21",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected_sequence.1.cash",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.F",
+          "expected": "91",
+          "independent_fraction": "91",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.funding_projected_cash",
+          "expected": "83",
+          "independent_fraction": "83",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.effective_risk",
+          "expected": "-8",
+          "independent_fraction": "-8",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.1.accrual_equity",
+          "expected": "87",
+          "independent_fraction": "87",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.cash",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.F",
+          "expected": "81",
+          "independent_fraction": "81",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.effective_risk",
+          "expected": "2",
+          "independent_fraction": "2",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.2.accrual_equity",
+          "expected": "87",
+          "independent_fraction": "87",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.cash",
+          "expected": "83",
+          "independent_fraction": "83",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.F",
+          "expected": "81",
+          "independent_fraction": "81",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.effective_risk",
+          "expected": "2",
+          "independent_fraction": "2",
+          "matches": true
+        },
+        {
+          "field": "expected_sequence.3.accrual_equity",
+          "expected": "87",
+          "independent_fraction": "87",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "trade_cost_exchanges_cash_for_accounting_asset": "0",
+          "fee_wealth_loss": "-1",
+          "after_fill_effective_risk": "-8",
+          "after_cancel_and_payment_effective_risk": "2",
+          "accounting_accrual": "87"
+        }
+      ]
+    },
+    {
+      "id": "PFH-M22",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected.F_after_incomplete_reply",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected.cash_posted",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "requested_release_is_not_confirmed_release": true,
+          "unconfirmed_backing_test": false,
+          "runtime_ack_validation_executed": false
+        }
+      ]
+    },
+    {
+      "id": "PFH-M23",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected.deadline_offset_us",
+          "expected": "30000000",
+          "independent_fraction": "30000000",
+          "matches": true
+        },
+        {
+          "field": "expected.restart_at20000000_deadline_offset_us",
+          "expected": "30000000",
+          "independent_fraction": "30000000",
+          "matches": true
+        },
+        {
+          "field": "expected.claim_reassignment_deadline_offset_us",
+          "expected": "30000000",
+          "independent_fraction": "30000000",
+          "matches": true
+        },
+        {
+          "field": "expected.P_at_expiry",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected.cash_at_expiry",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "expected.F_at_expiry",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "deadline_offset_us": 30000000,
+          "remaining_us_at_restart_20000000": 10000000,
+          "example_four_queries_starting_at_zero_offsets_us": [
+            0,
+            5000000,
+            10000000,
+            15000000
+          ],
+          "budget_may_expire_before_deadline": true,
+          "bounded_wait_is_not_guaranteed_payment_completion": true,
+          "no_synthetic_value_is_production_default": true
+        }
+      ]
+    },
+    {
+      "id": "PFH-M24",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "allowed_committed_states.0.cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.0.F",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.0.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.1.cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.1.F",
+          "expected": "85",
+          "independent_fraction": "85",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.1.P",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.2.cash",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.2.F",
+          "expected": "85",
+          "independent_fraction": "85",
+          "matches": true
+        },
+        {
+          "field": "allowed_committed_states.2.P",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "forbidden_backing_state": {
+            "F": 95,
+            "positive_cash": 88,
+            "excess": 7
+          },
+          "premature_P_removal_would_overstate_accrual_by": 12,
+          "paid_cash_with_same_P_still_active_effective_risk": "-9",
+          "correct_same_duty_after_payment_effective_risk": "3",
+          "other_independent_duty_H_must_still_remain": true,
+          "runtime_crashes_executed": false
+        }
+      ]
+    },
+    {
+      "id": "PFH-M25",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected.cash_after",
+          "expected": "-2",
+          "independent_fraction": "-2",
+          "matches": true
+        },
+        {
+          "field": "expected.gross_positive_cash_after",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.F_after",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.cash_deficit",
+          "expected": "2",
+          "independent_fraction": "2",
+          "matches": true
+        },
+        {
+          "field": "expected.P_after",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.effective_risk",
+          "expected": "-2",
+          "independent_fraction": "-2",
+          "matches": true
+        },
+        {
+          "field": "contrast.projected_cash",
+          "expected": "-7",
+          "independent_fraction": "-7",
+          "matches": true
+        },
+        {
+          "field": "contrast.H_retained",
+          "expected": "22",
+          "independent_fraction": "22",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "after_real_F_release_then_own_payment_cash": "-7",
+          "other_P_retained": "10",
+          "effective_risk_with_other_P_retained": "-17",
+          "accrual_same_before_after": "-17",
+          "original_M05_M16_numbers_not_edited": true
+        }
+      ]
+    },
+    {
+      "id": "PFH-M26",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected.approved_nonrepayable_transfer_source_debit",
+          "expected": "-7",
+          "independent_fraction": "-7",
+          "matches": true
+        },
+        {
+          "field": "expected.approved_transfer_customer_credit",
+          "expected": "7",
+          "independent_fraction": "7",
+          "matches": true
+        },
+        {
+          "field": "expected.cash_after_confirmed_transfer",
+          "expected": "107",
+          "independent_fraction": "107",
+          "matches": true
+        },
+        {
+          "field": "expected.cash_after_funding",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected.F_after",
+          "expected": "95",
+          "independent_fraction": "95",
+          "matches": true
+        },
+        {
+          "field": "expected.P_after",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.effective_risk_after_nonrepayable_injection_and_payment",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "capital_postings_net": "0",
+          "grant_risk_after_payment": "0",
+          "grant_risk_strictly_above_MM0": false,
+          "if_separately_approved_as_loan_principal_retained": "7",
+          "loan_risk_after_payment_before_additional_loan_IM": "-7",
+          "capital_or_borrow_capability_authorized_by_review": false
+        }
+      ]
+    },
+    {
+      "id": "PFH-M27",
+      "status": "INDEPENDENT_PAPER_ARITHMETIC_OR_IDENTITY_CONSISTENT_NOT_RUNTIME_STATE_PROOF",
+      "numeric_checks": [
+        {
+          "field": "expected.payer_A_cash",
+          "expected": "100",
+          "independent_fraction": "100",
+          "matches": true
+        },
+        {
+          "field": "expected.payer_B_cash",
+          "expected": "50",
+          "independent_fraction": "50",
+          "matches": true
+        },
+        {
+          "field": "expected.P_A",
+          "expected": "12",
+          "independent_fraction": "12",
+          "matches": true
+        },
+        {
+          "field": "expected.P_B",
+          "expected": "8",
+          "independent_fraction": "8",
+          "matches": true
+        },
+        {
+          "field": "expected.receiver_cash",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.receiver_N",
+          "expected": "20",
+          "independent_fraction": "20",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.A_cash",
+          "expected": "88",
+          "independent_fraction": "88",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.A_F",
+          "expected": "85",
+          "independent_fraction": "85",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.B_cash",
+          "expected": "42",
+          "independent_fraction": "42",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.receiver_cash",
+          "expected": "20",
+          "independent_fraction": "20",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.P_A",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.P_B",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        },
+        {
+          "field": "expected.release_only_A_confirmed10_then_apply_whole_period.N",
+          "expected": "0",
+          "independent_fraction": "0",
+          "matches": true
+        }
+      ],
+      "independent_notes": [
+        {
+          "before_and_after_customer_cash_sum": "150",
+          "A_backing_after_true_release_sufficient": true,
+          "unblocked_B_not_partially_APPLIED_while_A_waits": true,
+          "receiver_N_not_precredited": true,
+          "full_period_transaction_executed": false
+        }
+      ]
+    }
+  ],
+  "review_operations": {
+    "data_and_immutable_Git_reads": true,
+    "standard_library_Fraction_arithmetic": true,
+    "target_imports": 0,
+    "target_compiles": 0,
+    "target_tests": 0,
+    "SQL": 0,
+    "process_or_proc_probes": 0,
+    "workers_or_native": 0,
+    "CI": 0,
+    "network": 0,
+    "author_files_or_original_source_modified": false
+  },
+  "release_interpretation": {
+    "D0": "CURRENT_B1_B2_DEFINITION_REMEDIES_ACCEPTED_AT_SPEC_LEVEL_ONLY_ORIGINAL_ADE_FINDINGS_STILL_HISTORICAL",
+    "D1": "PURE_HOLD_ARITHMETIC_OR_RULE_MODEL_SUBSET_MAY_BE_SEPARATELY_SOURCE_REVIEWED_NO_EXECUTION_GO",
+    "D2": "BLOCKED_NO_RELIABLE_ACK_OUTBOX_PRIORITY_SETTLEMENT_OPENER_FENCES_OR_TRANSACTIONAL_FAULT_REOPEN_PROOF",
+    "D3_D4": "NOT_APPROVED"
+  },
+  "rollback": "REMOVE_ONLY_TWO_NEW_INDEPENDENT_REVIEW_FILES_LEAVE_REV2_ORIGINAL17_SOURCE13_ADE_REPORT_AND_ALL_FINANCIAL_HISTORY_UNCHANGED",
+  "static_rule_review": [
+    {
+      "id": "PFH-REV-B1",
+      "current_verdict": "SPEC_DEFINITION_REMEDY_ACCEPTED_ONLY",
+      "reason": "Schedule-independent canonical duty plus separate natural-slot uniqueness excluding interval/rule scope; typed stage references; one active U/P/N/zero with same-duty CAS and immutable old content",
+      "runtime_or_unique_constraint_proven": false
+    },
+    {
+      "id": "PFH-REV-B2",
+      "current_verdict": "ROOT_SELECTED_WAIT_AND_REAL_BACKING_SPEC_REMEDY_ACCEPTED_ONLY",
+      "reason": "WAIT plus due P/H/N restriction and outbox atomic; real cancel/fill proof and prior confirmed settlement before recheck; F_after<=max(C_after,0) preserves real backing and F0 negative-cash fixtures; own H consumed only with its payment",
+      "runtime_ack_outbox_or_settlement_path_proven": false
+    }
+  ],
+  "nonforfeiture_and_liveness": {
+    "due_P_H_and_receiver_N_survive_wait_expiry_claim_restart_and_review": true,
+    "deadline_or_budget_bound_ends_automatic_wait": "DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX",
+    "financial_obligation_guaranteed_to_complete_without_ack_or_capital": false,
+    "deadlock_free_or_external_progress_proof_created": false,
+    "late_ack_automatically_unlocks_or_clears_review": false,
+    "indefinite_unobserved_automatic_retries_allowed": false,
+    "operator_recovery_source_and_authorization_still_required": true
+  },
+  "multi_duty_boundary": {
+    "same_natural_slot_cannot_create_second_duty_via_scope_interval_command_or_claim": true,
+    "same_allocation_release_or_cancel_action_may_be_counted_multiple_times": false,
+    "other_duty_H_consumed_by_own_payment": false,
+    "latest_cash_funding_encumbrance_versions_required_for_each_payment": true,
+    "shared_action_attempt_counter_and_policy_ownership_must_be_explicit_before_state_model_CODE_review": true,
+    "new_duty_claim_or_attempt_ID_may_reset_wait_budget": false,
+    "parallel_writer_or_CAS_race_model_executed": false,
+    "one_blocked_payer_all_local_period_legs_wait": true,
+    "pending_N_can_finance_backing_or_capital": false
+  },
+  "implementation_verification_requirements": [
+    {
+      "id": "PFH-R2-V01",
+      "gates": [
+        "PFH-T025",
+        "PFH-T026"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Persistent natural-slot and active-stage uniqueness, exact type/canonical validation, immutable approved calendar/rule scope, same-duty CAS and replay; two concurrent resolvers cannot consume U twice or invent a new final-cut keyed duty"
+    },
+    {
+      "id": "PFH-R2-V02",
+      "gates": [
+        "PFH-T027",
+        "PFH-T028",
+        "PFH-T030"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Atomic due P/H/N plus WAIT/restriction/outbox; no release from request/text/timeout; trusted real cancel and complete preceding fill watermark/allocation lineage before F changes; confirmed settlement uses trusted original-authority path"
+    },
+    {
+      "id": "PFH-R2-V03",
+      "gates": [
+        "PFH-T021",
+        "PFH-T028",
+        "PFH-T029",
+        "PFH-T030"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Two duties sharing one allocation/action retain their individual debt and deadlines; define shared dispatch/attempt counting and policy ownership, persist unknown attempts, no reset via new duty/claim/action; one release fact and latest-version recheck for every payment"
+    },
+    {
+      "id": "PFH-R2-V04",
+      "gates": [
+        "PFH-T029",
+        "PFH-T030"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Required exact finite policy without defaults; first-wait deadline and observed high-watermark persist across restart/claims; earliest deadline/budget enters durable DEFAULT_REVIEW, debt never forfeited and late ack cannot auto unlock"
+    },
+    {
+      "id": "PFH-R2-V05",
+      "gates": [
+        "PFH-T009",
+        "PFH-T010",
+        "PFH-T020",
+        "PFH-T032"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "All local period cash/capital/clearing/P/N consumption/APPLIED/restriction commit atomically; incomplete period never gives receiver cash; every crash/unknown result reopens and queries original IDs without duplicate debit or in-flight hold release"
+    },
+    {
+      "id": "PFH-R2-V06",
+      "gates": [
+        "PFH-T012",
+        "PFH-T031"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Independent full-ledger obligation accrual mapping and real capital source proof; P/N recognized once, H not another liability/U not payable/N not collateral; any later authorized loan principal and counterparty claim explicit with no automatic borrowing or mint"
+    },
+    {
+      "id": "PFH-R2-V07",
+      "gates": [
+        "PFH-T016",
+        "PFH-T019",
+        "PFH-T022",
+        "PFH-T023",
+        "PFH-T024"
+      ],
+      "status": "REQUIRED_NOT_RUN",
+      "requirement": "Separate exact new capability/source/policy integration, old-writer denial, bounded resources, real matching/fault/replay and user capacity gates; no PR52/credit/engine integration inherited from paper arithmetic"
+    }
+  ],
+  "remaining_D2_blockers": [
+    "No reliable real cancel/fill acknowledgement and complete watermark adapter",
+    "No persistent outbox, finite wait/query recovery implementation",
+    "No priority confirmed-settlement or restricted quote-independent USD obligation opener",
+    "No all-entry old-writer/fencing/capability version proof",
+    "No whole-period cash/P/N/hold/accrual/restriction atomicity or reopened reconciliation execution"
+  ],
+  "full_accounting_financial_signoff_created": false,
+  "all_32_test_gates_not_run_by_review": true,
+  "original_17_not_recomputed_as_new_runtime_evidence": true,
+  "arithmetic_precision": "EXACT_RATIONAL_NO_FLOAT_NO_DECIMAL_CONTEXT_NO_ROUNDING_TOLERANCE",
+  "review_document": {
+    "file": "docs/pending-funding-hold-rev2-independent-review.md",
+    "bytes": 8280,
+    "sha256": "1ef2d84ee5ad3a719563dfa19ea543a17c9c0dc274bd2a7b1c032397be50ff39"
+  }
+}
