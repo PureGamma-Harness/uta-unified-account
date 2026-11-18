@@ -65,11 +65,11 @@
     "<NEW_PRIVATE_DIRECTORY>"
   ],
   "host_evidence": "Caller O_EXCL full argv/intent/monotonic/actual exit/reap/raw; inner receipt alone cannot prove actual host success.",
-  "independent_review": "PENDING",
+  "independent_review": "PENDING_DESCRIPTOR_FIX_CODE_REVIEW",
   "input_files": {
     "tests/test_cross_maintenance_boundary.py": {
-      "bytes": 8666,
-      "sha256": "605b7a5462abbf50cad6cbce518aa8d9fc50bf72629659ab066578a077d3cbfd"
+      "bytes": 8963,
+      "sha256": "953776fe76bb80d80d34afea6e78f917d64a1d7959bde6f9a62eab670b2c279c"
     },
     "tools/run_cross_maintenance_once.py": {
       "bytes": 9181,
@@ -205,6 +205,18 @@
   "planned_methods": 6,
   "preparation_history": {
     "correction": "Retain exact original future annotations AST node before selected definitions; no financial code or tests changed.",
+    "descriptor_fixture_fix": {
+      "cause": "test assigned real read-only properties while selected-method harness omitted descriptors",
+      "first_PR_run": 44275682105,
+      "first_public_source": "fc2d574d7ac434a214bf332649edf0d2effc2a8c",
+      "first_push_run": 44275550971,
+      "new_target_attempts": 0,
+      "observed_push312_errors": 4,
+      "observed_push312_tests": 2055,
+      "old_plan_copy": "once-plan-402c784-first-original.json",
+      "old_plan_sha256": "92fc36f7c1ea2f98d91f518fe93667c4a8ad907600a8e32c0070631c34fdcdc6",
+      "runtime_changes": 0
+    },
     "finding": "Selected service AST dropped original future annotations; MarketSnapshot annotation would evaluate without a binding before methods run.",
     "old_plan_copy": "once-plan-7c8bf60-NOT_RUN.json",
     "old_plan_sha256": "f9836976c789f6208b7fe98e7c6979219168e474677f412e4040cabab7b0d065",
@@ -216,7 +228,7 @@
   "raw_policy": "Shared reserve-before-FD-write 256KiB including512 failure trailer; any incomplete write sticky125/no retry; no child can be orphaned by fail_raw.",
   "root_once_GO_required": true,
   "schema": 1,
-  "scope": "Six memory-only methods using six retained risk modules and six exact selected service methods; not actual service admission/fill/SQL/matching.",
+  "scope": "Six memory-only methods using six retained risk modules, six exact service methods and both original read-only property descriptors; no actual admission/fill/SQL/matching.",
   "selected_service_globals": [
     "ServiceError",
     "_exact",
@@ -224,6 +236,8 @@
     "_MAX_INPUT"
   ],
   "selected_service_methods": [
+    "product_catalog",
+    "portfolio_rules",
     "_rounded",
     "_fee",
     "_reserve_reference",
