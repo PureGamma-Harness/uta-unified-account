@@ -1,7 +1,10 @@
 # Cross maintenance equality: static investigation
 
-Status: CODE investigation only. No financial function, test, SQL, service,
-worker, benchmark or native probe has run for this investigation. The base is
+Status: first bounded pure calculation completed on corrected source
+`402c78412df53cb91e0f7f7d463fdd7026cf7cac`; independent RAW review is pending.
+Six methods completed fifteen named manual cases with no failures, errors or
+skips. No actual service admission, fill, SQL, worker, benchmark or native probe
+has run for this investigation. The base is
 PR35 commit `9b61e5f35dd2196ef2fdddfa03559eca3f1322ec`. Current main
 `02549e5d662caa7156dc30e95f1d5e2dce18215c` does not contain the configured Cross
 service; evidence for this branch must not be attributed to main.
@@ -81,14 +84,20 @@ evidence of corrupted cost.
 
 ## Execution and delivery gates
 
-The final patch and its limited pure test plan require an independent code
-review before the first bounded test. A pure calculation/helper result alone
+The corrected pure driver received independent CODE review
+`c269409ba19ee2b3103214bbd12ad88708d27329` before root authorized its unique
+first bounded test. [Its preserved evidence](../evidence/reviews/cross-maintenance-boundary/first-pure-402c784/README.md)
+records the exact source, plan, six methods/fifteen cases, raw streams, actual
+CPU and runtime, actual prefix exit0/reap, and unchanged input bytes/metadata.
+The selected calculation interval is 79,838,698 ns; the actual timeout/taskset
+Popen-to-wait interval is separately 293,413,990 ns. This is a conditional pure
+PASS, pending independent RAW closure. A pure calculation/helper result alone
 does not establish durable rejection, transaction rollback, partial-fill
 behavior or matching integration; those require a separately scoped fresh
 SQLite/service validation. The benchmark scope on another source cannot be
 borrowed. Production, real funds and product activation remain unapproved.
 
-The proposed first pure scope contains six methods and fifteen named,
+The completed first pure scope contains six methods and fifteen named,
 hand-computed case completions in `tests/test_cross_maintenance_boundary.py`:
 fee-inclusive equal IM/MM; the eight-decimal USD units immediately below, at
 and above MM; valid IM equality with lower MM; safe partial and unsafe final
@@ -105,7 +114,7 @@ cumulative `_fill_fee`, matching, API and process workers do not execute.
 Static integration review must separately confirm that both new guard calls
 are exclusively in the non-RO branches, and that the original prior-ID returns
 and original RO subtree remain unchanged. Those source checks are not durable
-idempotency or transaction tests. The proposed once driver retains shared
+idempotency or transaction tests. The once driver retains shared
 256 KiB raw capacity including a 512-byte failure trailer, refuses incomplete
 raw writes, uses an exclusive new 0700/0600 output namespace, and records its
 inner completion; the caller must record the actual hard-timeout/taskset argv,
