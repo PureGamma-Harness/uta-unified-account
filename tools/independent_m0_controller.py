@@ -110,6 +110,12 @@ DIAGNOSTIC_OPERATIONS=frozenset({'ROOT_LSTAT','ENUMERATE_DIRECTORY','ENTRY_LSTAT
 DIAGNOSTIC_LABELS=frozenset({'UNKNOWN','AUTH_ROUTER_MAIN','AUTH_ROUTER_WAL','AUTH_ROUTER_SHM','AUTH_SHARD_0_MAIN','AUTH_SHARD_0_WAL','AUTH_SHARD_0_SHM','AUTH_SHARD_1_MAIN','AUTH_SHARD_1_WAL','AUTH_SHARD_1_SHM','RUNTIME_PROBE_MAIN','RUNTIME_PROBE_WAL','RUNTIME_PROBE_SHM','AUTH_CREATE_TEMP','ESCROW_CHECKPOINT_PART','ESCROW_CHECKPOINT','ESCROW_STAGED_CIPHER','ESCROW_PUBLIC_CIPHER'})
 DIAGNOSTIC_CODES=frozenset({'resource_root_directory','resource_entries_cap','resource_symlink','resource_special','escrow_directory_scope','escrow_file_scope','resource_compartment_cap','resource_missing_non_aux','resource_aux_parent_changed','resource_aux_main_changed','resource_aux_churn_limit','resource_aux_retry_deadline','resource_stable_type_changed','resource_stable_disappeared_during_retry','resource_scan_role','resource_case_name','tree_entries_cap','output_symlink','output_special','case_output_cap','case_metadata_file','diagnostic_file_scope','runner_boot_changed','runner_host_changed','runner_cpu_unavailable','fresh_space','RESOURCE_PERMISSION_ERROR','RESOURCE_OS_ERROR','UNCLASSIFIED_RESOURCE_ERROR'})
 _DIAGNOSTIC_CONTEXT=ContextVar('m0_resource_diagnostic_context',default=None)
+_RESOURCE_SCAN_TOKEN=ContextVar('m0_resource_scan_token',default=None)
+
+def _take_regular_entry_proof(error):
+    # Internal opaque objects never enter D1 or public records. Every read
+    # consumes the proof, including rejection for a different path or scan.
+    return vars(error).pop('_m0_enumerated_regular_proof',None)
 
 def _diagnostic_code(error):
     if isinstance(error,GateError) and str(error) in DIAGNOSTIC_CODES:return str(error)
@@ -171,6 +177,7 @@ def _mark_resource_error(error,scope,operation,path=None):
 def _resource_lstat(path,scope,operation):
     try:return path.lstat()
     except BaseException as error:
+        _take_regular_entry_proof(error)
         _mark_resource_error(error,scope,operation,path);raise
 
 def _resource_need(condition,code,scope,operation,path=None):
@@ -270,7 +277,15 @@ def _resource_tree_scope(root):
     return role
 
 def _walk_error(error,scope='UNKNOWN'):
+    _take_regular_entry_proof(error)
     _mark_resource_error(error,scope,'ENUMERATE_DIRECTORY',error.filename);raise error
+
+def _resource_directory_entries(parent,scope):
+    try:
+        with os.scandir(parent) as entries:
+            yield from entries
+    except OSError as error:
+        _walk_error(error,scope)
 
 def _resource_entries(root, observe, allow_missing_root=False, diagnostic_scope='UNKNOWN'):
     try:info=_resource_lstat(root,diagnostic_scope,'ROOT_LSTAT')
@@ -279,14 +294,31 @@ def _resource_entries(root, observe, allow_missing_root=False, diagnostic_scope=
         raise
     _resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory',diagnostic_scope,'ROOT_LSTAT',root)
     observe(root,info)
-    for parent,dirs,files in os.walk(root,followlinks=False,onerror=lambda error:_walk_error(error,diagnostic_scope)):
-        for name in dirs+files:
-            path=Path(parent)/name
-            info=_resource_lstat(path,diagnostic_scope,'ENTRY_LSTAT')
+    pending=[root]
+    while pending:
+        parent=pending.pop()
+        info=_resource_lstat(parent,diagnostic_scope,'ENUMERATE_DIRECTORY')
+        _resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory',diagnostic_scope,'ENUMERATE_DIRECTORY',parent)
+        for entry in _resource_directory_entries(parent,diagnostic_scope):
+            path=Path(entry.path)
+            try:enumerated_regular=entry.is_file(follow_symlinks=False)
+            except OSError as error:
+                _take_regular_entry_proof(error)
+                _mark_resource_error(error,diagnostic_scope,'ENUMERATE_DIRECTORY',path);raise
+            try:info=_resource_lstat(path,diagnostic_scope,'ENTRY_LSTAT')
+            except FileNotFoundError as error:
+                # DirEntry preserves nofollow enumeration metadata. If d_type
+                # is unknown and its fallback stat finds no entry, is_file is
+                # false (or raises); neither case grants a disappearance retry.
+                scan_token=_RESOURCE_SCAN_TOKEN.get()
+                if scan_token is not None and enumerated_regular is True and error.filename==str(path):
+                    error._m0_enumerated_regular_proof=(scan_token,str(path))
+                raise
             try:charge=observe(path,info)
             except BaseException as error:
                 _mark_resource_error(error,diagnostic_scope,'RETRY_STABLE_SET',path);raise
             yield path,info,charge
+            if stat.S_ISDIR(info.st_mode):pending.append(path)
 
 def _sqlite_aux_location(path, anchors):
     for role,anchor in anchors:
@@ -301,8 +333,13 @@ def _sqlite_aux_location(path, anchors):
     return None
 
 def _known_missing_sqlite_aux(error, anchors):
+    proof=_take_regular_entry_proof(error)
     if error.errno!=2 or not error.filename:return False
-    path=Path(error.filename);location=_sqlite_aux_location(path,anchors)
+    path=Path(error.filename)
+    scan_token=_RESOURCE_SCAN_TOKEN.get()
+    if (scan_token is None or type(proof) is not tuple or len(proof)!=2
+            or proof[0] is not scan_token or proof[1]!=str(path)):return False
+    location=_sqlite_aux_location(path,anchors)
     if location is not None:
         anchor,relative=location
         # A vanished sidecar never excuses missing/replaced main or parents.
@@ -321,7 +358,9 @@ def _fresh_resource_scan(scan, anchors):
     stable_types={};max_sizes={};current=set()
     def observe(path,info):
         kind=stat.S_IFMT(info.st_mode)
-        if _sqlite_aux_location(path,anchors) is None:
+        if _sqlite_aux_location(path,anchors) is not None:
+            need(stat.S_ISREG(info.st_mode),'resource_special')
+        else:
             if path in stable_types:need(stable_types[path]==kind,'resource_stable_type_changed')
             stable_types[path]=kind;current.add(path)
         if stat.S_ISREG(info.st_mode):
@@ -330,6 +369,7 @@ def _fresh_resource_scan(scan, anchors):
         return 0
     for attempt in range(RESOURCE_SCAN_ATTEMPTS):
         current=set()
+        reset_token=_RESOURCE_SCAN_TOKEN.set(object())
         try:
             value=scan(observe)
             if attempt:
@@ -340,6 +380,8 @@ def _fresh_resource_scan(scan, anchors):
             need(_known_missing_sqlite_aux(error,anchors),'resource_missing_non_aux')
             need(attempt+1<RESOURCE_SCAN_ATTEMPTS,'resource_aux_churn_limit')
             need(time.monotonic_ns()-started<RESOURCE_SCAN_RETRY_NS,'resource_aux_retry_deadline')
+        finally:
+            _RESOURCE_SCAN_TOKEN.reset(reset_token)
     raise GateError('resource_aux_churn_limit')
 
 def _tree_bytes_once(root, entries_limit, byte_limit, observe):

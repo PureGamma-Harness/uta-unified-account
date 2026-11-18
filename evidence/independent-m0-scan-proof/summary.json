@@ -1,0 +1,43 @@
+{
+  "scope": "NEW_SOURCE_SCAN_PROOF_PROTOCOL_METADATA_ONLY",
+  "system_qualification": "NO_GO",
+  "base_commit": "c52494bd8da14bfca26d21e498744b3888de94e4",
+  "code_commit": "4f316a89da1a001a9670a41cfeca754e67de1401",
+  "controller_sha256": "0e80c84030ca984a752d6991417a1454b02c64cb4be3fd4d50e97c1f4c7d87f2",
+  "previous_controller_sha256": "f0795cdb4d5992eeaa744f5088f7d476de773a1bb40d885f6bfcb6f80f9e33bb",
+  "original_independent_first_red_commit": "31b4af9996b4c2bfbfe58b1257b9f0519b328043",
+  "original_first_batch": {"groups": 20, "pass": 19, "red": 1, "exit": 1, "elapsed_ns": 199808835},
+  "original_93060_two_red_and_actual_M04_preserved": true,
+  "original_error_reuse_was_explicit_fake_not_observed_kernel_behavior": true,
+  "independent_new_source_review": "PENDING_CODE",
+  "source_committed_before_execution": true,
+  "run": {
+    "id": "pure-once01",
+    "started_utc": "2026-11-18T00:22:56Z",
+    "argv": ["taskset", "-c", "1", "timeout", "--signal=KILL", "10s", "python", "-B", "tests/test_independent_m0_scan_proof.py", "-v"],
+    "batch_count": 1,
+    "exit": 0,
+    "unittest_methods": 10,
+    "failures": 0,
+    "errors": 0,
+    "unittest_reported_seconds": "0.012",
+    "original_files_bytes": 1802,
+    "source_input_hashes_unchanged_after": true,
+    "original_one_red_sequence_adapted_only": true,
+    "old_14_20_27_batches_rerun": false
+  },
+  "protocol": {
+    "fresh_opaque_token_per_attempt": true,
+    "ContextVar_finally_reset": true,
+    "exact_entry_path_and_nofollow_regular_required": true,
+    "proof_removed_before_every_handler_decision": true,
+    "new_metadata_errors_revoke_old_proof": true,
+    "public_token_values_recorded": false,
+    "financial_permission_added": false
+  },
+  "retry_scans_unchanged": 3,
+  "retry_clock_ns_unchanged": 50000000,
+  "caps_stable_path_type_size_lower_bounds_unchanged": true,
+  "uta_config_workflow_escrow_existing_tests_diff_empty": true,
+  "SQL_native_worker_owner_signals_CI_M05_ref_push_network": "NOT_RUN"
+}
