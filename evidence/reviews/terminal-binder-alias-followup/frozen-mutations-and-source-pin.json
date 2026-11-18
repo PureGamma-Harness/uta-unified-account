@@ -1,0 +1,49 @@
+{
+  "frozen_utc": "2026-11-17T23:46:09.152864+00:00",
+  "source_commit": "15b61fd90ee0af6ee28cbba42a79a8484910d2d7",
+  "core_commit": "98e41f50256a6d2d01332c20826dd0033b9efc3a",
+  "source_files": {
+    "tools/bind_managed_terminal_evidence.py": {
+      "bytes": 24357,
+      "sha256": "d82936254765f2372ac9ecdbd0f0c19a1d12fb4cd70a52e0864d7ec4b2465a1f",
+      "git_blob_oid": "77a5d1b72bf0fba7952c64264981538d9107bd32"
+    },
+    "tools/extract_managed_terminal_evidence.py": {
+      "bytes": 7807,
+      "sha256": "691c6df2e91d0a980eebe78fe41e169e1fbd9d3e194b441723be42138e7607d6",
+      "git_blob_oid": "22e227071ae0f50abc3e289497c970712474e29b"
+    },
+    "tests/test_managed_terminal_binding.py": {
+      "bytes": 14127,
+      "sha256": "c867a8fd80d345f1c51a3ebe1375930ab3fda3efd5af5df0a5025374b125fd6f",
+      "git_blob_oid": "26b5ea4839b7a14d5561be0fef307918ee98d2a4"
+    }
+  },
+  "synthetic_only": true,
+  "builder_reused": "author synthetic_chain only, no author tests run; independent mutations/oracle/bundle pins",
+  "cases": [
+    {
+      "name": "same_numeric_birth_with_leading_zero",
+      "mutation": "cold.identity.pid=before.identity.pid; before.birth='2', cold.birth='02'",
+      "expected_bound": false,
+      "reason": "Same numeric PID/birth lifetime must not gain uniqueness from leading zeros."
+    },
+    {
+      "name": "finance_watermark_float_alias",
+      "mutation": "after.finance.watermark = independent copy of typed after.final_reconciliation.watermark.financial, with ledger_sequence converted to equal float",
+      "expected_bound": false,
+      "reason": "Entire financial watermark must have exact JSON numeric types across records."
+    },
+    {
+      "name": "same_pid_new_numeric_birth_is_legal",
+      "mutation": "cold.identity.pid=before.identity.pid; before.birth='2', cold.birth='3'",
+      "expected_bound": true,
+      "reason": "Distinct process lifetimes can legally reuse a PID."
+    }
+  ],
+  "cpu": 4,
+  "watchdog_seconds": 10,
+  "calls_author_original18": false,
+  "real_task_data_sql_observer_audit": "NOT_RUN",
+  "production_approved": false
+}

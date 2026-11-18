@@ -1,0 +1,191 @@
+{
+  "candidate_commit": "8a0aa6893d7ad301e1b67379a893e31554ca52c2",
+  "cases": [
+    {
+      "actual_metadata_chain_bound": true,
+      "candidate": false,
+      "case": "schema_baseline_remains_bound_unapproved",
+      "codes": [],
+      "expected_metadata_chain_bound": true,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "original_failed_receipt_is_now_rejected",
+      "codes": [
+        "cold_child_receipt_unsuccessful_or_incomplete"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "original_watermark_mismatch_is_now_rejected",
+      "codes": [
+        "after_watermark_reopen_or_logs_unbound",
+        "before_after_watermark_mismatch"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "original_fault_count_contradiction_is_now_rejected",
+      "codes": [
+        "summary_facts_or_collection_errors_invalid"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "boolean_zero_snapshot_counts_must_not_bind",
+      "codes": [
+        "after_original_terminal_snapshot_mismatch",
+        "before_original_terminal_snapshot_mismatch"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "floating_snapshot_counts_must_not_bind",
+      "codes": [
+        "after_original_terminal_snapshot_mismatch",
+        "before_original_terminal_snapshot_mismatch"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "floating_progress_count_must_not_bind",
+      "codes": [
+        "producer_not_complete_original_duration_and_rounds"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "floating_summary_fault_counts_must_not_bind",
+      "codes": [
+        "summary_facts_or_collection_errors_invalid"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "producer_identity_reused_for_new_final_child_must_not_bind",
+      "codes": [
+        "terminal_child_lifetime_identity_reused_or_invalid"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "bounded_json_huge_integer_must_fail_closed_without_exception",
+      "codes": [
+        "metadata_numeric_range_or_root_type_invalid"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "boolean_fault_generation_is_rejected",
+      "codes": [
+        "after_fault_schedule_incomplete",
+        "before_fault_schedule_incomplete"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "missing_file",
+      "codes": [
+        "externally_pinned_complete_bundle_required",
+        "missing_or_invalid_producer",
+        "producer_child_receipt_unsuccessful_or_incomplete",
+        "producer_launch_receipt_identity_mismatch",
+        "producer_response_progress_mismatch",
+        "terminal_child_lifetime_identity_reused_or_invalid",
+        "terminal_collection_order_unproven"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "wrong_file_hash",
+      "codes": [
+        "externally_pinned_complete_bundle_required",
+        "producer_child_receipt_unsuccessful_or_incomplete",
+        "producer_launch_receipt_identity_mismatch",
+        "producer_response_progress_mismatch",
+        "terminal_child_lifetime_identity_reused_or_invalid",
+        "terminal_collection_order_unproven"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "bad_manifest_hash",
+      "codes": [
+        "externally_pinned_complete_bundle_required"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "duplicate_key",
+      "codes": [
+        "externally_pinned_complete_bundle_required"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": false,
+      "candidate": false,
+      "case": "unknown_manifest_path",
+      "codes": [
+        "externally_pinned_complete_bundle_required"
+      ],
+      "expected_metadata_chain_bound": false,
+      "passed": true
+    },
+    {
+      "actual_metadata_chain_bound": true,
+      "candidate": false,
+      "case": "unknown_noncontract_resource_is_never_read_or_echoed",
+      "codes": [],
+      "expected_metadata_chain_bound": true,
+      "passed": true
+    }
+  ],
+  "fixture_scope": "author synthetic schema builder imported without running its 12 test cases; independent mutations and expectations",
+  "live_task_access": false,
+  "passed": true,
+  "production_approved": false,
+  "sql_execution": false
+}

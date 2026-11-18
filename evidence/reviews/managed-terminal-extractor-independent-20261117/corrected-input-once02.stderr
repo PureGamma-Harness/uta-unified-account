@@ -1,0 +1,51 @@
+test_empty_receipts_without_identity_final_snapshots_or_cold_receipt_cannot_qualify (__main__.IndependentTerminalReview.test_empty_receipts_without_identity_final_snapshots_or_cold_receipt_cannot_qualify) ... FAIL
+test_failed_producer_and_cold_receipts_cannot_qualify (__main__.IndependentTerminalReview.test_failed_producer_and_cold_receipts_cannot_qualify) ... FAIL
+test_inconsistent_watermarks_and_audit_hash_cannot_qualify (__main__.IndependentTerminalReview.test_inconsistent_watermarks_and_audit_hash_cannot_qualify) ... FAIL
+test_only_progress_and_summary_stays_incomplete (__main__.IndependentTerminalReview.test_only_progress_and_summary_stays_incomplete) ... ok
+test_summary_fault_facts_disagreeing_with_progress_cannot_qualify (__main__.IndependentTerminalReview.test_summary_fault_facts_disagreeing_with_progress_cannot_qualify) ... FAIL
+test_wrong_original_contract_duration_cannot_qualify (__main__.IndependentTerminalReview.test_wrong_original_contract_duration_cannot_qualify) ... FAIL
+
+======================================================================
+FAIL: test_empty_receipts_without_identity_final_snapshots_or_cold_receipt_cannot_qualify (__main__.IndependentTerminalReview.test_empty_receipts_without_identity_final_snapshots_or_cold_receipt_cannot_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-terminal-independent/evidence/reviews/managed-terminal-extractor-independent-20261117/first_negative_controls.py", line 31, in test_empty_receipts_without_identity_final_snapshots_or_cold_receipt_cannot_qualify
+    self.assertFalse(readfake(good())["candidate_for_independent_terminal_review"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_failed_producer_and_cold_receipts_cannot_qualify (__main__.IndependentTerminalReview.test_failed_producer_and_cold_receipts_cannot_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-terminal-independent/evidence/reviews/managed-terminal-extractor-independent-20261117/first_negative_controls.py", line 29, in test_failed_producer_and_cold_receipts_cannot_qualify
+    self.assertFalse(readfake(r)["candidate_for_independent_terminal_review"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_inconsistent_watermarks_and_audit_hash_cannot_qualify (__main__.IndependentTerminalReview.test_inconsistent_watermarks_and_audit_hash_cannot_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-terminal-independent/evidence/reviews/managed-terminal-extractor-independent-20261117/first_negative_controls.py", line 37, in test_inconsistent_watermarks_and_audit_hash_cannot_qualify
+    self.assertFalse(readfake(r)["candidate_for_independent_terminal_review"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_summary_fault_facts_disagreeing_with_progress_cannot_qualify (__main__.IndependentTerminalReview.test_summary_fault_facts_disagreeing_with_progress_cannot_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-terminal-independent/evidence/reviews/managed-terminal-extractor-independent-20261117/first_negative_controls.py", line 40, in test_summary_fault_facts_disagreeing_with_progress_cannot_qualify
+    self.assertFalse(readfake(r)["candidate_for_independent_terminal_review"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_wrong_original_contract_duration_cannot_qualify (__main__.IndependentTerminalReview.test_wrong_original_contract_duration_cannot_qualify)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-managed-terminal-independent/evidence/reviews/managed-terminal-extractor-independent-20261117/first_negative_controls.py", line 43, in test_wrong_original_contract_duration_cannot_qualify
+    self.assertFalse(readfake(r)["candidate_for_independent_terminal_review"])
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.007s
+
+FAILED (failures=5)
