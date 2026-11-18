@@ -1,0 +1,64 @@
+{
+  "argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-owned-startup-observation-delivery/evidence/reviews/owned-startup-observation-delivery/run_worker_compat_once.py",
+    "--plan-sha256",
+    "f336d6e293b983f5e8ee6609b1273f43401bc2f5e870bdf8b5da2446ebde7b90",
+    "--source-commit",
+    "8518a0b8fbe22a808183d17f579829d59a62f25f",
+    "--private-directory",
+    "/workspace/uta-startup-worker-compat-8518a0b-once01"
+  ],
+  "attempt": 1,
+  "elapsed_clock": "monotonic_ns",
+  "full_package_qualification_approved": false,
+  "input_pins_before": {
+    "evidence/reviews/owned-startup-observation-delivery/run_worker_compat_once.py": {
+      "bytes": 10401,
+      "sha256": "dff3d926d113405d9afe1d7324be68668a27d4956abd987b06ddfd06e1af7d24"
+    },
+    "evidence/reviews/owned-startup-observation-delivery/worker-compat-reference.json": {
+      "bytes": 9688,
+      "sha256": "65d5c30ac8411fcd611fffc55b51656814d31dddc8587ce6c341df37b98ab88e"
+    },
+    "evidence/reviews/owned-startup-observation-delivery/worker_compat_fake.py": {
+      "bytes": 12811,
+      "sha256": "a82af6c4f7c4426fe20cab9ea37d0ca479f5fdbcc9b36b34546a9a831b86ad49"
+    },
+    "tools/run_managed_variants.py": {
+      "bytes": 67008,
+      "sha256": "755bc31acb4d183fa8513b860f131490a2aba706c4e260b29b102f1592a15e33"
+    },
+    "tools/run_validation.py": {
+      "bytes": 12185,
+      "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+    },
+    "uta/startup.py": {
+      "bytes": 23653,
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 55394,
+      "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+    }
+  },
+  "intent_monotonic_ns": 121640402830445,
+  "native_financial_CI_production_approved": false,
+  "plan_sha256": "f336d6e293b983f5e8ee6609b1273f43401bc2f5e870bdf8b5da2446ebde7b90",
+  "planned_bounded_cases": 32,
+  "planned_methods": 6,
+  "retry": false,
+  "root_authorized_actual_QA_prefix_memory_only": true,
+  "shell": false,
+  "source_commit": "8518a0b8fbe22a808183d17f579829d59a62f25f",
+  "started_UTC": "2026-11-18T06:48:33.925529+00:00"
+}

@@ -1,0 +1,67 @@
+{
+  "actual_host_exit": 1,
+  "attempt": 1,
+  "automatic_retry_performed": false,
+  "capture": {
+    "actual_affinity": [
+      1
+    ],
+    "combined_bytes": 6335,
+    "complete_BEGIN_END_inner_and_host_receipts": true,
+    "eight_before_after_pins_equal": true,
+    "reserved_trailer_bytes": 512,
+    "runtime_version_binary_flags_match": true,
+    "shared_limit_bytes": 262144,
+    "stderr_bytes": 2640,
+    "stdout_bytes": 3695
+  },
+  "completed_and_reaped": true,
+  "completed_nonfailed_traces": 44,
+  "elapsed": {
+    "driver_target_elapsed_ns": 2194145161,
+    "fixture_unittest_reported_seconds": 2.123,
+    "not_a_performance_benchmark": true,
+    "outer_host_elapsed_ns": 2351296858
+  },
+  "entered_traces": 45,
+  "errors": 0,
+  "execution_acceptance": "RED",
+  "failed_methods": 1,
+  "failure": {
+    "classification": "SOURCE_SUPPORTED_FIXTURE_COUNTER_PLACEMENT_ERROR_PENDING_INDEPENDENT_RAW_REVIEW",
+    "exception": "AssertionError",
+    "line": 512,
+    "message": "0 != 1",
+    "method": "test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown",
+    "not_entered_selectors": [
+      "wrapper_unknown",
+      "wrong_receipt_token",
+      "optional_import_error"
+    ],
+    "not_reached_in_same_selector": [
+      "assert last_known_renew_attempt==2"
+    ],
+    "path": "evidence/reviews/owned-startup-read-admission/phase1_focused_fake.py",
+    "real_CI_cause_established": false,
+    "runtime_telemetry_defect_established": false,
+    "selector": "known (first loop member by source order)",
+    "source_line": "self.assertEqual(scope.database.commits, 1)",
+    "static_explanation": "Actual _OwnedStartup._renew shallow-copies self.database before WriterFence.renew. FakeDatabase.commits is an immutable integer attribute incremented on the copy; the original scope.database.commits stays0. The shared connection is a different mutable object. This assertion observes the original fake counter, not the copy used for renewal."
+  },
+  "methods": 12,
+  "native_or_financial_approved": false,
+  "passed_methods": 11,
+  "performance_approved": false,
+  "phase2_authorized": false,
+  "planned_trace_upper_bound": 48,
+  "preserved_separate_evidence": {
+    "baseline_conditional_RED": 3,
+    "original_PR38_CI_error_causes": "UNDETERMINED",
+    "preparations72dcebf_and166ddf9_attempts": 0
+  },
+  "production_approved": false,
+  "runtime_source": "6303ed46d946138c08551e30387abd3de18ab146",
+  "scope": "FIRST_SELECTED_ACTUAL_PHASE1_OBSERVATION_PURE_FAKE_ONLY",
+  "source_commit": "88da96f2ca32a237a47964062b43c26d51a2dec0",
+  "unentered_traces": 3
+}

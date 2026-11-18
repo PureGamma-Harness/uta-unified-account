@@ -1,0 +1,86 @@
+{
+  "commit_not_resolved_by_this_driver": true,
+  "exact_exec_fixture_pin": {
+    "bytes": 33309,
+    "sha256": "e4552285ff3b9882d315734cbafad9b70fdc1870be0f3ab033c2d18af862bcce"
+  },
+  "first_and_only": true,
+  "host_argv_template": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/run_phase1_m08_once.py",
+    "--plan-sha256",
+    "<FROZEN_PLAN_SHA256>",
+    "--source-commit",
+    "<FROZEN_SOURCE_COMMIT>",
+    "--private-directory",
+    "<NEW_O_EXCL_PRIVATE_DIRECTORY>"
+  ],
+  "input_pins_before": {
+    "evidence/reviews/owned-startup-read-admission/phase1-original-reference.json": {
+      "bytes": 35908,
+      "sha256": "70226148595cb6890e3e2879f5e75303a0b474a633f1910f022f5a4b89cf085a"
+    },
+    "evidence/reviews/owned-startup-read-admission/phase1_focused_fake.py": {
+      "bytes": 33309,
+      "sha256": "e4552285ff3b9882d315734cbafad9b70fdc1870be0f3ab033c2d18af862bcce"
+    },
+    "evidence/reviews/owned-startup-read-admission/run_phase1_m08_once.py": {
+      "bytes": 11798,
+      "sha256": "b285972d3e402912a5365ab38b3ef095d25c91b8c63c271dce5829f9995532f1"
+    },
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7"
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 8761,
+      "sha256": "bd07f4e2c855bd948d8d47db5b45376d963d8b76cd77967fdb54adc8fcfeb3ce"
+    },
+    "tools/run_validation.py": {
+      "bytes": 12185,
+      "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+    },
+    "uta/startup.py": {
+      "bytes": 23653,
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 55394,
+      "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+    }
+  },
+  "outer_host_invocation_not_self_attested": true,
+  "plan_sha256": "c0578bbc81eb24b571713f6d09724ac63b2d437460350e4683f8e3ad99540069",
+  "planned_methods": 1,
+  "planned_small_traces": 4,
+  "production_approved": false,
+  "raw_reserved_trailer_bytes": 512,
+  "raw_stdout_stderr_shared_limit_bytes": 262144,
+  "runtime": {
+    "actual_affinity": [
+      1
+    ],
+    "binary_only_not_all_shared_libraries_QA": true,
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "scope": "ONE_SELECTED_M08_ONLY_ACTUAL_PHASE1_OBSERVATION_FAKE_TRACE_RUN",
+  "source_commit_supplied_by_invoker": "bf48ae2f70f64f0fc92292fb2fe5f1b87a7ebc2b"
+}

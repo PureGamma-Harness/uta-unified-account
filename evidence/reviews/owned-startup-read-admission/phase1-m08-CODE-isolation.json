@@ -1,0 +1,88 @@
+{
+  "all_fixture_helpers_and_main_runner_AST_identical": true,
+  "all_original_assertions_except_counter_reference_preserved": true,
+  "counter_reference_correction": {
+    "expected_value_stays": 1,
+    "new": "self.assertEqual(keeper_database.commits, 1)",
+    "new_check_applies_all_four_paths": true,
+    "old": "self.assertEqual(scope.database.commits, 1)"
+  },
+  "first_run_permitted": false,
+  "independent_first_result_review": "85a3d3cc875f79cca97d064d5c8e1878ef07e714",
+  "independent_fixture_review": "PENDING",
+  "input_files": {
+    "evidence/reviews/owned-startup-read-admission/phase1-original-reference.json": {
+      "bytes": 35908,
+      "sha256": "70226148595cb6890e3e2879f5e75303a0b474a633f1910f022f5a4b89cf085a"
+    },
+    "evidence/reviews/owned-startup-read-admission/phase1_focused_fake.py": {
+      "bytes": 33309,
+      "sha256": "e4552285ff3b9882d315734cbafad9b70fdc1870be0f3ab033c2d18af862bcce"
+    },
+    "evidence/reviews/owned-startup-read-admission/run_phase1_m08_once.py": {
+      "bytes": 11798,
+      "sha256": "b285972d3e402912a5365ab38b3ef095d25c91b8c63c271dce5829f9995532f1"
+    },
+    "tests/test_owned_startup.py": {
+      "bytes": 15781,
+      "sha256": "49fbf42f6dd0510ba486a8f112389b02b0455524f36ad5d17491c58aba09fed7"
+    },
+    "tests/test_startup_write_contention.py": {
+      "bytes": 8761,
+      "sha256": "bd07f4e2c855bd948d8d47db5b45376d963d8b76cd77967fdb54adc8fcfeb3ce"
+    },
+    "tools/run_validation.py": {
+      "bytes": 12185,
+      "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+    },
+    "uta/startup.py": {
+      "bytes": 23653,
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 55394,
+      "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+    }
+  },
+  "native_or_financial_approved": false,
+  "new_assert_call_count": 11,
+  "new_observation_only_checks": [
+    "exactly one originalstdlibcopy call",
+    "keeper_database is not original",
+    "keeper_database.connection is original.connection",
+    "originaldatabase.commits stays0"
+  ],
+  "new_target_compilation_or_execution_attempts": 0,
+  "old_executed_fixture_source": "88da96f2ca32a237a47964062b43c26d51a2dec0",
+  "old_reference_JSON_old_fullsuite_driver_and_plan_unchanged": true,
+  "only_changed_fixture_method": "test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown",
+  "original_assert_call_count": 7,
+  "original_first_result": "RED,11OK1FAIL0ERROR,45entered;no retry",
+  "original_four_selectors": [
+    "known",
+    "wrapper_unknown",
+    "wrong_receipt_token",
+    "optional_import_error"
+  ],
+  "other_eleven_methods_AST_identical": [
+    "test_01_strict_primitive_filter_and_no_nonce",
+    "test_02_primary_annotation_identity_chain_and_unknown_attribute",
+    "test_03_one_load_sql_trace_row_fetch_and_primary",
+    "test_04_cancellation_before_sql_and_guard_registration",
+    "test_05_original_clock_once_expiry_and_created_primary_fault",
+    "test_06_guard_assert_plumbing_and_optional_annotation_call_failure",
+    "test_07_known_commit_and_transaction_unknown_never_invent_receipt",
+    "test_09_owned_read_primary_retained_before_any_verifier",
+    "test_10_collector_bookkeeping_first_no_import_and_no_nonce",
+    "test_11_worker_projection_revalidates_mutable_state_and_caps",
+    "test_12_static_sql_and_original_lifecycle_reference"
+  ],
+  "phase2_authorized": false,
+  "planned_four_traces": 4,
+  "production_approved": false,
+  "root_max_trace_budget_if_later_authorized": 8,
+  "runtime3_same6303": true,
+  "scope": "M08_ONLY_CODE_PREPARATION_NOT_RUN",
+  "selected_methods": 1,
+  "source_parent": "47dfa75b0cd3f912470869c4eafc015fe4c27d7c"
+}

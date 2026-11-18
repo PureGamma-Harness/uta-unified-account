@@ -1,0 +1,137 @@
+{
+  "kind": "INDEPENDENT_FIRST_STARTUP_PHASE1_PURE_RAW_REVIEW",
+  "version": 1,
+  "evidence_binding": "PASS",
+  "test_result": "RED",
+  "reviewed_evidence_commit": "47dfa75b0cd3f912470869c4eafc015fe4c27d7c",
+  "reviewed_evidence_tree": "570e9ba6eec2d02ae23256f7ee0e08bb812f887a",
+  "source_commit_and_actual_argument": "88da96f2ca32a237a47964062b43c26d51a2dec0",
+  "source_tree": "abfe9b08600a53f7218e3982d6690ae335aa3363",
+  "runtime_CODE": "6303ed46d946138c08551e30387abd3de18ab146",
+  "separate_runtime_CODE_review": "88b4cbb383614c8fab0ded9c96626153773a4c90",
+  "separate_fixture_driver_CODE_review": "c5de745984d5ce49fe7b909989cba6986bc91195",
+  "plan_sha256": "dc3fa71c0cad6f75dc327e29b26f87d57f573a3204e10de376a89a31f9d0f89a",
+  "raw_directory_in_evidence_commit": "evidence/reviews/owned-startup-read-admission/phase1-first",
+  "private_driver_originals": "/workspace/uta-startup-phase1-pure-88da96f-once01",
+  "private_host_originals": "/workspace/uta-startup-phase1-pure-88da96f-host-once01",
+  "raw_files_independently_compared": {
+    "first.driver.intent.json": {
+      "original": "driver:intent.json",
+      "bytes": 3148,
+      "sha256": "851b738cf2fcd7513debedfc529d93cf3bfb93e794831a18d61541f4ee2f2eab"
+    },
+    "first.execution.json": {
+      "original": "driver:first.execution.json",
+      "bytes": 2368,
+      "sha256": "b9ce340561453c7a2e906a20db720c58831d7c3356f9728e3d174875eaaa29c6"
+    },
+    "first.host.execution.json": {
+      "original": "host:first.host.execution.json",
+      "bytes": 3693,
+      "sha256": "583166fce8c00083ab485f781325ff1d2c583ad532bb707c680ac8a2e0c42fa5"
+    },
+    "first.host.intent.json": {
+      "original": "host:first.host.intent.json",
+      "bytes": 2265,
+      "sha256": "52e142aa0b04f78f3104f52a2b2463617984493479b9c27d192cef91dc1eadbe"
+    },
+    "first.launcher.stderr.txt": {
+      "original": "host:first.launcher.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first.launcher.stdout.txt": {
+      "original": "host:first.launcher.stdout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "first.stderr.txt": {
+      "original": "driver:first.stderr.txt",
+      "bytes": 2640,
+      "sha256": "abde45af414f90020226268c24116faae937b1d222c874ae228d59191774304f"
+    },
+    "first.stdout.txt": {
+      "original": "driver:first.stdout.txt",
+      "bytes": 3695,
+      "sha256": "0487c2e7f439e10ab18684ec4ddff426dd8865326506cd6ff48850a8997202e6"
+    }
+  },
+  "raw_binding": {
+    "eight_raw_file_bytes": 17809,
+    "all_copies_equal_private_original_bytes_length_SHA": true,
+    "all_sixteen_original_and_copy_files_regular_mode0600": true,
+    "both_private_directories_mode0700": true,
+    "BEGIN_result_END_driver_receipt_and_host_receipts_complete": true,
+    "eight_pins_equal_plan_before_after_in_BEGIN_END_driver_and_host": true,
+    "all_eight_source_files_and_plan_unchanged_after_source88da": true,
+    "exact_exec_fixture_pin": {
+      "bytes": 32681,
+      "sha256": "6a9af01f9bf35d320382eeb5ccb10822278c691d52cc9723fe6f609f8bfdca19"
+    },
+    "runtime_affinity_version_executable_SHA_and_flags_equal_plan": true,
+    "actual_affinity": [1],
+    "binary_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "host_argv_equals_literal_template_with_only_three_authorized_substitutions": true,
+    "shell": false,
+    "actual_host_exit": 1,
+    "completed_and_reaped": true,
+    "attempt": 1,
+    "driver_target_elapsed_ns": 2194145161,
+    "outer_host_elapsed_ns": 2351296858,
+    "both_elapsed_below_ten_seconds": true,
+    "stdout_stderr_actual_bytes_and_shared_reservation": 6335,
+    "shared_stream_cap_bytes": 262144,
+    "reserved_trailer_bytes": 512,
+    "raw_capture_complete": true,
+    "timings_are_not_performance_or_native_acceptance": true
+  },
+  "actual_scope": {
+    "methods": 12,
+    "passed_methods": 11,
+    "failed_methods": 1,
+    "errors": 0,
+    "entered_traces": 45,
+    "nonfailed_entered_traces": 44,
+    "failed_entered_traces": 1,
+    "planned_maximum_traces": 48,
+    "unentered_traces": 3,
+    "failed_method": "test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown",
+    "failed_selector": "known",
+    "unentered_selectors": ["wrapper_unknown", "wrong_receipt_token", "optional_import_error"],
+    "same_selector_later_last_known_attempt_assertion_not_reached": true,
+    "source_line": 512,
+    "assertion": "self.assertEqual(scope.database.commits, 1)",
+    "failure": "AssertionError: 0 != 1",
+    "raw_stdout_actual45_and_stderr_11ok_oneFAIL_agree": true,
+    "forty_eight_completed_or_green_result_claimed": false
+  },
+  "static_failure_classification": {
+    "classification": "SOURCE_SUPPORTED_FIXTURE_COUNTER_OBJECT_MISMATCH",
+    "basis": [
+      "The selected actual _OwnedStartup._renew shallow-copies self.database to keeper_database and passes that copy to WriterFence.",
+      "Fake Database initializes commits as an integer on each instance and has no custom copy hook or shared counter backend.",
+      "The fake context manager increments self.commits on the copied database; integer += rebinds that copy's attribute while the original instance remains zero.",
+      "The mutable connection is shared by a shallow copy, but that does not share the database integer counter.",
+      "The failing assertion reads scope.database, the original instance, after _renew returns. Its zero value is therefore explained by the fixture object/counter placement."
+    ],
+    "no_new_fake_snippet_or_target_execution_used_to_classify": true,
+    "pre_execution_static_review_missed_this_fixture_counter_error": true,
+    "not_a_proof_of_failed_real_COMMIT_or_runtime_telemetry_defect": true,
+    "not_a_positive_test_of_unreached_last_known_receipt_assertion": true,
+    "not_a_test_of_three_unentered_owned_wrapper_token_import_selectors": true,
+    "not_either_original_CI_error_cause": true
+  },
+  "preservation_and_limits": {
+    "first_RED_and_source_fixture_driver_reference_modified_by_reviewer": false,
+    "reviewer_rerun_or_new_test_or_target_import_compile_execution": false,
+    "automatic_retry_performed": false,
+    "source72dce_and166dd_attempts_remain_zero": true,
+    "earlier_conditional_baseline_RED": 3,
+    "original_CI_causes": "UNDETERMINED",
+    "phase2": "NO_GO",
+    "native_financial_recovery_performance_or_production_approval": false,
+    "execution_budget_consumed_no_next_run_permission": true
+  },
+  "production_approved": false,
+  "next_run_permitted": false
+}

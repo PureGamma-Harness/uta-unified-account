@@ -1,0 +1,80 @@
+{
+  "consumer_baseline": "17e0838ff0c153f36ec53a03e4db219e5948ab33",
+  "consumer_baseline_bytes": 66074,
+  "consumer_baseline_sha256": "b68c69189b06c4625d8ff419c27ca287d2239de5371a22791a9bd83feadcb2e7",
+  "consumer_candidate_bytes": 66618,
+  "consumer_candidate_sha256": "35c22d50b89ee282c22118442b039f27917aa9d80c0243dd2a74d06d146fece5",
+  "exact_four_new_statements_replace_one_old_worker_grammar_require": true,
+  "full_package_or_real_qualification_proved": false,
+  "independent_expected_reference_cases": 32,
+  "new_target_compile_or_execution_attempts": 0,
+  "no_canonical_projection_or_report_rewrite": true,
+  "observation_files_exact6303": {
+    "tools/run_validation.py": {
+      "bytes": 12185,
+      "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+    },
+    "uta/startup.py": {
+      "bytes": 23653,
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    "uta/writer_fence.py": {
+      "bytes": 55394,
+      "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+    }
+  },
+  "old_source_gates_not_replaced": true,
+  "original_all_worker_key_comparison_AST_unchanged": true,
+  "package_and_all_other_functions_AST_unchanged": true,
+  "pending_independent_CODE_and_root_once_budget": true,
+  "phase2_authorized": false,
+  "production_approved": false,
+  "restore_old_grammar_AST_makes_entire_file_equal_to_baseline": true,
+  "scope": "STATIC_CODE_ONLY_NO_TARGET_COMPILE_OR_EXECUTION",
+  "selected_methods_and_cases": {
+    "test_01_exact_legacy_new_and_mixed_positive_records": [
+      "legacy_all",
+      "new_all",
+      "mixed_local7_ci9",
+      "mixed_local9_ci7"
+    ],
+    "test_02_unknown_half_fields_and_wrong_collection_rejected": [
+      "legacy_unknown_key",
+      "new_unknown_key",
+      "half_list",
+      "half_flag",
+      "tuple_list",
+      "summary_missing_diagnostic"
+    ],
+    "test_03_nonempty_truncated_and_type_aliases_rejected": [
+      "nonempty_list",
+      "truncated_true",
+      "list_alias",
+      "false_zero",
+      "false_none"
+    ],
+    "test_04_original_nonzero_counts_and_boolean_alias_rejected": [
+      "count_failures",
+      "count_errors",
+      "count_skipped",
+      "count_expected_failures",
+      "count_unexpected_successes",
+      "count_worker_exit_code",
+      "count_bool_alias"
+    ],
+    "test_05_original_summary_source_and_runtime_binding_rejected": [
+      "summary_failed",
+      "worker_count_mismatch",
+      "source_hash_mismatch",
+      "runtime_mismatch",
+      "old_local_source"
+    ],
+    "test_06_original_CI_source_and_raw_log_gates_rejected": [
+      "ci_pending",
+      "old_ci_head",
+      "old_ci_summary",
+      "raw_warning",
+      "raw_not_OK"
+    ]
+  }
+}
