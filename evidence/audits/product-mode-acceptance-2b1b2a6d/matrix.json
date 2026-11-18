@@ -1,0 +1,2305 @@
+{
+  "schema": "uta-product-mode-operation-acceptance/static-v1",
+  "frozen_base": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+  "audit_date_utc": "2026-11-18",
+  "scope": "public source and synthetic repository documents only; docs/data-only delivery",
+  "execution_status": "NOT_RUN",
+  "source_budget": {
+    "max_files": 256,
+    "max_bytes": 67108864,
+    "actual_files": 73,
+    "actual_bytes": 1551658
+  },
+  "runtime_inventory_context": {
+    "files": 67,
+    "bytes": 1494225,
+    "python_files": 66,
+    "other_files": 1,
+    "origin": "existing combined-manifest.json, not a target runtime observation",
+    "changed_market_control_modules": [
+      "uta/durable_commands.py",
+      "uta/durable_process.py",
+      "uta/sharding.py"
+    ],
+    "other_runtime_origin": "27e9442d4939465482f191fef318380dd131a2e2"
+  },
+  "production_approved": false,
+  "deployed_flags_observed": false,
+  "no_go_gates": [
+    "G0 final-SHA independent correctness/installed artifact",
+    "G1 final-SHA transaction/fault proof",
+    "G2 complete first-batch vertical chain and real migration/custody",
+    "G3 sustained10000 unique durable order admissions/s >=1800s",
+    "G4 sustained10000 confirmed liquidation fills/s >=1800s",
+    "G5 mixed/long stability and reopened reconciliation",
+    "G6 replicated node/AZ/region fencing and measured RPO/RTO",
+    "G7 named financial/security/SRE/capacity/real-funds approvals"
+  ],
+  "historical_ci_context": {
+    "source": "task briefing; raw not accessed or independently adjudicated in this audit",
+    "PR62": "first2194 x8 PASS is limited historical RAW only",
+    "PR63": "first2200 push312 FAIL; PR green retained; old cause UNDETERMINED",
+    "PR64": "first2200 x8 PASS does not prove old cause",
+    "combined_first_ci": "NOT_RUN at freeze; expected2298 is not evidence"
+  },
+  "restriction_record": {
+    "H1_Auth_DB8": "AUTO_REVIEW_REJECTED_NOT_RUN_NO_BYPASS",
+    "old_pid_deny": "honored; no process lookup/signal",
+    "target_execution": "no target import, compile, tests, SQL, worker, network or proc operations"
+  },
+  "rows": [
+    {
+      "id": "P1-01",
+      "batch": "P1",
+      "product": "legacy reference account",
+      "mode": "development",
+      "operation": "risk evaluation without catalog/rules",
+      "internal_decision": "risk_mode=legacy_reference; it does not activate phase1_cross",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion",
+      "current_entry": "ExchangeService._risk / reference demo/serve",
+      "actual_flag": "SOURCE_REFERENCE_MODE_ONLY; deployed configuration UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "111-170,200-219,521-597",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/__main__.py",
+          "symbol_or_lines": "114-137,193-194",
+          "git_blob": "af6248ae7c16161192cfcb48f8174c707fadf5ff",
+          "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        }
+      ],
+      "gap": "Legacy compatibility and supplied-input services are separate from approved Cross trading.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "docs/margin-rules.md; service persisted risk_policy"
+    },
+    {
+      "id": "P1-02",
+      "batch": "P1",
+      "product": "spot",
+      "mode": "Cross",
+      "operation": "funded limit admission",
+      "internal_decision": "SpotExchange requires SPOT/SPOT_MARGIN, multiplier1, USD quote/settlement, settled unlocked cash and shared risk",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 POST accounts/{aid}/spot-orders; configured SpotExchange",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "87-103,174-260",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "503-533",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/__main__.py",
+          "symbol_or_lines": "129-135",
+          "git_blob": "af6248ae7c16161192cfcb48f8174c707fadf5ff",
+          "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_spot.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "efcbfd37194cce60baf6ad4f412682db3efb1e02",
+          "sha256": "21f99a85fede2b7002d926f3f3fbeb61ae4609b7d060c0ae8a7a3717cef72c18"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "No automatic borrow; v2 ordinary spot ingress unsupported. Product calibration and live custody unapproved.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-PRODUCT-GATE-v1; ACCT-002; NUM-ENV-001"
+    },
+    {
+      "id": "P1-03",
+      "batch": "P1",
+      "product": "spot margin",
+      "mode": "Cross",
+      "operation": "explicit loan then spot order",
+      "internal_decision": "Borrow and spot are separate authorized commands; no atomic combined borrow+buy transaction is exposed",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "CreditService.borrow then SpotExchange.submit_order",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "275-374",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "77-103,219-260",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "844b5aabc3f7a14550658fd5ac74b856b0279bcf",
+          "sha256": "c6e6dd1eaccd304bbcb329f045ba321f1de8664996ac6101e272333c1afd04de"
+        },
+        {
+          "path": "tests/test_spot.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "efcbfd37194cce60baf6ad4f412682db3efb1e02",
+          "sha256": "21f99a85fede2b7002d926f3f3fbeb61ae4609b7d060c0ae8a7a3717cef72c18"
+        }
+      ],
+      "gap": "A funded spot_margin catalog entry does not provide auto-borrow, cross-command atomicity or ordinary managed loan intake.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-004; UTA-CROSS-LOAN-v1"
+    },
+    {
+      "id": "P1-04",
+      "batch": "P1",
+      "product": "spot",
+      "mode": "Cross",
+      "operation": "matching and two-asset settlement",
+      "internal_decision": "Local opposite orders, price/time priority, no self-trade; receipts and native-asset journals in shared transaction",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "SpotExchange.match_once; v1 POST /v1/spot-matching",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "302-403",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "451-459",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_spot.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "efcbfd37194cce60baf6ad4f412682db3efb1e02",
+          "sha256": "21f99a85fede2b7002d926f3f3fbeb61ae4609b7d060c0ae8a7a3717cef72c18"
+        },
+        {
+          "path": "tests/test_spot_confirmation_integrity.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d9ecc91281ff52e2c0eb6fed85af62916adfb0a3",
+          "sha256": "3db936a555547e6d52b9e6d3387f023d895cd6acd7e1bbe5c2a28a72bb3e4d5e"
+        }
+      ],
+      "gap": "Actual candidate execution NOT_RUN; no replicated/cross-shard matching or external irreversible trade intake proof.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-001; ACCT-001; NUM-ENV-001"
+    },
+    {
+      "id": "P1-05",
+      "batch": "P1",
+      "product": "spot",
+      "mode": "Cross",
+      "operation": "cancel remaining order",
+      "internal_decision": "Local cancel releases remaining reservation; settled fills remain",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 spot-orders/{oid}/cancel; SpotExchange.cancel_order",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "261-278",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "529-533",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_spot.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "efcbfd37194cce60baf6ad4f412682db3efb1e02",
+          "sha256": "21f99a85fede2b7002d926f3f3fbeb61ae4609b7d060c0ae8a7a3717cef72c18"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "No external venue cancellation ACK; managed v2 spot cancel unsupported.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-003; local asset lock policy"
+    },
+    {
+      "id": "P1-06",
+      "batch": "P1",
+      "product": "linear perpetual",
+      "mode": "Cross",
+      "operation": "new limit order",
+      "internal_decision": "Perpetual service only LINEAR_PERPETUAL multiplier1; tick/step/min-notional; shared available IM and projected equity>MM",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 orders; v2 orders -> queue -> fenced writer terminal",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "360-378,753-845",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-145,348-378",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-300",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        },
+        {
+          "path": "tests/test_durable_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "db3a6079ede3569dab6ee840b234216c9f5f1ebe",
+          "sha256": "3d81f8eea750c96880c670b09308cd6dc11618f00838b0081e9cf611c9b4af51"
+        }
+      ],
+      "gap": "202 is inbox ACK only; no per-account activation observation; G0-G7 incomplete on this combined SHA.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-PRODUCT-GATE-v1; UTA-CROSS-LOAN-v1; DURABLE-001"
+    },
+    {
+      "id": "P1-07",
+      "batch": "P1",
+      "product": "linear perpetual",
+      "mode": "Cross",
+      "operation": "reduce-only limit order",
+      "internal_decision": "Cumulative remaining reductions cannot exceed opposite position; projected maintenance surplus cannot worsen; bool required",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "ExchangeService._admit_order / _apply_fill",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "762-818,858-867,934-1035",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        },
+        {
+          "path": "tests/test_cross_maintenance_boundary.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d31041bacbe3cb7647f5bb796f897cde34dcaf36",
+          "sha256": "953776fe76bb80d80d34afea6e78f917d64a1d7959bde6f9a62eab670b2c279c"
+        }
+      ],
+      "gap": "No new permission follows from halt=true; real liquidity, candidate execution and product rules remain unverified.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "LIQ-002; local unsafe_reduction policy"
+    },
+    {
+      "id": "P1-08",
+      "batch": "P1",
+      "product": "linear perpetual",
+      "mode": "Cross",
+      "operation": "partial/full fill and fee/PnL settlement",
+      "internal_decision": "Latest market/risk recheck; PnL floor to USD units; cumulative fee ceil then difference; configured standalone REST fill refused",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38; fee ceil cumulative, PnL floor",
+      "current_entry": "ExchangeService._apply_fill via LocalMatcher for configured products",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "429-445,894-1035",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/matching.py",
+          "symbol_or_lines": "LocalMatcher",
+          "git_blob": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+          "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "configured fill boundary",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_numeric_contract_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "693a64dcddf00c75e1f50a2d38d4001c2f9ccd60",
+          "sha256": "d79d8accb2f34d1eb30732800195559dc31baaef9f452ed6eba641eba232e834"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "No paired-matching throughput or external exchange fee/rebate alignment inferred from rounding policy.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "NUM-ROUND-001; LIQ-002"
+    },
+    {
+      "id": "P1-09",
+      "batch": "P1",
+      "product": "linear perpetual",
+      "mode": "Cross",
+      "operation": "local matching",
+      "internal_decision": "Two real counterpart orders and unique matching receipt; no crossed orders means no fabricated fill",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "LocalMatcher.match_once; v1 matching; managed worker matching",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/matching.py",
+          "symbol_or_lines": "LocalMatcher",
+          "git_blob": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+          "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "923-1035",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_process.py",
+          "symbol_or_lines": "matching dispatch",
+          "git_blob": "5781f54d227634f9da3e5c293bb59f3697c834ae",
+          "sha256": "9b346b3888a162141699926f6c4505b6804a5982a82af7ef3c017cac6ed1053e"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_matching.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "7bb1bafebb9f609741ea49d665cef8977b4f87de",
+          "sha256": "8b7f874cc063c2714c74b3c5d8167eb35788322fdb35595802cdd863e2c95173"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "Actual matching/four-side candidate reconciliation NOT_RUN; no cross-shard atomicity/replication proof.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "LIQ-002; local matching authority"
+    },
+    {
+      "id": "P1-10",
+      "batch": "P1",
+      "product": "linear perpetual",
+      "mode": "Cross",
+      "operation": "cancel",
+      "internal_decision": "Idempotent local terminal cancel; liq: ID reserved to risk supervisor; no fresh market required for ordinary cancel",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 cancel; v2 CANCEL_ORDER command",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "869-893",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "301-306",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "118-120",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "db3a6079ede3569dab6ee840b234216c9f5f1ebe",
+          "sha256": "3d81f8eea750c96880c670b09308cd6dc11618f00838b0081e9cf611c9b4af51"
+        },
+        {
+          "path": "tests/test_service.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "feb66bf90d715adbdf216b36443339f65495eebd",
+          "sha256": "a532638f4802369687cbe0099fdaba9ac593fc1655e14d31e4aade74a64d539e"
+        }
+      ],
+      "gap": "Queued cancel has not released reserve; unknown outcome requires original command ID query.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "DURABLE-001; local liquidation_order_protected"
+    },
+    {
+      "id": "P1-11",
+      "batch": "P1",
+      "product": "spot/linear",
+      "mode": "Cross",
+      "operation": "amend/replace order",
+      "internal_decision": "No amend protocol in v1/v2 route tables or durable command field set; reusing same order ID with changed fields returns idempotency_conflict",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Explicit /amend or /replace under v2 account ->501; unrecognized v1 route ->404",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "774-788",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "229-233",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-103",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "feb66bf90d715adbdf216b36443339f65495eebd",
+          "sha256": "a532638f4802369687cbe0099fdaba9ac593fc1655e14d31e4aade74a64d539e"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "No general atomic cancel-replace proof; arbitrary internal callers outside reviewed interfaces UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Immutable business identity; DURABLE-001"
+    },
+    {
+      "id": "P1-12",
+      "batch": "P1",
+      "product": "spot/linear",
+      "mode": "Cross",
+      "operation": "market / IOC / FOK / post-only order types",
+      "internal_decision": "Current request is quantity+limit_price with optional reduce_only on perp; extra order_type/time_in_force/post_only fields fail strict _fields; no corresponding native order type contract",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Known order POST with extra fields ->400 invalid_fields; separate v2 account operation ->501",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "122-124,523-528",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-299",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-117",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "1-6",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "bcc0e381f0436479ae6596d956a9164c9ae3b885",
+          "sha256": "ee595cf56d0160e7d6084e383a15dc6a822dc37d0ddd5fa81e8df616711bbfe2"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "Aggressive limit execution is not native market/IOC/FOK/post-only support. Non-HTTP internal semantics UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Strict request schema; PROD-001"
+    },
+    {
+      "id": "P1-13",
+      "batch": "P1",
+      "product": "spot/linear",
+      "mode": "Cross",
+      "operation": "conditional / TP / SL / trailing trigger",
+      "internal_decision": "No conditional command kind or trigger fields; migration rejects nonempty conditional_orders; known v2 unsupported account route ->501",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v2 account conditional route ->unsupported_durable_operation; v1 unknown route ->not_found",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-145",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/cutover.py",
+          "symbol_or_lines": "88-110",
+          "git_blob": "03e6f3660c7a8e09ef5b3903c0ef3b13b75b4fcf",
+          "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        },
+        {
+          "path": "tests/test_cutover.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d2977dd7c4a491d7b9d6ad320b1fbac7b087c3e9",
+          "sha256": "4158e3cafc1146c0b1066899669f8d894833a833cf38f3f3cd1dabe2bcccac32"
+        }
+      ],
+      "gap": "No trigger engine, trigger latency or trigger-to-reserve atomicity evidence. Other internal paths UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Strict command schema; MIG-001"
+    },
+    {
+      "id": "P1-14",
+      "batch": "P1",
+      "product": "spot/perp combinations",
+      "mode": "Cross",
+      "operation": "OCO / basket / multi-leg / spot-perp hedge execution",
+      "internal_decision": "No atomic combination command in ordinary ingress; catalog eligible_hedges explicitly rejected; individual commands retain individual effects",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Known account combination routes ->v2 501; extra order fields ->400",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-145",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "122-124",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "No atomic leg ownership, scenario offset or rollback of a committed independent leg is established.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; PM-001; strict request schema"
+    },
+    {
+      "id": "P1-15",
+      "batch": "P1",
+      "product": "multi-currency collateral",
+      "mode": "Cross",
+      "operation": "calculate equity / IM / MM / available",
+      "internal_decision": "Gross assets haircut before full-mark principal+interest+cash deficits; frozen excluded from collateral; independent IM/MM; equity<=MM liquidation",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion; collateral tier thresholds in USD; borrow quote rounded DOWN to quantity_step",
+      "current_entry": "calculate_cross_risk reference; ExchangeService._risk actual transaction hook",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "259-360",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "521-560",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        },
+        {
+          "path": "tests/test_numeric_contract_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "693a64dcddf00c75e1f50a2d38d4001c2f9ccd60",
+          "sha256": "d79d8accb2f34d1eb30732800195559dc31baaef9f452ed6eba641eba232e834"
+        }
+      ],
+      "gap": "No actual USDT/USDC settlement; no financial owner signoff; standalone outputs do not spend collateral.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-CROSS-LOAN-v1; ACCT-002; NUM-RATIO-001"
+    },
+    {
+      "id": "P1-16",
+      "batch": "P1",
+      "product": "spot loan",
+      "mode": "Cross",
+      "operation": "quote borrowable",
+      "internal_decision": "Shared collateral pool; conservative borrowed proceeds removed; min of principal/debt/LTV/IM caps; round DOWN; strict projected MM surplus",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion",
+      "current_entry": "calculate_cross_risk.borrowable, informational only",
+      "actual_flag": "INFORMATIONAL_QUOTE_ONLY; no balance mutation/reservation",
+      "evidence": [
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "333-355",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "553-559",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        }
+      ],
+      "gap": "Quote is neither reserved budget nor borrow authorization; fresh same-transaction execution required.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-CROSS-LOAN-v1; quote outputs cannot be summed across assets"
+    },
+    {
+      "id": "P1-17",
+      "batch": "P1",
+      "product": "spot loan",
+      "mode": "Cross",
+      "operation": "fund pool / explicit v1 borrowing",
+      "internal_decision": "Explicit immutable account/asset limits and confirmed supplied pool source; cash+principal+pool postings; shared exposure check and fresh risk",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38; CreditService uses exact asset codec up to18 places",
+      "current_entry": "v1 credit/pool, credit/asset-limit, accounts/{aid}/loans",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "203-260,275-374",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "460-471,514-522",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "844b5aabc3f7a14550658fd5ac74b856b0279bcf",
+          "sha256": "c6e6dd1eaccd304bbcb329f045ba321f1de8664996ac6101e272333c1afd04de"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "No external lender/custody reconciliation; v1 limits are not a live global cross-shard allocator; full approval missing.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-004; BORROW-JOIN-001; UTA-CROSS-LOAN-v1"
+    },
+    {
+      "id": "P1-18",
+      "batch": "P1",
+      "product": "spot loan",
+      "mode": "Cross managed ordinary authority",
+      "operation": "new public/CLI borrow",
+      "internal_decision": "Ordinary v2 has no BORROW command; account operation ->501. Direct managed borrow requires credit_format2 and real native operation context; otherwise501",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "/v2/accounts/{aid}/loans or borrow ->501; ordinary managed service direct borrow restricted",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-145",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "281-315",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_managed_borrow_boundary.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "fa23487d411827383239ad995ccd2444abae21b4",
+          "sha256": "4ece3d3370f89bbcbe37a1faff52cee4bb77c3570266dd2c386be1e6a0b0ffb3"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "Old rules row is incomplete for internal format2. Do not use it to deny that separate synthetic capability exists.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "DURABLE-002; current source-qualified interpretation of BORROW-MANAGED-001"
+    },
+    {
+      "id": "P1-19",
+      "batch": "P1",
+      "product": "internal BTC credit",
+      "mode": "Cross synthetic credit_format2",
+      "operation": "internal BORROW/REPAY",
+      "internal_decision": "Explicit synthetic_local BTC only, source receipt+FIFO+native scoped operation+decision audit; descriptor requires production_approved=false; trading readiness=false",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD8/BTC8 synthetic scope; BTC static budget scale8; native exact amounts; no new interest/fee",
+      "current_entry": "InternalCreditFIFO enqueue_borrow/enqueue_repay/process_one; not public ordinary gateway",
+      "actual_flag": "DESCRIPTOR production_approved=false; credit_format2 trading readiness=false; deployed capability UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit_native_v2.py",
+          "symbol_or_lines": "826-951",
+          "git_blob": "3c5c58e9936a9463eb43871556de49c3532e2c0b",
+          "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
+        },
+        {
+          "path": "uta/credit_fifo_v2.py",
+          "symbol_or_lines": "134-225",
+          "git_blob": "6a97ab0f0c20c8ca1b60cbac5d090af42cadb120",
+          "sha256": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca"
+        },
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "281-315",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "1281-1290",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit_v2_runtime_chain.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "55ef3f34797326b9d71a83a5f296580deb02ea95",
+          "sha256": "edce0997b5866e47ed4a3bfa8de24d5230579dc4e517928f526abb4e747a4c7a"
+        },
+        {
+          "path": "tests/test_credit_v2_financial_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d5fa13aa75f5ea64d955d3a8398ed9b2b955f618",
+          "sha256": "d7090e5058fd6128e1c6371063c451dc15babde92bd6edbe70b8ff90095f026a"
+        }
+      ],
+      "gap": "Source data/descriptor alone cannot grant native ownership. No HMAC first-source/revocation cut, live global allocation, new trading readiness or production permission.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Current credit_native_v2.validate_envelope, _source_payload; service readiness"
+    },
+    {
+      "id": "P1-20",
+      "batch": "P1",
+      "product": "spot loan",
+      "mode": "Cross",
+      "operation": "auto-borrow / auto-repay",
+      "internal_decision": "No automatic-borrow field or automatic credit command; v1 credit requires explicit command and supplied amount; v2 account auto operation ->501",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Ordinary HTTP strict fields/unsupported routes",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "1-5,275-279,396-405",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "514-522",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "844b5aabc3f7a14550658fd5ac74b856b0279bcf",
+          "sha256": "c6e6dd1eaccd304bbcb329f045ba321f1de8664996ac6101e272333c1afd04de"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "No event-driven balance shortfall borrowing or repayment scheduler. Arbitrary new callers UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-004; CreditService explicit operations"
+    },
+    {
+      "id": "P1-21",
+      "batch": "P1",
+      "product": "loan interest",
+      "mode": "Cross",
+      "operation": "recognize supplied interest event",
+      "internal_decision": "accrue_interest consumes supplied positive amount and existing principal; no rate clock or compounding inferred",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 accounts/{aid}/interest admin; CreditService.accrue_interest",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "376-394",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "514-522",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "844b5aabc3f7a14550658fd5ac74b856b0279bcf",
+          "sha256": "c6e6dd1eaccd304bbcb329f045ba321f1de8664996ac6101e272333c1afd04de"
+        },
+        {
+          "path": "tests/test_gateway_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "ed0501d11ff25fa3a5363a67038c942a29a06d8d",
+          "sha256": "f6bca9ed0a7995a37be293b3984c86fd9898a329eb8146a264f43b120c0708fb"
+        }
+      ],
+      "gap": "Automatic rate source, scheduler, historical interest reconciliation absent; v2 ordinary interest route501; internal format2 allows BORROW/REPAY only.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-005; supplied interest only"
+    },
+    {
+      "id": "P1-22",
+      "batch": "P1",
+      "product": "loan interest",
+      "mode": "Cross",
+      "operation": "automatic accrual / compounding scheduler",
+      "internal_decision": "No accrual command in durable _FIELDS; v2 unsupported interest operation501; supplied-event method is not a timer",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Known v2 account interest/scheduler routes501; v1 scheduler route404",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "99-145",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "376-394",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "Financial owner must select rate, period, day-count, boundary/rounding and correction policy; no new policy chosen by audit.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-005; no invented interest clock"
+    },
+    {
+      "id": "P1-23",
+      "batch": "P1",
+      "product": "loan repayment",
+      "mode": "Cross",
+      "operation": "same-asset explicit repayment",
+      "internal_decision": "Settled unlocked cash; interest first then principal; no overpayment; allowed through halt/stale quotes for debt reduction",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 repayments; v2 REPAY pending/terminal; separate internal format2 REPAY",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/credit.py",
+          "symbol_or_lines": "396-441",
+          "git_blob": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+          "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-312",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/durable_commands.py",
+          "symbol_or_lines": "130-145,370-377",
+          "git_blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+          "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_credit_joined.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "b9e81932f404c0ffeeb12cbf7cff63f704842fc3",
+          "sha256": "52e9cdee0c765b9a476aedd7ac579befd035b58da814a2dd38997aa5761f3cc4"
+        },
+        {
+          "path": "tests/test_durable_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "db3a6079ede3569dab6ee840b234216c9f5f1ebe",
+          "sha256": "3d81f8eea750c96880c670b09308cd6dc11618f00838b0081e9cf611c9b4af51"
+        }
+      ],
+      "gap": "No automatic FX conversion or unknown-debt inference. v2 ACK is not debt reduction.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-005; DURABLE-002"
+    },
+    {
+      "id": "P1-24",
+      "batch": "P1",
+      "product": "perpetual funding",
+      "mode": "Cross reference",
+      "operation": "plan supplied rate/positions",
+      "internal_decision": "Exact -quantity*mark*rate; complete local opposite sides; cap; per-account toward-zero cash units; reserve owns rounding difference",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Synthetic USD scale2..8; exact rational pre-rounding; TOWARD_ZERO_PER_ACCOUNT",
+      "current_entry": "plan_funding; no customer entry",
+      "actual_flag": "REFERENCE_ONLY; policy activation=SYNTHETIC_LOCAL_ONLY; no settlement by planner",
+      "evidence": [
+        {
+          "path": "uta/perpetual_funding.py",
+          "symbol_or_lines": "72-98,147-180",
+          "git_blob": "d4ace9ab45c65c3daa9036eb30e3c05a0ccb6d0e",
+          "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_perpetual_funding_local.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "9751fa32d5c1d0f80fff528dda7064930413e2e3",
+          "sha256": "fdd7f26594c6a44b2d8486a78d4f7c22cf98b25681c6b77efe8cb0d3934759dd"
+        }
+      ],
+      "gap": "Rate authenticity, external snapshot completeness and production trigger source unverified; reference has no settlement authority.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-FUNDING-LOCAL-USD-v1; segregated synthetic capital not revenue"
+    },
+    {
+      "id": "P1-25",
+      "batch": "P1",
+      "product": "perpetual funding",
+      "mode": "Cross fresh unmanaged synthetic",
+      "operation": "explicit local settlement",
+      "internal_decision": "Fresh authority only, configured Cross USD multiplier1; rejects managed; declared treasury capital proof; single actual local transaction",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Synthetic USD scale2..8; toward-zero funding; local reserve postings",
+      "current_entry": "FundingLocal.install_synthetic_fresh / settle; no public endpoint",
+      "actual_flag": "SYNTHETIC_LOCAL_ONLY; real_funds_approved=false; managed_or_HA_approved=false; deployed installation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/funding_local.py",
+          "symbol_or_lines": "67-130,171-284",
+          "git_blob": "f35351b8a0c3d1d4d1adaa900b0e5eca73e1ea45",
+          "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_perpetual_funding_local.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "9751fa32d5c1d0f80fff528dda7064930413e2e3",
+          "sha256": "fdd7f26594c6a44b2d8486a78d4f7c22cf98b25681c6b77efe8cb0d3934759dd"
+        }
+      ],
+      "gap": "real_funds_approved=false and managed_or_HA_approved=false; no timer, used-authority upgrade or production enable.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-FUNDING-LOCAL-USD-v1; SYNTHETIC_LOCAL_ONLY"
+    },
+    {
+      "id": "P1-26",
+      "batch": "P1",
+      "product": "perpetual funding obligations",
+      "mode": "Cross fresh unmanaged synthetic",
+      "operation": "schedule / capture / claim / apply",
+      "internal_decision": "Explicit local durable tasks; pending cash is not admission/withdrawal hold; current risk checked when applying; no background activation",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Synthetic USD native units; supplied schedule/rate; bounded local obligations",
+      "current_entry": "FundingObligations explicit methods only, no customer endpoint",
+      "actual_flag": "SYNTHETIC_LOCAL_ONLY; HA_or_production_approved=false; no background activation; deployed installation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/funding_obligations.py",
+          "symbol_or_lines": "1-5,85-130,355-464,501-550,761",
+          "git_blob": "6c942e9659c45460410eb681e9dfc128e7eaa407",
+          "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_funding_obligations_local.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "5579a347b1b3839c289ce58dbaacc1d7a87a1620",
+          "sha256": "1792c4789c06c2cc982538c49c3a9cf46fe00bc898a1897b80a40dbfd1e74f5d"
+        }
+      ],
+      "gap": "No managed/HA executor, complete risk-eligibility replay, timer or new hold integration. APPLIED here does not enable pure hold APPLIED requests.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "FundingObligations source scope; SYNTHETIC_LOCAL_ONLY"
+    },
+    {
+      "id": "P1-27",
+      "batch": "P1",
+      "product": "new funding hold D1",
+      "mode": "Cross supplied-data reference",
+      "operation": "stage CAS / aggregate / decompose / backing / wait preview",
+      "internal_decision": "USD supplied immutable data only; fixed activation_permission=false; unsupported_request ->operation_not_in_pure_hold_subset; V3 reference/mapper/driver definitions not execution",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD supplied integer minor units with same-scale checks; exact Fraction/rational outputs",
+      "current_entry": "uta/funding_hold_pure.py functions; tests reference/adapter/driver; unconnected to financial admission/payment",
+      "actual_flag": "FIXED activation_permission=false; no actual admission/payment integration",
+      "evidence": [
+        {
+          "path": "uta/funding_hold_pure.py",
+          "symbol_or_lines": "79-115,228-267,284-291,337-417,443-594",
+          "git_blob": "15c91c4c9ca109db906bc7c8a434751afbe78159",
+          "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+        },
+        {
+          "path": "docs/funding-hold-v3-combined-delivery.md",
+          "symbol_or_lines": "all",
+          "git_blob": "523fff733f41a1bba95fb32fae76a885d8e6fe59",
+          "sha256": "9d81cd95c3ccad80e62814cfad16133a4360b3343f1cd6b2fdd87ad3b814397b"
+        },
+        {
+          "path": "tests/reference_funding_hold_d1_v3.py",
+          "symbol_or_lines": "reference definitions",
+          "git_blob": "f773999cc082c85088bab69d7a87834a54f66514",
+          "sha256": "63c5deda6cdc1799eeae470f615c09ce5842a9e26acdad6fa23a8924fea79135"
+        },
+        {
+          "path": "tests/funding_hold_target_adapter_v3.py",
+          "symbol_or_lines": "marshaller definitions",
+          "git_blob": "6c34aebf728ccb8c5cc180e09d66724dfdadda86",
+          "sha256": "5953f9b5ccc1730f1ebb2d57707d73b339376a9a96159f244a1e256241eb6821"
+        },
+        {
+          "path": "tests/test_funding_hold_exact_reference_v3.py",
+          "symbol_or_lines": "driver definitions",
+          "git_blob": "99e77f3a627d31558033cf29e3690cea0e8f9477",
+          "sha256": "6b5186a3f245f72ffac4e1b721c49e6e63d0665a04d76199a1de71f8aec7075a"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_funding_hold_pure.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "091b8103bbe130bafcbbc21c0bf82d629bd32098",
+          "sha256": "9d0d5834617b892ceb60ec2e9b69bec1adf01adf76ffd229145634726ce6a6f2"
+        },
+        {
+          "path": "tests/test_funding_hold_exact_reference_v3.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "99e77f3a627d31558033cf29e3690cea0e8f9477",
+          "sha256": "6b5186a3f245f72ffac4e1b721c49e6e63d0665a04d76199a1de71f8aec7075a"
+        }
+      ],
+      "gap": "Combined first CI NOT_RUN at freeze; expected2298 not evidence. No actual hold, APPLIED newhold, ACK/outbox, global action owner, authenticated content or admission integration.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Existing local D1/final lineage rule; no new financial policy in audit"
+    },
+    {
+      "id": "P1-28",
+      "batch": "P1",
+      "product": "all assets",
+      "mode": "Cross",
+      "operation": "withdraw",
+      "internal_decision": "No supported public withdrawal route; known v2 account path->501; v1 unknown route->404. Pure backing projection cannot authorize real withdrawal",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1/v2 account withdrawal routes",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/funding_hold_pure.py",
+          "symbol_or_lines": "417-441",
+          "git_blob": "15c91c4c9ca109db906bc7c8a434751afbe78159",
+          "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+        },
+        {
+          "path": "uta/funding_obligations.py",
+          "symbol_or_lines": "FundingObligations docstring",
+          "git_blob": "6c942e9659c45460410eb681e9dfc128e7eaa407",
+          "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "Native custody/outbox/confirmation/reconciliation/hold atomics not delivered; behavior of unreviewed internal callers UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Ordinary ingress scope; no custody adapter"
+    },
+    {
+      "id": "P1-29",
+      "batch": "P1",
+      "product": "all assets",
+      "mode": "Cross",
+      "operation": "customer transfer",
+      "internal_decision": "No supported customer transfer command; v2 account unsupported route501; v1 unknown route404. Internal treasury funding transfer is narrower",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1/v2 accounts transfer route",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/funding_local.py",
+          "symbol_or_lines": "445-476",
+          "git_blob": "f35351b8a0c3d1d4d1adaa900b0e5eca73e1ea45",
+          "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "No customer account-to-account/cross-shard transfer protocol or atomic risk-budget movement. Internal treasury helper is not general transfer enable.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "Ordinary ingress scope; FundingLocal treasury policy only"
+    },
+    {
+      "id": "P1-30",
+      "batch": "P1",
+      "product": "all products",
+      "mode": "Cross -> Isolated/PM or policy version",
+      "operation": "mode change / parameter migration",
+      "internal_decision": "No public mode-change operation. Catalog rejects non-Cross; persisted risk policy mismatch/implicit downgrade ->configuration_conflict",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v2 account mode route501; unknown v1 mode route404; constructor policy validation",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "259-264",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "200-216",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "307-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        },
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        }
+      ],
+      "gap": "No live mode conversion, open-order carry-over or versioned financial migration. Existing state cannot be silently resealed.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; immutable persisted policy"
+    },
+    {
+      "id": "P1-31",
+      "batch": "P1",
+      "product": "spot+loan+linear",
+      "mode": "Cross",
+      "operation": "halt / freeze / risk supervisor",
+      "internal_decision": "Unknown/corrupt halt blocks; new exposure checks halt+freeze; distress cancels spot locks then revalues; creates reduction plans only",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "v1 kill-switch/supervise; managed fenced supervision; v2 single-authority halt/control",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "338-343,846-867,1100-1228,1263-1279",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "318-341",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_credit_supervisor.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "f777928a4857e7905ed19e8be5974837573798dc",
+          "sha256": "efe8252acb43b3546e14ecc732906247fcb758faf74bb54934a1e2e7fb7912f3"
+        },
+        {
+          "path": "tests/test_service_supervisor.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "12212c0239df6c6d3ef20824eac93413ef78f3ac",
+          "sha256": "ba641a7deadf6627a86f673f8f0addc7443372d225a020e163f009265cf4449e"
+        }
+      ],
+      "gap": "Agent audit does not authorize unhalting. Managed multi-shard HTTP control has501 boundary. Plans are not executed fills.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "LIQ-001; LIQ-002; local control state"
+    },
+    {
+      "id": "P1-32",
+      "batch": "P1",
+      "product": "loan-only distressed account",
+      "mode": "Cross",
+      "operation": "liquidation / forced spot conversion",
+      "internal_decision": "No perp positions and debt distress ->BLOCKED/frozen; no fabricated forced spot fill; repayment/conversion adapter needed",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "ExchangeService.supervise_account",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "1138-1155",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_credit_supervisor.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "f777928a4857e7905ed19e8be5974837573798dc",
+          "sha256": "efe8252acb43b3546e14ecc732906247fcb758faf74bb54934a1e2e7fb7912f3"
+        }
+      ],
+      "gap": "Debt liquidation/FX conversion/recovery of loan-only distress not complete; this blocks full P1 production loan lifecycle.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "LIQ-001; local loan_blocked policy"
+    },
+    {
+      "id": "P1-33",
+      "batch": "P1",
+      "product": "linear/default waterfall",
+      "mode": "Cross",
+      "operation": "insurance fund / ADL",
+      "internal_decision": "BANKRUPT is a supervisor state; no insurance/ADL execution endpoint. Known v2 account/control unsupported routes501; unknown v1 path404",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "service supervisor state and HTTP route boundary",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "1144-1170",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "313-342",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "568",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "docs/liquidation-rules.md",
+          "symbol_or_lines": "all",
+          "git_blob": "ff5f53c15fb52559d0694769d27b62af6e149147",
+          "sha256": "426c2eb47ba061e3b6c66854ab78cf564b3032bd12a20c100b5cc915eedb40b1"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_service_supervisor.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "12212c0239df6c6d3ef20824eac93413ef78f3ac",
+          "sha256": "ba641a7deadf6627a86f673f8f0addc7443372d225a020e163f009265cf4449e"
+        }
+      ],
+      "gap": "Loss waterfall, insurance funding/use, ADL priority and responsible financial approval absent. Other internal financial behavior UNDETERMINED.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "docs/liquidation-rules.md; no automatic insurance/ADL policy"
+    },
+    {
+      "id": "P1-34",
+      "batch": "P1",
+      "product": "classic account import",
+      "mode": "Cross offline",
+      "operation": "quiesced snapshot handover",
+      "internal_decision": "New empty destination; reject nonempty open/conditional/inflight collections and locks; import assets/principal/interest/positions atomically; source_fence_verified=false",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "ClassicImporter.import_shadow; operator-only offline primitive",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/cutover.py",
+          "symbol_or_lines": "1-5,62-120,139-243",
+          "git_blob": "03e6f3660c7a8e09ef5b3903c0ef3b13b75b4fcf",
+          "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+        },
+        {
+          "path": "uta/migration.py",
+          "symbol_or_lines": "build_shadow",
+          "git_blob": "d62fb2dd80301960d58eff2540e0488b7b869e2f",
+          "sha256": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_cutover.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d2977dd7c4a491d7b9d6ad320b1fbac7b087c3e9",
+          "sha256": "4158e3cafc1146c0b1066899669f8d894833a833cf38f3f3cd1dabe2bcccac32"
+        },
+        {
+          "path": "tests/test_migration_reverse_evidence.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "92ddb7958067db78148e816635eec3ebeb2ce5e0",
+          "sha256": "7fffdaf066e36e4f6cc13d838aeb891df9fc08bc333ab9250021ec7d9068cd81"
+        }
+      ],
+      "gap": "Real source credentials/fence/incremental cursor/custody reconciliation unverified; incremental_events_verified=false. No production migration approval.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "MIG-001; MIG-002; source attestation not proof"
+    },
+    {
+      "id": "P1-35",
+      "batch": "P1",
+      "product": "classic account migration",
+      "mode": "Cross offline",
+      "operation": "incremental cutover / active orders / handback",
+      "internal_decision": "Nonempty unsupported migration collections ->unsupported_migration_state; locks->unsupported_lock; reverse_import requires unchanged state and no live orders",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "ClassicImporter.import_shadow / reverse_import",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/cutover.py",
+          "symbol_or_lines": "88-120,227-230,281-338",
+          "git_blob": "03e6f3660c7a8e09ef5b3903c0ef3b13b75b4fcf",
+          "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_cutover.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "d2977dd7c4a491d7b9d6ad320b1fbac7b087c3e9",
+          "sha256": "4158e3cafc1146c0b1066899669f8d894833a833cf38f3f3cd1dabe2bcccac32"
+        },
+        {
+          "path": "tests/test_migration_reverse_evidence.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "92ddb7958067db78148e816635eec3ebeb2ce5e0",
+          "sha256": "7fffdaf066e36e4f6cc13d838aeb891df9fc08bc333ab9250021ec7d9068cd81"
+        }
+      ],
+      "gap": "Incremental source events/live fencing not implemented; handback attestation not external proof; confirmed effects cannot be rolled back by old snapshot.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "MIG-001; append-only compensation"
+    },
+    {
+      "id": "P1-36",
+      "batch": "P1",
+      "product": "ledger",
+      "mode": "Cross authority",
+      "operation": "journal / idempotency / replay / reconciliation",
+      "internal_decision": "Per asset signed postings sum zero; integer units exact; financial effects and receipts local COMMIT; correction new compensating event",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "DurableLedger and ExchangeService same authority",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/ledger.py",
+          "symbol_or_lines": "35-123",
+          "git_blob": "1c2fabf6949e2f296889ad7c24bf4e25a3c60b84",
+          "sha256": "ec20cb64ea5bc4d8a3e09144e91771f665ff03f82ea615910f102633031e1571"
+        },
+        {
+          "path": "uta/storage.py",
+          "symbol_or_lines": "DurableLedger",
+          "git_blob": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+          "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "308-315",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "docs/accounting-spec.md",
+          "symbol_or_lines": "all",
+          "git_blob": "9fbbc21d475775b232928443d652ed95e270eea6",
+          "sha256": "9cddc05c83b458038daca180c0d67dd66cac237057898a8eb0e501d19ee0fba5"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_storage.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "109bc03959523eecc73ae9497b6e4c184a927218",
+          "sha256": "aad4e96c80d40a7576798a76e12cfad4e7f54fac805ef690c0a878a96c4a475f"
+        },
+        {
+          "path": "tests/test_numeric_contract_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "693a64dcddf00c75e1f50a2d38d4001c2f9ccd60",
+          "sha256": "d79d8accb2f34d1eb30732800195559dc31baaef9f452ed6eba641eba232e834"
+        }
+      ],
+      "gap": "This audit did not open a database or run replay. No external custody, replicated durability, universal schema safety or cross-shard ledger proof.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "ACCT-001; ACCT-003; NUM-ENV-001"
+    },
+    {
+      "id": "P1-37",
+      "batch": "P1",
+      "product": "authenticated REST",
+      "mode": "Cross",
+      "operation": "account scope / role / signed ingress",
+      "internal_decision": "reader/trader/funding/risk/admin checks; HMAC nonce consumed before enqueue; bearer factory is development; durable health not individual risk acceptance",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Exact request bytes and epoch-ms auth; financial decimals are strings; auth COMMIT separate from financial inbox",
+      "current_entry": "v1 gateway; v2 signed handler and persisted RequestAuthenticator",
+      "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "34-50,333-357",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "185-211,252-342,366-401",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        },
+        {
+          "path": "uta/request_signing.py",
+          "symbol_or_lines": "RequestAuthenticator",
+          "git_blob": "e692747db6130efc1265ce71c32649e780513b44",
+          "sha256": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_request_signing.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "3fa52db526ee7124f421fd83a199f99d6dd83080",
+          "sha256": "09b69ccaa0575c2b6863099fc23e5224c99b83bbeab1e007b5dfa8ab347fc44c"
+        },
+        {
+          "path": "tests/test_durable_gateway.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "361afa418441645255358a4c8d71d76802a095ad",
+          "sha256": "a2545c1792365561a607e7c12fcd096ff62ab2a26d3da110d258ac5a27fc5e0b"
+        }
+      ],
+      "gap": "H1/Auth/DB8 is auto-review rejected / NOT_RUN in this task; no bypass. Security/live production review and replicated nonce protection absent.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "AUTH-001; VIEW-001; docs/durable-api.md"
+    },
+    {
+      "id": "P1-38",
+      "batch": "P1",
+      "product": "private account events",
+      "mode": "Cross",
+      "operation": "REST pagination / private WebSocket",
+      "internal_decision": "Private REST account-scoped pages exist. private_stream_codec explicitly unused by every service/listener; wire validation grants no socket/auth/revocation/financial delivery",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Stored monetary strings; per-stream cursor, account/version scope; codec byte bounds only",
+      "current_entry": "v1 account events; v2 managed views; WS codec has no active service entry",
+      "actual_flag": "REST_STATIC_AVAILABLE; WS_CODEC_UNCONNECTED; deployed listeners UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/gateway.py",
+          "symbol_or_lines": "441-446,account events",
+          "git_blob": "c01fb0f05ea32ba8c04412df8ebf9d71444035c6",
+          "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+        },
+        {
+          "path": "uta/durable_views.py",
+          "symbol_or_lines": "managed projections",
+          "git_blob": "4ff6dd591c30b17ed37c3e267ce662d6c3aea24b",
+          "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+        },
+        {
+          "path": "uta/private_stream_codec.py",
+          "symbol_or_lines": "1-6",
+          "git_blob": "9cf60cf16b1b373784586422c162e5a9695db8f7",
+          "sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "252-274",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_views.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "cae0d2190d8b57eef85c338e9fb1edc1019925cb",
+          "sha256": "8629095b7c522f03a4f65d0cbf3d926c1a07faaeecc311cb17f7c396453e7d69"
+        },
+        {
+          "path": "tests/test_private_stream_codec.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "eef5ea14496c5965caf99979ab40b2020f680b6a",
+          "sha256": "c2c7b90562ecfdac18a189c80f4f7c700e81134b982ddf759486ff3ea2103543"
+        }
+      ],
+      "gap": "No authenticated private WS listener, sequencing/reconnect/revocation latency or delivery guarantee; decoder tests are not WS enablement.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "VIEW-001; private_stream_codec module scope"
+    },
+    {
+      "id": "P1-39",
+      "batch": "P1",
+      "product": "managed account risk read",
+      "mode": "Cross",
+      "operation": "online risk explanation",
+      "internal_decision": "Managed view reports risk.status=unsupported and live_risk_recomputation_not_enabled; risk route unsupported501; stored liquidation/decision evidence is historical",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Native stored units and USD historical reporting; no recomputation",
+      "current_entry": "v2 account projections; v2 risk operation boundary",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/durable_views.py",
+          "symbol_or_lines": "237,264,360-393",
+          "git_blob": "4ff6dd591c30b17ed37c3e267ce662d6c3aea24b",
+          "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "252-274,313-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_durable_views.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "cae0d2190d8b57eef85c338e9fb1edc1019925cb",
+          "sha256": "8629095b7c522f03a4f65d0cbf3d926c1a07faaeecc311cb17f7c396453e7d69"
+        }
+      ],
+      "gap": "Historical decision existence is not current trade authorization or independent financial replay.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "VIEW-001; no invented current risk"
+    },
+    {
+      "id": "M-01",
+      "batch": "P1 boundary",
+      "product": "spot/loan/linear",
+      "mode": "Isolated",
+      "operation": "risk / catalog admission",
+      "internal_decision": "ProductCatalog.require_risk_supported and portfolio._inputs reject phase1_account_mode_unsupported; public mode field not in schema",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
+      "current_entry": "Catalog/reference APIs; ordinary HTTP extra fields rejected",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "259-264",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-299",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        }
+      ],
+      "gap": "No isolated wallets, liquidation budget isolation or Cross/Isolated conversion. Catalog enum existence grants no enable.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-PRODUCT-GATE-v1; PROD-002"
+    },
+    {
+      "id": "P2-01",
+      "batch": "P2",
+      "product": "multi-settlement/quote including real USDT/USDC",
+      "mode": "Cross",
+      "operation": "new exposure / settlement",
+      "internal_decision": "Catalog rejects any catalog settlement, product quote or product settlement !=USD: phase1_settlement_unsupported",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "Only synthetic USD reporting/settlement supported; non-USD collateral is distinct from settlement",
+      "current_entry": "ProductCatalog.require_risk_supported; runtime product checks",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "139-146,360-378",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        },
+        {
+          "path": "uta/spot.py",
+          "symbol_or_lines": "100-103",
+          "git_blob": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+          "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        }
+      ],
+      "gap": "No stablecoin real settlement policy, token/custody integration, FX conversion, native-product ledger precision or depeg settlement validation.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "UTA-PRODUCT-GATE-v1; PROD-001; PROD-002"
+    },
+    {
+      "id": "P2-02",
+      "batch": "P2",
+      "product": "inverse perpetual",
+      "mode": "Cross",
+      "operation": "risk / admission / execution",
+      "internal_decision": "Catalog raises phase1_product_unsupported: inverse_perpetual even if product status active",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "No inverse contract native settlement currency/reciprocal PnL rounding policy activated",
+      "current_entry": "ProductCatalog.require_risk_supported ->service product_rejected wrapper",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "360-378",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        }
+      ],
+      "gap": "Inverse repricing, fees/funding/settlement/partial close and liquidation lifecycle not validated.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; UTA-PRODUCT-GATE-v1"
+    },
+    {
+      "id": "P2-03",
+      "batch": "P2",
+      "product": "dated futures / delivery",
+      "mode": "Cross",
+      "operation": "risk / admission / expiry / delivery",
+      "internal_decision": "Catalog raises phase1_product_unsupported: dated_future; required expiry metadata alone provides no execution",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "No delivery price/currency/unit precision or rounding policy activated",
+      "current_entry": "ProductCatalog.require_risk_supported ->service product_rejected wrapper",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "125-134,190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "360-378",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_service_catalog.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "740bd437c8fd9fd15b0374106f39c22a8401b900",
+          "sha256": "755e05403d5e77bd8483d614d70a69e75f93bc16ebb4403a8fdd4c1c4f3f9a0f"
+        }
+      ],
+      "gap": "Expiry transition, fixing, delivery cash/assets, corporate corrections and final liquidation unimplemented/unapproved.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; UTA-PRODUCT-GATE-v1"
+    },
+    {
+      "id": "P3-01",
+      "batch": "P3",
+      "product": "options",
+      "mode": "Cross/PM",
+      "operation": "risk / admission / exercise / assignment",
+      "internal_decision": "Catalog raises phase1_product_unsupported: option in Cross; PM rejected earlier; option expiry enum is metadata only",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "No options premium/contract units, exercise cash precision or settlement policy activated",
+      "current_entry": "ProductCatalog.require_risk_supported ->service product_rejected wrapper",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "125-134,190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/service.py",
+          "symbol_or_lines": "360-378",
+          "git_blob": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+          "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        }
+      ],
+      "gap": "Full nonlinear repricing/vol surface/term structure/exercise/assignment and options risk validation absent.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; PM-001"
+    },
+    {
+      "id": "P3-02",
+      "batch": "P3",
+      "product": "spot/perp/option eligible hedge",
+      "mode": "Cross/PM",
+      "operation": "offset / correlated risk aggregation",
+      "internal_decision": "Any eligible_hedges in first-batch supported catalog ->phase1_hedge_offsets_disabled; scenario_reference clips loss per risk unit and adds nonnegative losses",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion",
+      "current_entry": "ProductCatalog require_risk_supported; scenario_reference",
+      "actual_flag": "SOURCE_DERIVED_REJECTION on the specified entry; deployed activation UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "157-164,190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "394-445",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        }
+      ],
+      "gap": "No approved cross-unit hedge qualification/correlation calibration/liquidity add-on. Shared underlying cannot authorize offsets.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PM-001; UTA-CROSS-LOAN-v1"
+    },
+    {
+      "id": "P3-03",
+      "batch": "P3",
+      "product": "portfolio margin",
+      "mode": "PM",
+      "operation": "actual trading admission / mode activation",
+      "internal_decision": "phase1_account_mode_unsupported; ScenarioReference.pm_activatable fixed false, init=False",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion",
+      "current_entry": "ProductCatalog/portfolio Cross APIs; no public PM route",
+      "actual_flag": "SOURCE_MODE_REJECTION; fixed pm_activatable=false; deployed configuration UNDETERMINED",
+      "evidence": [
+        {
+          "path": "uta/products.py",
+          "symbol_or_lines": "190-209",
+          "git_blob": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+          "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+        },
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "259-264,380-391",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/durable_gateway.py",
+          "symbol_or_lines": "290-316",
+          "git_blob": "f0db9115fce0098a6a40c03ac398bbb6614071a5",
+          "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_products.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "1d990039ae216c77d9a63c09cf2d9feaea5aa484",
+          "sha256": "151477ad57ae13f72348fc41bb9ed136f2e7c6f483861953ec99939743a3abe1"
+        },
+        {
+          "path": "tests/test_cross_margin.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "127e3b5a319a4170e325c6e133a82be6d72b8c41",
+          "sha256": "97f20c22dcaea38dc00b5763ce7a50534c31f1b8376953fa8e2fc03b736d5d2c"
+        }
+      ],
+      "gap": "Reference scenarios do not implement complete PM IM/MM. Financial calibration, historical/out-of-sample, independent responsible signoff and product lifecycle all missing.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "PROD-002; PM-001; no agent financial signature"
+    },
+    {
+      "id": "P3-04",
+      "batch": "P3 reference",
+      "product": "scenario simulator / research PM",
+      "mode": "research",
+      "operation": "scenario/reference study",
+      "internal_decision": "Research model/simulator retained; portfolio compatibility export says it cannot enable AccountMode.PM or production trading",
+      "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
+      "currency_unit_precision": "USD reference amounts; exact Fraction; no ledger mutation or currency conversion",
+      "current_entry": "lab/scenario/replay; scenario_margin.py; Store/ShardedStore research authority",
+      "actual_flag": "RESEARCH_AUTHORITY_ONLY; no production trading permission",
+      "evidence": [
+        {
+          "path": "uta/portfolio.py",
+          "symbol_or_lines": "449-450",
+          "git_blob": "e685f0acfa81708efe9984769667fb199d4625e0",
+          "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+        },
+        {
+          "path": "uta/scenario_margin.py",
+          "symbol_or_lines": "research scenario functions",
+          "git_blob": "5992c57675753c11ff197ef0ca52116f3c938efd",
+          "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+        },
+        {
+          "path": "uta/__main__.py",
+          "symbol_or_lines": "171-194",
+          "git_blob": "af6248ae7c16161192cfcb48f8174c707fadf5ff",
+          "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+        },
+        {
+          "path": "README.md",
+          "symbol_or_lines": "entry table",
+          "git_blob": "5ad9eacbc4510d3c9ba7f0903f89f2b871b205ad",
+          "sha256": "f926ad582ae578dcbe50a0e7f212a768f2272d555f3fcc7f92904fa628917fb9"
+        }
+      ],
+      "test_ids": [
+        {
+          "path": "tests/test_portfolio.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "e6220b1e1624ef1510e69de960910afeb3bc39d4",
+          "sha256": "a64389941511322fba3782eebc0182894af3bade521a5b63d2196ef49422540a"
+        },
+        {
+          "path": "tests/test_portfolio_reference.py",
+          "run_status": "NOT_RUN",
+          "meaning": "source definition only",
+          "git_blob": "5638fae3bd9d0d1584020e5162fdfbec654911fc",
+          "sha256": "a9d9e97fc64a0ea8e6b2fd56222f7b2883208b8a09cde790dc68bb952eba032d"
+        }
+      ],
+      "gap": "Research risk output, decoder presence or all-green tests do not grant trading authority; research and exchange DBs must remain separate.",
+      "production_decision": "NO_GO",
+      "local_policy_basis": "README entry/authority boundary; portfolio research compatibility note"
+    }
+  ]
+}
