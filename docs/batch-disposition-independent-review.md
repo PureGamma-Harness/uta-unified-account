@@ -40,6 +40,8 @@ to four members. This reference does not call the production validation helper
 or copy its subsequence algorithm. The actual selected method AST is evaluated
 only as the differential target, with an independently implemented canonical
 JSON wire encoder and independently specified terminal state vocabulary.
+The four synthetic members represent independent account lanes; this model
+does not newly verify account FIFO eligibility or multi-account scheduling.
 
 Eight new methods plan 1,694 checks, also covering future progression of all
 four recorded-PENDING members (256 combinations), immutable terminal mismatch,
