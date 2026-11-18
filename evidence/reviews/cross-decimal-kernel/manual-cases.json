@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "kind": "HUMAN_ARITHMETIC_EXPECTATIONS_BEFORE_KERNEL_CODE",
+  "execution_attempts": 0,
+  "case_ids": ["M01", "M02", "M03", "M04", "M05", "M06", "M07", "M08", "M09", "M10", "M11", "M12"],
+  "M01": {
+    "reason": "1000 USD plus2 BTC at100; .5 BTC frozen; BTC bands100@.8/rest@.5; USD/BTC LTV .8/.5; principal100 USD+.1BTC; interest1USD+.01BTC; linear q2 multiplier2 mark110 cost400; rates borrow USD .1/.05 BTC .2/.1 linear .1/.05; order10; debt cap500",
+    "expected": {"accounting_equity":"1128","collateral_value":"1105","risk_equity":"1033","loan_value":"852.5","principal_value":"110","interest_value":"2","cash_deficit_value":"0","debt_value":"112","unrealized_pnl":"40","frozen_value":"50","initial_margin":"56.3","maintenance_margin":"28.15","order_margin":"10","available_margin":"966.7","borrowable":{"USD":"388","BTC":"3.88"},"status":"HEALTHY"}
+  },
+  "M02": {
+    "reason": "2 BTC@100 with factor.8 and LTV.5; principal1.25BTC +interest.05BTC; borrow IM/MM .1/.05. Haircut gross200 before subtracting130 debt; no asset/debt netting",
+    "expected": {"accounting_equity":"70","collateral_value":"160","risk_equity":"30","loan_value":"80","principal_value":"125","interest_value":"5","cash_deficit_value":"0","debt_value":"130","unrealized_pnl":"0","frozen_value":"0","initial_margin":"13","maintenance_margin":"6.5","order_margin":"0","available_margin":"17","borrowable":{"BTC":"0"},"status":"HEALTHY"}
+  },
+  "M03": {"reason":"BTC1.00000000001@100, first100 factor.8/rest.5; debt .00000000001BTC, order.0000000001; no implicit USD8 rounding","expected":{"collateral_value":"80.0000000005","risk_equity":"79.9999999995","available_margin":"79.9999999994"}},
+  "M04": {"reason":"USD gross1, cash deficits USD2+BTC.01@100; no principal or interest","expected":{"accounting_equity":"-2","risk_equity":"-2","cash_deficit_value":"3","debt_value":"3","initial_margin":"0","maintenance_margin":"0","status":"LIQUIDATION"}},
+  "M05": {"reason":"USD1000; q+/-2 multiplier2 mark110 signedcost+/-400; linear IM/MM .1/.05","long":{"unrealized_pnl":"40","risk_equity":"1040","initial_margin":"44","maintenance_margin":"22","available_margin":"996"},"short":{"unrealized_pnl":"-40","risk_equity":"960","initial_margin":"44","maintenance_margin":"22","available_margin":"916"}},
+  "M06": {"reason":"USD1; q.0001 multiplier1 mark1 cost-.00000001 is legitimate signed settlement dust","expected":{"unrealized_pnl":".00010001","risk_equity":"1.00010001","initial_margin":".00001","maintenance_margin":".000005","available_margin":"1.00009001"}},
+  "M07": {"reason":"No positions/debt; zero MM","cash_zero_status":"LIQUIDATION","cash_1e-100_status":"HEALTHY","cash_deficit_one_status":"LIQUIDATION"},
+  "M08": {"reason":"q1 mark100 cost100 IM=MM=.1; cash10 equals MM and cash10.00000001 exceeds it","cash10_status":"LIQUIDATION","cash_above_status":"HEALTHY"},
+  "M09": {"reason":"USD11, fully eligible/LTV1, borrowUSD IM=MM=.1, step1, cap100. IM permits10 but equity11-10 equals MM1, so strict MM requires9","expected_borrowable_USD":"9"},
+  "M10": {"reason":"USD12 collateral/LTV1, borrowBTC price3, IM.1/MM.05, step.1. 12/(3*1.1)=40/11 ->3.6","expected_borrowable_BTC":"3.6"},
+  "M11": {"reason":"USD10, order margin20, no positions or debt; negative availability with positive equity","expected":{"risk_equity":"10","available_margin":"-10","status":"MARGIN_CALL"}},
+  "M12": {"reason":"Exact finite Decimal/model domain bounds, hostile Decimal contexts, nonfinite/bool rejection and explicit unsupported subclass/mode/product/freshness cases","expected":"No silent successful zero result or fallback"},
+  "production_approved": false
+}
