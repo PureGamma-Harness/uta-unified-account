@@ -117,6 +117,7 @@ def main(args):
     rc, reaped, eof, error, reserved, sticky, cleanup_signal = None, False, False, None, 0, False, 0
     cleanup_attempts = 0
     released = False
+    wait_end = None
     launch_started = time.monotonic_ns()
     deadline = time.monotonic() + 30
     try:
@@ -154,6 +155,7 @@ def main(args):
                             sticky = True
         eof = not selector.get_map()
         rc = process.wait(timeout=max(0, deadline - time.monotonic()))
+        wait_end = time.monotonic_ns()
         reaped = True
         args.outer_exit, args.outer_reaped = rc, reaped
     except BaseException as failure:
@@ -177,6 +179,7 @@ def main(args):
                         error = error or type(cleanup).__name__
                 try:
                     rc = process.wait(timeout=2)
+                    wait_end = time.monotonic_ns()
                     reaped = True
                     args.outer_exit, args.outer_reaped = rc, reaped
                 except BaseException as cleanup:
@@ -269,14 +272,20 @@ def main(args):
     for fd in streams:
         os.fsync(fd)
         os.close(fd)
+    launcher_raw = {}
+    for name in ("launcher.stdout.txt", "launcher.stderr.txt"):
+        value = raw(caller / name, RAW_LIMIT)
+        launcher_raw[name] = {"bytes": len(value), "sha256": sha256(value).hexdigest()}
     finished = time.monotonic_ns()
     put(caller / "actual-exit.json", {"source_commit": args.source_commit, "plan_sha256": args.plan_sha256,
         "caller_plan_sha256": args.caller_plan_sha256, "outer_actual_exit": rc, "outer_actual_reaped": reaped,
         "both_launcher_pipes_EOF": eof, "start_gate_released": released, "cleanup_signals": cleanup_signal,
         "cleanup_signal_attempts": cleanup_attempts,
-        "monotonic_start_ns": started, "outer_launch_ns": launch_started, "monotonic_actual_wait_end_ns": finished,
+        "monotonic_start_ns": started, "outer_launch_ns": launch_started, "monotonic_actual_wait_end_ns": wait_end,
+        "monotonic_through_validation_ns": finished,
         "elapsed_through_wait_and_validation_ns": finished - started, "launcher_payload_bytes": reserved,
         "launcher_raw_sticky": sticky, "checks": checks, "error": error, "classification": "PASS_LIMITED_PURE_ONLY" if status == 0 else "UNKNOWN",
+        "launcher_raw_files": launcher_raw,
         "preserved_outer_classification": outer_classification,
         "caller_return_status": status, "caller_own_future_exit_not_certified": True})
     put(caller / "CALLER_END.json", {"outer_actual_exit_observed": rc, "outer_actual_reaped": reaped,
