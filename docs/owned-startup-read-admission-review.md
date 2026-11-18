@@ -1,8 +1,16 @@
 # Owned startup: read-snapshot admission and lease progress
 
-This CODE/model review is based on source
+Current stage: phase1 observation CODE is implemented at6303ed4 and has a
+separate independent CODE-only review. The12-method/48-trace closure frozen
+at72dcebf has **NOT_RUN**; its independent fixture/driver review and exact root
+once budget remain pending. Phase2 remains NO_GO. The baseline/source-order
+assessment below and the first3RED result retain their original frozen scope.
+
+The baseline CODE/model review is based on source
 `9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439`, whose entire `uta/` tree equals
-base6010. It changes no runtime or original test. No SQL, database, native
+base6010. That baseline delivery changed no runtime or original test. Current
+phase1 changes only private observations in writer_fence/startup and the CI
+collector; original tests and admission remain unchanged. No SQL, database, native
 worker, thread, process, signal, network or real sleep is executed by the model.
 This branch is separate from shared-gate registration and readiness-case work.
 

@@ -1,8 +1,10 @@
 # Minimal next code: establish evidence before changing admission
 
 Baseline witness `5af6cb0eead28c3fd23c921143bbda5a53ac53ea` is sealed first.
-The three conditional RED do not prove the two real errors' histories. This
-proposal is not applied to runtime and is not a permission to ignore expiry.
+The three conditional RED do not prove the two real errors' histories. Phase1
+below is now implemented at6303ed4, CODE-only reviewed and **NOT_RUN**; it is not
+a permission to ignore expiry. The12/48 pure closure/driver at72dcebf still
+requires its own static review and exact root once budget. Phase2 is not applied.
 
 ## Phase1: observation-only patch, unchanged fencing
 
@@ -89,9 +91,18 @@ mathematical witness and proposed watermark policy do not supply this approval.
 
 ## Delivery and rollback
 
-Current delivery contains docs, model source and immutable first model output
-only. No startup code, original test or schema is modified. Revert only these
-new review additions; retain all original ERROR evidence and financial history.
-If phase1 is implemented later, rollback removes telemetry while leaving every
-original financial/fence decision and error unchanged. Phase2 requires its own
+Current delivery contains phase1 observation code, docs, model/fixture source
+and immutable first baseline output. Original tests, SQL operations, schema,
+lease and financial decisions remain unchanged; phase1 pure/native/whole-suite
+and packaging acceptance is not granted. Added guard/load/fetch/validation
+timings affect all read TransactionGuards, so no timing/performance equivalence
+is claimed. The original ERRORs and baseline RED remain original results.
+
+Runtime bytes have changed. Existing code-bound authorities cannot accept an
+unreviewed binary swap or marker rewrite merely because persistent schema is
+unchanged. Any authorized execution must use a separately pinned fresh
+synthetic layout until a financial upgrade/recovery procedure is qualified.
+Reverting phase1 in Git removes telemetry, but is not a data rollback: retain
+old authorities, original commands, receipts and financial history, and never
+erase UNKNOWN state or reissue it under a new ID. Phase2 requires its own
 deployment/migration/rollback plan and acceptance record.
