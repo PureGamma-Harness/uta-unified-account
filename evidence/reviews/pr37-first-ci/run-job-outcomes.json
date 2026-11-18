@@ -1,0 +1,112 @@
+{
+  "runs": [
+    {
+      "attempt": 1,
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "67cd9bd9fd494369b53c0a2792120c587d3e757f",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134551196094,
+          "name": "test (3.11)",
+          "package_verification_conclusion": "success",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134551196098,
+          "name": "test (3.10)",
+          "package_verification_conclusion": "success",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134551196146,
+          "name": "test (3.12)",
+          "package_verification_conclusion": "success",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134551196169,
+          "name": "test (3.13)",
+          "package_verification_conclusion": "success",
+          "status": "completed",
+          "unit_conclusion": "success"
+        }
+      ],
+      "run_id": 44229628066,
+      "status": "completed"
+    },
+    {
+      "attempt": 1,
+      "conclusion": "failure",
+      "event": "pull_request",
+      "head_sha": "67cd9bd9fd494369b53c0a2792120c587d3e757f",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134551534178,
+          "name": "test (3.11)",
+          "package_verification_conclusion": "skipped",
+          "status": "completed",
+          "unit_conclusion": "failure"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134551534526,
+          "name": "test (3.12)",
+          "package_verification_conclusion": "skipped",
+          "status": "completed",
+          "unit_conclusion": "failure"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134551534582,
+          "name": "test (3.13)",
+          "package_verification_conclusion": "success",
+          "status": "completed",
+          "unit_conclusion": "success"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134551534625,
+          "name": "test (3.10)",
+          "package_verification_conclusion": "skipped",
+          "status": "completed",
+          "unit_conclusion": "failure"
+        }
+      ],
+      "run_id": 44229734501,
+      "status": "completed"
+    }
+  ],
+  "successful_jobs_scope": "Provider whole-job metadata only; no success unit/package/review ZIP downloaded."
+}
