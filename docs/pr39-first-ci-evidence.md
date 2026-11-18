@@ -29,6 +29,6 @@ future-ci-smoke-feasibility.json仅记录静态路线。需要另冻结外部con
 
 ## 原件与权限
 
-`evidence/runs/pr39-first-ci/` 首封69个safe原件/投影共2701529B，加seal与说明；private总2771078B，低于64MiB。周期jobs查询实际间隔均≥60s，最小65.069s；时间戳原样保存。四份签名download引用与小package ZIP只留private0700/0600，OWN只有bytes/SHA及两个safe JSON；三个unit ZIP保留原字节。固定PEM/credential/signedURL模式计数0不是安全审计。API JSON按connector返回保存，job logs为connector解码文本，不伪称HTTP wire bytes。
+`evidence/runs/pr39-first-ci/` 首封69个safe原件/投影共2701529B，加seal与说明；后续独立closure单列；private总2771078B，低于64MiB。周期jobs查询实际间隔均≥60s，最小65.069s；时间戳原样保存。四份签名download引用与小package ZIP只留private0700/0600，OWN只有bytes/SHA及两个safe JSON；三个unit ZIP保留原字节。固定PEM/credential/signedURL模式计数0不是安全审计。API JSON按connector返回保存，job logs为connector解码文本，不伪称HTTP wire bytes。
 
-独立只读review待闭合。source policy的NOT_RUN/false是发布前快照，本记录另陈述ordinary CI实际执行，不回写旧标志。默认legacy、UTA=PR35/6010、旧首失败/实际adapter/909/M05证据全部不改；没有collector push、watch/SQL/probe或protected PID操作，production/financial6h/10k/HA/真实资金均false。root负责skip-ci整合及PR正文。
+独立只读review已闭合（EVIDENCE_PASS），见independent-review-closure.json。原seal/final-status里的PENDING为首封历史快照，不回写。source policy的NOT_RUN/false是发布前快照，本记录另陈述ordinary CI实际执行，不回写旧标志。默认legacy、UTA=PR35/6010、旧首失败/实际adapter/909/M05证据全部不改；没有collector push、watch/SQL/probe或protected PID操作，production/financial6h/10k/HA/真实资金均false。root负责skip-ci整合及PR正文。
