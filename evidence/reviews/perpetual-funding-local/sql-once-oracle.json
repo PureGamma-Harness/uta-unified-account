@@ -1,0 +1,262 @@
+{
+  "SQL_attempts": 0,
+  "aggregate": {
+    "committed_periods": 3,
+    "custody_USD": "-10002.04",
+    "fees_USD": ".46",
+    "fresh_DBs": 5,
+    "ledger_events": 32,
+    "matches": 6,
+    "paired_fills": 12
+  },
+  "base": {
+    "USD_scale": 2,
+    "clearing": "0",
+    "fee_rate": ".0004",
+    "initial_fill": {
+      "per_side_fee": ".04",
+      "price": "100",
+      "quantity": "1"
+    },
+    "multiplier": "1",
+    "reserve": "0",
+    "symbol": "BTC-PERP",
+    "treasury": "0"
+  },
+  "cases": {
+    "capital": {
+      "capital_reference": "authorized-synthetic-capital",
+      "capital_transfer": ".01",
+      "command": "capital-period",
+      "customers": {
+        "a": "999.93",
+        "b": "999.97",
+        "c": "999.97",
+        "funding-treasury": ".99"
+      },
+      "funding_cash_units": {
+        "a": "0",
+        "b": "1",
+        "c": "0"
+      },
+      "funding_journals": 3,
+      "ledger_events": 11,
+      "mark": "1",
+      "matches": 2,
+      "notes": [
+        "Treasury actual prior deposit1; a/b deposits1000 each; c deposit1000",
+        "Additional .6@100 match has fee ceil(.6*100*.0004, cents)=.03 for a and c",
+        "a=1000-.04-.03=999.93; b=1000-.04+.01=999.97; c=1000-.03=999.97",
+        "Exact funding a-.006/b+.015/c-.009; towardzero units0/+1/0 needs one cent actual treasury transfer",
+        "Treasury1-.01=.99; reserve+.01-.01=0; clearing ends0; proof reuse rejects next period and creates no second receipt"
+      ],
+      "paired_fills": 4,
+      "periods": 1,
+      "positions": {
+        "a": [
+          ".4",
+          "40"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ],
+        "c": [
+          ".6",
+          "60"
+        ]
+      },
+      "rate": ".015",
+      "system": {
+        "system:custody": "-3001",
+        "system:fees": ".14"
+      }
+    },
+    "distress": {
+      "command": "funding-distress",
+      "customers": {
+        "a": "-1",
+        "b": "1001.96",
+        "funding-treasury": "0"
+      },
+      "extra_setup": {
+        "account_id": "a",
+        "command": "submit_order",
+        "limit_price": "100",
+        "match_called": false,
+        "order_id": "synthetic-pending-ro",
+        "quantity": "-.1",
+        "reason": "Original fixture has no live order after matching; this separately declared once setup proves cancellation. Projected equity .99 minus MM .45 = .54 exceeds current 1-.5=.5; quantity .1 <= position1 so native reduction admission accepts.",
+        "reduce_only": true
+      },
+      "funding_cash_units": {
+        "a": "-200",
+        "b": "200"
+      },
+      "funding_journals": 2,
+      "ledger_events": 6,
+      "mark": "100",
+      "matches": 1,
+      "notes": [
+        "a=1.04-.04-2=-1; b=1000-.04+2=1001.96",
+        "Pending RO is cancelled by native supervisor; replacement remains unfilled and does not count as liquidation execution",
+        "No funding debit is recast as principal; no synthetic liquidation fill"
+      ],
+      "paired_fills": 2,
+      "periods": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "rate": ".02",
+      "risk": {
+        "cancelled_order_id": "synthetic-pending-ro",
+        "cancelled_quantity": "-.1",
+        "cash_deficit_value": "1",
+        "cycle": 1,
+        "equity": "-1",
+        "maintenance_margin": ".5",
+        "principal_value": "0",
+        "replacement_filled_quantity": "0",
+        "replacement_price": "100",
+        "replacement_quantity": "-1",
+        "replacement_reduce_only": true,
+        "replacement_status": "OPEN",
+        "revision": 1,
+        "state": "LIQUIDATING"
+      },
+      "system": {
+        "system:custody": "-1001.04",
+        "system:fees": ".08"
+      }
+    },
+    "late": {
+      "command": null,
+      "customers": {
+        "a": "999.96",
+        "b": "999.96",
+        "funding-treasury": "0"
+      },
+      "funding_cash_units": {},
+      "funding_journals": 0,
+      "ledger_events": 4,
+      "matches": 1,
+      "notes": [
+        "Prior period without trusted boundary snapshot rejects; never charge current inventory as historical inventory"
+      ],
+      "paired_fills": 2,
+      "periods": 0,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      }
+    },
+    "period": {
+      "command": "period-1",
+      "customers": {
+        "a": "999.95",
+        "b": "999.97",
+        "funding-treasury": "0"
+      },
+      "funding_cash_units": {
+        "a": "-1",
+        "b": "1"
+      },
+      "funding_journals": 2,
+      "ledger_events": 6,
+      "mark": "100",
+      "matches": 1,
+      "notes": [
+        "1000-.04-.01=999.95; 1000-.04+.01=999.97",
+        "same command exact receipt/journal replay; changed command payload and duplicate product-period reject",
+        "unknown loaded uppercase object constant rejects; deleted in finally; original receipt still queryable"
+      ],
+      "paired_fills": 2,
+      "periods": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "rate": ".0001",
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      }
+    },
+    "rollback": {
+      "command": null,
+      "customers": {
+        "a": "999.96",
+        "b": "999.96",
+        "funding-treasury": "0"
+      },
+      "funding_cash_units": {},
+      "funding_verify": "REJECT_EXPECTED_ORPHAN",
+      "ledger_events": 5,
+      "matches": 1,
+      "notes": [
+        "Balanced synthetic orphan reserved funding event deliberately persists; whole-funding verification must reject",
+        "Failed settlement leaves journal/accounts/events exactly equal to prior test snapshot; no receipt",
+        "No claim that failure reached second leg or COMMIT"
+      ],
+      "paired_fills": 2,
+      "periods": 0,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08",
+        "system:test-sink": "1",
+        "system:test-source": "-1"
+      }
+    }
+  },
+  "fixture_order": [
+    "period",
+    "distress",
+    "rollback",
+    "late",
+    "capital"
+  ],
+  "kind": "SYNTHETIC_HAND_CALCULATED_SQL_ONCE_ORACLE_CODE_ONLY",
+  "not_claimed": [
+    "process crash recovery",
+    "commit fault",
+    "schema tamper runtime injection",
+    "managed fencing/HA",
+    "full eligibility replay",
+    "funding scheduler or due obligation registry",
+    "production financial approval"
+  ],
+  "schema": 1
+}
