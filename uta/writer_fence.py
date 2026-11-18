@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from enum import Enum
 import math
 import os
 from pathlib import Path
@@ -55,8 +56,14 @@ _MAX_INTEGER = 2**63 - 1
 _REGISTRY = {}
 _REGISTRY_LOCK = RLock()
 
-# Private, bounded telemetry only. No field in this envelope grants authority.
-_LEASE_OBSERVATION_TAG = object()
+# A finite, fingerprintable singleton for private telemetry provenance only.
+# Identity comparisons remain local to this loaded module; this is not a
+# capability, financial authority or a boundary against code in this process.
+class _LeaseObservationTag(Enum):
+    V1 = "uta_lease_observation_v1"
+
+
+_LEASE_OBSERVATION_TAG = _LeaseObservationTag.V1
 _LEASE_OBSERVATION_ATTRIBUTE = "_uta_lease_observation_v1"
 _LEASE_OBSERVATION_INTS = frozenset({
     "version", "assert_generation", "assert_row_observed_ns", "assert_row_expires_ns", "assert_now_ns",

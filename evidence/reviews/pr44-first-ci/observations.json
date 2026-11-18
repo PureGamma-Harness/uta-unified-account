@@ -1,0 +1,1387 @@
+{
+  "schema": 1,
+  "initial_run_list": {
+    "completed_observed_at_UTC": "2026-11-18 08:01:44 UTC",
+    "projection": {
+      "total_count": 2,
+      "workflow_runs": [
+        {
+          "conclusion": null,
+          "created_at": "2026-11-18T08:00:21Z",
+          "event": "pull_request",
+          "head_branch": "fix/credit-lease-observation-tag",
+          "head_sha": "c2aa3cc4d2db7785a19d5f54352c0f893774582a",
+          "html_url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44263298099",
+          "id": 44263298099,
+          "path": ".github/workflows/ci.yml",
+          "run_attempt": 1,
+          "run_started_at": "2026-11-18T08:00:21Z",
+          "status": "in_progress",
+          "updated_at": "2026-11-18T08:00:25Z",
+          "workflow_id": 418343148
+        },
+        {
+          "conclusion": null,
+          "created_at": "2026-11-18T08:00:01Z",
+          "event": "push",
+          "head_branch": "fix/credit-lease-observation-tag",
+          "head_sha": "c2aa3cc4d2db7785a19d5f54352c0f893774582a",
+          "html_url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44263248587",
+          "id": 44263248587,
+          "path": ".github/workflows/ci.yml",
+          "run_attempt": 1,
+          "run_started_at": "2026-11-18T08:00:01Z",
+          "status": "in_progress",
+          "updated_at": "2026-11-18T08:00:05Z",
+          "workflow_id": 418343148
+        }
+      ]
+    }
+  },
+  "initial_jobs": {
+    "completed_observed_at_UTC": "2026-11-18 08:02:40 UTC",
+    "runs": [
+      {
+        "run_id": 44263248587,
+        "jobs": [
+          {
+            "id": 134661484927,
+            "name": "test (3.13)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263248587,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661485337,
+            "name": "test (3.11)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263248587,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661485340,
+            "name": "test (3.12)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263248587,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661485424,
+            "name": "test (3.10)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263248587,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "run_id": 44263298099,
+        "jobs": [
+          {
+            "id": 134661635349,
+            "name": "test (3.11)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263298099,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661635837,
+            "name": "test (3.10)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263298099,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661635909,
+            "name": "test (3.12)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263298099,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          },
+          {
+            "id": 134661635994,
+            "name": "test (3.13)",
+            "status": "in_progress",
+            "conclusion": null,
+            "run_id": 44263298099,
+            "logs_url": null,
+            "steps": [
+              {
+                "name": "Set up job",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 1
+              },
+              {
+                "name": "Run actions/checkout@v4",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 2
+              },
+              {
+                "name": "Run actions/setup-python@v5",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 3
+              },
+              {
+                "name": "Record actual runtime and SQLite build before tests",
+                "status": "completed",
+                "conclusion": "success",
+                "number": 4
+              },
+              {
+                "name": "Run unit tests",
+                "status": "in_progress",
+                "conclusion": null,
+                "number": 5
+              },
+              {
+                "name": "Preserve complete unit validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 6
+              },
+              {
+                "name": "Compile source",
+                "status": "pending",
+                "conclusion": null,
+                "number": 7
+              },
+              {
+                "name": "Run demo",
+                "status": "pending",
+                "conclusion": null,
+                "number": 8
+              },
+              {
+                "name": "Preserve and replay research scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 9
+              },
+              {
+                "name": "Run transactional acceptance scenario",
+                "status": "pending",
+                "conclusion": null,
+                "number": 10
+              },
+              {
+                "name": "Explore bounded reservation model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 11
+              },
+              {
+                "name": "Explore bounded paired settlement model",
+                "status": "pending",
+                "conclusion": null,
+                "number": 12
+              },
+              {
+                "name": "Explore bounded grouped receipt protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 13
+              },
+              {
+                "name": "Explore bounded shard scheduling and commit retry models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 14
+              },
+              {
+                "name": "Explore durable command receipt and recovery protocol",
+                "status": "pending",
+                "conclusion": null,
+                "number": 15
+              },
+              {
+                "name": "Explore bounded managed writer and liquidation receipt models",
+                "status": "pending",
+                "conclusion": null,
+                "number": 16
+              },
+              {
+                "name": "Explore proposed market epoch and financial batch protocols",
+                "status": "pending",
+                "conclusion": null,
+                "number": 17
+              },
+              {
+                "name": "Build installable wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 18
+              },
+              {
+                "name": "Build and verify exact source distribution and wheel",
+                "status": "pending",
+                "conclusion": null,
+                "number": 19
+              },
+              {
+                "name": "Verify installed package outside source tree",
+                "status": "pending",
+                "conclusion": null,
+                "number": 20
+              },
+              {
+                "name": "Preserve exact package and installed validation evidence",
+                "status": "pending",
+                "conclusion": null,
+                "number": 21
+              },
+              {
+                "name": "Retain installable review artifact",
+                "status": "pending",
+                "conclusion": null,
+                "number": 22
+              },
+              {
+                "name": "Post Run actions/setup-python@v5",
+                "status": "pending",
+                "conclusion": null,
+                "number": 43
+              },
+              {
+                "name": "Post Run actions/checkout@v4",
+                "status": "pending",
+                "conclusion": null,
+                "number": 44
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "subsequent_attempt_specific_polls": [
+    {
+      "completed_observed_at_UTC": "2026-11-18 08:05:10 UTC",
+      "label": "poll-001",
+      "runs": [
+        {
+          "run": {
+            "id": 44263248587,
+            "event": "push",
+            "head_sha": "c2aa3cc4d2db7785a19d5f54352c0f893774582a",
+            "head_branch": "fix/credit-lease-observation-tag",
+            "run_attempt": 1,
+            "status": "in_progress",
+            "conclusion": null,
+            "created_at": "2026-11-18T08:00:01Z",
+            "updated_at": "2026-11-18T08:00:05Z",
+            "run_started_at": "2026-11-18T08:00:01Z",
+            "path": ".github/workflows/ci.yml",
+            "html_url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44263248587"
+          },
+          "jobs": [
+            {
+              "id": 134661484927,
+              "name": "test (3.13)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661485337,
+              "name": "test (3.11)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661485340,
+              "name": "test (3.12)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661485424,
+              "name": "test (3.10)",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        },
+        {
+          "run": {
+            "id": 44263298099,
+            "event": "pull_request",
+            "head_sha": "c2aa3cc4d2db7785a19d5f54352c0f893774582a",
+            "head_branch": "fix/credit-lease-observation-tag",
+            "run_attempt": 1,
+            "status": "in_progress",
+            "conclusion": null,
+            "created_at": "2026-11-18T08:00:21Z",
+            "updated_at": "2026-11-18T08:00:25Z",
+            "run_started_at": "2026-11-18T08:00:21Z",
+            "path": ".github/workflows/ci.yml",
+            "html_url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44263298099"
+          },
+          "jobs": [
+            {
+              "id": 134661635349,
+              "name": "test (3.11)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661635837,
+              "name": "test (3.10)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661635909,
+              "name": "test (3.12)",
+              "status": "in_progress",
+              "conclusion": null
+            },
+            {
+              "id": 134661635994,
+              "name": "test (3.13)",
+              "status": "in_progress",
+              "conclusion": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "completed_observed_at_UTC": "2026-11-18 08:09:13 UTC",
+      "label": "poll-002",
+      "terminal": true
+    }
+  ],
+  "poll_intervals_each_same_resource_at_least_60s": true,
+  "note": "Run-list and initial-jobs are separate first resource reads, not repeated same-resource polling. Observer clock times are capture completion observations, not later file-write times. Terminal reads stop after poll-002."
+}

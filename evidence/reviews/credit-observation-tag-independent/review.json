@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_CODE_ONLY_CREDIT_OBSERVATION_TAG_REVIEW",
+  "reviewed_commit": "7030d121ba311274a3259917dffb8daa18ae75c7",
+  "reviewed_tree": "75739e98f14c1895a1431365d054a5c6069f59a0",
+  "sole_parent": "f510bf5fea852ca04c87930077861c312320141f",
+  "runtime_enum_change_status": "CLOSED_STATIC_SCOPE",
+  "first_pure_execution_status": "BLOCKED_CLOSURE_ITEMS",
+  "execution_GO_granted": false,
+  "findings": [
+    {
+      "id": "COT-CODE-001",
+      "scope": "FULL_ARTIFACT_SOURCE_MAP_BINDING",
+      "finding": "The real artifact rereads rglob physical source; the focused test checks only writer_fence.py and does not compare the complete source_files map to all retained UTA pins.",
+      "required": "Full exact source-map equality in the existing full-artifact method or equivalent source-bound caller evidence; no production fingerprint bypass."
+    },
+    {
+      "id": "COT-CODE-002",
+      "scope": "CALLER_RAW_FD_EXECUTION_ENVELOPE",
+      "finding": "RawStream caps Python streams while dup2 sends direct FD output into raw files; timeout/taskset and native FD bytes are not covered by a frozen caller-level shared cap.",
+      "required": "Freeze an enforcing complete FD-level shared raw envelope, exact caller argv/Git/exit/reap/monotonic and timeout ownership before first GO."
+    }
+  ],
+  "runtime_only_changed_path": "uta/writer_fence.py",
+  "runtime_patch_numstat": {"added": 9, "removed": 2},
+  "credit_artifact_modules_exclusions_format_validator_unchanged": true,
+  "annotation_identity_typed_payload_and_financial_functions_unchanged_by_diff": true,
+  "new_tag_scanned_as_module_constant": true,
+  "enum_member_scanned_as_class_constant": true,
+  "enum_loaded_class_function_code_scanned": true,
+  "new_live_global_exclusion": false,
+  "unsupported_object_serializer_added": false,
+  "first_CI_specific_attribute": "NOT_RECORDED_UNKNOWN",
+  "first_CI_all_error_single_cause_proven": false,
+  "input_inventory": {"files": 64, "UTA_python_files": 61, "bytes": 1326122},
+  "current_physical_git_plan_bytes_equal": true,
+  "current_physical_UTA_inventory_equals_plan": true,
+  "plan_bytes": 13045,
+  "verified_sha256": {
+    "evidence/reviews/credit-observation-tag/once-plan.json": "2e9c9a91d56435949158131d740a6680c74e0f946fd41f73a1d2a9dc13afb6cd",
+    "uta/writer_fence.py": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41",
+    "uta/credit_artifact.py": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+    "tools/run_validation.py": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973",
+    "tests/test_credit_lease_observation_tag.py": "c0fe6c130c32c2f4e4193817f19ab665511b5b5b17fd05aac85b66602235d922",
+    "tools/run_credit_observation_tag_once.py": "9b5decd7a40b811e644b1be3da391341d104219d6aca7dc59fe763eee02eb0c4"
+  },
+  "builtin_sqlite_missing_extension_path_assumption_found": false,
+  "proposed_methods": 6,
+  "proposed_case_groups": 20,
+  "target_compile_import_exec_by_reviewer": false,
+  "whole_artifact_or_test_executed": false,
+  "SQL_process_thread_network_probe_executed": false,
+  "production_approved": false,
+  "candidate_worktree_read_only": true,
+  "independent_review_worktree": "/workspace/uta-credit-observation-tag-independent"
+}
