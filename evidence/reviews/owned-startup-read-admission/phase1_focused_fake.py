@@ -482,6 +482,13 @@ class Phase1FocusedFakeTests(unittest.TestCase):
             self.mark()
             env, scope = Environment(), None
             scope = env.owned()
+            keeper_databases = []
+            original_copy = env.namespace["copy"]
+            def observe_copy(database):
+                keeper_database = original_copy(database)
+                keeper_databases.append(keeper_database)
+                return keeper_database
+            env.namespace["copy"] = observe_copy
             old = MappingProxyType({"version": 1, "last_known_renew_attempt": 1,
                                     "last_known_renew_expires_ns": 410, "last_known_renew_same_token": True})
             scope._lease_diagnostic_state = (MappingProxyType({"renew_attempt": 1,
@@ -509,11 +516,16 @@ class Phase1FocusedFakeTests(unittest.TestCase):
                 self.assertEqual(scope._lease_diagnostic_state[0]["renew_attempt_state"], "failed_or_unknown")
             else:
                 scope._renew()
-                self.assertEqual(scope.database.commits, 1)
                 if mode == "known":
                     self.assertEqual(scope._lease_diagnostic_state[1]["last_known_renew_attempt"], 2)
                 else:
                     self.assertEqual(scope._lease_diagnostic_state[1], old)
+            self.assertEqual(len(keeper_databases), 1)
+            keeper_database = keeper_databases[0]
+            self.assertIsNot(keeper_database, scope.database)
+            self.assertIs(keeper_database.connection, scope.database.connection)
+            self.assertEqual(keeper_database.commits, 1)
+            self.assertEqual(scope.database.commits, 0)
 
     def test_09_owned_read_primary_retained_before_any_verifier(self):
         for mode in ("ledger", "credit", "helper_raises", "existing_unknown_attribute"):
