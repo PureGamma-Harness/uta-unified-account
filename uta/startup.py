@@ -165,8 +165,8 @@ class _OwnedStartup:
 
     def _renew_diagnostic(self, stage, fence=None):
         """Optional lock-free telemetry; successful-path cancellation propagates."""
-        from .writer_fence import _lease_note_time, _lease_observation
         try:
+            from .writer_fence import _lease_note_time, _lease_observation
             state = self._lease_diagnostic_state
             attempt, known = state if type(state) is tuple and len(state) == 2 else (None, None)
             filtered = _lease_observation(attempt)
