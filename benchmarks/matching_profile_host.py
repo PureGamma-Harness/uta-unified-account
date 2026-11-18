@@ -188,6 +188,8 @@ def main():
         os.fsync(stdout.fileno())
         os.fsync(stderr.fileno())
     aggregate_end = monotonic_ns()
+    require(sum(value[channel]["bytes"] for value in phases.values() for channel in ("stdout", "stderr"))
+            + shared[0] + 1024 <= 512 * 1024, "joint raw cap lacks reserved host completion output")
     phases["aggregate"] = {"argv": aggregate_argv, **timed(aggregate_start, aggregate_end, status, 10, False)}
     logical = {}
     for name, root, cap in (("current", roots["current"], 78 * 1024 * 1024),
