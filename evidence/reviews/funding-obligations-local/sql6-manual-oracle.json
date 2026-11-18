@@ -1,0 +1,489 @@
+{
+  "aggregate": {
+    "applied": 5,
+    "custody_USD": "-15001",
+    "fees_USD": ".72",
+    "journals": 46,
+    "matches": 9,
+    "outstanding": 3,
+    "paired_fills": 18,
+    "tasks": 8
+  },
+  "cases": {
+    "capital": {
+      "capability": "new",
+      "cash": {
+        "a": "999.93",
+        "b": "999.97",
+        "c": "999.97",
+        "treasury": ".99"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "1",
+          "market_version": 2,
+          "quantities": {
+            "a": ".4",
+            "b": "-1",
+            "c": ".6"
+          },
+          "rate": ".015"
+        },
+        "next": {
+          "mark": "1",
+          "market_version": 3,
+          "quantities": {
+            "a": ".4",
+            "b": "-1",
+            "c": ".6"
+          },
+          "rate": ".015"
+        }
+      },
+      "journals": 11,
+      "matches": 2,
+      "positions": {
+        "a": [
+          ".4",
+          "40"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ],
+        "c": [
+          ".6",
+          "60"
+        ]
+      },
+      "receipt_risk_market_version": 2,
+      "risk": {
+        "a": {
+          "equity": "960.33",
+          "maintenance_margin": ".02"
+        },
+        "b": {
+          "equity": "1098.97",
+          "maintenance_margin": ".05"
+        },
+        "c": {
+          "equity": "940.57",
+          "maintenance_margin": ".03"
+        }
+      },
+      "system": {
+        "system:custody": "-3001",
+        "system:fees": ".14"
+      },
+      "tasks": {
+        "btc-end": "APPLIED",
+        "next": "WAITING_CAPITAL"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ],
+        [
+          "c",
+          "a",
+          ".6",
+          "100",
+          ".03",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "changed-positions": {
+      "capability": "new",
+      "cash": {
+        "a": "999.91",
+        "b": "999.91",
+        "treasury": "0"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "100",
+          "market_version": 2,
+          "quantities": {
+            "a": "1",
+            "b": "-1"
+          },
+          "rate": ".01"
+        }
+      },
+      "journals": 8,
+      "matches": 2,
+      "positions": {},
+      "receipt_risk_market_version": 4,
+      "risk": {
+        "a": {
+          "equity": "999.91",
+          "initial_margin": "0",
+          "maintenance_margin": "0"
+        },
+        "b": {
+          "equity": "999.91",
+          "initial_margin": "0",
+          "maintenance_margin": "0"
+        }
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".18"
+      },
+      "tasks": {
+        "btc-end": "APPLIED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ],
+        [
+          "b",
+          "a",
+          "1",
+          "101",
+          ".05",
+          "-1",
+          "1"
+        ]
+      ]
+    },
+    "competition": {
+      "capability": "new",
+      "cash": {
+        "a": "999.95",
+        "b": "999.97",
+        "treasury": "0"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "100",
+          "market_version": 2,
+          "quantities": {
+            "a": "1",
+            "b": "-1"
+          },
+          "rate": ".0001"
+        }
+      },
+      "journals": 6,
+      "matches": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "receipt_risk_market_version": 2,
+      "risk": {
+        "a": {
+          "equity": "999.95",
+          "maintenance_margin": "5"
+        },
+        "b": {
+          "equity": "999.97",
+          "maintenance_margin": "5"
+        }
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      },
+      "tasks": {
+        "btc-end": "APPLIED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "current-data": {
+      "capability": "new",
+      "cash": {
+        "a": "999.95",
+        "b": "999.97",
+        "treasury": "0"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "100",
+          "market_version": 2,
+          "quantities": {
+            "a": "1",
+            "b": "-1"
+          },
+          "rate": ".0001"
+        }
+      },
+      "journals": 6,
+      "matches": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "receipt_risk_market_version": 4,
+      "risk": {
+        "a": {
+          "equity": "1000.95",
+          "maintenance_margin": "5.05"
+        },
+        "b": {
+          "equity": "998.97",
+          "maintenance_margin": "5.05"
+        }
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      },
+      "tasks": {
+        "btc-end": "APPLIED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "missing": {
+      "capability": "new",
+      "cash": {
+        "a": "999.96",
+        "b": "999.96",
+        "treasury": "0"
+      },
+      "cuts": {},
+      "journals": 4,
+      "matches": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "receipt_risk_market_version": null,
+      "risk": {},
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      },
+      "tasks": {
+        "btc-end": "REVIEW_REQUIRED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "new-empty": {
+      "capability": "new",
+      "cash": {},
+      "cuts": {},
+      "journals": 0,
+      "matches": 0,
+      "positions": {},
+      "receipt_risk_market_version": null,
+      "risk": {},
+      "system": {},
+      "tasks": {},
+      "trades": []
+    },
+    "normal": {
+      "capability": "new",
+      "cash": {
+        "a": "999.95",
+        "b": "999.97",
+        "treasury": "0"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "100",
+          "market_version": 2,
+          "quantities": {
+            "a": "1",
+            "b": "-1"
+          },
+          "rate": ".0001"
+        }
+      },
+      "journals": 6,
+      "matches": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "receipt_risk_market_version": 2,
+      "risk": {
+        "a": {
+          "equity": "999.95",
+          "maintenance_margin": "5"
+        },
+        "b": {
+          "equity": "999.97",
+          "maintenance_margin": "5"
+        }
+      },
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08"
+      },
+      "tasks": {
+        "btc-end": "APPLIED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ]
+      ]
+    },
+    "old-empty": {
+      "capability": "old",
+      "cash": {},
+      "cuts": {},
+      "journals": 0,
+      "matches": 0,
+      "positions": {},
+      "receipt_risk_market_version": null,
+      "risk": {},
+      "system": {},
+      "tasks": {},
+      "trades": []
+    },
+    "review": {
+      "capability": "new",
+      "cash": {
+        "a": "999.96",
+        "b": "999.96",
+        "treasury": "0"
+      },
+      "cuts": {
+        "btc-end": {
+          "mark": "100",
+          "market_version": 2,
+          "quantities": {
+            "a": "1",
+            "b": "-1"
+          },
+          "rate": ".0001"
+        }
+      },
+      "journals": 5,
+      "matches": 1,
+      "positions": {
+        "a": [
+          "1",
+          "100"
+        ],
+        "b": [
+          "-1",
+          "-100"
+        ]
+      },
+      "receipt_risk_market_version": null,
+      "risk": {},
+      "system": {
+        "system:custody": "-2000",
+        "system:fees": ".08",
+        "system:test-sink": "1",
+        "system:test-source": "-1"
+      },
+      "tasks": {
+        "btc-end": "REVIEW_REQUIRED"
+      },
+      "trades": [
+        [
+          "a",
+          "b",
+          "1",
+          "100",
+          ".04",
+          "0",
+          "0"
+        ]
+      ]
+    }
+  },
+  "financial_source": "90e81daa7b7cb398664c1dadb3a0d943e45321d6",
+  "fixture_order": [
+    "normal",
+    "missing",
+    "current-data",
+    "capital",
+    "competition",
+    "changed-positions",
+    "new-empty",
+    "old-empty",
+    "review"
+  ],
+  "methods": [
+    "test_schedule_apply_command_queries_and_reopen",
+    "test_missing_data_and_no_backdated_cut",
+    "test_real_capital_wait_and_unique_proof",
+    "test_competing_executors_expiry_and_clock_regression",
+    "test_trades_after_cut_and_unknown_response_query",
+    "test_review_rollback_code_binding_and_old_capability_rejection"
+  ],
+  "schema": 1,
+  "scope": "Repeated IDs belong to independent synthetic authority namespaces, not globally unique production trades. All funding debit cases remain healthy, not cross-MM or insolvency acceptance. Synthetic clock only.",
+  "status": "CODE_ONLY_NOT_RUN"
+}

@@ -1,0 +1,175 @@
+{
+  "archive_kind": "LIMITED_PARAPHRASE_AND_LOCATOR_NOT_FULL_TEXT_ARCHIVE",
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "conflicts_and_gaps": [
+    "Bybit documents timing uncertainty around settlement. Local strict transaction cutoff is a new policy, not parity.",
+    "Public market APIs do not establish local per-account rounding or a custody-authorized capital source.",
+    "Only a trusted existing deposit supplies the synthetic treasury cash boundary; operator authentication and real custody proof remain unimplemented.",
+    "No durable scheduler or unsettled-obligation registry exists; failure must be recorded outside this component and cannot be treated as settled.",
+    "Existing DecisionAudit numerical replay does not attest new funding eligibility.",
+    "No managed fencing capability, code-bound migration, replication, real-money activation or capacity acceptance."
+  ],
+  "data": "SYNTHETIC_ONLY",
+  "financial_owner_signoff": "PENDING_HUMAN",
+  "independent_signoff": "PENDING",
+  "kind": "FUNDING_LOCAL_SOURCE_LOCATORS_AND_RULE_TRACEABILITY",
+  "observed_at_utc": "2026-11-18T08:21:24.777298+00:00",
+  "official_account_behavior_or_authorized_real_records_verified": false,
+  "production_approved": false,
+  "rules": [
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Signed local cash = -quantity * mark * rate; no cost-basis sign constraint.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-001",
+      "source_id": "BYBIT-FUNDING-HELP",
+      "test_id": "FundingArithmeticTests.test_two_sides_negative_and_zero_rates_use_manual_cash",
+      "topic": "DIRECTION",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "All target-product positions in one authority sum exactly to zero; cross-authority obligations reject.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-002",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingArithmeticTests.test_invalid_inventory_and_decimal_context_do_not_change_policy",
+      "topic": "LOCAL_COMPLETE_SIDES",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Per-account toward-zero at USD scale; subunit pricing adjustment is waived for this period, not booked as an unpaid claim. Cash variance is segregated capital, not fees.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-003",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingArithmeticTests.test_three_accounts_need_real_segregated_rounding_capital",
+      "topic": "ROUNDING_AND_OWNERSHIP",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Shortfall uses only the configured treasury confirmed deposit and positive available cash; unique proof, actual debit and no reserve-withdraw endpoint.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-004",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated",
+      "topic": "CONFIRMED_CAPITAL",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Atomic writer transaction supplies logical event watermark, full positions/account versions and trusted market. UTC period label is not a historical snapshot. Late without a boundary snapshot rejects.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-005",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated",
+      "topic": "BOUNDARY",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Unique product/UTC-period independently of rate/rule/command; same completed command returns original receipt before market freshness and changed content conflicts.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-006",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingLocalSQLTests.test_fresh_period_retry_reopen_and_period_uniqueness",
+      "topic": "PERIOD_AND_COMMAND_UNIQUENESS",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Confirmed fees can make cash negative as cash_deficits, not principal. Same-transaction native supervisor must persist freeze/cancel/reduce-only planning; no generated fills.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-007",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "FundingLocalSQLTests.test_mandatory_debit_uses_cash_deficit_and_real_risk_state",
+      "topic": "MANDATORY_DEBIT_AND_RISK",
+      "unit": "integer minor units at configured scale2..8"
+    },
+    {
+      "applicable_from": "THIS_UNEXECUTED_LOCAL_PROTOTYPE_ONLY",
+      "currency": "USD",
+      "local_choice": "Fresh unbound synthetic authority only. No existing managed marker, customer route or implicit rule/code/schema upgrade.",
+      "mode": "configured Cross",
+      "parameter_calibrated": false,
+      "product": "USD linear perpetual multiplier1",
+      "rule_id": "FUND-008",
+      "source_id": "LOCAL_POLICY",
+      "test_id": "CODE_ONLY_INSTALLATION_REVIEW_PENDING",
+      "topic": "ACTIVATION_AND_MIGRATION",
+      "unit": "integer minor units at configured scale2..8"
+    }
+  ],
+  "schema": 1,
+  "sources": [
+    {
+      "observed_sections": [
+        "What Is Funding Fee",
+        "When Is Funding Fee Charged",
+        "How Is Funding Fee Calculated"
+      ],
+      "observed_update": "2026-05-12 12:38:20",
+      "paraphrase": "Funding transfers between opposite perpetual positions. Positive rate pays short holders from long holders; negative rate reverses. Linear position value uses quantity and mark. Intervals differ and positions around settlement can have uncertain inclusion.",
+      "publisher": "Bybit",
+      "source_id": "BYBIT-FUNDING-HELP",
+      "unverified": [
+        "local rounding",
+        "local capital ownership",
+        "exact local cutoff",
+        "authorized customer data"
+      ],
+      "url": "https://www.bybit.com/en/help-center/article/Funding-fee-calculation"
+    },
+    {
+      "api_version": "v5",
+      "observed_fields": [
+        "category",
+        "symbol",
+        "fundingRate",
+        "fundingRateTimestamp"
+      ],
+      "paraphrase": "Funding history is market data; product information supplies intervals. This endpoint alone does not establish an account funding ledger.",
+      "publisher": "Bybit API documentation",
+      "source_id": "BYBIT-V5-FUNDING-HISTORY",
+      "url": "https://bybit-exchange.github.io/docs/v5/market/history-fund-rate"
+    },
+    {
+      "endpoint": "GET /fapi/v1/fundingRate",
+      "observed_fields": [
+        "symbol",
+        "fundingRate",
+        "fundingTime",
+        "markPrice",
+        "rateType"
+      ],
+      "paraphrase": "Historical records identify the rate, time and associated mark. Regular and Special rate types are distinct; the local prototype implements only vanilla linear funding.",
+      "publisher": "Binance Developer Documentation",
+      "resolved_url": "https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data",
+      "source_id": "BINANCE-USD-M-FUNDING-HISTORY",
+      "url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Get-Funding-Rate-History"
+    }
+  ],
+  "target_compile_import_tests_SQL_attempts": 0
+}

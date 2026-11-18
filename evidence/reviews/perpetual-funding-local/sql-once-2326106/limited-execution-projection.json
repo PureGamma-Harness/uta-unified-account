@@ -1,0 +1,242 @@
+{
+  "TAIL_late": false,
+  "actual_affinity_after": [
+    1
+  ],
+  "actual_owned_host_exit": 0,
+  "actual_owned_host_reaped": true,
+  "actual_runtime": {
+    "affinity": [
+      1
+    ],
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "aggregate_actual_component_counts": {
+    "committed_periods": 3,
+    "fresh_DBs": 5,
+    "ledger_events": 32,
+    "matches": 6,
+    "paired_fills": 12
+  },
+  "both_launcher_raw_pipes_EOF": true,
+  "both_target_raw_pipes_EOF": true,
+  "caller_actual_outer_exit": 0,
+  "caller_actual_outer_reaped": true,
+  "case_verifier_results": {
+    "capital": {
+      "committed_periods": 1,
+      "fresh_ro_snapshot": true,
+      "funding": {
+        "funding_reconciled": true,
+        "journal_references": 3,
+        "ledger_verified": true,
+        "periods": 1,
+        "production_approved": false,
+        "risk_eligibility_replayed": false
+      },
+      "ledger_events": 11,
+      "manual_cash_positions_and_system_accounts_equal": true,
+      "matching": {
+        "ledger_events": 11,
+        "matches": 2,
+        "paired_fills": 4,
+        "unpaired_fills": 0
+      },
+      "schema_and_current_artifact_verified_without_repair": true
+    },
+    "distress": {
+      "committed_periods": 1,
+      "fresh_ro_snapshot": true,
+      "funding": {
+        "funding_reconciled": true,
+        "journal_references": 2,
+        "ledger_verified": true,
+        "periods": 1,
+        "production_approved": false,
+        "risk_eligibility_replayed": false
+      },
+      "ledger_events": 6,
+      "manual_cash_positions_and_system_accounts_equal": true,
+      "matching": {
+        "ledger_events": 6,
+        "matches": 1,
+        "paired_fills": 2,
+        "unpaired_fills": 0
+      },
+      "schema_and_current_artifact_verified_without_repair": true
+    },
+    "late": {
+      "committed_periods": 0,
+      "fresh_ro_snapshot": true,
+      "funding": {
+        "funding_reconciled": true,
+        "journal_references": 0,
+        "ledger_verified": true,
+        "periods": 0,
+        "production_approved": false,
+        "risk_eligibility_replayed": false
+      },
+      "ledger_events": 4,
+      "manual_cash_positions_and_system_accounts_equal": true,
+      "matching": {
+        "ledger_events": 4,
+        "matches": 1,
+        "paired_fills": 2,
+        "unpaired_fills": 0
+      },
+      "schema_and_current_artifact_verified_without_repair": true
+    },
+    "period": {
+      "committed_periods": 1,
+      "fresh_ro_snapshot": true,
+      "funding": {
+        "funding_reconciled": true,
+        "journal_references": 2,
+        "ledger_verified": true,
+        "periods": 1,
+        "production_approved": false,
+        "risk_eligibility_replayed": false
+      },
+      "ledger_events": 6,
+      "manual_cash_positions_and_system_accounts_equal": true,
+      "matching": {
+        "ledger_events": 6,
+        "matches": 1,
+        "paired_fills": 2,
+        "unpaired_fills": 0
+      },
+      "schema_and_current_artifact_verified_without_repair": true
+    },
+    "rollback": {
+      "committed_periods": 0,
+      "fresh_ro_snapshot": true,
+      "funding": {
+        "code": "funding_reconciliation",
+        "expected_orphan_rejected": true
+      },
+      "ledger_events": 5,
+      "manual_cash_positions_and_system_accounts_equal": true,
+      "matching": {
+        "ledger_events": 5,
+        "matches": 1,
+        "paired_fills": 2,
+        "unpaired_fills": 0
+      },
+      "schema_and_current_artifact_verified_without_repair": true
+    }
+  },
+  "classification": "PASS_LIMITED_SQL_ONLY",
+  "combined_first_and_launcher_raw_bytes": 11522,
+  "complete_inner_END": true,
+  "corrected_CODE_review": "e29d2b763b02bad5d879c4b2411c7375f03fe338",
+  "counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 0,
+    "skipped": 0,
+    "unexpected_successes": 0
+  },
+  "durations_ns": {
+    "caller_actual_outer_process_lifetime": 2162771041,
+    "fixed_three_tests_only": 1308923454,
+    "inner_with_five_RO_oracles": 1644386558,
+    "owned_target_and_drain_excludes_source_preparation": 1904235790
+  },
+  "extra_SQL_queries_after_run": 0,
+  "forbidden_attempts": [],
+  "historical_f341_49407_d7e0_all_six_plan": "NOT_RUN_0_UNCHANGED",
+  "independent_RAW_review": "PENDING",
+  "input_pin_bytes": 1412889,
+  "input_pin_count": 67,
+  "kind": "FIRST_SQL_ONCE_SAFE_CANDIDATE_PENDING_INDEPENDENT_RAW",
+  "launcher_raw_complete": true,
+  "loaded_UTA_modules": [
+    "uta",
+    "uta.credit_artifact",
+    "uta.decision_audit",
+    "uta.existing_services",
+    "uta.funding_local",
+    "uta.ledger",
+    "uta.market",
+    "uta.market_cache",
+    "uta.matching",
+    "uta.models",
+    "uta.perpetual_funding",
+    "uta.portfolio",
+    "uta.products",
+    "uta.reserve_kernel",
+    "uta.risk",
+    "uta.scenario_margin",
+    "uta.service",
+    "uta.startup",
+    "uta.storage",
+    "uta.writer_fence"
+  ],
+  "loaded_UTA_modules_all_retained": true,
+  "observed_resources": {
+    "actual_RLIMIT_FSIZE": [
+      4194304,
+      4194304
+    ],
+    "actual_final_DB_files": 15,
+    "actual_final_DB_logical_bytes": 1994752,
+    "after_reopen_before_cleanup": {
+      "all_observed_handles_already_closed": true,
+      "observed_handles": 133,
+      "open_handles_before_cleanup": 0
+    },
+    "aggregate_quota_claimed": false,
+    "all_observed_handles_closed_after_cleanup": true,
+    "before_reopen": {
+      "all_observed_handles_already_closed": true,
+      "observed_handles": 128,
+      "open_handles_before_cleanup": 0
+    },
+    "connect_count": 133,
+    "connection_events_and_handles_and_five_paths_match": true,
+    "disk_observations": 144,
+    "disk_problem": null,
+    "observation_is_not_continuous_native_write_monitoring": true,
+    "own_leaked_handles_closed_after_failure": 0,
+    "peak_observed_DB_files": 15,
+    "peak_observed_logical_DB_bytes": 1994752
+  },
+  "old_d668_finding_and_NOT_RUN_preserved": true,
+  "open_gates": [
+    "independent_RAW_review",
+    "stale_supervision_and_second_leg_COMMIT_crash_faults",
+    "actual_process_restart",
+    "DUE_unfinished_obligations_and_scheduler",
+    "opsAuth_custody_and_approval",
+    "managed_HA_multi_authority",
+    "financial_calibration_and_capacity",
+    "real_funds_production_approval"
+  ],
+  "oracle_error": null,
+  "oracle_passed": true,
+  "plan_sha256": "fb3d1fb820f3cf4112699615a0a8ae05bae82ec945ac1c7d858a2c92fed7f241",
+  "private_DB_capsule_nonce_ZIP_exported": false,
+  "production_approved": false,
+  "raw_sticky": false,
+  "retry_performed": false,
+  "schema": 1,
+  "selected_methods": [
+    "test_fresh_period_retry_reopen_and_period_uniqueness",
+    "test_mandatory_debit_uses_cash_deficit_and_real_risk_state",
+    "test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated"
+  ],
+  "source_before_after_equal": true,
+  "source_commit": "2326106b3bf8cf6d2713e4cf8c7926afdf6962ab",
+  "source_or_deadline_drift": null,
+  "target_attempts": 1,
+  "tests_run": 3
+}
