@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "status": "PROPOSAL_NOT_AUTHORIZATION",
+  "execution_ready": false,
+  "program_imports_or_runs": 0,
+  "target_imports_or_runs": 0,
+  "sql_worker_process_network_runs": 0,
+  "test_definition_count": 22,
+  "fixed_seed_domain": {"first": 0, "last": 1023, "valid": 512, "negative_or_unsupported": 512, "actual_generated": "NOT_RUN"},
+  "families": ["identity", "stage", "aggregate", "decompose", "backing", "wait", "shared_action", "bounds"],
+  "case_max_serialized_bytes": 2097152,
+  "case_serialized_size_observation": "NOT_RUN",
+  "proposed_first_finite_scope": "Own independent reference/generator/test definitions only, after root immutable CODE review and separate execution plan",
+  "not_in_first_scope": ["target bridge", "production module", "UTA imports", "SQL", "installation", "workers", "network", "persistent clocks", "live acknowledgements"],
+  "gates": [
+    {"id": "REF-CODE", "state": "PENDING_INDEPENDENT_REVIEW", "meaning": "Review all immutable own source and declared unresolved semantics"},
+    {"id": "REF-SELF", "state": "NOT_RUN", "meaning": "Future 22 methods, manual arithmetic slices and fixed 1024 status partition"},
+    {"id": "REF-WIRE", "state": "BLOCKED", "meaning": "Public canonical policy/action hash and full stage-CAS/no-op semantics"},
+    {"id": "TARGET-BRIDGE", "state": "NOT_IMPLEMENTED", "meaning": "Separate reviewed complete target adapter with exact known exceptions and no silent field drops"},
+    {"id": "TARGET-DIFF", "state": "NOT_RUN", "meaning": "Future fixed source and full supported wire, separate from reference self-tests"},
+    {"id": "D2-ACK-OUTBOX", "state": "BLOCKED", "meaning": "Real release ACK, fills, durable budget/outbox and original-authority recovery absent"},
+    {"id": "D2-LEDGER-FENCE", "state": "BLOCKED", "meaning": "Cash/hold/accrual whole-period atomicity, old-writer fencing and reopened reconciliation not proven"},
+    {"id": "PRODUCTION", "state": "NO_GO", "meaning": "No real-fund, performance, HA or release approval"}
+  ],
+  "actual_checks_in_this_commit": ["Git source pin reading", "AST parse as data without compile/import", "JSON parse as data", "Literal byte hashing", "Own file inventory"],
+  "results_written_after_future_run": "A new immutable evidence commit, never editing this NOT_RUN record",
+  "activation_permission": false
+}

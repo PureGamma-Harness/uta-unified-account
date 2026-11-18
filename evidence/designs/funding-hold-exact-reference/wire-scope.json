@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "protocol": "PFH-D1-INDEPENDENT-WIRE-v1",
+  "status": "PARTIAL_SERIALIZED_REFERENCE_CODE_NOT_RUN",
+  "proposal_commit": "75358b8eb9e5ddf1abda2521208858264aa520b4",
+  "request_exact_keys": ["schema", "case_id", "op", "input"],
+  "response_exact_keys": ["schema", "case_id", "status", "value", "diagnostic_code", "activation_permission", "hash_wire"],
+  "response_hash_wire": "NOT_VERIFIED",
+  "policy_wire": "Full seven-field policy object, not opaque policy hash",
+  "action_wire": "Full action input plus explicit logical identity; no opaque action hash",
+  "duty_hash": "Independent direct 8008 canonical ASCII JSON/SHA256, CODE_ONLY_NOT_RUN",
+  "natural_slot_wire": "Object with exact six 8008 fields; not a production internal container claim",
+  "stage_expected_active_ref": "Typed CAP or FINAL_CUT reference or null; pure shape equality only; complete exposure+cap CAS NOT_VERIFIED",
+  "action_logical_identity": ["authority_id", "authority_generation", "account_id", "settlement_asset", "allocation_id", "CANCEL_QUERY", "CONFIRMED_CLOSED"],
+  "unfrozen_semantics": [
+    "Policy and action hash canonical bytes/prefix/schema have no frozen normative rule in 8008",
+    "Action allocation namespace account/scale relationship awaits explicit public wire specification",
+    "Complete active-stage and exposure/cap expected-reference CAS needs clarification",
+    "No-op observation and sticky-default revision increment granularity is a local proposal",
+    "Pure reachable duty revision=history length <=2 is a reference support slice, not a persistent schema contract"
+  ],
+  "no_op_revision_proposal": "Nondefault observations increment once; same-highwater already-default returns original; advancing default highwater increments without clearing default",
+  "input_fact_authentication": "NONE; completeness/prior-confirmed/quote/time/first-deadline/action-budget are externally supplied facts",
+  "target_bridge": "NOT_IMPLEMENTED_NOT_REVIEWED_NOT_RUN",
+  "full_field_differential": "BLOCKED_PENDING_WIRE_AND_SEMANTIC_REVIEW",
+  "rejection_contract": "Only explicit known reference reject/unsupported types become business classifications; unexpected exceptions escape as technical failures",
+  "activation_permission": false,
+  "D2": "BLOCKED"
+}
