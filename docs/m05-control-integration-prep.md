@@ -1,5 +1,7 @@
 # M05 控制面整合 PREP：6010 runtime 不变，尚未执行
 
+本页保存 a365f37 的历史 PREVIEW；后续 component CODE 闭合、dispatch 单行依赖修复和独立一次 combined 的当前状态见 `m05-combined-first-source.md` 与 current `policy.json`。原 `policy-first-pending.json`、原 static 首记录及本页中的未跑描述不回写成新结果。
+
 next_run_permitted=false。本树基于6010e920a168b35fccfc9ef9ee34e030b28b11d9，保留其已交付ff814业务runtime；只整合M0控制、测试、公共打包选择和证据。没有执行combined PURE、导入业务/控制模块、SQL/native/crypto/网络/CI、创建M05 marker或触发ref、push。component旧结果不转移成该整合树的通过记录。
 
 ## 来源与安全合并边界

@@ -6,7 +6,7 @@
   "M04_safe": "69d2c069fadd446a6a84648dc8fcbb8d6a8ce7ad",
   "actual_SQL_native_owner_crypto_network_or_CI": false,
   "actual_marker_created": false,
-  "all_component_CODE_reviews_closed": false,
+  "all_component_CODE_reviews_closed": true,
   "branch": "refs/heads/perf/approved-m0-20261117-05",
   "budgets": {
     "case_bytes": 33554432,
@@ -26,11 +26,28 @@
     "total_logical_bytes": 201326592,
     "watchdog_scope": "new owned session: source checks, driver, parser, hashes, fsync and staged safe output"
   },
-  "candidate_phase": "CODE_PREP_FS_REVIEW_PENDING",
+  "candidate_phase": "CODE_FIXED_COMBINED_FIRST_AUTHORIZED_NOT_RUN",
   "capacity_approved": false,
   "combined_PURE_process_permission_requires_root_explicit_scope": true,
   "combined_PURE_real_stdlib_child_spawn_expected_by_source": 6,
-  "combined_new_tree_PURE": "NOT_RUN_REQUIRES_SEPARATE_ROOT_BUDGET",
+  "combined_first_authorized_scope": {
+    "actual_M05_authorized": false,
+    "cpu": 2,
+    "discovery_pattern": "test_independent_m0_*.py",
+    "outer_seconds": 30,
+    "real_stdlib_children_max": 6,
+    "required_guards": [
+      "parent_and_child_process",
+      "SQL_import_and_connect",
+      "UTA_import",
+      "network",
+      "signals",
+      "threads",
+      "native_execution"
+    ],
+    "test_modules": 9
+  },
+  "combined_new_tree_PURE": "NOT_RUN_AUTHORIZED_ONE_FIXED_SOURCE_CPU2_OUTER30S",
   "command_spec": {
     "argv_templates": [
       [
@@ -93,7 +110,8 @@
     "FS": {
       "code": "4f316a89da1a001a9670a41cfeca754e67de1401",
       "old_c524_19PASS1RED_preserved": true,
-      "status": "INDEPENDENT_TOKEN_PROOF_REVIEW_PENDING",
+      "review": "837bd0ac8c43550590d8637000dea18db746d3ff",
+      "status": "INDEPENDENT_CODE_CLOSED",
       "tip": "3cc254db1d59f805a6d64825d75360a7f31aad41"
     },
     "cold": {
@@ -114,6 +132,11 @@
   "external_persistent_spent_registry": false,
   "kind": "M05_INTEGRATION_PREP_ONLY",
   "next_run_permitted": false,
+  "preview_review": {
+    "commit": "d49e85e73f629b44a0a980d5a75d8a83f6530cae",
+    "dispatch_sparse_dependency": "FIXED_EXACT_SINGLE_LINE",
+    "original_a365_first_pending_preserved": true
+  },
   "production_approved": false,
   "public_recipient_spki": "de01fcb8516224fd3d91f442899d582c4fcaa5aadfac8e91b45f680307ed3ab1",
   "push_or_dispatch_performed": false,
@@ -131,5 +154,9 @@
     "04"
   ],
   "trigger_ref_created": false,
-  "version": 1
+  "version": 2,
+  "workflow_sha256": {
+    ".github/workflows/independent-m0-once.yml": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
+    ".github/workflows/independent-m0.yml": "b6e6caca4d472e107f41b20b58e49294f07c16bf685a5c5300a7888b543a21ed"
+  }
 }
