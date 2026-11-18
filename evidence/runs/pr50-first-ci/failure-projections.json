@@ -1,0 +1,35 @@
+{
+  "failure_does_not_establish_candidate_causality": true,
+  "first_run_failure_preserved": true,
+  "green_fixed_push_sample_does_not_override_failure": true,
+  "production_acceptance_blocked": true,
+  "rows": [
+    {
+      "assertion": "financial_ready was False at final assertTrue after publishing replacement market",
+      "canonical_test_id": "test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused",
+      "cause": "UNRESOLVED",
+      "diagnostic_state_for_that_assertion_captured": false,
+      "kind": "FAIL",
+      "observed_source_site": "tests/test_process_readiness.py:158",
+      "selection": "pull313-unit"
+    },
+    {
+      "canonical_test_id": "test_owned_startup.OwnedStartupTests.test_additional_guarded_schema_after_full_replay_cannot_extend_frozen_manifest",
+      "cause": "UNRESOLVED",
+      "exception_code": "lease_expired",
+      "exception_type": "uta.writer_fence.WriterFenceError",
+      "kind": "ERROR",
+      "lease_error_native_observation_available": false,
+      "observed_source_site": "tests/test_owned_startup.py:229",
+      "phase": "context entry before intended schema-change assertion",
+      "selection": "push312-unit",
+      "stack_sites": [
+        "uta/startup.py:211",
+        "uta/writer_fence.py:533",
+        "uta/writer_fence.py:295"
+      ]
+    }
+  ],
+  "targeted_rerun": false,
+  "timeout_or_lease_threshold_changed": false
+}

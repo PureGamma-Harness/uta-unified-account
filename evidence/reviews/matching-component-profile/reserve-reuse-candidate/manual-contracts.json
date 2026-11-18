@@ -1,0 +1,30 @@
+{
+  "kind": "HUMAN_REVIEW_EXPECTATIONS_NOT_EXECUTED_RESULTS",
+  "required_arithmetic_error": "0 exact rational; no tolerance",
+  "native_scope": "legacy USD linear perpetual, native scan only; both fresh fixed32 books",
+  "capacities_in_order": [0, 128],
+  "seed": 17055,
+  "initial_economic_keys": [
+    {"quantity": "1", "limit_price": "100"},
+    {"quantity": "2", "limit_price": "101"},
+    {"quantity": "5", "limit_price": "102"},
+    {"quantity": "-1", "limit_price": "100"},
+    {"quantity": "-2", "limit_price": "99"},
+    {"quantity": "-5", "limit_price": "98"}
+  ],
+  "initial_key_other_inputs": {"filled_quantity": "0", "mark_price": "100", "reduce_only": false, "initial_margin_rate": "0.1", "fee_notional": "0", "charged_fee": "0", "fee_rate": "0.0004", "usd_scale": 8},
+  "diagnostic_expectations": {
+    "reference0_service": {"capacity": 0, "size": 0, "hits": 0, "misses": 0, "evictions": 0, "note": "native service bypasses kernel and runs original Fraction reference; counters do not count these calculations"},
+    "candidate128_after_setup": {"capacity": 128, "size": 6, "misses": 6, "hits": ">0 actually observed", "evictions": 0},
+    "candidate128_matching_delta": {"hits": ">0 actually observed", "misses": "0..16 inclusive", "evictions": 0, "end_size": "at most22"},
+    "candidate128_new_miss_bound_reason": "six distinct initial keys; at most one new remainder tuple per sixteen individual fills; no other input changes in fixed matching window",
+    "eviction_arithmetic_fixture": {"capacity": 2, "order": ["A100", "B101", "A100", "C102", "B101"], "reserves": ["10.04", "11.15", "10.04", "12.25", "11.15"], "hits": 1, "misses": 4, "evictions": 2, "size": 2}
+  },
+  "native_per_authority": {"accounts": 2, "deposit_per_account_USD": "1000000", "initial_orders": 32, "matching_calls": 1, "confirmed_matches": 8, "paired_fills": 16, "historical_numeric_FILL_replay_samples": 1, "warmup": 0, "retry": 0},
+  "must_compare_exact": ["economic_projection before/after reopen and across authorities", "nine non-temporal risk fields including all version/state/ratio fields", "market version/assets/instruments", "account views", "complete policy except explicit reserve_cache_size execution option", "same native financial runtime artifact"],
+  "provenance_only_exceptions": ["risk observed_at is quote asof, separately verified against actual quote payload/SHA/ID/history and native UTC TTL", "order and match created_at wall time, retained in raw", "audited reserve_cache_size execution option and its derived policy ID"],
+  "outside_this_native_scope": ["configured policy and product eligibility/multiplier mutations", "MM-only and rule-version changes", "stale or incomplete quote injection", "concurrency, writer-token/fencing failure, commit/disk faults", "borrow/interest/expiry/mode changes", "options, inverse and non-unit multipliers"],
+  "outside_scope_policy_oracles": "docs/performance/exact-reserve-reuse-candidate.md R13..R16; existing tests are listed for future separately authorized regression, not claimed run",
+  "production_approved": false,
+  "executions": 0
+}
