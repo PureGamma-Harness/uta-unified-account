@@ -1,6 +1,6 @@
 # D2 companion 导出：新 SOURCE 的首 PURE 结果
 
-最新状态：固定 SOURCE `8594a35827b0e064584113de48fda2490cb1c98e` / tree `ee5699814d37bbfb5d1ccb08e2c8bd5358f16fa3` 在 root 具体条件预算、独立 CODE_ONLY READY 与闭包核对后，首次一次 **76 PASS / 0 fail/errors/skips / exit0，CPU2，target child0**；外层 389,344,436ns，target计量 169,015,517ns，stdout0B / stderr12,384B。无重跑。首原件逐字节保存在 `first-pure-8594a35/`，当前状态另见 `current-status.json`；独立 raw 绑定复核尚待闭合。此通过仅验证合成 capture/export 合约，默认 FLAG 仍 false、next_run_permitted=false，kernel backend 仍 NOT_IMPLEMENTED / NOT_VERIFIED，无实际GHA/M06/M05补录。
+最新状态：固定 SOURCE `8594a35827b0e064584113de48fda2490cb1c98e` / tree `ee5699814d37bbfb5d1ccb08e2c8bd5358f16fa3` 在 root 具体条件预算、独立 CODE_ONLY READY 与闭包核对后，首次一次 **76 PASS / 0 fail/errors/skips / exit0，CPU2，target child0**；外层 389,344,436ns，target计量 169,015,517ns，stdout0B / stderr12,384B。无重跑。首原件逐字节保存在 `first-pure-8594a35/`，当前状态另见 `current-status.json`；独立只读 raw 绑定复核已闭合（PURE_ONLY PASS）。此通过仅验证合成 capture/export 合约，默认 FLAG 仍 false、next_run_permitted=false，kernel backend 仍 NOT_IMPLEMENTED / NOT_VERIFIED，无实际GHA/M06/M05补录。
 
 冻结 CODE 阶段的历史描述如下；其中“本轮未跑/待授权计划”已由上述唯一首 PURE 事实 supersede，冻结 policy/static-provenance 与原件不回写：
 

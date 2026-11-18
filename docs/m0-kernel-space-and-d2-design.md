@@ -1,6 +1,6 @@
 # 新资源协议与 D2：CODE / 设计，全部能力未验证
 
-当前后续阶段：默认关闭的 D2 persistent companion 在固定新 SOURCE `8594a35827b0e064584113de48fda2490cb1c98e` 首次 focused PURE 76 PASS / child0 / exit0，独立 raw 绑定复核尚待闭合；详见 [m0-d2-companion-export.md](m0-d2-companion-export.md)。默认开关仍 false，原 kernel backend 仍 NOT_IMPLEMENTED / NOT_VERIFIED。下文关于“persistent export 尚未实现”的文字是固定3040阶段历史，已被后续 CODE/PURE 状态 supersede，不构成实际 GHA/M06 或生产授权。
+当前后续阶段：默认关闭的 D2 persistent companion 在固定新 SOURCE `8594a35827b0e064584113de48fda2490cb1c98e` 首次 focused PURE 76 PASS / child0 / exit0，独立只读 raw 绑定复核已闭合（PURE_ONLY PASS）；详见 [m0-d2-companion-export.md](m0-d2-companion-export.md)。默认开关仍 false，原 kernel backend 仍 NOT_IMPLEMENTED / NOT_VERIFIED。下文关于“persistent export 尚未实现”的文字是固定3040阶段历史，已被后续 CODE/PURE 状态 supersede，不构成实际 GHA/M06 或生产授权。
 
 最新状态：固定 source `3040d09b576009893c6630f3c19ef4ad35fd774d` / tree `37e3cefe1fd6e318a7094597d6c88ebfe84899b3` 已在root条件预算与独立CODE_ONLY READY后首次运行一次受guard纯batch：**120 unittest条目PASS / 0fail/errors/skips / exit0，CPU2，264,358,860ns，child0**。其中24条新D2/interface测试；静态99个声明方法之外，原RouterAuxContract继承21个ResourceRaceContract方法，因此实际120，不是额外模块或新能力。原stdout为空，stderr19,721字节，合计低于100KiB；外prlimit每文件50KiB，原件保存在 `first-pure-3040d09/`。没有重跑或过滤继承条目。此通过仅是D2与NOT_IMPLEMENTED接口纯正确性，**不是kernel cap实际验证**；physical backend、persistent D2 export、新GHA仍NOT_IMPLEMENTED/NOT_RUN，next_run_permitted=false。
 
