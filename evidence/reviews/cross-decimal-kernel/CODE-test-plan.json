@@ -1,0 +1,78 @@
+{
+  "activation_limit": "No service/default/API/writer/module-list change. Added source has at-rest source identity but no activated loaded-credit-engine/admission capability. Future adapter integration needs separate explicit review.",
+  "base": "7665253ced0888e8204b9806b63c4163f2cafe42",
+  "execution_authorized": false,
+  "execution_entry_status": "Fixed selectors only, no executable once launcher supplied or authorized. Normal whole-module semantics required; do not extract service/model AST or use current files as historical pins.",
+  "fixed_differential_grid_cases": 96,
+  "kind": "CROSS_DECIMAL_KERNEL_FIXED_PURE_SCOPE_CODE_NOT_EXECUTION",
+  "manual_case_ids": [
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "M06",
+    "M07",
+    "M08",
+    "M09",
+    "M10",
+    "M11",
+    "M12"
+  ],
+  "not_selected": [
+    "test_credit_lease_observation_tag entire module (CODE compatibility reviewed only)",
+    "SQL/native service/matching/settlement/worker tests",
+    "performance or statistical comparisons"
+  ],
+  "oracles": {
+    "differential": "unchanged portfolio.calculate_cross_risk used only as test oracle; candidate does not call its arithmetic",
+    "literal_manual": "manual-cases.json authored at a25b45d before implementation",
+    "metadata": "existing versions/market ID exactly retained",
+    "representation": "every Decimal.as_tuple plus all CrossRisk fields and borrow entries"
+  },
+  "performance": "NOT_OBSERVED",
+  "preconditions": {
+    "bounded_whole_module_entry_and_caller_CODE": "NOT_PREPARED_NOT_GO",
+    "financial_rules_human_approval": "PENDING",
+    "independent_financial_CODE": "PENDING",
+    "root_exact_once_GO_required": true
+  },
+  "production_approved": false,
+  "resource_proposal_only": {
+    "CPU_count": 1,
+    "PID_proc_signal": 0,
+    "SQLite_connect_SQL": 0,
+    "benchmark": 0,
+    "drain_classification_seconds": 2,
+    "logical_control_bytes": 8388608,
+    "network": 0,
+    "passive_stdlib_imports": "unittest.mock may import asyncio/subprocess modules; no process/network operations allowed",
+    "retry": 0,
+    "shared_raw_bytes_including512trailer": 32768,
+    "target_application_thread_starts": 0,
+    "target_process_starts": 0,
+    "target_seconds": 10
+  },
+  "schema": 1,
+  "selected_methods": 9,
+  "selectors": [
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_full_manual_multi_asset_and_same_coin_gross_debt",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_subcurrency_tier_and_separate_cash_deficit_manual_cases",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_linear_long_short_multiplier_and_legitimate_cost_dust",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_zero_maintenance_equal_maintenance_and_order_reserve_boundaries",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_integer_borrow_floor_and_strict_maintenance_cap_manual_cases",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_fixed_differential_grid_under_hostile_context_and_model_immutability",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_large_model_bounded_values_and_zero_representation_are_exact",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_invalid_scalar_and_explicit_unsupported_specializations",
+    "test_cross_decimal_kernel.CrossDecimalKernelTests.test_candidate_does_not_call_reference_arithmetic_or_collateral_method"
+  ],
+  "source_commit": "a819182c35b79561277321bcef24ed706346b4ea",
+  "source_manifest": {
+    "bytes": 18101,
+    "path": "evidence/reviews/cross-decimal-kernel/source-manifest.json",
+    "sha256": "37fb201e6e17a1155e5e8afdd18e509da31947c213164fb482083b1a9736052b"
+  },
+  "target_attempts": 0,
+  "target_import_compile_SQL": 0,
+  "unsupported": "nonexact model/Decimal subclasses; nonCross mode/nonUSD settlement/unsupported position products/hedges; scenario/PM/Isolated; service ratio and settlement-unit quantization unchanged outside candidate"
+}
