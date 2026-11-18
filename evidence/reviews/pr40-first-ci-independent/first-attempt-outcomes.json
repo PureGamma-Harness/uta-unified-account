@@ -1,0 +1,174 @@
+{
+  "schema": 1,
+  "collection_conclusion": "EVIDENCE_COMPLETE_WITH_FIRST_EXACT_HEAD_PUSH_FAILURE",
+  "pr_url": "https://github.com/PureGamma-Harness/uta-unified-account/pull/40",
+  "head_sha": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "base_sha": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "draft": true,
+  "first_merge_ref": {
+    "sha": "9b22adddd07cad796eb042d2179d2a78a26b8f38",
+    "parents": [
+      "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+      "a2434bdfe711ead1d202f6c1527e527f73e2dfa2"
+    ],
+    "tree_sha": "fdbe93d1cb5d4be863cb64cead05014934283f06",
+    "tree_equal_to_headC": true
+  },
+  "observations": {
+    "first_runs_utc": "2026-11-18T05:04:06Z",
+    "first_attempt1_jobs_utc": "2026-11-18T05:06:04Z",
+    "poll2_utc": "2026-11-18T05:08:33Z",
+    "terminal_poll_utc": "2026-11-18T05:12:40Z",
+    "later_poll_intervals_seconds": [
+      149,
+      247
+    ],
+    "stopped_after_terminal": true
+  },
+  "runs": [
+    {
+      "event": "push",
+      "run_id": 44241282705,
+      "run_attempt": 1,
+      "head_sha": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+      "qualification": "EXACT_HEAD_PUSH",
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44241282705",
+      "jobs": [
+        {
+          "job_id": 134589520971,
+          "name": "test (3.10)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-11-18T05:01:15Z",
+          "completed_at": "2026-11-18T05:08:06Z",
+          "failed_steps": [
+            "Run unit tests"
+          ],
+          "unit_original_audited": true,
+          "selected_package_reports_audited": false
+        },
+        {
+          "job_id": 134589521456,
+          "name": "test (3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:16Z",
+          "completed_at": "2026-11-18T05:09:29Z",
+          "failed_steps": [],
+          "unit_original_audited": false,
+          "selected_package_reports_audited": false
+        },
+        {
+          "job_id": 134589521552,
+          "name": "test (3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:16Z",
+          "completed_at": "2026-11-18T05:09:16Z",
+          "failed_steps": [],
+          "unit_original_audited": false,
+          "selected_package_reports_audited": true
+        },
+        {
+          "job_id": 134589521556,
+          "name": "test (3.13)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:16Z",
+          "completed_at": "2026-11-18T05:09:42Z",
+          "failed_steps": [],
+          "unit_original_audited": false,
+          "selected_package_reports_audited": false
+        }
+      ]
+    },
+    {
+      "event": "pull_request",
+      "run_id": 44241334703,
+      "run_attempt": 1,
+      "head_sha": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+      "qualification": "PR_EVENT_EXPECTED_MERGE_REF_METADATA_ONLY",
+      "expected_checkout_sha": "9b22adddd07cad796eb042d2179d2a78a26b8f38",
+      "actual_unit_source_map_downloaded": false,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/PureGamma-Harness/uta-unified-account/actions/runs/44241334703",
+      "jobs": [
+        {
+          "job_id": 134589691563,
+          "name": "test (3.12)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:42Z",
+          "completed_at": "2026-11-18T05:09:42Z",
+          "failed_steps": [],
+          "unit_original_audited": false
+        },
+        {
+          "job_id": 134589691813,
+          "name": "test (3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:42Z",
+          "completed_at": "2026-11-18T05:08:02Z",
+          "failed_steps": [],
+          "unit_original_audited": false
+        },
+        {
+          "job_id": 134589691857,
+          "name": "test (3.13)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:42Z",
+          "completed_at": "2026-11-18T05:08:51Z",
+          "failed_steps": [],
+          "unit_original_audited": false
+        },
+        {
+          "job_id": 134589691868,
+          "name": "test (3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-18T05:01:42Z",
+          "completed_at": "2026-11-18T05:10:05Z",
+          "failed_steps": [],
+          "unit_original_audited": false
+        }
+      ]
+    }
+  ],
+  "selected_downloads": {
+    "failed_unit_archives": 1,
+    "failed_job_logs": 1,
+    "successful_exactC_push_package_report_archives": 1,
+    "wheel_or_sdist_payloads": 0,
+    "all_valid_archives_provider_digest_matched": true,
+    "unit_zip_bytes": 89541,
+    "package_report_zip_bytes": 58938,
+    "unit_and_failed_log_limit_bytes_each": 2097152,
+    "package_report_limit_bytes": 1048576,
+    "total_private_limit_bytes": 67108864,
+    "initial_direct_provider_redirect_http403_receipts_retained": true,
+    "authorized_connector_retrieval_used": true,
+    "failed_job_log_capture": "connector decoded UTF-8, not a claim of original wire bytes",
+    "failed_job_log_utf8_bytes": 27619,
+    "failed_job_log_utf8_sha256": "c911b71b643d460dea097873f9e210be370d0f25d946b9b70c8ec6a9b1ed2cc4",
+    "selected_package_interpreter": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+    "selected_package_sqlite": "3.46.1"
+  },
+  "qualification_limits": {
+    "success_jobs_do_not_erase_push_failure": true,
+    "merge_status_does_not_substitute_for_exact_head_push": true,
+    "successful_unit_originals_not_downloaded_to_expand_scope": true,
+    "unit_source_map_excludes_docs_and_evidence": true,
+    "changed22_paths_bound_by_selected_package_report": true,
+    "new_snapshot_sql_settlement_and_throughput_acceptance": false,
+    "production_or_real_funds_approved": false
+  },
+  "rerun_or_fix_or_new_push_performed": false,
+  "local_target_import_test_sql_pid_signal_network_probe_performed": false,
+  "network_scope": "Authorized GitHub metadata/log/artifact reads and connector file transport only",
+  "raw_signed_urls_keys_nonces_published": false
+}

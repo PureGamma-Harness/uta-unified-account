@@ -1,0 +1,91 @@
+{
+  "actual_sqlite_execution_authorized": false,
+  "budget": {
+    "actual_cpu_id": "record actual allowed one; do not infer CPU1",
+    "allowed_cpu_count": 1,
+    "application_children": 0,
+    "application_thread_starts": 0,
+    "driver_seconds": 30,
+    "mandatory_json_report_cap_each": 4194304,
+    "mini_source_bytes_cap": 2097152,
+    "network": 0,
+    "new_run_logical_bytes": 67108864,
+    "proc_pidfd_signal_operations": 0,
+    "raw_combined_bytes": 524288,
+    "raw_reserved_trailer_bytes": 512,
+    "worker_processes": 0
+  },
+  "budget_limitations": [
+    "64MiB is monitored logical file lengths, not kernel directory quota.",
+    "SQLite C writes may grow between application checks; no blocked-I/O hard realtime proof.",
+    "Python report bytes reserve before write; output hardcap covers frozen source's Python streams.",
+    "Python threading.active_count end-state is not kernel thread enumeration.",
+    "No exact external monotonic lifecycle timer promised; retain complete whole-call tool observation and own driver elapsed separately."
+  ],
+  "cases": [
+    "fifo-stp-partial",
+    "reduce-only-cross-cancel",
+    "second-leg-freeze",
+    "no-liquidity-halt"
+  ],
+  "command": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/matching-selection-snapshot/sqlite_once.py",
+    "--run-root",
+    "/workspace/uta-matching-sqlite-d517ea2-once01",
+    "--source-commit",
+    "d517ea250628517b22c3193afbbded6f00f48624",
+    "--approved-manifest-sha256",
+    "b0e982f8af66d1f59f772e36e1297ff56795621265d11eef4fef11e92fdfc0e4"
+  ],
+  "expected_matches_per_mode": 6,
+  "expected_paired_fills_per_mode": 12,
+  "forbidden": [
+    "old authority or old10protectedPID inspection/signal",
+    "worker/router/managed supervisor/child/newthread/network/socket/TLS/AuthDB",
+    "custom clocks/method substitution/fake mark fills/TTL fee policy relaxations",
+    "old suite rerun/warmup/retry/deleting prior data/reusing run directory",
+    "whole209MiB checkout copy/build/install/benchmark/10k or realfund activation"
+  ],
+  "invocations": 1,
+  "mandatory_checks": [
+    "All4scenarios in both modes complete; no invented fills.",
+    "Default native classes/clock/fees/marketTTL; no method monkeypatch or configured policy model.",
+    "WAL/FULL actual financial transaction settings.",
+    "Exact economic projection including complete ledger hashchain, postings, fills, costs, businessIDs, reservations and versions.",
+    "Only explicit timestamp fields/time-derived market references excluded from paired comparison; all raw originals retained and own quote SHA/reference/version/time verified.",
+    "Real second-leg account_frozen: buyer state+ledger unchanged, seller onlycancelled, strict0fills.",
+    "Fresh next-batch view and partialROcrosscancel actual orders.",
+    "Native service reopen exact projection; ledger.verify; Matcher.verify(strict=True); independent reconcile_exchange.",
+    "One actualFILL numeric audit replay per nonempty authority, explicitly a sample.",
+    "All module origins and63 original/snapshot beforeafter SHA match.",
+    "Fullfirst stdoutstderr/actual exit/reports and inventory retained; any missing/budget failure is FAILorUNKNOWN."
+  ],
+  "manifest_sha256": "b0e982f8af66d1f59f772e36e1297ff56795621265d11eef4fef11e92fdfc0e4",
+  "modes": [
+    "scan",
+    "snapshot"
+  ],
+  "new_authorities": 8,
+  "performance_accepted": false,
+  "preparation_execution_authorized": false,
+  "production_approved": false,
+  "public_candidate_frozen_separately": true,
+  "pure037_source_and_raw_unchanged": true,
+  "retries": 0,
+  "schema": 1,
+  "source_commit": "d517ea250628517b22c3193afbbded6f00f48624",
+  "source_inventory": {
+    "UTA_python": 61,
+    "actual_UTA_import_root": "new readonly private mini source only",
+    "materialization_record": "evidence/reviews/matching-selection-snapshot/sqlite-materialization-first.json",
+    "new_runners": 2,
+    "source_before_and_after": "both original and snapshot maps",
+    "total_bytes": 1326051,
+    "total_pinned_files": 63
+  },
+  "status": "CODE_ONLY_AWAITING_INDEPENDENT_REVIEW_AND_ROOT_SQLITE_ONCE_GO",
+  "warmup_runs": 0
+}

@@ -1,0 +1,123 @@
+{
+  "first_reader_error_commit": "69b4958",
+  "performance_accepted": false,
+  "production_approved": false,
+  "reader_kind": "independent captured JSON/file byte verifier, not target or SQL execution",
+  "reader_sha256": "85303e06d259563b347246c2fb5d7bbd4727a784b9fa6e158d1214986b50a0fa",
+  "review_result": {
+    "Git_bound_public_files": 19,
+    "byte_exact_private_report_copies": 11,
+    "captured_exit": 0,
+    "captured_loaded_UTA_origins": 18,
+    "captured_stdout_bytes": 76270,
+    "case_reviews": [
+      {
+        "case": "fifo-stp-partial",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 8,
+        "ledger_postings": 16,
+        "matches": 2,
+        "mode": "scan",
+        "paired_fills": 4
+      },
+      {
+        "case": "fifo-stp-partial",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 8,
+        "ledger_postings": 16,
+        "matches": 2,
+        "mode": "snapshot",
+        "paired_fills": 4
+      },
+      {
+        "case": "reduce-only-cross-cancel",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 9,
+        "ledger_postings": 22,
+        "matches": 3,
+        "mode": "scan",
+        "paired_fills": 6
+      },
+      {
+        "case": "reduce-only-cross-cancel",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 9,
+        "ledger_postings": 22,
+        "matches": 3,
+        "mode": "snapshot",
+        "paired_fills": 6
+      },
+      {
+        "case": "second-leg-freeze",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 2,
+        "ledger_postings": 4,
+        "matches": 0,
+        "mode": "scan",
+        "paired_fills": 0
+      },
+      {
+        "case": "second-leg-freeze",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 2,
+        "ledger_postings": 4,
+        "matches": 0,
+        "mode": "snapshot",
+        "paired_fills": 0
+      },
+      {
+        "case": "no-liquidity-halt",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 4,
+        "ledger_postings": 8,
+        "matches": 1,
+        "mode": "scan",
+        "paired_fills": 2
+      },
+      {
+        "case": "no-liquidity-halt",
+        "independent_captured_cash_cost_fee_and_hash_checks": true,
+        "ledger_events": 4,
+        "ledger_postings": 8,
+        "matches": 1,
+        "mode": "snapshot",
+        "paired_fills": 2
+      }
+    ],
+    "checkpoint_count": 470,
+    "driver_end_seconds": 10.144206064011087,
+    "independent_data_reader_uses_no_UTA_core": true,
+    "kernel_directory_quota_proven": false,
+    "outer_monotonic_seconds": null,
+    "owner_seal_commit": "3da0ee847042e995dae57778a8f7f3a7245cfeb5",
+    "past_native_execution_evidence": "fixed source plus captured outputs and exported SQL rows; no independent live kernel or SQL reexecution",
+    "per_mode": {
+      "scan": {
+        "matches": 6,
+        "paired_fills": 12
+      },
+      "snapshot": {
+        "matches": 6,
+        "paired_fills": 12
+      }
+    },
+    "performance_accepted": false,
+    "private_inventory_bytehash_entries": 82,
+    "private_report_bytes": 4906804,
+    "production_approved": false,
+    "reviewer_PID_network_probes": 0,
+    "reviewer_SQL_connections": 0,
+    "reviewer_target_reexecutions": 0,
+    "sealed_files": 17,
+    "snapshot_source_pins": 63,
+    "source_commit": "3b0c49a6df6773ea7cdb208945541480ea091ea8",
+    "status": "SCOPED_ACTUAL_SQLITE_EVIDENCE_PASS"
+  },
+  "reviewer_execution": {
+    "chunk_id": "a8fb45",
+    "exit_code": 0,
+    "original_token_count": 770,
+    "output": "{\n  \"Git_bound_public_files\": 19,\n  \"byte_exact_private_report_copies\": 11,\n  \"captured_exit\": 0,\n  \"captured_loaded_UTA_origins\": 18,\n  \"captured_stdout_bytes\": 76270,\n  \"case_reviews\": [\n    {\n      \"case\": \"fifo-stp-partial\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 8,\n      \"ledger_postings\": 16,\n      \"matches\": 2,\n      \"mode\": \"scan\",\n      \"paired_fills\": 4\n    },\n    {\n      \"case\": \"fifo-stp-partial\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 8,\n      \"ledger_postings\": 16,\n      \"matches\": 2,\n      \"mode\": \"snapshot\",\n      \"paired_fills\": 4\n    },\n    {\n      \"case\": \"reduce-only-cross-cancel\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 9,\n      \"ledger_postings\": 22,\n      \"matches\": 3,\n      \"mode\": \"scan\",\n      \"paired_fills\": 6\n    },\n    {\n      \"case\": \"reduce-only-cross-cancel\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 9,\n      \"ledger_postings\": 22,\n      \"matches\": 3,\n      \"mode\": \"snapshot\",\n      \"paired_fills\": 6\n    },\n    {\n      \"case\": \"second-leg-freeze\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 2,\n      \"ledger_postings\": 4,\n      \"matches\": 0,\n      \"mode\": \"scan\",\n      \"paired_fills\": 0\n    },\n    {\n      \"case\": \"second-leg-freeze\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 2,\n      \"ledger_postings\": 4,\n      \"matches\": 0,\n      \"mode\": \"snapshot\",\n      \"paired_fills\": 0\n    },\n    {\n      \"case\": \"no-liquidity-halt\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 4,\n      \"ledger_postings\": 8,\n      \"matches\": 1,\n      \"mode\": \"scan\",\n      \"paired_fills\": 2\n    },\n    {\n      \"case\": \"no-liquidity-halt\",\n      \"independent_captured_cash_cost_fee_and_hash_checks\": true,\n      \"ledger_events\": 4,\n      \"ledger_postings\": 8,\n      \"matches\": 1,\n      \"mode\": \"snapshot\",\n      \"paired_fills\": 2\n    }\n  ],\n  \"checkpoint_count\": 470,\n  \"driver_end_seconds\": 10.144206064011087,\n  \"independent_data_reader_uses_no_UTA_core\": true,\n  \"kernel_directory_quota_proven\": false,\n  \"outer_monotonic_seconds\": null,\n  \"owner_seal_commit\": \"3da0ee847042e995dae57778a8f7f3a7245cfeb5\",\n  \"past_native_execution_evidence\": \"fixed source plus captured outputs and exported SQL rows; no independent live kernel or SQL reexecution\",\n  \"per_mode\": {\n    \"scan\": {\n      \"matches\": 6,\n      \"paired_fills\": 12\n    },\n    \"snapshot\": {\n      \"matches\": 6,\n      \"paired_fills\": 12\n    }\n  },\n  \"performance_accepted\": false,\n  \"private_inventory_bytehash_entries\": 82,\n  \"private_report_bytes\": 4906804,\n  \"production_approved\": false,\n  \"reviewer_PID_network_probes\": 0,\n  \"reviewer_SQL_connections\": 0,\n  \"reviewer_target_reexecutions\": 0,\n  \"sealed_files\": 17,\n  \"snapshot_source_pins\": 63,\n  \"source_commit\": \"3b0c49a6df6773ea7cdb208945541480ea091ea8\",\n  \"status\": \"SCOPED_ACTUAL_SQLITE_EVIDENCE_PASS\"\n}\n",
+    "wall_time_seconds": 3.6042e-05
+  }
+}
