@@ -1,0 +1,67 @@
+{
+  "argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "tests/stopped_gate_recovery_probe.py",
+    "--execute",
+    "--case",
+    "all",
+    "--cpu",
+    "1",
+    "--output",
+    "/workspace/uta-spawn-native-once-private-20261117"
+  ],
+  "launcher_argv": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-c",
+    "import json,os,sys; os.sched_setaffinity(0,{1}); os.write(5,(json.dumps({'pid':os.getpid(),'cpu_ids':sorted(os.sched_getaffinity(0))})+'\\n').encode()); os.close(5); os.execv(sys.argv[1],sys.argv[1:])",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "tests/stopped_gate_recovery_probe.py",
+    "--execute",
+    "--case",
+    "all",
+    "--cpu",
+    "1",
+    "--output",
+    "/workspace/uta-spawn-native-once-private-20261117"
+  ],
+  "identity": {
+    "pid": 423040,
+    "state": "R",
+    "parent": 423038,
+    "group": 423040,
+    "session": 423040,
+    "birth_ticks": 8571612
+  },
+  "pidfd_used": true,
+  "cpu_ids": [
+    1
+  ],
+  "observed_child_cpu_ids": [
+    1
+  ],
+  "launcher_affinity_acknowledged": true,
+  "wall_seconds": 5.166487813999993,
+  "returncode": 0,
+  "watchdog_reason": null,
+  "outcome": "EXITED",
+  "stdout_stderr_complete": true,
+  "leader_reaped": true,
+  "streams": [
+    {
+      "path": "/workspace/uta-spawn-native-once-supervisor-20261117/driver.stdout",
+      "bytes": 136,
+      "observed_bytes": 136,
+      "sha256": "6ae110bb6947115277ffe6ebbbd73f101fb6d067c06777974da310ab26c582c5"
+    },
+    {
+      "path": "/workspace/uta-spawn-native-once-supervisor-20261117/driver.stderr",
+      "bytes": 0,
+      "observed_bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "outer_total_seconds": 5.302555279995431,
+  "under_30s": true
+}
