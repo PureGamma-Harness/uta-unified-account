@@ -1,0 +1,172 @@
+{
+  "conclusion": "SELECTED_FIRST_CI_EVIDENCE_PASS_WITH_EXACT_HEAD_PUSH_FAILURE_PRESERVED",
+  "directed_raw_export": {
+    "NOFOLLOW_NOATIME_stable_private_Git_copies": true,
+    "decoded_log_bytes": 27619,
+    "decoded_log_sha256": "c911b71b643d460dea097873f9e210be370d0f25d946b9b70c8ec6a9b1ed2cc4",
+    "finite_pattern_check": {
+      "matches": 0,
+      "not_full_security_audit": true,
+      "patterns": 9,
+      "scope": "five explicitly directed payloads only"
+    },
+    "log_representation": "Exact first saved connector-decoded UTF-8 with BOM; not HTTP wire bytes",
+    "manifest_sha256": "2d36066ca5bb8f0034a53d009c40a30382600cd5a7b0a6334467121dec37183b",
+    "member_count": 3,
+    "members_exact_exported_bytes_CRC32_sizes_and_SHA256": true,
+    "payload_bytes": 470712,
+    "payload_count": 5,
+    "provider_digest_and_length_equal": true,
+    "zip_bytes": 89541,
+    "zip_sha256": "f40438ac07ed26de922157137dc0fceb00f50436238623add809b7db6883b906"
+  },
+  "exact_head_C": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "failed_unit": {
+    "all_new_ids_unique_actual_log_ok": true,
+    "artifact": 14400281526,
+    "attempt": 1,
+    "breakpoint": "tests/test_durable_faults.py:1461 bounded SH capture precondition",
+    "errors": 0,
+    "failures": 1,
+    "fault_fixture_identical_to_PR35": true,
+    "independent_AST_declared_new_ids": 12,
+    "job": 134589520971,
+    "later_five_second_recovery_reached_proven": false,
+    "matching_optimization_cause_inferred": false,
+    "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+    "qualification": "EXACT_HEAD_PUSH",
+    "run": 44241282705,
+    "skipped": 0,
+    "source_C": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+    "source_before_after_count": 367,
+    "source_map_canonical_sha256": "afea21a16f907bc4f8f9a5dc99f722fe06bfa892c05c7a2f7ebf01457e48bafe",
+    "source_map_equals_before_after_and_each_Git_C": true,
+    "source_map_excludes_docs_and_evidence": true,
+    "sqlite": "3.46.1",
+    "test_log_matches_summary_SHA": true,
+    "tests_run": 2061,
+    "unique_failed_id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+    "worker_exit": 1
+  },
+  "first_safe_seal": "f9702630a0edd95469a9c03de8c93c75a2810451",
+  "head_tree": "fdbe93d1cb5d4be863cb64cead05014934283f06",
+  "only_new_paths_12_source_and_old_evidence_unchanged": true,
+  "original_first_five_files_unchanged": true,
+  "package_report": {
+    "all_changed_delivery_paths_selected": 22,
+    "all_member_CRC32_SHA256_sizes_verified": true,
+    "artifact": 14400062101,
+    "frozen_CLI_helper_source": "tests/test_durable_cli.py",
+    "helper_original_Git_manifest_copy_hashes_equal": true,
+    "installed_eight_actual_log_ids_unique_ok": true,
+    "installed_eight_recorded_commands_exit_zero": true,
+    "installed_isolated_pythonpath_unset": true,
+    "installed_module_origins_count_within_declared_site": 25,
+    "installed_tests": [
+      8,
+      0,
+      0,
+      0
+    ],
+    "job": 134589521552,
+    "member_count": 19,
+    "provider_digest_and_length_equal": true,
+    "qualification": "SINGLE_SUCCESSFUL_EXACT_HEAD_PUSH_JOB_REPORT_ONLY",
+    "required_files_equals_all_Git_C_tracked_paths": 6885,
+    "run": 44241282705,
+    "runtime_aggregate_recomputed_equals_archive_and_installed": true,
+    "runtime_files_each_Git_C": 62,
+    "seven_archive_checks_true": true,
+    "wheel_or_sdist_payload_independently_unpacked": false,
+    "zip_bytes": 58938,
+    "zip_sha256": "5e704a255cda37b2c4f493af30037ebc42f7231415924530e20ef6bf186f4820"
+  },
+  "preservation": {
+    "initial_direct_download_failed_zip_bytes": 0,
+    "initial_empty_zip_not_used_as_successful_artifact": true,
+    "package_v1_installed_ID_parser_false_retained": true,
+    "private_limit_bytes": 67108864,
+    "private_total_bytes": 512827,
+    "signed_headers_connector_private_JSON_not_read": true,
+    "unit_v1_parser_new12_count_zero_retained": true,
+    "v2_normalizes_original_display_only_no_original_or_CI_changes": true
+  },
+  "production_or_funds_or_snapshot_mode_SQL_settlement_throughput_acceptance": false,
+  "provider_terminal_metadata": {
+    "later_poll_intervals_seconds": [
+      149,
+      247
+    ],
+    "pull_request": {
+      "attempt": 1,
+      "conclusion": "success",
+      "expected_merge": "9b22adddd07cad796eb042d2179d2a78a26b8f38",
+      "expected_merge_base_head_parents_and_tree_equal_to_C": true,
+      "jobs_failed": 0,
+      "jobs_success": 4,
+      "raw_unit_originals_downloaded_or_reviewed": false,
+      "run": 44241334703
+    },
+    "push": {
+      "attempt": 1,
+      "conclusion": "failure",
+      "jobs_failed": 1,
+      "jobs_success": 3,
+      "run": 44241282705
+    }
+  },
+  "reviewed_delivery_files": {
+    "docs/pr40-first-ci-independent.md": {
+      "bytes": 5549,
+      "sha256": "4b3f5da4eaed6065d3cd40c6b689d00ea333eec36e39399280b455ba43d61edc"
+    },
+    "docs/pr40-first-ci-raw-export.md": {
+      "bytes": 4975,
+      "sha256": "552adbb9275e92e092e6567fae04145d7920e88b2b91b08b7a09f2d633319064"
+    },
+    "evidence/reviews/pr40-first-ci-independent/failed-push-python310-unit-audit.json": {
+      "bytes": 5298,
+      "sha256": "5a65af396e9c4d8bcce808e8981563810dcc0ea43e72a8d2685b43516ee3112f"
+    },
+    "evidence/reviews/pr40-first-ci-independent/first-attempt-outcomes.json": {
+      "bytes": 6359,
+      "sha256": "0ef562fb7c636a45f043c8a4bc91e1d4dae27869040e32fa539cf203ec80bdcc"
+    },
+    "evidence/reviews/pr40-first-ci-independent/manifest.json": {
+      "bytes": 1485,
+      "sha256": "114a71da7a69a8af29c9da210c95fc8a8d58ef580d879d24f4d2e1ea096fc97d"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-job-134589520971-connector-decoded.log": {
+      "bytes": 27619,
+      "sha256": "c911b71b643d460dea097873f9e210be370d0f25d946b9b70c8ec6a9b1ed2cc4"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/push-unit-3.10-14400281526-connector.zip": {
+      "bytes": 89541,
+      "sha256": "f40438ac07ed26de922157137dc0fceb00f50436238623add809b7db6883b906"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/raw-export-manifest.json": {
+      "bytes": 6307,
+      "sha256": "2d36066ca5bb8f0034a53d009c40a30382600cd5a7b0a6334467121dec37183b"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/summary.json": {
+      "bytes": 80243,
+      "sha256": "ac3f0ede54fc5f019d463d0647d63f01fcbc9d13bcd2f2b4c35b63a9e38b4f27"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/unittest.txt": {
+      "bytes": 273154,
+      "sha256": "c7cd2e91627f7151e6d152ee9b160d84c3f8753184ec41d5f16c0d1a27877058"
+    },
+    "evidence/reviews/pr40-first-ci-independent/raw-first-push-python310/unit-members/worker-result.json": {
+      "bytes": 155,
+      "sha256": "0c8503f66f4de51d3b519a3890b3af183021f5237b44835d9ebfc5d8de0b2ba1"
+    },
+    "evidence/reviews/pr40-first-ci-independent/selected-push-python311-package-audit.json": {
+      "bytes": 12383,
+      "sha256": "626e5ee421f11b77e9b6697ffc25ed0cecec745e83b65469c3dbf8149531a3a7"
+    }
+  },
+  "reviewed_tip": "cc415ea7478dd1a9c5498e533832f4b3d25e2392",
+  "reviewer_read_validator_note": "An initial independent assertion assigned cli_helper_sha256 to the verifier script. Frozen source shows it binds tests/test_durable_cli.py; the assertion was corrected to the actual contract. No original file or target execution changed.",
+  "reviewer_target_SQL_native_PID_signal_probe_network_API_download": 0,
+  "schema": "uta.pr40-ci-first-terminal-independent.v1"
+}

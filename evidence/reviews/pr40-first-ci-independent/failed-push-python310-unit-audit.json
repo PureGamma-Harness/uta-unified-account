@@ -1,0 +1,148 @@
+{
+  "arbitrary_private_payload_exported": false,
+  "archive_bytes": 89541,
+  "archive_sha256": "f40438ac07ed26de922157137dc0fceb00f50436238623add809b7db6883b906",
+  "artifact_id": 14400281526,
+  "audit_scope": "READ_ONLY_UNIT_ARTIFACT_ORIGINAL_NO_EXECUTION",
+  "code_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "counts": {
+    "errors": 0,
+    "expected_failures": 0,
+    "failures": 1,
+    "skipped": 0,
+    "tests_run": 2061,
+    "unexpected_successes": 0,
+    "unittest_passed": false
+  },
+  "derived_v1_parser_superseded": "v1 assumed Python3.11 full method display; Python3.10 displays class-only plus method; v2 normalizes canonical IDs without rerun.",
+  "entries": [
+    {
+      "bytes": 80243,
+      "crc32": "67c97866",
+      "crc_matches": true,
+      "name": "summary.json",
+      "sha256": "ac3f0ede54fc5f019d463d0647d63f01fcbc9d13bcd2f2b4c35b63a9e38b4f27"
+    },
+    {
+      "bytes": 155,
+      "crc32": "d893818b",
+      "crc_matches": true,
+      "name": "worker-result.json",
+      "sha256": "0c8503f66f4de51d3b519a3890b3af183021f5237b44835d9ebfc5d8de0b2ba1"
+    },
+    {
+      "bytes": 273154,
+      "crc32": "1269a6b7",
+      "crc_matches": true,
+      "name": "unittest.txt",
+      "sha256": "c7cd2e91627f7151e6d152ee9b160d84c3f8753184ec41d5f16c0d1a27877058"
+    }
+  ],
+  "expected_exactC_source_map_count": 367,
+  "failure_sections": [
+    {
+      "allowlisted_simple_assertions": [
+        "AssertionError: False is not true : read/stop races exhausted the bounded SH capture attempts"
+      ],
+      "causal_inference_from_matching_optimization": false,
+      "exception_classes": [
+        "AssertionError"
+      ],
+      "id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+      "kind": "FAIL",
+      "source_locations": [
+        {
+          "line": 1461,
+          "path": "tests/test_durable_faults.py"
+        }
+      ]
+    }
+  ],
+  "footer": [
+    "Ran 2061 tests in 395.179s",
+    "FAILED (failures=1)"
+  ],
+  "new12_all_ok": true,
+  "new12_expected_ids_equal": true,
+  "new12_ids": [
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_component_operation_counts_do_not_claim_end_to_end_throughput",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_constructor_default_scan_compatibility_and_explicit_mode_validation",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_cross_cancelled_reduce_only_heads_are_never_reused",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_empty_one_sided_uncrossed_and_zero_remaining_books",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_identity_priority_reversal_and_quantity_increase_fail_closed",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_native_guard_accepts_both_original_default_clock_declarations",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_native_guard_rejects_callbacks_overrides_and_unknown_components",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_numeric_priority_and_fifo_all_twenty_four_input_permutations",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_second_leg_rollback_restores_first_leg_before_next_peek",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_seeded_two_hundred_fifty_six_mutation_traces",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_self_trade_cancel_partial_fill_and_later_heads",
+      "outcome": "ok"
+    },
+    {
+      "display_format": "method_plus_class",
+      "id": "test_matching_selection_snapshot.SnapshotSelectionTests.test_transaction_boundary_and_fresh_next_batch",
+      "outcome": "ok"
+    }
+  ],
+  "new12_unique_count": 12,
+  "provider_digest_matches": true,
+  "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+  "qualification": "EXACT_HEAD_PUSH",
+  "schema": 1,
+  "source_map_count": 367,
+  "source_map_excludes_docs_evidence": true,
+  "source_map_mismatches": [],
+  "source_maps_equal": true,
+  "source_maps_match_exactC_git": true,
+  "source_unchanged": true,
+  "sqlite": "3.46.1",
+  "summary_passed": false,
+  "test_log_digest_matches": true,
+  "tracked_source_clean_after": true,
+  "tracked_source_clean_before": true,
+  "worker_exit_code": 1,
+  "worker_result_matches_summary": true,
+  "workflow_run_id": 44241282705
+}
