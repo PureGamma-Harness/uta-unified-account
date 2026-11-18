@@ -1,0 +1,114 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_FINANCIAL_ORACLE_CODE_REVIEW",
+  "CODE_result": "CLOSED_FIXED_TWO_ASSET_ENUMERATION_SPECIALIZATION_ONLY",
+  "source_commit": "7b449f30b417e043bf13a4f43540102b13c4d588",
+  "source_tree": "1b664154bdb65b1cd1b76b6da25e0bc8709b8977",
+  "source_parent_PR51": "667171d1f248f571b3f3386402bdc02f1fc0dc92",
+  "target_status": "NOT_RUN_0_NOT_RED",
+  "root_execution_GO": false,
+  "production_approved": false,
+  "blocking_findings_within_declared_fixed_oracle": [],
+  "binding": {
+    "canonical_regular_physical_Git_pins": 64,
+    "input_bytes": 1327705,
+    "all_lengths_and_SHA256_and_Git_objects_match": true,
+    "source_worktree_clean": true,
+    "unchanged_parent_UTA_Python_files": 62,
+    "plan_bytes": 11043,
+    "plan_sha256": "d95a7acbb2de9e7d3daab581cec076354315585fb2021521c97cfcc4a0778f87",
+    "test_bytes": 10770,
+    "test_sha256": "f4aec33b9bcb029f9f6eb4de8fba0783b7ab26e23908908e9099dd2da346a84a"
+  },
+  "oracle_independence": {
+    "production_reference_discount_rounding_borrow_core_reused": false,
+    "shared_validated_model_types_used": true,
+    "candidate_called_only_as_actual_under_test": true,
+    "direct_oracle_name_calls_AST": ["F", "abs", "dict", "map", "max", "min", "range"],
+    "oracle_attribute_calls_AST": ["append", "get"],
+    "oracle_floor_division": false,
+    "maximality_proof": "Enumerate all positiveUSD1..20 and BTC.1..1.0 steps; any larger quantity violates fixed maximum principal with nonnegative existing principal. Test post-loan constraints directly, not candidate bound division.",
+    "zero_sentinel": "No positive quote; not a claim that existing account is safe or zero-quantity command valid."
+  },
+  "financial_semantics_reviewed": [
+    "Gross accounting assets retained; frozen value reduces eligible collateral/LTV, not gross accounting assets",
+    "Principal, interest and USD cash deficit separate, no same-currency asset/loan netting before discount",
+    "BTC marginal80percent through100 and50percent above; LTV50percent of discounted BTC, USD LTV80percent",
+    "Borrow proceeds leave collateral; loan increases debt and reduces equity by its price value",
+    "Separate principal cap, total-debt cap, lending headroom, inclusiveIM and strictMM constraints",
+    "Signed linear quantity/cost PnL and absolute marked IM/MM",
+    "Liquidation equality takes precedence over negative available-margin status"
+  ],
+  "manual_checks_not_executed": {
+    "default": {
+      "accounting_equity": "300",
+      "risk_equity": "230",
+      "loan_value": "145",
+      "single_currency_borrow_USD": "20",
+      "single_currency_borrow_BTC": ".5",
+      "joint_quotes_warning": "20USD+.5BTC@100=70 exceeds total-debt cap50; outputs are individually evaluated quotes, not jointly authorized loans."
+    },
+    "zero_rate_strict": {
+      "USD10_max_whole_borrow": "9",
+      "USD10_01_max_whole_borrow": "10"
+    },
+    "additional_review_hand_calculation_not_added_vector": {
+      "gross_USD_BTC": ["100", "2"],
+      "frozen_USD_BTC": ["20", "1.5"],
+      "principal_USD_BTC": ["3", ".1"],
+      "interest_USD_BTC": [".5", ".005"],
+      "USD_deficit": "2",
+      "reserve": "1",
+      "BTC_spot": "100",
+      "linear_quantity_cost_mark": ["-.1", "-10", "120"],
+      "accounting_equity": "282",
+      "risk_equity": "102",
+      "loan_value": "84",
+      "frozen_value": "170",
+      "principal_value": "13",
+      "interest_value": "1",
+      "debt_value": "16",
+      "PnL": "-2",
+      "IM": "3.65",
+      "MM": "1.825",
+      "available": "97.35",
+      "single_currency_max_USD_BTC": ["17", ".3"]
+    }
+  },
+  "planned_not_observed": {
+    "methods": 5,
+    "vectors_by_method": [512, 6, 8, 8, 2],
+    "total_completed_checks_if_successful": 536,
+    "distinct_economic_state_count": "NOT_ASSERTED_HOSTILE_CONTEXT_REPEATS_FIRST_EIGHT_SEEDED_INPUTS",
+    "actual_completed": null,
+    "target_import_compile_test_SQL_native_proc_PID_CI_child_attempts": 0
+  },
+  "concrete_coverage_limits": [
+    {
+      "id": "CROSS-ENUM-COV-001",
+      "status": "OPEN_NONZERO_EQUAL_RATE_POLICY_EXTENSION_NOT_FIXED_SCOPE_BLOCKER",
+      "reason": "Fixed positive loanIM>MM ensures IM-feasible positive borrow is already strictMM-safe, so nonzero-rate strictMM upper-bound decrement is not exercised. Modified cases cover rate0 only.",
+      "future_counterexample": "USD11/LTV1/IM=MM=.1/step1:10 leaves equity1=MM1, so maximum9; USD11.01 permits10. Not added to current536 plan or authorized for execution."
+    },
+    {
+      "id": "CROSS-ENUM-COV-002",
+      "status": "OPEN_RETAINED_ENTRY_FAILURE_CAPTURE",
+      "reason": "completed_vectors append occurs after assertions. Future retained entry must preserve first failed input/expected/actual independently before assertion failure; successful-vector archive is insufficient."
+    },
+    {
+      "id": "CROSS-ENUM-COV-003",
+      "status": "EXPLICIT_FINITE_SCOPE",
+      "reason": "No BTC deficits/extra currencies or products/variable rates and multipliers/stale-invalid inputs/extreme decimal bounds/joint borrowing/concurrent reservations/service or PM acceptance."
+    }
+  ],
+  "remaining_execution_gates": [
+    "Bounded retained entry CODE and exact runtime/source/selector/resources/output capture review",
+    "Separate unique root GO",
+    "First actual fixed-method/per-vector results with host exit/reap/EOF",
+    "Independent RAW review and preservation of first FAIL or UNKNOWN"
+  ],
+  "deployment_or_data_migration": false,
+  "rollback": "Remove test-only candidate/preparation while retaining parent runtime and historical evidence; no financial source or service switch changed.",
+  "production_capacity_real_funds_insurance_ADL": "NO_GO",
+  "main_worktree_or_index_operations_in_this_review": 0
+}
