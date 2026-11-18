@@ -1,0 +1,38 @@
+{
+  "actual_failure": {
+    "errno": 22,
+    "line": 252,
+    "message": "Invalid argument",
+    "operation": "os.fsync(1)",
+    "source_file": "tools/run_cross_enumeration_once.py",
+    "type": "OSError"
+  },
+  "causal_order": [
+    "All five fixed methods finished and complete538 vectors were written.",
+    "Target emitted its complete END and receipt with inner passed=true.",
+    "Target called os.fsync(1), with FD1 inherited from the parent subprocess PIPE.",
+    "EINVAL caused target/prefix exit1; parent observed actual wait/reap and both EOF.",
+    "External root observed actual parent exit1."
+  ],
+  "compatibility_gap": "The retained target entry kept its file-redirection fsync calls after changing to inherited PIPE capture. Pre-execution CODE review missed that FD-type mismatch.",
+  "independent_RAW_status": "PENDING",
+  "inner_passed_does_not_override_final_failure": true,
+  "next_remediation_only_proposed": "Remove target pipe fsync calls; parent already fsyncs its own regular raw files. Rebind the changed entry and plans into a new scope; preserve this first failure. No broad OSError suppression.",
+  "overall": "FIRST_FAIL_PRESERVED",
+  "schema": 1,
+  "source_commit": "283dec8e16321697124a19847f103476136de683",
+  "source_evidence": {
+    "capture_source_pin": {
+      "bytes": 15836,
+      "sha256": "65eb8371a042e35f15f446b339560ddfe8c49356a8033b557f03a99a4d19fd63"
+    },
+    "original_target_stderr_bytes": 1332,
+    "original_target_stderr_sha256": "7ec999a2ab69530128f091ce08cb1fffb291c279e99da7f492bf475da6fdd1f1",
+    "parent_target_stdout_stderr_PIPE_source_line": 180,
+    "target_driver_pin": {
+      "bytes": 12343,
+      "sha256": "898b1e9bfde80a7c970655cf8834324df9c781fb393ba66fde3c6226dedda77a"
+    }
+  },
+  "source_repair_or_target_rerun_during_collection": false
+}

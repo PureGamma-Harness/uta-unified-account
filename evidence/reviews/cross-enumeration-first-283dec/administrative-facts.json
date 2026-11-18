@@ -1,0 +1,30 @@
+{
+  "actions": [
+    "Read sealed controls with O_NOATIME and O_NOFOLLOW.",
+    "Verified all13 original contents against their private seal.",
+    "Verified all13 ZIP member bytes and CRC.",
+    "Compared538 stored expected/actual values and534 provenance maps.",
+    "Matched70 stored source pins to Git source283dec8e.",
+    "Matched original stderr source frame to the unchanged target fsync call."
+  ],
+  "administrative_first_exporter_failure": {
+    "actual_target_PIPE_line": 180,
+    "all_source_PIPE_lines": [
+      64,
+      180
+    ],
+    "cause": "The initial source selector assumed exactly one stdout=subprocess.PIPE source line; it also matched the Git helper. No SAFE files had been written at that assertion.",
+    "correction": "Select the actual child=subprocess.Popen target line, preserving the separate Git helper PIPE.",
+    "exit_code": 1,
+    "financial_target_rerun": false,
+    "source_line": 69,
+    "tool_chunk": "f10a8e"
+  },
+  "independent_review_not_yet_claimed": true,
+  "original_content_modified": false,
+  "original_raw_controls_and_full_vectors_not_public": true,
+  "overall_first_failure_preserved": true,
+  "schema": 1,
+  "seal_mode_change_disclosed": true,
+  "target_import_compile_test_SQL_native_worker_proc_PID_signal_or_retry_actions": 0
+}

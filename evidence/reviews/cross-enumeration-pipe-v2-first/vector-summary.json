@@ -1,0 +1,55 @@
+{
+  "all_inputs_public_fixed_seed_or_manual_cases": true,
+  "complete_checks": 538,
+  "expected_actual_provenance_vectors": 534,
+  "failure_vectors": 0,
+  "full_vector_file": {
+    "bytes": 866704,
+    "public_path": "evidence/golden/cross-decimal-pipe-v2/vectors.json",
+    "sha256": "17364d12847d5f118cc62f0e301a45180e8ccd353a38010e3cf3582a917afd97"
+  },
+  "group_counts": [
+    512,
+    6,
+    8,
+    8,
+    4
+  ],
+  "groups": [
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_512_seeded_values_and_exhaustively_maximal_quotes",
+      "checks": 512,
+      "expected_actual_equal": true,
+      "metadata_compared": true
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_collateral_tier_crossing_and_full_freeze",
+      "checks": 6,
+      "expected_actual_equal": true,
+      "metadata_compared": true
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_maintenance_equality_and_order_reserve_boundaries",
+      "checks": 8,
+      "expected_actual_equal": true,
+      "metadata_compared": true
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_hostile_decimal_context_uses_independent_exact_oracle",
+      "checks": 8,
+      "expected_actual_equal": true,
+      "metadata_compared": true
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_zero_and_equal_rate_strict_borrow_boundaries",
+      "checks": 4,
+      "expected_actual_equal": true,
+      "metadata_compared": false
+    }
+  ],
+  "invocation_top_labels_differ": true,
+  "no_joint_borrow_or_full_model_claim": true,
+  "schema": 1,
+  "test_methods": 5,
+  "vector_groups_equal_old_first_failure_groups": true
+}

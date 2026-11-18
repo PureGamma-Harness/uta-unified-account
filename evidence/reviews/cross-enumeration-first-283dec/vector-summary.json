@@ -1,0 +1,154 @@
+{
+  "collection_comparison": "Canonical expected/actual archive consistency; not a second financial reference calculator.",
+  "compared_provenance_vectors": 534,
+  "completed_checks": 538,
+  "distinct_input_states_claimed": false,
+  "failure_vectors": 0,
+  "full538_vector_archive_private_and_sealed": true,
+  "group_counts": [
+    512,
+    6,
+    8,
+    8,
+    4
+  ],
+  "groups": [
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_512_seeded_values_and_exhaustively_maximal_quotes",
+      "archived_expected_actual_equal": true,
+      "archived_metadata_compared": true,
+      "completed_checks": 512
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_collateral_tier_crossing_and_full_freeze",
+      "archived_expected_actual_equal": true,
+      "archived_metadata_compared": true,
+      "completed_checks": 6
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_maintenance_equality_and_order_reserve_boundaries",
+      "archived_expected_actual_equal": true,
+      "archived_metadata_compared": true,
+      "completed_checks": 8
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_hostile_decimal_context_uses_independent_exact_oracle",
+      "archived_expected_actual_equal": true,
+      "archived_metadata_compared": true,
+      "completed_checks": 8
+    },
+    {
+      "actual_success_ID": "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_zero_and_equal_rate_strict_borrow_boundaries",
+      "archived_expected_actual_equal": true,
+      "archived_metadata_compared": false,
+      "completed_checks": 4
+    }
+  ],
+  "independent_full_Cross_joint_borrow_performance_or_production_acceptance": false,
+  "schema": 1,
+  "target_component_results_precede_process_terminal_failure": true,
+  "vector_file": {
+    "bytes": 866704,
+    "sha256": "724c13aa2a429fc83e751304926e34ae00c7ecc5e684353fb6a16030dee4a44e"
+  },
+  "zero_or_equal_rate_examples": [
+    {
+      "actual": {
+        "borrowable_USD": "9"
+      },
+      "expected": {
+        "borrowable_USD": "9"
+      },
+      "feasible_USD_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "inputs": {
+        "cash": 1000,
+        "equal_loan_rates": "0"
+      }
+    },
+    {
+      "actual": {
+        "borrowable_USD": "10"
+      },
+      "expected": {
+        "borrowable_USD": "10"
+      },
+      "feasible_USD_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "inputs": {
+        "cash": 1001,
+        "equal_loan_rates": "0"
+      }
+    },
+    {
+      "actual": {
+        "borrowable_USD": "9"
+      },
+      "expected": {
+        "borrowable_USD": "9"
+      },
+      "feasible_USD_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "inputs": {
+        "cash": 1100,
+        "equal_loan_rates": ".1"
+      }
+    },
+    {
+      "actual": {
+        "borrowable_USD": "10"
+      },
+      "expected": {
+        "borrowable_USD": "10"
+      },
+      "feasible_USD_units": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "inputs": {
+        "cash": 1101,
+        "equal_loan_rates": ".1"
+      }
+    }
+  ]
+}

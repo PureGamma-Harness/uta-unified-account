@@ -1,0 +1,101 @@
+{
+  "acceptance": {
+    "SQL_matching": false,
+    "concurrency_recovery_HA": false,
+    "full_independent_RAW_report": "PENDING",
+    "joint_borrow": false,
+    "limited_component_result": true,
+    "performance": false,
+    "real_funds": false,
+    "service_activation": false,
+    "whole_exchange_production": false
+  },
+  "actual_attempts_this_source": 1,
+  "actual_executed_source": "bb2a2cf13a7337d4b6ef9f35ce2335c5732ad85c",
+  "clock_scopes": {
+    "external_tool_reported_wall_seconds": 0.808035368,
+    "intervals_not_added_and_no_performance_claim": true,
+    "parent_prefix_wait_raw_fsync_interval_ns": 762947166,
+    "target_loading_and_comparison_ns": 435803752
+  },
+  "code_origin_commit": "a083fbc99d9e82d445b60d255a8872be41a8fb72",
+  "collection_added_target_runs": 0,
+  "old_first_fail": {
+    "RAW_commit": "2eeda6da2686fe572135bf8eff1e98b1f19d4ff6",
+    "SAFE_commit": "4f4dd04155e7da84e21527759614c1c8f292fd65",
+    "external_exit": 1,
+    "not_reclassified": true,
+    "source": "283dec8e16321697124a19847f103476136de683",
+    "status": "FIRST_FAIL_PRESERVED"
+  },
+  "parent_plan_sha256": "405da5ed431e926e9665e18ebed6d60851bd0135859c4526c962757e9c7b6739",
+  "resources": {
+    "Python_thread_count": 1,
+    "actual_capture_raw_reserved": 13984,
+    "actual_capture_raw_written": 13984,
+    "forbidden_listed_events": [],
+    "host_affinity": [
+      1
+    ],
+    "loaded_UTA_modules": [
+      "uta",
+      "uta.cross_decimal_kernel",
+      "uta.market",
+      "uta.models",
+      "uta.portfolio",
+      "uta.products",
+      "uta.risk",
+      "uta.scenario_margin"
+    ],
+    "physical_Git_pin_count_before_after": 70,
+    "stream_bytes": {
+      "stderr": 973,
+      "stdout": 13011
+    }
+  },
+  "schema": 1,
+  "status": "LIMITED_PURE_COMPONENT_PASS_PENDING_FINAL_INDEPENDENT_RAW",
+  "target_plan_sha256": "0cbd7949055592adbb811f92b281ba4e158bec300b56f8ae3278e2168f082c70",
+  "terminal": {
+    "actual_prefix_exit": 0,
+    "both_EOF": true,
+    "external_actual_host_exit": 0,
+    "external_tool_chunk": "432dc7",
+    "internal_future_host_exit": null,
+    "parent_internal_fault": null,
+    "pending_internal_status_not_used_as_future_exit_proof": true,
+    "real_wait_reaped": true
+  },
+  "tests": {
+    "actual_methods": 5,
+    "actual_success_IDs": [
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_512_seeded_values_and_exhaustively_maximal_quotes",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_collateral_tier_crossing_and_full_freeze",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_maintenance_equality_and_order_reserve_boundaries",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_hostile_decimal_context_uses_independent_exact_oracle",
+      "test_cross_decimal_enumeration.CrossDecimalEnumerationTests.test_zero_and_equal_rate_strict_borrow_boundaries"
+    ],
+    "component_complete": true,
+    "component_passed": true,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0
+  },
+  "vectors": {
+    "compared_metadata_vectors": 534,
+    "completed_checks": 538,
+    "completed_counts": [
+      512,
+      6,
+      8,
+      8,
+      4
+    ],
+    "distinct_input_states_claimed": false,
+    "raw_public_artifact": "evidence/golden/cross-decimal-pipe-v2/vectors.json",
+    "vector_file": {
+      "bytes": 866704,
+      "sha256": "17364d12847d5f118cc62f0e301a45180e8ccd353a38010e3cf3582a917afd97"
+    }
+  }
+}
