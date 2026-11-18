@@ -1,0 +1,78 @@
+{
+  "artifact_redownloaded": false,
+  "fifth_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "exception_type": "AssertionError",
+    "finding": "printed joblog summary intentionally omits source_sha256 and source_sha256_after; every common field equals original artifact summary and no joblog-only keys",
+    "handling": "validate exact non-map summary projection rather than require raw map equality; original artifact source maps remain independently Git-bound",
+    "public_output_written": false,
+    "schema": "pr47-administrative-joblog-summary-projection-stop-v1",
+    "script": "derive_safe_v4.py",
+    "script_sha256": "681b4aae0bcd38dad279efe75799d254564b165685fbadd3a00fc9395672977e",
+    "source_line": 421,
+    "target_invocations": 0
+  },
+  "first_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "classification": "collector administrative sparse-materialization omission; not a CI or business test failure",
+    "correction": "materialize package runtime non-Python static HTML before administrative projection; preserve original error",
+    "exception_type": "FileNotFoundError",
+    "missing_materialized_path": "uta/dashboard.html",
+    "public_output_written": false,
+    "raw_original_changed": false,
+    "schema": "pr47-administrative-derivation-first-error-v1",
+    "script": "derive_safe_v1.py",
+    "script_sha256": "6d57ba5d29b4abec64ba5da6e8c2d41661d8661e5409678875cf3849d1acdfd4",
+    "source_line": 195,
+    "target_invocations": 0
+  },
+  "fourth_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "auxiliary_probe": {
+      "actual_exit_code": 1,
+      "exception_type": "JSONDecodeError",
+      "reason": "attempted one-line JSON parse of pretty JSON field line; no file mutation or target execution"
+    },
+    "exception_type": "AssertionError",
+    "finding": "saved decoded job log prints timestamp-prefixed pretty JSON summary, not unittest member footer",
+    "handling": "parse that existing summary and project only exact allowlisted fields; retain actual traceback exclusively from saved unit member",
+    "public_output_written": false,
+    "schema": "pr47-administrative-log-format-stop-v1",
+    "script": "derive_safe_v3.py",
+    "script_sha256": "b7086c4331768a8bd5337812361a89f202f4197e941241d8c835e3dea1726bfe",
+    "source_line": 411,
+    "target_invocations": 0
+  },
+  "report_keeps_pin_difference": true,
+  "schema": "pr47-administrative-derivation-record-v1",
+  "second_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "exception_type": "AssertionError",
+    "finding": "historical plan aggregate control pin differs from current C bytes; host and current63 inputs match",
+    "handling": "preserve declared-vs-actual finding rather than silently treating old control pin as current code; report no CI causal claim",
+    "public_output_written": false,
+    "schema": "pr47-administrative-derivation-second-stop-v1",
+    "script": "derive_safe_v1.py",
+    "script_sha256": "6d57ba5d29b4abec64ba5da6e8c2d41661d8661e5409678875cf3849d1acdfd4",
+    "source_line": 212,
+    "target_invocations": 0
+  },
+  "target_or_ci_reexecuted": false,
+  "third_stop": {
+    "actual_exit_code": 1,
+    "api_or_download_repeated": false,
+    "exception_type": "AssertionError",
+    "finding": "historical generic plan manifest byte pins differ from C manifest metadata; inspect explicit active full plan instead",
+    "handling": "preserve historical generic plan and add actual full-plan binding to C separately, not rewrite old pins",
+    "public_output_written": false,
+    "schema": "pr47-administrative-derivation-third-stop-v1",
+    "script": "derive_safe_v2.py",
+    "script_sha256": "20bfb8c78a713ea35225a8e06029f6d9d11540ea0bfcb7c72200555bd237b1df",
+    "source_line": 216,
+    "target_invocations": 0
+  }
+}
