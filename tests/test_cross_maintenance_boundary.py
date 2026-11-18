@@ -31,7 +31,12 @@ class CrossMaintenanceBoundaryTests(unittest.TestCase):
         service = ExchangeService.__new__(ExchangeService)
         service.scales = {"USD": 8}
         service.fee_rate = D("0.0004")
-        service.product_catalog, service.portfolio_rules = catalog, rules
+        service._product_catalog, service._portfolio_rules = catalog, rules
+        self.assertIs(service.product_catalog, catalog)
+        self.assertIs(service.portfolio_rules, rules)
+        for name, value in (("product_catalog", catalog), ("portfolio_rules", rules)):
+            with self.assertRaises(AttributeError):
+                setattr(service, name, value)
         return service, market, catalog, rules
 
     def risk(self, values, cash, positions=None, deficit=None):
