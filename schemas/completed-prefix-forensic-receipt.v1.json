@@ -1,0 +1,207 @@
+{
+  "$id": "urn:uta:completed-prefix-forensic-receipt:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "execution_status": {
+            "const": "PREFIX_VERIFIED"
+          }
+        },
+        "required": [
+          "execution_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "audit_authorization": {
+            "const": "GRANTED"
+          },
+          "checks": {
+            "properties": {
+              "all_commands_and_controls_resolved": {
+                "const": true
+              },
+              "coherent_private_snapshot_verified": {
+                "const": true
+              },
+              "financial_journal_and_positions_reconciled": {
+                "const": true
+              },
+              "independent_reopen_same_watermark": {
+                "const": true
+              },
+              "original_prefix_boundary_verified": {
+                "const": true
+              },
+              "quiescence_verified": {
+                "const": true
+              },
+              "segmented_logs_verified": {
+                "const": true
+              },
+              "source_manifest_verified": {
+                "const": true
+              }
+            }
+          },
+          "reviewed_manifest_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "description": "Output shape only. Semantic K<N/formula/source/quiescence verification is not implemented by this schema.",
+  "properties": {
+    "audit_authorization": {
+      "enum": [
+        "PENDING",
+        "GRANTED"
+      ]
+    },
+    "checks": {
+      "additionalProperties": false,
+      "properties": {
+        "all_commands_and_controls_resolved": {
+          "type": "boolean"
+        },
+        "coherent_private_snapshot_verified": {
+          "type": "boolean"
+        },
+        "financial_journal_and_positions_reconciled": {
+          "type": "boolean"
+        },
+        "independent_reopen_same_watermark": {
+          "type": "boolean"
+        },
+        "original_prefix_boundary_verified": {
+          "type": "boolean"
+        },
+        "quiescence_verified": {
+          "type": "boolean"
+        },
+        "segmented_logs_verified": {
+          "type": "boolean"
+        },
+        "source_manifest_verified": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_manifest_verified",
+        "quiescence_verified",
+        "coherent_private_snapshot_verified",
+        "original_prefix_boundary_verified",
+        "all_commands_and_controls_resolved",
+        "segmented_logs_verified",
+        "financial_journal_and_positions_reconciled",
+        "independent_reopen_same_watermark"
+      ],
+      "type": "object"
+    },
+    "completed_prefix_rounds": {
+      "maximum": 21599,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "execution_status": {
+      "enum": [
+        "NOT_RUN",
+        "REFUSED",
+        "INCOMPLETE",
+        "PREFIX_VERIFIED"
+      ]
+    },
+    "limitations": {
+      "items": {
+        "enum": [
+          "ORIGINAL_JOB_INCOMPLETE",
+          "NOT_FULL_DURATION_ACCEPTANCE",
+          "NO_FULL_RISK_REEXECUTION",
+          "NO_WHOLE_BUSINESS_EVENT_REEXECUTION",
+          "NO_PRODUCTION_APPROVAL",
+          "SOURCE_OR_BOUNDARY_UNPROVEN",
+          "UNRESOLVED_OBLIGATION",
+          "PRIVATE_SNAPSHOT_NOT_CREATED",
+          "AUDIT_NOT_EXECUTED",
+          "METHOD_NOT_INDEPENDENTLY_APPROVED"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "mode": {
+      "const": "completed_prefix_forensic"
+    },
+    "new_original_data_write": {
+      "const": false
+    },
+    "original_job_status": {
+      "const": "paused"
+    },
+    "original_source_commit": {
+      "const": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+    },
+    "planned_rounds": {
+      "maximum": 21600,
+      "minimum": 2,
+      "type": "integer"
+    },
+    "qualification": {
+      "const": {
+        "capacity_10000_per_s_passed": false,
+        "complete_original_job": false,
+        "continuous_24h_stability_passed": false,
+        "continuous_6h_stability_passed": false,
+        "financial_6h_passed": false,
+        "full_risk_engine_reexecution_passed": false,
+        "production_approved": false,
+        "whole_business_event_reexecution_passed": false
+      }
+    },
+    "receipt_is_original_strict_cold": {
+      "const": false
+    },
+    "reviewed_manifest_sha256": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      ]
+    },
+    "schema": {
+      "const": "uta.completed_prefix_forensic_receipt.v1"
+    },
+    "scope": {
+      "const": "quiescent_completed_prefix_only_original_job_incomplete"
+    }
+  },
+  "required": [
+    "schema",
+    "mode",
+    "scope",
+    "execution_status",
+    "audit_authorization",
+    "original_source_commit",
+    "original_job_status",
+    "planned_rounds",
+    "completed_prefix_rounds",
+    "reviewed_manifest_sha256",
+    "checks",
+    "qualification",
+    "limitations",
+    "new_original_data_write",
+    "receipt_is_original_strict_cold"
+  ],
+  "title": "UTA completed-prefix forensic receipt v1",
+  "type": "object"
+}

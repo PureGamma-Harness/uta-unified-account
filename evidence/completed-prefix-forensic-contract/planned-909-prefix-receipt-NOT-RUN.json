@@ -1,0 +1,44 @@
+{
+  "audit_authorization": "PENDING",
+  "checks": {
+    "all_commands_and_controls_resolved": false,
+    "coherent_private_snapshot_verified": false,
+    "financial_journal_and_positions_reconciled": false,
+    "independent_reopen_same_watermark": false,
+    "original_prefix_boundary_verified": false,
+    "quiescence_verified": false,
+    "segmented_logs_verified": false,
+    "source_manifest_verified": false
+  },
+  "completed_prefix_rounds": 4357,
+  "execution_status": "NOT_RUN",
+  "limitations": [
+    "ORIGINAL_JOB_INCOMPLETE",
+    "NOT_FULL_DURATION_ACCEPTANCE",
+    "NO_FULL_RISK_REEXECUTION",
+    "NO_WHOLE_BUSINESS_EVENT_REEXECUTION",
+    "NO_PRODUCTION_APPROVAL",
+    "PRIVATE_SNAPSHOT_NOT_CREATED",
+    "AUDIT_NOT_EXECUTED",
+    "METHOD_NOT_INDEPENDENTLY_APPROVED"
+  ],
+  "mode": "completed_prefix_forensic",
+  "new_original_data_write": false,
+  "original_job_status": "paused",
+  "original_source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "planned_rounds": 5400,
+  "qualification": {
+    "capacity_10000_per_s_passed": false,
+    "complete_original_job": false,
+    "continuous_24h_stability_passed": false,
+    "continuous_6h_stability_passed": false,
+    "financial_6h_passed": false,
+    "full_risk_engine_reexecution_passed": false,
+    "production_approved": false,
+    "whole_business_event_reexecution_passed": false
+  },
+  "receipt_is_original_strict_cold": false,
+  "reviewed_manifest_sha256": null,
+  "schema": "uta.completed_prefix_forensic_receipt.v1",
+  "scope": "quiescent_completed_prefix_only_original_job_incomplete"
+}
