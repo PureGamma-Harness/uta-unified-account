@@ -92,14 +92,19 @@ _SOURCE_INVENTORY_V3 = tuple(sorted(_SOURCE_INVENTORY_V2 + (
     'perpetual_funding.py',
 )))
 
+# Explicit next deployment; V2 and V3 keep their original historical meanings.
+_SOURCE_INVENTORY_V4 = tuple(sorted(_SOURCE_INVENTORY_V3 + (
+    'funding_hold_pure.py',
+)))
+
 
 def current_source_snapshot():
     """Independent test read; never call production artifact source helpers."""
     root = Path(writer_fence.__file__).resolve().parent
     names = tuple(sorted(path.relative_to(root).as_posix()
                          for path in root.rglob("*.py")))
-    if names != _SOURCE_INVENTORY_V3:
-        raise AssertionError("current source inventory differs from test inventory v3")
+    if names != _SOURCE_INVENTORY_V4:
+        raise AssertionError("current source inventory differs from test inventory v4")
     hashes, metadata = {}, {}
     fields = ("st_dev", "st_ino", "st_size", "st_mtime_ns", "st_ctime_ns")
     for name in names:
@@ -150,8 +155,8 @@ class LeaseObservationTagArtifactTests(unittest.TestCase):
         artifact = credit_code_artifact()
         if ordinary_snapshot is not None:
             self.assertEqual((retained, ordinary_snapshot), current_source_snapshot())
-        self.assertEqual(len(retained), 65)
-        self.assertEqual(tuple(sorted(retained)), _SOURCE_INVENTORY_V3)
+        self.assertEqual(len(retained), 66)
+        self.assertEqual(tuple(sorted(retained)), _SOURCE_INVENTORY_V4)
         self.assertEqual(artifact["source_files"], retained)
         with self.assertRaises(AssertionError):
             self.assertEqual({**artifact["source_files"], "unreviewed.py": "0" * 64}, retained)

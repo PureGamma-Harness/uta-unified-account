@@ -26,13 +26,13 @@ def ref(k, kind, digit="1"):
 def final(k, amount, kind="FINAL_PAYABLE", scale=2):
     initial = h.DutyState.initial(k, scale)
     stage = h.Stage(kind, amount, None, None, ref(k, "FINAL_CUT", "3"))
-    return h.advance_stage(initial, stage, expected_revision=0, expected_active_ref=None)
+    return h.advance_stage(initial, stage, expected_revision=0, expected_active_stage=initial.active)
 
 
 def cap(k, amount=600):
     initial = h.DutyState.initial(k, 2)
     stage = h.Stage("EXPOSURE_RATE_PENDING", amount, ref(k, "EXPOSURE"), ref(k, "CAP", "2"), None)
-    return h.advance_stage(initial, stage, expected_revision=0, expected_active_ref=None)
+    return h.advance_stage(initial, stage, expected_revision=0, expected_active_stage=initial.active)
 
 
 def totals(states):
@@ -64,6 +64,97 @@ def wait(record, now, dispatch=False):
 
 
 class PureFundingHoldTests(unittest.TestCase):
+    def test_complete_stage_CAS_rejects_stale_exposure_amount_and_kind(self):
+        old = cap(key())
+        proposed = h.Stage("FINAL_PAYABLE", 246, old.active.exposure_ref,
+                           old.active.cap_ref, ref(old.key, "FINAL_CUT", "3"))
+        expected_states = (
+            replace(old.active, exposure_ref=ref(old.key, "EXPOSURE", "5")),
+            replace(old.active, amount_units=599),
+            replace(old.active, cap_ref=ref(old.key, "CAP", "4")),
+            h.Stage("REGISTERED_UNASSESSED", 0, None, None, None),
+        )
+        for expected in expected_states:
+            with self.subTest(kind=expected.kind, amount=expected.amount_units):
+                with self.assertRaisesRegex(h.HoldError, "stage_CAS_conflict"):
+                    h.advance_stage(old, proposed, expected_revision=1,
+                                    expected_active_stage=expected)
+        self.assertEqual((old.revision, old.active.amount_units), (1, 600))
+        self.assertEqual(proposed.amount_units, 246)
+
+    def test_complete_stage_CAS_rejects_foreign_malformed_and_legacy_expectation(self):
+        old = cap(key())
+        proposed = h.Stage("FINAL_ZERO", 0, old.active.exposure_ref,
+                           old.active.cap_ref, ref(old.key, "FINAL_CUT", "3"))
+        foreign = replace(old.active, exposure_ref=ref(key("OTHER"), "EXPOSURE"))
+        with self.assertRaisesRegex(h.HoldError, "foreign_stage_reference"):
+            h.advance_stage(old, proposed, expected_revision=1, expected_active_stage=foreign)
+        for expected in (None, old.active.cap_ref, True):
+            with self.assertRaises(h.HoldError):
+                h.advance_stage(old, proposed, expected_revision=1, expected_active_stage=expected)
+        with self.assertRaises(TypeError):
+            h.advance_stage(old, proposed, expected_revision=1, expected_active_ref=old.active.cap_ref)
+        self.assertEqual(old.history, (h.Stage("REGISTERED_UNASSESSED", 0, None, None, None),))
+
+    def test_wait_same_time_noop_preserves_original_normal_and_default_records(self):
+        normal = wait_record()
+        same = wait(normal, 0)
+        self.assertIs(same.record, normal)
+        self.assertEqual((same.outcome, same.query_counted, same.record.revision), ("WAIT", False, 0))
+        expired = wait(normal, normal.deadline_us).record
+        for dispatch in (False, True):
+            same = wait(expired, expired.observed_highwater_us, dispatch)
+            self.assertIs(same.record, expired)
+            self.assertEqual((same.outcome, same.query_counted), ("DEFAULT_REVIEW", False))
+
+    def test_wait_revision_exhaustion_allows_only_actual_noop(self):
+        normal = replace(wait_record(), revision=h.TIME_LIMIT)
+        self.assertIs(wait(normal, 0).record, normal)
+        for now, dispatch in ((1, False), (0, True)):
+            with self.assertRaisesRegex(h.HoldError, "revision_overflow"):
+                wait(normal, now, dispatch)
+        default = replace(normal, default_review=True)
+        self.assertIs(wait(default, 0, True).record, default)
+        # Same time alone is insufficient: reaching a boundary changes default.
+        at_deadline = replace(normal, observed_highwater_us=normal.deadline_us)
+        at_cap = replace(normal, attempts=normal.policy.max_query_attempts, last_dispatch_us=0)
+        for record in (at_deadline, at_cap):
+            with self.assertRaisesRegex(h.HoldError, "revision_overflow"):
+                wait(record, record.observed_highwater_us)
+        self.assertEqual((normal.attempts, normal.default_review, normal.revision),
+                         (0, False, h.TIME_LIMIT))
+
+    def test_wait_interval_and_deadline_equality_do_not_grant_late_query(self):
+        first = wait(wait_record(), 0, True).record
+        with self.assertRaisesRegex(h.HoldError, "query_too_early"):
+            wait(first, first.policy.min_query_interval_us - 1, True)
+        second = wait(first, first.policy.min_query_interval_us, True)
+        self.assertEqual((second.record.attempts, second.query_counted), (2, True))
+        deadline = wait(first, first.deadline_us, True)
+        self.assertEqual((deadline.outcome, deadline.record.attempts, deadline.query_counted),
+                         ("DEFAULT_REVIEW", 1, False))
+        self.assertEqual((first.attempts, first.observed_highwater_us), (1, 0))
+
+    def test_wait_revision_changes_once_for_highwater_or_dispatch(self):
+        original = wait_record()
+        observed = wait(original, 1).record
+        self.assertEqual((observed.revision, observed.attempts), (1, 0))
+        self.assertIs(wait(observed, 1).record, observed)
+        queried = wait(observed, 1, True).record
+        self.assertEqual((queried.revision, queried.attempts), (2, 1))
+        self.assertIs(wait(queried, 1).record, queried)
+        self.assertEqual((original.revision, original.observed_highwater_us), (0, 0))
+
+    def test_shared_root_action_scale_mismatch_cannot_create_second_tuple_budget(self):
+        original = wait_record()
+        other_scope = replace(original.action.scope, usd_scale=8)
+        other_action = h.ActionKey(other_scope, original.action.allocation_id)
+        self.assertEqual(original.action.action_id, other_action.action_id)
+        other = h.WaitRecord.initial(other_action, original.policy, original.started_us)
+        with self.assertRaisesRegex(h.HoldError, "shared_action_duplicate_budget"):
+            h.validate_wait_records((original, other))
+        self.assertEqual((original.attempts, other.attempts), (0, 0))
+
     def test_m18_exact_canonical_identity_precedes_schedule(self):
         k = key()
         self.assertEqual(k.duty_id, "funding-duty:v1:3608a7a0ec99683dd080f6663ad9283a965df92c46878e569c3a8c467d3f7779")
@@ -99,7 +190,7 @@ class PureFundingHoldTests(unittest.TestCase):
     def test_m10_m19_cap_resolution_has_one_active_stage_and_history(self):
         old = cap(key())
         proposed = h.Stage("FINAL_PAYABLE", 246, old.active.exposure_ref, old.active.cap_ref, ref(old.key, "FINAL_CUT", "3"))
-        resolved = h.advance_stage(old, proposed, expected_revision=1, expected_active_ref=old.active.active_ref)
+        resolved = h.advance_stage(old, proposed, expected_revision=1, expected_active_stage=old.active)
         self.assertEqual((resolved.key.duty_id, resolved.revision), (old.key.duty_id, 2))
         self.assertEqual((totals((old,)).U, totals((resolved,)).U, totals((resolved,)).P), (600, 0, 246))
         self.assertEqual(resolved.history[-1], old.active)
@@ -108,20 +199,20 @@ class PureFundingHoldTests(unittest.TestCase):
         with self.assertRaises(FrozenInstanceError):
             resolved.revision = 3
         with self.assertRaises(h.HoldError):
-            h.advance_stage(resolved, proposed, expected_revision=1, expected_active_ref=old.active.active_ref)
+            h.advance_stage(resolved, proposed, expected_revision=1, expected_active_stage=old.active)
 
     def test_m19_sign_zero_cap_breach_and_CAS_ref_conflicts(self):
         old = cap(key())
         for kind, amount, wanted in (("FINAL_RECEIVABLE", 246, (0, 246, 0)), ("FINAL_ZERO", 0, (0, 0, 0))):
             proposed = h.Stage(kind, amount, old.active.exposure_ref, old.active.cap_ref, ref(old.key, "FINAL_CUT", "3"))
-            changed = h.advance_stage(old, proposed, expected_revision=1, expected_active_ref=old.active.cap_ref)
+            changed = h.advance_stage(old, proposed, expected_revision=1, expected_active_stage=old.active)
             got = totals((changed,))
             self.assertEqual((got.U, got.N, got.H), wanted)
         excess = h.Stage("FINAL_PAYABLE", 601, old.active.exposure_ref, old.active.cap_ref, ref(old.key, "FINAL_CUT", "3"))
         with self.assertRaises(h.HoldUnsupported):
-            h.advance_stage(old, excess, expected_revision=1, expected_active_ref=old.active.cap_ref)
+            h.advance_stage(old, excess, expected_revision=1, expected_active_stage=old.active)
         with self.assertRaises(h.HoldError):
-            h.advance_stage(old, excess, expected_revision=1, expected_active_ref=ref(old.key, "CAP", "4"))
+            h.advance_stage(old, excess, expected_revision=1, expected_active_stage=replace(old.active, cap_ref=ref(old.key, "CAP", "4")))
         self.assertEqual(totals((old,)).U, 600)
 
     def test_m07_m18_duplicate_slots_and_foreign_ref_do_not_create_extra_debt(self):
@@ -134,7 +225,7 @@ class PureFundingHoldTests(unittest.TestCase):
         initial = h.DutyState.initial(key(), 2)
         bad = h.Stage("FINAL_PAYABLE", 1, None, None, ref(key("OTHER"), "FINAL_CUT"))
         with self.assertRaises(h.HoldError):
-            h.advance_stage(initial, bad, expected_revision=0, expected_active_ref=None)
+            h.advance_stage(initial, bad, expected_revision=0, expected_active_stage=initial.active)
         with self.assertRaises(h.HoldUnsupported):
             h.unsupported_request("claim_or_lease_expiry")
 

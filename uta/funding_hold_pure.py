@@ -264,17 +264,15 @@ class DutyState:
         return cls(key, usd_scale, 0, Stage("REGISTERED_UNASSESSED", 0, None, None, None), ())
 
 
-def advance_stage(state, proposed, *, expected_revision, expected_active_ref):
+def advance_stage(state, proposed, *, expected_revision, expected_active_stage):
     """Pure CAS check only. The caller's original state is never mutated."""
     _exact(state, DutyState)
     _exact(proposed, Stage)
     DutyState.__post_init__(state)
     Stage.__post_init__(proposed)
     _integer(expected_revision, 0, 2, "revision_invalid")
-    if expected_active_ref is not None:
-        _exact(expected_active_ref, ContentRef)
-        ContentRef.__post_init__(expected_active_ref)
-    _require(state.revision == expected_revision and state.active.active_ref == expected_active_ref,
+    _link(expected_active_stage, state.key)
+    _require(state.revision == expected_revision and state.active == expected_active_stage,
              "stage_CAS_conflict")
     if state.active.kind in _FINAL:
         raise HoldUnsupported("final_stage_immutable")
@@ -573,8 +571,6 @@ def preview_wait(record, *, now_us, expected_revision, expected_policy_digest, d
     _require(expected_revision == record.revision and expected_policy_digest == record.policy.digest,
              "wait_CAS_or_policy_conflict")
     _require(now_us >= record.observed_highwater_us, "clock_regression")
-    if record.default_review and now_us == record.observed_highwater_us:
-        return WaitProjection(record, "DEFAULT_REVIEW", False)
     expired = record.default_review or now_us >= record.deadline_us or record.attempts >= record.policy.max_query_attempts
     attempts, last = record.attempts, record.last_dispatch_us
     if dispatch_query and not expired:
@@ -582,6 +578,10 @@ def preview_wait(record, *, now_us, expected_revision, expected_policy_digest, d
         attempts += 1
         last = now_us
     review = expired or attempts >= record.policy.max_query_attempts
+    if (now_us, attempts, last, review) == (record.observed_highwater_us,
+                                           record.attempts, record.last_dispatch_us,
+                                           record.default_review):
+        return WaitProjection(record, "DEFAULT_REVIEW" if review else "WAIT", False)
     # No revision saturation: a changed record requires a new exact revision.
     revision = _integer(record.revision + 1, 0, TIME_LIMIT, "revision_overflow")
     updated = WaitRecord(record.action, record.policy, revision, record.started_us, record.deadline_us,
