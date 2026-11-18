@@ -1,0 +1,219 @@
+{
+  "actual_default_freshness_unchanged": true,
+  "actual_original_FILL_numeric_replays": 3,
+  "all_first_private_outputs_retained": true,
+  "all_other_main_table_and_schema_exact_rollback_required": true,
+  "bounds": {
+    "actual_CPU": [
+      1
+    ],
+    "explicit_proc_PID_pidfd_signal": 0,
+    "fresh_database_paths": 3,
+    "harness_retries": 0,
+    "initial_free_disk_floor_bytes": 134217728,
+    "kernel_directory_quota_proven": false,
+    "logical_data_bytes": 67108864,
+    "network": 0,
+    "old_authority_actions": 0,
+    "per_report_max_bytes": 4194304,
+    "shared_raw_bytes": 524288,
+    "shared_raw_reserved_trailer_bytes": 512,
+    "source_mini_max_bytes": 2097152,
+    "target_children": 0,
+    "target_driver_seconds": 30,
+    "target_hard_prefix_seconds": 30,
+    "target_thread_starts": 0,
+    "warmup": 0
+  },
+  "caller_completion_contract": "O_EXCL mode0700/0600 full literal argv/intent/original FD1+2/actual monotonic start+end/observed prefix exit+reap; incomplete or KILL137 stays UNKNOWN, never relabeled124 or PASS.",
+  "command_template": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "30s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-risk-linear-cost-sign/evidence/reviews/cross-maintenance-boundary/sqlite_once.py",
+    "--run-root",
+    "<NEW_PRIVATE_DIRECT_CHILD_OF_WORKSPACE>",
+    "--source-commit",
+    "<FROZEN_CONTROL_SOURCE_COMMIT>",
+    "--approved-manifest-sha256",
+    "<EXACT_MANIFEST_SHA256>"
+  ],
+  "control_source_commit": "BOUND_BY_SUBSEQUENT_FROZEN_SOURCE_MANIFEST",
+  "counts_expected": {
+    "automatic_matching_cancels": 1,
+    "direct_new_fill_business_rejections": 1,
+    "existing_fill_ID_conflicts": 1,
+    "explicit_cancels": 1,
+    "fresh_new_order_business_rejections": 1,
+    "known_accepted_ID_replays": 2,
+    "matching_attempts": 6,
+    "matching_rejection_attempts": 1,
+    "paired_fills": 10,
+    "unique_authority_qualified_matches": 5
+  },
+  "entry": "evidence/reviews/cross-maintenance-boundary/sqlite_once.py",
+  "full_audit_admission_eligibility_model": "OPEN_NOT_PROVEN_BY_NUMERIC_REPLAY",
+  "genuine_funding_substitute": "existing real publish_market ETH10 ->9.9999999; no SQL cash adjustment",
+  "independent_CODE_review": "PENDING",
+  "independent_cashflow_reconcile_and_manual_cash_cost_fees": true,
+  "kind": "PREPARED_THREE_FRESH_NATIVE_MATCHING_MM_BOUNDARY_SCOPE",
+  "manifest_path": "evidence/reviews/cross-maintenance-boundary/sqlite-source-manifest.json",
+  "manual_cases": [
+    {
+      "BTC_accepted_projection": {
+        "MM": "11",
+        "equity": "11.00000009",
+        "strict_surplus": ".00000009"
+      },
+      "ETH_trade": "A+1/B-1 at10, fee.004 each",
+      "USD_scale": 8,
+      "actual_ETH_mark_after": "9.9999999",
+      "actual_fills_expected": 2,
+      "actual_matches_expected": 1,
+      "custody_debit": "1011.04400009",
+      "deposit_A": "11.04400009",
+      "deposit_B": "1000",
+      "final_customer_cash": {
+        "A": "11.04000009",
+        "B": "999.996"
+      },
+      "final_system_fees": ".008",
+      "journal_events_expected": 4,
+      "name": "maintenance-equality-rollback",
+      "postings_expected": 8,
+      "projected_rejected_BTC_seller": {
+        "IM": "10.99999999",
+        "MM": "10.99999999",
+        "available": "0",
+        "equity": "10.99999999"
+      }
+    },
+    {
+      "BTC_price": "100",
+      "IM_rate": ".1",
+      "MM_rate": ".05",
+      "RO_closing_pair": true,
+      "USD_scale": 8,
+      "actual_fills_expected": 4,
+      "actual_matches_expected": 2,
+      "after_open_A": {
+        "IM": "10",
+        "MM": "5",
+        "available": "0",
+        "equity": "10"
+      },
+      "custody_debit": "1010.04",
+      "deposit_A": "10.04",
+      "deposit_B": "1000",
+      "final_customer_cash": {
+        "A": "9.96",
+        "B": "999.92"
+      },
+      "final_system_fees": ".16",
+      "journal_events_expected": 6,
+      "name": "IM-equality-lower-MM",
+      "postings_expected": 12
+    },
+    {
+      "A_fee_increments": [
+        ".01",
+        "0"
+      ],
+      "A_original_order": "-1",
+      "BTC_price": "1",
+      "B_distinct_orders": [
+        ".4",
+        ".6"
+      ],
+      "B_separate_order_fee_increments": [
+        ".01",
+        ".01"
+      ],
+      "IM_rate": ".1",
+      "MM_rate": ".05",
+      "USD_scale": 2,
+      "actual_fills_expected": 4,
+      "actual_matches_expected": 2,
+      "custody_debit": "10.11",
+      "deposit_A": ".11",
+      "deposit_B": "10",
+      "final_A_risk": {
+        "IM": ".1",
+        "MM": ".05",
+        "available": "0",
+        "equity": ".1"
+      },
+      "final_customer_cash": {
+        "A": ".1",
+        "B": "9.98"
+      },
+      "final_system_fees": ".03",
+      "journal_events_expected": 5,
+      "min_notional": ".1",
+      "name": "USD2-cumulative-partial-fee",
+      "postings_expected": 10,
+      "price_tick": ".01",
+      "quantity_step": ".1"
+    }
+  ],
+  "native_financial_code_changes_in_this_SQL_preparation": 0,
+  "native_hash_journal_and_strict_matching": true,
+  "native_observer": {
+    "API": "sys.setprofile; exact native codeobject identity",
+    "maximum_retained_events": 32,
+    "no_argument_return_code_connection_clock_modification": true,
+    "performance_evidence": false,
+    "removed_in_finally": true,
+    "require_buyer_B_real_fill_return_before_seller_A_call": true,
+    "require_seller_guard_actual_projected_MM_equality": true,
+    "scope": "only one real BTC matching call"
+  },
+  "performance_accepted": false,
+  "perpetual_funding_API_implemented": false,
+  "preparation_history": {
+    "SQL_attempts": 0,
+    "correction": "Compare complete account map to old map with only A version+1; reject added, removed or otherwise changed accounts.",
+    "final_preparation_OWN": "dec7c7ec838b4bf7cdc138cc05d0b937f22c7d36",
+    "finding": "sqlite-accounts-allowlist-static-finding.json",
+    "old_manifest_copy": "sqlite-source-manifest-fafd595-NOT_RUN.json",
+    "old_manifest_sha256": "a455f2ca642306368daa198d264917c3622b60cfc49586c5ab45e0aa1e45d729",
+    "old_plan_copy": "sqlite-source-plan-fafd595-NOT_RUN.json",
+    "old_plan_sha256": "385c64dad0dbca85e754dbcf394210f8a10aa33accaf5a315da46edc07acb411",
+    "source": "fafd5959451b283e93a6124c318982e052256b8c",
+    "status": "NOT_RUN_CODE_STATIC_GAP_NOT_RED_ZERO_ATTEMPTS"
+  },
+  "production_approved": false,
+  "raw_databases_publication": false,
+  "reopen_full_main_tables_and_schema_equal": true,
+  "rollback_difference_allowlist": [
+    "A cancellation account version+1",
+    "A cancelled order status/version",
+    "one native ORDER_CANCELLED event with matching_rejected:insufficient_margin"
+  ],
+  "root_exact_once_GO_required": true,
+  "runtime_before_business_and_after_equal_required": true,
+  "runtime_contract": {
+    "actual_affinity": [
+      1
+    ],
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite_version": "3.53.1"
+  },
+  "schema": 1,
+  "source_of_native_runtime": "402c78412df53cb91e0f7f7d463fdd7026cf7cac",
+  "status": "CODE_ONLY_NOT_RUN",
+  "target_SQL_attempts": 0
+}

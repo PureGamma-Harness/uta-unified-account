@@ -1,0 +1,21 @@
+{
+  "SQL_attempts": 0,
+  "correction": "Exact complete new account map must equal complete prior map with only A version incremented once. Other rows and the account key set are preserved.",
+  "defect": "The table allowlist checked only A and B row values, without comparing the complete account_id set; a new empty third account could evade this assertion. This is a proof-completeness finding, not an observed Matcher defect.",
+  "finding_id": "MM-SQL-ACCOUNTS-001",
+  "independent_recheck_required": true,
+  "manual_cases_runtime_rate_fee_budget_unchanged": true,
+  "old_control_source": "fafd5959451b283e93a6124c318982e052256b8c",
+  "old_source_lines": [
+    225,
+    228
+  ],
+  "old_source_path": "evidence/reviews/cross-maintenance-boundary/sqlite_case_once.py",
+  "phase": "INDEPENDENT_CODE_REVIEW_BEFORE_FIRST_EXECUTION",
+  "production_approved": false,
+  "reviewer": "/root/m05_final_integration/m05_post_run_evidence_review/kernel_cap_design_review",
+  "schema": 1,
+  "schema_rows_orders_events_rollback_policy_unchanged": true,
+  "source_old_status": "NOT_RUN_ZERO_ATTEMPTS_NOT_RED",
+  "target_import_compile_exec_attempts": 0
+}
