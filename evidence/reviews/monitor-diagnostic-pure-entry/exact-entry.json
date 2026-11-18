@@ -1,0 +1,51 @@
+{
+  "actual_execution_authorized": false,
+  "actual_prefix_argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-sre-monitor-diagnostic-pure-entry/tools/run_monitor_diagnostic_pure_entry.py",
+    "--scope",
+    "diagnostic4",
+    "--binding",
+    "/workspace/uta-sre-monitor-diagnostic-pure-entry/evidence/reviews/monitor-diagnostic-pure-entry/binding.json",
+    "--approved-binding-sha256",
+    "c4bb40361e67d37075a8913e0a583bd7abea926f1fdd0243d1aa5d664f1c71c9",
+    "MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+    "MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+    "MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+    "MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output"
+  ],
+  "exact_host_argv": [
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-sre-monitor-diagnostic-pure-entry/tools/run_monitor_diagnostic_pure_capture.py",
+    "--plan",
+    "/workspace/uta-sre-monitor-diagnostic-pure-entry/evidence/reviews/monitor-diagnostic-pure-entry/once-plan.json",
+    "--approved-plan-sha256",
+    "a957bed46c2e0acfdd877125c11f20c31f1facf554822ab776eb89f4d42e5e27",
+    "--scope",
+    "diagnostic4"
+  ],
+  "external_actual_exit_and_final_HEAD_are_required": true,
+  "plan": {
+    "bytes": 4971,
+    "path": "evidence/reviews/monitor-diagnostic-pure-entry/once-plan.json",
+    "sha256": "a957bed46c2e0acfdd877125c11f20c31f1facf554822ab776eb89f4d42e5e27"
+  },
+  "schema": 1,
+  "source_commit": "006b30a88e2e5e161ffc9cdd2b0e01b93173ad7f",
+  "status": "CODE_ONLY_NOT_RUN"
+}

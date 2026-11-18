@@ -1,0 +1,99 @@
+{
+  "GO_granted": false,
+  "actions_after_review": [
+    "Separate root exact GO if all outside CODE prerequisites are met",
+    "One first diagnostic4 invocation only",
+    "Preserve first FAIL/UNKNOWN without retry",
+    "Independent original RAW review before any functional acceptance"
+  ],
+  "checks": [
+    {
+      "evidence": "The only test selectors are the four original methods in exact order. TextTestRunner uses verbosity2/failfast and records actual addSuccess IDs, ordinary failures/errors and subTest failure IDs. Four expected IDs alone cannot produce PASS.",
+      "id": "SRE-PURE-CODE-001",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Helper and test execute complete retained buffers in exact sys.modules names with ModuleSpec. The original test imports that retained helper. Module/test/helper/file identities and seven exported helper function identities are checked before and after execution.",
+      "id": "SRE-PURE-CODE-002",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Target audit/guards reject listed UTA/SQLite imports, process or thread starts, live sys._current_frames, proc reads, sockets and signal/handler calls. Required signal/threading/asyncio/subprocess stdlib imports are expressly allowed and reported. All four fixed test paths mock frame access/FD writes or complete packet builders.",
+      "id": "SRE-PURE-CODE-003",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Capture requires host affinity[1], exact host command has outer taskset-c1 and target prefix independently contains taskset-c1. OS target timeout10s plus cooperative host12s and post-exit EOF drain2s are declared; no blocked-I/O hard deadline is claimed.",
+      "id": "SRE-PURE-CODE-004",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "Each payload block is charged against30720 bytes before the attempted FD write. Overflow/short write sets fault and cannot PASS. Each normal summary is<=512B and charged twice; a<=512B outer failure trailer fits within the2048B outer reserve. Total declared32768B is sufficient.",
+      "id": "SRE-PURE-CODE-005",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "PASS requires actual prefix exit0, owned Popen wait/reap, both EOFs, no fault, timely completion, input/plan/binding equality and trusted target's exact four ordered success IDs with all zero error/skip/expectedFailure/unexpectedSuccess counts.",
+      "id": "SRE-PURE-CODE-006",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "The capture copies its used source, exact argv, initial/final input pins, raw streams, receipt and inventory into a new exclusive private directory. receipt actual_host_exit remains null. Later publication/fsync/inventory or deadline failure may still return nonzero; external actual final host exit/raw is mandatory.",
+      "id": "SRE-PURE-CODE-007",
+      "status": "CLOSED"
+    },
+    {
+      "evidence": "All eight pure inputs match canonical regular physical bytes and metadata-HEAD Git blobs. Plan/binding/exact-entry hashes match. All66 original Git source pins are byte-identical to f30b; only helper/test are physically materialized in this pure source checkout.",
+      "id": "SRE-PURE-CODE-008",
+      "status": "CLOSED"
+    }
+  ],
+  "inputs": {
+    "binding": {
+      "bytes": 1965,
+      "sha256": "c4bb40361e67d37075a8913e0a583bd7abea926f1fdd0243d1aa5d664f1c71c9"
+    },
+    "capture": {
+      "bytes": 9284,
+      "sha256": "f3e1b5af74b2aa9b2f39fb233934dd335d23e68a68e37ad23cb1532dbb570ecf"
+    },
+    "entry": {
+      "bytes": 8108,
+      "sha256": "16e3fc072b8c8fba9a77fcc13cc2404ff299aa281721d1c521dc56b71971aa68"
+    },
+    "exact_entry": {
+      "sha256": "7e4172d278070f17675887a90c4dda673926ef7e38ac9238cedd78e66ae56fb9"
+    },
+    "original_manifest_Git_count": 66,
+    "original_manifest_Git_unchanged": 66,
+    "original_manifest_missing_in_this_source": 64,
+    "original_manifest_physical_in_this_source": 2,
+    "plan": {
+      "bytes": 4971,
+      "sha256": "a957bed46c2e0acfdd877125c11f20c31f1facf554822ab776eb89f4d42e5e27"
+    },
+    "pure_physical_Git_bytes": 58802,
+    "pure_physical_Git_count": 8
+  },
+  "kind": "INDEPENDENT_SRE_DIAGNOSTIC4_ENTRY_CAPTURE_CODE_REVIEW",
+  "limitations": [
+    "CODE review executed no target import, compilation, test, SQL, worker, native recovery, probe, PID lookup or signal.",
+    "Root must bind the actual final metadata HEAD to Git and verify the planned Python binary/runtime before a separate exact GO.",
+    "Root must observe actual final capture exit/reap and original outer stdout/stderr. An earlier functional receipt or null future-exit field is insufficient.",
+    "12s and8MiB are cooperative completion/final logical-tree checks; no kernel quota, RSS/peak allocation bound, or interruptibility of native filesystem I/O is established.",
+    "Failure during cleanup can omit receipt/reap evidence; this cannot qualify PASS and must remain UNKNOWN. No foreign PID cleanup or descendant-reap claim is supplied.",
+    "Local guards and reviewed imports are not full syscall, kernel process/thread, or immutable loaded-code attestation.",
+    "Original four tests mock primary projection or packet building. They do not validate the real uta.failure_diagnostics primary path, thread incarnation/SH ownership, registry blocking, native recovery or original CI cause.",
+    "66-source financial/runtime materialization remains OPEN. No SQL, fault recovery, performance, HA, production or real-funds acceptance follows.",
+    "Rollback removes only new pure controls/metadata and retains original native timing, diagnostic source and any later first-result evidence."
+  ],
+  "no_confirmed_CODE_blocker_in_declared_scope": true,
+  "parent_diagnostic_source": "f30b431b1f3e39b47636f5abf4227f36f978c17b",
+  "prior_native_hook_review": "5d64442865bb9ea378991b9fdd2164ce06c36ef3",
+  "reviewed_metadata": "07f75208ad8c9b6a3e11d491504693ba512d7352",
+  "reviewed_source": "006b30a88e2e5e161ffc9cdd2b0e01b93173ad7f",
+  "schema": 1,
+  "status": "CODE_CLOSED_LIMITED_INERT_DIAGNOSTIC4_ONLY",
+  "target_executions": 0,
+  "workspace_scope": "Only the newly created independent review worktree was initialized or written; primary worktree/index and target source were not mutated."
+}
