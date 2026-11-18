@@ -1,4 +1,9 @@
-# Isolated m08 correction: CODE only, not executed
+# Isolated m08 correction and its distinct first pure result
+
+Atbf48ae2 this was a CODE-only, zero-execution preparation. Root subsequently
+authorized its isolated first run: one method/four original selectors PASS,
+zero failures/errors, actual host exit0, no retry. The [new first evidence](../evidence/reviews/owned-startup-read-admission/phase1-m08-first/README.md)
+retains complete raw/host/input binding; it does not replace the earlier RED.
 
 The first source88da96f run remains RED in sealed47dfa75, independently reviewed
 at85a3d3c as EVIDENCE_BINDING_PASS / TEST_RED. Its12methods,11OK/1FAIL/0ERROR and
@@ -45,13 +50,13 @@ with512-byte trailer, sticky125, internal10s and fixed outer timeout/taskset
 argv. Only the event names, plan path, explicit one-method selector and reported
 counts differ from the original driver. A definition-time stop cannot pass.
 
-This preparation has **zero target executions** and no execution authorization.
-After independent CODE review, root may grant one specific CPU1/10s budget for
-the original four selectors, below its8-trace maximum. No old11-method or all12
-run is included. Every first stdout/stderr/host exit and incomplete result must
-be retained; no retry follows a RED/ERROR/UNKNOWN. A later successful isolated
-result would supplement its distinct source, never replace the original RED or
-claim an all12 rerun. It supplies no native/financial/CI/capacity approval.
+The source preparation itself had zero target executions. After independent
+CODE review, root granted one specific CPU1/10s budget for the original four
+selectors, below its8-trace maximum. No old11-method or all12 run was included.
+Every first stdout/stderr/host exit and incomplete result is retained; no retry
+follows a RED/ERROR/UNKNOWN. This successful isolated result supplements its
+distinct source and preserves the original RED. No all12 rerun or
+native/financial/CI/capacity approval is claimed.
 
 Original PR38 causes remain UNDETERMINED. Phase2 remains NO_GO, and no expiry,
 lease duration, keeper period, admission or financial policy changes. Rollback
