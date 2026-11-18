@@ -27,6 +27,7 @@ from .storage import Database, StorageError
 
 FORMAT = 1
 TRADING_SCHEMA = 3
+ADMISSION_CONTRACT = "UTA-LINEAR-ADMISSION-v1"
 _TABLES = {"uta_audit_capability", "uta_market_history", "uta_code_artifacts",
            "uta_risk_policies", "uta_risk_decisions"}
 
@@ -184,6 +185,7 @@ class DecisionAudit:
                 "scales": dict(exchange.scales), "fee_rate": str(exchange.fee_rate),
                 "max_price_age_us": exchange.max_price_age // timedelta(microseconds=1),
                 "order_precision": 8, "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+                "admission_contract": ADMISSION_CONTRACT,
                 "execution_options": {"reserve_cache_size": exchange._reserve_kernel.capacity,
                                       "market_cache_size": exchange._market_decode_cache.capacity}}
 
@@ -393,11 +395,162 @@ class DecisionAudit:
         return {"equity": _text(equity), "initial_margin": _text(im), "maintenance_margin": _text(mm),
                 "open_order_margin": _text(reserve), "available_margin": _text(equity - im - reserve)}
 
+    @staticmethod
+    def _admission_projection(state, request, policy):
+        """Separate exact settlement derivation; never calls service helpers.
+
+        The projection retains the original outstanding orders. Admission tests
+        their current reserve before separately testing the proposed reserve.
+        Realized loss rounds down; a new order's full fee rounds up in USD units.
+        """
+        projected = json.loads(_json(state))
+        symbol = request["symbol"]
+        quantity = Fraction(Decimal(request["quantity"]))
+        price = Fraction(Decimal(request["limit_price"]))
+        prior = state["positions"].get(symbol, {"quantity": "0", "cost_basis": "0"})
+        old, cost = Fraction(Decimal(prior["quantity"])), Fraction(Decimal(prior["cost_basis"]))
+        remaining, pnl = old + quantity, Fraction(0)
+        unit = 10 ** policy["scales"]["USD"]
+        if not old or (old > 0) == (quantity > 0):
+            basis = cost + quantity * price
+        else:
+            close = min(abs(old), abs(quantity))
+            direction = 1 if old > 0 else -1
+            exact = close * (direction * price - cost / abs(old))
+            pnl = Fraction((exact * unit).numerator // (exact * unit).denominator, unit)
+            if abs(quantity) < abs(old):
+                # The rounded settlement remainder belongs to surviving cost.
+                basis = cost + pnl - direction * close * price
+            else:
+                basis = remaining * price
+        if remaining:
+            projected["positions"][symbol] = {"quantity": _text(remaining), "cost_basis": _text(basis)}
+        else:
+            projected["positions"].pop(symbol, None)
+        exact_fee = abs(quantity) * price * Fraction(Decimal(policy["fee_rate"])) * unit
+        fee = Fraction(-(-exact_fee.numerator // exact_fee.denominator), unit)
+        projected["balances"]["USD"] = _text(Fraction(Decimal(state["balances"]["USD"])) + pnl - fee)
+        return projected, pnl, fee
+
+    @staticmethod
+    def _replay_admission(record, market, policy, values, operation):
+        """Check the recorded v1 linear financial predicates, not resubmit.
+
+        Settlement and predicates here do not call ExchangeService admission or
+        settlement helpers. Risk valuation below uses the existing numerical
+        replay engine; this is not an independent reference for that engine.
+        """
+        result = {"status": "UNSUPPORTED", "eligible": None, "matches": None,
+                  "checks": {}, "differences": {},
+                  "scope": "recorded linear financial admission predicates",
+                  "excluded": ["historical clock freshness", "writer ownership", "API authorization",
+                               "matching or command re-execution", "business rejection archive",
+                               "concurrent orders under arbitrary partial-fill sequences"]}
+        evidence = record["summary"].get("admission")
+        if record["kind"] != "ORDER_ACCEPTED":
+            result["reason"] = "decision_kind_not_supported"
+            return result
+        if evidence is None:
+            result["reason"] = "historical_admission_evidence_missing"
+            return result
+        if (not isinstance(evidence, dict) or type(evidence.get("format")) is not int
+                or evidence["format"] != 1 or policy.get("admission_contract") != ADMISSION_CONTRACT
+                or evidence.get("contract") != ADMISSION_CONTRACT):
+            result["reason"] = "admission_contract_not_supported"
+            return result
+        try:
+            before, after = record["inputs"]["before"], record["inputs"]["after"]
+            request = record["inputs"]["operation"]
+            if any(type(request[name]) is not str or len(request[name]) > 64
+                   for name in ("quantity", "limit_price")):
+                raise ValueError("bounded native order amounts required")
+            quantity, price = Decimal(request["quantity"]), Decimal(request["limit_price"])
+            ro = request["reduce_only"]
+            bounds = (type(ro) is bool and quantity != 0 and price > 0 and
+                all(value.is_finite() and len(value.as_tuple().digits) <= 32
+                    and -8 <= value.as_tuple().exponent <= 12 and abs(value) <= Decimal("1000000000000")
+                    for value in (quantity, price)))
+            result["checks"]["request_bounds"] = bounds
+            if not bounds:
+                result.update(status="FAILED", eligible=False, matches=False, reason="native_order_bounds")
+                return result
+            q, p = Fraction(quantity), Fraction(price)
+            projected, pnl, fee = DecisionAudit._admission_projection(before, request, policy)
+            risk = DecisionAudit._replay_state(projected, market, policy)
+            recorded = record["summary"]["projected_execution"]
+            differences = result["differences"]
+            for name, actual in risk.items():
+                if actual != recorded.get(name):
+                    differences["projected_execution." + name] = {"recorded": recorded.get(name), "replayed": actual}
+            for name, actual in (("projected_realized_pnl", _text(pnl)), ("projected_fee", _text(fee))):
+                if evidence.get(name) != actual:
+                    differences[name] = {"recorded": evidence.get(name), "replayed": actual}
+            checks = result["checks"]
+            checks["valuation_evidence_consistent"] = (all(
+                record["summary"]["risk_" + side].get(name) == value
+                for side in ("before", "after") for name, value in values[side].items())
+                and record["summary"]["reserved_margin"] == operation["reserved_margin"])
+            checks["position_limit"] = abs(q + Fraction(Decimal(before["positions"].get(
+                request["symbol"], {"quantity": "0"})["quantity"]))) <= 10**12
+            checks["order_limit"] = len(before["orders"]) < 1000
+            checks["account_version_step"] = (type(before["version"]) is int and
+                type(after["version"]) is int and after["version"] == before["version"] + 1)
+            checks["unrelated_state_unchanged"] = all(before[name] == after[name] for name in
+                ("balances", "frozen_assets", "positions", "liabilities", "halted", "liquidation_state"))
+            orders = after["orders"]
+            checks["prior_live_orders_unchanged"] = orders[:-1] == before["orders"] and len(orders) == len(before["orders"]) + 1
+            new = orders[-1] if orders else {}
+            checks["new_order_identity"] = (request["order_id"] == record["business_id"]
+                and not any(row["order_id"] == request["order_id"] for row in before["orders"])
+                and all(new.get(name) == request[name] for name in ("order_id", "symbol", "quantity", "limit_price"))
+                and new.get("account_id") == record["account_id"]
+                and type(new.get("reduce_only")) is int and new["reduce_only"] == int(ro)
+                and new.get("filled_quantity") == "0" and new.get("status") == "OPEN"
+                and new.get("version") == after["version"] and new.get("fee_notional") == "0"
+                and new.get("charged_fee") == "0" and new.get("admission_decision_id") == record["decision_id"])
+            expected_meta = {"account_version": before["version"], "market_version": market.version,
+                             "observed_at": market.observed_at.isoformat(), "risk_mode": policy["risk_mode"]}
+            if policy["catalog"] is not None:
+                catalog, rules = policy["catalog"], policy["rules"]
+                product = catalog["products"][request["symbol"]]
+                checks["product_eligibility"] = (catalog["settlement_asset"] == "USD"
+                    and product["kind"] == "linear_perpetual" and product["quote_asset"] == "USD"
+                    and product["settlement_asset"] == "USD" and Fraction(Decimal(product["multiplier"])) == 1
+                    and not product["eligible_hedges"] and (product["status"] == "active" or
+                        (ro and product["status"] == "reduce_only"))
+                    and (q / Fraction(Decimal(product["quantity_step"]))).denominator == 1
+                    and (p / Fraction(Decimal(product["price_tick"]))).denominator == 1
+                    and abs(q) * p >= Fraction(Decimal(product["min_notional"])))
+                expected_meta.update(rule_id=rules["rule_id"], rule_version=rules["version"], catalog_version=catalog["version"])
+            else:
+                checks["product_eligibility"] = request["symbol"] in market.instruments
+            checks["version_provenance"] = all(recorded.get(key) == value for key, value in expected_meta.items())
+            current_surplus = Fraction(Decimal(values["before"]["equity"])) - Fraction(Decimal(values["before"]["maintenance_margin"]))
+            projected_surplus = Fraction(Decimal(risk["equity"])) - Fraction(Decimal(risk["maintenance_margin"]))
+            if ro:
+                old = Fraction(Decimal(before["positions"].get(request["symbol"], {"quantity": "0"})["quantity"]))
+                held = sum((abs(Fraction(Decimal(row["quantity"])) - Fraction(Decimal(row["filled_quantity"])))
+                    for row in before["orders"] if row["symbol"] == request["symbol"] and row["reduce_only"]), Fraction(0))
+                checks["reduce_only_quantity"] = bool(old) and (q > 0) != (old > 0) and held + abs(q) <= abs(old)
+                checks["reduce_only_surplus"] = projected_surplus >= current_surplus
+            else:
+                checks["new_exposure_control"] = before["halted"] is False and (before["liquidation_state"] is None
+                    or before["liquidation_state"]["state"] == "NORMAL")
+                checks["initial_margin_reservation"] = Fraction(Decimal(values["before"]["available_margin"])) >= Fraction(Decimal(operation["reserved_margin"]))
+                checks["strict_maintenance_surplus"] = projected_surplus > 0
+            result.update(status="VERIFIED" if all(checks.values()) and not differences else "FAILED",
+                          eligible=all(checks.values()), matches=all(checks.values()) and not differences,
+                          projected_values=risk, projected_realized_pnl=_text(pnl), projected_fee=_text(fee))
+        except (KeyError, TypeError, ValueError, ArithmeticError, AttributeError):
+            result.update(status="FAILED", eligible=None, matches=False, reason="admission_evidence_invalid")
+        return result
+
     def replay(self, identity):
         """Recompute archived numerical values; refuse a different code/runtime.
 
-        Does not rerun matching, admission eligibility, lease ownership or clock
-        freshness. It is a valuation replay, not a historical command resubmit.
+        Separately checks supported archived admission predicates. Neither
+        result reruns matching, lease ownership or historical clock freshness.
+        `matches` remains the numerical result for compatibility.
         """
         record = self.decision(identity)
         try:
@@ -435,7 +588,9 @@ class DecisionAudit:
             if operation["reserved_margin"] != record["summary"]["reserved_margin"]:
                 differences["operation.reserved_margin"] = {"recorded": record["summary"]["reserved_margin"],
                                                            "replayed": operation["reserved_margin"]}
+        admission = self._replay_admission(record, market, policy, replayed, operation)
         return {"decision_id": identity, "market_snapshot_id": record["market_snapshot_id"],
                 "artifact_id": record["artifact_id"], "policy_id": record["policy_id"],
                 "values": replayed, "operation": operation, "differences": differences, "matches": not differences,
-                "scope": "numerical valuation; no historical re-execution or live freshness claim"}
+                "valuation_matches": not differences, "admission": admission,
+                "scope": "numerical valuation plus separately scoped admission predicates; no historical re-execution or live freshness claim"}
