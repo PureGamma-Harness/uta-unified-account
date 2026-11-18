@@ -178,16 +178,20 @@ class DecisionAudit:
         self.policy_id = None
 
     @staticmethod
-    def policy(exchange):
+    def valuation_policy(exchange):
+        """Runtime valuation fields, shared with the exact credit-v2 contract."""
         return {"format": FORMAT, "risk_mode": "legacy_reference" if exchange.product_catalog is None else "phase1_cross",
                 "catalog": None if exchange.product_catalog is None else json.loads(exchange.product_catalog.to_json()),
                 "rules": None if exchange.portfolio_rules is None else json.loads(exchange.portfolio_rules.to_json()),
                 "scales": dict(exchange.scales), "fee_rate": str(exchange.fee_rate),
                 "max_price_age_us": exchange.max_price_age // timedelta(microseconds=1),
                 "order_precision": 8, "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
-                "admission_contract": ADMISSION_CONTRACT,
                 "execution_options": {"reserve_cache_size": exchange._reserve_kernel.capacity,
                                       "market_cache_size": exchange._market_decode_cache.capacity}}
+
+    @staticmethod
+    def policy(exchange):
+        return {**DecisionAudit.valuation_policy(exchange), "admission_contract": ADMISSION_CONTRACT}
 
     @staticmethod
     def _insert(connection, table, id_column, identity, payload_column, payload):

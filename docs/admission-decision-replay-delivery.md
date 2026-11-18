@@ -33,12 +33,26 @@ Target interval940216051ns, inner719354757ns, tests397088601ns and caller
 through validation1555341844ns have distinct scopes. Tool yield/poll durations
 are not summed into an end-to-end latency. These figures are not capacity.
 
-This delivery merges the independently reviewed MM fixture correction from
-PR46; all66 retained SQL4 inputs plus the caller remain byte-identical to the
-actually executed sourceb4151847. The only runtime changes relative to PR46
-are the admission capture and decision replay changes in service/decision_audit.
-Historical first evidence remains pinned to its original SHA. First normal
-CI of this delivery is pending.
+Initial delivery137562a0 merged the independently reviewed PR46 MM fixture
+correction and verified all66 SQL4 retained inputs plus the caller equal the
+actually executed sourceb4151847. That remains historical evidence. Its first
+normal push/PR CI failed all8 jobs: each2066 tests/1 failure/16 errors. Eight
+375-pin maps and original failure stacks are independently bound by a59e1d41;
+all package/build/installed stages were absent or skipped. Preserve these
+failures and do not treat eleven new passing method IDs as platform acceptance.
+
+The corrected candidate separates the ten-field runtime valuation policy from
+the order envelope's additional admission contract. Credit-v2 keeps its original
+persisted reconstruction and exact equality; no unknown fields are dropped.
+Independent CODE54220955 verified this narrow change and the four new pure
+contract tests, which have not yet run locally. No financial formula, DDL,
+borrow mutation, format or historical archive is changed. Corrected-source
+normal CI, including the original credit helper and restart failures, is pending.
+
+The corrected runtime now also changes credit_audit_v2.py relative to PR46.
+Its artifact differs from b4151847, so original SQL4 results are not relabeled
+as a new-source run. Old certificates and failed first results retain their
+actual source identities; existing-authority hot replacement remains unsupported.
 
 Deploy only into new explicit synthetic authorities with the archived
 constructor policy. Existing-source ambiguity must reject, not select or
