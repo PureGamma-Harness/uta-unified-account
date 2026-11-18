@@ -1,0 +1,88 @@
+{
+  "PR_merge": "d6866465f76647df4381342a05d99d92505407ac",
+  "cases": [
+    {
+      "cause": "UNDETERMINED",
+      "exception_types": [
+        "BlockingIOError",
+        "uta.service.ServiceError"
+      ],
+      "final_message_sha256": "a5a6641b7d4fff6d73f2b2330574383de44f1aac0ded597ba38e925aee5cd70a",
+      "frames": [
+        {
+          "display_equals_exact_Git": true,
+          "exact_source_line": "fcntl.flock(descriptor, operation | fcntl.LOCK_NB)",
+          "function": "_lock",
+          "line": 263,
+          "path": "uta/sharding.py",
+          "repository_source": true,
+          "source_Git_blob_sha1": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+          "source_line_observed": "fcntl.flock(descriptor, operation | fcntl.LOCK_NB)",
+          "source_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+        },
+        {
+          "display_equals_exact_Git": true,
+          "exact_source_line": "partial = self.router.publish_market(snapshot, timeout=.15)",
+          "function": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+          "line": 1627,
+          "path": "tests/test_durable_faults.py",
+          "repository_source": true,
+          "source_Git_blob_sha1": "a02e62af6e22b36af05780f30707ec28de9ec6c9",
+          "source_line_observed": "partial = self.router.publish_market(snapshot, timeout=.15)",
+          "source_sha256": "b22629beadfd5d224d7030871f232b84604398ba3c00e13dd153b4227a934a7f"
+        },
+        {
+          "display_equals_exact_Git": true,
+          "exact_source_line": "with self._control._lock(exclusive=True, timeout=timeout):",
+          "function": "publish_market",
+          "line": 1532,
+          "path": "uta/durable_process.py",
+          "repository_source": true,
+          "source_Git_blob_sha1": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+          "source_line_observed": "with self._control._lock(exclusive=True, timeout=timeout):",
+          "source_sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+        },
+        {
+          "function": "__enter__",
+          "line": 135,
+          "path": "external:contextlib.py",
+          "repository_source": false,
+          "source_line_observed": "return next(self.gen)"
+        },
+        {
+          "display_equals_exact_Git": true,
+          "exact_source_line": "raise ServiceError(\"router_busy\", \"router control gate did not become available before timeout\", 503)",
+          "function": "_lock",
+          "line": 267,
+          "path": "uta/sharding.py",
+          "repository_source": true,
+          "source_Git_blob_sha1": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+          "source_line_observed": "raise ServiceError(\"router_busy\", \"router control gate did not become available before timeout\", 503)",
+          "source_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+        }
+      ],
+      "is_capture_target_failure": false,
+      "is_five_second_recovery_target_failure": false,
+      "kind": "ERROR",
+      "original_heading": "test_partial_publication_stays_halted_until_exact_publication_replay_completes (test_durable_faults.ManagedProcessFaultTests)",
+      "stage": "ordinary_partial_publication_control_gate_acquisition",
+      "test_id": "test_durable_faults.ManagedProcessFaultTests.test_partial_publication_stays_halted_until_exact_publication_replay_completes"
+    }
+  ],
+  "cause": "UNDETERMINED",
+  "collector_did_not_reproduce_signals_or_native_operations": true,
+  "errors": 1,
+  "failed_job": 134687835587,
+  "failing_method_AST_unchanged_from_PR35_base": true,
+  "failures": 0,
+  "new_capture_or_5s_target_failure_observed_in_two_selected_units": false,
+  "ordinary_gate_timeout_source_literal": {
+    "code": "router_busy",
+    "message": "router control gate did not become available before timeout",
+    "not_runtime_exception_object_code_extraction": true,
+    "source": "uta/sharding.py:267",
+    "status": 503
+  },
+  "source_head": "e8c466a410e659b7b0de965bc052e34107b67d8d",
+  "tests_run": 2057
+}

@@ -1,0 +1,19 @@
+# PR45 首轮 CI 独立复核：证据绑定通过，PR 整体仍失败
+
+结论：**有限 SAFE 首证据绑定 PASS，PR whole failure 保留。** 审查固定 `4507072bac52420700f791f6c456b53aa793c385`，source C `e8c466a410e659b7b0de965bc052e34107b67d8d`、PR35 base `9b61e5f35dd2196ef2fdddfa03559eca3f1322ec`。相对 C 仅27个SAFE路径、240396字节；两层seal及列出文件逐Git长度/SHA一致，未改旧PENDING或任何原件。
+
+私有目录49个原件共2290411字节，0700/0600、regular/canonical、NOFOLLOW/NOATIME稳定元数据及逐文件hash全部对应清单。headers、signed references等只做不解码的inventory hash；没有导出其内容。两个unit ZIP、六个成员及package原件全部保持私有。公开是有限字段投影和一份明确派生的joblog，未另挑无profile的成功样本。
+
+选定push3.13成功unit为99915字节/SHA256 `ebb4c58b7387c11a4e91c1533e68860044f8864852c1b76f1a8b22aeb3747261`；PR3.10失败unit为89419字节/SHA256 `422817544d11069b15158de58371693b13a702e0f6f86ed25d9f25e199760771`。各三个成员CRC/长度/SHA与私有提取副本一致。两份实际2057tests，分别0F/0E与0F/1E，均0skip；实际worker是baseline精确七字段，逐类型和值匹配summary，没有套用PR42诊断扩展字段。各370项before/after source maps与Git C对应；push实际code_commit为C，PR为d6866465实际merge。
+
+八个新pure方法由C的AST独立枚举，两个原unit内各逐ID单次ok；原instrumented SH方法也各唯一header和ok。每份原文各有一条private profile：六个packet keys、五个binding keys、原生整数/字符串范围和fixture/runtime源码指纹均对应；instrumented为true，native_recovery_proven为false。这里只验证留存数据schema与代码身份，不查询/proc或PID，不证明当时内核ownership或未插桩生产RTO。公开27路径没有实际boot字符串或profile binding键值；profile和包含它们的全文未复制。
+
+PR唯一ERROR的链是BlockingIOError→uta.service.ServiceError。五条frame逐源行、Git blob/SHA核对，对应partial test1627的publish_market调用、durable_process1532的exclusive control lock，以及sharding263/267的flock与timeout分支。调用尚未返回partial状态；router_busy/503/message是该源码literal，不冒称读取了异常对象的runtime code。此方法AST与PR35相同，生产UTA/tools/config/build/workflow对base零diff。当前记录没有新SH捕获或五秒恢复目标失败；具体持锁原因仍UNDETERMINED，不建立新SH的因果归属，也不以另一方法的ok覆盖PR错误。
+
+唯一小package为59144字节/SHA256 `e822eeb4a80182e47bfdc284fb2d0e35c78a306858b454a12e6c584ff6a38b23`。19成员CRC/长度对应，只对两个JSON report作语义核对，其余CLI stdout/stderr未解释或导出。报告7checks true、installed8/0F0E0skip、八命令return0、isolatedtrue/pythonpathnull；runtime hashes与重算tree对C一致。6908required集合等于Git C；真实delta45与静态pin69并集109均选入。所有qualification继续null，未进行完整资格调用或独立wheel/sdist二进制验收。
+
+原失败joblog28463字节与收据SHA对应；按七个隐私谓词重建27639字节SAFE：11个命中行替换为固定占位，其余原行保留，行号、长度、SHA一致。完整原profile/header文本仍private。首次行政109误当delta的guard失败及原/v2源码hash保留，正确域是45delta、69pin、109union。格式检查首exit2、原856字节stdout/空stderr、八处不可trim空白以及后续精确排除后的exit0分别保留；这不是重跑CI。
+
+已存provider metadata与两实际unit绑定确认push44271111043 attempt1四success，PR44271166000 attempt1三success/一个3.10 unit failure。实际merge parents为base/C、tree7590与C相同。其余六份成功unit未取，不给逐项数量或schema结论；PR整体仍FAIL。
+
+本复核只读Git、JSON、CRC/hash及定向隐私原件，没有target执行/import/compile、SQL、proc/PID、额外API、下载、child或重跑。新CODE修复与源调查是另一个版本/范围；本首RAW不等待或混入它们。历史CI35/41、旧local/native、c98/8112及其他PENDING均保持原结论，生产、真实资金、HA与10k/s未因此批准。
