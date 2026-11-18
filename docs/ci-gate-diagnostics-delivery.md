@@ -44,3 +44,9 @@ Rollback removes these diagnostics while retaining old failures and timing
 records. Do not extend a lease, relax a deadline, suppress an assertion or
 relabel a quote to make these tests pass. Live root causes, runtime safety/
 liveness fixes, capacity, HA and production/real-funds acceptance remain OPEN.
+
+## First normal CI and independent RAW acceptance
+
+First push44314535158 and PR44315430535 attempt1 completed all eight jobs and all200 steps successfully. The two fixed Python3.13 unit logs each report2070 tests with no failures/errors/skips. Both target methods are plain-ok in each log. The376-entry source maps bind to the tested source93c6d572.
+
+Collector f0fb9689 and independent RAW c78ce98f verify48 originals2961714B, three ZIPs261782B/25CRC and the finite package report. No target failure trace was emitted: the17-stage and64-entry timeline limits remain source contracts, with actual failure-event/cap behavior NOT_OBSERVED. These results do not establish that either historical root cause was fixed. Runtime, tests, tools, benchmarks and CI configuration are unchanged by this evidence integration. The independent administrative reader corrected a canonical-hash newline assumption, recorded separately from target/CI execution. Production/HA/capacity remain NO_GO.
