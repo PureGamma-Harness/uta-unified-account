@@ -1,0 +1,27 @@
+======================================================================
+FAIL: test_malformed_missing_and_oversize_persistent_quotes_fail_closed (test_process_readiness.ProcessReadinessTests.test_malformed_missing_and_oversize_persistent_quotes_fail_closed)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_process_readiness.py", line 162, in test_malformed_missing_and_oversize_persistent_quotes_fail_closed
+    self.activate()
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_process_readiness.py", line 76, in activate
+    self.wait_ready()
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_process_readiness.py", line 63, in wait_ready
+    return readiness_fixtures.ReadinessSamplingTests.wait_ready(self, self.router)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_readiness_sampling.py", line 55, in wait_ready
+    self.fail("non-transient readiness observation: " + json.dumps(report, sort_keys=True))
+AssertionError: non-transient readiness observation: {"decision_audit_required": false, "financial_ready": false, "managed": true, "profile": "managed_development_legacy_gap", "ready": false, "reason": "market_stale", "recovered_orphans": [], "state": {"epoch": 1, "error": null, "halted": false, "market_digest": "4dc9f45d6571aa90863fff6d4c67241a71b1f9804501bfdfff41671d851405dc", "market_version": 1, "publishing": false, "watermarks": {"0": 1, "1": 1}}, "state_observed": true, "supervisor_alive": true, "workers": [{"alive": true, "funding_registry_ready": true, "generation": 2, "lease_active": true, "locally_active": true, "market_digest": "4dc9f45d6571aa90863fff6d4c67241a71b1f9804501bfdfff41671d851405dc", "market_observed_at": "2026-11-18T01:48:36.978282+00:00", "market_ready": false, "market_version": 1, "owner_pid": 4984, "owner_ready": false, "pid": 4984, "reason": "market_stale", "report": {"generation": 1, "pid": 4978, "shard": 0, "state": "ready"}, "shard": 0}, {"alive": true, "funding_registry_ready": true, "generation": 1, "lease_active": false, "locally_active": true, "market_digest": "4dc9f45d6571aa90863fff6d4c67241a71b1f9804501bfdfff41671d851405dc", "market_observed_at": "2026-11-18T01:48:36.978282+00:00", "market_ready": false, "market_version": 1, "owner_pid": 4979, "owner_ready": false, "pid": 4985, "reason": "market_stale", "report": {"code": "lease_expired", "pid": 4979, "shard": 1, "state": "failed"}, "shard": 1}], "workers_alive": true}
+
+======================================================================
+FAIL: test_same_version_changed_persistent_content_is_not_reused (test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/runner/work/uta-unified-account/uta-unified-account/tests/test_process_readiness.py", line 158, in test_same_version_changed_persistent_content_is_not_reused
+    self.assertTrue(self.router.diagnostics()["financial_ready"])
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 1835 tests in 452.805s
+
+FAILED (failures=2)
