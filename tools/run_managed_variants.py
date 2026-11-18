@@ -338,7 +338,13 @@ def qualification(source_hashes, registration, *, source=None):
             require(len(summary["command_argv"]) == 4 and summary["command_argv"][1].endswith("/tools/run_validation.py")
                 and summary["command_argv"][2] == "--output", "not the full-suite validation command")
             require(summary["source_sha256"] == summary["source_sha256_after"] == expected, "QA input source hashes differ")
-            require(set(worker) == {"tests_run", "failures", "errors", "skipped", "expected_failures", "unexpected_successes", "unittest_passed"}, "QA worker result fields")
+            worker_fields = {"tests_run", "failures", "errors", "skipped", "expected_failures", "unexpected_successes", "unittest_passed"}
+            diagnostic_fields = {"lease_observations", "lease_observations_truncated"}
+            require(set(worker) in (worker_fields, worker_fields | diagnostic_fields), "QA worker result fields")
+            if set(worker) != worker_fields:
+                require(type(worker["lease_observations"]) is list and worker["lease_observations"] == []
+                    and worker["lease_observations_truncated"] is False, "QA worker lease diagnostics must be empty and untruncated")
+                require(diagnostic_fields <= set(summary), "QA worker differs from summary")
             require(all(type(worker[key]) is type(summary[key]) and worker[key] == summary[key] for key in worker), "QA worker differs from summary")
             require(record["python"] in ("3.10", "3.11", "3.12", "3.13") and summary["python"].startswith(record["python"] + "."), "QA interpreter identity")
             if kind == "local":

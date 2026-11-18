@@ -1,0 +1,207 @@
+{
+  "baseline_consumer_source": "17e0838ff0c153f36ec53a03e4db219e5948ab33",
+  "cases": {
+    "ci_pending": {
+      "accept_QA_prefix": false,
+      "error_message": "failed/pending CI cannot authorize execution",
+      "independent_policy_reason": "CI must be completed/success as before.",
+      "variant": "new"
+    },
+    "count_bool_alias": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: errors",
+      "independent_policy_reason": "False does not satisfy the original native integer error-count check.",
+      "variant": "new"
+    },
+    "count_errors": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: errors",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "count_expected_failures": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: expected_failures",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "count_failures": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: failures",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "count_skipped": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: skipped",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "count_unexpected_successes": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: unexpected_successes",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "count_worker_exit_code": {
+      "accept_QA_prefix": false,
+      "error_message": "red qualification: worker_exit_code",
+      "independent_policy_reason": "The original zero integer count/worker-exit gate remains authoritative.",
+      "variant": "new"
+    },
+    "false_none": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "None is not literalFalse.",
+      "variant": "new"
+    },
+    "false_zero": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Numeric zero is not literalFalse.",
+      "variant": "new"
+    },
+    "half_flag": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker result fields",
+      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
+      "variant": "new"
+    },
+    "half_list": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker result fields",
+      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
+      "variant": "new"
+    },
+    "legacy_all": {
+      "accept_QA_prefix": true,
+      "error_message": null,
+      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
+      "variant": "legacy"
+    },
+    "legacy_unknown_key": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker result fields",
+      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
+      "variant": "legacy"
+    },
+    "list_alias": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Native list aliases are not accepted.",
+      "variant": "new"
+    },
+    "mixed_local7_ci9": {
+      "accept_QA_prefix": true,
+      "error_message": null,
+      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
+      "variant": "new_ci"
+    },
+    "mixed_local9_ci7": {
+      "accept_QA_prefix": true,
+      "error_message": null,
+      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
+      "variant": "new_local"
+    },
+    "new_all": {
+      "accept_QA_prefix": true,
+      "error_message": null,
+      "independent_policy_reason": "Complete original QA proof matrix; exactlegacy7 or exactnew9 with empty native list and literalFalse, no qualification from telemetry.",
+      "variant": "new"
+    },
+    "new_unknown_key": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker result fields",
+      "independent_policy_reason": "Only exact7 or exact9 keys are supported; no unknown or half extension.",
+      "variant": "new"
+    },
+    "nonempty_list": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Successful qualification cannot carry diagnostic capsules.",
+      "variant": "new"
+    },
+    "old_ci_head": {
+      "accept_QA_prefix": false,
+      "error_message": "CI is not this source/event",
+      "independent_policy_reason": "CI run head must equal registered source.",
+      "variant": "new"
+    },
+    "old_ci_summary": {
+      "accept_QA_prefix": false,
+      "error_message": "push CI summary source",
+      "independent_policy_reason": "Push summary cannot borrow an old source identity.",
+      "variant": "new"
+    },
+    "old_local_source": {
+      "accept_QA_prefix": false,
+      "error_message": "old local source cannot qualify new source",
+      "independent_policy_reason": "Old local reports cannot certify a new source commit.",
+      "variant": "new"
+    },
+    "raw_not_OK": {
+      "accept_QA_prefix": false,
+      "error_message": "full QA log completion",
+      "independent_policy_reason": "Raw test completion must still end in OK.",
+      "variant": "new"
+    },
+    "raw_warning": {
+      "accept_QA_prefix": false,
+      "error_message": "unraisable/resource warning in QA",
+      "independent_policy_reason": "Raw warning rejection remains active.",
+      "variant": "new"
+    },
+    "runtime_mismatch": {
+      "accept_QA_prefix": false,
+      "error_message": "QA interpreter identity",
+      "independent_policy_reason": "Declared interpreter and reported actual version must still match.",
+      "variant": "new"
+    },
+    "source_hash_mismatch": {
+      "accept_QA_prefix": false,
+      "error_message": "QA input source hashes differ",
+      "independent_policy_reason": "Exact source-before/after inventory remains required.",
+      "variant": "new"
+    },
+    "summary_failed": {
+      "accept_QA_prefix": false,
+      "error_message": "failed/unknown qualification: passed",
+      "independent_policy_reason": "New diagnostics cannot make a failed summary healthy.",
+      "variant": "new"
+    },
+    "summary_missing_diagnostic": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker differs from summary",
+      "independent_policy_reason": "The complete worker extension cannot be paired with a partial summary extension.",
+      "variant": "new"
+    },
+    "truncated_true": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Truncation prevents an unambiguous empty successful diagnostic report.",
+      "variant": "new"
+    },
+    "tuple_list": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker lease diagnostics must be empty and untruncated",
+      "independent_policy_reason": "Only native list is accepted; an empty tuple is not the new grammar.",
+      "variant": "new"
+    },
+    "worker_count_mismatch": {
+      "accept_QA_prefix": false,
+      "error_message": "QA worker differs from summary",
+      "independent_policy_reason": "All original worker/summary fields must still agree.",
+      "variant": "new"
+    }
+  },
+  "does_not_qualify_real_source_or_package": true,
+  "expected_values_from_production_helpers": false,
+  "fake_boundaries": [
+    "proof JSON/regularfile/hash loading",
+    "memory Path and raw log bytes",
+    "CI/provider/source/runtime records",
+    "package/installed/omission section omitted"
+  ],
+  "root_policy": "Accept exactlegacy7 or exactnew9 only; new empty native list and literalFalse, all previous qualification gates retained.",
+  "scope": "INDEPENDENT_HAND_RECORDED_QA_PREFIX_POLICY_EXAMPLES"
+}
