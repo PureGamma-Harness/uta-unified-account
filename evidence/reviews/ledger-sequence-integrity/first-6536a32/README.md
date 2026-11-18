@@ -1,0 +1,9 @@
+# First reference-ledger native-sequence run
+
+The sole root-authorized first run of source `6536a32cbbd44c2ad7509e8eba26fd1a520f0dd0` completed four methods with zero failures, errors or skips. The actual host returned exit0 and was reaped. `first.stderr.txt` retains all four method names and the original unittest summary. `first.stdout.txt` retains BEGIN/END and actual runtime.
+
+Eight original files are copied byte-for-byte from the new private pure-target and outer-host output directories. The manifest identifies origin scope, original name, length and SHA; `first.intent.json` is the original target `intent.json` under a distinguishing filename. No output was replaced with a summary. Raw original files contain only synthetic test identifiers, source pins, runtime and local control paths; no financial authority, credentials or DB bytes.
+
+Actual CPU affinity was `[1]`, Python was 3.12.14 with `-I -S -B`, and the exact executable SHA was `fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7`. All three input buffers matched their frozen plan/Git blobs before and after execution. The root timeout was ten seconds; combined raw stdout/stderr was 2,225 bytes. Launcher stdout/stderr were both empty.
+
+The four passed methods and their bound source cover 14 bounded examples. There is no separate raw per-subcase event counter, baseline run, full-suite rerun, SQLite write, process fault, throughput or long-duration acceptance. Timing boundaries are recorded in `result-classification.json`; these timings do not measure persistent trading latency. The plan's historical NOT_RUN status remains the pre-execution declaration; this directory is the separate actual first-result record. Independent evidence review is pending. Real-funds, migration cutover, insurance and ADL remain disabled.
