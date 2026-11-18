@@ -1,0 +1,49 @@
+{
+  "schema": "funding-hold-target-adapter-output-fix/v3",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "previous_blocked_source": "fc1da5a704896dae63afe309ec8807a9df0f2029",
+  "previous_review": "1b456fd1e397ad77ba4a821c47ab6e867dae8ba0",
+  "target_source": "ed81c424e3be7c004331bcd8340421d60063fcb6",
+  "wire_source": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+  "pins": [
+    {
+      "path": "tests/funding_hold_target_adapter_v2.py",
+      "bytes": 20482,
+      "sha256": "ce62d95f8e7c51137f5ff98a6bc6e5e03d3f91252ceae4a0cebb289196069fb1"
+    },
+    {
+      "path": "tests/test_funding_hold_target_adapter_v2.py",
+      "bytes": 10575,
+      "sha256": "d9f7368382294793e513c2abc30a39dd407e13ad9ac941cfecbda222bdbd6895"
+    },
+    {
+      "path": "docs/funding-hold-target-adapter-output-fix.md",
+      "bytes": 2857,
+      "sha256": "03ddf0076ab064310f32fd7ad5d44f713de552793600ff991a077280dfe35a21"
+    },
+    {
+      "path": "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json",
+      "bytes": 31492,
+      "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+    }
+  ],
+  "old9_test_method_AST": "UNCHANGED",
+  "new_test_methods": [
+    "test_action_ID_elements_have_wire_native_type_and_format",
+    "test_encoding_known_target_exception_is_not_business_rejection",
+    "test_intermediate_bad_field_or_downstream_rejection_is_technical",
+    "test_invalid_intermediate_type_never_reaches_downstream_target",
+    "test_native_natural_slot_is_not_coerced_from_another_iterable",
+    "test_query_counted_integer_zero_is_not_boolean_false",
+    "test_unsupported_schema_cannot_be_hidden_by_another_oneof_branch"
+  ],
+  "test_definitions": 16,
+  "schema_data_nodes_checked": 164,
+  "actual_target_reference_import_compile_run_attempts": 0,
+  "SQL_actors_CI": 0,
+  "differential_runner": "NOT_IMPLEMENTED_NOT_RUN",
+  "decoder_equivalence": "PENDING_INDEPENDENT_CODE_AND_EXECUTION",
+  "activation_permission": false,
+  "D2": "BLOCKED",
+  "production": "NO_GO"
+}

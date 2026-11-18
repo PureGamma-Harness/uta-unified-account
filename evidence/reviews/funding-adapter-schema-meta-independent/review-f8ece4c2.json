@@ -1,0 +1,314 @@
+{
+  "D2": "UNCONDITIONALLY_BLOCKED_NO_FINANCIAL_SERVICE_ACK_OUTBOX_PERIOD_ATOMICITY_RECOVERY_REAL_FUNDS_OR_PRODUCTION_APPROVAL",
+  "actual_delta_files": [
+    "docs/funding-hold-target-adapter-schema-meta.md",
+    "evidence/designs/funding-hold-target-adapter-v2/code-candidate-v4.json",
+    "tests/funding_hold_target_adapter_v2.py",
+    "tests/test_funding_hold_target_adapter_v2.py"
+  ],
+  "actual_target_reference_adapter_validator_actions": {
+    "CI": 0,
+    "SQL": 0,
+    "actor_thread": 0,
+    "bytecode_compiles": 0,
+    "case_generations": 0,
+    "clock": 0,
+    "imports": 0,
+    "network": 0,
+    "proc_PID": 0,
+    "reference_calls": 0,
+    "target_calls": 0,
+    "tests": 0,
+    "validator_calls": 0
+  },
+  "assumptions_and_limits": [
+    "pinned native JSON schema graph remains immutable during one check/match; no adversarial mutable Python schema object or concurrent mutation proof",
+    "meta pass precedes value matching, not target pure calls or raw value encoding; earlier encoding failures remain technical, never an accepted hidden schema",
+    "only selected output root and referenced closure; not a general JSON Schema2020-12 library, request validator or all unuseddefs pass",
+    "const/enum/type combinations may be valid but unsatisfiable supported schemas; no general schema satisfiability proof",
+    "pattern uses finite pinned Python fullmatch semantics, no generic regex/library semantic or performance coverage",
+    "depth/work/hash-file caps are not kernel RSS/CPU/latency guarantees",
+    "fullfield structural shape does not prove numeric/state/lineage/authority correctness; actual independent reference/bridge/codec/differential/resource/CI evidence pending",
+    "612 reference lineage blocker and its future corrected source review remain separate"
+  ],
+  "candidate_parent": "afdd92104ccd2ab0f39a1b94ddcf7797211e38fe",
+  "candidate_physical_Git_pins": {
+    "docs/funding-hold-target-adapter-schema-meta.md": {
+      "bytes": 2494,
+      "git_blob_oid": "83b485037663b563583969717f889b4833045032",
+      "physical_equals_fixed_Git": true,
+      "sha256": "f3ac15b3e2cb15c938287a8a125c5d665c40b9fadd59ae57b4ee24dd734ad36f"
+    },
+    "evidence/designs/funding-hold-target-adapter-v2/code-candidate-v4.json": {
+      "bytes": 1393,
+      "git_blob_oid": "1ca740f9783bc463a1273dcf9bcae3da42560655",
+      "physical_equals_fixed_Git": true,
+      "sha256": "594c3b4f1e462f24f42798a88ffcbf7887eb2671c362f3e02ecc522fd554c1c4"
+    },
+    "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json": {
+      "bytes": 31492,
+      "git_blob_oid": "35065cfa2fa5ed8b9d53da25c24310deca3d5631",
+      "physical_equals_fixed_Git": true,
+      "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+    },
+    "tests/funding_hold_target_adapter_v2.py": {
+      "bytes": 24999,
+      "git_blob_oid": "01f82bf3e09d4176b6507b29d6239b6f84971074",
+      "physical_equals_fixed_Git": true,
+      "sha256": "104b92d6de6f0dafd28b71827501ffad23d9d2c97da666a2ffab995ae9a39fa3"
+    },
+    "tests/test_funding_hold_target_adapter_v2.py": {
+      "bytes": 11823,
+      "git_blob_oid": "055fb2245960b43d74aa10eed8163d5879453979",
+      "physical_equals_fixed_Git": true,
+      "sha256": "6741029e150a9455af1f75c1e1b71c3d478474a175cc24118ec671c983c6670e"
+    }
+  },
+  "confirmed_new_CODE_blockers": [],
+  "delivery": "2 SAFE review files only, no author/source/wire/runtime/raw/plan mutations, no push",
+  "execution_GO": false,
+  "formal_prior_review_bindings": [
+    {
+      "bytes": 9138,
+      "commit": "1b456fd1e397ad77ba4a821c47ab6e867dae8ba0",
+      "path": "docs/funding-hold-target-adapter-v2-independent-review.md",
+      "sha256": "c0f7c643c716534229efe898b733d004ebd3240de30f03294851d2965bf8a097"
+    },
+    {
+      "bytes": 11777,
+      "commit": "1b456fd1e397ad77ba4a821c47ab6e867dae8ba0",
+      "path": "evidence/reviews/funding-hold-target-adapter-v2-independent/review-fc1da5a7.json",
+      "sha256": "a7d100c3f6f11ee3139439d6680edaf781e36f6b868744a99b82e3ddc7a11434"
+    },
+    {
+      "bytes": 7122,
+      "commit": "afdd92104ccd2ab0f39a1b94ddcf7797211e38fe",
+      "path": "docs/funding-hold-target-adapter-output-independent-review.md",
+      "sha256": "fcdc91bb6ecb4017148eddcbc7169e45bb71414de1376b7226631bdeb47a7905"
+    },
+    {
+      "bytes": 9050,
+      "commit": "afdd92104ccd2ab0f39a1b94ddcf7797211e38fe",
+      "path": "evidence/reviews/funding-target-adapter-output-independent/review-4173d8d5.json",
+      "sha256": "64145a075c4c90714c7a7dd8aaa7a8fe799664301c98c0a8161147eb1d81485f"
+    }
+  ],
+  "frozen_wire": {
+    "bytes": 31492,
+    "commit": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+    "identical": true,
+    "keywords_in_output_closures": [
+      "$ref",
+      "additionalProperties",
+      "const",
+      "enum",
+      "exclusiveMaximum",
+      "items",
+      "maxItems",
+      "maxLength",
+      "maximum",
+      "minItems",
+      "minLength",
+      "minimum",
+      "oneOf",
+      "pattern",
+      "properties",
+      "required",
+      "type"
+    ],
+    "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be",
+    "types_in_output_closures": [
+      "array",
+      "boolean",
+      "integer",
+      "null",
+      "object",
+      "string"
+    ]
+  },
+  "independence": {
+    "basis": "public061 output schema,2bb/54af rules, actual mapper and formal1b456/afdd source findings only",
+    "no_answers_taken_from_target_or_reference_execution": true,
+    "prior_other_tasks": "reviewer previously handled separate funding core/reference reviews; no such algorithms used as correctness oracle for this wrapper",
+    "production_financial_algorithms_read_this_review": false,
+    "reference_financial_core_or_generator_read_this_review": false
+  },
+  "independent_JSON_data_graph_not_validator_calls": {
+    "candidate_values_supplied": false,
+    "chosen10_output_roots": {
+      "action_identity": {
+        "expanded_schema_occurrences": 18,
+        "max_depth": 5
+      },
+      "aggregate": {
+        "expanded_schema_occurrences": 25,
+        "max_depth": 5
+      },
+      "decompose": {
+        "expanded_schema_occurrences": 37,
+        "max_depth": 5
+      },
+      "duty_identity": {
+        "expanded_schema_occurrences": 23,
+        "max_depth": 5
+      },
+      "payment_precondition": {
+        "expanded_schema_occurrences": 30,
+        "max_depth": 5
+      },
+      "policy_identity": {
+        "expanded_schema_occurrences": 15,
+        "max_depth": 5
+      },
+      "stage_advance": {
+        "expanded_schema_occurrences": 99,
+        "max_depth": 9
+      },
+      "unsupported": {
+        "expanded_schema_occurrences": 1,
+        "max_depth": 0
+      },
+      "wait_preview": {
+        "expanded_schema_occurrences": 47,
+        "max_depth": 9
+      },
+      "wait_records": {
+        "expanded_schema_occurrences": 8,
+        "max_depth": 4
+      }
+    },
+    "configured_meta_depth": 32,
+    "configured_meta_work": 8192,
+    "generic_transport_request_input_excluded": true,
+    "maximum_depth": 9,
+    "maximum_expanded_occurrences": 99,
+    "unreferenced_definitions_or_other_roots_not_implicitly_all_validated": true
+  },
+  "kind": "INDEPENDENT_FUNDING_ADAPTER_SCHEMA_META_CODE_REVIEW",
+  "mapper_original_boundaries_preserved": [
+    "successful values encoded once outside business trycatch then complete selected-operation value validation",
+    "policy rawDTO and actual waitrecords tuple stay raw until outsidebusiness encoding; IDs/order preserved, not counted/reconstructed/sorted",
+    "native natural_slot exact sixstring tuple before list conversion",
+    "Totals exact type and full wire guard before downstream decompose; downstream accepted-input HoldError technical withcause",
+    "only exact known input/target error types normalized; unrelated/subclasses/encoding/schema failures escape, outer caller mustnot reclassify escapes bytype",
+    "DTO fullfields/fixedflags/native bool-int separation retained, no reference or financial equations in mapper"
+  ],
+  "next_gate": "separately reviewed immutable target/reference/retainedcaller and root exact unique execution scope; no automatic execute or production activation",
+  "old_output_fix_source": "4173d8d5315b02b5427d225718310016dfd26656",
+  "prior_B1_B2_B3": "original limited static closure preserved, no runtime results inferred",
+  "prior_B4": "FTA-V3-B4_LIMITED_CODE_CLOSED_ON_F8_ONLY_NO_HISTORICAL_REWRITE",
+  "qualification": "NOT_RUN_NOT_QUALIFIED",
+  "review_parent": "f8ece4c2257f2340e4b59fc0a113ac2b96ff9115",
+  "reviewed_source": "f8ece4c2257f2340e4b59fc0a113ac2b96ff9115",
+  "rollback": "revert only these2review files; preserve f8/4173/fc1/1b456/afdd/wire/historicalconfirmedrecords",
+  "runtime_tree_only_proof": {
+    "equal": true,
+    "f8_uta_tree": "344a63fa30e18079b335ad69bd326f92324f279c",
+    "parent_uta_tree": "344a63fa30e18079b335ad69bd326f92324f279c",
+    "production_algorithms_contents_read": false
+  },
+  "source_control_matrix": [
+    {
+      "ID": "META-TYPE",
+      "actual_executed": false,
+      "condition_unexecuted": "unknown/list type or unknown/cross-family feature",
+      "lines": "158-197",
+      "source_conclusion": "AdapterContractError before matcher"
+    },
+    {
+      "ID": "META-PROPS",
+      "actual_executed": false,
+      "condition_unexecuted": "object properties/required wrong native kind, duplicate/missing names, extra fields, additionalTrue or numeric0",
+      "lines": "219-227",
+      "source_conclusion": "technical rejection before child/value matching"
+    },
+    {
+      "ID": "META-ITEMS",
+      "actual_executed": false,
+      "condition_unexecuted": "missing or nested unsupported items even empty/nonarray candidate",
+      "lines": "228-231",
+      "source_conclusion": "recurses or technical rejects before matching"
+    },
+    {
+      "ID": "META-ONEOF",
+      "actual_executed": false,
+      "condition_unexecuted": "empty/oversize/nonlist alternatives or unknown child in unselected branch",
+      "lines": "178-184",
+      "source_conclusion": "every branch checked independently of value; no OutputMismatch ignored here"
+    },
+    {
+      "ID": "META-ENUM",
+      "actual_executed": false,
+      "condition_unexecuted": "nonnative const, enum string/empty/too large/object members",
+      "lines": "198-203",
+      "source_conclusion": "technical metadata rejection"
+    },
+    {
+      "ID": "META-BOUNDS",
+      "actual_executed": false,
+      "condition_unexecuted": "bool/float/string bounds, negative length bounds, checked invertedminmax",
+      "lines": "204-211",
+      "source_conclusion": "strict native-int technical rejection before numeric comparison"
+    },
+    {
+      "ID": "META-PATTERN",
+      "actual_executed": false,
+      "condition_unexecuted": "nonstring/oversize/invalidregex pattern",
+      "lines": "212-218",
+      "source_conclusion": "technical error with re.error cause, not value alternative mismatch"
+    },
+    {
+      "ID": "META-REF",
+      "actual_executed": false,
+      "condition_unexecuted": "bad prefix/siblings/unknown definition/path recursive reference",
+      "lines": "165-177",
+      "source_conclusion": "technical rejection; active path finally cleanup, DAG refs allowed"
+    },
+    {
+      "ID": "META-LIMIT",
+      "actual_executed": false,
+      "condition_unexecuted": "depth>32 or work>8192",
+      "lines": "160-164",
+      "source_conclusion": "technical rejection before matcher"
+    },
+    {
+      "ID": "VALUE-ONEOF",
+      "actual_executed": false,
+      "condition_unexecuted": "valid supported schema with wrong native value or multiple/no alternative match",
+      "lines": "234-293",
+      "source_conclusion": "OutputMismatch only after meta pass; bool notint"
+    }
+  ],
+  "source_scope": {
+    "all_other_module_declarations_AST_exact": true,
+    "mapper_lines": 475,
+    "meta_does_not_reference_candidate_value_matcher_or_OutputMismatch": true,
+    "old_value_validator_AST_after_name_only_exact": true,
+    "original_nonvalidator_AST_exact": [
+      "_closed",
+      "_array",
+      "_dto",
+      "_encode",
+      "_states",
+      "_wire_contract",
+      "_checked_intermediate",
+      "_call",
+      "_native_tree",
+      "evaluate",
+      "decode_request"
+    ],
+    "test_lines": 203,
+    "validate_public_wrapper": "exact two statements: complete _check_output_schema then _match_output"
+  },
+  "status": "CODE_CLOSED_FOR_OUTPUT_SCHEMA_META_DELTA",
+  "tests": {
+    "actual_methods_run": 0,
+    "meta_fault_examples": "8 new badbranch data definitions plus supportednull/int/bool cases, all NOT_RUN",
+    "new2_methods": [
+      "test_all_schema_branches_are_checked_before_value_selection",
+      "test_supported_alternatives_preserve_exact_native_integer_rules"
+    ],
+    "old16_AST_exact": true,
+    "total_definitions": 18
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "funding-hold-target-adapter-schema-meta/v4",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "previous_source": "4173d8d5315b02b5427d225718310016dfd26656",
+  "previous_review": "afdd92104ccd2ab0f39a1b94ddcf7797211e38fe",
+  "wire_source": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+  "wire_unchanged": true,
+  "pins": [
+    {
+      "path": "tests/funding_hold_target_adapter_v2.py",
+      "bytes": 24999,
+      "sha256": "104b92d6de6f0dafd28b71827501ffad23d9d2c97da666a2ffab995ae9a39fa3"
+    },
+    {
+      "path": "tests/test_funding_hold_target_adapter_v2.py",
+      "bytes": 11823,
+      "sha256": "6741029e150a9455af1f75c1e1b71c3d478474a175cc24118ec671c983c6670e"
+    },
+    {
+      "path": "docs/funding-hold-target-adapter-schema-meta.md",
+      "bytes": 2494,
+      "sha256": "f3ac15b3e2cb15c938287a8a125c5d665c40b9fadd59ae57b4ee24dd734ad36f"
+    }
+  ],
+  "old16_test_AST": "UNCHANGED",
+  "other_old_adapter_function_AST": "UNCHANGED_EXCEPT_SPLIT_OUTPUT_VALIDATOR",
+  "new_test_methods": [
+    "test_all_schema_branches_are_checked_before_value_selection",
+    "test_supported_alternatives_preserve_exact_native_integer_rules"
+  ],
+  "test_definitions": 18,
+  "actual_target_reference_validator_import_compile_run_attempts": 0,
+  "SQL_actors_CI": 0,
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "full_field_differential": "NOT_IMPLEMENTED_NOT_RUN"
+}
