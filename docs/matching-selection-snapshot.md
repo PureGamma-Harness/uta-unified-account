@@ -99,3 +99,7 @@ Matcher 构造器与停市前段提取为 AST，在内存行和不可执行的�
 合计256KiB，其中512B独立保留给一次失败trailer；每次先保留完整UTF-8请求字节再写FD，
 部分写或写失败不退回额度并sticky own-exit125。这个有限已冻结fixture没有native FD输出。
 原04c计划因该CODE缺口未执行，按NOT_RUN原样保留；新source88baf3b单独冻结，不计重跑。
+
+独立CODE审发现88b夹具在创建原构造器声明时，默认参数仍立即求值，缺少
+标准库timedelta/Decimal名称；7a737e3只补这两个namespace名称，不调用构造器。
+旧88b计划与v2物化记录原样保留为NOT_RUN/0attempt，新v3计划单独绑定四源。
