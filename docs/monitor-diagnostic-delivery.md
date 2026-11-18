@@ -43,4 +43,9 @@ fixtures. No account schema, policy, product or API changes. Rollback removes
 the test hook/helper/control files while retaining first raw observations.
 Actual native recovery, registry contention A/B, current CI root causes,
 blocked-I/O bounds, production and capacity approval remain OPEN/NO_GO.
-First normal CI for this public test-only delivery is pending.
+First normal CI for this public test-only delivery completed; its exact scope follows.
+
+
+First sourcec1fa3b49 push44311219728/PR44311364145 succeeded across all8 jobs/200 steps. Fixed push/PR Python3.13 logs each ran2130 tests with0 failures/errors/skips and strict9-field worker summaries. All4 diagnostic IDs and the original stopped-owner case are plain ok in each log (10 observations). Both logs contain zero helper-failure markers, so the native exception branch and any old SH/registry cause remain NOT_VERIFIED.
+
+Collector65efb2ed and independent RAWf4e036aa bind53 originals2253363B/three ZIPs25CRC,383-pin source maps,7391 required package paths/62 runtime files/7 reported checks and installed25-module/8-test/8-command reports. Provider merge metadata binds the source tree; no local merge object or independent binary/container was fetched. Full qualification remains null and production/capacity approval remains absent. This evidence-only merge changes no runtime, tests, tools, benchmark or CI bytes fromc1fa3b49.
