@@ -119,6 +119,7 @@ def main(args):
     cleanup_attempts = 0
     released = False
     wait_end = None
+    normal_capture_eof = timely_completion = deadline_expired = False
     launch_started = time.monotonic_ns()
     deadline = time.monotonic() + 30
     try:
@@ -155,12 +156,17 @@ def main(args):
                         if os.write(key.data, value) != len(value):
                             sticky = True
         eof = not selector.get_map()
+        normal_capture_eof = eof
+        deadline_expired = time.monotonic() >= deadline
         rc = process.wait(timeout=max(0, deadline - time.monotonic()))
         wait_end = time.monotonic_ns()
         reaped = True
         args.outer_exit, args.outer_reaped = rc, reaped
+        timely_completion = normal_capture_eof and not deadline_expired and time.monotonic() < deadline
+        deadline_expired = deadline_expired or not timely_completion
     except BaseException as failure:
         error = type(failure).__name__
+        deadline_expired = deadline_expired or time.monotonic() >= deadline
     finally:
         if process is not None:
             if process.stdin is not None and not process.stdin.closed:
@@ -264,10 +270,12 @@ def main(args):
     except BaseException as failure:
         error = error or type(failure).__name__
     checks["caller_completion_window"] = time.monotonic() < deadline + 2.2
+    checks["timely_normal_capture_and_wait"] = timely_completion and not deadline_expired
     passed = bool(checks) and all(checks.values()) and rc == 0 and reaped and eof and error is None and reserved == 0 and not sticky and cleanup_attempts == 0
     status = 0 if passed else 126
     trailer = encode({"event": "ADMISSION_CALLER_RAW_END", "outer_actual_exit": rc, "outer_reaped": reaped,
-        "both_EOF": eof, "status": status, "sticky": sticky})
+        "both_EOF": eof, "status": status, "sticky": sticky,
+        "timely_completion": timely_completion, "deadline_expired": deadline_expired})
     if len(trailer) > TRAILER or os.write(streams[1], trailer) != len(trailer):
         status, sticky = 126, True
     for fd in streams:
@@ -281,6 +289,8 @@ def main(args):
     put(caller / "actual-exit.json", {"source_commit": args.source_commit, "plan_sha256": args.plan_sha256,
         "caller_plan_sha256": args.caller_plan_sha256, "outer_actual_exit": rc, "outer_actual_reaped": reaped,
         "both_launcher_pipes_EOF": eof, "start_gate_released": released, "cleanup_signals": cleanup_signal,
+        "normal_capture_EOF": normal_capture_eof, "timely_completion": timely_completion,
+        "deadline_expired": deadline_expired,
         "cleanup_signal_attempts": cleanup_attempts,
         "monotonic_start_ns": started, "outer_launch_ns": launch_started, "monotonic_actual_wait_end_ns": wait_end,
         "monotonic_through_validation_ns": finished,
@@ -291,6 +301,7 @@ def main(args):
         "caller_return_status": status, "caller_own_future_exit_not_certified": True})
     put(caller / "CALLER_END.json", {"outer_actual_exit_observed": rc, "outer_actual_reaped": reaped,
         "status": status, "monotonic_after_actual_outer_wait_ns": finished,
+        "timely_completion": timely_completion, "deadline_expired": deadline_expired,
         "this_is_not_caller_own_future_exit": True})
     return 126 if time.monotonic() >= deadline + 2.2 else status
 

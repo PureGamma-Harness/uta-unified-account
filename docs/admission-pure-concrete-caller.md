@@ -4,6 +4,14 @@ Status: NOT_RUN, zero target import/compile/run/SQL/benchmark. The retained
 entry CODE review is `f4af44caa3a85c039a12ac12bd659bda274d202d`; this additional
 caller still requires its own finite CODE delta review and root GO.
 
+Independent review `2043075d163f5f2b33bbc55e4be6280c0b4b8552` found
+`PURE7-CALLER-LATE-EOF-001` in the original cb649be caller. That source and
+its d81205f9 plan remain NOT_RUN history. The corrected caller separately
+latches timely normal EOF plus actual wait/reap before30s. Cleanup can add
+true later exit/reap/EOF facts but cannot restore eligibility; rc0 remains
+rc0 while a late completion is permanently UNKNOWN. Resource limits and the
+unchanged retained entry/financial/test scope are not enlarged.
+
 `tools/run_admission_pure_caller_once.py` follows the funding once caller's
 intent, literal argv, actual Popen wait/reap and separate terminal-record
 structure. It is a separate observation process; the23947-byte retained entry,
