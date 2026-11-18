@@ -1,0 +1,1067 @@
+{
+  "schema": "funding-hold-wire-contract-proposal/v1",
+  "status": "SIGNATURE_SCHEMA_ONLY_PENDING_INDEPENDENT_REVIEW",
+  "base_commit": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "source_pin": {
+    "path": "uta/funding_hold_pure.py",
+    "bytes": 23278,
+    "sha256": "5c41504f58ae97c4437e7887985ef71bf65ce11b34b5d1bf923b08b6c529e67f"
+  },
+  "governing_spec_commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "independent_spec_review_commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+  "scope": {
+    "financial_algorithm_included": false,
+    "expected_financial_results_included": false,
+    "test_builders_included": false,
+    "reference_implementation_included": false,
+    "hash_test_vectors_included": false,
+    "target_import_compile_execution_attempts": 0,
+    "SQL_proc_worker_clock_CI_network_actions": 0,
+    "activation_permission": false,
+    "D2": "BLOCKED",
+    "existing_source_spec_or_reviews_modified": false,
+    "wire_serialization_implemented": false
+  },
+  "DTO_declarations_AST_only": [
+    {
+      "name": "Scope",
+      "declaration_line": 79,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "authority_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "authority_generation",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "account_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "usd_scale",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "settlement_asset",
+          "python_annotation": "str",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "DutyKey",
+      "declaration_line": 97,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "authority_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "authority_generation",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "symbol",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "period_end",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "interval_seconds",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "settlement_asset",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "account_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "rule_scope_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "schema",
+          "python_annotation": "int",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "ContentRef",
+      "declaration_line": 160,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "kind",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "digest",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "duty_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "rule_scope_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "Stage",
+      "declaration_line": 178,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "kind",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "amount_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "exposure_ref",
+          "python_annotation": "ContentRef | None",
+          "constructor_input": true
+        },
+        {
+          "name": "cap_ref",
+          "python_annotation": "ContentRef | None",
+          "constructor_input": true
+        },
+        {
+          "name": "final_ref",
+          "python_annotation": "ContentRef | None",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "DutyState",
+      "declaration_line": 228,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "key",
+          "python_annotation": "DutyKey",
+          "constructor_input": true
+        },
+        {
+          "name": "usd_scale",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "revision",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "active",
+          "python_annotation": "Stage",
+          "constructor_input": true
+        },
+        {
+          "name": "history",
+          "python_annotation": "tuple",
+          "constructor_input": true
+        },
+        {
+          "name": "activation_permission",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": false
+        }
+      ]
+    },
+    {
+      "name": "Totals",
+      "declaration_line": 286,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "scope",
+          "python_annotation": "Scope",
+          "constructor_input": true
+        },
+        {
+          "name": "duty_ids",
+          "python_annotation": "tuple",
+          "constructor_input": true
+        },
+        {
+          "name": "P",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "U",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "N",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "H",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "activation_permission",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": false
+        }
+      ]
+    },
+    {
+      "name": "BaseValues",
+      "declaration_line": 339,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "scope",
+          "python_annotation": "Scope",
+          "constructor_input": true
+        },
+        {
+          "name": "accounting_equity_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "risk_equity_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "initial_margin_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "maintenance_margin_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "order_reserve_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "cash_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "spot_frozen_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "funding_components",
+          "python_annotation": "str",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "Decomposition",
+      "declaration_line": 366,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "scope",
+          "python_annotation": "Scope",
+          "constructor_input": true
+        },
+        {
+          "name": "P",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "U",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "N",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "H",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "accrual_equity_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "risk_equity_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "available_margin_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "initial_margin_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "maintenance_margin_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "order_reserve_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "ordinary_spend_raw_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "ordinary_spendable_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "activation_permission",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": false
+        }
+      ]
+    },
+    {
+      "name": "PaymentProjection",
+      "declaration_line": 405,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "scope",
+          "python_annotation": "Scope",
+          "constructor_input": true
+        },
+        {
+          "name": "outcome",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "own_duty_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "projected_cash_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "projected_P",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "projected_U",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "projected_N",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "projected_H",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "other_H_units",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "risk_recheck_required",
+          "python_annotation": "bool",
+          "constructor_input": true
+        },
+        {
+          "name": "activation_permission",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": false
+        }
+      ]
+    },
+    {
+      "name": "WaitPolicy",
+      "declaration_line": 445,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "format",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "policy_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "clock_policy",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "max_wait_us",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "min_query_interval_us",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "max_query_attempts",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "expiry_action",
+          "python_annotation": "str",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "ActionKey",
+      "declaration_line": 474,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "scope",
+          "python_annotation": "Scope",
+          "constructor_input": true
+        },
+        {
+          "name": "allocation_id",
+          "python_annotation": "str",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "WaitRecord",
+      "declaration_line": 496,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "action",
+          "python_annotation": "ActionKey",
+          "constructor_input": true
+        },
+        {
+          "name": "policy",
+          "python_annotation": "WaitPolicy",
+          "constructor_input": true
+        },
+        {
+          "name": "revision",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "started_us",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "deadline_us",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "observed_highwater_us",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "attempts",
+          "python_annotation": "int",
+          "constructor_input": true
+        },
+        {
+          "name": "last_dispatch_us",
+          "python_annotation": "int | None",
+          "constructor_input": true
+        },
+        {
+          "name": "default_review",
+          "python_annotation": "bool",
+          "constructor_input": true
+        }
+      ]
+    },
+    {
+      "name": "WaitProjection",
+      "declaration_line": 538,
+      "frozen_dataclass": true,
+      "ordered_fields": [
+        {
+          "name": "record",
+          "python_annotation": "WaitRecord",
+          "constructor_input": true
+        },
+        {
+          "name": "outcome",
+          "python_annotation": "str",
+          "constructor_input": true
+        },
+        {
+          "name": "query_counted",
+          "python_annotation": "bool",
+          "constructor_input": true
+        },
+        {
+          "name": "holds_unchanged",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": true
+        },
+        {
+          "name": "activation_permission",
+          "python_annotation": "bool",
+          "constructor_input": false,
+          "fixed_output_value": false
+        }
+      ]
+    }
+  ],
+  "public_callable_signatures_AST_only": [
+    {
+      "owner": "DutyKey",
+      "name": "payload",
+      "signature": "self",
+      "decorators": [],
+      "line": 130,
+      "body_included": false
+    },
+    {
+      "owner": "DutyKey",
+      "name": "duty_id",
+      "signature": "self",
+      "decorators": [
+        "property"
+      ],
+      "line": 139,
+      "body_included": false
+    },
+    {
+      "owner": "DutyKey",
+      "name": "natural_slot",
+      "signature": "self",
+      "decorators": [
+        "property"
+      ],
+      "line": 143,
+      "body_included": false
+    },
+    {
+      "owner": "Stage",
+      "name": "active_ref",
+      "signature": "self",
+      "decorators": [
+        "property"
+      ],
+      "line": 213,
+      "body_included": false
+    },
+    {
+      "owner": "DutyState",
+      "name": "initial",
+      "signature": "cls, key, usd_scale",
+      "decorators": [
+        "classmethod"
+      ],
+      "line": 262,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "advance_stage",
+      "signature": "state, proposed, *, expected_revision, expected_active_ref",
+      "decorators": [],
+      "line": 267,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "aggregate",
+      "signature": "states, scope, *, basis_complete",
+      "decorators": [],
+      "line": 311,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "decompose",
+      "signature": "base, totals",
+      "decorators": [],
+      "line": 387,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "backing_precondition",
+      "signature": "states, scope, own_duty_id, *, cash_units, spot_frozen_units, prior_confirmed_settlements_clear, quote_available, basis_complete",
+      "decorators": [],
+      "line": 419,
+      "body_included": false
+    },
+    {
+      "owner": "WaitPolicy",
+      "name": "digest",
+      "signature": "self",
+      "decorators": [
+        "property"
+      ],
+      "line": 465,
+      "body_included": false
+    },
+    {
+      "owner": "ActionKey",
+      "name": "action_id",
+      "signature": "self",
+      "decorators": [
+        "property"
+      ],
+      "line": 485,
+      "body_included": false
+    },
+    {
+      "owner": "WaitRecord",
+      "name": "initial",
+      "signature": "cls, action, policy, started_us",
+      "decorators": [
+        "classmethod"
+      ],
+      "line": 526,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "validate_wait_records",
+      "signature": "records",
+      "decorators": [],
+      "line": 546,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "preview_wait",
+      "signature": "record, *, now_us, expected_revision, expected_policy_digest, dispatch_query",
+      "decorators": [],
+      "line": 559,
+      "body_included": false
+    },
+    {
+      "owner": "module",
+      "name": "unsupported_request",
+      "signature": "operation",
+      "decorators": [],
+      "line": 592,
+      "body_included": false
+    }
+  ],
+  "scalar_contract": {
+    "identifiers": {
+      "python_type": "exact str",
+      "pattern": "[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}",
+      "normalization": "NONE: no alias, trimming, casefold, Unicode normalization or inferred catalog mapping"
+    },
+    "integer": {
+      "python_type": "exact int, bool rejected",
+      "wire_type": "JSON integer token; independent readers must retain arbitrary precision, never binary64 roundtrip"
+    },
+    "USD": {
+      "settlement_asset": "exact USD",
+      "scale_min": 2,
+      "scale_max": 8,
+      "conversion": "UNSUPPORTED; every combined scope must have equal scale"
+    },
+    "money_input": {
+      "absolute_exclusive_limit_decimal": "100000000000000000000000000000000000000",
+      "nonnegative_fields": "additional lower bound zero",
+      "signed_fields": "strictly between negative and positive exclusive limit"
+    },
+    "aggregate": {
+      "max_duties": 1000,
+      "each_P_U_N_H_max_decimal": "99999999999999999999999999999999999999000",
+      "joint_P_U_N_bound": "bounded by supplied duty count times (10^38 - 1); no i64 claim"
+    },
+    "derived_units": {
+      "absolute_inclusive_limit_decimal": "400000000000000000000000000000000000000000"
+    },
+    "time": {
+      "units": "integer UTC microseconds for wait inputs; no clock read",
+      "minimum": 0,
+      "maximum_decimal": "9223372036854775807",
+      "overflow": "reject, never wrap or saturate"
+    },
+    "period_end": {
+      "shape": "YYYY-MM-DDTHH:MM:SS+00:00",
+      "whole_seconds": true,
+      "on_or_after": "1970-01-01T00:00:00+00:00",
+      "interval_seconds_min": 1,
+      "interval_seconds_max": 86400,
+      "alignment": "elapsed whole UTC seconds is exactly divisible by interval_seconds",
+      "normalization": "NONE: Z, fractional seconds, equivalent offsets and alternate text rejected"
+    },
+    "tuple_fields": {
+      "DutyState.history": "tuple of Stage, exact tuple",
+      "Totals.duty_ids": "tuple of unique duty-ID strings; aggregate emits lexical order",
+      "API states/records": "exact tuple, not list; JSON arrays are only proposed transport representation"
+    }
+  },
+  "enum_contract": {
+    "Stage.kind": [
+      "REGISTERED_UNASSESSED",
+      "EXPOSURE_RATE_PENDING",
+      "FINAL_PAYABLE",
+      "FINAL_RECEIVABLE",
+      "FINAL_ZERO"
+    ],
+    "Stage.APPLIED": "UNSUPPORTED; no APPLIED DTO or financial commit in D1",
+    "ContentRef.kind": [
+      "EXPOSURE",
+      "CAP",
+      "FINAL_CUT"
+    ],
+    "BaseValues.funding_components": [
+      "EXCLUDED"
+    ],
+    "PaymentProjection.outcome": [
+      "PREVIEW_BACKING_ELIGIBLE",
+      "WAITING_ENCUMBRANCE_RELEASE"
+    ],
+    "PaymentProjection.outcome_semantics": "conditional data projection only; eligible does not authorize cash, real ACK, lock release, outbox dispatch, financial settlement or APPLIED",
+    "WaitProjection.outcome": [
+      "WAIT",
+      "DEFAULT_REVIEW"
+    ],
+    "WaitPolicy.clock_policy": [
+      "TRUSTED_UTC_PERSISTENT_HIGH_WATERMARK"
+    ],
+    "WaitPolicy.expiry_action": [
+      "DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX"
+    ],
+    "fixed_flags": {
+      "DutyState.activation_permission": false,
+      "Totals.activation_permission": false,
+      "Decomposition.activation_permission": false,
+      "PaymentProjection.activation_permission": false,
+      "WaitProjection.activation_permission": false,
+      "WaitProjection.holds_unchanged": true
+    }
+  },
+  "natural_slot": {
+    "source_property": "DutyKey.natural_slot",
+    "Python_return": "exact tuple of six exact str elements",
+    "ordered_fields": [
+      "authority_id",
+      "authority_generation",
+      "symbol",
+      "period_end",
+      "settlement_asset",
+      "account_id"
+    ],
+    "proposed_JSON_transport": "array of six strings in that exact positional order; no object, no hash, no prefix, not an implemented parser",
+    "excluded_immutable_attributes": [
+      "interval_seconds",
+      "rule_scope_id"
+    ],
+    "excluded_attributes_policy": "same natural slot cannot be duplicated under another interval or rule scope; approval and persistent unique constraints remain external D2",
+    "unchanged_slot_requires_same_approved_scale": "usd_scale is not in slot or duty payload; rule_scope approval must bind scale as specified in8008"
+  },
+  "canonical_JSON_contract": {
+    "payload_kind": "fixed shallow JSON object of only the listed exact validated scalar fields",
+    "sort_keys": true,
+    "separators": [
+      ",",
+      ":"
+    ],
+    "ensure_ascii": true,
+    "allow_nan": false,
+    "indent": null,
+    "trailing_newline": false,
+    "character_encoding": "ASCII",
+    "byte_order_mark": false,
+    "integers": "base-ten JSON integers; no float, decimal string, boolean, NaN, Infinity or lossy numeric conversion",
+    "strings": "standard JSON string escaping under ensure_ascii=true; no external normalization",
+    "digest_algorithm": "SHA-256",
+    "digest_rendering": "64 lowercase hexadecimal characters",
+    "field_order_in_source": "not a byte-order authority; sort_keys defines canonical key order",
+    "extra_or_missing_or_duplicate_keys": "proposed wire reader must reject; no such JSON reader is implemented by the D1 module"
+  },
+  "identity_contracts": {
+    "duty_id": {
+      "status": "NORMATIVE_FIELDS_AND_ENCODING_FROM_8008_MATCH_4e2b",
+      "source_property": "DutyKey.duty_id",
+      "prefix": "funding-duty:v1:",
+      "payload_schema": {
+        "schema": "exact native int 1",
+        "authority_id": "identifier",
+        "authority_generation": "stable financial authority generation identifier, not worker/claim/lease generation",
+        "symbol": "exact catalog symbol identifier",
+        "period_end": "canonical period_end string",
+        "interval_seconds": "exact int 1..86400, canonical aligned period",
+        "settlement_asset": "exact USD",
+        "account_id": "identifier",
+        "rule_scope_id": "approved immutable identifier"
+      },
+      "exact_payload_keys": [
+        "schema",
+        "authority_id",
+        "authority_generation",
+        "symbol",
+        "period_end",
+        "interval_seconds",
+        "settlement_asset",
+        "account_id",
+        "rule_scope_id"
+      ],
+      "prefix_is_outside_hashed_JSON": true,
+      "excluded_fields": [
+        "obligation_id",
+        "schedule_command_id",
+        "quantity",
+        "mark",
+        "rate",
+        "source_code_hash",
+        "executor_owner",
+        "executor_nonce",
+        "claim_generation",
+        "claim_expiry",
+        "exposure_cut_sha",
+        "cap_sha",
+        "final_cut_sha"
+      ],
+      "authority_qualification": "D1 checks shape and links only; catalog, approval and financial-generation provenance remain external"
+    },
+    "wait_policy_digest": {
+      "status": "OBSERVED_4e2b_CANDIDATE_ENCODING_PROPOSED_FOR_REVIEW_NOT_LOCKED_BY_8008",
+      "source_property": "WaitPolicy.digest",
+      "source_property_policy_digest_exists": false,
+      "consumer_argument": "preview_wait.expected_policy_digest",
+      "proposal_field_name": "policy_digest is an external contract concept only, not a new runtime property",
+      "prefix": null,
+      "namespace": "NO EXTRA NAMESPACE OR DOMAIN SEPARATOR IS HASHED OR RETURNED IN_4e2b",
+      "payload_schema": {
+        "format": "exact native int 1",
+        "policy_id": "immutable identifier",
+        "clock_policy": "exact TRUSTED_UTC_PERSISTENT_HIGH_WATERMARK",
+        "max_wait_us": "exact int 1..2^63-1",
+        "min_query_interval_us": "exact int 1..max_wait_us",
+        "max_query_attempts": "exact int 1..10000",
+        "expiry_action": "exact DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX"
+      },
+      "exact_payload_keys": [
+        "format",
+        "policy_id",
+        "clock_policy",
+        "max_wait_us",
+        "min_query_interval_us",
+        "max_query_attempts",
+        "expiry_action"
+      ],
+      "excluded_fields": [
+        "action_id",
+        "duty_id",
+        "rule_scope_id",
+        "interval_seconds",
+        "account_id",
+        "authority_id",
+        "authority_generation",
+        "allocation_id",
+        "started_us",
+        "deadline_us",
+        "observed_highwater_us",
+        "revision",
+        "attempts",
+        "last_dispatch_us",
+        "default_review"
+      ],
+      "qualification": "digest is content identity, not approval, authority, uniqueness or a fresh budget; accepting this exact no-prefix encoding needs independent contract sign-off; a future domain-separated version requires explicit new version and migration"
+    },
+    "action_id": {
+      "status": "OBSERVED_4e2b_EXACT_MAPPING_PROPOSED_FOR_REVIEW_8008_CONCEPTUAL_FIELDS_ONLY",
+      "source_property": "ActionKey.action_id",
+      "prefix": "funding-action:v1:",
+      "payload_schema": {
+        "authority_id": "scope.authority_id identifier",
+        "authority_generation": "scope.authority_generation stable financial authority generation identifier",
+        "account_id": "scope.account_id identifier",
+        "settlement_asset": "constant exact USD (same as validated scope.settlement_asset)",
+        "allocation_id": "allocation identifier supplied by authoritative encumbrance lineage",
+        "action": "constant exact CANCEL_QUERY",
+        "terminal_goal": "constant exact CONFIRMED_CLOSED"
+      },
+      "exact_payload_keys": [
+        "authority_id",
+        "authority_generation",
+        "account_id",
+        "settlement_asset",
+        "allocation_id",
+        "action",
+        "terminal_goal"
+      ],
+      "payload_schema_or_format_key": "NONE; version resides only in the returned prefix, which is outside hashed JSON",
+      "prefix_is_outside_hashed_JSON": true,
+      "excluded_fields": [
+        "scope.usd_scale",
+        "duty_id",
+        "claim_id",
+        "claim_generation",
+        "executor_owner",
+        "executor_nonce",
+        "policy_id",
+        "policy_digest",
+        "rule_scope_id",
+        "interval_seconds",
+        "period_end",
+        "symbol",
+        "revision",
+        "started_us",
+        "deadline_us",
+        "observed_highwater_us",
+        "attempts",
+        "last_dispatch_us",
+        "default_review"
+      ],
+      "qualification": "reference may independently compare all fields and canonical digest; identity equality alone neither proves existing global action history nor grants dispatch authority"
+    }
+  },
+  "typed_reference_scope": {
+    "ContentRef.digest": "64 lowercase hex content reference only; not authenticated content",
+    "link_validation": "kind plus duty_id plus rule_scope_id; no arbitrary referenced content is fetched or executed",
+    "external_open_obligations": [
+      "immutable content provenance",
+      "complete cut/cap semantics",
+      "catalog approval",
+      "persistent CAS and unique constraints",
+      "source authority signature if required by later D2 contract"
+    ]
+  },
+  "shared_action_budget_proposal": {
+    "status": "PROPOSED_POLICY_CLARIFICATION_REQUIRES_INDEPENDENT_REVIEW_NOT_D1_ENFORCEMENT",
+    "economic_identity": "one authoritative allocation lineage plus stable financial authority/account/settlement scope and approved action/terminal goal, not one duty or one policy",
+    "budget_owner": "the single durable canonical action record owns the shared dispatch count and high-watermark; linked duties retain their own debt and deadlines",
+    "relink_events_never_reset": [
+      "another duty",
+      "different rule_scope_id",
+      "different interval_seconds",
+      "new claim/worker/restart",
+      "new policy_id or digest",
+      "caller replacing a tuple or constructing a new WaitRecord"
+    ],
+    "initial_policy_choice": "OPEN: authorized selection/admission of the first shared-action policy must be specified; arbitrary caller supply or digest possession is insufficient",
+    "different_policy_after_existing_action": "PROPOSED REJECT policy conflict while preserving existing action, attempts, first start, deadline, highwater, restriction and all duties; no independent second budget. No hot replacement is authorized.",
+    "per_duty_deadlines": "retain each original duty deadline; shared action must not extend it; action query availability is not a duty default-review clearance",
+    "allocation_identity": "OPEN: authoritative immutable allocation_id ownership, lineage and duplicate-ID prevention must be specified; splitting/relabeling/reissuing the same economic encumbrance cannot create a fresh budget",
+    "financial_authority_generation_transition": "OPEN: ordinary worker/claim/lease changes never change this field; a genuine financial authority migration requires explicit mapping and import of existing action history so a new generation cannot reset pending actions",
+    "prior_action_record_missing_or_unknown": "PROPOSED no fresh initialization or dispatch permission from missing/unknown state; require authoritative recovery or retain restricted/default-review state. Empty collection is not proof of no history.",
+    "D1_enforcement_limit": "validate_wait_records rejects duplicate action IDs only inside the supplied exact tuple; it cannot verify global completeness, uniqueness, prior policy ownership, persistence, cancellation, external ACK or dispatch history",
+    "funding_hold_accounting_scope": "wait/query lifecycle never forfeits debt or releases hold; no real release, payment or APPLIED is represented here"
+  },
+  "open_items": [
+    {
+      "id": "WIRE-POLICY-01",
+      "issue": "8008 enumerates seven WaitPolicy fields but does not fix hash namespace/encoding/property name",
+      "candidate": "freeze the observed .digest encoding only after independent approval; do not silently expose a nonexistent .policy_digest property",
+      "blocks": "reference expectations must label the proposed encoding; any D2 contract activation"
+    },
+    {
+      "id": "WIRE-ACTION-02",
+      "issue": "8008 has conceptual stable action fields;4e2b chooses explicit account/settlement fields and fixed CANCEL_QUERY/CONFIRMED_CLOSED with prefix-only version",
+      "candidate": "independent review the exact payload and constants; reference must not copy a production helper",
+      "blocks": "claim of a previously normative action wire ABI"
+    },
+    {
+      "id": "WIRE-OWNER-03",
+      "issue": "same allocation cannot gain a second budget by different caller policy or discarded prior record;D1 cannot prove record ownership/completeness",
+      "candidate": "single durable action record, authorized immutable first policy and recovery closure; conflict preserves old state",
+      "blocks": "D2 execution, global deduplication or budget safety claim"
+    },
+    {
+      "id": "WIRE-MIGRATION-04",
+      "issue": "authoritative allocation lineage and financial authority generation migration need stable pending-action history mapping",
+      "candidate": "explicit D2 migration contract and independent tests before activation",
+      "blocks": "cross-generation migration and automatic action reinitialization"
+    },
+    {
+      "id": "WIRE-CODEC-05",
+      "issue": "D1 has typed Python DTOs but no wire encoder/decoder or authentication layer",
+      "candidate": "declare proposed transport shapes separately; strict duplicate/unknown-field rejection and exact-integer codecs need their own scoped implementation/review",
+      "blocks": "claim of implemented REST/WebSocket/JSON wire transport"
+    }
+  ],
+  "independent_reference_boundary": {
+    "allowed": "independently implement exact typed DTO field checks, independently construct listed shallow hash payloads and standard SHA256, compare all listed fields and stable IDs; use independently chosen synthetic inputs",
+    "prohibited_in_this_delivery": "no production core helpers, expected financial values, fixture builders, oracle algorithms, executable snippets or digest answer vectors supplied",
+    "NOT_RUN": "all target, reference, codec, hash comparison and financial tests remain unexecuted by this task"
+  },
+  "deployment_and_rollback": {
+    "deployment": "documentation-only proposal; no runtime or inventory update, no financial capability enabled",
+    "rollback": "revert this two-file proposal commit; existing4e2b/PR61 bytes and all historical reports remain untouched",
+    "approval": "no independent or real-funds sign-off is inferred from proposal publication"
+  }
+}
