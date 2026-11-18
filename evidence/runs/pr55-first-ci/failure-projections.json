@@ -1,0 +1,35 @@
+{
+  "PR_run_success_does_not_replace_push_failure": true,
+  "failures": [
+    {
+      "cause": "UNRESOLVED",
+      "kind": "FAIL",
+      "no_rerun_or_threshold_change": true,
+      "observed_assertion": "AssertionError: True is not false",
+      "phase_limit": "after SID2 publish reported publishing=False, then halted activation assertion; before subsequent actual-stale check",
+      "publication_storage_contents_not_independently_captured_in_this_artifact": true,
+      "selection": "push313-unit",
+      "source_frames": [
+        {
+          "function": "test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes",
+          "line": 369,
+          "path": "tests/test_readiness_sampling.py",
+          "source_file_SHA256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+          "source_line": "        self.assertFalse(router.set_kill_switch(False, timeout=10)[\"halted\"])"
+        }
+      ],
+      "test_id": "test_readiness_sampling.ReadinessSamplingTests.test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes"
+    }
+  ],
+  "first_push_run_remains_failure": true,
+  "original_diagnostic_payloads_remain_private": true,
+  "unique_bound_source_frames": [
+    {
+      "function": "test_bounded_eventual_observation_cannot_pass_partial_or_actual_stale_quotes",
+      "line": 369,
+      "path": "tests/test_readiness_sampling.py",
+      "source_file_SHA256": "69ecbc3c5af2da5e170f70c6620f1b4b00fab0fe7e36475ec148874d7ee43fba",
+      "source_line": "        self.assertFalse(router.set_kill_switch(False, timeout=10)[\"halted\"])"
+    }
+  ]
+}
