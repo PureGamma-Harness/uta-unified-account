@@ -1,0 +1,121 @@
+{
+  "FS_CODE_closed_by_separate_OWN": "837bd0ac8c43550590d8637000dea18db746d3ff",
+  "actual_M05_marker_ref_push_SQL_native_crypto_CI": false,
+  "actual_marker_absent_in_tree_and_since909_ancestry": true,
+  "base6010_runtime_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+  "combined_new_tree_tests_or_build_run_by_reviewer": false,
+  "control_runtime_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+  "controller_only_two_namespace_literals_changed": true,
+  "controller_sha256": "eb447cefe07a04de9dbcf06b370834f4abf3f56a7ef5325313fe44403657d918",
+  "delivered_ff814_runtime_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+  "equal_top_level_class_and_function_AST_count": 61,
+  "finding": {
+    "actual_test_executed": false,
+    "kind": "STATIC_DISPATCH_DRAFT_MISSING_REQUIRED_WORKFLOW",
+    "planned_once_M05_dependency_gap": false,
+    "source_test_reads_both_YAML": true
+  },
+  "pending_preview_policy_not_rewritten": true,
+  "policy_sha256": "2854294727a9f147955c1e51192a6eebb65c21ec0c6f08724ae438e9a402dfea",
+  "preview": "a365f37e23e1c0ce75e403062344a5f482c9a3cf",
+  "preview_parent": [
+    "ed929d38648486ec01a01094b772b2c9c1072573"
+  ],
+  "review": "CODE_ONLY_STATIC_NO_TARGET_IMPORT",
+  "root_final_GO": false,
+  "spent01_02_03_04_remain_spent_policy": [
+    "01",
+    "02",
+    "03",
+    "04"
+  ],
+  "template": {
+    "execution_authorized": false,
+    "fields": 19,
+    "sha256": "912ac29f080ab5660a277b9c636bf52041680299144648fecf625a3d757e9dce"
+  },
+  "test_dependencies": {
+    "tests/test_independent_m0_checkout_ref.py": {
+      "sha256": "dd283a2f17c444155c378c4842d94c9800cc661b62e66c999a3611c6b0763f58"
+    },
+    "tests/test_independent_m0_cold_import.py": {
+      "sha256": "eef2eef119bed98ab701dbe24840d233028a366e1c47a9da7dbdebf4a6c31d07"
+    },
+    "tests/test_independent_m0_controller.py": {
+      "sha256": "6de39ade0b01126404c594100a0f6d789cdc03b2b3a5050d6c1ea802b6a33c27"
+    },
+    "tests/test_independent_m0_diagnostics.py": {
+      "sha256": "d464bd2814b0d75f98c40b7f0c17e534071b8ad8923ba463eb916c35063d64df"
+    },
+    "tests/test_independent_m0_entry_types.py": {
+      "sha256": "12355208fa1699e8667aea34291899741dfd0cce447bf94a9130996489bd6f04"
+    },
+    "tests/test_independent_m0_escrow.py": {
+      "sha256": "15766e0764b7d7e583657d80b37afab8621e8faaaa597c3f8ec5f386154c8fae"
+    },
+    "tests/test_independent_m0_integrity.py": {
+      "sha256": "143999e83903157664887cbc4adee63d1edf13f2459be50fdfa9540ee06b3ed9"
+    },
+    "tests/test_independent_m0_resource_race.py": {
+      "sha256": "1042f80a12f1e262bdb0452d4a74803e01309cc212bae318b64aaeede6b7e515"
+    },
+    "tests/test_independent_m0_scan_proof.py": {
+      "sha256": "8cc1ceb30977434774dfb16fa974a7c1bbd0ae00c8c4308c6390d13ec89af49a"
+    }
+  },
+  "workflow_dependencies": {
+    ".github/workflows/independent-m0-once.yml": {
+      "control_sparse_paths": [
+        "tools/independent_m0_controller.py",
+        "tools/m0_stream_escrow.py",
+        "tools/cold_import_contract.py",
+        "config/m0-stream-recipient-public.pem",
+        "config/m0-stream-recipient-public-metadata.json",
+        "tests/test_independent_m0_controller.py",
+        "tests/test_independent_m0_integrity.py",
+        "tests/test_independent_m0_escrow.py",
+        "tests/test_independent_m0_checkout_ref.py",
+        "tests/test_independent_m0_resource_race.py",
+        "tests/test_independent_m0_diagnostics.py",
+        "tests/test_independent_m0_cold_import.py",
+        "tests/test_independent_m0_entry_types.py",
+        "tests/test_independent_m0_scan_proof.py",
+        ".github/workflows/independent-m0.yml",
+        ".github/workflows/independent-m0-once.yml"
+      ],
+      "discovery_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "matched_test_count": 9,
+      "missing_dependencies": [],
+      "sha256": "84bb649a2894b1bc47d2c4ff16bf948da59e591afbfcbce1b6d80e9e173182dd",
+      "workload_ref": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+    },
+    ".github/workflows/independent-m0.yml": {
+      "control_sparse_paths": [
+        "tools/independent_m0_controller.py",
+        "tools/m0_stream_escrow.py",
+        "tools/cold_import_contract.py",
+        "config/m0-stream-recipient-public.pem",
+        "config/m0-stream-recipient-public-metadata.json",
+        "tests/test_independent_m0_controller.py",
+        "tests/test_independent_m0_integrity.py",
+        "tests/test_independent_m0_escrow.py",
+        "tests/test_independent_m0_checkout_ref.py",
+        "tests/test_independent_m0_resource_race.py",
+        "tests/test_independent_m0_diagnostics.py",
+        "tests/test_independent_m0_cold_import.py",
+        "tests/test_independent_m0_entry_types.py",
+        "tests/test_independent_m0_scan_proof.py",
+        ".github/workflows/independent-m0.yml"
+      ],
+      "discovery_command": "run: python -m unittest discover -s control/tests -p 'test_independent_m0_*.py' -v",
+      "matched_test_count": 9,
+      "missing_dependencies": [
+        ".github/workflows/independent-m0-once.yml"
+      ],
+      "sha256": "05b658ad482537b54f1040136cfba3d7934e2b0396c90b1dc29f480ab90eb7d9",
+      "workload_ref": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0"
+    }
+  },
+  "workload_tracked_blobs": 5518,
+  "workload_tree": "cee60bc0b5413551030300e065d0dcaac6a7ff55"
+}
