@@ -419,9 +419,9 @@ def inner(argv):
                     raise ValueError("unexpected nonzero ledger account or asset")
                 if {row[0] for row in connection.execute("SELECT account_id FROM uta_accounts")} != set(expected["customers"]):
                     raise ValueError("unexpected customer inventory")
-                positions = {row["account_id"]: [Fraction(Decimal(row["quantity"])), Fraction(Decimal(row["cost_basis"]))]
+                positions = {(row["account_id"], row["symbol"]): [Fraction(Decimal(row["quantity"])), Fraction(Decimal(row["cost_basis"]))]
                              for row in connection.execute("SELECT * FROM uta_positions")}
-                if positions != {account: [Fraction(Decimal(value)) for value in pair]
+                if positions != {(account, oracle["base"]["symbol"]): [Fraction(Decimal(value)) for value in pair]
                                  for account, pair in expected["positions"].items()}:
                     raise ValueError("manual position inventory/cost differs: " + label)
                 if connection.execute("SELECT COUNT(*) FROM uta_liabilities").fetchone()[0] != 0:

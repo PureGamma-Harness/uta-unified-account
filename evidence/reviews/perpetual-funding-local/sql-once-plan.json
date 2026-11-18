@@ -54,7 +54,7 @@
     "-c",
     "1"
   ],
-  "input_bytes": 1412844,
+  "input_bytes": 1412889,
   "input_count": 67,
   "input_files": {
     "evidence/reviews/perpetual-funding-local/sql-once-oracle.json": {
@@ -70,8 +70,8 @@
       "sha256": "5bf9033c85ecdcfdce4f73dccd6536a767347c365a3a81926b3839f45d271a42"
     },
     "tools/run_funding_sql_once.py": {
-      "bytes": 44454,
-      "sha256": "288bc98a40376f119788a56c0f1661b749514e6915c5d421eda0d0deeb1ce366"
+      "bytes": 44499,
+      "sha256": "da7904d0cc22debc4378b570894177f2c4b35a2501de1c2938c5c1a7f0872c9e"
     },
     "uta/__init__.py": {
       "bytes": 104,
@@ -365,6 +365,17 @@
   "planned_ledger_events": 32,
   "planned_paired_fills": 12,
   "planned_unique_matches": 6,
+  "preparation_correction": {
+    "change": "actual and expected full position inventories both keyed by (account_id,symbol); no financial/test/oracle/resource change",
+    "finding": "FUND-SQL-CODE-001",
+    "independent_delta_review": "PENDING",
+    "independent_finding_commit": "c4ca14fe8c60d9d93dd76b946cb37ff0c64cba59",
+    "new_target_attempts": 0,
+    "prior_plan_copy": "sql-once-plan-d6687e8-NOT_RUN.json",
+    "prior_plan_sha256": "e5f5c6cda608ff49b5541653f69917933be53ac731a4e64546db85cc05c332d5",
+    "prior_source": "d6687e877faf04f90686ea257351d90745d92642",
+    "prior_target_attempts": 0
+  },
   "private_evidence": "All5 DBs/sidecars, full source capsule and detailed internal oracle/resources remain private originals. Only independently reviewed explicit raw allowlist, finite projection and byte-length/SHA inventories may become SAFE public synthetic evidence. No automatic DB/capsule export.",
   "production_approved": false,
   "proposed_bounds": {
