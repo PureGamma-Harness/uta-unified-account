@@ -1,0 +1,11 @@
+{
+  "finding": "Optional diagnostic helper import preceded its Exception protection and could block the original renew on ordinary import metadata failure.",
+  "focused_budget_unchanged": "12methods/48traces",
+  "previous_CODE": "c315241a4caa9c69d7ff6782a719fe8b1af8d567",
+  "repair": "Move only optional helper import inside existing try/except Exception; preserve normal-path BaseException cancellation and original mandatory WriterFence import.",
+  "startup": {
+    "bytes": 23653,
+    "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+  },
+  "target_executed": false
+}

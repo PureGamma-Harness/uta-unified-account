@@ -1,0 +1,25 @@
+test_01_strict_primitive_filter_and_no_nonce (__main__.Phase1FocusedFakeTests.test_01_strict_primitive_filter_and_no_nonce) ... ok
+test_02_primary_annotation_identity_chain_and_unknown_attribute (__main__.Phase1FocusedFakeTests.test_02_primary_annotation_identity_chain_and_unknown_attribute) ... ok
+test_03_one_load_sql_trace_row_fetch_and_primary (__main__.Phase1FocusedFakeTests.test_03_one_load_sql_trace_row_fetch_and_primary) ... ok
+test_04_cancellation_before_sql_and_guard_registration (__main__.Phase1FocusedFakeTests.test_04_cancellation_before_sql_and_guard_registration) ... ok
+test_05_original_clock_once_expiry_and_created_primary_fault (__main__.Phase1FocusedFakeTests.test_05_original_clock_once_expiry_and_created_primary_fault) ... ok
+test_06_guard_assert_plumbing_and_optional_annotation_call_failure (__main__.Phase1FocusedFakeTests.test_06_guard_assert_plumbing_and_optional_annotation_call_failure) ... ok
+test_07_known_commit_and_transaction_unknown_never_invent_receipt (__main__.Phase1FocusedFakeTests.test_07_known_commit_and_transaction_unknown_never_invent_receipt) ... ok
+test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown (__main__.Phase1FocusedFakeTests.test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown) ... FAIL
+test_09_owned_read_primary_retained_before_any_verifier (__main__.Phase1FocusedFakeTests.test_09_owned_read_primary_retained_before_any_verifier) ... ok
+test_10_collector_bookkeeping_first_no_import_and_no_nonce (__main__.Phase1FocusedFakeTests.test_10_collector_bookkeeping_first_no_import_and_no_nonce) ... ok
+test_11_worker_projection_revalidates_mutable_state_and_caps (__main__.Phase1FocusedFakeTests.test_11_worker_projection_revalidates_mutable_state_and_caps) ... ok
+test_12_static_sql_and_original_lifecycle_reference (__main__.Phase1FocusedFakeTests.test_12_static_sql_and_original_lifecycle_reference) ... ok
+
+======================================================================
+FAIL: test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown (__main__.Phase1FocusedFakeTests.test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-owned-startup-read-admission/evidence/reviews/owned-startup-read-admission/phase1_focused_fake.py", line 512, in test_08_owned_same_token_last_known_and_postcommit_wrapper_unknown
+    self.assertEqual(scope.database.commits, 1)
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 12 tests in 2.123s
+
+FAILED (failures=1)

@@ -1,0 +1,13 @@
+{
+  "executed": false,
+  "finding": "assert_writer caller could replace an already-thrown token error if optional annotation call setup/helper failed outside the helper protection.",
+  "observation_overhead_scope": "Every read TransactionGuard, including unmanaged/unbound readers, receives additional load/fetch/validation monotonic samples; additional CPU/timing overhead is not zero or qualified.",
+  "previous_CODE": "24a8cf74ab6ab861d2dec7e5f2ff5656bf504f91",
+  "production_approved": false,
+  "pure_plan_budget_unchanged": "12methods/48traces",
+  "repair": "Protect only both optional annotation calls with BaseException and retain final bare raise; original load/format/token paths unchanged.",
+  "writer_fence": {
+    "bytes": 55394,
+    "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+  }
+}
