@@ -1,0 +1,355 @@
+{
+  "R13_R16_configured_product_MM_quote_rule_native_mutations_not_exercised": true,
+  "SQL_target_import_compile_test_monitor_probe_child_invocations": 0,
+  "actual_prefix_exit": 0,
+  "actual_prefix_reaped": true,
+  "all_originals_0400_directories0500": true,
+  "artifact_same": true,
+  "audit_policy_only_execution_option_differs": true,
+  "audit_policy_records": {
+    "candidate128": {
+      "artifact_id": "artifact:d4e8cfbc665a98aeec854e798dd18c80afe59d3aeedca4dc03a5f178f471c749",
+      "payload": {
+        "catalog": null,
+        "execution_options": {
+          "market_cache_size": 0,
+          "reserve_cache_size": 128
+        },
+        "fee_rate": "0.0004",
+        "format": 1,
+        "max_price_age_us": 5000000,
+        "order_precision": 8,
+        "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+        "risk_mode": "legacy_reference",
+        "rules": null,
+        "scales": {
+          "USD": 8
+        }
+      },
+      "policy_id": "policy:0c9a7c376ec064ecd0f9e13e033cb41303de48af5dcff444507f48c9eabd3e47"
+    },
+    "reference0": {
+      "artifact_id": "artifact:d4e8cfbc665a98aeec854e798dd18c80afe59d3aeedca4dc03a5f178f471c749",
+      "payload": {
+        "catalog": null,
+        "execution_options": {
+          "market_cache_size": 0,
+          "reserve_cache_size": 0
+        },
+        "fee_rate": "0.0004",
+        "format": 1,
+        "max_price_age_us": 5000000,
+        "order_precision": 8,
+        "reserve_formula": "linear-adverse-loss-cumulative-fee-v1",
+        "risk_mode": "legacy_reference",
+        "rules": null,
+        "scales": {
+          "USD": 8
+        }
+      },
+      "policy_id": "policy:196e3e35368f13616cf2f1df331cffedd9587554cd54b943d9c4b752c66e1a69"
+    }
+  },
+  "authority_qualified_matches": 16,
+  "authority_qualified_side_fills": 32,
+  "both_stream_EOF_complete": true,
+  "cache_actual": {
+    "candidate128": {
+      "after": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 1138,
+        "misses": 6,
+        "size": 6
+      },
+      "before": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 570,
+        "misses": 6,
+        "size": 6
+      },
+      "delta": {
+        "evictions": 0,
+        "hits": 568,
+        "misses": 0
+      },
+      "reopened": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 28,
+        "misses": 4,
+        "size": 4
+      },
+      "setup": {
+        "capacity": 128,
+        "evictions": 0,
+        "hits": 570,
+        "misses": 6,
+        "size": 6
+      }
+    },
+    "reference0": {
+      "after": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "before": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "delta": {
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0
+      },
+      "reopened": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      },
+      "setup": {
+        "capacity": 0,
+        "evictions": 0,
+        "hits": 0,
+        "misses": 0,
+        "size": 0
+      }
+    }
+  },
+  "capture_enforcement_source_audited_readonly": true,
+  "capture_fault": null,
+  "capture_source_metadata": {
+    "bytes": 6367,
+    "sha256": "1bfd09f7235e433cf9c160bd26e939d5dfcc63f95904602d8b1d407bf4240469"
+  },
+  "capture_source_sealed_and_mtime_before_intent": true,
+  "conservative_raw_bytes_including_summary_duplicate": 54335,
+  "default_reserve_cache_size_unchanged": 0,
+  "distinct_business_trade_IDs_across_pair": 8,
+  "elapsed_boundary": "immediately before Popen through actual prefix wait/EOF and raw fsync; source pin reads outside this interval",
+  "financial_status": "INDEPENDENT_RESERVE_PAIR_FINANCIAL_PASS",
+  "historical_H254_cause": "UNKNOWN_UNCHANGED",
+  "independent_readonly_reader_sources_retained_private": {
+    "financial_reader": {
+      "bytes": 17952,
+      "public_source_copied": false,
+      "sha256": "db3aaeea18bf928ad6daa6ee50a274ecb25698cddaadccaf739f9fa296013da2"
+    },
+    "receipt_reader": {
+      "bytes": 17045,
+      "public_source_copied": false,
+      "sha256": "caf100a5d1c4db835512f63c6a96e9eac97d1d5c9b298136c7a97cda39cfa078"
+    }
+  },
+  "independent_safe_parent": "bd6b1ef60e3bd30f3b2772f9021820fe3a79c5f8",
+  "independent_sampled_FILL_before_after_five_value_checks": 2,
+  "live_raw_counters": {
+    "bytes_reserved_before_write": 53973,
+    "bytes_written": 53973,
+    "completed_full_writes": 330,
+    "read_calls": 332,
+    "stream_bytes": {
+      "stderr": 0,
+      "stdout": 53973
+    },
+    "write_attempts": 330
+  },
+  "matching_profile_call_counts": {
+    "candidate128": {
+      "kernel_calculate": 568,
+      "reserve_reference": 0
+    },
+    "reference0": {
+      "kernel_calculate": 0,
+      "reserve_reference": 568
+    }
+  },
+  "matching_trace_event_counts_equal": true,
+  "native_inputs": 63,
+  "native_mini_files_including_manifest": 64,
+  "native_source_runtime_plan_bindings_equal": true,
+  "no_SQLite_DB_open_or_new_target_import_compile_test_monitor_profile_proc_API_probe_child_invocations": 0,
+  "no_private_DB_WAL_SHM_nonce_fullcapsule_capture_source_or_rawreport_copied": true,
+  "observed_at_utc": "2026-11-18T10:32:49.173625+00:00",
+  "observer_lifecycle": {
+    "active": false,
+    "all_handles_attached": true,
+    "attachments_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "attempts_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "cleanup_error": null,
+    "closed": true,
+    "ever_owned_tool": true,
+    "first_fault": null,
+    "handles_by_phase": {
+      "matching-candidate128": 1,
+      "matching-reference0": 1,
+      "setup-candidate128": 75,
+      "setup-reference0": 75,
+      "verification-candidate128": 17,
+      "verification-reference0": 17
+    },
+    "local_LINE_events_by_phase": {
+      "matching-candidate128": 18,
+      "matching-reference0": 18,
+      "setup-candidate128": 1350,
+      "setup-reference0": 1350,
+      "verification-candidate128": 291,
+      "verification-reference0": 291
+    },
+    "monitor_instance_label": "uta-matching-sql-observer:1",
+    "owned_tool_released": true,
+    "pending_references": 0,
+    "tool_owned_after_close": false,
+    "unattached_at_close": 0
+  },
+  "old_H33_and_all_private_failures_unmodified_by_review": true,
+  "outer_elapsed_ns": 9179087059,
+  "outer_raw_accounting": {
+    "file_bytes": 181,
+    "file_stdout_duplicate_conservative_charged_bytes": 362,
+    "reserved_before_write": 181,
+    "stdout_bytes": 181,
+    "within_outer1KiB_even_counting_both": true,
+    "within_shared256KiB": true
+  },
+  "owner_safe_seal": "96889196f56f92e8f40d32ba2e6982498a8ca786",
+  "pair_full_financial_accounts_nine_risk_canonical_exact": true,
+  "performance_significance_no_regression_TPS_percentile_capacity_or_production_accepted": false,
+  "private_archives_not_ancestors": true,
+  "private_inventory_metadata": {
+    "bytes": 13811,
+    "sha256": "de65498bc88dc683fff435734450cfc2f89bef7b8df29d31351ad9dc0d0c93f7"
+  },
+  "private_original_bytes": 3788579,
+  "private_original_files": 86,
+  "private_original_hash_index_sha256": "3116907bfad9026885c77141c522bfedbc6ed68c51e1a347aeb2d3135e5a0609",
+  "reference_model": "Exact Fraction cash/cost/IM/MM/reserve+cumulative USD8 fee ceiling from documented rules; decimal34 ratio/entry; full-sort price/time; ledger fingerprints/hashchain and posting reconstruction; no production core functions called.",
+  "reopened_capture_risk_states": 4,
+  "reviewer_phase_label_adaptation": {
+    "correct_pair_contract": "matching-reference0 / matching-candidate128 per frozen H73 source; no financial formula or target result changed.",
+    "initial_checker": "AssertionError at inline line164: retained old six-authority matching-32-scan label"
+  },
+  "safe_artifact_hash_metadata": {
+    "README.md": {
+      "bytes": 852,
+      "sha256": "557fc3d2454d392b0d1ad60cb1a219e1b723f69de46ebe2b79496890874d23e9"
+    },
+    "byte-inventory.json": {
+      "bytes": 12211,
+      "sha256": "b216323bcc1d9f044c9b97716134588541a71fd63e106cd51b02801337c7bb9f"
+    },
+    "inventory.json": {
+      "bytes": 458,
+      "sha256": "37b4f5fdabb011e7892f15b912363b958fd8d2066922eed98fe6966aaaa372af"
+    },
+    "report.json": {
+      "bytes": 13260,
+      "sha256": "b438f753549ef20cd6023fca0c9329a895a45907f1cfecc2479108e2ec31aa16"
+    }
+  },
+  "safe_git_blobs_exact": true,
+  "safe_projection_matches_private_receipts_and_financial_hashes": true,
+  "safe_public_opaque_byte_inventory_matches_all_86_originals": true,
+  "samples": [
+    {
+      "all_nine_risk_fields_checked": true,
+      "authority": "reference0",
+      "book_size": 32,
+      "cash_each": "624999211/625",
+      "cprofile_groups": {
+        "audit_python": 0.004275306999999999,
+        "book_selection_and_ordering": 0.001133749,
+        "exact_fraction_arithmetic": 0.025168009000000005,
+        "json_serialization": 0.004732887999999999,
+        "matching_orchestration_python": 0.0007876510000000001,
+        "other": 0.05971676400000005,
+        "profile_sql_counter_instrumentation": 0.0020334980000000003,
+        "risk_and_reserve": 5.8202e-05,
+        "sqlite_native_including_execution_and_commit": 0.016696454
+      },
+      "fills": 16,
+      "ledger_events": 18,
+      "ledger_postings": 36,
+      "manual_fee_each": "789/625",
+      "manual_notional": "3156",
+      "manual_quantity": "31",
+      "matches": 8,
+      "matching_CPU_ns": 111796421,
+      "matching_wall_ns": 114769067,
+      "mode": "scan",
+      "original_report_bytes": 339960,
+      "original_report_sha256": "00b1c4771d7564abe894525aeed74ae1312ec2eabd0e31163a339a87fa12b9e7",
+      "sample_FILL_before_after_five_values_independently_recomputed": true,
+      "setup_wall_ns": 2683815725,
+      "verification_wall_ns": 591160651
+    },
+    {
+      "all_nine_risk_fields_checked": true,
+      "authority": "candidate128",
+      "book_size": 32,
+      "cash_each": "624999211/625",
+      "cprofile_groups": {
+        "audit_python": 0.004538038,
+        "book_selection_and_ordering": 0.001021743,
+        "exact_fraction_arithmetic": 0.007744255000000001,
+        "json_serialization": 0.005436085,
+        "matching_orchestration_python": 0.0007887220000000001,
+        "other": 0.04448258799999997,
+        "profile_sql_counter_instrumentation": 0.0021292480000000003,
+        "risk_and_reserve": 0.00124915,
+        "sqlite_native_including_execution_and_commit": 0.017393665
+      },
+      "fills": 16,
+      "ledger_events": 18,
+      "ledger_postings": 36,
+      "manual_fee_each": "789/625",
+      "manual_notional": "3156",
+      "manual_quantity": "31",
+      "matches": 8,
+      "matching_CPU_ns": 83420288,
+      "matching_wall_ns": 85834410,
+      "mode": "scan",
+      "original_report_bytes": 341667,
+      "original_report_sha256": "2ffd0c2cb171c92aa07fabec85ef3f97342116c831579e4beeaf01b9ffc04077",
+      "sample_FILL_before_after_five_values_independently_recomputed": true,
+      "setup_wall_ns": 2884568764,
+      "verification_wall_ns": 516236352
+    }
+  ],
+  "schema": 1,
+  "scope_limits": "Fixed32 legacy USD/mark100; archived FILL numeric receipts linked to independent sequential opening-fill state, no historical business reexecution/SQL; R13..16 policy boundaries not newly tested.",
+  "single_pair_wall_ratio_candidate_over_reference": 0.7478880175962396,
+  "source_before_after_pins": 65,
+  "source_commit": "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+  "source_local_pins_not_remote_attestation": true,
+  "statistics_limit": "one serial fixed32 profiled reference0 then candidate128; setup naturally warms six candidate keys, order/cache/cohost/instrumentation effects remain",
+  "status": "INDEPENDENT_SCOPED_EXACT_RESERVE_PAIR_FUNCTIONAL_AND_REUSE_EVIDENCE_PASS",
+  "target_actual_affinity": [
+    1
+  ],
+  "target_raw_frames": 318,
+  "total_observed_handles": 186
+}
