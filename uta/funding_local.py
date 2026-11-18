@@ -103,6 +103,7 @@ class FundingLocal:
         scale = service.scales["USD"]
         with service._transaction() as connection:
             cls._unmanaged(connection)
+            cls._no_obligations(connection)
             if connection.execute("SELECT 1 FROM sqlite_master WHERE name GLOB 'funding_local_*' LIMIT 1").fetchone():
                 raise FundingError("funding_install_conflict", "funding storage already exists; open without repair")
             for table in ("uta_accounts", "uta_positions", "uta_orders", "uta_fills", "uta_deposits",
@@ -125,9 +126,15 @@ class FundingLocal:
         if connection.execute("SELECT 1 FROM sqlite_master WHERE name GLOB 'writer_fence_*' LIMIT 1").fetchone():
             raise FundingError("funding_managed_unsupported", "managed/code-bound funding upgrade is not implemented")
 
+    @staticmethod
+    def _no_obligations(connection):
+        if connection.execute("SELECT 1 FROM sqlite_master WHERE name GLOB 'funding_obligations_*' LIMIT 1").fetchone():
+            raise FundingError("funding_obligations_migration_required", "durable obligations cannot use the old prototype")
+
     def _configuration(self, connection):
         from .existing_services import _verify_fixed_schema
         self._unmanaged(connection)
+        self._no_obligations(connection)
         _verify_fixed_schema(connection, _SCHEMA)
         rows = connection.execute("SELECT singleton,payload FROM funding_local_config").fetchall()
         if len(rows) != 1 or rows[0]["singleton"] != 1:

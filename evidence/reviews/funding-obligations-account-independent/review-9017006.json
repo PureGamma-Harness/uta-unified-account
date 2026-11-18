@@ -1,0 +1,103 @@
+{
+  "CODE_result": "NOT_CLOSED_TWO_RECOVERABLE_DATA_CLASSIFICATION_PATHS",
+  "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "claim_time_calibration": {
+    "limit": "The final apply observation at line404 precedes receipt/task/command/event writes and actual COMMIT/fsync. This code does not prove physical COMMIT completion before until_at. Root scope already limits it to trusted single-node UTC/serialized-writer semantics; do not market it as hard wallclock acknowledgement fencing or managed/HA safety.",
+    "new_blocker_added_for_unpromised_hard_timing": false,
+    "verified_point": "Cut/apply check _held against persistent row and a fresh _clock observation while holding the one SQLite writer transaction."
+  },
+  "explicit_production_OPEN": [
+    "Pending funding DUE is not included in order/withdrawal/transfer reservations",
+    "Production timer and durable execution scheduling integration",
+    "Authenticated operations/approval/custody boundaries",
+    "Excluding arbitrary old binaries/raw SQLite writers",
+    "Managed fencing, replication/multiple authorities and HA",
+    "Commit/crash/concurrency/real-clock and capacity acceptance",
+    "Independent risk cross-review and human financial/real-funds launch approval"
+  ],
+  "findings": [
+    {
+      "id": "FUND-OBL-001",
+      "lines": [
+        343,
+        352,
+        370,
+        371
+      ],
+      "path": "uta/funding_obligations.py",
+      "path_evidence": [
+        "uta/market.py:86 explicitly permits empty instruments and validate checks age, not required product coverage",
+        "uta/service.py:351 skips products whose symbol is absent from market.instruments",
+        "capture accepts the fresh trusted snapshot then direct instruments[symbol] raises KeyError",
+        "capture except(FundingError,KeyError,ValueError) persists REVIEW_REQUIRED and clears claim"
+      ],
+      "required_fix": "Classify explicitly missing required boundary quote data as a retryable unavailable-data error/WAITING_DATA. Keep malformed inventory, rule conflicts and genuine accounting failures as REVIEW. Do not broadly waive KeyError/ValueError.",
+      "severity_within_declared_slice": "FUNCTIONAL_ACCEPTANCE_BLOCKER_RECOVERY_STATE",
+      "static_trigger": "At the period boundary with valid approved rate, publish a fresh MarketSnapshot with USD asset but instruments={} and reference its actual SHA. This is a supported MarketSnapshot shape. ExchangeService._validate_policy_market skips absent instrument symbols.",
+      "test_plan_hint": "Add a fresh missing-mark substep in the existing missing-data scenario; keep six method names and nine DBs, then still verify no-cut late REVIEW.",
+      "title": "A timely missing funding mark permanently enters REVIEW instead of WAITING_DATA",
+      "why_blocking": "Specification says missing mark/rate remain WAITING_DATA and may recover via a new attempt. REVIEW_REQUIRED blocks claim/automation, so restoring quotes cannot recover the scheduled obligation automatically. No cash is posted and the obligation remains outstanding, but the promised recoverability fails."
+    },
+    {
+      "id": "FUND-OBL-002",
+      "lines": [
+        458,
+        484,
+        414,
+        419,
+        420
+      ],
+      "path": "uta/funding_obligations.py",
+      "path_evidence": [
+        "The archived cut remains valid in verify because it uses its original complete market",
+        "_cash takes fresh current partial market, stages cash and calls real supervise_account",
+        "service._risk wraps PortfolioError(missing_instrument_price) as ServiceError(code=risk_unavailable)",
+        "apply correctly rolls back SAVEPOINT but its WAITING_DATA whitelist omits risk_unavailable, so the obligation becomes REVIEW_REQUIRED"
+      ],
+      "required_fix": "Identify required current quote availability explicitly or preserve structured data-unavailable causes so only recoverable market gaps become WAITING_DATA. Do not treat all risk_unavailable or malformed financial input as automatically retryable.",
+      "severity_within_declared_slice": "FUNCTIONAL_ACCEPTANCE_BLOCKER_RECOVERY_STATE",
+      "static_trigger": "Create a valid immutable cut with live BTC positions, then publish a fresh USD-only snapshot without the BTC mark and apply under a valid claim.",
+      "test_plan_hint": "Extend existing current-data scenario with a fresh partial-quote apply/no-cash/retained-cut WAITING_DATA step, then restore full fresh mark101 and apply frozen mark100 cash. Existing DB/match/journal totals can remain unchanged.",
+      "title": "Current risk quote unavailability after a valid cut rolls back cash but becomes terminal REVIEW",
+      "why_blocking": "A recoverable current quote gap cannot proceed after a complete current quote is restored, despite the valid frozen obligation. The money rollback is correct; the persistent state classification violates the promised recovery path. Similar expiry inside _risk may yield risk_unavailable rather than market_unavailable."
+    }
+  ],
+  "physical_binding": {
+    "all_pins_matched": true,
+    "base62_other_UTA_modules_unchanged": true,
+    "funding_local_delta": "Only mutual-capability rejection helper plus two calls; original authorities/firstSQL/firstCI/private originals unchanged",
+    "input_bytes": 1407331,
+    "manual_plan_sha256": "375cb98c1290e14ab9a294938bb4edcb2a4399af360bba2398ca853e26fd79a3",
+    "new_module_bytes": 59799,
+    "new_module_sha256": "6888454ecce7dbc5bb8e6a4201b75c005ce03aa7fb00ea0b290be9d6fdd1f513",
+    "physical_canonical_regular_Git_inputs": 66,
+    "runtime_manifest_sha256": "fd71cf23615f115430737242bdbc5a36ae377be47f309ff6bd6a6427ede6f9cb"
+  },
+  "production_approved": false,
+  "review_kind": "INDEPENDENT_ACCOUNT_LEDGER_CODE_ONLY",
+  "reviewed_closed_subproperties": {
+    "atomicity": "Financial ledger, reserve/clearing, versions, real risk state/plans, immutable receipt and task APPLIED share original writer transaction. Expected application failure rolls back SAVEPOINT then commits a small WAITING/REVIEW command/state; whole transaction/storage failure retains earlier DUE/cut and is not falsely called a durable error write.",
+    "capital": "Only exact needed deficit from fixed treasury confirmed deposit, original sealed custody/customer postings and positive unreserved cash; no positions/borrowing/live orders/locks/freeze, unique proof only consumed by committed applied receipt. No negative system-capital mint. Shared reserve history replays in immutable receipt insertion order.",
+    "claim": "Native writer serializes generation/private nonce/owner/100..5000ms lease changes. Stale token has no financial effect; committed command replay does not extend claim. Persistent UTC watermark detects committed observed regressions under declared trusted-clock assumption. This is not whole-exchange writer exclusion or HA.",
+    "delayed_cash": "Original frozen quantity/mark/rate cash applies even after real closing trades. Current account/positions/fresh risk market and actual supervisor are used for application; no synthetic fill or principal relabeling.",
+    "identity_idempotency": "Obligation ID and(symbol,canonical UTC period) are globally unique within one authority; command ID is cross-kind unique and exact request replay returns original committed result before new clock/claim logic. Unknown result query remains distinct from current task state.",
+    "loaded_artifact": "Unchanged strict credit_artifact._MODULES platform closure plus the three funding modules captures loaded functions/defaults/closures/constants with existing unknown-type rejection and exclusions; source hashes do not replace loaded identity.",
+    "manual_oracles": "Nine independent scenarios, nine qualified matches/eighteen paired fills, eight tasks/five APPLIED/three outstanding,46 journals including one injected orphan, fees.72/custody-15001 are arithmetically consistent. Changed-positions case: real close at101 yields a1000.91/b998.91, then frozen -1/+1 gives both999.91, fees.18.",
+    "schema_and_binding": "29 fixed DDL statements and append-only/digest/hash-chain references; constructor/status uses exact schema/config/code verification without repair, while apply requires full financial verify. Old FundingLocal/new capability mutually reject; changed artifact cannot silently reopen older authority.",
+    "task_discovery": "SCHEDULED/DUE/WAITING states and REVIEW remain outstanding; pending is bounded keyset pagination and query checks durable tail/archive references. APPLIED is terminal; no deletion, forgiveness or automatic REVIEW unlock API.",
+    "trusted_cut": "Single native writer reads all net-zero positions/account versions/costs, market payload/SHA, event watermark and config/code refs within declared window. Unknown rate stays NULL and requires explicit approved resolution; no untrusted historical holdings/cash input. No-cut late attempts become durable REVIEW without zeroing economic obligation."
+  },
+  "reviewed_source_commit": "901700637b3bb329cbb5729227e5b654dd8a00b6",
+  "reviewed_source_tree": "60ad7104beabed0cd00eb08ebe4924bad31b2248",
+  "root_execution_GO": false,
+  "schema": 1,
+  "spec_commit": "69f6c16bd612d775b8e1ce77ca6fd7bfdcc5649f",
+  "target_status": "NOT_RUN_0_NOT_RED",
+  "test_readiness": {
+    "execution_runner_and_exact_scope": "OPEN_NOT_PREPARED_OR_AUTHORIZED",
+    "future_method_count": 6,
+    "future_scenario_DBs": 9,
+    "future_test_threads": 2,
+    "no_target_import_or_compile_or_SQL_or_test_or_thread_or_native_or_proc_or_CI_or_child": true
+  }
+}
