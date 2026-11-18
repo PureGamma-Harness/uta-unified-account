@@ -64,9 +64,13 @@ provide fresh execution evidence, rather than borrowing an old source plan.
 
 Root's earlier scanner/shell narrative is bound to the captured PR body SHA;
 it is a sourced administrative statement, not independent observation of those
-older processes and not a CI-failure cause. Initial/final format outcomes and
-the metadata tool's numeric-spacing warnings remain recorded outside target
-runtime. Review-only schema/namespace checks also stopped on the initial-list
+older processes and not a CI-failure cause. The first format check has a saved
+actual exit0/reap receipt with empty streams. Final format0 and the metadata
+tool's three numeric-spacing warnings remain collector/root tool observations;
+the provided private set has no separate final-format/warning stderr receipt.
+They are outside target runtime, and this review does not convert those reported
+observations into an additional independently inspected raw receipt.
+Review-only schema/namespace checks also stopped on the initial-list
 versus final-dict inventory shape and an absent file in the separate sparse
 candidate directory. Correcting the reader to the actual collector namespace
 changed no source, original or target result.
