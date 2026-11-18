@@ -1,0 +1,172 @@
+{
+  "schema": 1,
+  "kind": "IMMUTABLE_STATIC_SOURCE_BASELINE",
+  "base_commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+  "status": "DOCS_ONLY_NO_TARGET_RUNTIME_VALIDATION",
+  "target_execution_attempts": 0,
+  "source_files": [
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/funding_obligations.py",
+      "git_blob_oid": "6c942e9659c45460410eb681e9dfc128e7eaa407",
+      "bytes": 63141,
+      "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97",
+      "scope": [
+        "class FundingObligations docstring: pending cash is not an admission/withdrawal hold",
+        "schedule/capture/apply/_cash/query/pending/verify: immutable cuts, claim-only execution ownership, complete local posting and current-risk dependency"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/perpetual_funding.py",
+      "git_blob_oid": "d4ace9ab45c65c3daa9036eb30e3c05a0ccb6d0e",
+      "bytes": 7981,
+      "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd",
+      "scope": [
+        "FundingPolicy payload/number/plan_funding: USD bounds, per-account toward-zero rounding, waived subunits and segregated capital"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/funding_local.py",
+      "git_blob_oid": "f35351b8a0c3d1d4d1adaa900b0e5eca73e1ea45",
+      "bytes": 34952,
+      "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd",
+      "scope": [
+        "Cash prototype, pure receipt recomputation and capital ownership helpers reused by obligations"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/service.py",
+      "git_blob_oid": "676ff1a43c4477cc7eec397cc3b053b0c89521c7",
+      "bytes": 85864,
+      "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+      "scope": [
+        "_available_asset/_risk/_admit_order/_apply_fill/supervise_account: no pending funding integration; frozen/principal/interest/cash-deficit and original reserve semantics"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/portfolio.py",
+      "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+      "bytes": 24042,
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+      "scope": [
+        "calculate_cross_risk: gross haircut-before-debt, conservative proceeds-leave quotes, strict MM boundary"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/credit.py",
+      "git_blob_oid": "4095d4a76578485dc4af8d2604c0c97b554e3aa7",
+      "bytes": 31349,
+      "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a",
+      "scope": [
+        "_borrow/_repay: pool/limits/quote/post-state and settled-cash interest-first repayment"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/decision_audit.py",
+      "git_blob_oid": "a2c8f364dadbf272648723f2c6deed789538c791",
+      "bytes": 27494,
+      "sha256": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6",
+      "scope": [
+        "policy: old exact ten-field envelope; PR52 valuation/order separation is not present"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/spot.py",
+      "git_blob_oid": "1bf9c721effa2d654e4a978e3433291cd1aa904b",
+      "bytes": 37264,
+      "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26",
+      "scope": [
+        "Shared native cash locks, projected account risk and cancellation confirmation boundary"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/matching.py",
+      "git_blob_oid": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+      "bytes": 21921,
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d",
+      "scope": [
+        "Matcher.match_once and verify: paired local _apply_fill within same transaction and unique trade IDs"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/storage.py",
+      "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "scope": [
+        "Database transaction and DurableLedger: single-host WAL/FULL, explicit commit/rollback; source pin is not a new durability run"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "uta/ledger.py",
+      "git_blob_oid": "e99ab683649d4869f0e748a0957939157f96aeb9",
+      "bytes": 7272,
+      "sha256": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66",
+      "scope": [
+        "Per-asset balanced signed postings contract"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "tests/test_funding_obligations_local.py",
+      "git_blob_oid": "5579a347b1b3839c289ce58dbaacc1d7a87a1620",
+      "bytes": 18145,
+      "sha256": "1792c4789c06c2cc982538c49c3a9cf46fe00bc898a1897b80a40dbfd1e74f5d",
+      "scope": [
+        "Six existing method identities inspected; no test run and no new hold evidence inferred"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    },
+    {
+      "commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+      "path": "docs/durable-funding-obligations-delivery.md",
+      "git_blob_oid": "7c5042434700e4b5b256b80d4b3aca6a8007ec78",
+      "bytes": 5585,
+      "sha256": "1884bebd873fc3bf3cf637953a85a8061ea6579037557d52b66081801b8ed6e9",
+      "scope": [
+        "Published fresh-only/0HA and pending-budget/current-risk/fault/capacity gaps; historical evidence not reclassified"
+      ],
+      "access": "STATIC_GIT_OBJECT_AND_SCOPED_TEXT_READ",
+      "execution_attempts": 0
+    }
+  ],
+  "limitations": [
+    "PR53 code still has inactive pending cash and no admission/withdrawal hold",
+    "No PR52 policy separation or engine-binding runtime is assumed integrated",
+    "Current tests and first CI are historical evidence only; no new hold behavior is executed",
+    "No production activation, H1 AuthDB probe, SQL, process/PID inspection, worker, CI rerun, or remote service operation"
+  ]
+}
