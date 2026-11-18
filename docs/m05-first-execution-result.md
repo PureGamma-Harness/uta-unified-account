@@ -28,3 +28,7 @@ root 于2026-11-18T01:38:23.128553Z至01:38:25.223472Z完成唯一一次 exact-M
 这些是原结果与静态源码定位，不是DB corruption判断，也不支持放宽3scan/50ms、重跑或再次使用05。公开runtime记录实际Python3.12.14/GCC13.3.0、SQLite3.45.1、WAL、synchronous2、replication=false；source-manifest精确909/treecee60b并包含5518文件。control绑定C/M/strict19 marker SHA35cd035d及原预算，四流/public recipient不变。
 
 production、10k/s capacity、HA及真实资金批准均false；next_run_permitted=false。新修复与新的注册只能走另一个版本/另一个ref及root独立审批，不改首证据或spent05。本OWN仅包含safe文档/JSON/text；原ZIP与带signed URL的下载响应保存在私有目录，未上传密钥、DB或明文raw。
+
+后续root首次offline认证解密仅发布了获准的单个safe metadata文件：PASS，88,385,373ns，helper89f未改，四条retained closed stream均0B/SHA256 e3b0c442…；每条protocol、authenticated exit0及container binding均报告true。该2334字节摘要以SHA256 `ef87a9b9cadb8056409960b5835ddc41ad5bef6d1349fd1f34653e13b2050b8b`逐字节复制，四个ciphertext len/SHA与公开ZIP manifest独立交叉核真。本owner只读这一safe文件，没有读取root目录其他文件、key、quarantine或明文，未自行解密。空流不能证明driver从未启动，不改变B UNKNOWN/P NOT_RUN，也不支持DB损坏、资金损失或资金无损失推断。origin_identity_authenticated仍false，金融/容量批准仍false。原首次OWN/判型/封存文件不改，root摘要单独follow-up封存。
+
+原push.stderr中的四行trailing spaces为Git首响应原字节；`git diff --check`仅对此原始stderr报告空白告警。该文件不trim、不重写，以保持收据SHA和首响应完整性。
