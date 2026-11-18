@@ -1,0 +1,99 @@
+{
+  "binding": {
+    "bytes": 1965,
+    "path": "evidence/reviews/monitor-diagnostic-pure-entry/binding.json",
+    "sha256": "c4bb40361e67d37075a8913e0a583bd7abea926f1fdd0243d1aa5d664f1c71c9"
+  },
+  "budgets": {
+    "cooperative_host_completion_seconds": 12,
+    "external_host_taskset_required": true,
+    "kernel_quota_or_RSS_or_blocked_IO_hard_time_proven": false,
+    "logical_final_capture_tree_bytes": 8388608,
+    "outer_raw_including_512_failure_reserve": 2048,
+    "post_exit_EOF_drain_max_seconds": 2,
+    "shared_raw_bytes": 32768,
+    "target_raw_max": 30720,
+    "target_timeout_seconds": 10,
+    "whole_capture_and_target_CPU_affinity": [
+      1
+    ]
+  },
+  "capture_origin": "31fe46fd1e6f8a542c0ae36f1dccb29f055e0788:benchmarks/cross_pilot_pure_capture.py; diagnostic4/host affinity/extra target guard result checks adapted",
+  "execution_authorized": false,
+  "external_host_exit": {
+    "receipt_value": null,
+    "requires_actual_external_exit_reap_and_raw_observation": true,
+    "root_must_record_final_metadata_HEAD_and_Git_match": true
+  },
+  "first_result_policy": "Preserve first FAIL/UNKNOWN, no retry, refresh, repair or phase broadening.",
+  "independent_CODE": "PENDING",
+  "kind": "CODE_ONLY_MONITOR_DIAGNOSTIC4_CAPTURE_PROPOSAL",
+  "native_recovery_or_registry_AB": "OPEN_NOT_IMPLEMENTED_NOT_AUTHORIZED",
+  "original_tests": "unchanged; inert frame/thread/FD mocks, no native primary diagnostic proof",
+  "prior_diagnostic_CODE": "5d64442865bb9ea378991b9fdd2164ce06c36ef3",
+  "production_HA_capacity_real_funds": "NO_GO",
+  "rollback": "Remove new validation controls/metadata only; preserve original diagnostic/native timing/first evidence and confirmed history.",
+  "runtime": {
+    "actual_invocation_not_observed": true,
+    "bytes": 30894944,
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "flags": [
+      "-I",
+      "-S",
+      "-B"
+    ],
+    "root_must_verify_actual_binary_before_GO": true,
+    "sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7"
+  },
+  "schema": 1,
+  "scopes": {
+    "diagnostic4": {
+      "expected_success_IDs": [
+        "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+        "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+        "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+        "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output"
+      ],
+      "fresh_capture_root": "/workspace/uta-monitor-diagnostic4-006b30a-once01",
+      "methods": [
+        "MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+        "MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+        "MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+        "MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output"
+      ],
+      "native_UTA_SQL_workers": 0,
+      "outer_prefix": [
+        "/usr/bin/timeout",
+        "--signal=KILL",
+        "10s",
+        "/usr/bin/taskset",
+        "-c",
+        "1"
+      ],
+      "status": "NOT_RUN",
+      "target_argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+        "-I",
+        "-S",
+        "-B",
+        "/workspace/uta-sre-monitor-diagnostic-pure-entry/tools/run_monitor_diagnostic_pure_entry.py",
+        "--scope",
+        "diagnostic4",
+        "--binding",
+        "/workspace/uta-sre-monitor-diagnostic-pure-entry/evidence/reviews/monitor-diagnostic-pure-entry/binding.json",
+        "--approved-binding-sha256",
+        "c4bb40361e67d37075a8913e0a583bd7abea926f1fdd0243d1aa5d664f1c71c9",
+        "MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+        "MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+        "MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+        "MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output"
+      ],
+      "target_children": 0,
+      "target_thread_starts": 0
+    }
+  },
+  "source_commit": "006b30a88e2e5e161ffc9cdd2b0e01b93173ad7f",
+  "source_commit_is_code_origin_not_final_metadata_HEAD": true,
+  "stdlib_import_policy": "signal/threading and unittest.mock dependencies including asyncio/subprocess allowed as imports; no target process/thread start, signal/handler call, UTA/SQLite import, live _current_frames or proc access.",
+  "target_attempts": 0
+}
