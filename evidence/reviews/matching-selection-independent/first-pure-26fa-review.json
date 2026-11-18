@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "review_kind": "READ_ONLY_EXISTING_FIRST_SYNTHETIC_RAW",
+  "conclusion": "PURE_COMPONENT_RAW_PASS",
+  "seal_commit": "037c7da6befdc17d2f45ad76bf7cf82c5a06b5ce",
+  "target_source_commit": "26fa6285afde7d38e8e811f54ac16e5816fdd79d",
+  "code_closure_commit": "5d65310df6ce19fc49ecb9c93af5db5dd0189eb7",
+  "plan_sha256": "6145486b0cadf8fcdb53fd85252cc2078f3830a0aec8b5c87b79bd2a51904615",
+  "raw": {
+    "stdout": {"bytes": 3954, "sha256": "d51f6e7ac311ea8b23d422fec51d667e24164a44c77d6dadcbc1bcb785bbbffd"},
+    "stderr": {"bytes": 0, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    "all_five_manifest_entries_match_git_bytes_and_sha256": true,
+    "manifest_listed_total_bytes_excluding_manifest": 8948,
+    "complete_declared_begin_methods_summary_end": true,
+    "cap_or_budget_abort_observed": false
+  },
+  "result": {"tests_run": 12, "failures": 0, "errors": 0, "skipped": 0, "actual_exit_status": 0, "attempt": 1},
+  "runtime": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "actual_affinity": [0],
+  "forbidden_runtime_imports": [],
+  "input_sha256": {
+    "uta/matching.py": "b308516497d690ec1ac53056e27bd64afcd0c13ea7ee7c49f337983377af98d9",
+    "uta/service.py": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034",
+    "tests/test_matching_selection_snapshot.py": "f379016c70bf3d9ae141314801cc2aeacb8c4d2d8e6faa4c9f78f083dcc328dc",
+    "evidence/reviews/matching-selection-snapshot/run_once.py": "e07928d9fbf59bbfc33157c12e1bd3d1d59abccc88a9722ae819fa7d67c7d15a"
+  },
+  "inputs_before_after_git_plan_materialization_equal": true,
+  "old_plan_git_blob_equalities": {
+    "04c_original_and_archived": "59d88881fcae84e9ce7614e884ed8b9232bbf2ca",
+    "88b_original_and_archived": "6f89d03e8c5bff4e330a76bbe6fe73410696b10c",
+    "7a_original_and_archived": "82ed7836ea6eb2dbd7e82d6d6f6821b9879763bf"
+  },
+  "timing": {
+    "driver_internal_seconds": 2.191063063990441,
+    "unittest_reported_seconds": 2.093,
+    "outer_monotonic_lifecycle_elapsed_ns": null,
+    "outer_e2e_or_benchmark_claim": false,
+    "limitation": "Two tool wait fragments and second-resolution UTC do not measure full outer lifecycle."
+  },
+  "component_count_assertions": {"full_reads": 1, "rows_scanned": 128, "point_reads": 78, "iterations": 20, "raw_per_operation_trace_exported": false},
+  "reviewer_executed_methods_or_target_imports": false,
+  "sqlite_settlement_module_import_concurrency_performance_acceptance": false,
+  "production_or_financial_approval": false,
+  "default_snapshot_enabled": false,
+  "scope_expanded_or_original_artifacts_changed": false
+}
