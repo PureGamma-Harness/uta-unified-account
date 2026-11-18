@@ -54,9 +54,19 @@ candidate, absent from this delivery.
 This is synthetic component tooling, not an authority upgrade or real-funds
 release. The frozen plan records the complete unique commands and resource
 limits. It requires a new exclusive namespace and its explicit execution
-switch. Do not reuse the sealed run paths, relax freshness, repeat a failed
+plan-SHA argument. Do not reuse the sealed run paths, relax freshness, repeat a failed
 scope or transfer these results to a different runtime/rule configuration.
-First integrated CI for this tools delivery is pending.
+First push CI44279325039 failed in one Python3.10 unit (2061 tests, one
+router_busy ERROR during four-second publication EX-gate admission, before
+the five-second assertion). PR CI44279599639 succeeded. The fixed PR3.13
+unit ran2061 tests without failures/errors/skips. Independent RAWd7e5e270
+accepted the evidence bindings while preserving that push failure and its
+UNDETERMINED cause. Full qualification remains null.
+
+The actual full profile uses the approved observer-lifecycle-full-profile plan
+03c789c6; its66 control/source pins match the recorded execution. The older
+generic plan retains historical H254 control hashes and is not the current
+execution closure. No historical plan or first outcome is rewritten.
 
 No schema migration is introduced. Rollback removes the tooling invocation
 and restores the prior reviewed tool version; it preserves all first results,
