@@ -1,0 +1,156 @@
+{
+  "kind": "INDEPENDENT_PR52_CORRECTED_FIRST_CI_RAW_EVIDENCE_REVIEW",
+  "conclusion": "CORRECTED_FIRST_EVIDENCE_ACCEPTED_COMPLETE_CI_BLOCKED",
+  "source_head": "f7747c100a68c88a894b5aded73f12717ad54064",
+  "collector": "fd5c8fe2294623ac1b9c426c117b9024a558e514",
+  "first_push": 44306356209,
+  "first_PR": 44306368539,
+  "run_attempt_each": 1,
+  "complete_CI_acceptance": "BLOCKED",
+  "reviewer_actions": {
+    "download": 0, "target_rerun": 0, "target_import": 0, "target_compile": 0,
+    "SQL": 0, "PID_or_proc_query": 0, "native_or_worker": 0,
+    "CI_retry": 0, "child_agent": 0, "push": 0
+  },
+  "sealed_originals": {
+    "files": 60,
+    "bytes": 3742100,
+    "mode": "0600",
+    "seal_bytes": 11814,
+    "seal_sha256": "692e5c8ae4c83a3fee9925fc13882fd351d922332db8ed1ae811cfc78455f328",
+    "all_len_SHA_and_stable_metadata_checked": true,
+    "NOFOLLOW_NOATIME_reads": true,
+    "ZIPs": 4,
+    "ZIP_bytes": 362462,
+    "CRC_and_exact_member_checks": 28,
+    "provider_size_digest_matches": true,
+    "originals_modified": false
+  },
+  "metadata": {
+    "jobs": 8,
+    "jobs_successful": 6,
+    "jobs_failed": 2,
+    "steps": 200,
+    "step_conclusions": {"success": 166, "failure": 2, "skipped": 32},
+    "multiple_snapshots_are_same_run_and_attempt": true,
+    "raw_per_test_details_of_other_five_jobs_inferred": false
+  },
+  "selected_raw_units": [
+    {"sample": "push313-unit", "tests": 2070, "failures": 0, "errors": 0, "skipped": 0, "worker_exit": 0},
+    {"sample": "pr313-unit", "tests": 2070, "failures": 1, "errors": 0, "skipped": 0, "worker_exit": 1},
+    {"sample": "push312-unit", "tests": 2070, "failures": 1, "errors": 0, "skipped": 0, "worker_exit": 1}
+  ],
+  "remaining_failures": [
+    {
+      "sample": "pr313-unit",
+      "test_id": "test_startup_write_contention.StartupWriteContentionTests.test_own_short_financial_writer_does_not_poison_live_startup_renewal",
+      "file": "tests/test_startup_write_contention.py",
+      "line": 74,
+      "error_codes": ["startup_keeper_failed", "lease_expired"],
+      "keeper_error_codes": ["lease_expired"],
+      "typed_phases": {"constructed": true, "entered": true, "finished": false, "renewal_requested": true, "writer_held": true},
+      "source_line_and_base_test_bytes_equal": true,
+      "precise_cause": "UNDETERMINED"
+    },
+    {
+      "sample": "push312-unit",
+      "test_id": "test_process_readiness.ProcessReadinessTests.test_partial_fanout_is_unready_until_exact_generation_finishes",
+      "file": "tests/test_process_readiness.py",
+      "line": 196,
+      "actual_assertion": "diagnostics ready False; AssertionError: False is not true",
+      "source_line_and_base_test_bytes_equal": true,
+      "precise_cause": "UNDETERMINED"
+    }
+  ],
+  "timing_cause_assumed": false,
+  "indirect_impact_of_new_policy_change_excluded": false,
+  "source_binding": {
+    "source_maps_checked": 3,
+    "entries_each": 376,
+    "all_before_after_and_Git_digests_equal": true,
+    "actual_PR_merge": "70bc2203324a9930f62b49f3842b2692cca88333",
+    "archived_provider_parents": ["10ec28331eae46f4cf8aa7bcd36054b4daac73a6", "f7747c100a68c88a894b5aded73f12717ad54064"],
+    "provider_tree_equals_local_source_tree": "a4672efe6ceb64c706dede6104097548d0ae25bf",
+    "merge_object_locally_present": false,
+    "merge_object_fetched": false,
+    "scope": "archived_provider_merge_metadata_plus_local_source_tree"
+  },
+  "selected_method_observations": {
+    "previous_failure_IDs": 17,
+    "new_credit_admission_contract_IDs": 4,
+    "existing_admission_IDs": 11,
+    "distinct_IDs": 32,
+    "plain_ok_per_selected_log": 32,
+    "plain_ok_observations_total": 96,
+    "source_definitions_and_old_immutable_failure_IDs_bound": true,
+    "old17_did_not_recur_in_selected_logs": true,
+    "global_unique_financial_operation_or_authority_count": false,
+    "historical_SQL4_independent_RAW_reexecuted_or_reaccepted_here": false,
+    "all_other_jobs_detailed_method_success_claim": false
+  },
+  "package_small_report": {
+    "fixed_sample": "push313-package",
+    "exact_required_Git_paths": 7038,
+    "runtime_digests_equal_Git": 62,
+    "runtime_Python_files": 61,
+    "runtime_tree_sha256": "2067bdadc9d1426a9d6bb88d90cd86d30d0ad401aa69392d3e843d6f84c765af",
+    "reported_checks_true": 7,
+    "declared_wheel_sdist_IDs_match_installed_report": true,
+    "helper_source_and_copied_digest_match_Git": true,
+    "actual_binary_containers_downloaded_or_independently_unpacked": false,
+    "full_qualification": null
+  },
+  "installed_smoke_report": {
+    "reported_module_origins": 25,
+    "module_origin_values_are_strings": true,
+    "reported_origins_under_installed_site": true,
+    "isolated": true,
+    "tests": {"run": 8, "failures": 0, "errors": 0, "skipped": 0},
+    "raw_eight_test_footer_matches": true,
+    "commands": 8,
+    "all_reported_command_exits_zero": true,
+    "credit_audit_v2_targeted_import": "OPEN_NOT_DIRECTLY_EXERCISED",
+    "absence_from_every_transitive_load_proven": false,
+    "independent_new_installed_execution": false
+  },
+  "SAFE": {
+    "files": 15,
+    "bytes": 106642,
+    "all_seal_and_Git_bytes_equal": true,
+    "unit_failure_outcome_source_package_and_inventory_projections_checked": true,
+    "private_actual_paths_refs_bindings_nonces_or_binary_exported": false,
+    "full_maps_logs_and_payloads_exported": false,
+    "producer_pending_fields_rewritten": false,
+    "new_independent_commit_only_MD_JSON": true
+  },
+  "collector_administrative_schema_correction": {
+    "first_exit": 1,
+    "corrected_exit": 0,
+    "cause": "installed modules values are string paths, not objects",
+    "receipt_bytes": 433,
+    "receipt_sha256": "d59a5018af74ebf7984e65ecd0c4820e0714e50bd17d434a5542fd2399cb5696",
+    "actual_paths_printed": false,
+    "target_or_CI_reexecution": false,
+    "originals_modified": false
+  },
+  "reviewer_reader_provenance": {
+    "first_source_bytes": 20534,
+    "first_source_sha256": "ca3373f3caab69c261165912dac1ce62eeef06884dc41b78e8b5d2c2bdf0ff40",
+    "first_error_receipt_sha256": "7b1ba2f5fc3a201143086a96105bfe753c64aa04c1bfa5c6c3b870061497c875",
+    "second_source_bytes": 20574,
+    "second_source_sha256": "90835a99a32a818f16118182da36bda80c48b029beddb15b72fd0ddda66b71ae",
+    "second_error_receipt_sha256": "0f4ccf4545c7f540840382035f7dae052d3c6a24bcacfabdfd0d097b902fbe95",
+    "bookkeeping_errors": ["prior_marker_payload_attempt_field_assumption", "prior_inventory_originals_field_assumption"],
+    "corrected_using_existing_attempt_and_opaque_files_schema": true,
+    "failed_readers_and_receipts_preserved_privately": true,
+    "final_source_bytes": 21390,
+    "final_source_sha256": "fed77841a64c2018694b7033d493566ddaf71af5105b4bebe99e0644d91bb65f",
+    "final_summary_bytes": 1826,
+    "final_summary_sha256": "9ccc472b4a2ea4286270f2e3ae44e11f09c396a1bd648a276dc6a3a4be8faa7b",
+    "target_or_CI_reexecution_due_to_parser_corrections": false
+  },
+  "prior137_first_RED_and_a59_review_preserved": true,
+  "complete_CI_or_recovery_approved": false,
+  "capacity_approved": false,
+  "production_or_real_funds_approved": false
+}

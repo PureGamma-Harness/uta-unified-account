@@ -1,0 +1,644 @@
+{
+  "export_order": "predeclared definition order, not execution order",
+  "historical_SQL4_or_independent_financial_oracle_not_reexecuted_by_collection": true,
+  "observations_not_global_unique_business_operations": true,
+  "predeclared_IDs": {
+    "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_credit_policy_does_not_consume_the_order_admission_envelope": "new_credit_admission_contract",
+    "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_exact_credit_comparison_rejects_changed_and_unknown_valuation_fields": "new_credit_admission_contract",
+    "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_order_envelope_preserves_admission_and_copies_runtime_values": "new_credit_admission_contract",
+    "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_valuation_fields_preserve_the_exact_credit_wire_contract": "new_credit_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_requires_native_boolean_halt_state": "existing_admission_contract",
+    "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values": "existing_admission_contract",
+    "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules": "previous_CI_failure",
+    "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve": "previous_CI_failure",
+    "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard": "previous_CI_failure",
+    "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive": "previous_CI_failure",
+    "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock": "previous_CI_failure",
+    "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls": "previous_CI_failure",
+    "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt": "previous_CI_failure",
+    "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit": "previous_CI_failure",
+    "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents": "previous_CI_failure",
+    "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back": "previous_CI_failure",
+    "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure": "previous_CI_failure",
+    "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once": "previous_CI_failure",
+    "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery": "previous_CI_failure",
+    "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence": "previous_CI_failure",
+    "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation": "previous_CI_failure",
+    "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue": "previous_CI_failure",
+    "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market": "previous_CI_failure",
+    "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage": "existing_admission_contract",
+    "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence": "existing_admission_contract",
+    "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision": "existing_admission_contract",
+    "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_synthetic_coexisting_policy_candidates_reject_read_arguments": "existing_admission_contract"
+  },
+  "samples": [
+    {
+      "existing_admission_plain_ok": 11,
+      "new_contracts_plain_ok": 4,
+      "old_failures_now_plain_ok": 17,
+      "records": [
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_credit_policy_does_not_consume_the_order_admission_envelope"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_exact_credit_comparison_rejects_changed_and_unknown_valuation_fields"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_order_envelope_preserves_admission_and_copies_runtime_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_valuation_fields_preserve_the_exact_credit_wire_contract"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_requires_native_boolean_halt_state"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+        }
+      ],
+      "sample": "push313-unit",
+      "total": 32
+    },
+    {
+      "existing_admission_plain_ok": 11,
+      "new_contracts_plain_ok": 4,
+      "old_failures_now_plain_ok": 17,
+      "records": [
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_credit_policy_does_not_consume_the_order_admission_envelope"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_exact_credit_comparison_rejects_changed_and_unknown_valuation_fields"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_order_envelope_preserves_admission_and_copies_runtime_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_valuation_fields_preserve_the_exact_credit_wire_contract"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_requires_native_boolean_halt_state"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+        }
+      ],
+      "sample": "pr313-unit",
+      "total": 32
+    },
+    {
+      "existing_admission_plain_ok": 11,
+      "new_contracts_plain_ok": 4,
+      "old_failures_now_plain_ok": 17,
+      "records": [
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_credit_policy_does_not_consume_the_order_admission_envelope"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_exact_credit_comparison_rejects_changed_and_unknown_valuation_fields"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_order_envelope_preserves_admission_and_copies_runtime_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "new_credit_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_credit_policy_contract.AdmissionCreditPolicyContracts.test_valuation_fields_preserve_the_exact_credit_wire_contract"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_full_fee_and_existing_live_order_reserves"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_manual_strict_mm_and_legal_im_equality"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_missing_legacy_and_unknown_contract_never_verify"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_projection_fee_versions_and_control_tampering_fail"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_allocation_and_surplus_are_separate"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_reduce_only_requires_native_boolean_halt_state"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_admission_policy_reference.AdmissionPolicyReferenceTests.test_settlement_dust_flip_and_short_close_manual_values"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_actual_policy_is_pinned_to_persisted_rules"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_full_risk_quote_replays_actual_gross_and_order_reserve"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_dedicated_policy_never_masks_a_missing_base_audit_guard"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_load_requires_one_actual_pinned_dedicated_policy_archive"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_audit_v2_helpers.CreditAuditV2HelperTests.test_recorded_freshness_and_future_equalities_use_original_clock"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_actual_three_legacy_sources_refuse_complete_fresh_v2_with_positive_controls"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_legacy_and_lease_runtime.LegacyAndLeaseRuntimeTests.test_real_renew_release_reacquire_preserves_original_pending_cid_and_receipt"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_missing_actual_intent_and_current_wrong_row_or_digest_still_poison_commit"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_history_boundary.NativeHistoryBoundaryTests.test_second_same_and_different_account_borrow_commit_with_historical_intents"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_actual_orphan_intent_keeps_original_typed_failure_and_rolls_back"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_native_late_boundaries.NativeLateBoundaryTests.test_complete_real_staged_loan_cannot_commit_after_context_loss_or_late_failure"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_process_restart.ActualCreditProcessRecoveryTests.test_crash_after_actual_commits_loses_replies_then_new_process_replays_once"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_realtime_clock.CreditV2RealtimeClockTests.test_real_utc_fresh_borrow_partial_repay_stale_rejection_and_new_sid_recovery"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_commit_and_reopen_have_complete_original_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_actual_borrow_only_preserves_original_db_for_independent_observation"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_initial_quota_refusal_rolls_back_then_original_fifo_can_continue"
+        },
+        {
+          "actual_result": "ok",
+          "category": "previous_CI_failure",
+          "display": "full_method",
+          "test_id": "test_credit_v2_runtime_chain.CreditV2RuntimeChainTests.test_real_fifo_repay_pays_interest_first_during_halt_and_stale_market"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_configured_projection_and_reduce_only_have_explicit_coverage"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_mm_equality_rejection_has_no_fabricated_accepted_evidence"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_ordinary_capture_and_known_id_retry_preserve_original_decision"
+        },
+        {
+          "actual_result": "ok",
+          "category": "existing_admission_contract",
+          "display": "full_method",
+          "test_id": "test_decision_admission_capture.DecisionAdmissionCaptureTests.test_synthetic_coexisting_policy_candidates_reject_read_arguments"
+        }
+      ],
+      "sample": "push312-unit",
+      "total": 32
+    }
+  ]
+}
