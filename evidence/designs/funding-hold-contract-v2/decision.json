@@ -1,0 +1,40 @@
+{
+  "schema": "funding-hold-d1-contract-decision/v2",
+  "status": "OWNER_DECISION_PENDING_INDEPENDENT_REVIEW",
+  "observed_candidate": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "observed_wire_proposal": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+  "governing_spec": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "document": "docs/funding-hold-d1-contract-v2.md",
+  "identifier_decision": "EXACT_895BCF_TYPED_CANONICAL_PAYLOADS_AND_PREFIXES",
+  "policy_digest": "BARE_LOWERCASE_SHA256_TYPED_CONTENT_ID_NOT_AUTHORIZATION",
+  "stage_precondition": {
+    "signature": "advance_stage(state, proposed, *, expected_revision, expected_active_stage)",
+    "expected_active_stage": "EXACT_STAGE_COMPLETE_FIELD_EQUALITY_AND_DUTY_SCOPE_VALIDATION",
+    "old_expected_active_ref": "UNSUPPORTED_NO_INFERRED_CONVERSION",
+    "persistence_or_content_authentication_proved": false
+  },
+  "wait_revision": {
+    "increments": "ONCE_IF_ANY_NONREVISION_RECORD_FIELD_CHANGES",
+    "unchanged": "RETURN_ORIGINAL_RECORD_SAME_REVISION_QUERY_NOT_COUNTED",
+    "overflow": "UNCHANGED_ALLOWED_CHANGED_REJECTED",
+    "same_time_normal_and_default": "SAME_RULE",
+    "deadline_equality": "NO_QUERY_STICKY_DEFAULT_REVIEW",
+    "interval_equality": "ELIGIBLE_ONLY_BEFORE_DEADLINE_AND_BELOW_CAP"
+  },
+  "shared_action": {
+    "allocation_id": "AUTHORITATIVE_IMMUTABLE_ROOT_ENCUMBRANCE_LINEAGE",
+    "split_or_relabel": "INHERITS_SHARED_BUDGET_EACH_PHYSICAL_QUERY_COUNTS",
+    "policy_owner": "APPROVED_EFFECTIVE_IMMUTABLE_RISK_CONFIGURATION",
+    "policy_change": "CONFLICT_PRESERVE_EXISTING_ACTION",
+    "scale_change": "CONFLICT_NEVER_NEW_BUDGET",
+    "unknown_history": "RESTRICT_NO_INITIALIZATION_OR_DISPATCH",
+    "generation_migration": "EXPLICIT_IMPORT_MAPPING_AND_FULL_HISTORY_BEFORE_WRITES",
+    "D1_global_enforcement": false
+  },
+  "target_imports_or_tests": 0,
+  "activation_permission": false,
+  "D2": "BLOCKED",
+  "production": "NO_GO",
+  "migration": "NONE_DOCUMENTATION_ONLY",
+  "rollback": "REVERT_NEW_CONTRACT_FILES_PRESERVE_CONFIRMED_HISTORY"
+}

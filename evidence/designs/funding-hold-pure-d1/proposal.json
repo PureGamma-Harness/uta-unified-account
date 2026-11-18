@@ -1,0 +1,126 @@
+{
+  "schema": 1,
+  "kind": "MINIMAL_PURE_FUNDING_HOLD_D1_SUBSET_PROPOSAL",
+  "status": "PROTOCOL_FIXED_BEFORE_CODE_NOT_RUN",
+  "base": "ef7508bebd35cac71d9db8fdda896806ce4ade64",
+  "rules_commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "independent_rules_commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+  "source_references": [
+    {
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "docs/pending-funding-risk-hold-b1-b2-amendment.md",
+      "bytes": 13454,
+      "sha256": "a664661a0da506d88e9b3c193faa7e983bea5e029c4769becca4b078efed98eb",
+      "git_blob_oid": "f01fab7c6a793f76ccf241e93a69a843617cc005",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    },
+    {
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-contract.json",
+      "bytes": 17604,
+      "sha256": "041fa3abc54b3881086049fe5963d321aafd0f3421f95a9c53c5f8e8e63da29b",
+      "git_blob_oid": "b0f1cb96bd064f7b6ce89a3225e629e824919d08",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    },
+    {
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/manual-cases.json",
+      "bytes": 16106,
+      "sha256": "0b2b27c0c2020cab320fb9844907149e4163b63cefeec6ab44d0d1fe85c72d6e",
+      "git_blob_oid": "3b9532c1fba091595b0b51eb90944c2e21b4525a",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    },
+    {
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-cases.json",
+      "bytes": 14119,
+      "sha256": "b98321db286028edc05cc2cc4a69c14b250038b2a6ab6066fcaf5610022bdb59",
+      "git_blob_oid": "101fd7b54e13566cf6247392d61bd72a83a09ae6",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    },
+    {
+      "commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+      "path": "docs/pending-funding-hold-rev2-independent-review.md",
+      "bytes": 8280,
+      "sha256": "1ef2d84ee5ad3a719563dfa19ea543a17c9c0dc274bd2a7b1c032397be50ff39",
+      "git_blob_oid": "d622fc8f3db7c0a14a32027a32d73f803ad9c4f8",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    },
+    {
+      "commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+      "path": "evidence/reviews/pending-funding-hold-rev2-independent/review-8008a0b2.json",
+      "bytes": 37775,
+      "sha256": "c645a4a40988f7315100d0429fddc2915b785bf3067d8386b354963a78519c0c",
+      "git_blob_oid": "3d282e5edcc7e8ebb4c5407a1b242e5ef7a4e391",
+      "access": "STATIC_GIT_READ_ONLY_NO_TARGET_EXECUTION"
+    }
+  ],
+  "module_proposal": "uta/funding_hold_pure.py",
+  "tests_proposal": "tests/test_funding_hold_pure.py",
+  "dependency_allowlist": [
+    "__future__.annotations",
+    "dataclasses",
+    "datetime",
+    "hashlib",
+    "json",
+    "re"
+  ],
+  "UTA_imports": false,
+  "target_execution_attempts": 0,
+  "runtime_changed_at_proposal": false,
+  "activation_permission": false,
+  "D2": "BLOCKED",
+  "APIs": [
+    {
+      "name": "DutyKey.duty_id / natural_slot",
+      "effect": "Canonical identity exact8008 fields; strict UTC text, no normalization, no cut/claim in identity; duplicate natural slots reject"
+    },
+    {
+      "name": "advance_stage",
+      "effect": "Pure CAS precondition over same immutable duty/revision/active typed ref; registered->cap/final or cap->final; returns new state/history; no persistent CAS or APPLIED"
+    },
+    {
+      "name": "aggregate",
+      "effect": "Complete provided same-account USD-scale tuple, <=1000; exact unique duty/natural slot and legal single-active stages; gross P/U/N/H, no N netting"
+    },
+    {
+      "name": "decompose",
+      "effect": "Requires funding_components=EXCLUDED on supplied base values; accrual=baseAccounting-P+N, risk=baseRisk-H, available=risk-baseIM-orderReserve; cash raw=cash-realSpotF-H, clamped max(raw,0); conditional arithmetic not valuation/admission"
+    },
+    {
+      "name": "backing_precondition",
+      "effect": "Own fixed P only, other H unchanged; prior confirmed obligations must be externally supplied clear; F<=max(cash-ownP,0). WAIT preserves every P/U/N/H; eligible output is projection only, never actual payment/APPLIED/ACK"
+    },
+    {
+      "name": "preview_wait / validate_wait_records",
+      "effect": "Explicit immutable shared-action policy/first-start/deadline/highwater/revision/attempts; no clock; unknown query outcome consumes one supplied dispatched attempt; no new duty/claim budget. WAIT or sticky DEFAULT_REVIEW without changing holds"
+    },
+    {
+      "name": "unsupported_request",
+      "effect": "Closed unsupported operation names rejected; unknown requests never default to0 or authorize anything"
+    }
+  ],
+  "fixed_numeric_domain": {
+    "currency": "USD",
+    "usd_scale": "native int2..8, exact same scale required everywhere; no conversion/rounding API",
+    "money_inputs": "native int not bool, absolute units<10^38; nonnegative P/U/N/F/IM/MM/reserve; signed base equity/cash",
+    "max_duties": 1000,
+    "totals_upper_bound": "Each P/U/N/H <=1000*(10^38-1); one active representation per duty, so H=P+U fits this bound, not i64",
+    "derived_values_upper_bound": "Absolute conditional equity/availability/cash expressions <=4000*10^38; checked exact Python integers, never clamp except public spendable max(raw,0)",
+    "unknown_missing_data": "EXPLICIT_ERROR_OR_UNSUPPORTED_NOT_ZERO",
+    "negative_and_equal": "F<=max(cash-ownP,0) permits F0 negative-cash preview; no IM/MM equality authorization. Equal versions/refs required for pureCAS"
+  },
+  "refs": "Typed EXPOSURE/CAP/FINAL_CUT shape+same-duty/scope linking only; no authentication/content lookup/actual obligation proof",
+  "base_input_precondition": "Supplied base accounting/risk values explicitly exclude P/N/H; base risk already includes genuine spot F once. Values are externally provided facts, not evaluated by this module.",
+  "wait_policy": "Required exact versioned no-default fields from8008; stable action identity and approved policy identity belong to one supplied record, not individual duty/claim; first deadline/highwater and counts never reset; persistence/outbox/real time/auth remainD2",
+  "support_manuals": "Original17+supplement10 audited as a support/reject matrix; only unit/CAS/conditional arithmetic slices compile into tests, not all27 full cases",
+  "unsupported": [
+    "qty/mark/rate valuation or generation of cap/final cash",
+    "borrowable quote, loan authorization, financing/capital substitution",
+    "calculate IM/MM, mark/price/portfolio valuation, nonUSD/mixed scales",
+    "real ACK/cancel/outbox/claim/receipt/APPLIED/ledger/service/matching/whole-period atomicity",
+    "multi-account isolation transfer/custody/mode/HA or production activation"
+  ],
+  "baseline_inventory": "65py+1HTML=66runtime unchanged; one new module means66py/67runtime candidate, normalCI_NOT_READY until separately reviewed explicit next inventory; no default policy change",
+  "next": "Implement CODE+unrun tests and candidate source evidence after this immutable protocol commit; independent CODE review and separate root pure execution plan later"
+}

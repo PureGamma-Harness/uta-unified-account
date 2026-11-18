@@ -1,0 +1,70 @@
+{
+  "schema": "funding-hold-pure-contract-v2-code/v1",
+  "policy_decision": "2bb8095faa76ca7d18f957590c7816ba44018554",
+  "original_candidate": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "original_review": "7519ace0def348df46b8f5e237ff668622ca2e34",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "pins": [
+    {
+      "path": "uta/funding_hold_pure.py",
+      "bytes": 23348,
+      "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+    },
+    {
+      "path": "tests/test_funding_hold_pure.py",
+      "bytes": 25541,
+      "sha256": "9d0d5834617b892ceb60ec2e9b69bec1adf01adf76ffd229145634726ce6a6f2"
+    },
+    {
+      "path": "tests/test_credit_lease_observation_tag.py",
+      "bytes": 12287,
+      "sha256": "805c0e60ae951b2d14b7adee993ec09d44a90defda05461ec6eef65556e0d798"
+    },
+    {
+      "path": "docs/funding-hold-pure-contract-v2-code.md",
+      "bytes": 2926,
+      "sha256": "afead953029813ecdeddffa6bded00d74d9c138bf23c8cdfa794399a61b8cb54"
+    }
+  ],
+  "original_runtime_files_unchanged": 66,
+  "original_test_ids": [
+    "test_checked_1000_duty_aggregate_has_auditable_python_integer_bound",
+    "test_m01_m02_gross_payables_never_net_pending_receivers",
+    "test_m03_only_given_original_rounded_units_are_aggregated",
+    "test_m04_loans_fees_and_funding_are_given_separate_base_components",
+    "test_m05_m25_zero_frozen_negative_cash_keeps_other_H_once",
+    "test_m06_receiver_has_no_preview_cash_and_other_payable_stays",
+    "test_m07_m18_duplicate_slots_and_foreign_ref_do_not_create_extra_debt",
+    "test_m08_m09_given_margin_arithmetic_is_not_liquidation_or_admission",
+    "test_m10_m19_cap_resolution_has_one_active_stage_and_history",
+    "test_m11_m12_provided_USD_base_values_do_not_revalue_collateral",
+    "test_m13_m17_given_receivables_do_not_grant_risk_or_capital",
+    "test_m14_m15_m27_and_other_unsupported_operations_have_no_fallback",
+    "test_m18_exact_canonical_identity_precedes_schedule",
+    "test_m19_sign_zero_cap_breach_and_CAS_ref_conflicts",
+    "test_m20_m24_frozen_backing_wait_and_given_true_release_projection",
+    "test_m21_m22_prior_confirmed_fill_or_unknown_ack_does_not_release_backing",
+    "test_m23_deadline_and_highwater_not_reset_by_observations",
+    "test_m23_unknown_dispatched_query_consumes_budget_and_CAS_once_in_projection",
+    "test_m26_given_capital_snapshot_does_not_authorize_financing",
+    "test_money_scale_exact_types_limits_and_no_user_hash_hook",
+    "test_shared_action_cannot_take_second_policy_or_duty_budget",
+    "test_unknown_unassessed_missing_or_cross_scope_is_not_zero"
+  ],
+  "new_test_ids": [
+    "test_complete_stage_CAS_rejects_foreign_malformed_and_legacy_expectation",
+    "test_complete_stage_CAS_rejects_stale_exposure_amount_and_kind",
+    "test_shared_root_action_scale_mismatch_cannot_create_second_tuple_budget",
+    "test_wait_interval_and_deadline_equality_do_not_grant_late_query",
+    "test_wait_revision_changes_once_for_highwater_or_dispatch",
+    "test_wait_revision_exhaustion_allows_only_actual_noop",
+    "test_wait_same_time_noop_preserves_original_normal_and_default_records"
+  ],
+  "test_definitions": 29,
+  "target_import_compile_execution_attempts": 0,
+  "static_checks": "AST data parsing, Git byte comparison, explicit inventory comparison only",
+  "activation_permission": false,
+  "D2": "BLOCKED",
+  "normal_CI": "PENDING_SOURCE_REVIEW",
+  "differential_reference": "NOT_RUN"
+}

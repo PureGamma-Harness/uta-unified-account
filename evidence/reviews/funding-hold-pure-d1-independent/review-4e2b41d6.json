@@ -1,0 +1,701 @@
+{
+  "AST_static_only": {
+    "bytecode_compiled_or_target_imported": false,
+    "explicit_dependencies": [
+      "__future__",
+      "dataclasses",
+      "datetime",
+      "hashlib",
+      "json",
+      "re"
+    ],
+    "module_function_method_definitions": 39,
+    "no_UTA_module_imports": true,
+    "no_source_clock_actor_SQL_call_attributes": true,
+    "no_top_level_business_function_call_expressions": true,
+    "sorted_test_names_equal_manifest": true,
+    "test_method_count": 22,
+    "test_method_names": [
+      "test_checked_1000_duty_aggregate_has_auditable_python_integer_bound",
+      "test_m01_m02_gross_payables_never_net_pending_receivers",
+      "test_m03_only_given_original_rounded_units_are_aggregated",
+      "test_m04_loans_fees_and_funding_are_given_separate_base_components",
+      "test_m05_m25_zero_frozen_negative_cash_keeps_other_H_once",
+      "test_m06_receiver_has_no_preview_cash_and_other_payable_stays",
+      "test_m07_m18_duplicate_slots_and_foreign_ref_do_not_create_extra_debt",
+      "test_m08_m09_given_margin_arithmetic_is_not_liquidation_or_admission",
+      "test_m10_m19_cap_resolution_has_one_active_stage_and_history",
+      "test_m11_m12_provided_USD_base_values_do_not_revalue_collateral",
+      "test_m13_m17_given_receivables_do_not_grant_risk_or_capital",
+      "test_m14_m15_m27_and_other_unsupported_operations_have_no_fallback",
+      "test_m18_exact_canonical_identity_precedes_schedule",
+      "test_m19_sign_zero_cap_breach_and_CAS_ref_conflicts",
+      "test_m20_m24_frozen_backing_wait_and_given_true_release_projection",
+      "test_m21_m22_prior_confirmed_fill_or_unknown_ack_does_not_release_backing",
+      "test_m23_deadline_and_highwater_not_reset_by_observations",
+      "test_m23_unknown_dispatched_query_consumes_budget_and_CAS_once_in_projection",
+      "test_m26_given_capital_snapshot_does_not_authorize_financing",
+      "test_money_scale_exact_types_limits_and_no_user_hash_hook",
+      "test_shared_action_cannot_take_second_policy_or_duty_budget",
+      "test_unknown_unassessed_missing_or_cross_scope_is_not_zero"
+    ]
+  },
+  "D2": "UNCONDITIONALLY_BLOCKED_ACK_OUTBOX_ALLENTRY_FENCE_ATOMIC_PERIOD_RESTART_AND_REAL_FUNDS_NOT_PROVEN",
+  "M18_independent_standard_JSON_literal_only": {
+    "canonical_fields_source": "8008 rule nine fields, fixed test literal",
+    "duty_id": "funding-duty:v1:3608a7a0ec99683dd080f6663ad9283a965df92c46878e569c3a8c467d3f7779",
+    "full_reference_or_differential_execution": false,
+    "policy_action_hash_normative_validation": false,
+    "target_helper_used": false
+  },
+  "OP_GAP": [
+    {
+      "ID": "OP01",
+      "gap": "bare policy SHA and action payload/schema/scale choices require normative approval;895bcf51 is proposal, not prior PR61 specification; duty vector not fullhashcoverage",
+      "source_lines": "63-66,465-470,484-492",
+      "status": "OPEN_POLICY_GAP"
+    },
+    {
+      "ID": "OP02",
+      "gap": "expected revision+one active ref and shape/history links are not dual exposure/cap expected-ref/fullstate CAS, durable uniqueness or content authentication",
+      "source_lines": "267-282",
+      "status": "OPEN_POLICY_GAP"
+    },
+    {
+      "ID": "OP03",
+      "gap": "same-highwater nonreview no-dispatch increments revision; defaultreview same-highwater no-op retains record; no-op revision policy not treated as fully approved global CAS contract",
+      "source_lines": "576-589",
+      "status": "OPEN_POLICY_GAP"
+    },
+    {
+      "ID": "OP04",
+      "gap": "provided tuple duplicate check does not authenticate first policy, allocation identity, fullhistory, crossgeneration migration or persisted shared budget; loss of priorrecord is not permission to reset",
+      "source_lines": "478-555",
+      "status": "OPEN_AUTHORITY_STORAGE_GAP"
+    },
+    {
+      "ID": "OP05",
+      "gap": "query_counted is a predispatch projection; no real dispatch/unknown-result/outbox/ACK/restart/atomic cash state observed",
+      "source_lines": "559-565 and candidate boundary",
+      "status": "D2_BLOCKED"
+    }
+  ],
+  "actual_target_actions": {
+    "CI": 0,
+    "SQL": 0,
+    "bytecode_compiles": 0,
+    "clock_reads": 0,
+    "imports": 0,
+    "network": 0,
+    "process_or_PID_or_proc_actions": 0,
+    "tests": 0,
+    "worker": 0
+  },
+  "administrative_reader_events": [
+    {
+      "actual": "FileNotFoundError uta/__init__.py after four candidate physical pins; no source materialization assumed",
+      "correction": "read fixed candidate/base Git objects for original66; physical claim expressly false; no target retry",
+      "event": "sparse_review_missing_baseline_physical_file"
+    },
+    {
+      "actual": "AST method source order != sorted inventory assertion; AST definition count22 already observed",
+      "correction": "sorted+count comparison matches inventory; target never executed",
+      "event": "manifest_order_assumption"
+    }
+  ],
+  "baseline66_Git_only": [
+    {
+      "bytes": 104,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/__init__.py",
+      "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+    },
+    {
+      "bytes": 12953,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/__main__.py",
+      "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+    },
+    {
+      "bytes": 4920,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/acceptance.py",
+      "sha256": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7"
+    },
+    {
+      "bytes": 14604,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/admission.py",
+      "sha256": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47"
+    },
+    {
+      "bytes": 6832,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/api.py",
+      "sha256": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2"
+    },
+    {
+      "bytes": 4624,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/bridge.py",
+      "sha256": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432"
+    },
+    {
+      "bytes": 824,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/configuration.py",
+      "sha256": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68"
+    },
+    {
+      "bytes": 31349,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit.py",
+      "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+    },
+    {
+      "bytes": 18651,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_artifact.py",
+      "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9"
+    },
+    {
+      "bytes": 54043,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_audit_v2.py",
+      "sha256": "d455b8417bd3938f9aca14eda5dd0a0f366b1da0e60638c83324085cbc7eb83a"
+    },
+    {
+      "bytes": 20499,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_audit_v2_replay.py",
+      "sha256": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af"
+    },
+    {
+      "bytes": 18118,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_fifo_v2.py",
+      "sha256": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca"
+    },
+    {
+      "bytes": 24552,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_native.py",
+      "sha256": "088d6b6b0879124c122cb674d9b347f9688657d7b35019ed643dbeaf1ed19a99"
+    },
+    {
+      "bytes": 103836,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_native_v2.py",
+      "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
+    },
+    {
+      "bytes": 16925,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_policy.py",
+      "sha256": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a"
+    },
+    {
+      "bytes": 13967,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_transition.py",
+      "sha256": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99"
+    },
+    {
+      "bytes": 3716,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/credit_v2_payload_contract.py",
+      "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7"
+    },
+    {
+      "bytes": 16411,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/cross_decimal_kernel.py",
+      "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53"
+    },
+    {
+      "bytes": 27630,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/cutover.py",
+      "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+    },
+    {
+      "bytes": 23977,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/dashboard.html",
+      "sha256": "97e2668bde9b292eb3ee0310b48f836b63c3e69e119c6a64321b1afb81223c07"
+    },
+    {
+      "bytes": 38983,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/decision_audit.py",
+      "sha256": "0046dc943ddb1e075841e81e3c58c939c7468cfd8e0c5595c8a4d4d7ac27e514"
+    },
+    {
+      "bytes": 27476,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_batches.py",
+      "sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32"
+    },
+    {
+      "bytes": 17842,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_cli.py",
+      "sha256": "69334c3d1c209ed2a721d594ed53882f98fedb6d0010de70c185b8687b5c6bde"
+    },
+    {
+      "bytes": 29291,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_commands.py",
+      "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8"
+    },
+    {
+      "bytes": 25775,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_gateway.py",
+      "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+    },
+    {
+      "bytes": 20142,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_liquidation.py",
+      "sha256": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826"
+    },
+    {
+      "bytes": 106136,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_process.py",
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    {
+      "bytes": 26768,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/durable_views.py",
+      "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+    },
+    {
+      "bytes": 1444,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/examples.py",
+      "sha256": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90"
+    },
+    {
+      "bytes": 16790,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/existing_services.py",
+      "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f"
+    },
+    {
+      "bytes": 6366,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/failure_diagnostics.py",
+      "sha256": "953ec1dd75ffadcb44f560e4042c92162f7302ac753034bb7f7c5a91a46f0f32"
+    },
+    {
+      "bytes": 34952,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/funding_local.py",
+      "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd"
+    },
+    {
+      "bytes": 63141,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/funding_obligations.py",
+      "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97"
+    },
+    {
+      "bytes": 33412,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/gateway.py",
+      "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+    },
+    {
+      "bytes": 7329,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/ledger.py",
+      "sha256": "ec20cb64ea5bc4d8a3e09144e91771f665ff03f82ea615910f102633031e1571"
+    },
+    {
+      "bytes": 8904,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/liquidation.py",
+      "sha256": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f"
+    },
+    {
+      "bytes": 8465,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/market.py",
+      "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+    },
+    {
+      "bytes": 3877,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/market_cache.py",
+      "sha256": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211"
+    },
+    {
+      "bytes": 21921,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/matching.py",
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+    },
+    {
+      "bytes": 9596,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/migration.py",
+      "sha256": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5"
+    },
+    {
+      "bytes": 6034,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/models.py",
+      "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+    },
+    {
+      "bytes": 9854,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/ops.py",
+      "sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da"
+    },
+    {
+      "bytes": 7981,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/perpetual_funding.py",
+      "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd"
+    },
+    {
+      "bytes": 24042,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/portfolio.py",
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+    },
+    {
+      "bytes": 21647,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/private_stream_codec.py",
+      "sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2"
+    },
+    {
+      "bytes": 12043,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/products.py",
+      "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+    },
+    {
+      "bytes": 17911,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/reconciliation.py",
+      "sha256": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8"
+    },
+    {
+      "bytes": 23518,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/request_signing.py",
+      "sha256": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+    },
+    {
+      "bytes": 5501,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/reservations.py",
+      "sha256": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b"
+    },
+    {
+      "bytes": 4923,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/reserve_kernel.py",
+      "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+    },
+    {
+      "bytes": 7535,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/risk.py",
+      "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+    },
+    {
+      "bytes": 7092,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/scenario_margin.py",
+      "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+    },
+    {
+      "bytes": 9654,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/server.py",
+      "sha256": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c"
+    },
+    {
+      "bytes": 87079,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/service.py",
+      "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+    },
+    {
+      "bytes": 4672,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/shadow_adapter.py",
+      "sha256": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064"
+    },
+    {
+      "bytes": 11755,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/shard_admission.py",
+      "sha256": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c"
+    },
+    {
+      "bytes": 51451,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/sharding.py",
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    {
+      "bytes": 21532,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/simulator.py",
+      "sha256": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae"
+    },
+    {
+      "bytes": 37264,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/spot.py",
+      "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+    },
+    {
+      "bytes": 23653,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/startup.py",
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    {
+      "bytes": 30225,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/storage.py",
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    {
+      "bytes": 19174,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/store.py",
+      "sha256": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c"
+    },
+    {
+      "bytes": 15243,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/supervisor.py",
+      "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e"
+    },
+    {
+      "bytes": 7134,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/vertical.py",
+      "sha256": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0"
+    },
+    {
+      "bytes": 6412,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/worker.py",
+      "sha256": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b"
+    },
+    {
+      "bytes": 55652,
+      "candidate_Git_equals_base_Git": true,
+      "path": "uta/writer_fence.py",
+      "sha256": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41"
+    }
+  ],
+  "baseline66_bytes": 1456126,
+  "baseline66_physical_copy_claim": false,
+  "bound_proof": {
+    "L": "10^38",
+    "accrual_and_risk_absolute": "<1001L",
+    "aggregate": "P+U+N<=n*(L-1), H=P+U",
+    "available_absolute": "<1003L",
+    "base_and_unit_inputs": "nativeint, abs<L; nonnegative constrained components; scale2..8 equal",
+    "checked_derived_limit": "inclusive4000L",
+    "n": "0..1000",
+    "ordinary_cash_raw_absolute": "<1002L",
+    "own_payment_cash_absolute": "<2L",
+    "per_duty_active": "0..L-1",
+    "rounding": "none; max(raw,0) only spend display"
+  },
+  "candidate_inventory": "66py/67runtime; original65py/66runtime retained",
+  "candidate_physical_and_Git_pins": {
+    "docs/funding-hold-pure-d1-code.md": {
+      "bytes": 5242,
+      "git_blob_oid": "ee8403ca268b5e8ec0802f811a9afd4f4e6eba4a",
+      "physical_equals_fixed_Git": true,
+      "sha256": "af736c15b511fbb7651555386012d15c2ea417ff90de9a0e846248845429e34f"
+    },
+    "docs/funding-hold-pure-d1-protocol.md": {
+      "bytes": 3616,
+      "git_blob_oid": "3a1cff5a67f29c8ec833f2e7e943be333488d024",
+      "physical_equals_fixed_Git": true,
+      "sha256": "75d96d853c019d2ea46e059e0c4c74d049dcafaab2d41bad631c6b4e1999c07b"
+    },
+    "evidence/designs/funding-hold-pure-d1/code-candidate.json": {
+      "bytes": 21773,
+      "git_blob_oid": "77e06593805839f323ee9d67fff3b3ae067f245f",
+      "physical_equals_fixed_Git": true,
+      "sha256": "511e0e5e80371c36b0ed6ee28df066c9abcc7eda863ff8a07f059ebb9b4be4d9"
+    },
+    "evidence/designs/funding-hold-pure-d1/manual-subset.json": {
+      "bytes": 12031,
+      "git_blob_oid": "1aa57fc8c65a78a4cfa89796ed732f35e617d52e",
+      "physical_equals_fixed_Git": true,
+      "sha256": "627fed9e7d388553cfa3f126f02f786ff56313e3462a564212893ae9e86a7c5c"
+    },
+    "evidence/designs/funding-hold-pure-d1/proposal.json": {
+      "bytes": 7203,
+      "git_blob_oid": "98a80ef2ddb0277415597ed5fb8b729dc886c840",
+      "physical_equals_fixed_Git": true,
+      "sha256": "5ab637fbec23a9c51a8a590684294f453dad2cc9c651fc51ced6548d7bc8d243"
+    },
+    "tests/test_funding_hold_pure.py": {
+      "bytes": 19959,
+      "git_blob_oid": "0710c0bd1757930786c3e3913e6d3339c3d2695f",
+      "physical_equals_fixed_Git": true,
+      "sha256": "9608e0bee8db55c33de667f84d7acedabd14adab1b327ab5b533aca19c8c31fc"
+    },
+    "uta/funding_hold_pure.py": {
+      "bytes": 23278,
+      "git_blob_oid": "a71f148f6bac6df92d19e91226e664a962b9b7a7",
+      "physical_equals_fixed_Git": true,
+      "sha256": "5c41504f58ae97c4437e7887985ef71bf65ce11b34b5d1bf923b08b6c529e67f"
+    }
+  },
+  "checks": [
+    {
+      "ID": "INT",
+      "conclusion": "exact native types before numeric comparison/hash; bounded ASCII/text/native tuple; no custom getter/hash path",
+      "source_lines": "35-56,86-128,236-259,295-308,350-362,454-462,507-523",
+      "status": "CODE_CLOSED"
+    },
+    {
+      "ID": "BOUND",
+      "conclusion": "one active per duty; P+U+N <=1000*(L-1); all expressions below4000L; Python exact int",
+      "source_lines": "15-20,305-308,319-335,383-401,434-441",
+      "status": "CODE_CLOSED"
+    },
+    {
+      "ID": "SLOT",
+      "conclusion": "canonical duty fields, unique natural slot independent of interval/rule scope, same scope/scale and typed ref links",
+      "source_lines": "130-156,218-225,321-330",
+      "status": "CODE_CLOSED"
+    },
+    {
+      "ID": "STAGE",
+      "conclusion": "finite legal chain/history/revision/cap lineage, cap breach/final changes/APPLIED rejected, returns new state",
+      "source_lines": "185-215,236-282",
+      "status": "CODE_CLOSED_LIMITED_PURE_CAS"
+    },
+    {
+      "ID": "GROSS",
+      "conclusion": "H=P+U, N no risk/cash credit, base EXCLUDED, F once, IM/MM supplied unchanged",
+      "source_lines": "311-335,387-401",
+      "status": "CODE_CLOSED"
+    },
+    {
+      "ID": "BACKING",
+      "conclusion": "prior-confirmed fact and F<=max(cash-ownP,0), WAIT preserves fields, ownP only removed in preview, otherH stays, F0 negative cash",
+      "source_lines": "419-441",
+      "status": "CODE_CLOSED_CONDITIONAL_PREVIEW"
+    },
+    {
+      "ID": "WAIT",
+      "conclusion": "explicit policy/start/deadline/highwater, bounded budget/interval, exact expected revision/digest, expiry>=, stickyreview/no reset/no refund output",
+      "source_lines": "454-470,478-492,507-589",
+      "status": "CODE_CLOSED_PROVIDED_RECORD_ONLY"
+    },
+    {
+      "ID": "FLAGS",
+      "conclusion": "returned DTO defaults activation=false and holds_unchanged=true; not capability or authentication",
+      "source_lines": "234,293,380,416,542-543",
+      "status": "CODE_CLOSED_OUTPUT_DEFAULTS_ONLY"
+    },
+    {
+      "ID": "NOINTEGRATION",
+      "conclusion": "no UTA dependency/service/ledger/credit/matching integration, original financial runtime exact",
+      "source_lines": "module imports and original66 Git object comparison",
+      "status": "CODE_CLOSED"
+    }
+  ],
+  "confirmed_new_numeric_or_state_CODE_blockers": [],
+  "delivery": "exactly2 SAFE review files; no author/runtime/test/protocol/history/raw changes; no push",
+  "execution_GO": false,
+  "fixed_public_base": "ef7508bebd35cac71d9db8fdda896806ce4ade64",
+  "independent_reference_boundary": "No reference imported/executed/reused; separate reference hash_wire NOT_VERIFIED is not upgraded by this review. No numeric fullcoverage claim.",
+  "kind": "INDEPENDENT_FUNDING_HOLD_D1_CODE_REVIEW",
+  "manual_scope": {
+    "all_method_references_resolve": true,
+    "all_rows_NOT_RUN": true,
+    "all_rows_full_case_supported": false,
+    "declared_test_methods": 22,
+    "full27_case_PASS_claim": false,
+    "rows": 27
+  },
+  "new_runtime_only": "uta/funding_hold_pure.py",
+  "next_gate": "independent finite pure runner/capture/source budget review and root exact unique GO; actual bounded tests/reference differential/RAW later; D2 stays blocked",
+  "normal_CI": "NOT_READY_NO_NEW_INVENTORY_APPROVAL",
+  "production_approval": false,
+  "qualification": "NOT_RUN_NOT_QUALIFIED",
+  "reference_source_bindings": [
+    {
+      "bytes": 13454,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "docs/pending-funding-risk-hold-b1-b2-amendment.md",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "a664661a0da506d88e9b3c193faa7e983bea5e029c4769becca4b078efed98eb"
+    },
+    {
+      "bytes": 17604,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-contract.json",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "041fa3abc54b3881086049fe5963d321aafd0f3421f95a9c53c5f8e8e63da29b"
+    },
+    {
+      "bytes": 16106,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/manual-cases.json",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "0b2b27c0c2020cab320fb9844907149e4163b63cefeec6ab44d0d1fe85c72d6e"
+    },
+    {
+      "bytes": 14119,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-cases.json",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "b98321db286028edc05cc2cc4a69c14b250038b2a6ab6066fcaf5610022bdb59"
+    },
+    {
+      "bytes": 8280,
+      "commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+      "path": "docs/pending-funding-hold-rev2-independent-review.md",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "1ef2d84ee5ad3a719563dfa19ea543a17c9c0dc274bd2a7b1c032397be50ff39"
+    },
+    {
+      "bytes": 37775,
+      "commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+      "path": "evidence/reviews/pending-funding-hold-rev2-independent/review-8008a0b2.json",
+      "role": "fixed normative rules or prior independent rules review; not test execution",
+      "sha256": "c645a4a40988f7315100d0429fddc2915b785bf3067d8386b354963a78519c0c"
+    },
+    {
+      "bytes": 5263,
+      "commit": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+      "path": "docs/funding-hold-wire-contract-proposal.md",
+      "role": "PROPOSAL_NOT_NORMATIVE_WIRE_APPROVAL",
+      "sha256": "e69d66b244fa45505079afbe65f824a2cb876f5703fbd8c362e8fc962372d1bf"
+    },
+    {
+      "bytes": 34543,
+      "commit": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+      "path": "evidence/designs/funding-hold-wire-contract-proposal/contract.json",
+      "role": "PROPOSAL_NOT_NORMATIVE_WIRE_APPROVAL",
+      "sha256": "287cf5f5fe73cc3d9a22f33dd82c4283f933d86c2c476c965f11724d7bc96f20"
+    }
+  ],
+  "review_parent": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "reviewed_commit": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "rollback": "revert only these2 SAFE review files; preserve4e/8008/446/895/reference/oldplans/raw",
+  "status": "CODE_CLOSED_FOR_DECLARED_PURE_SUBSET_ONLY"
+}
