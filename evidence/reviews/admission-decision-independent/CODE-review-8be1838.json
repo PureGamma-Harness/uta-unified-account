@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_ADMISSION_REPLAY_CODE_REVIEW",
+  "decision": "NOT_CLOSED_RO_NATIVE_CONTROL_SHAPE_GAP",
+  "source_commit": "8be1838b04224d43c348a86030471c8e4051e0b6",
+  "source_tree": "fce84ac9758c51a2a86a2868aa1ce7c91eaa2ace",
+  "metadata_OWN": "90ba4beda98e9bc1a58bb64a5345db91c64f6906",
+  "metadata_tree": "bca0804ac60df986aff8cbd1d255e0fba4029024",
+  "base_commit": "fc2d574d7ac434a214bf332649edf0d2effc2a8c",
+  "manifest_sha256": "8b5cb9cc33ceb902ef434aab864d04e4c1d40216e41a780947877b2b160e7c26",
+  "manifest_files": 64,
+  "manifest_bytes": 1316614,
+  "physical_regular_length_SHA256_and_Git_bytes_equal": true,
+  "physical_pin_observation": "Matched at frozen read; later author WIP seen at final status is excluded. This report binds immutable8be/90ba, not uncommitted changes.",
+  "additional_specific_blocker_found_beyond_reported_RO_gap": false,
+  "principal_pins": {
+    "uta/service.py": {"bytes": 87079, "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"},
+    "uta/decision_audit.py": {"bytes": 38536, "sha256": "3450e19bc7759c64f2b70b5aeac493471ddcaa444344a2b69dbd57da1568f27d"},
+    "tests/test_admission_policy_reference.py": {"bytes": 9675, "sha256": "d54b5080b322d2c66c1ad3129da459efd914fa0c4940882d6eafec0a416c0301"},
+    "tests/test_decision_admission_capture.py": {"bytes": 5051, "sha256": "0992ba9d3f1ffd766f993a285820ef97eb929b5b3bd38cfbd4d07653308478c4"}
+  },
+  "required_finding": {
+    "id": "ADMISSION-RO-HALT-SHAPE-001",
+    "path": "uta/decision_audit.py",
+    "line": 531,
+    "issue": "RO evaluates quantity/surplus but does not require native boolean before.halted. Changing before and after to the same nonboolean leaves unrelated-state and valuation checks unchanged, permitting false VERIFIED.",
+    "producer_boundary": "uta/service.py:785 calls _halted for every new order, including RO; captured native halt is boolean and malformed control is rejected.",
+    "static_counterexample": "Otherwise valid existing underwater RO example with both before.halted and after.halted set to1 or 'unknown'. No target execution performed.",
+    "minimal_fix": "Validate native bool halt shape for both branches while permitting RO halted=True; add before-and-after consistent nonbool negative controls.",
+    "observed_runtime_financial_bug_claim": false
+  },
+  "compatibility_OPEN": {
+    "id": "ADMISSION-OLD-NEW-POLICY-CANDIDATES-002",
+    "path": "uta/existing_services.py",
+    "line": 255,
+    "scenario": "Preserved old no-contract audit policy and registered new contract policy have identical financial settings/options; both enter candidates and len!=1 rejects existing source reopen.",
+    "new_authorities_affected": false,
+    "historical_handoff_read_compatibility_accepted": false,
+    "validation_needed": "Old/new policy coexistence with identical constructor args, plus genuinely different options retaining ambiguity rejection.",
+    "must_preserve_exact_current_policy_artifact_and_engine_checks": true,
+    "deleting_or_rewriting_old_policies_or_engine_bypass_allowed": false
+  },
+  "positive_static_results": {
+    "entire_service_AST_equal_base_after_capture_only_normalization": true,
+    "original_SQL_guard_RO_and_known_ID_paths_preserved": true,
+    "fee_evaluated_once_and_no_new_risk_calculation": true,
+    "old_audit_definitions_equal_except_policy_and_replay": true,
+    "new_projection_and_replay_static_descriptors_present": true,
+    "new_derivation_does_not_call_production_admission_projection_fee_or_guards": true,
+    "manual_settlement_fee_dust_flip_short_close_MM_and_RO_math_consistent": true,
+    "risk_and_reserve_independent_reference_claim": false,
+    "capture_and_audit_failure_remain_inside_original_financial_transaction": true,
+    "schema3_format1_and_immutable_archives_unchanged": true,
+    "top_level_matches_still_valuation_only": true,
+    "old_missing_evidence_unknown_contract_and_FILL_not_falsely_verified_by_default": true,
+    "old_exact_artifact_runtime_mismatch_precedes_replay": true,
+    "unsigned_local_archive_not_hostile_owner_authentication": true
+  },
+  "test_preparation": {
+    "status": "NOT_RUN_ZERO_ATTEMPTS",
+    "pure_direct_methods": 6,
+    "SQL_direct_methods": 3,
+    "inherited_test_expansion": false,
+    "static_import_global_or_descriptor_blocker_found": false,
+    "passive_sqlite3_import_needed_for_pure_module": true,
+    "actual_SQL_allowed_in_pure": false,
+    "bounded_once_entrypoint_present": false,
+    "existing_plan_is_execution_GO": false,
+    "additional_minimal_validation": ["consistent before/after RO halt-shape negatives and RO True positive", "missing policy contract and unknown contract UNSUPPORTED", "old/new policy coexistence and real ambiguity refusal", "audit-write failure actual rollback and original numerical replay regressions in separately authorized bounded scope"]
+  },
+  "scope": {
+    "reviewer_target_import_compile_test_SQL_native_probe_benchmark_CI_or_child_agent": false,
+    "author_or_old_evidence_modified_by_reviewer": false,
+    "new_test_results_inferred_from_prior_MM_source": false,
+    "full_admission_or_concurrent_partial_fill_guarantee_accepted": false,
+    "historical_freshness_fence_or_API_authorization_proven": false,
+    "performance_accepted": false,
+    "production_approved": false,
+    "additional_execution_authorized": false
+  }
+}
