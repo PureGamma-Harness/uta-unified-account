@@ -1,0 +1,143 @@
+{
+  "schema": 1,
+  "status": "STATIC_FILE_READ_ONLY_NO_PYTHON_IMPORT_OR_PROBE",
+  "stdlib_directory": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing",
+  "sources_sha256": {
+    "context.py": "63f15d3169f4453eb80af4ce673a193a0670941206673ab5192ea16a17e8419f",
+    "process.py": "67f0c2a7a3a83c92dd024705bac18619a2e123c9df77c414beb81035ea4a0e18",
+    "popen_spawn_posix.py": "97b5d25aa479516894489877e6a7921252ee35f51e118c2f1f91f32919e7caa8",
+    "popen_fork.py": "0a09db57e7fab7061c01a61778feea6e2b6bb02ccbc150332f2960b05258ef95",
+    "spawn.py": "ebf9fa40eb622384c37690d8c78e7208744df031155ab4ceedab0fc791a1669b",
+    "util.py": "6752c4515ec69f82e9df64e017da490c3754e51d818c270ea1ad2d64e09268be",
+    "resource_tracker.py": "f9d73a8145f8026ec48ebe4127e7e84960e297cb2e247159f8df4f858cfccbf6",
+    "synchronize.py": "78ff49cff58c0c590324e5097241371f25d61d592c598a8b2c2788f2de32a53e",
+    "connection.py": "c2f2d6f3d32d48d4d8c51a7d7c98766a04e958cae72a67c7f905438a7c332bdd",
+    "forkserver.py": "11c9f2e90ae7b0d5882a608ecc074047c10c7360834b026865696a0439bf873f"
+  },
+  "runtime_version_previously_observed": "3.12.14 (first pure7 only; no new executable version invocation)",
+  "source_boundary": {
+    "application_source_count": 69,
+    "stdlib_sources_are_separately_pinned_in_future_binary_metadata": true
+  },
+  "findings": [
+    {
+      "path": "uta/durable_process.py",
+      "lines": [
+        1014,
+        1110,
+        1116
+      ],
+      "fact": "Explicit spawn context and Pipe-based stop/gate/ready channels; thread Events do not remove spawn's resource tracker requirement."
+    },
+    {
+      "path": "multiprocessing/context.py",
+      "lines": [
+        284,
+        288,
+        307
+      ],
+      "fact": "SpawnProcess uses popen_spawn_posix, not popen_forkserver."
+    },
+    {
+      "path": "multiprocessing/popen_spawn_posix.py",
+      "lines": [
+        38,
+        40,
+        58
+      ],
+      "fact": "Worker launch obtains resource_tracker.getfd before util.spawnv_passfds."
+    },
+    {
+      "path": "multiprocessing/resource_tracker.py",
+      "lines": [
+        155,
+        173,
+        181,
+        234,
+        237,
+        238
+      ],
+      "fact": "First tracker starts through util.spawnv_passfds, outside BaseProcess.start; ignores SIGINT/SIGTERM and normally consumes EOF after all alive-pipe writers close."
+    },
+    {
+      "path": "multiprocessing/resource_tracker.py",
+      "lines": [
+        79,
+        91,
+        107,
+        111
+      ],
+      "fact": "Normal stop holds tracker lock, closes alive writer, then waitpid(pid,0); the default implementation discards status, so proposed scope records the original waitpid receipt."
+    },
+    {
+      "path": "multiprocessing/synchronize.py",
+      "lines": [
+        75,
+        79,
+        328,
+        331
+      ],
+      "fact": "Spawn Event/SemLock would also register resources, but the selected UTA path already requires a tracker even without those objects."
+    },
+    {
+      "path": "multiprocessing/util.py",
+      "lines": [
+        353,
+        356,
+        358,
+        360,
+        365
+      ],
+      "fact": "Interpreter atexit can call daemon p._popen.terminate directly and join active children, bypassing BaseProcess method hooks after restoration."
+    },
+    {
+      "path": "multiprocessing/process.py",
+      "lines": [
+        290,
+        317
+      ],
+      "fact": "Worker bootstrap also invokes util._exit_function; the selected UTA worker target creates no further Process children."
+    },
+    {
+      "path": "subprocess.py",
+      "lines": [
+        1120,
+        1129,
+        1130,
+        1133
+      ],
+      "fact": "Popen destructor warns/polls/registers a still-running child; it does not signal that child."
+    }
+  ],
+  "proposed_allowed_roles": {
+    "controller": 1,
+    "case_leader": 1,
+    "maximum_concurrent_financial_workers": 2,
+    "resource_tracker": 1,
+    "normal_maximum_live_processes": 5,
+    "forkserver_or_manager_allowed": false
+  },
+  "proof_required_before_PASS": [
+    "same owned-session birth/pidfd binding for tracker",
+    "unique tracker role separate from financial slots",
+    "normal standard-library stop with actual waitpid status0 receipt",
+    "all financial workers terminal and absent from current case-owned children",
+    "case/native footer role association and outer actual descendant reconciliation",
+    "no residual/unbound/undeclared helper; forced late outer cleanup is UNKNOWN"
+  ],
+  "performed": {
+    "python_execution": 0,
+    "imports": 0,
+    "actual_preflight": 0,
+    "native_case": 0,
+    "child_start": 0,
+    "SQL": 0,
+    "signal": 0,
+    "network": 0
+  },
+  "interpretation_limit": "A static path finding, not observed helper behavior or a native authorization. Future preflight must obtain exact binary/SQL/runtime-source metadata; root CODE closure and explicit final native GO remain required.",
+  "additional_exit_source_sha256": {
+    "subprocess.py": "85d29b2bf0249f5436838298c9a60ee93508b1102e9ac43b001f8a7e7ae8f375"
+  },
+  "exit_boundary_policy": "Case CLI must flush raw output then use self os._exit after explicit original test and helper cleanup; it must not restore hooks then enter Python atexit on PASS/FAIL/UNKNOWN. Residual children are not claimed reaped; the independently bound outer subreaper retains the same absolute cleanup/signal deadline."
+}

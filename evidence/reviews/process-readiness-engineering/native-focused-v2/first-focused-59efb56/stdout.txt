@@ -1,0 +1,58 @@
+{"actual_affinity": [0], "attempt": 1, "event": "BEGIN_FOCUSED_SYNTHETIC_ONLY", "methods": 20, "native_execution_authorized": false, "plan_sha256": "b827601756473c7df20530b8a6136cbc1f8583312b91adc565510b78e6324dc8", "raw_stdout_stderr_hard_limit_bytes": 262144, "runtime": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]", "target_module_imports_authorized": false, "target_source_commit": "59efb56f86de49c51bbea7407c3be447332df216", "wall_budget_seconds": 10}
+{"event": "SOURCE_PINS", "sha256": {"fake_support.py": "652aa14594cb8839018cb4e0779f922298a6f812458fdfa8a17f76fb8038640e", "guard_fakes.py": "6cbd4f5624150166db69c8d45f958f50e993246c1b7dc22f4aa692980fe6d10d", "native_case_once.py": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c", "native_once.py": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820", "native_once_common.py": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75", "native_safe_export.py": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e", "run_focused_once.py": "cfe3894c27baaf3b0a1a3f01440a307b6cadc790126f0adad50a37273bf425f8", "terminal_fakes.py": "95aff3dd889a8ba27159822e253f316e5f66eb56a0370c92d15e6387b89f0f1f"}}
+test_case_conclusion_and_actual_exit_must_agree (guard_fakes.GuardFocusedCases.test_case_conclusion_and_actual_exit_must_agree) ... ok
+test_current_required_protected_pids_reject_before_proc_or_pidfd (guard_fakes.GuardFocusedCases.test_current_required_protected_pids_reject_before_proc_or_pidfd) ... ok
+test_existing_protected_pid_rejects_before_any_proc_read (guard_fakes.GuardFocusedCases.test_existing_protected_pid_rejects_before_any_proc_read) ... ok
+test_journal_cap_counts_successful_write_when_fsync_fails (guard_fakes.GuardFocusedCases.test_journal_cap_counts_successful_write_when_fsync_fails) ... ok
+test_late_popen_and_gate_boundaries_do_not_start_or_release (guard_fakes.GuardFocusedCases.test_late_popen_and_gate_boundaries_do_not_start_or_release) ... ok
+test_outer_signal_subtree_denies_observed_elapsed_after_40s (guard_fakes.GuardFocusedCases.test_outer_signal_subtree_denies_observed_elapsed_after_40s) ... ok
+test_partial_write_and_eof_error_latch_without_more_bytes (guard_fakes.GuardFocusedCases.test_partial_write_and_eof_error_latch_without_more_bytes) ... ok
+test_signal_guard_rechecks_deadline_after_before_record_fsync (guard_fakes.GuardFocusedCases.test_signal_guard_rechecks_deadline_after_before_record_fsync) ... ok
+test_stdio_cap_counts_successful_write_when_fsync_fails (guard_fakes.GuardFocusedCases.test_stdio_cap_counts_successful_write_when_fsync_fails) ... ok
+test_complete_manual_session_is_eligible_without_promoting_owner_witness (terminal_fakes.TerminalFocusedCases.test_complete_manual_session_is_eligible_without_promoting_owner_witness) ... ok
+test_deleted_whole_diagnostic_pair_cannot_be_complete_against_case_count (terminal_fakes.TerminalFocusedCases.test_deleted_whole_diagnostic_pair_cannot_be_complete_against_case_count) ... ok
+test_duplicate_sequence_and_missing_sequence_are_incomplete (terminal_fakes.TerminalFocusedCases.test_duplicate_sequence_and_missing_sequence_are_incomplete) ... ok
+test_honest_early_assertion_failure_retains_complete_zero_control_fail (terminal_fakes.TerminalFocusedCases.test_honest_early_assertion_failure_retains_complete_zero_control_fail) ... ok
+test_missing_case_end_is_not_complete (terminal_fakes.TerminalFocusedCases.test_missing_case_end_is_not_complete) ... ok
+test_missing_original_subtest_evidence_is_incomplete_even_if_case_passes (terminal_fakes.TerminalFocusedCases.test_missing_original_subtest_evidence_is_incomplete_even_if_case_passes) ... ok
+test_paired_prefix_with_separate_pass_result_is_incomplete (terminal_fakes.TerminalFocusedCases.test_paired_prefix_with_separate_pass_result_is_incomplete) ... ok
+test_runtime_proxy_denies_unbound_protected_terminal_and_unregistered_signal (terminal_fakes.TerminalFocusedCases.test_runtime_proxy_denies_unbound_protected_terminal_and_unregistered_signal) ... ok
+test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) ... 
+  test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='swallowed_reentrant_denial') ... ERROR
+  test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='post_start_name_changed') ... ERROR
+  test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='post_start_slot_overflow') ... ERROR
+test_third_live_worker_must_be_denied_before_start_spy (terminal_fakes.TerminalFocusedCases.test_third_live_worker_must_be_denied_before_start_spy) ... ok
+test_top_level_observation_error_is_safely_preserved (terminal_fakes.TerminalFocusedCases.test_top_level_observation_error_is_safely_preserved) ... ok
+
+======================================================================
+ERROR: test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='swallowed_reentrant_denial')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py", line 368, in test_sticky_and_inflight_denial_cannot_return_start_permission
+    namespace["process_start"](SimpleNamespace(pid=9000, name="uta-shard-0"))
+  File "new-case-guard-selected-AST", line 269, in process_start
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='post_start_name_changed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py", line 368, in test_sticky_and_inflight_denial_cannot_return_start_permission
+    namespace["process_start"](SimpleNamespace(pid=9000, name="uta-shard-0"))
+  File "new-case-guard-selected-AST", line 269, in process_start
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+======================================================================
+ERROR: test_sticky_and_inflight_denial_cannot_return_start_permission (terminal_fakes.TerminalFocusedCases.test_sticky_and_inflight_denial_cannot_return_start_permission) (mutation='post_start_slot_overflow')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py", line 368, in test_sticky_and_inflight_denial_cannot_return_start_permission
+    namespace["process_start"](SimpleNamespace(pid=9000, name="uta-shard-0"))
+  File "new-case-guard-selected-AST", line 269, in process_start
+TypeError: unhashable type: 'types.SimpleNamespace'
+
+----------------------------------------------------------------------
+Ran 20 tests in 8.384s
+
+FAILED (errors=3)
+{"attempt": 1, "before_after_source_pins_equal": true, "elapsed_seconds": 8.519232224993175, "errors": 3, "event": "END_FOCUSED_SYNTHETIC_ONLY", "exit_status": 1, "failures": 0, "forbidden_runtime_imports": [], "original_pure7_and_original_peer_fixture_executables_not_run": true, "skipped": 0, "source_after_sha256": {"fake_support.py": "652aa14594cb8839018cb4e0779f922298a6f812458fdfa8a17f76fb8038640e", "guard_fakes.py": "6cbd4f5624150166db69c8d45f958f50e993246c1b7dc22f4aa692980fe6d10d", "native_case_once.py": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c", "native_once.py": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820", "native_once_common.py": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75", "native_safe_export.py": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e", "run_focused_once.py": "cfe3894c27baaf3b0a1a3f01440a307b6cadc790126f0adad50a37273bf425f8", "terminal_fakes.py": "95aff3dd889a8ba27159822e253f316e5f66eb56a0370c92d15e6387b89f0f1f"}, "tests_run": 20}

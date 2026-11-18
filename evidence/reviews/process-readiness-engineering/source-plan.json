@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "status": "source_only_no_candidate_execution",
+  "parent_source": "8d6e7852689851f56801768de65506242f9d4c46",
+  "original_evidence_commit": "bc04c9fb7a4de4e93dcf4a46b93b2fc2920da0f6",
+  "original_pr_run": 44217846755,
+  "original_failed_job": 134512043520,
+  "original_failures_retained": 2,
+  "root_cause_proven": false,
+  "same_cause_proven": false,
+  "candidate_files_sha256": {
+    "tests/readiness_before_quote.py": "4e464322077089b8150505753d1eef5fdb0062e5902318b492e0d9f6afe93dfa",
+    "tests/test_readiness_before_quote_reference.py": "84284d1e865e48af2bb991da28aead2d5cb0f1fd66d3c49d0a685d679a359c58",
+    "tests/test_process_readiness.py": "f74db65c632f2c40ea7bfdffe281f308864cc37c56ec3493750fc85d3b48294d",
+    "tests/test_readiness_sampling.py": "20d8745f6ced5515d35fd83729711a2045b19d02db64347e4b8790690e68577e",
+    "docs/process-readiness-candidate-plan.md": "0b80375f65e0c6d20419684dda882288436a6a51bd3384d803af70d0227657d2"
+  },
+  "unchanged_runtime_sha256": {
+    "uta/durable_process.py": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "uta/startup.py": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+    "uta/durable_batches.py": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+  },
+  "performed": {
+    "code_and_safe_evidence_read": true,
+    "git_diff_check": "PASS",
+    "python_or_test_execution": 0,
+    "sql_execution": 0,
+    "uta_runtime_import": 0,
+    "router_worker_service_start": 0,
+    "signal_action": 0,
+    "network_action": 0,
+    "private_key_or_quarantine_or_auth_read": 0
+  },
+  "proposal_pure_once": {
+    "status": "awaiting_parent_agent_scope_authorization",
+    "command": ["python", "-m", "unittest", "-v", "test_readiness_before_quote_reference"],
+    "environment": {"PYTHONPATH": "tests"},
+    "methods": 5,
+    "native_budget": 0,
+    "forbidden": ["UTA import", "SQLite import/use", "router/worker/service", "signals", "network", "rerun"],
+    "first_result_preservation": ["exact invocation", "runtime version", "source hashes", "stdout", "stderr", "exit status"]
+  },
+  "native_run_status": "not_authorized_not_prepared_no_native_budget",
+  "native_proposal_requires": [
+    "separate small resource preflight",
+    "source-frozen once driver",
+    "append-and-flush first raw diagnostic journal",
+    "exact selected case and interpreter",
+    "private own authority and at most two own workers at once",
+    "explicit wall/output bounds and owned-child cleanup scope",
+    "new parent-agent scope authorization"
+  ]
+}

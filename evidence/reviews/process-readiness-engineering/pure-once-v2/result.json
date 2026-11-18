@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "attempt": 1,
+  "source_commit": "cb35a277d3f77c1bcb9ef9ab7efae398beae2c4f",
+  "previous_candidate": "2d12a2e488bd1d2df3599f8c8e15cb9217573264",
+  "previous_candidate_executed": false,
+  "conclusion": "PASS_pure_fixture_only",
+  "runtime": "Python 3.12.14; Clang 22.1.3",
+  "selector": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests",
+  "tests_run": 7,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "unittest_seconds": 0.018,
+  "runner_elapsed_seconds": 0.20903910599008668,
+  "cpu_affinity": [0],
+  "wall_budget_seconds": 10,
+  "exit_status": 0,
+  "forbidden_runtime_imports": [],
+  "source_pins_before": 9,
+  "source_pins_after": 9,
+  "all_before_after_pins_match_frozen_manifest": true,
+  "first_raw_sha256": {
+    "intent.json": "ad9a76b17ef7b07bc7a0c6fc96aedfae2f91b22e077f01584d0298a70fd58ac4",
+    "stdout.txt": "62426f2cc7beea2f069f68891762c7af958c2906dce30bbcdfd96ef8708822a0",
+    "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exit-status.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "source_manifest_sha256": "86502c63dfee5c51f54ec2602633d1aa264efb83b6503d54dda869deb5ed268d",
+  "source_after_sha256": {
+    "tests/readiness_before_quote.py": "f1c9de2ff1cf6b115752d099f4c9461ce840c5f0697bb76e41750a305485a390",
+    "tests/test_readiness_before_quote_reference.py": "111ffc6dbb21d524bfb1c28dc0b10e2fbff5faba3b2c014c965d35ea5b1c6012",
+    "tests/test_process_readiness.py": "f74db65c632f2c40ea7bfdffe281f308864cc37c56ec3493750fc85d3b48294d",
+    "tests/test_readiness_sampling.py": "20d8745f6ced5515d35fd83729711a2045b19d02db64347e4b8790690e68577e",
+    "docs/process-readiness-candidate-plan.md": "7fdacb2ea37e2fdd8bab48a6a4eb04e10823654a5c3d477e8f60fdb66e76b60f",
+    "evidence/reviews/process-readiness-engineering/run_pure_once.py": "a11a1b39314191e659a02347369d42adc31b25746e71df69b9b57104aca7fe5b",
+    "uta/durable_process.py": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "uta/startup.py": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+    "uta/durable_batches.py": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+  },
+  "performed": {
+    "pure_test_invocations": 1,
+    "reruns": 0,
+    "uta_runtime_import": 0,
+    "sqlite_import_or_use": 0,
+    "actual_router_worker_service_start": 0,
+    "signal_action": 0,
+    "network_action": 0
+  },
+  "interpretation_limit": "Synthetic helper fixtures validate orchestration only. No native readiness behavior or original CI failure cause was established. The two original PR34 CI FAIL remain separate and unresolved. Actual native scope remains unauthorized."
+}

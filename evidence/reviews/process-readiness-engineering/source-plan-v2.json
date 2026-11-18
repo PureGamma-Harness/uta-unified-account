@@ -1,0 +1,40 @@
+{
+  "schema": 2,
+  "status_at_freeze": "source_only_authorized_pure_batch_not_executed",
+  "parent_source": "2d12a2e488bd1d2df3599f8c8e15cb9217573264",
+  "unexecuted_previous_candidate": "2d12a2e488bd1d2df3599f8c8e15cb9217573264",
+  "runtime_source": "8d6e7852689851f56801768de65506242f9d4c46",
+  "original_evidence_commit": "bc04c9fb7a4de4e93dcf4a46b93b2fc2920da0f6",
+  "original_failures_retained": 2,
+  "root_cause_proven": false,
+  "same_cause_proven": false,
+  "candidate_files_sha256": {
+    "tests/readiness_before_quote.py": "f1c9de2ff1cf6b115752d099f4c9461ce840c5f0697bb76e41750a305485a390",
+    "tests/test_readiness_before_quote_reference.py": "111ffc6dbb21d524bfb1c28dc0b10e2fbff5faba3b2c014c965d35ea5b1c6012",
+    "tests/test_process_readiness.py": "f74db65c632f2c40ea7bfdffe281f308864cc37c56ec3493750fc85d3b48294d",
+    "tests/test_readiness_sampling.py": "20d8745f6ced5515d35fd83729711a2045b19d02db64347e4b8790690e68577e",
+    "docs/process-readiness-candidate-plan.md": "7fdacb2ea37e2fdd8bab48a6a4eb04e10823654a5c3d477e8f60fdb66e76b60f",
+    "evidence/reviews/process-readiness-engineering/run_pure_once.py": "a11a1b39314191e659a02347369d42adc31b25746e71df69b9b57104aca7fe5b"
+  },
+  "unchanged_runtime_sha256": {
+    "uta/durable_process.py": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "uta/startup.py": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d",
+    "uta/durable_batches.py": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+  },
+  "pure_once_scope": {
+    "status_at_freeze": "authorized_by_parent_agent_not_executed",
+    "command": ["python", "-I", "evidence/reviews/process-readiness-engineering/run_pure_once.py", "FROZEN_SOURCE_COMMIT"],
+    "selector": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests",
+    "methods": 7,
+    "maximum_authorized_methods": 8,
+    "cpu_affinity_count": 1,
+    "wall_budget_seconds": 10,
+    "wall_guard": "Python-line trace; self os._exit(124) on expiry; reviewed nonblocking pure cases only",
+    "native_budget": 0,
+    "forbidden": ["UTA import", "SQLite import/use", "actual router/worker/service", "signals", "network", "rerun"],
+    "first_raw_required": ["exact invocation", "runtime version", "source hashes", "stdout", "stderr", "exit status"],
+    "late_return_model": "fake helper monotonic only; no native clock patch",
+    "previous_candidate_execution": 0
+  },
+  "native_run_status": "not_authorized_not_prepared_no_native_budget"
+}

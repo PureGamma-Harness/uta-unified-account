@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "taskset",
+    "-c",
+    "3",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python",
+    "-I",
+    "-S",
+    "/workspace/uta-readiness-native-case-independent/evidence/reviews/readiness-native-case-independent/journal_and_start_once.py",
+    "-v"
+  ],
+  "cpu": 3,
+  "elapsed_ns": 107920242,
+  "exit_code": 1,
+  "production_approved": false,
+  "pure_memory_AST_and_start_spy_only": true,
+  "real_native_UTA_SQL_process_signal_pidfd_proc_network_original_data": "NOT_RUN",
+  "schema": "uta.native-readiness-independent-first-execution.v1",
+  "source_commit": "7809b59cb02a91ff9bd19c6dbee41321500a38a2",
+  "started_utc": "2026-11-18T02:45:25.484248+00:00",
+  "stderr": {
+    "bytes": 7573,
+    "sha256": "5b5148f0fc6591f5ace15f2c0302bd666c793536408099f54b4532f6c6e3cb83"
+  },
+  "stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "target_commit": "0fbf6797b6a2f0c3bd8ed5782c303b024b48da90",
+  "timeout_seconds": 10
+}

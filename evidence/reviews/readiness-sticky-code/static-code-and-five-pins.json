@@ -1,0 +1,64 @@
+{
+  "declared_five_input_bindings": {
+    "evidence/reviews/process-readiness-engineering/native-focused-v2/fake_support.py": {
+      "bytes": 3659,
+      "sha256": "652aa14594cb8839018cb4e0779f922298a6f812458fdfa8a17f76fb8038640e"
+    },
+    "evidence/reviews/process-readiness-engineering/native-focused-v2/run_sticky_once.py": {
+      "bytes": 7056,
+      "sha256": "a0c92912e9eb1045f529cba111ce9c0432423d70ffb7cdb77f4dcb09b82877ec"
+    },
+    "evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py": {
+      "bytes": 24023,
+      "sha256": "f2c59f7490204bf257646d9950b6f9d60e1f0141fa0cb5760d15e1511eea407e"
+    },
+    "evidence/reviews/process-readiness-engineering/native_case_once.py": {
+      "bytes": 27151,
+      "sha256": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c"
+    },
+    "evidence/reviews/process-readiness-engineering/native_once_common.py": {
+      "bytes": 11010,
+      "sha256": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75"
+    }
+  },
+  "finding": "PROCESS_STANDIN_PROTOCOL_CODE_CLOSED",
+  "fixture_adapter_commit": "cb76afd1e9b5bad9e07125c43e39c020af3a7ff7",
+  "isolated_driver_commit": "19eebff7fe2585bbc153b70529b67b2344da3e0d",
+  "native_sources_unchanged": {
+    "native_case_once.py": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c",
+    "native_once.py": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820",
+    "native_once_common.py": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75",
+    "native_safe_export.py": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e"
+  },
+  "new_file_materialization": "SEPARATE_AUTHOR_RECORD_PENDING_NOT_ESTABLISHED_BY_THIS_CODE_REVIEW",
+  "normalized_method_equal_to_first_source_except_three_standins": true,
+  "original_pure20_six_first_files_unchanged": true,
+  "preflight_or_native_GO": false,
+  "production_approved": false,
+  "proposed_budget": {
+    "actual_allowed_CPUs": 1,
+    "authorization_granted_by_review": false,
+    "combined_raw_bytes": 262144,
+    "forbidden_runtime_imports": [
+      "uta",
+      "sqlite3",
+      "_sqlite3",
+      "multiprocessing",
+      "subprocess"
+    ],
+    "target_module_native_SQL_proc_PID_signal_network_execution": false,
+    "wall_seconds": 10
+  },
+  "pure_first_result": "NOT_RUN_AT_REVIEWED_TIP",
+  "review_type": "STATIC_CODE_ONLY_NO_EXECUTION",
+  "reviewed_tip": "705244611e1f33fdb8e4f8e520c109edd7d4b630",
+  "schema": "uta.readiness-sticky-independent-code.v1",
+  "selector": {
+    "max_traces": 8,
+    "method": "test_sticky_and_inflight_denial_cannot_return_start_permission",
+    "methods": 1,
+    "old_other19_methods_selected": false,
+    "trace_count": 4
+  },
+  "target_source": "59efb56f86de49c51bbea7407c3be447332df216"
+}

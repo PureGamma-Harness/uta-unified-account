@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "status": "FROZEN_CODE_PROPOSAL_AWAITING_INDEPENDENT_REVIEW_AND_NEW_ROOT_METADATA_ONCE",
+  "candidate_source_commit": "ee225ae59474daa094b210e97be99d6a9325acce",
+  "baseline_native_source": "59efb56f86de49c51bbea7407c3be447332df216",
+  "common_sha256": "c36c84bec265ebabe0256477fb7cb2f192b64045f41e836a12c3e94fc0b347b9",
+  "common_bytes": 13542,
+  "manifest_sha256": "a39ae6d5985736f7ffb1255e245494a14b5fbaed6999b82e975dbe01c4b04fb0",
+  "source_identity_proof_sha256": "ea5456a3a7ec8cbecf8176a1cd4d4a08aa7c41a19509c3756d763e3822b5d6b3",
+  "source_count": 69,
+  "changed_source_function": "binary_info only; no top-level imports or guards changed",
+  "new_fresh_root_proposal": "/workspace/readiness-native-once-ee225ae-first",
+  "proposed_command": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/process-readiness-engineering/native_once.py",
+    "preflight",
+    "--run-root",
+    "/workspace/readiness-native-once-ee225ae-first",
+    "--source-commit",
+    "ee225ae59474daa094b210e97be99d6a9325acce"
+  ],
+  "preserved_first_metadata_failure": "2d17fc878edce8bfa59d2a498178999da8d6bc00",
+  "preserved_failed_run_root": "/workspace/readiness-native-once-59efb56-first",
+  "preserved_first_pure20_red": "9648476962427504cc790c3728b32c2a5757e96d",
+  "preserved_isolated_pure1_pass": "731df1a101b9abd12d3c7857b80c35eccb6314cf",
+  "descriptor_contract": {
+    "builtin_requires": [
+      "type(ModuleSpec) exact and name _sqlite3",
+      "origin exactly built-in",
+      "loader identity exactly importlib.machinery.BuiltinImporter",
+      "_sqlite3 present in sys.builtin_module_names",
+      "has_location false and module.__file__ absent or None"
+    ],
+    "builtin_result": {
+      "kind": "built-in",
+      "path": null,
+      "sha256": null
+    },
+    "dynamic_requires": [
+      "absolute origin",
+      "exact ExtensionFileLoader with _sqlite3 name",
+      "has_location true and not in builtin module names",
+      "origin/module.__file__/loader.path resolve to same regular image"
+    ],
+    "dynamic_result": "real resolved extension path and file SHA256",
+    "unknown_origin": "failclosed ScopeUnknown",
+    "images": "actual regular resolved Python executable plus every libpython/libsqlite3 image path named in this interpreter's own maps; missing/unreadable/nonregular named images failclosed",
+    "run_binding": "unchanged native_run requires full binary_info dictionary == approved preflight binary dictionary, including new descriptor and all loaded image entries"
+  },
+  "interpretation_boundary": "File-byte and descriptor consistency for these declared executable/extension/loaded images, not full-system attestation, not mapped-memory verification, not all dependency attestation. Built-in code may live in the executable or libpython; no fictitious extension path or hash is manufactured. Empty loaded-libsqlite/libpython maps mean none were observed, not a known nonexistent library version.",
+  "budgets": {
+    "cpu_affinity_count": 1,
+    "actual_cpu_id": "record actual ID; no assumed CPUindex1",
+    "python_line_wall_seconds": 10,
+    "source_snapshot_cap_bytes": 8388608,
+    "minimum_disk_headroom_bytes": 134217728,
+    "minimum_memory_headroom_bytes": 402653184,
+    "minimum_pid_headroom": 12
+  },
+  "required_before_any_new_invocation": [
+    "independent CODE closure",
+    "new root exact metadata budget",
+    "clean worktree",
+    "new proposed runroot ENOENT",
+    "rebind candidate69+manifest to physical regular canonical len/SHA/Git bytes without overwriting WIP",
+    "preserve prior raw and failed partial root"
+  ],
+  "required_first_raw": [
+    "exact command",
+    "complete stdout/stderr/actual exit",
+    "full preflight.json bytes and SHA if created",
+    "source before/after and snapshot bindings",
+    "actual affinity/resources/binary metadata if persisted; unavailable remains null",
+    "any failure/partial preserved without retry"
+  ],
+  "performed_on_candidate": {
+    "Python_probe_or_import": 0,
+    "fixture_methods": 0,
+    "metadata_preflight": 0,
+    "native_case": 0,
+    "SQL": 0,
+    "workers_or_helpers": 0,
+    "signals": 0,
+    "network": 0
+  },
+  "metadata_execution_authorized": false,
+  "native_execution_authorized": false
+}

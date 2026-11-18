@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "status": "CODE_ONLY_AWAITING_INDEPENDENT_CLOSURE_AND_ROOT_ONCE_PURE_BUDGET",
+  "target_source_commit": "59efb56f86de49c51bbea7407c3be447332df216",
+  "targets_sha256": {
+    "native_once.py": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820",
+    "native_once_common.py": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75",
+    "native_case_once.py": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c",
+    "native_safe_export.py": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e"
+  },
+  "targets_bytes": {
+    "native_once.py": 29008,
+    "native_once_common.py": 11010,
+    "native_case_once.py": 27151,
+    "native_safe_export.py": 31623
+  },
+  "fixtures_sha256": {
+    "fake_support.py": "652aa14594cb8839018cb4e0779f922298a6f812458fdfa8a17f76fb8038640e",
+    "guard_fakes.py": "6cbd4f5624150166db69c8d45f958f50e993246c1b7dc22f4aa692980fe6d10d",
+    "terminal_fakes.py": "95aff3dd889a8ba27159822e253f316e5f66eb56a0370c92d15e6387b89f0f1f",
+    "run_focused_once.py": "cfe3894c27baaf3b0a1a3f01440a307b6cadc790126f0adad50a37273bf425f8"
+  },
+  "fixtures_bytes": {
+    "fake_support.py": 3659,
+    "guard_fakes.py": 11503,
+    "terminal_fakes.py": 23774,
+    "run_focused_once.py": 7125
+  },
+  "command": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/process-readiness-engineering/native-focused-v2/run_focused_once.py",
+    "59efb56f86de49c51bbea7407c3be447332df216"
+  ],
+  "selector": {
+    "GuardFocusedCases": 9,
+    "TerminalFocusedCases": 11,
+    "total_methods": 20
+  },
+  "budget": {
+    "cpu_affinity_count": 1,
+    "actual_cpu_number": "record from runtime; never infer CPU ID1",
+    "wall_seconds": 10,
+    "raw_stdout_stderr_hard_limit_bytes": 262144,
+    "raw_trailer_reserved_bytes": 512
+  },
+  "native_execution_authorized": false,
+  "preflight_execution_authorized": false,
+  "pure_execution_authorized": false,
+  "materialization_prerequisite": "Before any actual batch: explicit approved-Git restore only after zero WIP check; regular-file/size/SHA/stat/Git-blob byte binding for all69 native inputs plus4 fixture/runner paths and required manifests/plans. Missing input is preparation blocked, not native FAIL.",
+  "execution_kind": "Only frozen selected actual AST definitions execute against memory writers/paths, inert start/signal/pidfd/proc spies and explicit fake monotonic clocks. No target module import.",
+  "forbidden": [
+    "UTA/SQLite/multiprocessing/subprocess target import",
+    "actual target child process/worker/helper/router/service",
+    "real proc or pidfd inspection",
+    "signal",
+    "SQL",
+    "network",
+    "business filesystem",
+    "old pure7 executable",
+    "original guard6 or terminal8 executable",
+    "rerun"
+  ],
+  "first_raw_required": [
+    "exact command",
+    "runtime version",
+    "actual affinity",
+    "all8 before/after input pins",
+    "complete stdout/stderr",
+    "actual exit",
+    "all failures/errors and budget outcomes retained"
+  ],
+  "coverage": {
+    "preserved_guard_first_six": [
+      "existing protected PID refusal",
+      "all current/legacy ten PID refusal before proc/pidfd",
+      "outer observed post40s TERM/KILL refusal",
+      "pre-signal fsync late return refusal",
+      "journal write-success/fsync-EIO cap bound",
+      "stdio write-success/fsync-EIO cap bound"
+    ],
+    "new_guard_three": [
+      "expired Popen and late gate release, both inert-spy0",
+      "partial-write/EOF failure latches",
+      "PASS/FAIL versus child exit plus actual/declared owned-role closure"
+    ],
+    "preserved_terminal_first_eight": [
+      "complete positive with owner witness not financial promotion",
+      "whole diagnostic pair deletion",
+      "paired prefix plus independent claimed PASS",
+      "duplicate/gapped sequence",
+      "missing case_end",
+      "missing original subtest controls",
+      "third worker start spy0",
+      "safe top-level observation_error"
+    ],
+    "new_terminal_three": [
+      "honest closed early FAIL with0/3 controls",
+      "sticky/reentrant/inflight/postbind worker denial",
+      "runtime proxies, helper birth/reap, and pure late-exit/flush-failure callback boundaries"
+    ]
+  },
+  "preserved_first_results": {
+    "pure7_source": "cb35a277d3f77c1bcb9ef9ab7efae398beae2c4f",
+    "pure7": "PASS_once_affinity[0]",
+    "guard6": "first1PASS5RED0ERROR_affinity[4]",
+    "terminal8": "first1PASS7RED0ERROR_affinity[3]",
+    "original_native_module_or_case_executed": false,
+    "original_CI_failures_remaining": 2
+  },
+  "acceptance_limit": "Any future focused PASS is a new synthetic result only; it cannot replace either independent first RED, the old pure7, either original CI FAIL, or root preflight/native GO."
+}

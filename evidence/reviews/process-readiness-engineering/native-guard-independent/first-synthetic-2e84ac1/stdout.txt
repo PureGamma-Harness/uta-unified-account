@@ -1,0 +1,77 @@
+{"actual_affinity": [4], "attempt": 1, "kind": "SYNTHETIC_ACTUAL_SELECTED_AST_NOT_NATIVE", "methods": 6, "source_sha256": {"native_once.py": "4926570fc7b86b3ea75317fc349c395724b350f3975cb24997d254eee54a8d6e", "native_once_common.py": "a1d4a8be96fc4694ce0679cd6beb77ab82cf7826bc1fb9a784a1c312dc9f8838"}, "target_commit": "0fbf6797b6a2f0c3bd8ed5782c303b024b48da90"}
+test_current_required_protected_pids_reject_before_any_proc_read (__main__.GuardCounterexamples.test_current_required_protected_pids_reject_before_any_proc_read) ... FAIL
+test_existing_protected_pid_rejects_before_any_proc_read (__main__.GuardCounterexamples.test_existing_protected_pid_rejects_before_any_proc_read) ... ok
+test_journal_cap_counts_successful_write_when_fsync_fails (__main__.GuardCounterexamples.test_journal_cap_counts_successful_write_when_fsync_fails) ... FAIL
+test_outer_signal_subtree_denies_observed_elapsed_after_40s (__main__.GuardCounterexamples.test_outer_signal_subtree_denies_observed_elapsed_after_40s) ... FAIL
+test_signal_guard_rechecks_deadline_after_before_record_fsync (__main__.GuardCounterexamples.test_signal_guard_rechecks_deadline_after_before_record_fsync) ... FAIL
+test_stdio_cap_counts_successful_write_when_fsync_fails (__main__.GuardCounterexamples.test_stdio_cap_counts_successful_write_when_fsync_fails) ... FAIL
+
+======================================================================
+FAIL: test_current_required_protected_pids_reject_before_any_proc_read (__main__.GuardCounterexamples.test_current_required_protected_pids_reject_before_any_proc_read)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-native-guard-independent/evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py", line 118, in test_current_required_protected_pids_reject_before_any_proc_read
+    self.assertEqual(inspected, [], "actual identity reached fake /proc for protected births")
+AssertionError: Lists differ: [{'pid': 310035, 'first_read': '/proc/3100[161 chars]at'}] != []
+
+First list contains 4 additional elements.
+First extra element 0:
+{'pid': 310035, 'first_read': '/proc/310035/stat'}
+
++ []
+- [{'first_read': '/proc/310035/stat', 'pid': 310035},
+-  {'first_read': '/proc/310039/stat', 'pid': 310039},
+-  {'first_read': '/proc/310266/stat', 'pid': 310266},
+-  {'first_read': '/proc/310269/stat', 'pid': 310269}] : actual identity reached fake /proc for protected births
+
+======================================================================
+FAIL: test_journal_cap_counts_successful_write_when_fsync_fails (__main__.GuardCounterexamples.test_journal_cap_counts_successful_write_when_fsync_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-native-guard-independent/evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py", line 172, in test_journal_cap_counts_successful_write_when_fsync_fails
+    self.assertLessEqual(fake_os.bytes, journal.cap,
+AssertionError: 104 not less than or equal to 52 : actual append wrote a second allowed record after failed fsync
+
+======================================================================
+FAIL: test_outer_signal_subtree_denies_observed_elapsed_after_40s (__main__.GuardCounterexamples.test_outer_signal_subtree_denies_observed_elapsed_after_40s)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-native-guard-independent/evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py", line 140, in test_outer_signal_subtree_denies_observed_elapsed_after_40s
+    self.assertEqual(calls, [], "actual signal branch sent after already observed 40s")
+AssertionError: Lists differ: [(777, 15), (777, 9)] != []
+
+First list contains 2 additional elements.
+First extra element 0:
+(777, 15)
+
+- [(777, 15), (777, 9)]
++ [] : actual signal branch sent after already observed 40s
+
+======================================================================
+FAIL: test_signal_guard_rechecks_deadline_after_before_record_fsync (__main__.GuardCounterexamples.test_signal_guard_rechecks_deadline_after_before_record_fsync)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-native-guard-independent/evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py", line 157, in test_signal_guard_rechecks_deadline_after_before_record_fsync
+    self.assertEqual(calls, [], "actual send continues after synthetic pre-signal fsync returns late")
+AssertionError: Lists differ: [(40.02, 778, 15)] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+(40.02, 778, 15)
+
+- [(40.02, 778, 15)]
++ [] : actual send continues after synthetic pre-signal fsync returns late
+
+======================================================================
+FAIL: test_stdio_cap_counts_successful_write_when_fsync_fails (__main__.GuardCounterexamples.test_stdio_cap_counts_successful_write_when_fsync_fails)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-native-guard-independent/evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py", line 193, in test_stdio_cap_counts_successful_write_when_fsync_fails
+    self.assertLessEqual(fake_os.bytes, cap,
+AssertionError: 2097216 not less than or equal to 2097152 : actual drain wrote beyond cap after successful write and failed fsync
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.196s
+
+FAILED (failures=5)
+{"attempt": 1, "elapsed_seconds": 0.2061658000020543, "errors": 0, "failures": 5, "no_native_or_real_proc_signal_pidfd_children_sql": true, "original_seven_methods_not_run": true, "tests_run": 6}
