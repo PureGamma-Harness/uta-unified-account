@@ -1,0 +1,117 @@
+{
+  "SQL_probes": 0,
+  "UTA_files_AST_scanned": 61,
+  "candidate_implementation_status": "WAIT_INDEPENDENT_NATIVE_RAW_CLOSE_BEFORE_FREEZE",
+  "diagnostic_source_commit": "33ce0aabb9a9a5d9061707f71cea97e7c8763995",
+  "direct_connect_sites": [
+    {
+      "file": "uta/durable_process.py",
+      "file_sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+      "fixture_path": false,
+      "git_blob": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+      "line": 131,
+      "qualified_function": "_DiagnosticDatabase._connect",
+      "source_expression": "sqlite3.connect(Path(self.path).as_uri() + \"?mode=ro\", uri=True,\n                                     timeout=_diagnostic_remaining(self._deadline), isolation_level=None)"
+    },
+    {
+      "file": "uta/durable_views.py",
+      "file_sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352",
+      "fixture_path": false,
+      "git_blob": "4ff6dd591c30b17ed37c3e267ce662d6c3aea24b",
+      "line": 137,
+      "qualified_function": "_ExistingViewDatabase._connect",
+      "source_expression": "sqlite3.connect(Path(self.path).as_uri() + \"?mode=ro\", uri=True,\n                                     timeout=self.timeout, isolation_level=None)"
+    },
+    {
+      "file": "uta/ops.py",
+      "file_sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da",
+      "fixture_path": false,
+      "git_blob": "776d978e7bc1a494665805117e56bd17adce1985",
+      "line": 52,
+      "qualified_function": "_readonly",
+      "source_expression": "sqlite3.connect(path.as_uri() + \"?mode=ro\", uri=True, timeout=timeout)"
+    },
+    {
+      "file": "uta/ops.py",
+      "file_sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da",
+      "fixture_path": false,
+      "git_blob": "776d978e7bc1a494665805117e56bd17adce1985",
+      "line": 156,
+      "qualified_function": "backup_database",
+      "source_expression": "sqlite3.connect(temporary, timeout=limit)"
+    },
+    {
+      "file": "uta/sharding.py",
+      "file_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "fixture_path": false,
+      "git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "line": 233,
+      "qualified_function": "ShardRouter._verify_identity",
+      "source_expression": "sqlite3.connect(self._path(index).as_uri() + \"?mode=ro\", uri=True)"
+    },
+    {
+      "file": "uta/sharding.py",
+      "file_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "fixture_path": false,
+      "git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "line": 279,
+      "qualified_function": "ShardRouter._state",
+      "source_expression": "sqlite3.connect(Path(self.control.path).as_uri() + \"?mode=ro\", uri=True)"
+    },
+    {
+      "file": "uta/sharding.py",
+      "file_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "fixture_path": false,
+      "git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "line": 426,
+      "qualified_function": "ShardRouter._batch_funding_claims",
+      "source_expression": "sqlite3.connect(Path(self.control.path).as_uri() + \"?mode=ro\", uri=True)"
+    },
+    {
+      "file": "uta/sharding.py",
+      "file_sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+      "fixture_path": false,
+      "git_blob": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+      "line": 706,
+      "qualified_function": "_open_router_control",
+      "source_expression": "sqlite3.connect(control_path.as_uri() + \"?mode=ro\", uri=True)"
+    },
+    {
+      "file": "uta/storage.py",
+      "file_sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "fixture_path": true,
+      "git_blob": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "line": 136,
+      "qualified_function": "Database._connect",
+      "source_expression": "sqlite3.connect(Path(self.path).as_uri() + \"?mode=\" + mode, uri=True,\n                                     timeout=self.timeout, isolation_level=None)"
+    },
+    {
+      "file": "uta/store.py",
+      "file_sha256": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c",
+      "fixture_path": false,
+      "git_blob": "5fcaf536653862d692a5975a24e8ead24f326985",
+      "line": 97,
+      "qualified_function": "_transaction",
+      "source_expression": "sqlite3.connect(f\"{path.as_uri()}?mode={mode}\", uri=True, timeout=5.0, isolation_level=None)"
+    }
+  ],
+  "execution_or_SQL_used_for_this_static_inventory": 0,
+  "fixture_callchain": [
+    "run_observer_setup",
+    "Fixture.__init__: Database + ExchangeService + native Matcher schema initialization",
+    "Fixture.setup: publish_market/set_kill_switch/create_account/deposit/submit_order",
+    "Database.transaction",
+    "Database._role_transaction",
+    "Database._role_transaction_body",
+    "Database._connect",
+    "sqlite3.connect returns connection",
+    "native file identity validation and row_factory",
+    "first explicit Python SQL: PRAGMA foreign_keys = ON"
+  ],
+  "fixture_connect_codeobject": "uta.storage.Database._connect",
+  "kind": "STATIC_CONNECT_COVERAGE_INVENTORY_NOT_ATTACH_IMPLEMENTATION",
+  "private_H254_cause": "UNKNOWN_UNCHANGED",
+  "publish_private_database": "tempfile.mkstemp/fchmod/fsync/link/unlink only, zero SQLite connect calls",
+  "runtime_current_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "unexercised_connect_sites_policy": "Audit every handle; any unknown/unattached pending handle must fail snapshot. No silent uncounted source acceptance. Do not monitor unexercised services for this component."
+}
