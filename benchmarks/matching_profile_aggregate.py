@@ -55,17 +55,12 @@ class Raw:
             os._exit(125)
 
 
-sys.stdout = sys.__stdout__ = Raw(1)
-sys.stderr = sys.__stderr__ = Raw(2)
-
-
 def deadline(frame, event, argument):
     if monotonic() >= DEADLINE:
         os._exit(124)
     return deadline
 
 
-sys.settrace(deadline)
 import argparse
 from hashlib import sha256
 import json
@@ -287,11 +282,20 @@ def main():
     return 0
 
 
-try:
-    STATUS = main()
-except BaseException:
-    traceback.print_exc()
-    STATUS = 1
-finally:
-    sys.settrace(None)
-raise SystemExit(STATUS)
+def script_entry():
+    sys.stdout = sys.__stdout__ = Raw(1)
+    sys.stderr = sys.__stderr__ = Raw(2)
+    sys.settrace(deadline)
+    try:
+        return main()
+    except SystemExit as error:
+        return error.code if type(error.code) is int else 1
+    except BaseException:
+        traceback.print_exc()
+        return 1
+    finally:
+        sys.settrace(None)
+
+
+if __name__ == "__main__":
+    raise SystemExit(script_entry())

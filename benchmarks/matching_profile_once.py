@@ -69,10 +69,6 @@ class BoundedRaw:
         return self.descriptor
 
 
-sys.stdout = sys.__stdout__ = BoundedRaw(1)
-sys.stderr = sys.__stderr__ = BoundedRaw(2)
-
-
 def application_trace(frame, event, argument):
     if any(frame.f_code.co_filename.startswith(prefix) for prefix in TRACE_ROOTS):
         now = monotonic()
@@ -85,7 +81,6 @@ def application_trace(frame, event, argument):
     return None
 
 
-sys.settrace(application_trace)
 import argparse
 import hashlib
 from importlib.machinery import BuiltinImporter, ExtensionFileLoader, ModuleSpec
@@ -443,11 +438,20 @@ def main():
     return 0
 
 
-try:
-    STATUS = main()
-except BaseException:
-    traceback.print_exc()
-    STATUS = 1
-finally:
-    sys.settrace(None)
-raise SystemExit(STATUS)
+def script_entry():
+    sys.stdout = sys.__stdout__ = BoundedRaw(1)
+    sys.stderr = sys.__stderr__ = BoundedRaw(2)
+    sys.settrace(application_trace)
+    try:
+        return main()
+    except SystemExit as error:
+        return error.code if type(error.code) is int else 1
+    except BaseException:
+        traceback.print_exc()
+        return 1
+    finally:
+        sys.settrace(None)
+
+
+if __name__ == "__main__":
+    raise SystemExit(script_entry())

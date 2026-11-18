@@ -139,3 +139,9 @@ runtime and scan default were never changed. Existing code-bound authorities
 cannot be swapped or their markers edited for this diagnostic. A later product
 activation, performance optimization or long test requires its own frozen source,
 profiles, actual correctness evidence and independent review.
+
+The bench controllers install raw capture, tracing and argument execution only
+under their explicit script entry points. Importing a controller as a module
+does not replace the caller's streams/trace or parse its argv. Preparation
+control870 and its manifests were never executed; their original JSONs remain
+as named preparation snapshots when the entry-point guard was added.
