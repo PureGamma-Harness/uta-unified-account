@@ -764,7 +764,8 @@
     "Well-formed unsupported settlement assets are UNSUPPORTED; malformed native types and invalid supported preconditions REJECT",
     "Unexpected target/reference/constructor errors are TECHNICAL_FAILURE outside this response contract, never an expected matching business result",
     "Only exact known HoldError/HoldUnsupported or explicit known wire-decode rejection may be classified by target adapter; do not catch all ValueError/TypeError/Exception as business outcomes",
-    "wait_records action_ids must contain every actual returned ID in its actual order; count-only summaries cannot claim full-output equality"
+    "wait_records action_ids must contain every actual returned ID in its actual order; count-only summaries cannot claim full-output equality",
+    "Malformed transport/top-level envelope has no valid response correlation and must raise exact WireReject outside the business-classification catch"
   ],
   "natural_slot_order": [
     "authority_id",
@@ -1046,7 +1047,7 @@
       }
     }
   },
-  "prior_wire_commit": "2a204f064ddda782547993fa4a16e669bbbcd907",
+  "prior_wire_commit": "2e6ad129804eebbf0d8682f3f0b0855ebfd8ea5c",
   "protocol": "PFH-D1-INDEPENDENT-WIRE-v2",
   "request": {
     "additionalProperties": false,
@@ -1140,5 +1141,14 @@
   ],
   "status": "FROZEN_API_ACTION_IDS_REVISION_NOT_RUN",
   "support_slice": "Pure reachable DutyState histories0..2 transitions; all external authority/approval/completeness/history facts unauthenticated; no APPLIED or real dispatch",
-  "target_reference_runs": 0
+  "target_reference_runs": 0,
+  "transport_rejection": {
+    "UTF8": "Decode bytes explicitly UTF8; reject BOM/invalid UTF8/duplicate keys/nonfinite JSON; no UTF16 inference",
+    "business_input_negative": "Within validated envelope, only exact known wire-input/HoldError/HoldUnsupported classifications yield response",
+    "case_id": "Echo only validated original case_id; never fabricate INVALID or another substitute",
+    "envelope_validation": "Top exact keys, native schema2, valid case_id, known op enum and input native object before business catch",
+    "generator_1024": "All envelopes wellformed; negative cases alter input only",
+    "malformed_JSON_or_envelope": "Exact WireReject escapes; no business response is emitted",
+    "unexpected_error": "Technical failure outside successful differential result, never normalized into business rejection"
+  }
 }
