@@ -1,0 +1,58 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "adapter_core_in_export": false,
+  "entrypoints": [
+    {
+      "contract": "Native serialized data only; load_request accepts native str/bytes and returns bounded decoded tree. evaluate_request accepts bounded closed v3 envelope and returns complete wire response. Malformed transport/envelope raises ReferenceWireReject; unexpected implementation errors escape.",
+      "module": "reference_funding_hold_d1_v3",
+      "path": "tests/reference_funding_hold_d1_v3.py",
+      "signatures": [
+        "evaluate_request(request)",
+        "load_request(raw)"
+      ]
+    },
+    {
+      "contract": "Native integer seeds 0..1023 only, bool rejected. case object has seed,family,partition,expected_status,request,hash_wire,activation_permission. iter_cases yields that same closed domain in ascending order; no oracle or target imported.",
+      "module": "funding_hold_d1_reference_cases_v3",
+      "path": "tests/funding_hold_d1_reference_cases_v3.py",
+      "signatures": [
+        "case_for_seed(seed)",
+        "iter_cases()"
+      ]
+    }
+  ],
+  "exact_file_count": 11,
+  "exact_file_list": [
+    "tests/reference_funding_hold_d1_v3.py",
+    "tests/funding_hold_d1_reference_cases_v3.py",
+    "tests/test_funding_hold_exact_reference_v3.py",
+    "docs/funding-hold-exact-reference-v3.md",
+    "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+    "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+    "evidence/designs/funding-hold-exact-reference-v3/proposal.json",
+    "evidence/designs/funding-hold-exact-reference-v3/execution-gates.json",
+    "evidence/designs/funding-hold-exact-reference-v3/data-review.json",
+    "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+    "evidence/designs/funding-hold-exact-reference-v3/source-manifest.json"
+  ],
+  "execution_ready": false,
+  "historical_artifacts": "Preserved outside this exact export; no e6/v2/061 source or legacy program dependency included",
+  "import_context": "The three Python modules share one tests directory; names are ordinary module names, with no package or runtime dependency on legacy files",
+  "kind": "INDEPENDENT_REFERENCE_V3_MINIMAL_COMPLETE_PUBLIC_EXPORT",
+  "manual_dependency": "Only the new v3/manual-slices.json is read; its bytes are copied from frozen e6 data, never imported from an old program",
+  "oracle_generator_target_runs": 0,
+  "pinning": "Source commit C contains the ten non-manifest artifacts. Follow-up manifest-only commit F pins all ten C blobs; pin F by its immutable Git commit, with no circular self hash.",
+  "production_code_in_export": false,
+  "protocol": "PFH-D1-INDEPENDENT-WIRE-v3",
+  "request_response_schema": 3,
+  "root_bridge_input": "Only this interface, the full wire contract and public rule data are needed for a root-owned bridge. Do not use reference arithmetic or expected-program source to implement target-side logic.",
+  "schema": 1,
+  "status": "CODE_ONLY_PENDING_OTHER_GROUP_REVIEW_NOT_RUN",
+  "wire_pin": {
+    "bytes": 33268,
+    "commit": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+    "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+    "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+  }
+}
