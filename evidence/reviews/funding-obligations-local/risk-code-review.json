@@ -1,0 +1,164 @@
+{
+  "base_commit": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "disposition": "LIMITED_CODE_CLOSURE_NO_CONFIRMED_ADDITIONAL_LOCAL_CONTRACT_BLOCKER",
+  "findings": [
+    {
+      "id": "FUND-OBL-001",
+      "scope": "Explicit eligible required boundary-mark check before indexing; six methods NOT_RUN.",
+      "status": "CLOSED_LIMITED_CODE_ONLY"
+    },
+    {
+      "id": "FUND-OBL-002",
+      "scope": "Precise pre-payment native current-inventory missing quote classification; persisted partial-market recovery OPEN.",
+      "status": "CLOSED_LIMITED_CODE_ONLY"
+    }
+  ],
+  "independent_planned_hand_oracles": {
+    "APPLIED": 5,
+    "authority_qualified_matches": 9,
+    "capital_rounding_cash": [
+      "0",
+      ".01",
+      "0"
+    ],
+    "capital_rounding_exact": [
+      "-.006",
+      ".015",
+      "-.009"
+    ],
+    "capital_transfer_USD": ".01",
+    "changed_positions_after_funding": {
+      "a": "999.91",
+      "b": "999.91"
+    },
+    "changed_positions_before_funding": {
+      "a": "1000.91",
+      "b": "998.91"
+    },
+    "custody_USD": "-15001",
+    "fees_USD": ".72",
+    "journals_including_intentional_orphan": 46,
+    "namespaces": "Independent scenario authorities; repeated business IDs are not global unique execution evidence.",
+    "normal_final_cash": {
+      "a": "999.95",
+      "b": "999.97"
+    },
+    "obligations": 8,
+    "observed": false,
+    "outstanding": 3,
+    "paired_fills": 18,
+    "risk_oracles_not_observed": {
+      "all_cases": "Above MM; no distress threshold transition demonstrated.",
+      "capital_mark1": {
+        "MM": [
+          ".02",
+          ".05",
+          ".03"
+        ],
+        "risk_equity": [
+          "960.33",
+          "1098.97",
+          "940.57"
+        ]
+      },
+      "normal": {
+        "MM": [
+          "5",
+          "5"
+        ],
+        "risk_equity": [
+          "999.95",
+          "999.97"
+        ]
+      },
+      "refreshed_mark101": {
+        "MM": [
+          "5.05",
+          "5.05"
+        ],
+        "risk_equity": [
+          "1000.95",
+          "998.97"
+        ]
+      }
+    },
+    "scenario_journals": {
+      "capital": 11,
+      "changed-positions": 8,
+      "competition": 6,
+      "current-data": 6,
+      "missing": 4,
+      "new-empty": 0,
+      "normal": 6,
+      "old-empty": 0,
+      "review": 5
+    }
+  },
+  "kind": "INDEPENDENT_RISK_LIQUIDATION_CODE_REVIEW",
+  "limited_source_conclusions": {
+    "boundary": "Actual writer logical sequence within allowed lateness, not exact historical UTC holdings.",
+    "capital": "Existing treasury confirmed deposit and journal plus current settled available cash; actual transfer, unique committed proof, segregated reserve.",
+    "cash": "Frozen cut quantities/mark/rate; current market/account risk; original supervisor in same financial transaction; no fabricated fill.",
+    "claim": "Serialized generation/owner/private nonce/expiry and final observed UTC fence only; no physical COMMIT/fsync deadline guarantee.",
+    "debt": "Negative cash uses native cash deficit debt component, does not fabricate principal or interest.",
+    "idempotency": "Original exact command result and immutable one-product-period receipt; not-found read does not prove unknown in-flight commit absent.",
+    "reconciliation": "Cash and journal chain is verified; risk_eligibility_replayed remains false."
+  },
+  "open_acceptance_gates": [
+    "Exact independent entry/resource review and separate execution authorization",
+    "All six future methods, nine DBs and two bounded competitor threads NOT_RUN",
+    "Funding actually crosses MM, creates deficit, or changes loan-only supervisor state: runtime evidence OPEN",
+    "Persistent partial-market fault recovery integration",
+    "Independent risk eligibility replay",
+    "Pending funding in order, withdrawal and transfer reservations",
+    "Managed writer and arbitrary old-binary exclusion",
+    "Commit/crash/storage faults and long concurrency",
+    "Native wallclock/clock faults and physical COMMIT timing",
+    "Production timer, custody, operations approvals, replication, sharding, HA and capacity"
+  ],
+  "original_source_commit": "901700637b3bb329cbb5729227e5b654dd8a00b6",
+  "production_approved": false,
+  "public_publisher_boundaries": {
+    "current_partial_market_helper": "READ_ONLY_NEGATIVE_CONTROL_ONLY_NOT_EXECUTED",
+    "flat_after_real_close_USD_only_current_market": "LEGITIMATE_PUBLIC_PATH_SOURCE_REVIEWED",
+    "missing_boundary_mark_before_positions": "LEGITIMATE_PUBLIC_PATH_SOURCE_REVIEWED",
+    "newly_created_USD_cash_quote_requirement": "PUBLIC_PRE_VALIDATION_ALREADY_REQUIRES_USD_QUOTE",
+    "persistent_partial_market_recovery": "OPEN_NO_HISTORY_OR_GUARD_BYPASS",
+    "remove_live_position_or_order_mark": "PUBLICATION_REJECTED"
+  },
+  "real_funds_release": "NO_GO",
+  "rejected_candidates": [
+    {
+      "candidate": "Pre-payment USD=0 and missing USD current quote could create a new quote requirement only after funding cash movement.",
+      "disproof": "Public publish_market first calls _validate_market_command at service.py:663; service.py:654-656 unconditionally requires USD asset price and collateral_factor equal to one, independently of current inventory.",
+      "execution_status": "NOT_RUN_SOURCE_ONLY",
+      "id": "FUND-OBL-003",
+      "persistent_corrupt_partial_market": "Separate existing OPEN fault-model boundary; not evidence for the normal public candidate.",
+      "reviewer_correction": "Initial candidate traced _publish_market without its public pre-validation. Final call-chain read disproved reachability before review commit; integration owner was promptly notified. No author code or execution-plan amendment is requested.",
+      "status": "DISMISSED_PUBLIC_GUARD_EXCLUDES_PATH"
+    }
+  ],
+  "review_methods": [
+    "SOURCE_READ",
+    "STDLIB_AST_PARSE",
+    "JSON_READ",
+    "BYTE_HASH_VALIDATION",
+    "INDEPENDENT_HAND_ARITHMETIC"
+  ],
+  "rollback": "Stop explicit invocation and preserve every task/cut/claim/command/receipt/journal/event. No marker deletion, old-binary takeover or live-data migration is approved.",
+  "safe_projection": "Synthetic source facts, hashes, source references and hand oracles only; no actual claims/nonces/keys/PIDs/DB/archive bindings.",
+  "schema": 1,
+  "scope": "FRESH_SYNTHETIC_NATIVE_SINGLE_SQLITE_AUTHORITY_USD_SETTLEMENT_CONFIGURED_CROSS_MULTIPLIER1",
+  "source_commit": "90e81daa7b7cb398664c1dadb3a0d943e45321d6",
+  "source_inputs": {
+    "manual_plan_sha256": "4c5b959b12437f53b38474cdd112eabb5529151c93a937f17d951e2fd667e36f",
+    "module_bytes": 63141,
+    "module_sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97",
+    "original_901_exact_copies_verified": 3,
+    "runtime_manifest_sha256": "8653d8976cc7b3191fe14600a21579aac2de8cea107ce1b40d9b42228fecde98",
+    "verified_bytes": 1414749,
+    "verified_files": 66
+  },
+  "target_compile_import_SQL_test_thread_worker_bench_CI": "NOT_RUN",
+  "target_execution_attempts": 0
+}
