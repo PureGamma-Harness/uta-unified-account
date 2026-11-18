@@ -1,6 +1,8 @@
 # 新资源协议与 D2：CODE / 设计，全部能力未验证
 
-本分支从固定 C `933c86803020fccbc11949795cb9c75a2262959d` 开始，只写控制 CODE、未来纯测与设计。未运行测试、mount、loop、quota、SQL、OpenSSL、业务/native、service、子进程能力、网络或新GHA。原M05 B UNKNOWN/P NOT_RUN、spent05、D1九字段及全部原证据不变；不会给M05补造attempt、elapsed或路径。无生产、容量、HA或真实资金批准。
+最新状态：固定 source `3040d09b576009893c6630f3c19ef4ad35fd774d` / tree `37e3cefe1fd6e318a7094597d6c88ebfe84899b3` 已在root条件预算与独立CODE_ONLY READY后首次运行一次受guard纯batch：**120 unittest条目PASS / 0fail/errors/skips / exit0，CPU2，264,358,860ns，child0**。其中24条新D2/interface测试；静态99个声明方法之外，原RouterAuxContract继承21个ResourceRaceContract方法，因此实际120，不是额外模块或新能力。原stdout为空，stderr19,721字节，合计低于100KiB；外prlimit每文件50KiB，原件保存在 `first-pure-3040d09/`。没有重跑或过滤继承条目。此通过仅是D2与NOT_IMPLEMENTED接口纯正确性，**不是kernel cap实际验证**；physical backend、persistent D2 export、新GHA仍NOT_IMPLEMENTED/NOT_RUN，next_run_permitted=false。
+
+原3040 CODE冻结阶段的历史状态如下，后文“未跑/计划”指该阶段，已被上述pure事实supersede；`policy.json`/`static-provenance.json`原冻结记录不回写，最新状态另见current-status：本分支从固定 C `933c86803020fccbc11949795cb9c75a2262959d` 开始，只写控制 CODE、未来纯测与设计。当时未运行测试或任何能力。至今仍未运行mount、loop、quota、SQL、OpenSSL、业务/native、service、子进程能力、网络或新GHA。原M05 B UNKNOWN/P NOT_RUN、spent05、D1九字段及全部原证据不变；不会给M05补造attempt、elapsed或路径。无生产、容量、HA或真实资金批准。
 
 ## 强度与尚缺的证据
 
