@@ -1,0 +1,68 @@
+{
+  "actual_command": [
+    "timeout",
+    "10s",
+    "taskset",
+    "-c",
+    "1",
+    "python",
+    "-B",
+    "-W",
+    "error::ResourceWarning",
+    "evidence/reviews/cli-sigterm-failure-evidence/run_fixed_identity_once.py",
+    "a43ce07e126125650839a5ed1516e3439b0fac85"
+  ],
+  "actual_helper_sha256": "6baec73b84ac4f73521c362e1d8fc7c5ff63d09c5aa4c869e1e8e5ae2b831f1d",
+  "actual_source_commit": "a43ce07e126125650839a5ed1516e3439b0fac85",
+  "additional_errors": 0,
+  "additional_failures": 0,
+  "additional_tests_run": 4,
+  "all_passed": true,
+  "elapsed_ns": 56419901,
+  "exec_wall_seconds": 0.031462098,
+  "in_process_cpu_ids": [
+    1
+  ],
+  "original_counterexamples_preserved": true,
+  "original_eight": [
+    {
+      "name": "prefix_roundtrip",
+      "status": "PASS"
+    },
+    {
+      "name": "timeout",
+      "status": "PASS"
+    },
+    {
+      "name": "cleanup_error",
+      "status": "PASS"
+    },
+    {
+      "name": "archive_error",
+      "status": "PASS"
+    },
+    {
+      "name": "success",
+      "status": "PASS"
+    },
+    {
+      "name": "missing_birth_fields",
+      "status": "PASS"
+    },
+    {
+      "name": "extra_identity_fields",
+      "status": "PASS"
+    },
+    {
+      "name": "nonmapping_identity",
+      "status": "PASS"
+    }
+  ],
+  "original_eight_exit": 0,
+  "real_operations": false,
+  "returncode": 0,
+  "stderr_sha256": "608e66c77bc008bb6a80c3be654af8ea8e6d588715f3cf16410399233345c50f",
+  "stdout_sha256": "021c9bc9a361cb8e4f221cefe8d9b6c7288aed30c07911fe96e613578d390955",
+  "timing_scope_note": "elapsed_ns is measured inside the pure interpreter; exec_wall_seconds is the tool-reported field and is not used as end-to-end runtime/performance evidence",
+  "watchdog_triggered": false
+}

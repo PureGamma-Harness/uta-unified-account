@@ -1,0 +1,125 @@
+{
+  "binary_path_mapping_provenance": "Absolute paths explicitly transferred by root; current binary bytes were read and hashed without invoking any binary.",
+  "first_results_file_sha256": "197775f578b5b6a97b6753e2b34c63d7d2dcb0af3e95117a0e9de2874b7df392",
+  "recorded_actual_cli_executions": 0,
+  "recorded_production_approved": false,
+  "recorded_scope": "three pure AST business-preservation checks per runtime only",
+  "recorded_signals": 0,
+  "recorded_source_commit": "05c3e4d5a4124e4a2185c621071f1a9890d10d0b",
+  "recorded_sql_operations": 0,
+  "records": [
+    {
+      "binary_current_sha256": "473dd9c9a03e0b41ba35f986afd9bb13162d7ac7aa5d44d4dfdf75a2e19c9989",
+      "binary_path_from_root": "/tmp/uta-python310/cpython-3.10.22-linux-x86_64-gnu/bin/python3.10",
+      "binary_sha256": "473dd9c9a03e0b41ba35f986afd9bb13162d7ac7aa5d44d4dfdf75a2e19c9989",
+      "binary_sha256_matches": true,
+      "elapsed_ns": 260798587,
+      "exit_code": 0,
+      "reviewer_executed_binary": false,
+      "runtime": "python310",
+      "stderr_sha256": "78c8f9dd6ca82aba7715309bbc489ab055790aea125c4759c080b51c4208f9a0",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "streams": [
+        {
+          "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0,
+          "stream": "stdout"
+        },
+        {
+          "actual_sha256": "78c8f9dd6ca82aba7715309bbc489ab055790aea125c4759c080b51c4208f9a0",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "78c8f9dd6ca82aba7715309bbc489ab055790aea125c4759c080b51c4208f9a0",
+          "size_bytes": 500,
+          "stream": "stderr",
+          "synthetic_test_result_projection": [
+            "test_business_preservation_rejects_changed_business_argv (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests) ... ok",
+            "test_business_preservation_rejects_changed_shutdown_deadline (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests) ... ok",
+            "test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests) ... ok",
+            "Ran 3 tests in 0.031s",
+            "OK"
+          ]
+        }
+      ]
+    },
+    {
+      "binary_current_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "binary_path_from_root": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "binary_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+      "binary_sha256_matches": true,
+      "elapsed_ns": 246774913,
+      "exit_code": 0,
+      "reviewer_executed_binary": false,
+      "runtime": "python312",
+      "stderr_sha256": "b62717ca78eb682859bbce8dfa1f742a778e5686e31de0853f01992b9c54f865",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "streams": [
+        {
+          "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0,
+          "stream": "stdout"
+        },
+        {
+          "actual_sha256": "b62717ca78eb682859bbce8dfa1f742a778e5686e31de0853f01992b9c54f865",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "b62717ca78eb682859bbce8dfa1f742a778e5686e31de0853f01992b9c54f865",
+          "size_bytes": 689,
+          "stream": "stderr",
+          "synthetic_test_result_projection": [
+            "test_business_preservation_rejects_changed_business_argv (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_business_preservation_rejects_changed_business_argv) ... ok",
+            "test_business_preservation_rejects_changed_shutdown_deadline (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_business_preservation_rejects_changed_shutdown_deadline) ... ok",
+            "test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation) ... ok",
+            "Ran 3 tests in 0.025s",
+            "OK"
+          ]
+        }
+      ]
+    },
+    {
+      "binary_current_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "binary_path_from_root": "/usr/bin/python3.13",
+      "binary_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "binary_sha256_matches": true,
+      "elapsed_ns": 120403373,
+      "exit_code": 0,
+      "reviewer_executed_binary": false,
+      "runtime": "python313",
+      "stderr_sha256": "9c6d3df655da74d742f22cd7f9e7063d77eb50a93307d3c9fc545f6e33e1e684",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "streams": [
+        {
+          "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "size_bytes": 0,
+          "stream": "stdout"
+        },
+        {
+          "actual_sha256": "9c6d3df655da74d742f22cd7f9e7063d77eb50a93307d3c9fc545f6e33e1e684",
+          "file_mode": "0o600",
+          "hash_matches": true,
+          "recorded_sha256": "9c6d3df655da74d742f22cd7f9e7063d77eb50a93307d3c9fc545f6e33e1e684",
+          "size_bytes": 689,
+          "stream": "stderr",
+          "synthetic_test_result_projection": [
+            "test_business_preservation_rejects_changed_business_argv (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_business_preservation_rejects_changed_business_argv) ... ok",
+            "test_business_preservation_rejects_changed_shutdown_deadline (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_business_preservation_rejects_changed_shutdown_deadline) ... ok",
+            "test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation) ... ok",
+            "Ran 3 tests in 0.024s",
+            "OK"
+          ]
+        }
+      ]
+    }
+  ],
+  "source": "Previously retained root first execution; this reviewer performed no new execution.",
+  "source_binding_limit": "The original first-results JSON declares source_commit; this review pins the Git source separately and does not replace the record with a rerun or claim a per-process source trace."
+}

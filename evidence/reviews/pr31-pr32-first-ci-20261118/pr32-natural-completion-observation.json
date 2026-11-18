@@ -1,0 +1,755 @@
+{
+  "actual_pr_merge_sha": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+  "assembled_at": "2026-11-18T00:25:04.371189+00:00",
+  "binary_verification_scope": {
+    "all_three_member_crcs_each_zip": true,
+    "before_after_source_maps_equal": true,
+    "failed_unit_zips_each_downloaded_once": 6,
+    "package_artifacts_downloaded": false,
+    "provider_sha_and_size": true,
+    "standard_source_git_blobs_each_zip": 355,
+    "successful_python312_artifacts_downloaded": false,
+    "unit_log_hashes_verified": true
+  },
+  "capacity_10000_per_s_passed": false,
+  "common_failure": {
+    "file": "tests/test_cli_sigterm_failure_evidence.py",
+    "fixed_expected_sha256": "a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128",
+    "fixed_record_file": "evidence/reviews/cli-sigterm-failure-evidence/original-case-ast.json",
+    "line": 201,
+    "no_additional_AST_or_business_reproduction_executed": true,
+    "normalization_source": "normalizes observation hooks then returns ast.dump(method, include_attributes=False)",
+    "observed_actual_by_minor": {
+      "3.10": "2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98",
+      "3.11": "2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98",
+      "3.13": "3bf36241a88c82a67a2381c0cc1b737343a01885efb90f09794e4295160305b5"
+    },
+    "predicate": "SHA256(normalized_method(source).encode()) equals single recorded normalized_method_sha256",
+    "python312_jobs_succeeded": true,
+    "semantic_business_change_or_cli_shutdown_root_cause_proven": false,
+    "stage": "pure AST preservation evidence assertion, not native CLI shutdown assertion",
+    "static_gap": "AST dump is compared to one unversioned fixed representation; no declared cross-Python serialization contract",
+    "test": "CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation"
+  },
+  "first_failure_unit_artifacts": [
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 83780,
+      "artifact_id": 14384291400,
+      "artifact_name": "uta-unit-validation-python-3.10",
+      "artifact_sha256": "71f5f14340cfef547d5afda09357194d5505ba5f8a8429fa74fe1da5386a4898",
+      "code_commit": "497c67f60901653634a96f629087f805032acec5",
+      "duration_seconds": 385.513304037,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:16:15.113748+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests)",
+          "log_line": 1943,
+          "terminal_error_lines": [
+            "AssertionError: '2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77535,
+          "crc32": 2221243816,
+          "name": "summary.json",
+          "sha256": "8aa82bc0fab8a9e47bf4f26f69a1971b1ca757bde2270951ca31a334f22ef5cf"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 245678,
+          "crc32": 4023941680,
+          "name": "unittest.txt",
+          "sha256": "e75f6386aeafb1cab326f803bcf244f9d6355c3f3c636c5bef08b15ec1383ea8"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+      "run_id": 44205495492,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:09:49.535286+00:00",
+      "test_log_sha256": "e75f6386aeafb1cab326f803bcf244f9d6355c3f3c636c5bef08b15ec1383ea8",
+      "tests_run": 1840,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 93792,
+      "artifact_id": 14383666773,
+      "artifact_name": "uta-unit-validation-python-3.11",
+      "artifact_sha256": "95cc22832756b5c294e7bceea8b08747cb199e25e9c4c8bb922ed6b93da164e3",
+      "code_commit": "497c67f60901653634a96f629087f805032acec5",
+      "duration_seconds": 315.331579223,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:14:58.922023+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation)",
+          "log_line": 1990,
+          "terminal_error_lines": [
+            "AssertionError: '2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77535,
+          "crc32": 3601103857,
+          "name": "summary.json",
+          "sha256": "5ed8b7c97330fd08dd976946ee02801460f5f3345e45e3be65535adc2cbf35f5"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 367450,
+          "crc32": 4002782437,
+          "name": "unittest.txt",
+          "sha256": "d158f886c4262d847900071c88a105d61bc74bdef6378d18d2df4843b2997e75"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+      "run_id": 44205495492,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:09:43.538980+00:00",
+      "test_log_sha256": "d158f886c4262d847900071c88a105d61bc74bdef6378d18d2df4843b2997e75",
+      "tests_run": 1840,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 93873,
+      "artifact_id": 14382694888,
+      "artifact_name": "uta-unit-validation-python-3.13",
+      "artifact_sha256": "624bdefe2b6ab5382286df1f9ac4a1506cfe93170055f75ad120eb33ccc54150",
+      "code_commit": "497c67f60901653634a96f629087f805032acec5",
+      "duration_seconds": 405.881837041,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:16:30.478175+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation)",
+          "log_line": 2018,
+          "terminal_error_lines": [
+            "AssertionError: '3bf36241a88c82a67a2381c0cc1b737343a01885efb90f09794e4295160305b5' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77535,
+          "crc32": 3469401743,
+          "name": "summary.json",
+          "sha256": "2b6702c6ce916b227b18e9556f698b694f2263e7c90ef6e305f16f5c54655bca"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 369148,
+          "crc32": 4134327774,
+          "name": "unittest.txt",
+          "sha256": "0427d76d3514376011d7587a012c32808ae4625d2b6cbcfc6518b8412493f3e7"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "run_id": 44205495492,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:09:44.438963+00:00",
+      "test_log_sha256": "0427d76d3514376011d7587a012c32808ae4625d2b6cbcfc6518b8412493f3e7",
+      "tests_run": 1840,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 94087,
+      "artifact_id": 14384071838,
+      "artifact_name": "uta-unit-validation-python-3.11",
+      "artifact_sha256": "578233254d7f899cf4123571a1c3508414240ffd5ccf8ef621815d4fd2cc0566",
+      "code_commit": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+      "duration_seconds": 376.074953229,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:18:34.047823+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation)",
+          "log_line": 1980,
+          "terminal_error_lines": [
+            "AssertionError: '2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77535,
+          "crc32": 130238499,
+          "name": "summary.json",
+          "sha256": "b8ae76840e443935295f72c947a10ba3e9bbbed3d949d804266c7bf97b572562"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 366871,
+          "crc32": 1629290725,
+          "name": "unittest.txt",
+          "sha256": "745b8c6a10df3a7a752734b2d451cb9460448d6d0454a7427db1ad14902db6b2"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+      "run_id": 44205859502,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:12:17.832505+00:00",
+      "test_log_sha256": "745b8c6a10df3a7a752734b2d451cb9460448d6d0454a7427db1ad14902db6b2",
+      "tests_run": 1840,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 94206,
+      "artifact_id": 14382749159,
+      "artifact_name": "uta-unit-validation-python-3.13",
+      "artifact_sha256": "268451611996c357918775a697658572414df9b64d6a83345750f3a0930591ab",
+      "code_commit": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+      "duration_seconds": 304.20046845900004,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:17:19.589851+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests.test_original_business_case_is_preserved_except_documented_observation)",
+          "log_line": 1987,
+          "terminal_error_lines": [
+            "AssertionError: '3bf36241a88c82a67a2381c0cc1b737343a01885efb90f09794e4295160305b5' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77540,
+          "crc32": 1901646145,
+          "name": "summary.json",
+          "sha256": "a98f8e1218a4be3ffdb28d97d5d79dfedb27d8036b28a9981ce2681d1eb1b934"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 367057,
+          "crc32": 1136686243,
+          "name": "unittest.txt",
+          "sha256": "d7989e0110e5a408e6078a266d723f2cdb261e8d53330612b04ead23c91f45f3"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "run_id": 44205859502,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:12:15.288595+00:00",
+      "test_log_sha256": "d7989e0110e5a408e6078a266d723f2cdb261e8d53330612b04ead23c91f45f3",
+      "tests_run": 1840,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 83972,
+      "artifact_id": 14382509787,
+      "artifact_name": "uta-unit-validation-python-3.10",
+      "artifact_sha256": "bb096f287de34828ee33ca12310d74700f49dcad6e8ac7eb4f23339b48abf975",
+      "code_commit": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+      "duration_seconds": 403.113267074,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:19:06.477693+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_original_business_case_is_preserved_except_documented_observation (test_cli_sigterm_failure_evidence.CliFailureEvidencePureTests)",
+          "log_line": 2011,
+          "terminal_error_lines": [
+            "AssertionError: '2668cdf7dada1b19bc7a87396fad2893265b8d5654579f05f9039b36817abc98' != 'a5884f2d24313698722277f803206c460aa1ef7e2a38055dfdae7820df01d128'"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_original_business_case_is_preserved_except_documented_observation",
+              "line": 201,
+              "path": "tests/test_cli_sigterm_failure_evidence.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77535,
+          "crc32": 20831170,
+          "name": "summary.json",
+          "sha256": "fd3b35b7e6d68f54c9ddd4e11665d86518620ee29f703ac3df37911b6b820b14"
+        },
+        {
+          "bytes": 155,
+          "crc32": 784900166,
+          "name": "worker-result.json",
+          "sha256": "3fedd6726a8013131afb962f810b8be4fdd797ff217be0945ab83de47cba30c3"
+        },
+        {
+          "bytes": 250407,
+          "crc32": 1008618218,
+          "name": "unittest.txt",
+          "sha256": "5eb344b5eb8c3cc89baa31fa6680c0e915e0859486d11d28696e94ad330830ee"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 32,
+      "production_approved": false,
+      "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+      "run_id": 44205859502,
+      "skipped": 0,
+      "source_map_git_binding_commit": "497c67f60901653634a96f629087f805032acec5",
+      "source_map_git_inputs_verified": 355,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:12:23.219489+00:00",
+      "test_log_sha256": "5eb344b5eb8c3cc89baa31fa6680c0e915e0859486d11d28696e94ad330830ee",
+      "tests_run": 1840,
+      "unittest_passed": false
+    }
+  ],
+  "gate": "NO_GO",
+  "head_sha": "497c67f60901653634a96f629087f805032acec5",
+  "jobs": [
+    {
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134470237906,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134470238219,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134470238384,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134470238541,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        }
+      ],
+      "run_id": 44205495492
+    },
+    {
+      "jobs": [
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134471474659,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134471475036,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134471475088,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134471475213,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        }
+      ],
+      "run_id": 44205859502
+    }
+  ],
+  "limits": [
+    "This is a later GET of the same original attempt after its natural completion, not a new CI invocation. First pending snapshot remains unchanged.",
+    "The test's observed version-specific digests are preserved as first results. This review did not execute or correct its normalization algorithm.",
+    "Preserving the business case remains a requirement; deleting the test or accepting arbitrary hashes is not justified.",
+    "No claim that original CLI shutdown failures have been explained or fixed follows from these pure-test failures.",
+    "PR31's three different setup/control assertions remain independent unresolved first observations."
+  ],
+  "no_ci_rerun_or_dispatch": true,
+  "no_sql_cli_worker_or_long_task_access": true,
+  "observation_label": "natural_completion_followup_after_retained_first_pending_snapshot",
+  "pr": 32,
+  "prior_first_pending_evidence_commit": "3f69885034032c9d754fd361558eca2529c3fe90",
+  "prior_first_pending_snapshot_unchanged": true,
+  "private_original_digests": [
+    {
+      "bytes": 77535,
+      "name": "pr32-artifact-14382509787-summary.original.json",
+      "sha256": "fd3b35b7e6d68f54c9ddd4e11665d86518620ee29f703ac3df37911b6b820b14"
+    },
+    {
+      "bytes": 250407,
+      "name": "pr32-artifact-14382509787-unittest.original.txt",
+      "sha256": "5eb344b5eb8c3cc89baa31fa6680c0e915e0859486d11d28696e94ad330830ee"
+    },
+    {
+      "bytes": 83972,
+      "name": "pr32-artifact-14382509787.original.zip",
+      "sha256": "bb096f287de34828ee33ca12310d74700f49dcad6e8ac7eb4f23339b48abf975"
+    },
+    {
+      "bytes": 77535,
+      "name": "pr32-artifact-14382694888-summary.original.json",
+      "sha256": "2b6702c6ce916b227b18e9556f698b694f2263e7c90ef6e305f16f5c54655bca"
+    },
+    {
+      "bytes": 369148,
+      "name": "pr32-artifact-14382694888-unittest.original.txt",
+      "sha256": "0427d76d3514376011d7587a012c32808ae4625d2b6cbcfc6518b8412493f3e7"
+    },
+    {
+      "bytes": 93873,
+      "name": "pr32-artifact-14382694888.original.zip",
+      "sha256": "624bdefe2b6ab5382286df1f9ac4a1506cfe93170055f75ad120eb33ccc54150"
+    },
+    {
+      "bytes": 77540,
+      "name": "pr32-artifact-14382749159-summary.original.json",
+      "sha256": "a98f8e1218a4be3ffdb28d97d5d79dfedb27d8036b28a9981ce2681d1eb1b934"
+    },
+    {
+      "bytes": 367057,
+      "name": "pr32-artifact-14382749159-unittest.original.txt",
+      "sha256": "d7989e0110e5a408e6078a266d723f2cdb261e8d53330612b04ead23c91f45f3"
+    },
+    {
+      "bytes": 94206,
+      "name": "pr32-artifact-14382749159.original.zip",
+      "sha256": "268451611996c357918775a697658572414df9b64d6a83345750f3a0930591ab"
+    },
+    {
+      "bytes": 77535,
+      "name": "pr32-artifact-14383666773-summary.original.json",
+      "sha256": "5ed8b7c97330fd08dd976946ee02801460f5f3345e45e3be65535adc2cbf35f5"
+    },
+    {
+      "bytes": 367450,
+      "name": "pr32-artifact-14383666773-unittest.original.txt",
+      "sha256": "d158f886c4262d847900071c88a105d61bc74bdef6378d18d2df4843b2997e75"
+    },
+    {
+      "bytes": 93792,
+      "name": "pr32-artifact-14383666773.original.zip",
+      "sha256": "95cc22832756b5c294e7bceea8b08747cb199e25e9c4c8bb922ed6b93da164e3"
+    },
+    {
+      "bytes": 77535,
+      "name": "pr32-artifact-14384071838-summary.original.json",
+      "sha256": "b8ae76840e443935295f72c947a10ba3e9bbbed3d949d804266c7bf97b572562"
+    },
+    {
+      "bytes": 366871,
+      "name": "pr32-artifact-14384071838-unittest.original.txt",
+      "sha256": "745b8c6a10df3a7a752734b2d451cb9460448d6d0454a7427db1ad14902db6b2"
+    },
+    {
+      "bytes": 94087,
+      "name": "pr32-artifact-14384071838.original.zip",
+      "sha256": "578233254d7f899cf4123571a1c3508414240ffd5ccf8ef621815d4fd2cc0566"
+    },
+    {
+      "bytes": 77535,
+      "name": "pr32-artifact-14384291400-summary.original.json",
+      "sha256": "8aa82bc0fab8a9e47bf4f26f69a1971b1ca757bde2270951ca31a334f22ef5cf"
+    },
+    {
+      "bytes": 245678,
+      "name": "pr32-artifact-14384291400-unittest.original.txt",
+      "sha256": "e75f6386aeafb1cab326f803bcf244f9d6355c3f3c636c5bef08b15ec1383ea8"
+    },
+    {
+      "bytes": 83780,
+      "name": "pr32-artifact-14384291400.original.zip",
+      "sha256": "71f5f14340cfef547d5afda09357194d5505ba5f8a8429fa74fe1da5386a4898"
+    },
+    {
+      "bytes": 9008,
+      "name": "pr32-first-artifact-provider-responses.json",
+      "sha256": "a1b36d568570c40e6eec51954a03e7c71f19d70ee2eed2c1badb97b86ecb0e34"
+    },
+    {
+      "bytes": 14401,
+      "name": "pr32-first-unit-safe-observations.json",
+      "sha256": "63e17e7b6495c4ca8bed20c3ef1990dfb417360ebf4424889508dfd477dd5226"
+    },
+    {
+      "bytes": 26762,
+      "name": "pr32-job-134470237906-first-response.json",
+      "sha256": "349e37aa71969e2b0060200915023e11705d9fe59244fb9621cff6deca9b5706"
+    },
+    {
+      "bytes": 26769,
+      "name": "pr32-job-134470238219-first-response.json",
+      "sha256": "0a60bfd94f3a9e40cea1e9d39dcff84d2855e7865b7a09042bee245000ddd301"
+    },
+    {
+      "bytes": 28588,
+      "name": "pr32-job-134470238541-first-response.json",
+      "sha256": "29f652c1beb35fb559dca29da7a25459ccd15184b7d65b866e0dc38738aae602"
+    },
+    {
+      "bytes": 27605,
+      "name": "pr32-job-134471475036-first-response.json",
+      "sha256": "0a5b37ab45cd62e0db0bb99f029543170079a25d7dbf879ec63eede57bc5b7e2"
+    },
+    {
+      "bytes": 29428,
+      "name": "pr32-job-134471475088-first-response.json",
+      "sha256": "e4ab388557f60100d592df5ba61d9e39a65a57f3586945b797ca67bf77bc5fac"
+    },
+    {
+      "bytes": 27600,
+      "name": "pr32-job-134471475213-first-response.json",
+      "sha256": "b3d1a25e2fdb9473cb7b89cfbf3821b1a7258afe4884532d16b3dc272ffccb82"
+    },
+    {
+      "bytes": 85696,
+      "name": "pr32-natural-completion-followup-responses.json",
+      "sha256": "6982642c13505173d6017f9468e6b7180c27178c9ad6d40d818e2af13c7d2244"
+    },
+    {
+      "bytes": 0,
+      "name": "pr32-unit-reader-first.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 4502,
+      "name": "pr32-unit-reader-first.stdout",
+      "sha256": "b5dcc60fddf91dfbc888ca7ce29b50e617dfd48a75ff0bf91104493b8acf2ecf"
+    }
+  ],
+  "production_approved": false,
+  "recorded_at_after_fetch": "2026-11-18T00:21:21Z",
+  "repository": "PureGamma-Harness/uta-unified-account",
+  "workflow_runs": [
+    {
+      "conclusion": "failure",
+      "created_at": "2026-11-18T00:09:36Z",
+      "event": "push",
+      "head_sha": "497c67f60901653634a96f629087f805032acec5",
+      "id": 44205495492,
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-11-18T00:17:53Z"
+    },
+    {
+      "conclusion": "failure",
+      "created_at": "2026-11-18T00:12:08Z",
+      "event": "pull_request",
+      "head_sha": "497c67f60901653634a96f629087f805032acec5",
+      "id": 44205859502,
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-11-18T00:19:15Z"
+    }
+  ]
+}
