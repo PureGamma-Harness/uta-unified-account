@@ -115,6 +115,9 @@ class NativeSHCaptureProtocolPureTests(unittest.TestCase):
 
     def test_exact_original_source_codeobject_and_unique_callsite_required(self):
         source = (ROOT / "uta/durable_process.py").read_bytes()
+        self.assertEqual(fixture.RUNTIME_BINDING_REVISION, 2)
+        self.assertEqual(hashlib.sha256(source).hexdigest(), fixture.RUNTIME_SHA256)
+        self.assertNotEqual(fixture.RUNTIME_SHA256, fixture.PREVIOUS_RUNTIME_SHA256)
         code = compile(source, str(ROOT / "uta/durable_process.py"), "exec", dont_inherit=True)
         original = next(value for value in code.co_consts if isinstance(value, CodeType)
                         and value.co_name == "_run_worker")
@@ -183,8 +186,9 @@ class NativeSHCaptureProtocolPureTests(unittest.TestCase):
                     and node.args and isinstance(node.args[0], ast.Constant)
                     and node.args[0].value == "one-shot deterministic capture rejected native preconditions; no recapture"]
         self.assertEqual(len(refusals), 1)
-        # The existing complete-original-AST test removes only exact scheduling
-        # additions and still compares against its unchanged original reference.
+        # The complete-module guard still uses the unchanged original reference;
+        # one explicitly hashed ordinary-case delta permits the reviewed pending
+        # oracle while every recovery/capture/cleanup node remains protected.
         audit_source = (ROOT / "tests/test_expired_gate_failure_evidence.py").read_text()
         audit_tree = ast.parse(audit_source)
         helpers = [node for node in audit_tree.body if isinstance(node, ast.FunctionDef)

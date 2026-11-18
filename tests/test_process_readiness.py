@@ -17,6 +17,7 @@ from uta import durable_process
 from uta.durable_process import DurableProcessRouter
 from uta.market import MarketSnapshot
 from uta.models import AssetSpec, InstrumentSpec
+from uta.service import ServiceError
 from uta.writer_fence import WriterFence
 
 
@@ -332,11 +333,24 @@ class ProcessReadinessTests(unittest.TestCase):
             result = self.router.diagnostics()
             self.assertFalse(result["ready"], result)
             self.assertEqual(result["reason"], "publication_incomplete")
-            for fault in ({"halted": "invalid"}, {"watermarks": {str(self.path): 1}},
+            for fault in ({"halted": "invalid"}, {"market_transition_pending": 1},
+                          {"watermarks": {str(self.path): 1}},
                           {"market_version": None, "market_digest": str(self.path)}):
                 with self.subTest(fault=list(fault)):
                     with self.router._control._lock(exclusive=True):
-                        self.router._control._write_state({**original, **fault})
+                        self.router._control._write_state(dict(original))
+                        if "halted" in fault or "market_transition_pending" in fault:
+                            # Normal control writers must keep rejecting bad
+                            # flags. Corrupt only this closed test authority's
+                            # storage to exercise the independent read path.
+                            with self.assertRaises(ServiceError) as rejected:
+                                self.router._control._write_state({**original, **fault})
+                            self.assertEqual(rejected.exception.code, "control_corruption")
+                            self.assertEqual(self.router._control._state(), original)
+                        with self.router._control.control.transaction() as connection:
+                            connection.execute("UPDATE router_state SET payload=? WHERE singleton=1",
+                                (json.dumps({**original, **fault}, sort_keys=True,
+                                            separators=(",", ":"), allow_nan=False),))
                     result = self.router.diagnostics()
                     self.assertFalse(result["ready"], result)
                     self.assertFalse(result["state_observed"])

@@ -1,0 +1,196 @@
+{
+  "callable_signatures": {
+    "uta/credit.py": {
+      "Git_bytes_unchanged_from_component": true,
+      "all_component_existing_callable_signatures_preserved": true
+    },
+    "uta/durable_batches.py": {
+      "Git_bytes_unchanged_from_component": true,
+      "all_component_existing_callable_signatures_preserved": true
+    },
+    "uta/durable_commands.py": {
+      "added_functions": [],
+      "changed_existing_signatures": [
+        "QueueStore.process_one"
+      ]
+    },
+    "uta/durable_process.py": {
+      "added_functions": [
+        "DurableProcessRouter._record_receipt_read_failure"
+      ],
+      "changed_existing_signatures": []
+    },
+    "uta/existing_services.py": {
+      "Git_bytes_unchanged_from_component": true,
+      "all_component_existing_callable_signatures_preserved": true
+    },
+    "uta/service.py": {
+      "Git_bytes_unchanged_from_component": false,
+      "all_component_existing_callable_signatures_preserved": true
+    },
+    "uta/sharding.py": {
+      "added_functions": [
+        "_market_transition_pending",
+        "_raise_transition_unknown",
+        "_record_transition_failure",
+        "_transition_failure_cause",
+        "_transition_identity"
+      ],
+      "changed_existing_signatures": []
+    },
+    "uta/startup.py": {
+      "Git_bytes_unchanged_from_component": true,
+      "all_component_existing_callable_signatures_preserved": true
+    }
+  },
+  "component_CODE_review": "e51015a623acdf56cb914c923c307ce237239e2b",
+  "component_source": "e1c38cfed7838951303921ed98b449025cb334f9",
+  "component_static_closure_is_not_new_tree_runtime_acceptance": true,
+  "first_normal_CI_actual": "NOT_RUN_BY_REVIEWER",
+  "first_normal_CI_allowed_for_this_source": true,
+  "observations": {
+    "batch_race": "Before preparation paused path serves eligible single lane. If pause starts after prepare, recover resolves original members before single-lane selection; no new IDs/financial completion inferred.",
+    "deployment": "Fresh isolated synthetic namespace only; no mixed revisions, automatic authority migration, artifact reseal or old writer invalidation proof.",
+    "freshness_and_fencing": "Original configured freshness/fees/precision/native fencing/source/ledger and funding-registry checks remain; no tolerance increase or old-writer retirement proof.",
+    "full_payload_CAS": "Managed first EX captures immutable full persisted state after enqueue. Both normal second EX paths and owned fatal receipt-error path compare full identity before later global mutation; differing payload returns409 and preserves successor.",
+    "funding_inactive": "The base funding modules are byte-identical and not newly imported/activated by the three overlay modules. Router funding registry remains credit-pool claims; pending funding encumbrance is OPEN.",
+    "historical_scope": "Experimental protocol revision2 intentionally gives superseded409; timeout/unknown still requires querying original CID/current control. Old component plans/freezes/results cannot qualify new combined bytes.",
+    "identity_limits": "Only missing legacy marker normalizes False; depth16/work4096/native finite/i64/1MiB accepted identity caps do not prove a global pre-write quota, predecode payload bound or overflow recovery.",
+    "operator_halt_and_activation": "write_state clears pending for active or unrelated stop state; explicit halt sets marker False; fatal validation clear is persisted under control EX or original error carries UNKNOWN stop cause.",
+    "queued_pause": "allow_submit defaults True; only explicit pending market transition sets False; SQL excludes SUBMIT candidates while predecessor subquery still includes every earlier PENDING account command. Skipped rows are selected out before execution and attempts/receipts unchanged.",
+    "service_admission_credit_compatibility": "Base service signatures unchanged from component. New admission policy/archive summary stays in service/DecisionAudit; CreditAuditV2 explicitly uses valuation_policy; queue/service and CreditService construction API still matches."
+  },
+  "open_limits": [
+    "same-account cancel/repay behind paused SUBMIT remains FIFO head-of-line blocking",
+    "custom22 capture producer/review/RAW scope remains separate from normal CI",
+    "new-tree actual tests/restart/fault/unknown outcomes and package-installed new-component qualification",
+    "pending funding encumbrance and production financial/matching/ledger reconciliation",
+    "sustained10000/s/30minute mixed load, HA/RPO/RTO and real-funds approval"
+  ],
+  "patch": {
+    "doc_only_followup": "7fb80af to72dd changes integration doc only",
+    "exact_paths": [
+      "docs/market-control-cas-v2-integration.md",
+      "evidence/integrations/market-control-cas-v2/source-manifest.json",
+      "tests/test_market_transition_activation_failures.py",
+      "tests/test_market_transition_pending.py",
+      "uta/durable_commands.py",
+      "uta/durable_process.py",
+      "uta/sharding.py"
+    ],
+    "no_tools_workflow_bench_or_unrelated_test_mutation": true
+  },
+  "production_approved": false,
+  "public_base": "ef7508bebd35cac71d9db8fdda896806ce4ade64",
+  "review_activity": {
+    "method": "Read-only Git/source/AST/hash/signature/manifest comparison; no target functions invoked",
+    "target_import_compile_tests_SQL_proc_workers_CI_network": 0
+  },
+  "reviewed_source": "72dd3a17d7a8e363d95854ee8c4f361e0a24d901",
+  "rollback": "Review-only addition can be reverted. Runtime rollback remains fresh reviewed namespace with actual ownership stop and original command/trade/ledger reconciliation; no overwrite of confirmed history.",
+  "schema": 1,
+  "session_private_ancestor_denylist": {
+    "entries_checked": 2,
+    "forbidden_ancestors_found": 0,
+    "private_component_ancestry_not_imported_by_source_overlay": true,
+    "resolved": true
+  },
+  "source_inventory": {
+    "V2_V3_historical_meaning_preserved": true,
+    "V3_explicit_names": 65,
+    "names_equal_all_tracked_runtime_python": true,
+    "no_new_runtime_module_or_inventory_version_required": true,
+    "test_file_unchanged_from_base": true
+  },
+  "source_manifest": {
+    "all_Git_blob_physical_size_hash_origin_match": true,
+    "bytes": 19053,
+    "changed_runtime_files": [
+      "uta/durable_commands.py",
+      "uta/durable_process.py",
+      "uta/sharding.py"
+    ],
+    "changed_tests_exact_component_origin": 2,
+    "html_files": 1,
+    "other_exact_public_base_runtime_files": 63,
+    "overlay_source_pins": [
+      {
+        "blob": "f0d8c4b52644bd87b9a65f5d294e031e69a4250f",
+        "bytes": 29719,
+        "origin": "e1c38cfed7838951303921ed98b449025cb334f9",
+        "path": "uta/durable_commands.py",
+        "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+      },
+      {
+        "blob": "5781f54d227634f9da3e5c293bb59f3697c834ae",
+        "bytes": 110134,
+        "origin": "e1c38cfed7838951303921ed98b449025cb334f9",
+        "path": "uta/durable_process.py",
+        "sha256": "9b346b3888a162141699926f6c4505b6804a5982a82af7ef3c017cac6ed1053e"
+      },
+      {
+        "blob": "4b8505ac926a4412cfe036b6abba494be8cedfde",
+        "bytes": 61776,
+        "origin": "e1c38cfed7838951303921ed98b449025cb334f9",
+        "path": "uta/sharding.py",
+        "sha256": "00f370cc10d67cc3d76fabd63d7f92179fdd38c7f0794a59dc3d4812edcdf880"
+      },
+      {
+        "blob": "7b816f8c86bbc71bbda3af60c53950e5d0a89536",
+        "bytes": 18475,
+        "origin": "e1c38cfed7838951303921ed98b449025cb334f9",
+        "path": "tests/test_market_transition_pending.py",
+        "sha256": "45d7b99ceee8bb0fdbcb08f34e0daddf709fc6c6b5a77ffa26597b8cb253ef5e"
+      },
+      {
+        "blob": "e343d015f7fe802661e55a05f8f1d6aa17fd2f35",
+        "bytes": 17453,
+        "origin": "e1c38cfed7838951303921ed98b449025cb334f9",
+        "path": "tests/test_market_transition_activation_failures.py",
+        "sha256": "a0063e98f0372bffe46fd3d326cce3186cd162395c112149ec65982aad01edcf"
+      }
+    ],
+    "path": "evidence/integrations/market-control-cas-v2/source-manifest.json",
+    "python_files": 65,
+    "runtime_bytes": 1470877,
+    "runtime_files": 66,
+    "sha256": "1e2426b99eb91bfe3ee228e9cc3370d3f076e8b1e8ce8e59210819e10035d6d6",
+    "verification_detail": "Every entry in the source-pinned full manifest was independently compared; canonical inventory digest binds the sorted rows without duplicating all66 here.",
+    "verified_inventory_canonical_sha256": "93d402e44b3541c8399e39eebafac8e83801aac9a9192cdc8d6ad023b1e8acb6"
+  },
+  "tests_defined_not_run": {
+    "tests/test_market_transition_activation_failures.py": [
+      "ActivationFailureStateContracts.test_quote_timeout_busy_and_superseded_are_narrowly_classified",
+      "ActivationFailureStateContracts.test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown",
+      "ActivationFailureStateContracts.test_old_waiter_cannot_change_new_operator_or_publication_identity",
+      "SyncActivationFailureSQLContracts.test_sync_bad_local_generation_records_stop_before_original_raise",
+      "SyncActivationFailureSQLContracts.test_sync_funding_reconcile_error_records_stop_and_preserves_original",
+      "ManagedActivationFailureSQLContracts.test_managed_bad_local_generation_after_receipts_clears_pending",
+      "ManagedActivationFailureSQLContracts.test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown",
+      "ManagedActivationFailureSQLContracts.test_managed_funding_reconcile_only_in_second_EX_clears_pending",
+      "ManagedActivationFailureSQLContracts.test_late_publication_exception_does_not_overwrite_later_operator_halt",
+      "ManagedActivationFailureSQLContracts.test_late_activation_exception_does_not_overwrite_later_operator_halt",
+      "ManagedActivationFailureSQLContracts.test_late_successful_activation_receipts_cannot_reopen_integrity_freeze"
+    ],
+    "tests/test_market_transition_pending.py": [
+      "MarketTransitionStateContracts.test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected",
+      "MarketTransitionStateContracts.test_all_control_writes_clear_activation_and_unrelated_stops",
+      "MarketTransitionPendingSQLContracts.test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen",
+      "MarketTransitionPendingSQLContracts.test_force_halt_during_publication_keeps_router_halted_terminal_rejection",
+      "MarketTransitionPendingSQLContracts.test_integrity_freeze_clears_pending_marker_without_risk_acceptance",
+      "MarketTransitionPendingSQLContracts.test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo",
+      "MarketTransitionPendingSQLContracts.test_original_cid_payload_conflict_is_rejected_while_submission_is_paused",
+      "MarketTransitionPendingSQLContracts.test_stale_quote_after_activation_cannot_accept_the_deferred_order",
+      "MarketTransitionPendingSQLContracts.test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn",
+      "MarketTransitionPendingSQLContracts.test_paused_selection_still_requires_the_original_live_writer_token",
+      "MarketTransitionPendingSQLContracts.test_legacy_and_malformed_persisted_marker_fail_closed"
+    ]
+  },
+  "tests_scope_count": {
+    "SQL_methods": 17,
+    "actual_runs": 0,
+    "state_methods": 5,
+    "total": 22
+  },
+  "verdict": "CODE_NO_BLOCKER_FOR_FIRST_NORMAL_CI_ONLY"
+}
