@@ -130,6 +130,10 @@ def child_phase(name, argv, root, host, control, manifest, limit, raw_cap, scope
                     errors["held_handle_error"] = type(error).__name__
             if handle_ready and all(value is None for value in errors.values()):
                 try:
+                    before_release = monotonic_ns()
+                    require(before_release - start <= limit * 1000000000
+                            and before_release - scope_start <= 120000000000,
+                            "known phase/total deadline exhausted before business gate release")
                     require(os.write(gate_write, b"G") == 1, "incomplete one-byte startgate release")
                     gate_released = True
                 except Exception as error:
