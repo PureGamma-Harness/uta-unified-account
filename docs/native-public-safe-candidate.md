@@ -31,3 +31,9 @@
 ## 回滚
 
 本次只增加benchmark/fixture与证据文档，未改UTA运行时或任何持久authority。回滚候选commit即可移除新增文件；不改写原CODE/SAFE/RAW提交或封存原件。以后若经独立计划运行，应保留已确认经济事件和原始失败记录，先停新增风险并查询原命令结果，再按该新计划的恢复/迁移手册处理；不得删除历史cut/账本或借旧计划恢复写入。
+
+## Independent public transport review
+
+Independent review af826f35 accepts only the exact export transport and finite privacy policy. All44 exported blobs/modes/hashes and the four new metadata files were checked. The70-source Git closure is separate from the candidate worktree physical checkout:64 base blobs plus six added sources, with no claim of a new70-file execution preflight. Guards15 physical/Git closure holds. Ten strong actual identity values from37 fixed sealed JSON files were absent from all48 candidate files. Exactly four prior guards receipt monotonic-clock fields are explicitly cleared as non-sensitive execution metadata; no process birth/boot/lease identity is cleared.
+
+This follow-up supersedes the candidate-only pending-review publication status. It grants no new test/run permission and changes none of the44 exported bytes. The original finite six mock methods and the first native functional failure remain separate historical evidence; no new normal CI, source execution, matching reconciliation, performance or production acceptance is asserted for this export.
