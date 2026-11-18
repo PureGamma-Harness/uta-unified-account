@@ -809,6 +809,14 @@ class ExchangeService:
             self._check_reduction_surplus(current, projected)
         elif Fraction(Decimal(current["available_margin"])) < Fraction(reserve):
             raise ServiceError("insufficient_margin", "insufficient available margin for order and fee reserve", 409)
+        else:
+            # Initial-margin availability may equal zero, but a new exposure
+            # must retain strictly positive maintenance surplus. Revalue the
+            # whole projected account after settlement rounding and fees.
+            next_positions, pnl = self._project_fill(positions, symbol, quantity, limit_price)
+            projected = self._risk(connection, account_id, market, positions=next_positions,
+                                   balance_delta=_exact(Fraction(pnl) - Fraction(self._fee(quantity, limit_price))))
+            self._require_maintenance_surplus(projected)
         audit_before = self._audit_state(connection, account_id) if self.audit is not None else None
         market_id = self.audit.market_ref(connection, market) if self.audit is not None else None
         decision_id = self.audit.decision_id("ORDER_ACCEPTED", account_id, order_id) if self.audit is not None else None
@@ -848,6 +856,11 @@ class ExchangeService:
         after = Fraction(Decimal(projected["equity"])) - Fraction(Decimal(projected["maintenance_margin"]))
         if after < before:
             raise ServiceError("unsafe_reduction", "reduce-only execution would worsen maintenance margin surplus", 409)
+
+    @staticmethod
+    def _require_maintenance_surplus(projected: dict) -> None:
+        if Fraction(Decimal(projected["equity"])) <= Fraction(Decimal(projected["maintenance_margin"])):
+            raise ServiceError("insufficient_margin", "new exposure requires positive maintenance margin surplus", 409)
 
     def cancel_order(self, account_id: str, order_id: str) -> dict:
         self._validate_cancel_command(account_id, order_id)
@@ -972,6 +985,7 @@ class ExchangeService:
             remaining_reserve = Fraction(self._reserve(remainder, market)) if status != "FILLED" else Fraction(0)
             if Fraction(Decimal(projected["available_margin"])) - remaining_reserve < 0:
                 raise ServiceError("insufficient_margin", "latest market no longer supports this local execution", 409)
+            self._require_maintenance_surplus(projected)
         audit_before = self._audit_state(connection, account_id) if self.audit is not None else None
         audit_risk_before = self._risk(connection, account_id, market) if self.audit is not None else None
         market_id = self.audit.market_ref(connection, market) if self.audit is not None else None

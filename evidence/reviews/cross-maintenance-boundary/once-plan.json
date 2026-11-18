@@ -1,0 +1,245 @@
+{
+  "actual_service_integration_accepted": false,
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "bounds": {
+    "CPU": 1,
+    "SQL": 0,
+    "explicit_process_probes": 0,
+    "hard_timeout_seconds": 10,
+    "network": 0,
+    "reserved_trailer_bytes": 512,
+    "retries": 0,
+    "shared_raw_bytes": 262144,
+    "target_subprocesses": 0,
+    "worker_threads": 0
+  },
+  "case_ids": [
+    "full_fee_boundary",
+    "unit_below",
+    "unit_equal",
+    "unit_above",
+    "im_equal_mm_lower",
+    "partial_safe",
+    "partial_terminal_unsafe",
+    "zero_mm_zero_equity",
+    "zero_mm_negative_equity",
+    "zero_mm_positive_equity",
+    "ro_same_deficit",
+    "ro_improved_boundary",
+    "ro_worsening_reject",
+    "legacy_equal_mm_reject",
+    "legacy_im_equal_mm_lower"
+  ],
+  "expected_runtime": {
+    "affinity": [
+      1
+    ],
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "host_argv_template": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-risk-linear-cost-sign/tools/run_cross_maintenance_once.py",
+    "--plan-sha256",
+    "<PLAN_SHA256>",
+    "--source-commit",
+    "<FROZEN_COMMIT>",
+    "--private-directory",
+    "<NEW_PRIVATE_DIRECTORY>"
+  ],
+  "host_evidence": "Caller O_EXCL full argv/intent/monotonic/actual exit/reap/raw; inner receipt alone cannot prove actual host success.",
+  "independent_review": "PENDING",
+  "input_files": {
+    "tests/test_cross_maintenance_boundary.py": {
+      "bytes": 8666,
+      "sha256": "605b7a5462abbf50cad6cbce518aa8d9fc50bf72629659ab066578a077d3cbfd"
+    },
+    "tools/run_cross_maintenance_once.py": {
+      "bytes": 9181,
+      "sha256": "072423d077d6bd11129939800f27a7a63b5b4877177164fe4f8c331676ec3d8b"
+    },
+    "uta/market.py": {
+      "bytes": 8465,
+      "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+    },
+    "uta/models.py": {
+      "bytes": 6034,
+      "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+    },
+    "uta/portfolio.py": {
+      "bytes": 24042,
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+    },
+    "uta/products.py": {
+      "bytes": 12043,
+      "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+    },
+    "uta/risk.py": {
+      "bytes": 7535,
+      "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+    },
+    "uta/scenario_margin.py": {
+      "bytes": 7092,
+      "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+    },
+    "uta/service.py": {
+      "bytes": 86832,
+      "sha256": "d3ed342c4adfca7960957d3d4579adb13974aa676bc1e5cfaa20261261bd8910"
+    }
+  },
+  "kind": "CROSS_MAINTENANCE_BOUNDARY_FOCUSED_PURE_ONCE",
+  "local_rule_id": "UTA-CROSS-MM-STRICT-001",
+  "main_commit_not_tested": "02549e5d662caa7156dc30e95f1d5e2dce18215c",
+  "manual_values": {
+    "RO": {
+      "accepts": [
+        true,
+        true,
+        false
+      ],
+      "after_surplus": [
+        "-1",
+        "0",
+        "-2"
+      ],
+      "before_surplus": "-1"
+    },
+    "full_fee_boundary": {
+      "IM_after": "10",
+      "IM_rate": "0.1",
+      "MM_after": "10",
+      "MM_rate": "0.1",
+      "available_after": "0",
+      "cash_before": "10.04",
+      "cash_equity_after": "10",
+      "fee": "0.04",
+      "fee_rate": "0.0004",
+      "guard": "insufficient_margin/409",
+      "mark_and_limit": "100",
+      "quantity": "1",
+      "reserve": "10.04",
+      "status_after": "LIQUIDATION"
+    },
+    "one_unit": {
+      "MM": "10",
+      "USD_scale": 8,
+      "above": "10.00000001",
+      "below": "9.99999999",
+      "equal": "10",
+      "guard_accepts": [
+        false,
+        false,
+        true
+      ]
+    },
+    "partial": {
+      "MM": "5",
+      "complete_MM": "10",
+      "complete_cost": "100",
+      "complete_equity": "10",
+      "complete_guard_accepts": false,
+      "complete_position": "1",
+      "cost": "50",
+      "equity": "10.02",
+      "fee": "0.02",
+      "guard_accepts": true,
+      "quantity": "0.5"
+    },
+    "valid_IM_equality": {
+      "IM": "10",
+      "MM": "5",
+      "available": "0",
+      "equity": "10",
+      "guard_accepts": true
+    },
+    "zero_MM": {
+      "equities": [
+        "0",
+        "-1",
+        "0.00000001"
+      ],
+      "guard_accepts": [
+        false,
+        false,
+        true
+      ]
+    }
+  },
+  "methods": [
+    "test_equal_im_mm_fee_boundary_is_unsafe",
+    "test_im_equality_and_one_unit_maintenance_boundaries",
+    "test_partial_fill_projection_retains_unsafe_final_boundary",
+    "test_zero_maintenance_still_requires_positive_equity",
+    "test_reduce_only_keeps_its_independent_surplus_policy",
+    "test_legacy_reference_obeys_same_maintenance_trigger"
+  ],
+  "omitted_paths": [
+    "service module imports",
+    "service constructors",
+    "_admit_order",
+    "_apply_fill",
+    "_fill_fee",
+    "SQL/transaction/ledger/matching",
+    "API/network",
+    "workers/PID/proc/pidfd/signals"
+  ],
+  "performance_accepted": false,
+  "planned_case_completions": 15,
+  "planned_methods": 6,
+  "preparation_history": {
+    "correction": "Retain exact original future annotations AST node before selected definitions; no financial code or tests changed.",
+    "finding": "Selected service AST dropped original future annotations; MarketSnapshot annotation would evaluate without a binding before methods run.",
+    "old_plan_copy": "once-plan-7c8bf60-NOT_RUN.json",
+    "old_plan_sha256": "f9836976c789f6208b7fe98e7c6979219168e474677f412e4040cabab7b0d065",
+    "source": "7c8bf6055db86ff8267831c80bd75ca837a60dbd",
+    "status": "NOT_RUN_CODE_BLOCKED_NOT_RED",
+    "target_attempts": 0
+  },
+  "production_approved": false,
+  "raw_policy": "Shared reserve-before-FD-write 256KiB including512 failure trailer; any incomplete write sticky125/no retry; no child can be orphaned by fail_raw.",
+  "root_once_GO_required": true,
+  "schema": 1,
+  "scope": "Six memory-only methods using six retained risk modules and six exact selected service methods; not actual service admission/fill/SQL/matching.",
+  "selected_service_globals": [
+    "ServiceError",
+    "_exact",
+    "_ZERO",
+    "_MAX_INPUT"
+  ],
+  "selected_service_methods": [
+    "_rounded",
+    "_fee",
+    "_reserve_reference",
+    "_project_fill",
+    "_require_maintenance_surplus",
+    "_check_reduction_surplus"
+  ],
+  "source_binding": "Invoker binds all9 actual physical files to frozen Git SHA; financial methods execute only retained verified bytes; exact driver is trusted control, not remote attestation.",
+  "source_rule": "UTA-CROSS-LOAN-v1 maintenance equality in docs/margin-rules.md",
+  "static_review_required": {
+    "LinearExposure_and_cost_dust_policy_unchanged": true,
+    "all_non_RO_sufficient_IM_orders_use_full_projected_risk": true,
+    "new_fill_uses_existing_projected_risk": true,
+    "original_RO_subtrees_unchanged": true,
+    "prior_ID_returns_before_new_checks_unchanged": true
+  },
+  "status": "NOT_RUN",
+  "target_attempts": 0
+}

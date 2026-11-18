@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-risk-linear-cost-sign/tools/run_cross_maintenance_once.py",
+    "--plan-sha256",
+    "92fc36f7c1ea2f98d91f518fe93667c4a8ad907600a8e32c0070631c34fdcdc6",
+    "--source-commit",
+    "402c78412df53cb91e0f7f7d463fdd7026cf7cac",
+    "--private-directory",
+    "/workspace/uta-cross-maintenance-402c784-once01"
+  ],
+  "binding_before": {
+    "bytes": 2958,
+    "sha256": "c0f44534a7384add1fec1f950c3e49c604be494b67c57323cb4e75847c185e52"
+  },
+  "cwd": "/workspace/uta-risk-linear-cost-sign",
+  "first_and_only": true,
+  "intent_monotonic_ns": 124472286923383,
+  "kind": "ROOT_AUTHORIZED_FIRST_ONCE_HOST_INTENT",
+  "launch_script": {
+    "bytes": 3757,
+    "sha256": "5643de8568092b451619ab0e8227ec2dba5e81f057df93eaa8a04dcbac93d322"
+  },
+  "plan_sha256": "92fc36f7c1ea2f98d91f518fe93667c4a8ad907600a8e32c0070631c34fdcdc6",
+  "production_approved": false,
+  "source_commit": "402c78412df53cb91e0f7f7d463fdd7026cf7cac",
+  "utc": "2026-11-18T07:35:45.809624+00:00"
+}
