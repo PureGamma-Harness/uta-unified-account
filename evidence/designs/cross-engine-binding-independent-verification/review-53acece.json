@@ -1,0 +1,175 @@
+{
+  "D1_code_preparation_recommendation": "Fixed merged baseline then bounded CODE implementation only; separate review and root execution decision still required",
+  "D1_execution_GO": false,
+  "D2_financial_activation": "NOT_ACCEPTED_UNIMPLEMENTED_GATES",
+  "all_counterexamples_are": "UNEXECUTED_ACCEPTANCE_VECTORS_NOT_REPRODUCED_FINDINGS",
+  "confirmed_new_D0_blockers": [],
+  "design_files": [
+    {
+      "bytes": 31492,
+      "path": "docs/cross-engine-binding-design.md",
+      "physical_canonical_regular_Git_equal": true,
+      "sha256": "30badc45a94b94de74a5e1b259336db0837ebb3f8db5bd225b315f19ebaaee4a"
+    },
+    {
+      "bytes": 16060,
+      "path": "evidence/designs/cross-engine-binding/contract.json",
+      "physical_canonical_regular_Git_equal": true,
+      "sha256": "7cdca0847335c5c9f5d016d7dcad9a721af634008fdc07b94239ebf0ba5499f7"
+    },
+    {
+      "bytes": 8714,
+      "path": "evidence/designs/cross-engine-binding/source-evidence.json",
+      "physical_canonical_regular_Git_equal": true,
+      "sha256": "e45a523ebb031f3b1fcc868584d792daac9389902502d6e7a6dab6e9891ef0c4"
+    }
+  ],
+  "financial_model_signed_off_by_this_review": false,
+  "implementation_verification_gates": [
+    {
+      "acceptance": "变更确实生效后，authority 创建前或本次业务提交前确定拒绝；不得把未成功实施的 mutation 当拒绝证明。",
+      "id": "EVG-001",
+      "negative": "同名同输出 FunctionType/closure/default/helper 替换；函数使用独立 builtins dict 而模块 __builtins__ 保持原值；服务实例 alias 与 registry 脱离。",
+      "references": [
+        "3.1",
+        "EBD-001",
+        "EBD-002",
+        "EBD-003"
+      ],
+      "requirement": "在可信初始化时建立固定对象 anchor；验证实际将调用的函数、函数自身 __globals__ 及 __builtins__ 解析关系，不只比较当前模块字典或名字。跨 helper 的可执行引用同样受检。",
+      "stage": "D1",
+      "status": "REQUIRED_NOT_RUN",
+      "topic": "实际 callable、globals 与 builtins"
+    },
+    {
+      "acceptance": "相同可信制品跨干净启动 binding ID 相同；实际对象漂移被拒绝；未知/过界图有界失败且不调用用户 repr/getter/serializer。",
+      "id": "EVG-002",
+      "negative": "两个干净解释器相同制品得到不同绑定；同 module/qualname 的另一类、property fget 或 default_factory 变更；cycle/over-bound closure/unwrap 图。",
+      "references": [
+        "3.1",
+        "EBD-002",
+        "EBD-003"
+      ],
+      "requirement": "D1 固定 canonical 字节规范、逻辑节点/共享边/循环表示及 depth/node/item/byte 上限。进程内 is 身份校验与跨重启稳定 content digest 分开；不得把 id()/内存地址写成持久 binding ID。类方法、属性、dataclass defaults/default_factory 的执行边纳入有限清单。",
+      "stage": "D1",
+      "status": "SCHEMA_AND_IMPLEMENTATION_REQUIRED_NOT_RUN",
+      "topic": "class layout 与稳定图编码"
+    },
+    {
+      "acceptance": "默认正例继续，实验信用路径在金融/能力写入前拒绝；历史缺证据返回明确未验证/拒绝，不能生成补造时间或改旧 archive。",
+      "id": "EVG-003",
+      "negative": "未知/缺失/重复 key、bool 版本、将 experimental inner valuation 单独当信用政策；用当前 now/新 market 替换历史 evaluation。",
+      "references": [
+        "4.1",
+        "4.2",
+        "4.3",
+        "EBD-005",
+        "EBD-006",
+        "EBD-009"
+      ],
+      "requirement": "默认十字段 valuation、十一字段 order、两个 cache 字段及 Credit V2 精确比较保留。新 envelope 必须显式版本分派。历史 v1 始终参考；v2 使用归档 contract/binding/evaluated_at/max_age/market ID，不由当前默认值重解释。",
+      "stage": "D1_D2",
+      "status": "REQUIRED_NOT_RUN",
+      "topic": "默认与版本回放"
+    },
+    {
+      "acceptance": "授权边界内全部旧路径无金融表/账本/预占变化；只读 schema/rows/main bytes 不变。任一可写则 D2 保持禁用并补真正 fence。",
+      "id": "EVG-004",
+      "negative": "旧 binary 不走普通新构造器仍尝试直接金融写入；旧句柄复用、旧主回来；只读打开意外 DDL/归档插入或创建信用能力。",
+      "references": [
+        "4.3",
+        "8",
+        "EBD-007",
+        "EBD-008",
+        "EBD-015"
+      ],
+      "requirement": "先固定合并基线与精确旧二进制矩阵。逐一覆盖构造器、只读 opener、takeover、直接 order/fill/ledger/credit 金融入口及已有句柄；枚举 control lease 允许副作用。配置字符串比较不替代 fencing/capability。",
+      "stage": "D2",
+      "status": "EXPLICIT_EXISTING_GATE_NOT_CLOSED",
+      "topic": "旧 writer 与只读重开"
+    },
+    {
+      "acceptance": "两计算器仍使用同份输入；过晚新风险按声明的既有时效政策拒绝，不刷新/延长报价来修复。历史数值和准入新鲜度验证结果分开。",
+      "id": "EVG-005",
+      "negative": "行情在首次估值时尚有效，binding/双算或排队后跨过 max_age；时钟回退/未来报价；历史回放运行在今日但使用归档时间。",
+      "references": [
+        "3.2",
+        "4.3",
+        "5.1",
+        "EBD-009",
+        "EBD-010"
+      ],
+      "requirement": "同一 captured now 用于参考/候选及同一决策快照，不能因此省略原行情准入和 precommit guard。实现须明确 logical valuation time 与最终准入 freshness/deadline 的适用时点，并归档所用政策；它不是物理 COMMIT 时间证明。",
+      "stage": "D2",
+      "status": "D2_CHECKPOINT_AND_FAULT_PLAN_REQUIRED",
+      "topic": "估值时间与最终行情准入时点"
+    },
+    {
+      "acceptance": "candidate-only 故障不丢失已确认成交，按可信参考幂等履行并记录失败/锁新风险；参考也不可信时保留持久待结算义务交受审恢复，不能用未验证计算器或虚报结算成功。未具备路径时只读/离线 shadow。",
+      "id": "EVG-006",
+      "negative": "真实已确认成交到达后 candidate-only binding 失败；随后重启；客户伪称 mandatory 来绕过 shadow；参考 binding 自身失败。",
+      "references": [
+        "4.3",
+        "5.1",
+        "8",
+        "EBD-010",
+        "EBD-013",
+        "EBD-015"
+      ],
+      "requirement": "区分 candidate 数值差异/超域、candidate binding 缺失、reference binding 不可信。操作类别来自可信结算义务/调用链而非客户 flag。具体定义 candidate 失败时的 reference-only 结算、查询和重启 opener/audit/replay 路径，避免全局 strict opener 或共同 fingerprint 在写账前再次挡住已确认义务。",
+      "stage": "D2_D3",
+      "status": "EXPLICIT_READ_ONLY_FALLBACK_REQUIRED_UNTIL_PROVED",
+      "topic": "shadow 失败与必须结算恢复"
+    },
+    {
+      "acceptance": "无重复预占/分录；新风险按持久状态拒绝，必要结算/撤单仍按规则履行；客户端能按原 CID 查明确或 UNKNOWN 状态，不重放第二影响。",
+      "id": "EVG-007",
+      "negative": "rollback 后 freeze 前终止；freeze commit 后响应丢失；在途取消/部分成交交错；同 CID 查询/重复投递。",
+      "references": [
+        "5.1",
+        "8",
+        "EBD-010",
+        "EBD-015"
+      ],
+      "requirement": "在明确的单写者/事务顺序中关联失败命令、金融回滚和持久 freeze，定义故障窗口；不能回滚一切后仅靠内存 flag 冻结，也不能让并发/重启命令在 freeze 落盘前继续新增风险。",
+      "stage": "D2",
+      "status": "EXISTING_FAILURE_POLICY_NEEDS_CONCRETE_PROTOCOL",
+      "topic": "金融回滚、冻结与结果未知"
+    },
+    {
+      "acceptance": "保留首 FAIL/UNKNOWN/未完成；代码作者不代签金融或独立验证；没有真实资金/生产/容量批准的自动推论。",
+      "id": "EVG-008",
+      "negative": "把已发布 538 样本或 compute 速度当完整接入；复用旧 GO/历史 source plans；为过 TPS 跳过 binding 或把缓存当 immutable。",
+      "references": [
+        "7",
+        "9",
+        "EBD-012",
+        "EBD-014"
+      ],
+      "requirement": "每阶段固定新 source/plan/argv/corpus/runtime。mutation 负例、纯数值、金融 SQL、撮合、容量分开；独立参考不调用生产 core；新 binding 序列化/双算成本单测量。",
+      "stage": "D1_D4",
+      "status": "ALL_EXECUTION_AND_PRODUCTION_GATES_REMAIN_OPEN",
+      "topic": "独立证据、性能与权限边界"
+    }
+  ],
+  "kind": "INDEPENDENT_VERIFICATION_DESIGN_REVIEW",
+  "production_real_funds_capacity_approved": false,
+  "reference_Git_bytes": 673673,
+  "reference_Git_pin_count": 21,
+  "references_are_loaded_runtime_proof": false,
+  "reviewed_design_strengths": [
+    "Closed engine IDs and trusted-image assumptions; no callable/path injection",
+    "Actual callable/alias/default/closure/layout/runtime coverage required",
+    "Legacy policy and historical-artifact semantics not silently upgraded",
+    "Old-writer exclusion and reference-authoritative mandatory settlement explicitly future-gated",
+    "Read-only/offline fallback until operation distinction is independently accepted"
+  ],
+  "rollback": "Remove only two review files; retain source53ace, all design/history and financial records",
+  "root_review_does_not_authorize_blocked_AuthDB_probe": true,
+  "runtime_diff_matrices_match_Git": true,
+  "schema": 1,
+  "scope": "identity/default/closure/globals-builtins/class-layout/old-writer/version-replay/settlement-and-failure verification design only",
+  "source": "53acece53d27fb118c89286c10e5be41bb2ca5e7",
+  "target_import_compile_test_SQL_process_PID_worker_CI_attempts": 0,
+  "verdict": "D0_DESIGN_DIRECTION_ACCEPTABLE_WITH_EXPLICIT_IMPLEMENTATION_GATES"
+}
