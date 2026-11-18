@@ -1,0 +1,101 @@
+{
+  "reviewed_utc": "2026-11-17T23:54:28.167043+00:00",
+  "verdict": "PASS_CODE_ONLY_CLOSURE_OF_TWO_ALIASES_IN_VALID_FINITE_JSON_DOMAIN",
+  "source_commit": "56d2c6cee7cde1b2f74cf2c959cfed07044981f0",
+  "core_commit": "4f9efc9e16da108fabe3be0eaec4d9f922dad948",
+  "source_files_and_author_raw": {
+    "tools/bind_managed_terminal_evidence.py": {
+      "bytes": 25804,
+      "sha256": "70e0dc17335dc1f51fb0a55cbf298fea1ede27146e83f262a6e3d85aa862d8b3",
+      "git_blob_oid": "9b26ae0f05bdf15cadcf7eea8ff91298d9efdd1e"
+    },
+    "tools/extract_managed_terminal_evidence.py": {
+      "bytes": 7807,
+      "sha256": "691c6df2e91d0a980eebe78fe41e169e1fbd9d3e194b441723be42138e7607d6",
+      "git_blob_oid": "22e227071ae0f50abc3e289497c970712474e29b"
+    },
+    "tests/test_managed_terminal_binding.py": {
+      "bytes": 14127,
+      "sha256": "c867a8fd80d345f1c51a3ebe1375930ab3fda3efd5af5df0a5025374b125fd6f",
+      "git_blob_oid": "26b5ea4839b7a14d5561be0fef307918ee98d2a4"
+    },
+    "evidence/managed-terminal-binder-alias-fix-20261117/binding.json": {
+      "bytes": 1018,
+      "sha256": "53e8fe4e57538b950a5d116607f9d4bdb2d621f7e6f56e2ef3282cd93476c2a9",
+      "git_blob_oid": "502cc1d60102bb88bad74904aae435679ac1342a"
+    },
+    "evidence/managed-terminal-binder-alias-fix-20261117/first-result.json": {
+      "bytes": 417,
+      "sha256": "0f77675e1248bc195dc44d86e61c5a403aca2ae02d634f6c6f320e60dd484778",
+      "git_blob_oid": "70ed5e68c0fdf36bc531d87aaac4e29ecfce7101"
+    },
+    "evidence/managed-terminal-binder-alias-fix-20261117/driver.py": {
+      "bytes": 3425,
+      "sha256": "4e8a8f2883da612b6dda69333aff5e51487a9037776d9736ad28a517867500fb",
+      "git_blob_oid": "9b06d56853a22e22b4e4488b4125287c2cae1591"
+    },
+    "evidence/managed-terminal-binder-alias-fix-20261117/stdout.json": {
+      "bytes": 19931,
+      "sha256": "9e7b55f01e5357a8a2c582f52989788389034458f3c078f4e2844c39652a096b",
+      "git_blob_oid": "744dede76019516bf4df636d5b3702a7cc648428"
+    },
+    "evidence/managed-terminal-binder-alias-fix-20261117/stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_oid": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    "evidence/reviews/terminal-binder-alias-followup/first.stdout.json": {
+      "bytes": 7301,
+      "sha256": "df90d11aeb52884cfc2aa81b33be83460e72469f2a75c6cdc3811d3717a5dbe7",
+      "git_blob_oid": "2f44b8c1baffe99ec1db1b7094715f2fb4c68614"
+    },
+    "evidence/reviews/managed-terminal-binder-independent-20261117/first.stdout.json": {
+      "bytes": 5142,
+      "sha256": "5ffef96c4933a73a6043b663ed14f2595845a524cb93e266b9d499c6fdb07fd9",
+      "git_blob_oid": "6d111db25309f46453140ec61fd08c6451ebb664"
+    },
+    "evidence/managed-terminal-binder-strict-20261117/stdout.json": {
+      "bytes": 1015,
+      "sha256": "0d60fcba0c7181a2b0e9f74baef114e0303e4b53bd7c54ba4713791201b8de50",
+      "git_blob_oid": "423b2e009103588ba8e53bb4b5fff80920cabe9c"
+    }
+  },
+  "ast_static_facts": {
+    "source_binder_equals_core_bytes": true,
+    "canonical_birth_required": true,
+    "pairwise_pid_birth_not_pid_alone": true,
+    "strict_equal_has_type_guard_and_iterative_traversal_no_self_recursion": true,
+    "both_financial_watermarks_full_schema_validated_then_strict_compared": true,
+    "REVIEW_AUTHORIZED": false
+  },
+  "author_recorded_execution": {
+    "cases": 14,
+    "passed_cases": 14,
+    "binder_results": 13,
+    "helper_comparison_group": 1,
+    "helper_comparisons": 5,
+    "elapsed_ns": 214873239,
+    "exit_code": 0,
+    "driver_hash_and_all_input_sha_verified": true,
+    "independently_reexecuted": false
+  },
+  "earlier_results_preserved": {
+    "original_two_red_sha256": "df90d11aeb52884cfc2aa81b33be83460e72469f2a75c6cdc3811d3717a5dbe7",
+    "original_six_red_sha256": "5ffef96c4933a73a6043b663ed14f2595845a524cb93e266b9d499c6fdb07fd9",
+    "original18_result_sha256": "0d60fcba0c7181a2b0e9f74baef114e0303e4b53bd7c54ba4713791201b8de50"
+  },
+  "domain_preconditions": [
+    "JSON decoded objects have exact string keys and acyclic JSON containers.",
+    "numeric_tree_bounded rejects nonfinite/out-of-range values before binder comparisons.",
+    "strict_equal is not a comparator for arbitrary Python objects or raw JSON spellings."
+  ],
+  "limits": [
+    "No claim of arbitrary-depth decoder exception coverage or hard filesystem deadline.",
+    "Child raw stdout hashes remain declared/pinned metadata, not reconstructed byte proofs.",
+    "No financial authenticity, actual six-hour completion, full replay or HA validation."
+  ],
+  "new_test_fixture_import_or_project_execution": false,
+  "sql_live_observer_audit": "NOT_RUN",
+  "production_approved": false,
+  "capacity_10000_per_s_passed": false
+}
