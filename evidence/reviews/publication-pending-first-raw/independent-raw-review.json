@@ -1,0 +1,522 @@
+{
+  "actual_model_report": {
+    "baseline": {
+      "complete": true,
+      "coverage": {
+        "activation_gap": 28,
+        "admitted": 332,
+        "fatal_observed": 48,
+        "halted_during_publication": 432,
+        "inflight_activation_halt": 24,
+        "paused_CIDs": 94,
+        "recovered_pause": 94
+      },
+      "states": 854,
+      "transitions": 3339,
+      "violations": []
+    },
+    "bounds": {
+      "CIDs": 1,
+      "operator_halts": 1,
+      "publications": 1,
+      "restarts": 1,
+      "shards": 2,
+      "state_limit_each_variant": 25000
+    },
+    "closed_state_field_count": 20,
+    "coverage_is_state_counts_not_crash_point_coverage": true,
+    "data_reviewed_counterexample_edges": 43,
+    "model_replay_reported_true_not_reexecuted_by_reviewer": true,
+    "negative_complete_false_means_counterexample_found_not_exhaustion": true,
+    "negative_controls": {
+      "activation_ignores_stale_quote": {
+        "actions": [
+          "initial",
+          "quote_expires",
+          "begin_one_publication",
+          "install_shard_0",
+          "query_durable_receipt_shard_0",
+          "install_shard_1",
+          "query_durable_receipt_shard_1",
+          "complete_publication_keep_activation_gap",
+          "begin_activation_capture_operator_revision",
+          "last_validation_and_activate_atomically"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": 0,
+          "activation_witness": [
+            false,
+            true,
+            false,
+            0,
+            0,
+            false
+          ],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": false,
+          "halted": false,
+          "installed": [
+            1,
+            1
+          ],
+          "lease": true,
+          "market": 1,
+          "observed": [
+            1,
+            1
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": false,
+          "phase": "complete",
+          "publication_revision": 0,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 712,
+        "reported_transitions": 2720,
+        "required_violation": "activation_has_final_freshness_check",
+        "trace_edges": 9,
+        "trace_states": 10
+      },
+      "duplicate_admission_reserves_twice": {
+        "actions": [
+          "initial",
+          "last_checkpoint_and_one_CID_reservation",
+          "duplicate_CID_query"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": -1,
+          "activation_witness": [],
+          "admission_witness": [
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            0,
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              0
+            ]
+          ],
+          "attempts": 1,
+          "command": "SUCCEEDED",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": false,
+          "installed": [
+            0,
+            0
+          ],
+          "lease": true,
+          "market": 0,
+          "observed": [
+            0,
+            0
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": false,
+          "phase": "idle",
+          "publication_revision": -1,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 2
+        },
+        "reported_replayed": true,
+        "reported_states": 76,
+        "reported_transitions": 134,
+        "required_violation": "one_CID_reserves_once",
+        "trace_edges": 2,
+        "trace_states": 3
+      },
+      "exception_without_freeze": {
+        "actions": [
+          "initial",
+          "begin_one_publication",
+          "install_shard_0",
+          "query_durable_receipt_shard_0",
+          "install_shard_1",
+          "query_durable_receipt_shard_1",
+          "complete_publication_keep_activation_gap",
+          "begin_activation_capture_operator_revision",
+          "fatal_validation_exit"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": 0,
+          "activation_witness": [],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": true,
+          "fresh": true,
+          "halted": true,
+          "installed": [
+            1,
+            1
+          ],
+          "lease": true,
+          "market": 1,
+          "observed": [
+            1,
+            1
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": true,
+          "phase": "failed",
+          "publication_revision": 0,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 673,
+        "reported_transitions": 2575,
+        "required_violation": "fatal_exit_clears_temporary_pause",
+        "trace_edges": 8,
+        "trace_states": 9
+      },
+      "late_activation_reopens_gate": {
+        "actions": [
+          "initial",
+          "begin_one_publication",
+          "install_shard_0",
+          "query_durable_receipt_shard_0",
+          "install_shard_1",
+          "query_durable_receipt_shard_1",
+          "complete_publication_keep_activation_gap",
+          "begin_activation_capture_operator_revision",
+          "operator_halt_durably_clears_pause",
+          "last_validation_and_activate_atomically"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": 0,
+          "activation_witness": [
+            true,
+            true,
+            false,
+            0,
+            1,
+            true
+          ],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": false,
+          "installed": [
+            1,
+            1
+          ],
+          "lease": true,
+          "market": 1,
+          "observed": [
+            1,
+            1
+          ],
+          "operator_halt": true,
+          "operator_revision": 1,
+          "pending": false,
+          "phase": "complete",
+          "publication_revision": 0,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 740,
+        "reported_transitions": 2809,
+        "required_violation": "operator_halt_dominates_old_control",
+        "trace_edges": 9,
+        "trace_states": 10
+      },
+      "late_publication_revives_pause": {
+        "actions": [
+          "initial",
+          "operator_halt_durably_clears_pause",
+          "begin_one_publication",
+          "install_shard_0",
+          "query_durable_receipt_shard_0",
+          "install_shard_1",
+          "query_durable_receipt_shard_1",
+          "complete_publication_keep_activation_gap"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": -1,
+          "activation_witness": [],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": true,
+          "installed": [
+            1,
+            1
+          ],
+          "lease": true,
+          "market": 1,
+          "observed": [
+            1,
+            1
+          ],
+          "operator_halt": true,
+          "operator_revision": 1,
+          "pending": true,
+          "phase": "gap",
+          "publication_revision": 1,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 554,
+        "reported_transitions": 2006,
+        "required_violation": "operator_halt_dominates_old_control",
+        "trace_edges": 7,
+        "trace_states": 8
+      },
+      "partial_fanout_visible": {
+        "actions": [
+          "initial",
+          "begin_one_publication",
+          "install_shard_0",
+          "query_durable_receipt_shard_0",
+          "complete_publication_keep_activation_gap"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": -1,
+          "activation_witness": [],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": true,
+          "installed": [
+            1,
+            0
+          ],
+          "lease": true,
+          "market": 1,
+          "observed": [
+            1,
+            0
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": true,
+          "phase": "gap",
+          "publication_revision": 0,
+          "publishing": false,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 261,
+        "reported_transitions": 684,
+        "required_violation": "visible_market_has_both_durable_receipts",
+        "trace_edges": 4,
+        "trace_states": 5
+      },
+      "paused_poll_charges_attempt": {
+        "actions": [
+          "initial",
+          "begin_one_publication",
+          "poll_paused_CID"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": -1,
+          "activation_witness": [],
+          "admission_witness": [],
+          "attempts": 1,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": true,
+          "installed": [
+            0,
+            0
+          ],
+          "lease": true,
+          "market": 0,
+          "observed": [
+            0,
+            0
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": true,
+          "phase": "publishing",
+          "publication_revision": 0,
+          "publishing": true,
+          "recovered": false,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 67,
+        "reported_transitions": 112,
+        "required_violation": "paused_pending_command_is_unchanged",
+        "trace_edges": 2,
+        "trace_states": 3
+      },
+      "restart_forgets_pending": {
+        "actions": [
+          "initial",
+          "begin_one_publication",
+          "restart_from_durable_control_and_original_CID"
+        ],
+        "data_only_preconditions_exact_deltas_and_terminal_witness": "PASS",
+        "final_synthetic_state": {
+          "activation_revision": -1,
+          "activation_witness": [],
+          "admission_witness": [],
+          "attempts": 0,
+          "command": "PENDING",
+          "fatal_observed": false,
+          "fresh": true,
+          "halted": true,
+          "installed": [
+            0,
+            0
+          ],
+          "lease": true,
+          "market": 0,
+          "observed": [
+            0,
+            0
+          ],
+          "operator_halt": false,
+          "operator_revision": 0,
+          "pending": false,
+          "phase": "publishing",
+          "publication_revision": 0,
+          "publishing": true,
+          "recovered": true,
+          "reservations": 0
+        },
+        "reported_replayed": true,
+        "reported_states": 61,
+        "reported_transitions": 98,
+        "required_violation": "temporary_pause_survives_restart",
+        "trace_edges": 2,
+        "trace_states": 3
+      }
+    }
+  },
+  "data_only": true,
+  "execution_evidence": {
+    "automatic_retry_recorded": false,
+    "capture": "regular stdout/stderr files; wrapper flush/fsync calls; pipe EOF/wait/reap not applicable",
+    "direct_exec_runpy_same_process_no_model_Popen_child": true,
+    "elapsed_and_tool_wall_are_distinct_not_performance_results": true,
+    "external_tool_record": {
+      "chunk_id": "914815",
+      "completion_output_bytes": 0,
+      "exit": 0,
+      "session_present": false
+    },
+    "model_returned": true,
+    "prefix_elapsed_ns": 107657743,
+    "prefix_reported_exit": null,
+    "process_tree_observation_performed": false,
+    "review_reruns": 0,
+    "root_witness_external_exit": 0,
+    "tool_wall_time_seconds": 2.5701e-05,
+    "witness_limit": "sealed root tool-result record reviewed; no independent provider/history uniqueness attestation"
+  },
+  "export_recommendation": {
+    "approved_content_sha256": "fc393727703b954f5544cf5132eecd3a528d0131bbd5edc475c34a475f5fcdd3",
+    "closed_keys_types_and_constants_only": true,
+    "decision": "ALLOW_EXACT_46945_BYTE_SYNTHETIC_STDOUT_ONLY_AFTER_ROOT_SAFE_DELIVERY",
+    "full_stdout_export_performed_by_reviewer": false,
+    "real_CPU_PID_paths_interpreter_root_witness_wrapper_or_prefix_exported": false,
+    "real_account_or_identity_or_clock_data_present": false,
+    "requires_post_export_exact_byte_delta_review": true
+  },
+  "important_trace_scope": {
+    "late_activation_reopens_gate": "Actual trace captures revision0, then operator halt advances current revision1 before activation.",
+    "late_publication_revives_pause": "Actual shortest trace halts before beginning publication; captured/current revisions are both1 and operator_halt remains true. This proves the synthetic operator-halt branch failure, not a captured0/current1 late-publication race.",
+    "restart_forgets_pending": "Actual trace begins publication before restart; pending true becomes false in publishing."
+  },
+  "independent_CODE_commit": "94b1c9da352c9fbeedd99734f0db01162c071ffc",
+  "model_source_bytes": 11472,
+  "model_source_commit": "2ff960eb7ec5b5ad19e366448237a010254c7f47",
+  "model_source_sha256": "8d6ead3a0f9c9d58c52d6659db3fac090bea9b9f9b5e57d6430eefef247f93fb",
+  "production_approved": false,
+  "resource_limits": {
+    "CPU_RLIMIT_CPU_seconds": 60,
+    "RLIMIT_scope": "model/wrapper process writes and allocations; not a hard directory-wide cap or peak-usage measurement",
+    "aggregate_namespace_or_hard_wall_interrupt_proven": false,
+    "memory_RLIMIT_AS_bytes": 536870912,
+    "namespace_observed_including_seal_bytes": 70312,
+    "namespace_plan_bytes": 8388608,
+    "observed_prefix_seconds_under_60": true,
+    "per_file_RLIMIT_FSIZE_bytes": 1048576,
+    "single_selected_CPU": true
+  },
+  "review_method": "Read sealed bytes, strict JSON shape/types/constants and all observed transition preconditions/exact changed fields/terminal witnesses; did not call or import model, enumerate states, or build an independent production reference. Baseline BFS counts remain actual model-reported values bound to reviewed source and completion evidence.",
+  "review_target_import_compile_model_runs_SQL_proc_workers_network": 0,
+  "schema": 1,
+  "sealed_originals": {
+    "all_original_hashes_and_sizes_match": true,
+    "bytes": 68621,
+    "files": 9,
+    "regular_files_0400_and_directory_0500": true,
+    "seal_bytes": 1691,
+    "seal_not_modified": true,
+    "seal_sha256": "50078c83e78be80186ea14991f4979679f8a34922fb07e45006d6052a7fd9ff0"
+  },
+  "source_binding": {
+    "CODE_review_Git_model_unchanged": true,
+    "CODE_review_parent_is_model_source": true,
+    "Git_physical_used_model_equal": true,
+    "actual_interpreter_bytes": 30894944,
+    "actual_interpreter_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "interpreter_evidence_limit": "Command-selected path and current/preflight bytes match; trusted immutable preflight-to-exec environment assumed, no in-process executable self-attestation.",
+    "interpreter_matches_preflight": true,
+    "model_imports": [
+      "collections",
+      "dataclasses",
+      "json"
+    ],
+    "used_wrapper_plan_command_argument_equal": true
+  },
+  "stdout": {
+    "ASCII": true,
+    "bytes": 46945,
+    "complete_single_JSON_no_duplicate_keys": true,
+    "sha256": "fc393727703b954f5544cf5132eecd3a528d0131bbd5edc475c34a475f5fcdd3",
+    "stderr_bytes": 0
+  },
+  "unproved": [
+    "runtime refinement or implementation correspondence",
+    "liveness/fairness or multi-account ordering",
+    "stop-record write failure path",
+    "physical fsync/durable replica/lease freshness",
+    "financial balances/reservations in actual ledger/matching/liquidation",
+    "production readiness or performance qualification"
+  ],
+  "verdict": "ACCEPT_FIRST_BOUNDED_MODEL_RAW_RECORD_WITH_EXPLICIT_LIMITS"
+}
