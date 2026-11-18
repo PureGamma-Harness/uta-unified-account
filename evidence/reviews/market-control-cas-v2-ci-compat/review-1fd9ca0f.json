@@ -1,0 +1,183 @@
+{
+  "AST_checks": {
+    "changed_Python_files": 4,
+    "fixture_all_function_class_ASTs_equal_parent": true,
+    "parse": "PASS_AST_ONLY",
+    "runtime_worker_functions": 1,
+    "runtime_worker_unique_callsite_line": 544,
+    "runtime_worker_view_process_one_calls": 1
+  },
+  "UTA_Git_tree_unchanged": true,
+  "activity": {
+    "CI_actions": 0,
+    "SQL_or_DB_open": 0,
+    "candidate_source_edits": 0,
+    "network": 0,
+    "old_authority_or_main_index_edits": 0,
+    "proc_or_PID_queries": 0,
+    "target_compile": 0,
+    "target_import": 0,
+    "target_tests": 0,
+    "worker_native_or_signal_actions": 0
+  },
+  "candidate_five_author_physical_files_equal_Git": true,
+  "candidate_pins": {
+    "docs/market-control-cas-v2-first-ci-compatibility.md": {
+      "bytes": 3213,
+      "sha256": "6f989b86de2777393bcf4e862658b88aa6d2f513ae555a77d48c371adb94f6d8"
+    },
+    "tests/native_sh_capture_fixture.py": {
+      "bytes": 11936,
+      "sha256": "ec3dfa68259bbc238e75993e6c45f4cc24495a96df1f1edbf7d68f8f4f7d62a8"
+    },
+    "tests/test_durable_faults.py": {
+      "bytes": 101002,
+      "sha256": "d3f24a76c49744124c898dac2fdb29df446fd4ff01c1da538c302321c0d603f2"
+    },
+    "tests/test_native_sh_capture_protocol_pure.py": {
+      "bytes": 12468,
+      "sha256": "b3838c458c6def145ee97d10d1fc8e2421647e2b8dd3f79da02f08493c1a1b37"
+    },
+    "tests/test_process_readiness.py": {
+      "bytes": 19495,
+      "sha256": "a78221d0db4993408c66e3dace8dba59f84e772b39ff080aac6420d9fb24630d"
+    }
+  },
+  "delta_paths_exact": true,
+  "exact_parent": "72dd3a17d7a8e363d95854ee8c4f361e0a24d901",
+  "execution_authorized": false,
+  "historical_CI": {
+    "first_failure": "PRESERVED_NOT_RERUN_OR_RELABELED",
+    "new_CI_outcome": "NOT_RUN_IN_THIS_REVIEW",
+    "numbers_provenance": "PARENT_AND_DELIVERY_DOCUMENT_NOT_RECOLLECTED_IN_THIS_REVIEW",
+    "reported_errors_each": 1,
+    "reported_failures_each": 3,
+    "reported_jobs": 8,
+    "reported_skips_each": 0,
+    "reported_tests_each": 2193,
+    "scope_per_job_observations_not_overclaimed": true,
+    "two_fixed_logs_new_methods_plain_ok_observations": 44
+  },
+  "kind": "independent_first_CI_test_fixture_compatibility_static_review",
+  "native_binding": {
+    "PROFILE_unchanged": true,
+    "all_fixture_function_class_ASTs_unchanged": true,
+    "exact_source_loaded_code_unique_callsite_rejection_retained": true,
+    "literal_matches_Git_runtime": true,
+    "literal_revision": 2,
+    "literal_runtime_sha256": "9b346b3888a162141699926f6c4505b6804a5982a82af7ef3c017cac6ed1053e",
+    "native_recovery_proven": false,
+    "previous_literal": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "previous_matches_parent_fixture": true,
+    "pure_literal_assertions_added": 3,
+    "runtime_source_bytes": 110134,
+    "unique_old_horizon_root_cause_claimed": false,
+    "wire_version": 1
+  },
+  "no_changes": [
+    "UTA runtime/API/financial formula",
+    "fee/business threshold",
+    "lease/timeouts",
+    "skip or assertion suppression",
+    "wire protocol/profile",
+    "native capture signalling or recovery implementation",
+    "old authority/main index/original native helpers"
+  ],
+  "nonblocking_comments": [
+    {
+      "blocks_new_first_CI": false,
+      "id": "C1",
+      "kind": "DUPLICATE_RECEIPT_ASSERTION_COVERAGE",
+      "observation": "New duplicate assertion compares result plus financial snapshot, not every outer receipt field. Existing unchanged QueueStore duplicate branch returns the original complete row.",
+      "optional_improvement": "Assert complete duplicate receipt equals the accepted receipt to cover sequence, attempts, identity and timestamps explicitly."
+    }
+  ],
+  "production_approved": false,
+  "publication_case": {
+    "after_replay_and_activation": [
+      "original CID SUCCEEDED",
+      "result.order_id equals original command/order",
+      "result.reserved_margin positive",
+      "same canonical duplicate result",
+      "financial_snapshot unchanged",
+      "later normal order still succeeds"
+    ],
+    "explicit_halt_runtime_rejection_changed": false,
+    "financial_snapshot_helper_changed": false,
+    "financial_snapshot_table_count": 12,
+    "financial_snapshot_tables": [
+      "uta_accounts",
+      "uta_orders",
+      "uta_positions",
+      "uta_fills",
+      "uta_events",
+      "uta_deposits",
+      "uta_liabilities",
+      "ledger_events",
+      "ledger_postings",
+      "ledger_balances",
+      "uta_matches",
+      "credit_commands"
+    ],
+    "nonterminal_observation": "status, not wait",
+    "pending_assertions": [
+      "PENDING",
+      "attempts=0",
+      "result=None",
+      "error=None",
+      "financial_snapshot unchanged",
+      "no financial order"
+    ],
+    "queue_metadata_in_financial_snapshot": false,
+    "result_shape_static_consistent": true,
+    "source_contracts_reviewed": [
+      "DurableProcessRouter.status/wait/submit_order",
+      "ShardWorkerView.process_one and typed _market_transition_pending",
+      "QueueStore.enqueue/_record/process_one",
+      "ExchangeService._admit_order/_order"
+    ]
+  },
+  "push_authorized_by_this_report": false,
+  "readiness_case": {
+    "canonical_JSON_matches_normal_encoder": true,
+    "diagnostic_rejects_before_state_projection": true,
+    "direct_fault_injection": "parameterized UPDATE of router_state payload under existing control transaction role and exclusive lock",
+    "faults": [
+      "invalid halted type",
+      "invalid pause-marker type",
+      "invalid watermark key",
+      "invalid market version/digest pair"
+    ],
+    "finally_restores_valid_original": true,
+    "lock": "existing exclusive control lock; released before diagnosis",
+    "normal_writer_bad_flag_checks": [
+      "halted invalid string",
+      "market_transition_pending integer"
+    ],
+    "normal_writer_raises": "ServiceError control_corruption before write transaction",
+    "production_control_validation_changed": false,
+    "read_only_diagnostic_and_redaction_assertions_retained": true,
+    "role": "closed fresh synthetic test authority only",
+    "valid_state_unchanged_asserted": true
+  },
+  "recommendation": "No static CODE blocker to root authorizing a separately scoped new first normal CI on exact1fd. This report is not itself execution authority or a passing CI result.",
+  "remaining_gates": [
+    "new normal CI outcome",
+    "functional acceptance",
+    "installed-component acceptance",
+    "native recovery",
+    "capacity",
+    "HA",
+    "real funds and production approval"
+  ],
+  "review_document": {
+    "bytes": 5818,
+    "path": "docs/market-control-cas-v2-ci-compatibility-review.md",
+    "sha256": "8e06baf858dfb19cb01d3c727a5b55fe5da9e7fee7f509109a981beb81f29a31"
+  },
+  "reviewed_commit": "1fd9ca0f3142bff87a8329e2a257dd5a7ca73227",
+  "rollback": "Revert only this five-file test/fixture/docs delta; retain historical failures and fingerprints; no DB migration or confirmed financial-effect change.",
+  "schema": 1,
+  "scope": "FIVE_FILE_TEST_FIXTURE_DOCS_ONLY_NO_TARGET_EXECUTION",
+  "status": "PASS_STATIC_NO_BLOCKER"
+}
