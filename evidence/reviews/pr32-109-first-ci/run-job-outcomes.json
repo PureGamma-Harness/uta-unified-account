@@ -1,0 +1,65 @@
+{
+  "base_sha": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+  "head_sha": "1097387cdb3d630f643b0ced7bf00fe4cd76028d",
+  "provenance": "Explicit run/jobs outcome projection transferred by root from its once-fetched provider responses. This reviewer did not GET either run or jobs list.",
+  "runs": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "job_id": 134481965771,
+          "python": "3.10"
+        },
+        {
+          "conclusion": "success",
+          "job_id": 134481965972,
+          "python": "3.12"
+        },
+        {
+          "conclusion": "failure",
+          "failed_step": "Run unit tests",
+          "failed_step_number": 5,
+          "job_id": 134481966056,
+          "python": "3.13"
+        },
+        {
+          "conclusion": "success",
+          "job_id": 134481966098,
+          "python": "3.11"
+        }
+      ],
+      "run_attempt": 1,
+      "run_id": 44208918336
+    },
+    {
+      "conclusion": "success",
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "job_id": 134481991867,
+          "python": "3.12"
+        },
+        {
+          "conclusion": "success",
+          "job_id": 134481991894,
+          "python": "3.13"
+        },
+        {
+          "conclusion": "success",
+          "job_id": 134481991914,
+          "python": "3.10"
+        },
+        {
+          "conclusion": "success",
+          "job_id": 134481991946,
+          "python": "3.11"
+        }
+      ],
+      "run_attempt": 1,
+      "run_id": 44208926861
+    }
+  ]
+}
