@@ -377,7 +377,7 @@
       "internal_decision": "Latest market/risk recheck; PnL floor to USD units; cumulative fee ceil then difference; configured standalone REST fill refused",
       "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
       "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38; fee ceil cumulative, PnL floor",
-      "current_entry": "ExchangeService._apply_fill via LocalMatcher for configured products",
+      "current_entry": "ExchangeService._apply_fill via Matcher for configured products",
       "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
       "evidence": [
         {
@@ -388,7 +388,7 @@
         },
         {
           "path": "uta/matching.py",
-          "symbol_or_lines": "LocalMatcher",
+          "symbol_or_lines": "Matcher",
           "git_blob": "e53eddde90398b59d20df2fecf019287b6f2d94e",
           "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
         },
@@ -428,12 +428,12 @@
       "internal_decision": "Two real counterpart orders and unique matching receipt; no crossed orders means no fabricated fill",
       "exchange_mapping": "UNDETERMINED: local policy is not an exchange implementation; no live/external source accessed",
       "currency_unit_precision": "USD reporting/settlement; asset amounts in native units; exact Fraction risk; trading input <=8 decimals, abs<=1e12; service USD scale2..8; ledger asset scale0..18, abs minor units<1e38",
-      "current_entry": "LocalMatcher.match_once; v1 matching; managed worker matching",
+      "current_entry": "Matcher.match_once; v1 matching; managed worker matching",
       "actual_flag": "STATIC_PATH_AVAILABLE; deployed activation UNDETERMINED",
       "evidence": [
         {
           "path": "uta/matching.py",
-          "symbol_or_lines": "LocalMatcher",
+          "symbol_or_lines": "Matcher",
           "git_blob": "e53eddde90398b59d20df2fecf019287b6f2d94e",
           "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
         },
