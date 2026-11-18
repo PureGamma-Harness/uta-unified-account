@@ -20,6 +20,30 @@ def request(op="aggregate", data=None):
 
 
 class TargetFundingAdapterV2Tests(unittest.TestCase):
+    def test_all_schema_branches_are_checked_before_value_selection(self):
+        bad_branches = (
+            {"type": "number"},
+            {"type": ["null", "integer"]},
+            {"type": "object", "properties": {"x": {"unknown_feature": True}},
+             "required": ["x"], "additionalProperties": False},
+            {"type": "array", "items": {"unknown_feature": True}},
+            {"type": "object", "properties": {"x": {"type": "string"}},
+             "required": "x", "additionalProperties": False},
+            {"oneOf": []},
+            {"type": "array", "items": {"type": "integer"}, "maxItems": True},
+            {"enum": "x"},
+        )
+        for branch in bad_branches:
+            with self.subTest(branch_keys=tuple(branch)), self.assertRaises(AdapterContractError):
+                _validate_output({"oneOf": [{"type": "null"}, branch]}, None)
+
+    def test_supported_alternatives_preserve_exact_native_integer_rules(self):
+        schema = {"oneOf": [{"type": "null"}, {"type": "integer", "minimum": 0}]}
+        self.assertIsNone(_validate_output(schema, None))
+        self.assertIsNone(_validate_output(schema, 0))
+        with self.assertRaises(AdapterContractError):
+            _validate_output(schema, True)
+
     def test_action_ID_elements_have_wire_native_type_and_format(self):
         for identities in ((0,), (False,), ("not-an-action-id",)):
             with patch.object(target, "validate_wait_records", return_value=identities):

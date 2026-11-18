@@ -155,7 +155,83 @@ def _wire_contract():
     return json.loads(raw.decode("utf-8"))
 
 
-def _validate_output(schema, value, depth=0):
+def _check_output_schema(schema, definitions, depth=0, active_refs=None, work=None):
+    """Validate every schema branch before inspecting the candidate value."""
+    if active_refs is None:
+        active_refs, work = set(), [0]
+    work[0] += 1
+    if type(schema) is not dict or any(type(k) is not str for k in schema) or depth > 32 or work[0] > 8192:
+        raise AdapterContractError("unsupported_output_schema_shape")
+    if "$ref" in schema:
+        ref = schema["$ref"]
+        if set(schema) != {"$ref"} or type(ref) is not str or not ref.startswith("#/$defs/"):
+            raise AdapterContractError("unsupported_output_reference")
+        name = ref.removeprefix("#/$defs/")
+        if name not in definitions or name in active_refs:
+            raise AdapterContractError("unknown_or_recursive_output_reference")
+        active_refs.add(name)
+        try:
+            _check_output_schema(definitions[name], definitions, depth + 1, active_refs, work)
+        finally:
+            active_refs.remove(name)
+        return
+    if "oneOf" in schema:
+        options = schema["oneOf"]
+        if set(schema) != {"oneOf"} or type(options) is not list or not 1 <= len(options) <= 4:
+            raise AdapterContractError("unsupported_output_alternatives")
+        for option in options:
+            _check_output_schema(option, definitions, depth + 1, active_refs, work)
+        return
+    declared = schema.get("type")
+    families = {
+        "object": {"properties", "required", "additionalProperties"},
+        "array": {"items", "minItems", "maxItems"},
+        "integer": {"minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"},
+        "string": {"minLength", "maxLength", "pattern"},
+        "boolean": set(), "null": set(),
+    }
+    if "type" in schema and (type(declared) is not str or declared not in families):
+        raise AdapterContractError("unsupported_output_type")
+    allowed = {"type", "const", "enum"} | (families[declared] if declared is not None else set())
+    if not schema or set(schema) - allowed or declared is None and not (set(schema) & {"const", "enum"}):
+        raise AdapterContractError("unsupported_output_schema")
+    if "const" in schema and type(schema["const"]) not in (type(None), bool, int, str):
+        raise AdapterContractError("unsupported_output_constant")
+    if "enum" in schema:
+        options = schema["enum"]
+        if type(options) is not list or not 1 <= len(options) <= 32 or any(type(x) not in (type(None), bool, int, str) for x in options):
+            raise AdapterContractError("unsupported_output_enum")
+    numeric = ("minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum")
+    lengths = ("minItems", "maxItems", "minLength", "maxLength")
+    for bound in numeric + lengths:
+        if bound in schema and (type(schema[bound]) is not int or bound in lengths and schema[bound] < 0):
+            raise AdapterContractError("unsupported_output_bound")
+    for low, high in (("minimum", "maximum"), ("minItems", "maxItems"), ("minLength", "maxLength")):
+        if low in schema and high in schema and schema[low] > schema[high]:
+            raise AdapterContractError("inconsistent_output_bounds")
+    if "pattern" in schema:
+        if type(schema["pattern"]) is not str or len(schema["pattern"]) > 1024:
+            raise AdapterContractError("unsupported_output_pattern")
+        try:
+            re.compile(schema["pattern"])
+        except re.error as error:
+            raise AdapterContractError("invalid_output_pattern") from error
+    if declared == "object":
+        properties, required = schema.get("properties"), schema.get("required")
+        if (type(properties) is not dict or any(type(k) is not str for k in properties)
+                or type(required) is not list or any(type(k) is not str for k in required)
+                or len(required) != len(set(required)) or set(properties) != set(required)
+                or schema.get("additionalProperties") is not False):
+            raise AdapterContractError("unsupported_closed_output_object")
+        for child in properties.values():
+            _check_output_schema(child, definitions, depth + 1, active_refs, work)
+    if declared == "array":
+        if "items" not in schema:
+            raise AdapterContractError("unsupported_output_items")
+        _check_output_schema(schema["items"], definitions, depth + 1, active_refs, work)
+
+
+def _match_output(schema, value, depth=0):
     """Closed native JSON-schema subset for the pinned output contract only."""
     supported = {"$ref", "type", "const", "enum", "oneOf", "properties", "required",
                  "additionalProperties", "items", "minItems", "maxItems", "minLength",
@@ -170,14 +246,14 @@ def _validate_output(schema, value, depth=0):
         definitions = _wire_contract()["$defs"]
         if name not in definitions:
             raise AdapterContractError("unknown_output_reference")
-        return _validate_output(definitions[name], value, depth + 1)
+        return _match_output(definitions[name], value, depth + 1)
     if "oneOf" in schema:
         if set(schema) != {"oneOf"} or type(schema["oneOf"]) is not list or len(schema["oneOf"]) > 4:
             raise AdapterContractError("unsupported_output_alternatives")
         matches = 0
         for option in schema["oneOf"]:
             try:
-                _validate_output(option, value, depth + 1)
+                _match_output(option, value, depth + 1)
             except _OutputMismatch:
                 continue
             matches += 1
@@ -199,12 +275,12 @@ def _validate_output(schema, value, depth=0):
                 or set(value) != set(required) or set(properties) != set(required)):
             raise _OutputMismatch("output_object_fields_mismatch")
         for name in required:
-            _validate_output(properties[name], value[name], depth + 1)
+            _match_output(properties[name], value[name], depth + 1)
     if type(value) is list:
         if "items" not in schema or len(value) < schema.get("minItems", 0) or len(value) > schema.get("maxItems", 1000):
             raise _OutputMismatch("output_array_mismatch")
         for item in value:
-            _validate_output(schema["items"], item, depth + 1)
+            _match_output(schema["items"], item, depth + 1)
     if type(value) is str:
         if (len(value) < schema.get("minLength", 0) or len(value) > schema.get("maxLength", 2097152)
                 or "pattern" in schema and re.fullmatch(schema["pattern"], value) is None):
@@ -215,6 +291,11 @@ def _validate_output(schema, value, depth=0):
                 or "exclusiveMinimum" in schema and value <= schema["exclusiveMinimum"]
                 or "exclusiveMaximum" in schema and value >= schema["exclusiveMaximum"]):
             raise _OutputMismatch("output_integer_range_mismatch")
+
+
+def _validate_output(schema, value):
+    _check_output_schema(schema, _wire_contract()["$defs"])
+    return _match_output(schema, value)
 
 
 def _checked_intermediate(name, value):
