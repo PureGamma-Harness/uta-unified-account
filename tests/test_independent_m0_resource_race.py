@@ -1,5 +1,6 @@
 """Pure file/metadata races only; no SQLite import or workload process."""
 import errno
+from contextlib import contextmanager
 import importlib.util
 from pathlib import Path
 import stat
@@ -102,9 +103,9 @@ class ResourceRaceContract(unittest.TestCase):
         with patch.object(Path,'lstat',missing):
             with self.assertRaises((m.GateError,FileNotFoundError)):m.resource_usage(self.private,self.public)
         self.assertEqual(len(calls),1)
-    def test_walk_permission_error_propagates(self):
-        def walk(root,**kwargs):kwargs['onerror'](PermissionError(errno.EACCES,'synthetic directory denied',str(root)))
-        with patch.object(m.os,'walk',walk):
+    def test_scandir_permission_error_propagates(self):
+        def denied(root):raise PermissionError(errno.EACCES,'synthetic directory denied',str(root))
+        with patch.object(m.os,'scandir',denied):
             with self.assertRaises(PermissionError):m.resource_usage(self.private,self.public)
     def test_runtime_probe_aux_disappearance_uses_same_bounded_policy(self):
         probe=self.private/'runtime-probe';probe.mkdir();(probe/'private.sqlite3').write_bytes(b'q')
@@ -121,11 +122,12 @@ class ResourceRaceContract(unittest.TestCase):
             return self.real(path,*args,**kwargs)
         with patch.object(Path,'lstat',racing):
             with self.assertRaises(m.GateError):m.resource_usage(self.private,self.public)
-    def ordered_walk(self,real_walk):
-        def walk(*args,**kwargs):
-            for parent,dirs,files in real_walk(*args,**kwargs):
-                yield parent,dirs,sorted(files,key=lambda name:name.endswith('-shm'))
-        return walk
+    def ordered_scandir(self,real_scandir):
+        @contextmanager
+        def scan(*args,**kwargs):
+            with real_scandir(*args,**kwargs) as entries:
+                yield iter(sorted(entries,key=lambda entry:entry.name.endswith('-shm')))
+        return scan
     def test_previously_seen_stable_path_cannot_vanish_between_attempts(self):
         stable=self.authority/'stable.json';stable.write_bytes(b's')
         def racing(path,*args,**kwargs):
@@ -133,7 +135,7 @@ class ResourceRaceContract(unittest.TestCase):
                 self.removed=True;path.unlink();stable.unlink()
                 raise FileNotFoundError(errno.ENOENT,'synthetic sidecar closed',str(path))
             return self.real(path,*args,**kwargs)
-        with patch.object(m.os,'walk',self.ordered_walk(m.os.walk)),patch.object(Path,'lstat',racing):
+        with patch.object(m.os,'scandir',self.ordered_scandir(m.os.scandir)),patch.object(Path,'lstat',racing):
             with self.assertRaisesRegex(m.GateError,'resource_stable_disappeared_during_retry'):m.resource_usage(self.private,self.public)
     def test_prior_partial_size_lower_bound_survives_retry(self):
         stable=self.authority/'stable.bin';stable.write_bytes(b's');growth=self.authority/'growth.bin'
@@ -143,7 +145,7 @@ class ResourceRaceContract(unittest.TestCase):
                 raise FileNotFoundError(errno.ENOENT,'synthetic sidecar closed',str(path))
             if path==stable:return SimpleNamespace(st_mode=stat.S_IFREG|0o600,st_size=1 if getattr(self,'removed',False) else m.AGGREGATE_CAP-2)
             return self.real(path,*args,**kwargs)
-        with patch.object(m.os,'walk',self.ordered_walk(m.os.walk)),patch.object(Path,'lstat',racing):
+        with patch.object(m.os,'scandir',self.ordered_scandir(m.os.scandir)),patch.object(Path,'lstat',racing):
             with self.assertRaisesRegex(m.GateError,'resource_compartment_cap'):m.resource_usage(self.private,self.public)
     def test_previously_seen_stable_type_cannot_change_on_retry(self):
         stable=self.authority/'stable.json';stable.write_bytes(b's')
@@ -152,7 +154,7 @@ class ResourceRaceContract(unittest.TestCase):
                 self.removed=True;path.unlink();stable.unlink();stable.mkdir()
                 raise FileNotFoundError(errno.ENOENT,'synthetic sidecar closed',str(path))
             return self.real(path,*args,**kwargs)
-        with patch.object(m.os,'walk',self.ordered_walk(m.os.walk)),patch.object(Path,'lstat',racing):
+        with patch.object(m.os,'scandir',self.ordered_scandir(m.os.scandir)),patch.object(Path,'lstat',racing):
             with self.assertRaisesRegex(m.GateError,'resource_stable_type_changed'):m.resource_usage(self.private,self.public)
 
 class RouterAuxContract(ResourceRaceContract):

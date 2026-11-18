@@ -272,6 +272,13 @@ def _resource_tree_scope(root):
 def _walk_error(error,scope='UNKNOWN'):
     _mark_resource_error(error,scope,'ENUMERATE_DIRECTORY',error.filename);raise error
 
+def _resource_directory_entries(parent,scope):
+    try:
+        with os.scandir(parent) as entries:
+            yield from entries
+    except OSError as error:
+        _walk_error(error,scope)
+
 def _resource_entries(root, observe, allow_missing_root=False, diagnostic_scope='UNKNOWN'):
     try:info=_resource_lstat(root,diagnostic_scope,'ROOT_LSTAT')
     except FileNotFoundError:
@@ -279,14 +286,29 @@ def _resource_entries(root, observe, allow_missing_root=False, diagnostic_scope=
         raise
     _resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory',diagnostic_scope,'ROOT_LSTAT',root)
     observe(root,info)
-    for parent,dirs,files in os.walk(root,followlinks=False,onerror=lambda error:_walk_error(error,diagnostic_scope)):
-        for name in dirs+files:
-            path=Path(parent)/name
-            info=_resource_lstat(path,diagnostic_scope,'ENTRY_LSTAT')
+    pending=[root]
+    while pending:
+        parent=pending.pop()
+        info=_resource_lstat(parent,diagnostic_scope,'ENUMERATE_DIRECTORY')
+        _resource_need(stat.S_ISDIR(info.st_mode) and not stat.S_ISLNK(info.st_mode),'resource_root_directory',diagnostic_scope,'ENUMERATE_DIRECTORY',parent)
+        for entry in _resource_directory_entries(parent,diagnostic_scope):
+            path=Path(entry.path)
+            try:enumerated_regular=entry.is_file(follow_symlinks=False)
+            except OSError as error:
+                _mark_resource_error(error,diagnostic_scope,'ENUMERATE_DIRECTORY',path);raise
+            try:info=_resource_lstat(path,diagnostic_scope,'ENTRY_LSTAT')
+            except FileNotFoundError as error:
+                # DirEntry preserves nofollow enumeration metadata. If d_type
+                # is unknown and its fallback stat finds no entry, is_file is
+                # false (or raises); neither case grants a disappearance retry.
+                error._m0_enumerated_regular_path=(str(path) if enumerated_regular is True
+                    and error.filename==str(path) else None)
+                raise
             try:charge=observe(path,info)
             except BaseException as error:
                 _mark_resource_error(error,diagnostic_scope,'RETRY_STABLE_SET',path);raise
             yield path,info,charge
+            if stat.S_ISDIR(info.st_mode):pending.append(path)
 
 def _sqlite_aux_location(path, anchors):
     for role,anchor in anchors:
@@ -302,7 +324,9 @@ def _sqlite_aux_location(path, anchors):
 
 def _known_missing_sqlite_aux(error, anchors):
     if error.errno!=2 or not error.filename:return False
-    path=Path(error.filename);location=_sqlite_aux_location(path,anchors)
+    path=Path(error.filename)
+    if getattr(error,'_m0_enumerated_regular_path',None)!=str(path):return False
+    location=_sqlite_aux_location(path,anchors)
     if location is not None:
         anchor,relative=location
         # A vanished sidecar never excuses missing/replaced main or parents.
@@ -321,7 +345,9 @@ def _fresh_resource_scan(scan, anchors):
     stable_types={};max_sizes={};current=set()
     def observe(path,info):
         kind=stat.S_IFMT(info.st_mode)
-        if _sqlite_aux_location(path,anchors) is None:
+        if _sqlite_aux_location(path,anchors) is not None:
+            need(stat.S_ISREG(info.st_mode),'resource_special')
+        else:
             if path in stable_types:need(stable_types[path]==kind,'resource_stable_type_changed')
             stable_types[path]=kind;current.add(path)
         if stat.S_ISREG(info.st_mode):

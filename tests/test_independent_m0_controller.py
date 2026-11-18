@@ -1,5 +1,5 @@
 """Pure stub controls only: no SQL/product/profile/workload/Actions execution."""
-from contextlib import redirect_stdout
+from contextlib import nullcontext, redirect_stdout
 from datetime import datetime, timezone, timedelta
 import importlib.util
 import io
@@ -217,7 +217,8 @@ class PureM0Controls(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             fake=SimpleNamespace(st_mode=stat.S_IFREG|0o600,st_size=0)
             directory=SimpleNamespace(st_mode=stat.S_IFDIR|0o700,st_size=0)
-            with patch.object(m.os,'walk',return_value=[(tmp,[],[f'f{i}' for i in range(20001)])]),patch.object(Path,'lstat',lambda path:directory if path==Path(tmp) else fake):
+            entries=(SimpleNamespace(path=str(Path(tmp)/f'f{i}'),is_file=lambda **kwargs:True) for i in range(20001))
+            with patch.object(m.os,'scandir',side_effect=lambda root:nullcontext(entries)),patch.object(Path,'lstat',lambda path:directory if path==Path(tmp) else fake):
                 with self.assertRaisesRegex(m.GateError,'tree_entries_cap'):m.tree_bytes(Path(tmp))
     def test_profile_schema_has_only_function_counters_no_arguments(self):
         with TemporaryDirectory() as tmp:
