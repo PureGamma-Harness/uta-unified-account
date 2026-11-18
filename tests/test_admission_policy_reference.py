@@ -61,7 +61,9 @@ def verify(fixture):
 class AdmissionPolicyReferenceTests(unittest.TestCase):
     def test_manual_strict_mm_and_legal_im_equality(self):
         for mm, expected in ((".1", False), (".05", True)):
-            with self.subTest(mm=mm):
+            with self.subTest(mm=mm), localcontext() as context:
+                context.prec = 2
+                context.traps[Inexact] = context.traps[Rounded] = True
                 fixture = example(cash="10.04", mm=mm,
                     before_values=risk("10.04", "0", "0", "0", "10.04"),
                     after_values=risk("10.04", "0", "0", "10.04", "0"),
