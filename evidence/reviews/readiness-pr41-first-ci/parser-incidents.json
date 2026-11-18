@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "original_archives_unchanged": true,
+  "CI_reruns_or_dispatches": 0,
+  "derived_failures": [
+    {
+      "order": 1,
+      "schema": 1,
+      "phase": "first derived decoded-joblog scanner preparation",
+      "error": "ReferenceError: TextEncoder is not defined",
+      "first_attempt_failed_before_file_write_or_archive_decode": true,
+      "original_plugin_file_reference_unchanged": true,
+      "original_archive_not_yet_materialized_at_error": true,
+      "correction": "Use an explicit UTF-8 byte-count function in V8; no target or archive bytes changed and no CI rerun.",
+      "scope": "Derived parser environment error only; not a CI result."
+    },
+    {
+      "order": 2,
+      "phase": "first package ZIP parser",
+      "error": "ValueError: unknown package report member",
+      "reason": "Actual upload retains the explicit uta-installed-validation/ prefix declared by workflow common root; first parser assumed flat report names.",
+      "original_parser_source": "parser-sources/inspect_ci_archive_first.py",
+      "original_stderr": "parser-sources/package-first-error.stderr",
+      "original_exit": 1,
+      "archive_id": 14402101902,
+      "archive_sha256": "cca2dcbd99476f912e32a81742a43b4e8234bad82e07e4b7cc5bb0232b04b89e",
+      "correction": "Only allow the exact workflow-declared prefix and the predeclared report basenames; create that validated private output parent. Second decode reads the same unchanged ZIP; no archive refetch or edit."
+    },
+    {
+      "order": 3,
+      "phase": "derived large JSON consumer",
+      "error": "SyntaxError: Unexpected token 'W' from tool-output truncation warning",
+      "reason": "561307-byte valid package JSON exceeded the requested tool text output token cap. This was not malformed package JSON.",
+      "correction": "Read and project the original local JSON with standard-library json instead of materializing the entire report as a tool text result; original report and ZIP unchanged."
+    }
+  ],
+  "transport_failures": {
+    "direct_gh_redirect_HEAD_and_GET": "Forbidden; three private error responses/zero-byte captures preserved. HEAD shell's final awk status did not represent the gh status; GET pipeline exits1 were explicitly captured.",
+    "subsequent_route": "Official GitHub connector decoded logs and materialized artifacts to reusable file-service references; bounded HTTPS retrieval then preserved original provider-digest-matching ZIP bytes.",
+    "headers_signed_refs_and_private_transfer_errors_exported": false
+  },
+  "limit": "Parser/transport incidents are collection incidents, not additional CI attempts or altered CI test outcomes."
+}
