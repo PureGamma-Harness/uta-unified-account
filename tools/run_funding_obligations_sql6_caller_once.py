@@ -296,6 +296,8 @@ def main(args):
         checks["observers_restored"] = restoration == {"resource_observers_restored": True,
             "original_profiles_were_none": True, "financial_functions_replaced": False}
         allowed = {str(path) + suffix for path in expected_db for suffix in ("", "-wal", "-shm", "-journal")}
+        if resources["DB_byte_hashing_permitted"] is not True or resources["observer_error"] is not False:
+            raise ValueError("DB byte verification refused without proven native closure/observation")
         for fact in resources["final_DB_files"]:
             path = target / "inner/cases" / fact["path"]
             if str(path) not in allowed:
@@ -306,7 +308,8 @@ def main(args):
         checks["closed_SQL_handles"] = (resources["before_reopen"]["all_observed_handles_already_closed"] is True
             and resources["after_reopen_before_cleanup"]["all_observed_handles_already_closed"] is True
             and resources["own_leaked_handles_closed_after_failure"] == 0
-            and resources["connection_events_and_handles_and_nine_paths_match"] is True)
+            and resources["connection_events_and_handles_and_nine_paths_match"] is True
+            and resources["DB_byte_hashing_permitted"] is True and resources["observer_error"] is False)
         db_bytes = sum(f["bytes"] for f in resources["final_DB_files"])
         checks["combined_logical_disk"] = (db_bytes <= 64 * 1024 * 1024 and
             sum((target / name).stat().st_size for name in (*names, "inner/oracle-details.json", "inner/restoration.json")) + CONTROL_LIMIT + RAW_LIMIT <= 8 * 1024 * 1024)

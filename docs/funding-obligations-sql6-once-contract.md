@@ -137,3 +137,23 @@ of crossing MM, insolvency, loan-only balances, persistent partial-store fault
 recovery, network response loss, commit/crash durability, scheduler correctness,
 HA, old-binary exclusion, pending-funding admission/withdrawal reserves or
 capacity. Those gates remain OPEN and production/real funds remain NO_GO.
+
+## Independent ENTRY finding: fail-closed DB-byte access
+
+The initial27c8/eb778 CODE proposal was NOT_RUN. Its three exact metadata files
+are retained under `sql6-27c8-NOT_RUN/`; original commits remain ancestors. The
+review found that the final DB-byte hash comprehension ran even when native
+closure was not proven. Opening/closing an ordinary FD for a SQLite inode with
+live connections may drop the same process's fcntl locks, so an eventual FAIL
+classification did not make that access safe.
+
+The corrected entry records callback exceptions in a sticky observer-error flag.
+It opens DB bytes for hashing only after all observed native handles have a
+successful close, all connect/handle paths agree, both profiles remain intact,
+no forbidden observation occurred and all declared threads are quiescent. If any
+condition is unknown it keeps stat-only facts, explicitly records NOT_OPENED,
+sets oracle qualification false and preserves original bytes. No connection is
+closed to upgrade qualification. The caller independently refuses DB-byte reads
+when that permission/observer evidence is false. This changes only verification
+failure behavior, not UTA/test SQL semantics, six selectors or resource budgets.
+New plan pins require another independent limited CODE review and root GO.

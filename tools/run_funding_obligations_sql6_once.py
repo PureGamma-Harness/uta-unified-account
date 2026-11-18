@@ -314,21 +314,26 @@ def _inner_scoped(argv):
     # worker connection from this main thread. First failure cannot become PASS.
     successful_close_ids, thread_starts = set(), []
     close_returns, native_thread_starts = 0, 0
+    observer_error = False
     current_method, opening_native = None, False
     original_thread_start = threading.Thread.start
     original_native_start = threading._start_new_thread
 
     def close_profile(frame, event, function):
-        nonlocal close_returns
-        if event == "c_return" and getattr(function, "__name__", None) == "close":
-            owner = getattr(function, "__self__", None)
-            if type(owner) is sqlite3.Connection:
-                close_returns += 1
-                if close_returns > 4096:
-                    denied("native_close_return_limit")
-                if not any(owner is handle for handle in handles):
-                    denied("native_close_return_without_observed_connect_handle")
-                successful_close_ids.add(id(owner))
+        nonlocal close_returns, observer_error
+        try:
+            if event == "c_return" and getattr(function, "__name__", None) == "close":
+                owner = getattr(function, "__self__", None)
+                if type(owner) is sqlite3.Connection:
+                    close_returns += 1
+                    if close_returns > 4096:
+                        denied("native_close_return_limit")
+                    if not any(owner is handle for handle in handles):
+                        denied("native_close_return_without_observed_connect_handle")
+                    successful_close_ids.add(id(owner))
+        except BaseException:
+            observer_error = True  # Sticky even if Python disables this profile.
+            raise
 
     def no_thread(*arguments, **keywords):
         denied("direct_native_thread_start")
@@ -487,8 +492,6 @@ def _inner_scoped(argv):
     except BaseException as failure:
         oracle_error = type(failure).__name__ + ": " + str(failure)
     closure_after = closed_handles()
-    # Never relabel a leak as success: cleanup only handles owned by this run,
-    # after recording the pre-cleanup failure; do not touch any foreign DB/PID.
     # Do not access/close a connection from a different owning thread. All
     # unclosed observations are sticky UNKNOWN/FAIL; process termination is the
     # outer containment. An observed close after failure never repairs PASS.
@@ -508,9 +511,26 @@ def _inner_scoped(argv):
         "actual_final_DB_files": len(facts), "actual_final_DB_logical_bytes": sum(fact["bytes"] for fact in facts),
         "observation_is_not_continuous_native_write_monitoring": True,
         "aggregate_quota_claimed": False, "actual_RLIMIT_FSIZE": list(resource.getrlimit(resource.RLIMIT_FSIZE))}
-    # Hash DB bytes only after all owned observed connections are closed.
-    resources["final_DB_files"] = [{**fact, "sha256": sha256(read_regular(dbroot / fact["path"])).hexdigest()}
-                                     for fact in facts]
+    # Closing an ordinary FD for a live SQLite inode can drop this process's
+    # fcntl locks. A comment/PASS=false is insufficient: do not even open DB
+    # bytes unless closure, complete observation and quiescent threads are proven.
+    byte_hashing_permitted = (closure_after["all_observed_handles_already_closed"]
+        and not observer_error and not forbidden and connection_accounting_ok
+        and sys.getprofile() is close_profile and threading.getprofile() is close_profile
+        and not any(thread.is_alive() for thread in thread_starts))
+    resources["DB_byte_hashing_permitted"] = byte_hashing_permitted
+    resources["observer_error"] = observer_error
+    if byte_hashing_permitted:
+        resources["final_DB_files"] = [{**fact, "sha256": sha256(read_regular(dbroot / fact["path"])).hexdigest()}
+                                         for fact in facts]
+        resources["DB_byte_hash_status"] = "HASHED_AFTER_PROVEN_NATIVE_CLOSURE"
+    else:
+        # Stat facts and all original bytes remain untouched for later separately
+        # authorized inspection. No cleanup, hashing, or late close repairs PASS.
+        resources["final_DB_files"] = list(facts)
+        resources["DB_byte_hash_status"] = "NOT_OPENED_CLOSURE_OR_OBSERVATION_UNKNOWN"
+        oracle_passed = False
+        oracle_error = oracle_error or "DB closure/observation not proven; byte hashing refused"
     resources["competition_threads"] = {"declared_starts": len(thread_starts), "native_starts": native_thread_starts,
         "alive_after_methods": sum(thread.is_alive() for thread in thread_starts),
         "profile_close_identity_is_audit_observed_native_handle": True,
@@ -533,7 +553,7 @@ def _inner_scoped(argv):
         and len(thread_starts) == native_thread_starts == 2 and not any(t.is_alive() for t in thread_starts)
         and oracle_passed and closure_before["all_observed_handles_already_closed"]
         and closure_after["all_observed_handles_already_closed"] and not disk_problem
-        and connection_accounting_ok)
+        and connection_accounting_ok and byte_hashing_permitted and not observer_error)
     receipt = {"source_commit_invoker_label": args.source_commit, "runtime": runtime,
         "selected_methods": list(methods), "tests_run": result.testsRun,
         "failures": len(result.failures), "errors": len(result.errors),
@@ -551,6 +571,7 @@ def _inner_scoped(argv):
         "expected_matches": 9, "expected_paired_fills": 18,
         "all_owned_handles_closed_before_cleanup": closure_after["all_observed_handles_already_closed"],
         "connection_events_and_handles_and_nine_paths_match": connection_accounting_ok,
+        "DB_byte_hashing_permitted": byte_hashing_permitted, "observer_error": observer_error,
         "private_DB_and_capsule_export_authorized": False, "production_approved": False}
     new_file(output / "execution.json", encoded(receipt))
     print(json.dumps({"event": "FUNDING_OBLIGATIONS_SQL6_END", **receipt}), flush=True)
@@ -719,7 +740,8 @@ def run(args):
               and inner["SQL_test_methods_selected"] is True and inner["forbidden_attempts"] == []
               and inner["oracle_passed"] is True and inner["oracle_case_count"] == 9
               and inner["all_owned_handles_closed_before_cleanup"] is True
-              and inner["connection_events_and_handles_and_nine_paths_match"] is True)
+              and inner["connection_events_and_handles_and_nine_paths_match"] is True
+              and inner["DB_byte_hashing_permitted"] is True and inner["observer_error"] is False)
     classification = "PASS_LIMITED_SQL_ONLY" if passed else "FAIL" if complete and host_exit == 1 else "UNKNOWN"
     status = 0 if passed else 1 if classification == "FAIL" else 125 if capture.failed else 126
     capture.trailer(err_fd, {"event": "FUNDING_OBLIGATIONS_SQL6_HOST_END", "host_exit": host_exit,
