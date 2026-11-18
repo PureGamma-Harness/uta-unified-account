@@ -38,3 +38,5 @@ Only new synthetic pure inputs are eligible. Preserve first FAIL/UNKNOWN, full
 vectors and source bytes, with no retry or fallback. No financial source,
 migration, feature selection, product mode or default is changed. Rollback
 removes these test/control files while retaining original536/538 evidence.
+
+CROSS-ENUM-ENTRY-001 from independent d1c7551a is corrected by archiving all five expected provenance scalars before the candidate and all five actual scalars before any comparison. Historical4ac29 plan is preserved byte-for-byte as NOT_RUN; vector count, financial models and budgets remain unchanged.

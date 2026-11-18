@@ -132,8 +132,11 @@ class CrossDecimalEnumerationTests(unittest.TestCase):
         expected, feasible = independent_values(account, market)
         current.update(stage="before_candidate", feasible_units=feasible,
             expected={k: ({a: str(v) for a, v in x.items()} if k == "borrowable" else str(x))
-                      for k, x in expected.items()})
+                      for k, x in expected.items()},
+            expected_metadata=dict(rule_id=rules.rule_id, rule_version=13, catalog_version=7,
+                                   market_version=11, market_id="market-11@" + NOW.isoformat()))
         actual = calculate_cross_risk_decimal(account, market, catalog, rules, now=NOW)
+        current["actual_metadata"] = {k: getattr(actual, k) for k in current["expected_metadata"]}
         current.update(stage="before_comparison",
             actual={k: ({a: str(F(v)) for a, v in actual.borrowable.items()} if k == "borrowable"
                         else actual.status if k == "status" else str(F(getattr(actual, k))))
@@ -145,9 +148,7 @@ class CrossDecimalEnumerationTests(unittest.TestCase):
                 self.assertEqual(actual.status, value)
             else:
                 self.assertEqual(F(getattr(actual, name)), value, name)
-        self.assertEqual((actual.rule_id, actual.rule_version, actual.catalog_version, actual.market_version),
-                         (rules.rule_id, 13, 7, 11))
-        self.assertEqual(actual.market_id, "market-11@" + NOW.isoformat())
+        self.assertEqual(current["actual_metadata"], current["expected_metadata"])
         # Finite exact values can be archived by a future retained entry; no
         # production calls or side effects are introduced by this test module.
         current["stage"] = "verified"
