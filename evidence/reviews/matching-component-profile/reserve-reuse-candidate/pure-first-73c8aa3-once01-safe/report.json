@@ -1,0 +1,139 @@
+{
+  "independent_CODE_close": "b25b8ce9e7fd501f28f6d7f30ab7d7cc41dfa5d7",
+  "independent_RAW_status": "PENDING",
+  "kind": "PURE4_FIRST_ACTUAL_LOCAL_RESULT_PENDING_INDEPENDENT_RAW",
+  "limitations": [
+    "exact argv binds requested four methods; default unittest output supplies count/dots only",
+    "arithmetic results do not prove native admission/freshness/product/rule/ledger/durability",
+    "trusted local before-after read pins are not immutable remote attestation",
+    "initial inventory was written before caller-summary; immutable final-seal covers both without rewriting first records"
+  ],
+  "metadata_commit": "7ffd2b2b",
+  "new_native_pair_executed": false,
+  "original_files": {
+    "caller-summary.stdout": {
+      "bytes": 191,
+      "sha256": "f1e2502456c3dd9f4f8357e717b880a3426c626e46756f082b38ed7a497263dc"
+    },
+    "first.stderr": {
+      "bytes": 102,
+      "sha256": "d094b1bd2c8318c96097f80c50da282add5b2972970a77046de8db6c8935f6ca"
+    },
+    "first.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "intent.json": {
+      "bytes": 1249,
+      "sha256": "1e3d82d42437f365756945b03d981779f785b50110c5b8f1079e81b6b63162fc"
+    },
+    "inventory.json": {
+      "bytes": 855,
+      "sha256": "a718e4826dea0a7f40f400014d42a9317fd7acdce7ada49a112b4e9e549a85f9"
+    },
+    "pins-after.json": {
+      "bytes": 808,
+      "sha256": "0ff48cd060f40378f85b60780779cec0157bc0c2aa0490b95a1e9f568459a253"
+    },
+    "pins-before.json": {
+      "bytes": 808,
+      "sha256": "0ff48cd060f40378f85b60780779cec0157bc0c2aa0490b95a1e9f568459a253"
+    },
+    "receipt.json": {
+      "bytes": 1137,
+      "sha256": "d6ec9b54a2bb1892d10846c5319525613267124f615195d6927fd209e4f710e0"
+    }
+  },
+  "output_observed": {
+    "OK": true,
+    "default_unittest_dots": 4,
+    "reported_tests": 4,
+    "stream_bytes": 102,
+    "verbose_per_method_IDs_observed": false
+  },
+  "plan_sha256": "20499f700f8dd3f6b2ec43c85751c65e31fd141511a6e3c8c117daf4744f878e",
+  "production_or_capacity_approved": false,
+  "pure_manifest_sha256": "7afab6e767af3339457598863c827d0392e29290b7756f80e7118aa73db56499",
+  "raw_original_final_seal": {
+    "bytes": 1300,
+    "sha256": "277062eb94d84ed99a93a9cfc58ce0119cffefae3e1581f7a6b995906e6a7208"
+  },
+  "receipt": {
+    "SQL": 0,
+    "actual_prefix_exit": 0,
+    "elapsed_ns": 93723613,
+    "exact_argv": [
+      "/usr/bin/timeout",
+      "--signal=KILL",
+      "10s",
+      "/usr/bin/taskset",
+      "-c",
+      "1",
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-risk-kernel-candidate/benchmarks/test_reserve_reuse_candidate.py",
+      "ReserveReuseContracts.test_manual_cumulative_fee_signed_and_zero_cases",
+      "ReserveReuseContracts.test_all_ten_economic_key_inputs_remain_exact",
+      "ReserveReuseContracts.test_lru_eviction_and_numeric_equal_keys",
+      "ReserveReuseContracts.test_exact_arithmetic_ignores_ambient_context_and_failed_math_is_not_cached"
+    ],
+    "fault": null,
+    "monitor_registrations": 0,
+    "monotonic_end_ns": 133393861772389,
+    "monotonic_start_ns": 133393768048776,
+    "native_runs": 0,
+    "raw_stream_bytes": 102,
+    "reaped": true,
+    "source_pins_unchanged": true,
+    "status": "PURE4_LOCAL_PASS_PENDING_INDEPENDENT_RAW",
+    "stdout_stderr_EOF_complete": true,
+    "unittest_output_limit": "default dots/count4 only; no verbose per-method IDs observed"
+  },
+  "source_commit": "73c8aa3a57955901ddfe777ff8e22b2fd883bc1f",
+  "trusted_local_pins_after": {
+    "benchmarks/test_reserve_reuse_candidate.py": {
+      "bytes": 6188,
+      "sha256": "15bcb4a33944918959aa1cc3a89444727c9329bae6130e5bd0e59345272171b6"
+    },
+    "evidence/reviews/matching-component-profile/reserve-reuse-candidate/plan.json": {
+      "bytes": 9510,
+      "sha256": "20499f700f8dd3f6b2ec43c85751c65e31fd141511a6e3c8c117daf4744f878e"
+    },
+    "evidence/reviews/matching-component-profile/reserve-reuse-candidate/pure-manifest.json": {
+      "bytes": 1696,
+      "sha256": "7afab6e767af3339457598863c827d0392e29290b7756f80e7118aa73db56499"
+    },
+    "uta/__init__.py": {
+      "bytes": 104,
+      "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+    },
+    "uta/reserve_kernel.py": {
+      "bytes": 4923,
+      "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+    }
+  },
+  "trusted_local_pins_before": {
+    "benchmarks/test_reserve_reuse_candidate.py": {
+      "bytes": 6188,
+      "sha256": "15bcb4a33944918959aa1cc3a89444727c9329bae6130e5bd0e59345272171b6"
+    },
+    "evidence/reviews/matching-component-profile/reserve-reuse-candidate/plan.json": {
+      "bytes": 9510,
+      "sha256": "20499f700f8dd3f6b2ec43c85751c65e31fd141511a6e3c8c117daf4744f878e"
+    },
+    "evidence/reviews/matching-component-profile/reserve-reuse-candidate/pure-manifest.json": {
+      "bytes": 1696,
+      "sha256": "7afab6e767af3339457598863c827d0392e29290b7756f80e7118aa73db56499"
+    },
+    "uta/__init__.py": {
+      "bytes": 104,
+      "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+    },
+    "uta/reserve_kernel.py": {
+      "bytes": 4923,
+      "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+    }
+  }
+}
