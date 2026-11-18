@@ -1,0 +1,165 @@
+{
+  "JSON_diff_scope": {
+    "added_relation_boolean_paths": [
+      "/failures/3/worker_generation_relationships/0/READY_report_generation_mismatches_owner_generation",
+      "/failures/3/worker_generation_relationships/0/READY_report_generation_precedes_owner"
+    ],
+    "other_JSON_values_or_array_lengths_changed": false,
+    "removed_binding_scalar_paths": [
+      "/failures/3/worker_generation_relationships/0/READY_report_generation",
+      "/failures/3/worker_generation_relationships/0/owner_generation",
+      "/failures/3/worker_generation_relationships/0/shard"
+    ]
+  },
+  "absence_check_scope": "binding-key locations and contextual generation/shard prose only; ordinary CI counters, diagnostic call-count4-versus1, code-line numbers and hashes are preserved",
+  "document_diff_scope": {
+    "concrete_identity_ordinal_span_exported": false,
+    "matched_spans": 1,
+    "other_prose_changed": false
+  },
+  "facts_preserved": {
+    "PR_failure_count": 3,
+    "all_CI_counts_and_source_hashes_unchanged": true,
+    "all_four_runtime_causes": "UNDETERMINED",
+    "all_phase_source_line_SHA_fields_unchanged": true,
+    "both_whole_runs": "failure",
+    "full_qualification": null,
+    "installed_funding_operation_qualification": null,
+    "new_unique_funding_methods": 6,
+    "observed_versus_expected_diagnostic_call_counts_unchanged": true,
+    "push_failure_count": 1,
+    "selected_passes_or_local_SQL_override_whole_CI": false,
+    "three_unit_observations": 18
+  },
+  "file_map": [
+    {
+      "byte_equal": false,
+      "new_bytes": 5744,
+      "new_sha256": "fd0d875cd6df6b6b89a6e6f8c595ca363f43dfc72536cd202ae289b4fed0e854",
+      "old_bytes": 5737,
+      "old_sha256": "5653a167b69fce00b6a95e77ad382fae15a39a1d053653c54b8b1cc953300f6f",
+      "path": "docs/pr48-first-ci-evidence.md",
+      "transformations": [
+        {
+          "new_relation": "READY report generation precedes current owner generation",
+          "new_span_sha256": "90f8e929045d7374f73e8fcbf69a3ce872050d4c426fbeb7a0c668c541fb9066",
+          "old_span_sha256": "7b90bed4d02ff906b4bf2dcb568db27295d4c724065b3e94753cc4f3952f5b46",
+          "old_span_value_exported": false,
+          "operation": "replace_one_prose_span"
+        }
+      ]
+    },
+    {
+      "byte_equal": false,
+      "new_bytes": 5165,
+      "new_sha256": "bf2a4d62eb10a924f38b0f606393baa674cfa704bbd3777e8b6be596e2c9597a",
+      "old_bytes": 5131,
+      "old_sha256": "0835fefaa10ad4ef7fe9e3b5c7ccc6eb122dfbea14924361348facffcb134f9c",
+      "path": "evidence/reviews/pr48-first-ci/failure-phase-projection.json",
+      "transformations": [
+        {
+          "json_pointer": "/failures/3/worker_generation_relationships/0/READY_report_generation_mismatches_owner_generation",
+          "new_value": true,
+          "operation": "add"
+        },
+        {
+          "json_pointer": "/failures/3/worker_generation_relationships/0/READY_report_generation_precedes_owner",
+          "new_value": true,
+          "operation": "add"
+        },
+        {
+          "json_pointer": "/failures/3/worker_generation_relationships/0/READY_report_generation",
+          "old_value_exported": false,
+          "operation": "remove"
+        },
+        {
+          "json_pointer": "/failures/3/worker_generation_relationships/0/owner_generation",
+          "old_value_exported": false,
+          "operation": "remove"
+        },
+        {
+          "json_pointer": "/failures/3/worker_generation_relationships/0/shard",
+          "old_value_exported": false,
+          "operation": "remove"
+        }
+      ]
+    },
+    {
+      "byte_equal": true,
+      "new_bytes": 17530,
+      "new_sha256": "9aa7115d0c97f48ec9112b50eac47e6abcae416e8414c91ba025eae04eeec950",
+      "old_bytes": 17530,
+      "old_sha256": "9aa7115d0c97f48ec9112b50eac47e6abcae416e8414c91ba025eae04eeec950",
+      "path": "evidence/reviews/pr48-first-ci/first-ci-report.json",
+      "transformations": []
+    },
+    {
+      "byte_equal": true,
+      "new_bytes": 7127,
+      "new_sha256": "d820f13648e84e1316452da7e8d79c8f6a2e6f5567e32a5ef03b82cdb3eb8f0e",
+      "old_bytes": 7127,
+      "old_sha256": "d820f13648e84e1316452da7e8d79c8f6a2e6f5567e32a5ef03b82cdb3eb8f0e",
+      "path": "evidence/reviews/pr48-first-ci/new-funding-method-results.json",
+      "transformations": []
+    },
+    {
+      "byte_equal": true,
+      "new_bytes": 12981,
+      "new_sha256": "04f6d386e67e42af7a17a1dd7341aae1263f9d1ccebb38417e5c02deb34c6464",
+      "old_bytes": 12981,
+      "old_sha256": "04f6d386e67e42af7a17a1dd7341aae1263f9d1ccebb38417e5c02deb34c6464",
+      "path": "evidence/reviews/pr48-first-ci/private-originals-digest-inventory.json",
+      "transformations": []
+    }
+  ],
+  "independent_RAW_binding_verdict": "RAW_EVIDENCE_BINDING_PASS_WITH_EXPLICIT_LIMITATIONS",
+  "independent_RAW_review": "d5ccc4cb12e03a0989775e93736ab0303d896632",
+  "independent_delta_review_required_before_publication": true,
+  "inherited_RAW_review_payloads_unchanged": [
+    {
+      "bytes": 6274,
+      "path": "docs/pr48-first-ci-raw-independent.md",
+      "sha256": "02b5bde7c51bbe086be266a7f63a46d5216541ef591f1d0ba5a34832fe675a3e"
+    },
+    {
+      "bytes": 14500,
+      "path": "evidence/reviews/pr48-first-ci-raw-independent/binding.json",
+      "sha256": "8b6ccfd1be0845524466c5c4eea7563d375ba2f8ea5a7bf06ef7ca6805164c5a"
+    },
+    {
+      "bytes": 1978,
+      "path": "evidence/reviews/pr48-first-ci-raw-independent/manifest.json",
+      "sha256": "679c0453910dd4ff3046da4279439b319741fdb877bf974efa1b1d38c124e1fb"
+    }
+  ],
+  "kind": "PR48_RELATION_ONLY_SAFE_DELIVERY_REDACTION_RECEIPT",
+  "manifest_self_hash": "excluded",
+  "new_execution_authorized": false,
+  "original_unpublished_candidate_is_ancestor": false,
+  "original_unpublished_candidate_reference": "local Git provenance only; never merged or cherry-picked",
+  "privacy": {
+    "DB_ZIP_full_profile_or_source_capsule_added": false,
+    "actual_PID_nonce_boot_numeric_generation_shard_binding_values_in_new_payloads": false,
+    "old_removed_scalar_values_in_receipt": false,
+    "private60_originals_read_or_modified": false,
+    "private_API_or_download_reference_read": false
+  },
+  "production_gate": "NO_GO",
+  "public_source_base": "6ba5ba2e9334f30be949f368d036c96fe9857c30",
+  "reviewer_actions": {
+    "API_or_download": false,
+    "local_Git_show_and_SAFE_JSON_text_only": true,
+    "new_subagent": false,
+    "push": false,
+    "target_import_compile_SQL_proc_PID_native_benchmark_CI_or_child_execution": false
+  },
+  "schema": 1,
+  "source_payload_bytes": 48506,
+  "source_payload_files": 5,
+  "status": "RELATION_ONLY_TRANSFORM_VERIFIED_PENDING_INDEPENDENT_DELTA_REVIEW",
+  "tree_policy": {
+    "delta_from_public_C_docs_and_evidence_only": true,
+    "runtime_financial_tests_tools_CI_changed": false,
+    "unsafe_origin_reachable_as_ancestor": false
+  }
+}
