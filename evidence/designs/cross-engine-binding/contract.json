@@ -1,0 +1,934 @@
+{
+  "schema": 1,
+  "kind": "SOURCE_ONLY_CROSS_ENGINE_BINDING_ACTIVATION_PROPOSAL",
+  "status": "DESIGN_ONLY",
+  "production_approved": false,
+  "runtime_implemented": false,
+  "target_execution_attempts": 0,
+  "financial_authority_modified": false,
+  "policy_attribution": "LOCAL_SYSTEM_CHOICE_NOT_EXTERNAL_EXCHANGE_BEHAVIOR",
+  "recommended_option": "B_VERSIONED_EXPERIMENTAL_ENVELOPE",
+  "default": {
+    "engine": "cross_fraction_v1",
+    "risk_policy_shapes": {
+      "legacy_reference": [
+        "mode"
+      ],
+      "phase1_cross": [
+        "mode",
+        "catalog",
+        "rules"
+      ]
+    },
+    "valuation_policy_format": 1,
+    "valuation_policy_exact_fields": [
+      "format",
+      "risk_mode",
+      "catalog",
+      "rules",
+      "scales",
+      "fee_rate",
+      "max_price_age_us",
+      "order_precision",
+      "reserve_formula",
+      "execution_options"
+    ],
+    "order_policy_exact_fields": [
+      "format",
+      "risk_mode",
+      "catalog",
+      "rules",
+      "scales",
+      "fee_rate",
+      "max_price_age_us",
+      "order_precision",
+      "reserve_formula",
+      "execution_options",
+      "admission_contract"
+    ],
+    "execution_options_exact_fields": [
+      "reserve_cache_size",
+      "market_cache_size"
+    ],
+    "credit_v2_base_policy_fields_unchanged": true,
+    "historical_artifacts_mutable": false,
+    "new_source_is_same_historical_code_artifact": false
+  },
+  "experimental": {
+    "allowed_contracts": [
+      "UTA-CROSS-SHADOW-v1"
+    ],
+    "reserved_but_rejected_contracts": [
+      "UTA-CROSS-DECIMAL-AUTH-v1"
+    ],
+    "fresh_database_and_authority_generation_required": true,
+    "synthetic_data_only": true,
+    "deployment": "LOCAL_EXCLUSIVE_SINGLE_WRITER",
+    "risk_policy": {
+      "exact_fields": [
+        "format",
+        "mode",
+        "catalog",
+        "rules",
+        "valuation_contract"
+      ],
+      "format": 2,
+      "mode": "phase1_cross",
+      "catalog_type": "CANONICAL_EXISTING_PRODUCT_CATALOG_OBJECT",
+      "rules_type": "CANONICAL_EXISTING_PORTFOLIO_RULES_OBJECT"
+    },
+    "valuation_contract": {
+      "format": 1,
+      "id": "UTA-CROSS-SHADOW-v1",
+      "authoritative_engine": "cross_fraction_v1",
+      "shadow_engine": "cross_decimal_v1",
+      "numeric_contract": "UTA-CROSS-LOAN-v1",
+      "input_domain": "UTA-CROSS-DECIMAL-DOMAIN-v1",
+      "comparison": "exact_value_and_canonical_text_v1",
+      "failure_policy": "freeze_new_risk_preserve_settlement_v1",
+      "dispatch_contract": "fixed_callable_binding_v1"
+    },
+    "valuation_contract_all_values_fixed": true,
+    "order_policy_envelope": {
+      "format": 2,
+      "exact_fields": [
+        "format",
+        "valuation_policy",
+        "valuation_contract",
+        "admission_contract"
+      ],
+      "valuation_policy": "EXACT_EXISTING_TEN_FIELD_FORMAT_1_OBJECT",
+      "valuation_contract": "EXACT_FIXED_SHADOW_CONTRACT",
+      "admission_contract": "UTA-LINEAR-ADMISSION-v1"
+    },
+    "unknown_fields_versions_engines_types_or_duplicate_json_keys": "REJECT",
+    "bool_as_integer_version": "REJECT",
+    "existing_authority_implicit_upgrade": "REJECT",
+    "hot_change": "REJECT",
+    "silent_fallback": "FORBIDDEN",
+    "decision_input_valuation_evaluation": {
+      "format": 1,
+      "exact_fields": [
+        "format",
+        "evaluated_at",
+        "max_age_us",
+        "market_snapshot_id",
+        "contract_id",
+        "binding_id"
+      ],
+      "evaluated_at": "SINGLE_CAPTURED_UTC_TIME_USED_BY_BOTH_CALCULATORS_AND_BOTH_DECISION_STATES",
+      "max_age_us": "EXACT_POLICY_VALUE",
+      "market_snapshot_id": "EXACT_ARCHIVED_MARKET_SNAPSHOT",
+      "contract_id": "UTA-CROSS-SHADOW-v1",
+      "binding_id": "CONTENT_ADDRESSED_EXACT_ENGINE_BINDING"
+    },
+    "legacy_replay_does_not_reprove_historical_freshness_lease_or_matching": true,
+    "decision_input_admission_freshness": {
+      "format": 1,
+      "exact_fields": [
+        "format",
+        "checked_at",
+        "market_snapshot_id",
+        "max_age_us",
+        "max_future_skew_us",
+        "check_result"
+      ],
+      "checked_at": "FINAL_ADMISSION_GUARD_UTC_AFTER_BINDING_DUAL_CALC_AND_AUDIT_WITH_ORIGINAL_FENCING_AND_PRECOMMIT_GUARDS",
+      "market_snapshot_id": "EXACT_SAME_ARCHIVED_SNAPSHOT_AS_VALUATION",
+      "max_age_us": "EXACT_POLICY_VALUE",
+      "max_future_skew_us": 1000000,
+      "check_result_type": "EXACT_BOOL",
+      "conditions": [
+        "CHECKED_AT_NOT_BEFORE_CAPTURED_EVALUATED_AT",
+        "AGE_LE_MAX_AGE_EQUALITY_ALLOWED",
+        "AGE_GE_NEGATIVE_MAX_FUTURE_SKEW_EQUALITY_ALLOWED",
+        "ACCOUNT_AND_MARKET_VERSIONS_UNCHANGED",
+        "ORIGINAL_DEADLINE_AND_FENCING_GUARDS_STILL_VALID"
+      ],
+      "refresh_snapshot_reset_valuation_time_or_extend_TTL_to_pass": false,
+      "physical_commit_instant_proven": false,
+      "historical_numeric_and_freshness_results_separate": true,
+      "after_final_check": "ONLY_CANONICAL_GUARD_EVIDENCE_WRITE_ORIGINAL_FINAL_WRITER_GUARD_AND_COMMIT_NO_NEW_COMPUTATION_OR_MARKET_REPLACEMENT"
+    }
+  },
+  "binding": {
+    "module_proposal": "uta/risk_engine.py",
+    "function_proposals": [
+      "resolve_valuation_contract",
+      "capture_engine_binding",
+      "assert_engine_binding",
+      "evaluate_cross_contract"
+    ],
+    "fixed_registry": {
+      "cross_fraction_v1": "uta.portfolio.calculate_cross_risk",
+      "cross_decimal_v1": "uta.cross_decimal_kernel.calculate_cross_risk_decimal"
+    },
+    "artifact_envelope": {
+      "format": 2,
+      "exact_fields": [
+        "format",
+        "base_artifact",
+        "engine_binding"
+      ]
+    },
+    "engine_binding_format": 1,
+    "engine_binding_exact_fields": [
+      "format",
+      "contract_id",
+      "callable_graph",
+      "constants_and_aliases",
+      "class_layouts",
+      "runtime_capsule",
+      "digest_algorithm",
+      "trust_partitions"
+    ],
+    "digest_algorithm": "sha256",
+    "coverage": [
+      "ACTUALLY_CALLED_FUNCTION_IDENTITY_TO_FIXED_MODULE_AND_REGISTRY",
+      "SERVICE_AND_REPLAY_DISPATCH_ALIAS_IDENTITY",
+      "CODE_DEFAULTS_KWDEFAULTS_CLOSURES_UNWRAP_HELPERS",
+      "REFERENCE_INPUT_AND_EXACT_CONVERSION_HELPERS",
+      "DECIMAL_EXACT_TYPE_DISCOUNTED_ARITHMETIC_METHODS_ENTRYPOINT",
+      "ZERO_ONE_MAX_POWER_MAX_SCALAR_CACHE_AND_OTHER_RUNTIME_LIMITS",
+      "ACTUAL_GLOBAL_MODEL_DECIMAL_HELPER_ENUM_ALIASES",
+      "OWN_CLASS_BASES_SLOTS_METHODS_PROPERTIES_DATACLASS_LAYOUT",
+      "PINNED_INTERPRETER_DECIMAL_STDLIB_IMAGE_AND_SOURCE_DIGESTS"
+    ],
+    "checks": [
+      "BEFORE_NORMAL_NEW_RISK_AUTHORITY_OPEN_FULL_BINDING_REFERENCE_ONLY_BOOTSTRAP_OR_RECOVERY_HAS_SEPARATE_CLOSED_GATE_RULES",
+      "EXACT_READ_ONLY_REOPEN",
+      "ACTUAL_FUNCTION_AND_LOOKUP_BINDING_BEFORE_EVALUATION",
+      "BEFORE_ADMISSION_AND_RESERVATION_COMMIT",
+      "RESTRICTED_SETTLEMENT_REOPEN_VERIFIES_KNOWN_AUTHORITY_PARTITION_AND_CLOSED_NEW_RISK_GATE"
+    ],
+    "unknown_objects_dynamic_import_reflection_callable_injection": "REJECT",
+    "legacy_credit_artifact_format_or_live_exclusions_weakened": false,
+    "artifact_confers_activation_or_writer_permission": false,
+    "assumptions": [
+      "TRUSTED_IMMUTABLE_OS_PROCESS_IMAGE_AND_SOURCE",
+      "NO_ADVERSARY_PATCHING_BOTH_CHECKER_AND_CALLEE_OR_ARBITRARY_MEMORY_BETWEEN_CHECKS"
+    ],
+    "not_a_sandbox_signature_or_remote_attestation": true,
+    "candidate_exact_functions": [
+      "_exact_type",
+      "_discounted",
+      "calculate_cross_risk_decimal"
+    ],
+    "candidate_exact_arithmetic_methods": [
+      "__init__",
+      "power",
+      "read",
+      "nonnegative",
+      "positive",
+      "rate",
+      "negative",
+      "absolute",
+      "add",
+      "subtract",
+      "multiply",
+      "compare",
+      "floor_ratio",
+      "ceiling_ratio",
+      "decimal"
+    ],
+    "candidate_exact_constants": {
+      "_ZERO": [
+        0,
+        0
+      ],
+      "_ONE": [
+        1,
+        0
+      ],
+      "_MAX_POWER": 1000,
+      "_MAX_SCALAR_CACHE": 2048
+    },
+    "candidate_imported_class_aliases": [
+      "MarketSnapshot",
+      "AssetSpec",
+      "InstrumentSpec",
+      "BorrowLimits",
+      "CollateralRule",
+      "CollateralTier",
+      "CrossRisk",
+      "LinearExposure",
+      "LinearMarginRule",
+      "LoanAccount",
+      "PortfolioError",
+      "PortfolioRules",
+      "AccountMode",
+      "ProductCatalog",
+      "ProductKind",
+      "ProductSpec",
+      "UnsupportedProduct",
+      "Decimal",
+      "datetime",
+      "timedelta"
+    ],
+    "candidate_builtin_execution_lookups_to_verify": [
+      "type",
+      "isinstance",
+      "len",
+      "abs",
+      "min",
+      "max",
+      "set",
+      "sorted",
+      "int",
+      "tuple",
+      "map",
+      "str"
+    ],
+    "function_globals_and_builtins_lookup_identity_required": true,
+    "unknown_new_execution_lookup": "REJECT_UNTIL_FIXED_INVENTORY_REVIEWED",
+    "in_process_identity": {
+      "comparison": "IS_TO_TRUSTED_BOOTSTRAP_FIXED_MODULE_REGISTRY_AND_LOOKUP_ANCHORS",
+      "function_globals": "EXACT_FUNCTION_GLOBALS_MAPPING_IS_EXPECTED_MODULE_DICT",
+      "function_builtins": "ACTUAL_FUNCTION_BUILTINS_MAPPING_AND_EACH_RESOLVED_NAME_MATCH_TRUSTED_RUNTIME",
+      "module_builtins_only_is_sufficient": false,
+      "new_process_may_self_bless_changed_current_objects": false,
+      "expected_release_binding_input": "SEPARATELY_REVIEWED_IMMUTABLE_RELEASE_INPUT_NOT_ARCHIVE_EXECUTABLE_NAMES"
+    },
+    "stable_graph": {
+      "status": "D1_ENCODING_AND_LIMITS_REQUIRE_SEPARATE_SOURCE_REVIEW",
+      "logical_node_key": [
+        "module",
+        "qualified_name",
+        "object_kind"
+      ],
+      "edge_key": [
+        "source_logical_node",
+        "static_member_or_lookup_label",
+        "target_logical_node"
+      ],
+      "ordering": "EXACT_UTF8_BYTES_SORTED_NO_IMPLICIT_UNICODE_NORMALIZATION",
+      "primitive_encoding": "EXPLICIT_TYPE_TAGS_BOOL_DISTINCT_FROM_INT_FINITE_DECIMAL_TUPLES_AND_FIXED_RUNTIME_CODE_FIELDS",
+      "canonical_json": {
+        "sort_keys": true,
+        "separators": [
+          ",",
+          ":"
+        ],
+        "allow_nan": false
+      },
+      "digest": "SHA256_OF_FIXED_FORMAT_DOMAIN_PREFIX_AND_CANONICAL_BYTES",
+      "memory_addresses_id_values_absolute_locations_times_or_cache_order_in_digest": false,
+      "same_release_across_clean_trusted_restart_requires_same_digest": true,
+      "alias_identity_checks_are_in_process_only": true,
+      "shared_or_cycle_edges": "FIXED_REVIEWED_LOGICAL_NODE_REFERENCES_ONLY_UNKNOWN_CYCLES_REJECT",
+      "dataclass_defaults_factories_property_accessors_are_executable_edges": true,
+      "proposed_review_only_limits": {
+        "nodes": 2048,
+        "edges": 32768,
+        "depth": 24,
+        "container_items": 2048,
+        "canonical_bytes": 4194304,
+        "unwrap_depth": 8,
+        "scalar_string_bytes": 65536,
+        "code_bytes_per_node": 262144
+      },
+      "limit_or_encoding_change_requires_explicit_versioned_review": true,
+      "node_key_collision": "REJECT_UNLESS_SAME_ACTUAL_OBJECT_AND_FIXED_APPROVED_ALIAS",
+      "partition_digest_payload_excludes_own_binding_id": true,
+      "D1_proposal_limits_are_proven_coverage_or_performance": false
+    },
+    "trust_partitions": {
+      "status": "D2_SPEC_ONLY_NOT_IMPLEMENTED",
+      "exact_fields": [
+        "authority",
+        "candidate"
+      ],
+      "each_partition_exact_fields": [
+        "logical_node_ids",
+        "logical_edge_ids",
+        "source_scope",
+        "binding_id"
+      ],
+      "authority_scope": [
+        "REFERENCE_CALCULATOR",
+        "SHARED_MODELS_AND_RUNTIME",
+        "ACTUAL_AUTHORITY_SELECTOR_AND_RESOLVER",
+        "ACCOUNT_ORDER_FEES_RESERVE_POSITIONS_LEDGER_STORAGE",
+        "WRITER_FENCING_AND_CONTROL",
+        "SETTLEMENT_AND_REFERENCE_AUDIT"
+      ],
+      "candidate_scope": "CANDIDATE_EXCLUSIVE_FUNCTIONS_CLASSES_CONSTANTS_AND_FILES_ONLY",
+      "candidate_shared_edges": "REFERENCE_FIXED_AUTHORITY_NODES",
+      "unknown_edges_or_unclear_failure_partition": "SHARED_OR_UNKNOWN_NOT_CANDIDATE_ONLY",
+      "full_shadow_admission": "FULL_ARTIFACT_AND_BOTH_PARTITIONS_REQUIRED",
+      "restricted_recovery": "SEPARATE_CLOSED_REFERENCE_SETTLEMENT_ENTRY_VERIFY_AUTHORITY_PARTITION_POLICY_SCHEMA_FENCING_OBLIGATION",
+      "normal_opener_or_legacy_artifact_weakened": false
+    },
+    "pure_binding_module_proposal": "uta/risk_engine_binding.py",
+    "future_dispatch_module_proposal": "uta/risk_engine.py"
+  },
+  "domain": {
+    "mode": [
+      "CROSS"
+    ],
+    "service_products": [
+      "EXISTING_PHASE1_USD_LINEAR_PERPETUAL_MULTIPLIER_1"
+    ],
+    "valuation_model": [
+      "EXACT_EXISTING_MODEL_TYPES",
+      "FINITE_DECIMAL",
+      "GROSS_ASSETS_AND_PRINCIPAL_INTEREST_CASH_DEFICIT_SEPARATE",
+      "EXISTING_TIER_COLLATERAL_LTV_AND_FROZEN_SEMANTICS"
+    ],
+    "candidate_bounds_to_revalidate": {
+      "decimal_digits": 80,
+      "absolute_exponent": 100,
+      "tiers": 64,
+      "power": 1000,
+      "call_local_scalar_cache": 2048,
+      "nonzero_absolute_adjusted": 100,
+      "entries_per_model_map": 4096
+    },
+    "unsupported": [
+      "REAL_FUNDS",
+      "EXISTING_AUTHORITY_IN_PLACE_MIGRATION",
+      "MANAGED_SHARDED_NATIVE_WRITER",
+      "NEW_CREDIT_CAPABILITY_OR_BORROW",
+      "AUTO_BORROW",
+      "CREDIT_MUTATIONS",
+      "WITHDRAW_TRANSFER_COLLATERAL_OR_MODE_CHANGE",
+      "CANDIDATE_AUTHORITY_LIQUIDATION_INSURANCE_OR_ADL",
+      "ISOLATED",
+      "PM",
+      "OPTIONS",
+      "INVERSE",
+      "DATED",
+      "MULTI_SETTLEMENT",
+      "NEW_MARKET_CONDITIONAL_BATCH_OR_MULTI_LEG_ORDER_TYPE",
+      "MODEL_SUBCLASSES_FLOAT_BOOL_NAN_INFINITY_OUT_OF_BOUNDS"
+    ],
+    "must_not_broaden_service_domain_to_pure_model_domain": true,
+    "debt_fixture_import_without_credit_activation": "UNIMPLEMENTED_REQUIRES_REVIEWED_IMPORT_CONTRACT_OR_PURE_OFFLINE_VALUATION_ONLY"
+  },
+  "transaction_semantics": {
+    "same_account_market_catalog_rules_and_single_now": true,
+    "comparison": "ALL_CROSSRISK_FIELDS_EXACT_NUMERIC_VALUE_CANONICAL_TEXT_BORROWABLE_KEYS_AND_ALL_METADATA",
+    "incremental_risk_shadow_failure": "DURABLE_EVALUATING_GATE_BEFORE_CANDIDATE_CHECK_THEN_LATCH_ROLLBACK_FREEZE_COMMIT_THEN_DEFINITE_REJECT",
+    "confirmed_settlement_shadow_failure": "ONLY_TRUSTED_CANDIDATE_ONLY_FAILURE_USES_SEPARATE_FENCED_REFERENCE_SETTLEMENT_PATH_AND_RECOVERY_AUDIT_OTHERWISE_PRESERVE_PENDING_OBLIGATION",
+    "cannot_distinguish_risk_and_mandatory_settlement": "READ_ONLY_OR_OFFLINE_SHADOW_ONLY",
+    "cancel_without_ack_releases_reservation": false,
+    "confirmed_fill_discarded_because_shadow_failed": false,
+    "fee_reserve_settlement_rounding_rewritten": false,
+    "existing_apply_fill": "LOCAL_EXECUTION_AUTHORIZATION_NOT_EXTERNAL_CONFIRMED_FILL_INGESTION_RISK_AND_AUDIT_AFTER_CAN_ROLLBACK",
+    "existing_matching": "BOTH_APPLY_FILL_SIDES_AND_MATCH_RECEIPT_COMMIT_ATOMICALLY_BEFORE_CONFIRMATION_IS_RETURNED",
+    "operation_classification": "TRUSTED_DURABLE_MATCHING_OBLIGATION_AND_COMPILED_CALL_CHAIN_NOT_CLIENT_MANDATORY_FLAG"
+  },
+  "proposed_errors_not_implemented": {
+    "valuation_contract_unsupported": 400,
+    "valuation_migration_required": 409,
+    "valuation_binding_unavailable": 503,
+    "valuation_shadow_mismatch": 503,
+    "valuation_domain_unsupported": 422
+  },
+  "implementation_files": {
+    "D1": [
+      "uta/risk_engine_binding.py (proposal only, pure binding evidence)",
+      "tests/test_risk_engine_binding.py (future unexecuted pure contract definitions)",
+      "new explicit source inventory version under separate review"
+    ],
+    "D2": [
+      "uta/risk_engine.py: future fixed contract dispatch and exact comparison; pure D1 evidence does not activate service",
+      "uta/service.py: __init__/_risk/_policy_versions",
+      "uta/decision_audit.py: policy/install/_replay_state/replay",
+      "uta/existing_services.py: _source_arguments/exchange-only opener",
+      "uta/credit_audit_v2.py and credit entrypoints: explicit experimental rejection",
+      "uta/service.py: trusted settle_confirmed_obligation plus original apply_fill distinction",
+      "uta/existing_services.py: restricted open_existing_settlement_services",
+      "uta/decision_audit.py: reference_settlement_recovery_v1 audit and limited replay",
+      "uta/valuation gate schema/transaction integration: EVALUATING before candidate checks, success OPEN atomic with acceptance"
+    ],
+    "D3_SEPARATE_APPROVAL": [
+      "uta/durable_process.py: _options/initialize/takeover",
+      "uta/sharding.py: ShardRouter",
+      "uta/supervisor.py: dependency/cache/precommit contract",
+      "new dedicated credit model/policy version"
+    ]
+  },
+  "test_gates": [
+    {
+      "id": "EBD-001",
+      "stage": "D1",
+      "requirement": "Fixed callable identity; same-name same-output monkeypatch and unchanged source cannot bypass binding"
+    },
+    {
+      "id": "EBD-002",
+      "stage": "D1",
+      "requirement": "Code/defaults/kwdefaults/closures/unwrap mutation rejected"
+    },
+    {
+      "id": "EBD-003",
+      "stage": "D1",
+      "requirement": "Constants/class layout/global Decimal or model/helper alias mutation rejected"
+    },
+    {
+      "id": "EBD-004",
+      "stage": "D1",
+      "requirement": "Unknown engine/registry/import path/reflection/object rejected before authority effect"
+    },
+    {
+      "id": "EBD-005",
+      "stage": "D2",
+      "requirement": "Default valuation10/order11 unchanged; experimental exact fields, values, duplicate keys, versions and bool typing checked"
+    },
+    {
+      "id": "EBD-006",
+      "stage": "D2",
+      "requirement": "CreditV2 baseline positive retained; experimental install/new borrow rejected before any financial/capability effect"
+    },
+    {
+      "id": "EBD-007",
+      "stage": "D2",
+      "requirement": "Pinned old binaries constructor/opener/managed takeover/direct financial paths cannot mutate experimental financial state; separately report control lease effects"
+    },
+    {
+      "id": "EBD-008",
+      "stage": "D2",
+      "requirement": "Exact read-only reopen without DDL, archive insertion, config repair or capability creation"
+    },
+    {
+      "id": "EBD-009",
+      "stage": "D2",
+      "requirement": "Historical v1 reference and v2 shadow replay use matching pinned artifacts; unknown/missing/mismatched code or contract rejected"
+    },
+    {
+      "id": "EBD-010",
+      "stage": "D2",
+      "requirement": "One captured account/market/now input; failure rollback for new risk and durable freeze; mandatory confirmed settlement preserved"
+    },
+    {
+      "id": "EBD-011",
+      "stage": "D2",
+      "requirement": "Gross debt/frozen/deficit/dust and original cumulative fees/reserve/reduce-only/cancel/partial-fill invariants"
+    },
+    {
+      "id": "EBD-012",
+      "stage": "D1_D2",
+      "requirement": "Independent human cases, published finite corpus, domain boundaries, hostile contexts and sample-outside-corpus differential checks; no core production function reuse in oracle"
+    },
+    {
+      "id": "EBD-013",
+      "stage": "D2_D4",
+      "requirement": "D2 must first prove trusted confirmed-obligation classification, candidate-only recovery opener/audit-after and restart exactly-once settlement; broader real matching four-side reconciliation and system capacity remain separately gated"
+    },
+    {
+      "id": "EBD-014",
+      "stage": "D4",
+      "requirement": "Independent open-loop 10k/s accepted durable orders and 10k/s complete unique liquidation fills >=30m plus soak/mixed/fault/liquidity scenarios; no compute-only substitution"
+    },
+    {
+      "id": "EBD-015",
+      "stage": "D2_D4",
+      "requirement": "Fresh-generation allowlist, immutable policy, old-writer exclusion, in-flight settlement and rollback/forward-compensation drills"
+    },
+    {
+      "id": "EVG-001",
+      "stage": "D1",
+      "requirement": "Trusted actual function globals and captured builtins anchors including independent builtins dict mutation"
+    },
+    {
+      "id": "EVG-002",
+      "stage": "D1",
+      "requirement": "Canonical bounded stable graph same across clean trusted restart; executable class/default_factory/property edges and approved cycles"
+    },
+    {
+      "id": "EVG-003",
+      "stage": "D1_D2",
+      "requirement": "Legacy exact shapes and explicit new-version replay preserve original time/artifact, no credit downgrade"
+    },
+    {
+      "id": "EVG-004",
+      "stage": "D2",
+      "requirement": "Pinned complete old binary direct-writer/old-handle/takeover matrix plus truly read-only reopen"
+    },
+    {
+      "id": "EVG-005",
+      "stage": "D2",
+      "requirement": "Distinct logical valuation time and final admission freshness/precommit checkpoint; late dual computation cannot reuse initial freshness"
+    },
+    {
+      "id": "EVG-006",
+      "stage": "D2_D3",
+      "requirement": "Candidate-only versus authority/shared/unknown failure and trusted obligation restricted opener/audit/replay matrix"
+    },
+    {
+      "id": "EVG-007",
+      "stage": "D2",
+      "requirement": "Durable EVALUATING gate before candidate checks; crash at every rollback/freeze/response/queued-command boundary"
+    },
+    {
+      "id": "EVG-008",
+      "stage": "D1_D4",
+      "requirement": "New exact source/plan/runtime/corpus per gate, preserve FIRST_FAIL_UNKNOWN, no old GO reuse or production inference"
+    }
+  ],
+  "test_gate_status": "ALL_NOT_RUN_BY_THIS_COMMIT",
+  "independent_signoff": "ORIGINAL_D0_STATIC_REVIEWS_PRESERVED_REVISION_AND_RUNTIME_NUMERIC_FINANCIAL_ACTIVATION_NOT_SIGNED_OFF",
+  "rollback": {
+    "automatic_reference_fallback_from_candidate_authority": false,
+    "delete_or_rewrite_config_archive_schema_to_open_old_binary": false,
+    "halt_new_risk_preserve_confirmed_settlement": true,
+    "no_financial_events": "RECREATE_SYNTHETIC_INSTANCE_FROM_APPROVED_REFERENCE_IMAGE",
+    "financial_events_exist": "RECONCILE_AND_EXPLICITLY_MIGRATE_OR_COMPENSATE_TO_NEW_GENERATION",
+    "real_funds": "REQUIRES_INDEPENDENT_REVIEW_AND_EXPLICIT_LAUNCH_APPROVAL"
+  },
+  "manual_cases": [
+    {
+      "id": "EBD-M02",
+      "upstream_id": "M02",
+      "scope": "PURE_VALUATION",
+      "expected": {
+        "accounting_equity": "70",
+        "collateral_value": "160",
+        "risk_equity": "30",
+        "loan_value": "80",
+        "principal_value": "125",
+        "interest_value": "5",
+        "debt_value": "130",
+        "initial_margin": "13",
+        "maintenance_margin": "6.5",
+        "available_margin": "17",
+        "borrowable_BTC": "0"
+      }
+    },
+    {
+      "id": "EBD-M01",
+      "upstream_id": "M01",
+      "scope": "PURE_VALUATION_MULTIPLIER_2_NOT_SERVICE_ACTIVATION",
+      "expected": {
+        "accounting_equity": "1128",
+        "collateral_value": "1105",
+        "risk_equity": "1033",
+        "loan_value": "852.5",
+        "debt_value": "112",
+        "unrealized_pnl": "40",
+        "initial_margin": "56.3",
+        "maintenance_margin": "28.15",
+        "order_margin": "10",
+        "available_margin": "966.7",
+        "independent_not_additive_borrowable_USD": "388",
+        "independent_not_additive_borrowable_BTC": "3.88"
+      }
+    },
+    {
+      "id": "EBD-M09",
+      "upstream_id": "M09",
+      "scope": "STRICT_MAINTENANCE_BOUNDARY",
+      "expected": {
+        "gross_USD_11_quote": "9",
+        "gross_USD_11_01_quote": "10"
+      },
+      "other_limits_must_also_hold": true,
+      "proceeds_assumption": "BORROWED_PROCEEDS_IMMEDIATELY_LEAVE_COLLATERAL_CONSERVATIVE_QUOTE",
+      "actual_credited_cash_post_borrow_equity": false,
+      "borrowing_authorization": false
+    },
+    {
+      "id": "EBD-M04",
+      "scope": "CONDITIONAL_SERVICE_FEE_RESERVE_FIXTURE_DISTINCT_PRE_POST_TERMINAL_RO_RESERVE_STATES",
+      "expected": {
+        "cash_after_half_fill": "99.98",
+        "position_quantity": "0.5",
+        "position_cost": "50",
+        "remaining_original_reserve": "5.02",
+        "reduce_only_reserve": "0.02",
+        "total_order_margin": "5.04",
+        "current_initial_margin": "5",
+        "current_maintenance_margin": "2.5",
+        "current_available_margin": "89.94",
+        "confirmed_close_own_RO_reserve_terminated_available_margin": "94.94",
+        "before_fill_projection_retaining_own_RO_fee_reserve_available_margin": "94.92",
+        "confirmed_close_cash": "99.96"
+      },
+      "preconditions": [
+        "MARK_LIMIT_FILL_100",
+        "MULTIPLIER_1",
+        "USD_MIN_UNIT_0_01",
+        "NO_OTHER_ASSETS_DEBTS_ORDERS_OBLIGATIONS_OR_FEES",
+        "ONLY_OWN_CONFIRMED_TERMINAL_RO_RESERVE_RELEASED"
+      ]
+    }
+  ],
+  "design_revision": 2,
+  "review_integration": {
+    "original_design_commit": "53acece53d27fb118c89286c10e5be41bb2ca5e7",
+    "financial_review_commit": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+    "independent_verification_commit": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+    "review_files_preserved_unchanged": true,
+    "revision_runtime_or_numeric_signoff_created": false,
+    "revision_execution_GO": false
+  },
+  "phase_gate_status": {
+    "D0": "REVISED_STATIC_SPEC_AWAITING_REVIEW_NOT_IMPLEMENTATION_APPROVAL",
+    "D1": "PURE_BINDING_CODE_MAY_BE_SEPARATELY_REVIEWED_NO_EXECUTION_GO_FROM_THIS_SPEC",
+    "D2": "BLOCKED_UNIMPLEMENTED_UNVERIFIED_SETTLEMENT_RECOVERY_AND_CRASH_SAFE_GATE",
+    "D3": "SEPARATE_SCOPE_NOT_ACCEPTED",
+    "D4": "SEPARATE_SCOPE_NOT_ACCEPTED"
+  },
+  "open_blockers": [
+    {
+      "id": "EBD-FIN-001",
+      "status": "OPEN_SPEC_REFINED_NOT_IMPLEMENTED_OR_VERIFIED",
+      "required_verification": [
+        "EVG-006",
+        "EBD-010",
+        "EBD-013",
+        "EBD-015"
+      ],
+      "blocks": [
+        "D2",
+        "D3",
+        "D4"
+      ]
+    },
+    {
+      "id": "EBD-FIN-002",
+      "status": "OPEN_SPEC_REFINED_NOT_IMPLEMENTED_OR_VERIFIED",
+      "required_verification": [
+        "EVG-007",
+        "EBD-010",
+        "EBD-015"
+      ],
+      "blocks": [
+        "D2",
+        "D3",
+        "D4"
+      ]
+    }
+  ],
+  "failure_recovery_matrix": [
+    {
+      "class": "HEALTHY_FULL_BINDING_AND_COMPARISON",
+      "new_risk": "ONLY_AFTER_EXISTING_POLICY_AND_FINAL_FRESHNESS_GUARDS",
+      "unconfirmed_local_execution": "MAY_AUTHORIZE_ONLY_BEFORE_CONFIRMATION",
+      "confirmed_obligation": "IDEMPOTENT_EXISTING_REFERENCE_AUTHORITY_SETTLEMENT",
+      "reopen": "FULL_NORMAL_BINDING_REQUIRED",
+      "replay": "FULL_PINNED_ARTIFACT_WITH_ORIGINAL_TIMES"
+    },
+    {
+      "class": "CANDIDATE_ONLY_UNSUPPORTED_MISMATCH_MISSING_OR_DRIFT",
+      "precondition": "AUTHORITY_SHARED_RUNTIME_CONTRACT_SCHEMA_FENCING_AND_OBLIGATION_INDEPENDENTLY_TRUSTED",
+      "new_risk": "GATE_CLOSED_REJECT_AND_ROLLBACK",
+      "unconfirmed_local_execution": "REJECT_BEFORE_MATCH_CONFIRMATION",
+      "confirmed_obligation": "SEPARATE_REFERENCE_ONLY_SETTLEMENT_WITH_ORIGINAL_FEE_POSITION_LEDGER_RESERVE_AND_NON_CANDIDATE_AUDIT_AFTER",
+      "reopen": "KNOWN_CONTRACT_RESTRICTED_SETTLEMENT_OPENER_NO_SCHEMA_REPAIR_CREDIT_INSTALL_OR_NEW_RISK",
+      "query_cancel": "LABELED_DEGRADED_REFERENCE_QUERY_AND_CONFIRMED_CANCEL_ONLY",
+      "replay": "REFERENCE_SCOPE_RESULT_AND_SHADOW_NOT_REPRODUCED_SEPARATE_NEVER_FULL_SHADOW_SUCCESS"
+    },
+    {
+      "class": "REFERENCE_SHARED_MODEL_ACCOUNTING_RUNTIME_AUTHORITY_BINDING_OR_WRITER_PERMISSION_UNTRUSTED",
+      "new_risk": "REJECT_NO_DEFAULT_REFERENCE_FALLBACK",
+      "unconfirmed_local_execution": "REJECT",
+      "confirmed_obligation": "RETAIN_DURABLE_PENDING_OBLIGATION_AND_RESERVATION_NO_UNTRUSTED_FINANCIAL_WRITES_OR_FALSE_SUCCESS",
+      "reopen": "RESTRICTED_SETTLEMENT_OPENER_ALSO_REJECTS_RESTORE_APPROVED_EXACT_REFERENCE_ARTIFACT_AND_QUERY_ORIGINAL_ID",
+      "replay": "EXPLICIT_UNAVAILABLE_OR_MISMATCH_NO_REWRITE"
+    },
+    {
+      "class": "UNKNOWN_CONTRACT_VERSION_UNCLEAR_PARTITION_OR_UNTRUSTED_OBLIGATION_SOURCE",
+      "new_risk": "REJECT_NO_INNER_TEN_FIELD_DOWNGRADE",
+      "unconfirmed_local_execution": "REJECT",
+      "confirmed_obligation": "PRESERVE_EXISTING_TRUSTED_OBLIGATIONS_NO_CLIENT_REQUEST_PROMOTION_NO_RESERVATION_RELEASE",
+      "reopen": "NO_FALLBACK_REQUIRES_REVIEWED_RECOVERY",
+      "replay": "UNKNOWN_OR_UNVERIFIED_NOT_SUCCESS"
+    },
+    {
+      "class": "CONTROL_OR_FINANCIAL_STORAGE_UNAVAILABLE_FREEZE_COMMIT_FAILED_OR_UNKNOWN",
+      "new_risk": "FAIL_CLOSED_DO_NOT_CLAIM_DURABLE_FREEZE",
+      "unconfirmed_local_execution": "NO_NEW_AUTHORIZATION",
+      "confirmed_obligation": "PENDING_OR_UNKNOWN_WHEN_CANNOT_COMMIT_REQUERY_ORIGINAL_ID_AFTER_RECOVERY",
+      "reopen": "NEW_RISK_CLOSED_NO_BLIND_REPLAY",
+      "replay": "LIMITED_TO_AVAILABLE_TRUSTED_EVIDENCE"
+    }
+  ],
+  "shared_risk_input_unavailable": "NOT_CANDIDATE_ONLY_NO_NEW_DEGRADED_SETTLEMENT_CAPABILITY_UNTIL_SEPARATELY_REVIEWED_RISK_AUDIT_PENDING_CONTRACT_KEEP_OBLIGATION_PENDING",
+  "restricted_settlement_proposal": {
+    "status": "D2_BLOCKED_NOT_IMPLEMENTED",
+    "entrypoint": "settle_confirmed_obligation(obligation_id)",
+    "opener": "open_existing_settlement_services",
+    "client_supplied_terms_or_mandatory_flag_authorize": false,
+    "preconditions": [
+      "KNOWN_FIXED_SHADOW_CONTRACT",
+      "MATCHING_ORIGINAL_AUTHORITY_BINDING_PARTITION",
+      "TRUSTED_SCHEMA_AND_FENCING",
+      "IMMUTABLE_AUTHORIZED_DURABLE_OBLIGATION",
+      "NEW_RISK_GATE_CLOSED"
+    ],
+    "recovery_audit_scope": "reference_settlement_recovery_v1",
+    "recovery_audit_required": [
+      "ORIGINAL_CONTRACT_AND_FULL_ARTIFACT_REFERENCE",
+      "AUTHORITY_BINDING_DIGEST",
+      "CANDIDATE_FAILURE_CATEGORY",
+      "OBLIGATION_ID",
+      "AUTHORITATIVE_REFERENCE_BEFORE_AFTER",
+      "ORIGINAL_AND_RESULT_STATE",
+      "FEE_POSITION_LEDGER_RESERVATION_LINKS"
+    ],
+    "candidate_audit_after_invoked": false,
+    "reference_audit_unavailable": "KEEP_PENDING_NO_SUCCESS",
+    "recovery_replay_is_full_shadow_success": false,
+    "existing_normal_constructor_opener_or_archive_validator_relaxed": false
+  },
+  "admission_gate_protocol": {
+    "status": "D2_BLOCKED_SPEC_ONLY_NOT_IMPLEMENTED_OR_FAULT_VERIFIED",
+    "table_proposal": "uta_valuation_gate",
+    "states": [
+      "OPEN",
+      "EVALUATING",
+      "FROZEN"
+    ],
+    "scope": [
+      "KNOWN_AUTHORITY",
+      "ACCOUNT",
+      "CURRENT_FENCING_TOKEN"
+    ],
+    "correlation": [
+      "ORIGINAL_COMMAND_ID",
+      "EXPECTED_ACCOUNT_VERSION",
+      "GATE_REVISION",
+      "FAILURE_DIGEST"
+    ],
+    "sequence": [
+      {
+        "step": 1,
+        "action": "EXCLUSIVE_ACCOUNT_LANE_CHECK_OPEN_FOR_NEW_RISK_EXISTING_EXPERIMENTAL_RESTART_TAKEOVER_DURABLY_CLOSE_GATE_VIA_TRUSTED_AUTHORITY_ONLY_BEFORE_CANDIDATE_CHECK_UNKNOWN_STORE_OR_AUTHORITY_REJECT"
+      },
+      {
+        "step": 2,
+        "action": "DURABLY_COMMIT_EVALUATING_INTENT_AND_LATCH_BEFORE_THIS_NEW_RISK_COMMAND_CANDIDATE_CHECK_OR_DUAL_COMPUTE_NO_FINANCIAL_TX_IF_INTENT_NOT_DURABLE"
+      },
+      {
+        "step": 3,
+        "action": "FINANCIAL_TX_CHECK_EXACT_INTENT_COMMAND_ACCOUNT_VERSION_FENCING_THEN_CAPTURE_COMPUTE_AUDIT_AND_FINAL_FRESHNESS"
+      },
+      {
+        "step": 4,
+        "success": "ADMISSION_RECEIPT_RESERVATION_ACCOUNT_EFFECTS_AND_EVALUATING_TO_OPEN_IN_SAME_FINANCIAL_COMMIT_RELEASE_LATCH_ONLY_AFTER_CONFIRMATION"
+      },
+      {
+        "step": 5,
+        "failure": "KEEP_LATCH_CLOSED_ROLLBACK_FINANCIAL_TX_EVALUATING_INTENT_SURVIVES_THEN_SEPARATELY_COMMIT_FROZEN_FAILURE_DIGEST_AND_ORIGINAL_COMMAND_NOT_ADMITTED_RESULT"
+      },
+      {
+        "step": 6,
+        "response": "DEFINITE_SHADOW_REJECT_ONLY_AFTER_FREEZE_COMMIT_OTHERWISE_QUERYABLE_UNKNOWN_OR_UNAVAILABLE_NO_DURABLE_FREEZE_CLAIM"
+      },
+      {
+        "step": 7,
+        "recovery": "QUERY_ORIGINAL_ID_GATE_RESERVATION_AND_OBLIGATION_EVALUATING_NEVER_AUTO_REOPEN_OR_REAUTHORIZE_INCONSISTENCY_IS_CORRUPTION"
+      },
+      {
+        "step": 8,
+        "unfreeze": "EXPLICIT_REVIEWED_CONTROL_ACTION_WITH_FULL_BINDING_STORAGE_RECONCILIATION_AND_PENDING_COMMAND_CHECKS"
+      }
+    ],
+    "next_queued_new_risk_selected_before_closure": false,
+    "success_and_open_atomicity_required": true,
+    "failure_intent_inside_rolled_back_financial_tx": false,
+    "mandatory_settlement_or_confirmed_cancel_discarded_by_latch": false,
+    "existing_durable_command_savepoint_and_terminal_integration": "UNIMPLEMENTED_REQUIRES_SEPARATE_SOURCE_REVIEW_AND_FAULT_PROOF",
+    "crash_boundaries": [
+      "BEFORE_AFTER_DURABLE_INTENT",
+      "FINANCIAL_BEGIN",
+      "COMPARISON",
+      "FINAL_GUARD",
+      "BEFORE_AFTER_SUCCESS_COMMIT",
+      "BEFORE_AFTER_FAILURE_ROLLBACK",
+      "BEFORE_AFTER_FROZEN_COMMIT",
+      "RESPONSE_LOSS",
+      "RESTART_TAKEOVER",
+      "NEXT_QUEUED_NEW_RISK"
+    ],
+    "acceptance": "REOPEN_AFTER_EACH_FAULT_NO_UNAPPROVED_ACCEPTANCE_FAILED_RESERVATION_OR_DUPLICATE_POSTING_CONFIRMED_OBLIGATIONS_PRESERVED",
+    "known_business_rejection": "ONLY_AFTER_COMPLETE_TRUSTED_VALUATION_AND_ZERO_FINANCIAL_EFFECT_COMMIT_ORIGINAL_BUSINESS_REJECT_TERMINAL_AND_EVALUATING_TO_OPEN_IN_ONE_TRUSTED_TX_NO_ENGINE_FAILURE_CLASSIFICATION_BY_HTTP_STATUS_ONLY",
+    "fresh_initialization": "NO_WRITABLE_FUNDED_ACCOUNT_IF_FULL_CANDIDATE_VALIDATION_FAILS_NOT_AN_EXISTING_AUTHORITY_MIGRATION",
+    "frozen_failure_result": "EXPLICIT_NEW_EXPERIMENTAL_QUERYABLE_NOT_ADMITTED_NOT_IMPLICIT_LEGACY_BUSINESS_REJECTED_OR_HTTP_STATUS_BASED_RETRY_CHANGE"
+  },
+  "D1_protocol_reference": {
+    "commit": "f34644bd8300e94d39d8782b04bcca0673023da1",
+    "base": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+    "commit_contains": "DOCUMENTS_AND_JSON_ONLY_NO_NEW_MODULE",
+    "merged_into_this_design_branch": false,
+    "fixed_engines": 2,
+    "named_own_functions": 23,
+    "own_classes": 22,
+    "runtime_capsule_self_authenticated": false,
+    "pure_evidence_is_D2_audit_or_recovery_artifact": false,
+    "resolved_callable_proves_service_used_it": false,
+    "source_only_no_execution_GO": true,
+    "inventory": "V3_65PY_66RUNTIME_TO_FUTURE_66PY_67RUNTIME_REQUIRES_SEPARATE_NEW_INVENTORY_VERSION"
+  },
+  "review_disposition": [
+    {
+      "review": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "item": "EBD-FIN-001",
+      "spec_section": "5.2",
+      "disposition": "SPEC_REFINED_OPEN_UNIMPLEMENTED_D2_BLOCKED"
+    },
+    {
+      "review": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "item": "EBD-FIN-002",
+      "spec_section": "5.3",
+      "disposition": "SPEC_REFINED_OPEN_UNIMPLEMENTED_D2_BLOCKED"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-001",
+      "spec_section": "3.3",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-002",
+      "spec_section": "3.3",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-003",
+      "spec_section": "4",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-004",
+      "spec_section": "4.3",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-005",
+      "spec_section": "4.3",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-006",
+      "spec_section": "5.2",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-007",
+      "spec_section": "5.3",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    },
+    {
+      "review": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "item": "EVG-008",
+      "spec_section": "7",
+      "disposition": "REQUIRED_NOT_RUN_NO_GO"
+    }
+  ],
+  "verification_evidence_scopes": {
+    "pure_binding": "D1_ONLY_NEW_EXACT_SOURCE_AND_PLAN_REQUIRED",
+    "pure_numerical": "SEPARATE_CORPUS_RUNTIME_AND_INDEPENDENT_ORACLE_NOT_IMPLIED_BY_BINDING",
+    "financial_transactions": "D2_BLOCKED_SEPARATE_SOURCE_AND_EXECUTION_APPROVAL",
+    "matching_and_settlement": "CONFIRMED_OBLIGATION_RECOVERY_REQUIRED_BEFORE_D2_COMPLETE_CHAIN_SEPARATE_SCOPE",
+    "capacity": "D4_USER_OPEN_LOOP_DURABLE_END_TO_END_GATES_NOT_COMPUTE_TPS",
+    "old_GO_or_inventory_reuse": false
+  }
+}

@@ -1,0 +1,540 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_FINANCIAL_SPEC_DELTA_REVIEW",
+  "reviewed_commit": "a2e5db45620f9dbf6c34d4262cdbd50f359e8065",
+  "original_design": "53acece53d27fb118c89286c10e5be41bb2ca5e7",
+  "original_financial_review": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+  "status": "REV2_D0_CLARIFICATIONS_ACCEPTABLE_D2_IMPLEMENTATION_GATES_OPEN",
+  "target_execution_attempts": 0,
+  "target_import_compile_SQL_process_CI_actions": false,
+  "runtime_or_financial_activation_approved": false,
+  "production_approved": false,
+  "original_findings_closed": false,
+  "source_scope": "ONLY_DOC_SPEC_IMMUTABLE_DATA_GIT_AND_INDEPENDENT_STDLIB_FRACTION_ARITHMETIC",
+  "reviewed_revision_files": [
+    {
+      "path": "docs/cross-engine-binding-design.md",
+      "bytes": 47174,
+      "sha256": "c28866a211e7e1e410792573bd50dacd7cf66dbb026e6e526b0ee0088ae52095",
+      "git_blob_oid": "37fd7b23827ee7bc78710d8e60c181f9bafba9fd"
+    },
+    {
+      "path": "evidence/designs/cross-engine-binding/contract.json",
+      "bytes": 36063,
+      "sha256": "429a6360b9e79b891982f762ad830e4c07a54bc4d65c13576e4816a09c95a799",
+      "git_blob_oid": "8adb47cd3414c3f55201a4360cea2781e7cc04e0"
+    },
+    {
+      "path": "evidence/designs/cross-engine-binding/source-evidence.json",
+      "bytes": 16543,
+      "sha256": "1c19b2f0ac40207295aeb7797da363bc612dd2f287575416f2d876749a812027",
+      "git_blob_oid": "3b256fb946e3028641d266c555dbf0b9824b1648"
+    }
+  ],
+  "pin_verification": {
+    "original_21_records_equal_53acece": true,
+    "original_source_tuples_verified": 21,
+    "additional_declared_reference_tuples_verified": 15,
+    "total_declared_tuples_verified": 36,
+    "mismatches": 0,
+    "imported_review_files_physical_bytes_equal_original": 4,
+    "references_are_not_loaded_runtime_proof": true,
+    "tuples": [
+      {
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/ledger.py",
+        "git_blob_oid": "1c2fabf6949e2f296889ad7c24bf4e25a3c60b84",
+        "bytes": 7329,
+        "sha256": "ec20cb64ea5bc4d8a3e09144e91771f665ff03f82ea615910f102633031e1571",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/startup.py",
+        "git_blob_oid": "50347be9d63205f406a480df4d59f2fe31530625",
+        "bytes": 23653,
+        "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/writer_fence.py",
+        "git_blob_oid": "302de1b0d2a409e610bf807692514b120bb5f87f",
+        "bytes": 55652,
+        "sha256": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/service.py",
+        "git_blob_oid": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+        "bytes": 87079,
+        "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/decision_audit.py",
+        "git_blob_oid": "b00d057ac9b0b541b62d266cd8a1b4d9f4b71dd8",
+        "bytes": 38983,
+        "sha256": "0046dc943ddb1e075841e81e3c58c939c7468cfd8e0c5595c8a4d4d7ac27e514",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_artifact.py",
+        "git_blob_oid": "d19ee78866cd33b4e65833b797c4602c0ff1be42",
+        "bytes": 18651,
+        "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_audit_v2.py",
+        "git_blob_oid": "e9c0bbb3c9c56d4b752ee51c9578d3ec299a7e36",
+        "bytes": 54043,
+        "sha256": "d455b8417bd3938f9aca14eda5dd0a0f366b1da0e60638c83324085cbc7eb83a",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_v2_payload_contract.py",
+        "git_blob_oid": "a7562075f5443b76027134342fe5f7dcb8f2d649",
+        "bytes": 3716,
+        "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_native_v2.py",
+        "git_blob_oid": "3c5c58e9936a9463eb43871556de49c3532e2c0b",
+        "bytes": 103836,
+        "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/existing_services.py",
+        "git_blob_oid": "c849b631baa29fc07262ae8582d6d662e1840e08",
+        "bytes": 16790,
+        "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/durable_process.py",
+        "git_blob_oid": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+        "bytes": 106136,
+        "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/sharding.py",
+        "git_blob_oid": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+        "bytes": 51451,
+        "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/supervisor.py",
+        "git_blob_oid": "5fe55ce3fbc772d3d162b63ab01cb30c835d0f03",
+        "bytes": 15243,
+        "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/portfolio.py",
+        "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+        "bytes": 24042,
+        "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/products.py",
+        "git_blob_oid": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+        "bytes": 12043,
+        "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/models.py",
+        "git_blob_oid": "f91ddee7ba1f6389991a4cb0aa3848900f051b11",
+        "bytes": 6034,
+        "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/market.py",
+        "git_blob_oid": "6589acc7a877e8d403186554f4a24505661e8fdb",
+        "bytes": 8465,
+        "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "8262bb7226d0b110d2c89bb1c58293e7908fa420",
+        "path": "uta/cross_decimal_kernel.py",
+        "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+        "bytes": 16411,
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "uta/cross_decimal_kernel.py",
+        "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+        "bytes": 16411,
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "docs/cross-decimal-independent-oracle-delivery.md",
+        "git_blob_oid": "68a28fbb0ceaf2f0239e55c8dc73d35c4f2c5bda",
+        "bytes": 4050,
+        "sha256": "b4a29b2596db0d3e7d50ba94246e590e38619da6075ed270a4874c72c2026779",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "evidence/reviews/cross-decimal-kernel/manual-cases.json",
+        "git_blob_oid": "bcee1f913b02bdb3cd3f64f5b43b7a937439163e",
+        "bytes": 3655,
+        "sha256": "2b0e99ebc37d72d890b545ad1050778ee5971a4176540cd6b8bf1f700a2d747d",
+        "declared_group": "reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+        "path": "docs/cross-engine-binding-financial-review.md",
+        "git_blob_oid": "346ccba697d5ebf0e49f2232a71c69251e9d3e60",
+        "bytes": 6155,
+        "sha256": "85c4e29f00da702bf325c36a1cab7265dc5321950dff176012afbbe79d2d311a",
+        "declared_group": "review_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+        "path": "evidence/reviews/cross-engine-binding-financial/review.json",
+        "git_blob_oid": "40f45ab4a5ead276e535b5ff151b45b00d106d50",
+        "bytes": 21055,
+        "sha256": "4320d5418eb881aeb9eb27667b57e944258b7774ede09279193471148a78dc2f",
+        "declared_group": "review_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+        "path": "docs/cross-engine-binding-independent-verification.md",
+        "git_blob_oid": "ae6694040f6d4ca8755eb8aa77759a646b784919",
+        "bytes": 5581,
+        "sha256": "d08d65e5482ef951d500a2db1bb69291429f6aa82417cb5b68ef34175dd70c13",
+        "declared_group": "review_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+        "path": "evidence/designs/cross-engine-binding-independent-verification/review-53acece.json",
+        "git_blob_oid": "ec5cf7f0b41694ce0a7292af62c04d2fa4814639",
+        "bytes": 9938,
+        "sha256": "34990e725101364e9af9cf74bcc59395654a12936743da806031b42da07a0669",
+        "declared_group": "review_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/storage.py",
+        "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+        "bytes": 30225,
+        "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+        "declared_group": "revision_additional_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/matching.py",
+        "git_blob_oid": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+        "bytes": 21921,
+        "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d",
+        "declared_group": "revision_additional_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/durable_commands.py",
+        "git_blob_oid": "127ae8481a980c832f25da6443c58af7ed6ac7eb",
+        "bytes": 29291,
+        "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8",
+        "declared_group": "revision_additional_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "f34644bd8300e94d39d8782b04bcca0673023da1",
+        "path": "docs/cross-engine-binding-d1-protocol.md",
+        "git_blob_oid": "d877f46c1b89bfd46364e623f91a03011f543181",
+        "bytes": 3144,
+        "sha256": "e24eb771150051792cdf53387fc855f20f6ed725389f24ebc62d92b5a1f4c625",
+        "declared_group": "D1_protocol_read_only_references",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "f34644bd8300e94d39d8782b04bcca0673023da1",
+        "path": "evidence/designs/cross-engine-binding-d1/proposal.json",
+        "git_blob_oid": "56c8f5736770eae817cc3967cc25440e4d40537d",
+        "bytes": 6774,
+        "sha256": "efb446734da6df0ae003412e4f64a7b2fe87e50fc94f20360fbc3f836025adf3",
+        "declared_group": "D1_protocol_read_only_references",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/cross_decimal_kernel.py",
+        "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+        "bytes": 16411,
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/market.py",
+        "git_blob_oid": "6589acc7a877e8d403186554f4a24505661e8fdb",
+        "bytes": 8465,
+        "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/models.py",
+        "git_blob_oid": "f91ddee7ba1f6389991a4cb0aa3848900f051b11",
+        "bytes": 6034,
+        "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/portfolio.py",
+        "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+        "bytes": 24042,
+        "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/products.py",
+        "git_blob_oid": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+        "bytes": 12043,
+        "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      },
+      {
+        "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+        "path": "uta/risk.py",
+        "git_blob_oid": "26910411f6951c26cbc688440176bfbbc209a42d",
+        "bytes": 7535,
+        "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264",
+        "declared_group": "D1_protocol_fixed_source_reads",
+        "exact_tuple_verified": true
+      }
+    ]
+  },
+  "default_compatibility": {
+    "default_contract_equal_original": true,
+    "valuation_fields": 10,
+    "order_fields": 11,
+    "execution_option_fields": 2,
+    "credit_V2_activated": false,
+    "new_trust_partitions_in_undeployed_D0_format1": "EXPLICIT_DRAFT_REVISION_NOT_IMPLICIT_RUNTIME_COMPATIBILITY",
+    "D1_document_references_not_implementation_review_or_GO": true
+  },
+  "responses": [
+    {
+      "original_finding": "EBD-FIN-001",
+      "original_review": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "disposition": "AUTHOR_RESPONSE_ADEQUATE_AS_D0_SPEC_CLARIFICATION_IMPLEMENTATION_BLOCKER_REMAINS_OPEN",
+      "spec_sections": [
+        "3.2",
+        "3.3",
+        "5.2"
+      ],
+      "clarified": [
+        "Full healthy shadow binding remains mandatory for new risk and normal openers",
+        "Authority partition includes reference/shared models/runtime/accounting/settlement/fencing/resolver and recovery audit; unclear dependencies are shared/unknown, never candidate-only",
+        "Trusted durable matching obligation and compiled call chain authorize mandatory settlement; client flag or arbitrary fill ID cannot promote a request",
+        "Candidate-only fault permits a separate restricted reference-only opener/audit with new recovery scope; ordinary constructor/full artifact equality is not silently weakened",
+        "Reference/shared/runtime/unknown contract/schema/fencing failure rejects restricted opener too and retains original duties/reservations",
+        "Missing shared current quote is explicitly outside candidate-only; no unreviewed no-quote settlement capability is granted",
+        "Existing apply_fill and paired matcher remain pre-confirmation local authorization with rollback, not an external confirmed-fill ingestion endpoint",
+        "Reference-only replay is labelled incomplete shadow evidence, not full shadow success"
+      ],
+      "still_required_before_D2": [
+        "Implement exact known-contract authority partition and immutable expected anchors without trusting mutated candidate objects or current defaults",
+        "Implement authorized durable obligation source, two-sided exactly-once settlement, reservation/fee/position/ledger links and restricted opener",
+        "Prove candidate failure cannot invoke candidate audit-after or block reference recovery while all reference/shared failures remain rejected",
+        "Inject failures and reopen/unknown outcomes with complete original obligation/query evidence; preserve normal Credit V2 and funding/capability rejection boundaries"
+      ],
+      "runtime_closed": false
+    },
+    {
+      "original_finding": "EBD-FIN-002",
+      "original_review": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "disposition": "AUTHOR_RESPONSE_ADEQUATE_AS_D0_SPEC_CLARIFICATION_IMPLEMENTATION_BLOCKER_REMAINS_OPEN",
+      "spec_sections": [
+        "5.3"
+      ],
+      "clarified": [
+        "Persist EVALUATING intent independently before this command candidate check/dual compute; no financial transaction if intent not durable",
+        "Exclusive account lane and local latch prevent next queued new-risk selection while intent exists",
+        "Successful receipt/reservation/account effects and EVALUATING->OPEN share the financial commit",
+        "Known failed financial transaction rolls back while EVALUATING survives, then separate trusted FROZEN+NOT_ADMITTED commits before definite shadow rejection",
+        "Freeze-store failure or unknown result remains closed/queryable UNKNOWN; no claim of durable freeze or legacy business rejection from HTTP503 alone",
+        "Existing authority restart closes gate before candidate check; EVALUATING/FROZEN never auto-open, and unknown authority cannot create a new writable library",
+        "Normal known business rejection only returns gate OPEN with original terminal result after trusted valuation/zero financial effects, in one trusted commit",
+        "Mandatory settlement and confirmed cancellation use trusted separate categories; unfreeze requires explicit reviewed action"
+      ],
+      "still_required_before_D2": [
+        "Exact gate authority/table/role/CAS ownership and complete all-entry queue/credit/financial mutation integration",
+        "Explicit known rollback versus unknown financial COMMIT/ROLLBACK protocol; never stamp NOT_ADMITTED while a successful effect may exist",
+        "Correlate recovery to immutable historical command-specific gate revision rather than only the current gate row",
+        "All crash boundaries including before intent/commit, after rollback, freeze write failure, lost response, restart/takeover and next queued command",
+        "Fencing, storage reopening, receipt/reservation consistency and no double effects; no success claimed from ordered text alone"
+      ],
+      "runtime_closed": false
+    }
+  ],
+  "residual_implementation_constraints": [
+    {
+      "id": "FIN-REV2-REQ01",
+      "priority": "HIGH_BEFORE_D2",
+      "title": "Historical success must be reconciled at its own gate revision",
+      "reason": "Section5.3.5 says an original successful transaction should have unique success and OPEN. This is valid for its original atomic transition, not a requirement that today current gate is still OPEN. Later command B may validly set EVALUATING or operator control may set FROZEN.",
+      "required": "Archive/correlate command A receipt to its own committed gate transition/revision and financial effect; separately preserve current command/control gate. Do not mark a legitimate later gate as corruption or reopen B when answering A.",
+      "synthetic_sequence": [
+        "A commits SUCCEEDED/reservation plus OPEN at revision10",
+        "B durably enters EVALUATING revision11, or operator later freezes revision11",
+        "A response was lost; query original A returns its unique historical success while current gate remains closed for B/control"
+      ],
+      "scope": "Residual implementation/recovery contract within still-open FIN-002; not a reproduced runtime defect or demand to run target"
+    },
+    {
+      "id": "FIN-REV2-REQ02",
+      "priority": "HIGH_BEFORE_D2",
+      "title": "Unknown financial commit is not a known rollback",
+      "reason": "The rollback->FROZEN+NOT_ADMITTED path is appropriate only if the financial transaction has definitely not committed. Existing high-level storage-unknown matrix requires pending/unknown, but implementation must not route commit/rollback uncertainty through a generic failure handler.",
+      "required": "When financial COMMIT/ROLLBACK outcome or freeze COMMIT is unknown, keep admission closed and query/reopen original receipt, reservation, account effect and command-specific gate evidence. CAS from same EVALUATING ownership plus verified no effect is required before a definite NOT_ADMITTED. If success committed, replay success once; if state cannot be established, remain UNKNOWN.",
+      "forbidden": [
+        "503 alone implies NOT_ADMITTED or business REJECTED",
+        "best-effort rollback after uncertain commit treated as proof of no effect",
+        "freeze confirmation without checking potential prior success",
+        "new command ID automatically retries uncertain financial effect"
+      ],
+      "scope": "Specific acceptance constraint, not a claim rev2 promises false rejection; rev2 explicitly leaves integration/fault proof open"
+    },
+    {
+      "id": "FIN-REV2-REQ03",
+      "priority": "HIGH_BEFORE_D2",
+      "title": "The restricted opener and gate cannot become a credit or direct-call bypass",
+      "required": "All old/normal/direct service, credit install/borrow, transfer/withdrawal/mode and managed/native entrypoints reject unsupported experimental capability before financial/capability writes. Authority-only recovery exposes only verified original obligations/confirmed cancellation/degraded query, never a callable selected from archive or client mandatory flag. The same references and guards must govern before/after audit, constructor, reopen and queue paths.",
+      "scope": "Retains original gate/old-writer/credit requirements; no new runtime review or generic security scan performed"
+    }
+  ],
+  "unknown_result_matrix": [
+    {
+      "case": "EVALUATING intent commit not confirmed",
+      "new_financial_tx": "MUST_NOT_BEGIN",
+      "reply": "UNKNOWN_OR_UNAVAILABLE_NO_DURABLE_CLOSURE_CLAIM"
+    },
+    {
+      "case": "known shadow failure before any financial commit; rollback confirmed; FROZEN+same command NOT_ADMITTED confirmed",
+      "gate": "FROZEN",
+      "reply": "DEFINITE_EXPERIMENTAL_NOT_ADMITTED_NOT_IMPLICIT_LEGACY_BUSINESS_REJECTED"
+    },
+    {
+      "case": "financial commit outcome unknown",
+      "gate": "CLOSED_FOR_NEW_RISK",
+      "reply": "QUERY_ORIGINAL_ID_AND_CORRELATED_HISTORICAL_EVIDENCE_NO_FABRICATED_REJECTION"
+    },
+    {
+      "case": "freeze/stop write outcome unknown",
+      "gate": "LOCAL_CLOSED_REOPEN_AUTHORITY_ONLY_CLOSED",
+      "reply": "UNKNOWN_NO_FROZEN_SUCCESS_CLAIM"
+    },
+    {
+      "case": "original successful financial commit confirmed but response lost",
+      "reply": "RETURN_ORIGINAL_UNIQUE_SUCCESS_NO_SECOND_EFFECT",
+      "gate": "PRESERVE_ANY_LATER_VALID_EVALUATING_OR_FROZEN_REVISION"
+    },
+    {
+      "case": "known genuine business refusal with no effects and trusted valuation",
+      "reply": "ORIGINAL_BUSINESS_TERMINAL_PLUS_OPEN_AT_OWN_REVISION_IN_ONE_TRUSTED_COMMIT_ONLY"
+    },
+    {
+      "case": "authority/shared/runtime/unknown contract failure",
+      "reply": "NO_REFERENCE_DEFAULT_FALLBACK_RESTRICTED_OPENER_ALSO_REJECTS_PENDING_DUTIES_PRESERVED"
+    }
+  ],
+  "independent_manual_arithmetic": {
+    "method": "STDLIB_FRACTION_FROM_LITERAL_STRINGS_ONLY_NO_PRODUCTION_FUNCTIONS",
+    "M09": {
+      "proceeds_leave_assumption_explicit": true,
+      "at_USD11_quote10_equity": "1",
+      "at_USD11_quote10_MM": "1",
+      "strict_equality_result": "UNSAFE_QUOTE9",
+      "at_USD11_01_quote10_equity": "1.01",
+      "at_USD11_01_quote10_MM": "1",
+      "result": "BOUNDARY_ALLOWS10_IF_OTHER_LIMITS_PASS",
+      "actual_cash_credited_equity_or_borrow_permission": false
+    },
+    "M04": {
+      "fee_first_half": "0.02",
+      "cash_after_first_half": "99.98",
+      "remaining_original_reserve": "5.02",
+      "own_RO_fee_reserve": "0.02",
+      "current_IM": "5",
+      "current_available": "89.94",
+      "cash_after_RO_fill": "99.96",
+      "after_own_RO_reserve_terminated_available": "94.94",
+      "projection_with_own_RO_reserve_retained_available": "94.92",
+      "difference_is_logical_state_not_tolerance": "0.02",
+      "preconditions": "limit=mark=fill100; multiplier1; USD minimum.01; no unrelated asset/debt/order/obligation/fee; original cumulative fee/reserve policy unchanged"
+    },
+    "result": "ARITHMETIC_AND_TIMING_CLARIFICATIONS_AGREE"
+  },
+  "release_status": {
+    "D0": "AUTHOR_RESPONSES_SUFFICIENT_AS_SPEC_CLARIFICATION_WITH_RESIDUAL_IMPLEMENTATION_CONSTRAINTS",
+    "D1": "SEPARATE_PURE_BINDING_CODE_SOURCE_PLAN_AND_EXECUTION_REVIEW_ONLY_NO_GO_FROM_THIS_REVIEW",
+    "D2": "BLOCKED_ORIGINAL_FIN001_FIN002_AND_ALL_APPLICABLE_EBD_EVG_GATES_REMAIN_OPEN",
+    "D3_D4": "NO_APPROVAL",
+    "23_design_test_gates": "NOT_RUN_BY_THIS_REVIEW"
+  },
+  "administrative_validation": "Exact Git/blob/length/SHA of36 declared tuples, four imported review files unchanged, default exact comparison, own JSON/ref checks and diffcheck. Fraction checks only supplied hand examples; no target model/service/calculator executed.",
+  "rollback": "Revert only these two delta review files; original design, author revision, prior reviews and source pins remain exact. No data migration or runtime change."
+}

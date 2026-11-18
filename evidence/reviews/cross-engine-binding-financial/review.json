@@ -1,0 +1,416 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_FINANCIAL_CODE_SPEC_REVIEW",
+  "reviewed_design_commit": "53acece53d27fb118c89286c10e5be41bb2ca5e7",
+  "status": "D0_FINANCIAL_BOUNDARIES_REVIEWED_D2_BLOCKED",
+  "scope": "IMMUTABLE_DESIGN_AND_STATIC_SOURCE_PINS_ONLY",
+  "runtime_approval": false,
+  "production_approved": false,
+  "target_execution_attempts": 0,
+  "target_import_compile_test_sql_process_worker_ci_actions": false,
+  "reviewed_design_files": [
+    {
+      "path": "docs/cross-engine-binding-design.md",
+      "bytes": 31492,
+      "sha256": "30badc45a94b94de74a5e1b259336db0837ebb3f8db5bd225b315f19ebaaee4a",
+      "git_blob_oid": "7131fffbcac33f09d6cc0122eb70d90f91ab3688"
+    },
+    {
+      "path": "evidence/designs/cross-engine-binding/contract.json",
+      "bytes": 16060,
+      "sha256": "7cdca0847335c5c9f5d016d7dcad9a721af634008fdc07b94239ebf0ba5499f7",
+      "git_blob_oid": "831122fb7558c4b2718c9c0a09f29ef87337e74a"
+    },
+    {
+      "path": "evidence/designs/cross-engine-binding/source-evidence.json",
+      "bytes": 8714,
+      "sha256": "e45a523ebb031f3b1fcc868584d792daac9389902502d6e7a6dab6e9891ef0c4",
+      "git_blob_oid": "5613432cc0cd44bd607d1ec26dbacada4c8230fa"
+    }
+  ],
+  "pinned_source_verification": {
+    "expected": 21,
+    "verified": 21,
+    "mismatches": 0,
+    "reads": [
+      {
+        "snapshot": "pr49",
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/ledger.py",
+        "git_blob_oid": "1c2fabf6949e2f296889ad7c24bf4e25a3c60b84",
+        "bytes": 7329,
+        "sha256": "ec20cb64ea5bc4d8a3e09144e91771f665ff03f82ea615910f102633031e1571",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr49",
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/startup.py",
+        "git_blob_oid": "50347be9d63205f406a480df4d59f2fe31530625",
+        "bytes": 23653,
+        "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr49",
+        "commit": "c3e937a967711cd5cae7293ac3bf63c8260d8528",
+        "path": "uta/writer_fence.py",
+        "git_blob_oid": "302de1b0d2a409e610bf807692514b120bb5f87f",
+        "bytes": 55652,
+        "sha256": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/service.py",
+        "git_blob_oid": "439f8cf7aee0a6ebbd8dcc659f5f30ba7facce47",
+        "bytes": 87079,
+        "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/decision_audit.py",
+        "git_blob_oid": "b00d057ac9b0b541b62d266cd8a1b4d9f4b71dd8",
+        "bytes": 38983,
+        "sha256": "0046dc943ddb1e075841e81e3c58c939c7468cfd8e0c5595c8a4d4d7ac27e514",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_artifact.py",
+        "git_blob_oid": "d19ee78866cd33b4e65833b797c4602c0ff1be42",
+        "bytes": 18651,
+        "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_audit_v2.py",
+        "git_blob_oid": "e9c0bbb3c9c56d4b752ee51c9578d3ec299a7e36",
+        "bytes": 54043,
+        "sha256": "d455b8417bd3938f9aca14eda5dd0a0f366b1da0e60638c83324085cbc7eb83a",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_v2_payload_contract.py",
+        "git_blob_oid": "a7562075f5443b76027134342fe5f7dcb8f2d649",
+        "bytes": 3716,
+        "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/credit_native_v2.py",
+        "git_blob_oid": "3c5c58e9936a9463eb43871556de49c3532e2c0b",
+        "bytes": 103836,
+        "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/existing_services.py",
+        "git_blob_oid": "c849b631baa29fc07262ae8582d6d662e1840e08",
+        "bytes": 16790,
+        "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/durable_process.py",
+        "git_blob_oid": "e85239d6bb78d1798c7fc4803e25df92f1179b42",
+        "bytes": 106136,
+        "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/sharding.py",
+        "git_blob_oid": "325d26dabefea4dd7b41fbd889f0fc0dc0f8710a",
+        "bytes": 51451,
+        "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/supervisor.py",
+        "git_blob_oid": "5fe55ce3fbc772d3d162b63ab01cb30c835d0f03",
+        "bytes": 15243,
+        "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/portfolio.py",
+        "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+        "bytes": 24042,
+        "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/products.py",
+        "git_blob_oid": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+        "bytes": 12043,
+        "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/models.py",
+        "git_blob_oid": "f91ddee7ba1f6389991a4cb0aa3848900f051b11",
+        "bytes": 6034,
+        "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr52",
+        "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+        "path": "uta/market.py",
+        "git_blob_oid": "6589acc7a877e8d403186554f4a24505661e8fdb",
+        "bytes": 8465,
+        "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr51",
+        "commit": "8262bb7226d0b110d2c89bb1c58293e7908fa420",
+        "path": "uta/cross_decimal_kernel.py",
+        "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+        "bytes": 16411,
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr55",
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "uta/cross_decimal_kernel.py",
+        "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+        "bytes": 16411,
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr55",
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "docs/cross-decimal-independent-oracle-delivery.md",
+        "git_blob_oid": "68a28fbb0ceaf2f0239e55c8dc73d35c4f2c5bda",
+        "bytes": 4050,
+        "sha256": "b4a29b2596db0d3e7d50ba94246e590e38619da6075ed270a4874c72c2026779",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      },
+      {
+        "snapshot": "pr55",
+        "commit": "03dfa275def7ee6e5997894398f8f6de30b6f2f0",
+        "path": "evidence/reviews/cross-decimal-kernel/manual-cases.json",
+        "git_blob_oid": "bcee1f913b02bdb3cd3f64f5b43b7a937439163e",
+        "bytes": 3655,
+        "sha256": "2b0e99ebc37d72d890b545ad1050778ee5971a4176540cd6b8bf1f700a2d747d",
+        "access": "STATIC_GIT_OBJECT_READ_ONLY",
+        "verified": true
+      }
+    ]
+  },
+  "static_checks": [
+    {
+      "id": "FIN-C01",
+      "result": "DESIGN_CONSISTENT_WITH_SOURCE",
+      "claim": "Default valuation10, order11 and two execution-option fields preserved; experimental artifact/order/risk policy versions are distinct and exact."
+    },
+    {
+      "id": "FIN-C02",
+      "result": "DESIGN_REQUIREMENT_SUFFICIENT_NOT_IMPLEMENTED",
+      "claim": "Defaults, kwdefaults, closures, helpers, constants, imported classes, dispatcher/registry/global/builtin aliases and runtime are in binding scope; unknown execution lookup rejects. Actual coverage must be proven by EBD-001..004."
+    },
+    {
+      "id": "FIN-C03",
+      "result": "DESIGN_REQUIREMENT_SUFFICIENT_NOT_IMPLEMENTED",
+      "claim": "One archived UTC evaluated_at is shared by both calculators and both decision states; v2 reuses that historical time. v1 remains numerical-only and may not claim historical freshness."
+    },
+    {
+      "id": "FIN-C04",
+      "result": "DESIGN_CONSISTENT_WITH_SOURCE",
+      "claim": "Credit V2 ten-field base and zero caches stay fixed. Experimental envelope and exchange-only opening must reject before credit capability, pool, liability or authority effects; inner ten fields are not experimental-credit authorization."
+    },
+    {
+      "id": "FIN-C05",
+      "result": "DESIGN_REQUIREMENT_SUFFICIENT_NOT_IMPLEMENTED",
+      "claim": "Unknown engines, versions and missing candidate artifacts reject without fallback; reserved Decimal-authority ID is not allowed."
+    },
+    {
+      "id": "FIN-C06",
+      "result": "DESIGN_CONSISTENT_WITH_SOURCE",
+      "claim": "Gross assets, frozen assets, principal, interest and cash deficits remain separate. Haircut precedes debt subtraction, and risk_equity <= MM is unsafe including zero MM."
+    },
+    {
+      "id": "FIN-C07",
+      "result": "DESIGN_REQUIREMENT_SUFFICIENT_NOT_IMPLEMENTED",
+      "claim": "Old binary financial exclusion, exact archive/runtime replay, managed/sharded/native rejection, and new combined source inventory remain explicit unrun gates."
+    },
+    {
+      "id": "FIN-C08",
+      "result": "D2_BLOCKED",
+      "claim": "Mandatory settlement failure/recovery and rollback-to-freeze ordering require EBD-FIN-001 and EBD-FIN-002."
+    }
+  ],
+  "manual_arithmetic_review": {
+    "method": "HUMAN_RECOMPUTATION_NO_TARGET_FUNCTION_EXECUTION",
+    "cases": [
+      {
+        "id": "EBD-M02",
+        "result": "ARITHMETIC_CONSISTENT",
+        "derivation": "Assets200; principal125 + interest5 = debt130; accounting70; haircut160; risk30; loan80; IM13; MM6.5; available17; no borrow headroom."
+      },
+      {
+        "id": "EBD-M01",
+        "result": "ARITHMETIC_CONSISTENT_PURE_MODEL_ONLY",
+        "derivation": "BTC usable150 => haircut80+25=105; total collateral1105; loan800+52.5=852.5; debt110+2=112; PnL440-400=40; accounting1128; risk1033; IM10.1+2.2+44=56.3; MM28.15; available1033-56.3-10=966.7; independent debt-headroom quotes USD388/BTC3.88 are not additive."
+      },
+      {
+        "id": "EBD-M09",
+        "result": "ARITHMETIC_CONSISTENT_QUOTE_ONLY",
+        "derivation": "Conservative quote assumes loan proceeds leave collateral immediately. For USD11 and IM=MM=.1, quote10 leaves risk equity1 equal to MM1, so quote9. USD11.01 permits10 on this strict boundary. This is not actual credited-cash post-borrow equity or borrowing authorization.",
+        "clarification": "State this proceeds-leave assumption explicitly in future fixtures; do not carry the shorthand into credit settlement."
+      },
+      {
+        "id": "EBD-M04",
+        "result": "ARITHMETIC_CONSISTENT_CONDITIONAL_FIXTURE_NOT_RUNTIME_EVIDENCE",
+        "derivation": "0.5*100*.0004=.02 fee; cash99.98; IM5/MM2.5; remaining original reserve5.02 plus RO fee reserve.02 =>5.04; available89.94. After confirmed RO fully fills and its own reserve terminates: cash99.96, original reserve5.02, available94.94. A before-fill projection that retains the RO fee reserve would be94.92, so do not label it the post-fill state.",
+        "preconditions": [
+          "mark=limit=fill=100",
+          "multiplier1",
+          "USD minimum unit .01",
+          "no other assets, debts, orders, pending obligations or fees",
+          "confirmed RO fill releases only its own terminal reservation"
+        ]
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "EBD-FIN-001",
+      "severity": "HIGH",
+      "status": "OPEN_BEFORE_D2",
+      "title": "Mandatory settlement needs an explicit recovery and binding-failure matrix",
+      "design_locations": [
+        "docs/cross-engine-binding-design.md:78",
+        "docs/cross-engine-binding-design.md:131",
+        "docs/cross-engine-binding-design.md:149",
+        "docs/cross-engine-binding-design.md:160",
+        "docs/cross-engine-binding-design.md:211",
+        "evidence/designs/cross-engine-binding/contract.json:169",
+        "evidence/designs/cross-engine-binding/contract.json:303"
+      ],
+      "source_commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "source_locations": [
+        "uta/service.py:923",
+        "uta/service.py:979",
+        "uta/service.py:994",
+        "uta/service.py:1033"
+      ],
+      "observation": "The design requires full binding validation before authority open, and promises reference-authoritative settlement when the candidate fails. It does not yet specify a restricted settlement opener or operation path after a restart where only the shadow binding is unavailable. Existing apply_fill is explicitly local authorization, not external confirmed-fill ingestion; its risk and audit calls may reject and roll back. The source does not prove the promised mandatory-obligation path. The design itself identifies this implementation gap.",
+      "required_resolution": [
+        "Classify local pre-match execution authorization separately from durable obligations already confirmed by matching; never treat a rejected local apply_fill as a confirmed external fill.",
+        "Specify a restricted, fenced, idempotent settlement/recovery path for shadow-only unavailable, unsupported, mismatch, or drift outcomes; both risk snapshots and audit-after must preserve the same authoritative reference result and known contract.",
+        "Separate shadow-only failure from unknown contract/authority/reference/shared-model/runtime-binding failure. Unknown authority must not select reference by default. If trusted authority cannot be established, retain obligations durably and recover using the approved exact reference artifact; do not fabricate successful settlement or release reservations.",
+        "Define how candidate failure evidence and frozen-new-risk state survive restart without requiring the failed candidate to reopen the settlement authority."
+      ],
+      "acceptance": [
+        "Inject shadow-only failure before and after matching confirmation, during after-state auditing, and on restart. Confirmed unique trades retain exact fees, positions, ledger and reservation changes once; local unconfirmed execution can reject.",
+        "With shadow-only failure, cancellation acknowledgement, mandatory fees/fills and query remain available; new risk rejects. Unknown contract or damaged reference binding never receives a successful fallback.",
+        "If the implementation cannot provide this classification and recovery, keep it read-only/offline as already required by EBD-010."
+      ],
+      "blocks": [
+        "D2_SYNCHRONOUS_FINANCIAL_SHADOW",
+        "D3",
+        "D4"
+      ],
+      "does_not_block": "D0_STATIC_DESIGN_AND_SEPARATELY_REVIEWED_D1_PURE_BINDING"
+    },
+    {
+      "id": "EBD-FIN-002",
+      "severity": "HIGH",
+      "status": "OPEN_BEFORE_D2",
+      "title": "Admission rollback and independent durable freeze need a crash-safe ordering rule",
+      "design_locations": [
+        "docs/cross-engine-binding-design.md:158",
+        "evidence/designs/cross-engine-binding/contract.json:302"
+      ],
+      "source_commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "source_locations": [
+        "uta/service.py:521",
+        "uta/service.py:797",
+        "uta/service.py:837"
+      ],
+      "observation": "ROLLBACK_THEN_DURABLY_FREEZE is an outcome requirement, but the design leaves the ordering and recovery protocol unimplemented. Rollback followed by process death before the separate control commit can lose the freeze; even a single writer can process another queued command before closure unless its gate is explicitly latched. No observed runtime bug is claimed because shadow is unimplemented.",
+      "required_resolution": [
+        "Define the admission gate, account/generation scope, financial rollback, correlated failure intent, durable freeze and acknowledgement ordering. The gate must close before the next admission can be selected, while existing obligations stay executable.",
+        "Specify crash recovery for every boundary between failed comparison, financial rollback and control commit; restart or takeover cannot reopen new risk merely because the separate freeze record was not committed.",
+        "If the control store is unavailable, keep admission failed closed with observable results; never report the freeze as durable from the rolled-back financial transaction.",
+        "Retried command IDs preserve the original acceptance/result-unknown protocol; a failure notification is not an accepted reservation."
+      ],
+      "acceptance": [
+        "Bounded state enumeration or fault injection at each ordering boundary plus concurrent queued commands proves no accepted admission after the failed comparison until an explicit reviewed unfreeze.",
+        "Reopen storage after each crash, reconcile failed-command receipts and reservation absence, and verify pending confirmed settlement still progresses exactly once."
+      ],
+      "blocks": [
+        "D2_SYNCHRONOUS_FINANCIAL_SHADOW",
+        "D3",
+        "D4"
+      ],
+      "does_not_block": "D0_STATIC_DESIGN_AND_SEPARATELY_REVIEWED_D1_PURE_BINDING"
+    }
+  ],
+  "gate_interpretation": {
+    "D0": "STATIC_FINANCIAL_POLICY_REVIEW_COMPLETE_WITH_OPEN_D2_REQUIREMENTS",
+    "D1": "MAY_DESIGN_IMPLEMENT_PURE_BINDING_UNDER_SEPARATE_SOURCE_REVIEW_NO_FINANCIAL_AUTHORITY",
+    "D2": "BLOCKED_UNTIL_BOTH_FINDINGS_AND_EBD_001_THROUGH_012_HAVE_REQUIRED_EVIDENCE",
+    "D3_D4": "SEPARATE_SCOPE_AND_ACCEPTANCE_REQUIRED",
+    "published_538_samples": "FINITE_HISTORICAL_NUMERICAL_EVIDENCE_ONLY_NOT_REEXECUTED",
+    "all_15_design_test_gates": "NOT_RUN_BY_THIS_REVIEW",
+    "new_independent_numeric_or_runtime_signoff": "NOT_CREATED"
+  },
+  "administrative_validation": [
+    "All three design files read from exact Git object",
+    "All 21 pinned source length/blob/SHA256 tuples independently matched",
+    "Exact shape and explicit boolean/version flags statically inspected",
+    "Design commit changed only three documentation/JSON paths",
+    "PR52 versus PR49 has six uta paths and PR55 versus PR49 only candidate kernel; no integrated runtime assumed",
+    "Review JSON parsed and git diff --check; no target imports/tests executed"
+  ],
+  "deployment_and_rollback": "No runtime or persistent state changes. Revert this review commit to remove review documentation; sealed prior evidence remains unchanged. No push, CI rerun, activation or external message was performed."
+}
