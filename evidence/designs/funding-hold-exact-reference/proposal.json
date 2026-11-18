@@ -1,0 +1,116 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "base_commit": "ef7508bebd35cac71d9db8fdda896806ce4ade64",
+  "case_proposal": {
+    "capacity1000_1001_only_fixed_boundary_cases": true,
+    "count": 1024,
+    "families": [
+      "identity",
+      "stage",
+      "aggregate",
+      "decomposition",
+      "backing",
+      "wait",
+      "shared_action",
+      "bounds"
+    ],
+    "generator_and_reference_executions": 0,
+    "max_serialized_case_bytes_proposal": 2097152,
+    "per_family_negative": 64,
+    "per_family_valid": 64,
+    "public_seed_first": 0,
+    "public_seed_last": 1023,
+    "rejected_or_unsupported_count": 512,
+    "stream_cases_one_at_a_time": true,
+    "valid_count": 512
+  },
+  "execution_GO": false,
+  "independence": {
+    "production_DTO_validators_builders_hash_rounding_helpers_reused": false,
+    "production_code_read_scope": "schema-only AST declarations, field names and enum literals; financial algorithms not copied",
+    "production_imports": false,
+    "target_or_reference_program_runs": 0
+  },
+  "kind": "INDEPENDENT_EXACT_REFERENCE_PROPOSAL_BEFORE_CODE",
+  "operations": {
+    "aggregate": [
+      "states",
+      "scope",
+      "basis_complete"
+    ],
+    "decompose": [
+      "base",
+      "states",
+      "basis_complete"
+    ],
+    "duty_identity": [
+      "key"
+    ],
+    "payment_precondition": [
+      "states",
+      "scope",
+      "own_duty_id",
+      "cash_units",
+      "spot_frozen_units",
+      "prior_confirmed_settlements_clear",
+      "quote_available",
+      "basis_complete"
+    ],
+    "stage_advance": [
+      "state",
+      "proposed",
+      "expected_revision",
+      "expected_active_ref"
+    ],
+    "unsupported": [
+      "operation"
+    ],
+    "wait_preview": [
+      "record",
+      "now_us",
+      "expected_revision",
+      "expected_policy",
+      "dispatch_query"
+    ],
+    "wait_records": [
+      "records"
+    ]
+  },
+  "protocol": "PFH-D1-INDEPENDENT-WIRE-v1",
+  "request_keys": [
+    "schema",
+    "case_id",
+    "op",
+    "input"
+  ],
+  "response_keys": [
+    "schema",
+    "case_id",
+    "status",
+    "value",
+    "diagnostic_code",
+    "activation_permission"
+  ],
+  "rules_commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+  "rules_review_commit": "446af54a5da53728de006ead3afc8f752df2bd4c",
+  "schema": 1,
+  "status": "CODE_ONLY_NOT_RUN",
+  "support_limits": [
+    "M10 tests given U600 to P246, not quantity/mark/rate or rounding",
+    "M14 borrow quote80 explicitly unsupported",
+    "Manual27 get an explicit support/unsupported slice matrix, never reported as27 passed cases",
+    "No actual APPLIED/ACK/outbox/ledger, claim ownership, persistence CAS, old-writer fence, restart, whole-period or real clock guarantee"
+  ],
+  "target_source_reference": "4e2b41d64b867e0b3a29e3c3ca25bc64f9d0e357",
+  "wire_rules": [
+    "Exact native JSON closed keys at every level, duplicate JSON keys rejected; no target DTO object or helper reuse",
+    "All financial values exact integer units, internally independent Fraction in USD major units; no float/ambient Decimal arithmetic",
+    "Scope USD scale2..8, leg absolute<10^38, <=1000 provided duties, total contributions<=1000*(10^38-1), derived absolute<=4000*10^38",
+    "Only duty identity SHA/canonical fields and natural-slot fields are exact normative8008 digest oracles",
+    "Action identity compares normative stable fields, not an undocumented production opaque hash namespace",
+    "Expected full wait-policy data is external input; target policy-digest adapter is separately reviewed and not used to manufacture reference expectations",
+    "Output tuples normalized to JSON lists; collection duty_ids sorted as declared wire semantics; all monetary fields and activation flags exact",
+    "Known target HoldError may map to REJECT and known HoldUnsupported to UNSUPPORTED; unexpected exceptions are TECHNICAL failures, never business rejections"
+  ]
+}
