@@ -6,6 +6,7 @@ not validate settlement, SQLite locking, financial arithmetic or performance.
 import ast
 from copy import deepcopy
 from contextlib import contextmanager
+from datetime import timedelta
 from decimal import Decimal, localcontext
 from fractions import Fraction
 from itertools import permutations
@@ -46,7 +47,7 @@ def load_selected():
     constructor = next(node for node in service_class.body if isinstance(node, ast.FunctionDef)
                        and node.name == "__init__")
     future = ast.ImportFrom(module="__future__", names=[ast.alias(name="annotations")], level=0)
-    ctor_namespace = {}
+    ctor_namespace = {"timedelta": timedelta, "Decimal": Decimal}
     exec(compile(ast.fix_missing_locations(ast.Module(body=[future, constructor], type_ignores=[])),
                  "selected-service-constructor-declaration", "exec"), ctor_namespace)
     native_classes = {name: type(name, (), {}) for name in
