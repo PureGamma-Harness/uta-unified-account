@@ -39,7 +39,8 @@ The review used its authorized optional package check only for PR3.13 job
 `uta-package-validation-python-3.13`, **54,636B**, SHA256
 `389a95d782395a8b76b864cdd80825256caf8ab7c3d2e0099ebe209d1096fafd`.
 One actual download matched provider size/hash. All **19** ZIP members passed
-CRC, size/path/duplicate-name bounds and member hashes. The full original ZIP
+CRC and size/path/duplicate-name bounds; their individual hashes were recorded.
+The full original ZIP
 and reports remain private.
 [Archive integrity](../evidence/reviews/pr36-first-ci/package-artifact-integrity.json).
 The first artifact-metadata page returned twelve items; no other archive or
