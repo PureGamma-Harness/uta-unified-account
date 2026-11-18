@@ -36,7 +36,8 @@
     "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
     "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
   },
-  "external_capture": "OPEN_NOT_EXECUTION_READY",
+  "external_capture": "PIPE_V2_PENDING_INDEPENDENT_DELTA_REVIEW_NO_EXECUTION_GO",
+  "first_failure_evidence_commit": "4f4dd04155e7da84e21527759614c1c8f292fd65",
   "historical_536_source": "7b449f30b417e043bf13a4f43540102b13c4d588",
   "historical_CODE_plan_SHA256": "d95a7acbb2de9e7d3daab581cec076354315585fb2021521c97cfcc4a0778f87",
   "independent_finding": "CROSS-ENUM-ENTRY-001/d1c7551a54483bb733139f3a6d549bdbc29f7c32",
@@ -58,8 +59,8 @@
       "sha256": "79e1918151f70d6a60dc50e76e603e40bc32632525d89c4cdb8f96c0110ad84b"
     },
     "tools/run_cross_enumeration_once.py": {
-      "bytes": 12343,
-      "sha256": "898b1e9bfde80a7c970655cf8834324df9c781fb393ba66fde3c6226dedda77a"
+      "bytes": 12311,
+      "sha256": "5b9315dab2650bcfb7cf21418c460f8abab539d995bb748d2cc3e9f614774ad5"
     },
     "uta/__init__.py": {
       "bytes": 104,
@@ -346,6 +347,11 @@
     "cross_decimal_kernel"
   ],
   "output_vector_semantics": "completed success groups plus original active failure stages; no repaired PASS",
+  "pipe_v2_change": "Only final inherited-pipe os.fsync(1) and os.fsync(2) removed; parent owns regular captured-file fsync.",
+  "pipe_v2_entry_CODE_source": "a083fbc99d9e82d445b60d255a8872be41a8fb72",
+  "previous_executed_result": "FIRST_FAIL_PRESERVED",
+  "previous_executed_source": "283dec8e16321697124a19847f103476136de683",
+  "previous_executed_target_plan_sha256": "f51c0f682c24febadfac5f8bb6338d26752e0bd90877843fee34f75a4efea255",
   "previous_unexecuted_source": "4ac29b30bfa69b2971a57d7ae2b70e287a607d72",
   "production_approved": false,
   "schema": 1,
