@@ -756,7 +756,7 @@
   "independent_rule_review": "86b3c2ac0b41b526cf8ebba2b3babda0b4b97ad1",
   "kind": "INDEPENDENT_FUNDING_D1_SERIALIZED_WIRE_CONTRACT_V2",
   "native_rules": [
-    "Exact native int excludes bool/int subclasses; exact str/dict/list/bool/null only in serialized domain",
+    "Exact native JSON str/dict/list/bool/null/int and finite float only; integer excludes bool/int subclasses; finite float never becomes money through conversion",
     "Reject duplicate JSON keys, NaN/Infinity, unknown/missing keys, binary64 money, invalid UTF-8 and oversize requests",
     "Tuple-typed target fields decode from wire arrays by explicit full-field mapping, never by lossy financial conversion",
     "Fixed output-only activation/holds flags in supplied objects must validate before omitted from target constructor init=False arguments",
@@ -765,7 +765,8 @@
     "Unexpected target/reference/constructor errors are TECHNICAL_FAILURE outside this response contract, never an expected matching business result",
     "Only exact known HoldError/HoldUnsupported or explicit known wire-decode rejection may be classified by target adapter; do not catch all ValueError/TypeError/Exception as business outcomes",
     "wait_records action_ids must contain every actual returned ID in its actual order; count-only summaries cannot claim full-output equality",
-    "Malformed transport/top-level envelope has no valid response correlation and must raise exact WireReject outside the business-classification catch"
+    "Malformed transport/top-level envelope has no valid response correlation and must raise exact WireReject outside the business-classification catch",
+    "Transport resource walker counts dict keys and values, aliases by path and rejects cycles; raw and decoded compactASCII byte caps both apply before business classification"
   ],
   "natural_slot_order": [
     "authority_id",
@@ -1047,7 +1048,7 @@
       }
     }
   },
-  "prior_wire_commit": "2e6ad129804eebbf0d8682f3f0b0855ebfd8ea5c",
+  "prior_wire_commit": "a33da70026a5b0d36d5df57ae8a5736a64914ab1",
   "protocol": "PFH-D1-INDEPENDENT-WIRE-v2",
   "request": {
     "additionalProperties": false,
@@ -1084,6 +1085,22 @@
       "input"
     ],
     "type": "object"
+  },
+  "resource_contract": {
+    "alias_and_cycles": "Count alias again at each path; reject ancestor-path cycles, do not reject ordinary repeated aliases",
+    "budget_violation": "WireReject escapes before correlated business response",
+    "compact_encoding": "json.dumps ensure_ascii=True allow_nan=False separators comma/colon indent=None; key sorting does not affect byte length",
+    "decoded_compact_ASCII_bytes_max_inclusive": 2097152,
+    "depth_max_inclusive": 32,
+    "floats": "Finite native float may pass transport then be rejected by exact typed DTO fields; any NaN/Infinity including overflow from1e999 is transport WireReject",
+    "integer_digits": "Base-ten digits excluding negative sign;0 has1; applies to integer tokens/nativeints, not finite float token mantissa",
+    "integer_digits_max_inclusive": 128,
+    "node_definition": "Each container and scalar occurrence counts1; each dict string key and corresponding value is a separate scalar/subtree at parentdepth+1; each listitem parentdepth+1",
+    "node_occurrences_max_inclusive": 250000,
+    "proof_boundary": "Validation caps, not a parser native-allocation/RSS hard quota; complete decoder equivalence remains pending independent CODE/execution",
+    "raw_UTF8_bytes_max_inclusive": 2097152,
+    "root_depth": 0,
+    "status": "NEW_PUBLIC_TRANSPORT_RULE_CODE_ONLY_NOT_EQUIVALENCE_PROOF"
   },
   "response": {
     "additionalProperties": false,

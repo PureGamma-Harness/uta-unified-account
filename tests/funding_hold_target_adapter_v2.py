@@ -4,8 +4,11 @@ No reference implementation, financial equation, expected answer or service
 hook belongs here. Unexpected target/constructor failures remain technical.
 """
 from dataclasses import fields
+from functools import lru_cache
+from hashlib import sha256
 import json
 import math
+from pathlib import Path
 import re
 
 from uta import funding_hold_pure as target
@@ -13,6 +16,7 @@ from uta import funding_hold_pure as target
 
 REQUEST_BYTES = 2 * 1024 * 1024
 HASH_WIRE = "CODE_CONTRACT_IMPLEMENTED_NOT_RUN"
+WIRE_SHA256 = "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
 OPERATIONS = (
     "duty_identity", "policy_identity", "action_identity", "stage_advance",
     "aggregate", "decompose", "payment_precondition", "wait_preview",
@@ -69,6 +73,10 @@ class InputReject(ValueError):
 
 class AdapterContractError(RuntimeError):
     """Unexpected target return/schema: technical failure, never business reject."""
+
+
+class _OutputMismatch(AdapterContractError):
+    """Value mismatch, distinct from unsupported schema or reader failures."""
 
 
 def _closed(value, names, error=InputReject):
@@ -137,6 +145,91 @@ def _states(data):
     return tuple(_dto("DutyState", item) for item in _array(data, 1000))
 
 
+@lru_cache(maxsize=1)
+def _wire_contract():
+    path = Path(__file__).resolve().parents[1] / "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json"
+    with path.open("rb") as stream:
+        raw = stream.read(65537)
+    if len(raw) > 65536 or sha256(raw).hexdigest() != WIRE_SHA256:
+        raise AdapterContractError("wire_contract_bytes_changed")
+    return json.loads(raw.decode("utf-8"))
+
+
+def _validate_output(schema, value, depth=0):
+    """Closed native JSON-schema subset for the pinned output contract only."""
+    supported = {"$ref", "type", "const", "enum", "oneOf", "properties", "required",
+                 "additionalProperties", "items", "minItems", "maxItems", "minLength",
+                 "maxLength", "pattern", "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum"}
+    if type(schema) is not dict or set(schema) - supported or depth > 32:
+        raise AdapterContractError("unsupported_output_schema")
+    if "$ref" in schema:
+        ref = schema["$ref"]
+        if set(schema) != {"$ref"} or type(ref) is not str or not ref.startswith("#/$defs/"):
+            raise AdapterContractError("unsupported_output_reference")
+        name = ref.removeprefix("#/$defs/")
+        definitions = _wire_contract()["$defs"]
+        if name not in definitions:
+            raise AdapterContractError("unknown_output_reference")
+        return _validate_output(definitions[name], value, depth + 1)
+    if "oneOf" in schema:
+        if set(schema) != {"oneOf"} or type(schema["oneOf"]) is not list or len(schema["oneOf"]) > 4:
+            raise AdapterContractError("unsupported_output_alternatives")
+        matches = 0
+        for option in schema["oneOf"]:
+            try:
+                _validate_output(option, value, depth + 1)
+            except _OutputMismatch:
+                continue
+            matches += 1
+        if matches != 1:
+            raise _OutputMismatch("output_alternative_mismatch")
+        return
+    types = {"object": dict, "array": list, "integer": int, "boolean": bool,
+             "string": str, "null": type(None)}
+    if "type" in schema and (schema["type"] not in types or type(value) is not types[schema["type"]]):
+        raise _OutputMismatch("output_native_type_mismatch")
+    if "const" in schema and (type(value) is not type(schema["const"]) or value != schema["const"]):
+        raise _OutputMismatch("output_constant_mismatch")
+    if "enum" in schema and not any(type(value) is type(item) and value == item for item in schema["enum"]):
+        raise _OutputMismatch("output_enum_mismatch")
+    if type(value) is dict:
+        properties = schema.get("properties", {})
+        required = schema.get("required", [])
+        if (schema.get("additionalProperties") is not False or any(type(k) is not str for k in value)
+                or set(value) != set(required) or set(properties) != set(required)):
+            raise _OutputMismatch("output_object_fields_mismatch")
+        for name in required:
+            _validate_output(properties[name], value[name], depth + 1)
+    if type(value) is list:
+        if "items" not in schema or len(value) < schema.get("minItems", 0) or len(value) > schema.get("maxItems", 1000):
+            raise _OutputMismatch("output_array_mismatch")
+        for item in value:
+            _validate_output(schema["items"], item, depth + 1)
+    if type(value) is str:
+        if (len(value) < schema.get("minLength", 0) or len(value) > schema.get("maxLength", 2097152)
+                or "pattern" in schema and re.fullmatch(schema["pattern"], value) is None):
+            raise _OutputMismatch("output_string_mismatch")
+    if type(value) is int:
+        if ("minimum" in schema and value < schema["minimum"]
+                or "maximum" in schema and value > schema["maximum"]
+                or "exclusiveMinimum" in schema and value <= schema["exclusiveMinimum"]
+                or "exclusiveMaximum" in schema and value >= schema["exclusiveMaximum"]):
+            raise _OutputMismatch("output_integer_range_mismatch")
+
+
+def _checked_intermediate(name, value):
+    # All failures here are technical; this guard runs before a downstream call
+    # can mistake a malformed target result for an invalid customer input.
+    try:
+        if type(value) is not CONSTRUCTORS[name]:
+            raise AdapterContractError("intermediate_target_type_mismatch")
+        _validate_output({"$ref": "#/$defs/" + name}, _encode(value))
+    except AdapterContractError:
+        raise
+    except Exception as error:
+        raise AdapterContractError("intermediate_target_encoding_failed") from error
+
+
 def _call(operation, raw):
     if operation == "stage_advance" and type(raw) is dict and "expected_active_ref" in raw:
         # The old keyword is a known unsupported capability, never inferred.
@@ -144,11 +237,14 @@ def _call(operation, raw):
     data = _closed(raw, INPUT_FIELDS[operation])
     if operation == "duty_identity":
         key = _dto("DutyKey", data["key"])
-        return {"duty_id": key.duty_id, "natural_slot": list(key.natural_slot),
+        slot = key.natural_slot
+        if type(slot) is not tuple or len(slot) != 6 or any(type(item) is not str for item in slot):
+            raise AdapterContractError("unexpected_native_natural_slot")
+        return {"duty_id": key.duty_id, "natural_slot": list(slot),
                 "payload": key.payload(), "activation_permission": False}
     if operation == "policy_identity":
         policy = _dto("WaitPolicy", data["policy"])
-        return {"digest": policy.digest, "payload": _encode(policy), "activation_permission": False}
+        return {"digest": policy.digest, "payload": policy, "activation_permission": False}
     if operation == "action_identity":
         action = _dto("ActionKey", data["action"])
         scope = action.scope
@@ -166,7 +262,13 @@ def _call(operation, raw):
     if operation == "decompose":
         base = _dto("BaseValues", data["base"])
         total = target.aggregate(_states(data["states"]), base.scope, basis_complete=data["basis_complete"])
-        return target.decompose(base, total)
+        _checked_intermediate("Totals", total)
+        try:
+            return target.decompose(base, total)
+        except target.HoldError as error:
+            # Base and aggregate already accepted this request. A downstream
+            # rejection of their output is a broken composed target contract.
+            raise AdapterContractError("accepted_intermediate_rejected_downstream") from error
     if operation == "payment_precondition":
         return target.backing_precondition(_states(data["states"]), _dto("Scope", data["scope"]),
             data["own_duty_id"], cash_units=data["cash_units"], spot_frozen_units=data["spot_frozen_units"],
@@ -181,7 +283,7 @@ def _call(operation, raw):
         identities = target.validate_wait_records(records)
         if type(identities) is not tuple:
             raise AdapterContractError("unexpected_validator_return")
-        return {"action_ids": _encode(identities), "record_count": len(records),
+        return {"action_ids": identities, "record_count": len(records),
                 "holds_unchanged": True, "activation_permission": False}
     if operation == "unsupported":
         target.unsupported_request(data["operation"])
@@ -257,6 +359,7 @@ def evaluate(request):
         if operation in OUTPUT_TYPES and type(value) is not OUTPUT_TYPES[operation]:
             raise AdapterContractError("unexpected_target_return_type")
         value = _encode(value)  # Outside business catch: malformed returns fail.
+        _validate_output(_wire_contract()["operations"][operation]["value"], value)
     return {"schema": 2, "case_id": case_id, "status": status, "value": value,
             "diagnostic_code": diagnostic, "activation_permission": False, "hash_wire": HASH_WIRE}
 
