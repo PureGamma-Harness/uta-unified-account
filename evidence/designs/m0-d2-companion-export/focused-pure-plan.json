@@ -1,0 +1,78 @@
+{
+  "actual_children_permitted": 0,
+  "command": [
+    "/usr/bin/prlimit",
+    "--fsize=51200:51200",
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "2",
+    "python3",
+    "-I",
+    "-S",
+    "RUNNER",
+    "SOURCE",
+    "PRIVATE",
+    "IDENTITY"
+  ],
+  "declared_method_count": 76,
+  "declared_method_count_by_module": {
+    "tests/test_independent_m0_d2.py": 24,
+    "tests/test_independent_m0_d2_export.py": 29,
+    "tests/test_independent_m0_diagnostics.py": 23
+  },
+  "failure": "retain first FAIL/ERROR/UNKNOWN; no automatic retry or old120 suite rerun",
+  "fixtures": "KB synthetic temp files/fake ownership/stubs only; no UTA/helper/cold child materialized",
+  "guard": "same reviewed C933 GUARD_CODE plus active sqlite3/_sqlite3/uta import blockers; passive stdlib imports allowed; no launch permission assigned",
+  "guard_literal_sha256": "effe4d5229d84b099fa75edfd0c1e2922285c494fc8e179e46afb80670687919",
+  "inherited_additional_methods": 0,
+  "interpretation": "D2 capture/export pure correctness only; NOT physical quota/backend/GHA/workload evidence",
+  "kind": "PROPOSED_FOCUSED_ZERO_CHILD_PURE_PLAN",
+  "modules": [
+    "test_independent_m0_d2_export",
+    "test_independent_m0_d2",
+    "test_independent_m0_diagnostics"
+  ],
+  "outer_cpu": [
+    2
+  ],
+  "outer_file_size_limit_each_bytes": 51200,
+  "outer_timeout_seconds": 10,
+  "predicted_runtime_methods": 76,
+  "preflight": [
+    "independent exact commit/tree and 4-file SHA/length verification",
+    "new private0700 and source closure only",
+    "runner SHA pinned; stdout/stderr0600/O_EXCL",
+    "retain first identity/stdout/stderr/exit/runtime binary SHA/monotonic/guard checks and denials"
+  ],
+  "root_new_source_budget_required": true,
+  "runner_path": "evidence/designs/m0-d2-companion-export/run_zero_child_pure.py",
+  "runner_sha256": "2794353c396e643a70123b61b519dfaf898c4c5613de24e4e9cb38a65c6dac00",
+  "source_closure": {
+    "tests/test_independent_m0_d2.py": {
+      "bytes": 12924,
+      "sha256": "9539e537904bb45ed2c937d74d5aec1ac38e9484d34c0bf0e3315c698eb78e4d"
+    },
+    "tests/test_independent_m0_d2_export.py": {
+      "bytes": 18819,
+      "sha256": "822f8b695ef09cead76981845e2eb3197422c4b321e5318b8740c70dd79c45c4"
+    },
+    "tests/test_independent_m0_diagnostics.py": {
+      "bytes": 14798,
+      "sha256": "d464bd2814b0d75f98c40b7f0c17e534071b8ad8923ba463eb916c35063d64df"
+    },
+    "tools/independent_m0_controller.py": {
+      "bytes": 104961,
+      "sha256": "67a97e551590ff4f23d1256c79ad5b9ae0259e9973012541cee678ab1842ca93"
+    }
+  },
+  "source_closure_bytes": 151502,
+  "source_closure_files": 4,
+  "source_commit_recorded_after_freeze": true,
+  "source_tree_recorded_after_freeze": true,
+  "status": "NOT_RUN",
+  "stdout_stderr_combined_limit_bytes": 102400,
+  "version": 1
+}

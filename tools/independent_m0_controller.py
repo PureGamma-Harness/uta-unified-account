@@ -122,6 +122,12 @@ SCAN_D2_GATES={
 SCAN_D2_AUX_LABELS=frozenset({'UNKNOWN','AUTH_ROUTER_WAL','AUTH_ROUTER_SHM',
     'AUTH_SHARD_0_WAL','AUTH_SHARD_0_SHM','AUTH_SHARD_1_WAL','AUTH_SHARD_1_SHM',
     'RUNTIME_PROBE_WAL','RUNTIME_PROBE_SHM'})
+D2_COMPANION_EXPORT_ENABLED=False  # Enabling requires a new reviewed controller SHA.
+D2_COMPANION_PREFIX='resource-scan-d2-'
+D2_PREDICATE_SITES={'POST_RETRY_SCAN_RETURN':'AFTER_RETRY_SUCCESS',
+    'QUALIFIED_AUX_ENOENT':'AFTER_AUX_MISS'}
+_D2_QUIESCENT_EXPORT_SEAL=object()
+_D2_QUIESCENT_EXPORT=ContextVar('m0_d2_quiescent_export',default=None)
 
 @contextmanager
 def resource_scan_d2_capture(phase):
@@ -272,6 +278,185 @@ def _scan_deadline_need(elapsed,attempt,gate,rows,aux_catalogue):
             except BaseException:pass
         raise
 
+class _ResourceScanD2ExportState(dict):
+    def __init__(self):
+        super().__init__(capsules={},status={},pending_owners=0,cleanup_unproven=False,cleanup_proofs=[])
+        self._saw_owned_return=False;self._cleanup_unproven_sticky=False
+
+def new_resource_scan_d2_export_state():return _ResourceScanD2ExportState()
+
+def _d2_cleanup_unproven(state):
+    try:state['cleanup_unproven']=True
+    except BaseException:pass
+    try:state._cleanup_unproven_sticky=True
+    except BaseException:pass
+
+class ResourceScanD2OwnedObserver:
+    """Only observes returns from frozen SOURCE's owned_run; never signals/reaps."""
+    def __init__(self,owned,state):
+        self._owned=owned;self.resource_scan_d2_state=state
+    def __getattr__(self,name):return getattr(self._owned,name)
+    def owned_run(self,*args,**kwargs):
+        state=self.resource_scan_d2_state;tracked=False
+        try:state['pending_owners']+=1;tracked=True
+        except Exception:_d2_cleanup_unproven(state)
+        except BaseException:
+            _d2_cleanup_unproven(state);raise  # Never launch new risk after cancellation.
+        primary_in_flight=False
+        try:
+            try:observed=self._owned.owned_run(*args,**kwargs)
+            except BaseException:
+                primary_in_flight=True;_d2_cleanup_unproven(state);raise
+            try:
+                # SOURCE owned_run verifies an empty group before returning,
+                # then its finally closes streams. A throw does not grant this.
+                if observed.get('leader_reaped') is True and observed.get('stdout_stderr_complete') is True:
+                    state['cleanup_proofs'].append({'leader_reaped':True,'stdout_stderr_complete':True,'source_contract':SOURCE})
+                    state._saw_owned_return=True
+                else:_d2_cleanup_unproven(state)
+            except Exception:_d2_cleanup_unproven(state)
+            except BaseException:
+                primary_in_flight=True;_d2_cleanup_unproven(state);raise
+            return observed
+        finally:
+            if tracked:
+                try:state['pending_owners']-=1
+                except BaseException as tracking_error:
+                    _d2_cleanup_unproven(state)
+                    if not primary_in_flight and not isinstance(tracking_error,Exception):raise
+
+def resource_health_check_with_d2(private,public,phase,check,status_sink=None,state=None):
+    """Capture/queue in memory only; no new I/O in the safety health callback."""
+    if D2_COMPANION_EXPORT_ENABLED is not True or state is None:
+        return resource_health_check(private,public,phase,check,status_sink)
+    configured=False
+    try:
+        captured={'status':'NOT_OBSERVED','records':[]}
+        token=_RESOURCE_SCAN_D2_CAPTURE.set({'phase':phase,'value':captured})
+        configured=True
+    except Exception:
+        try:
+            if type(phase) is str and phase in DIAGNOSTIC_PHASES:state['status'].setdefault(phase,'UNAVAILABLE')
+        except BaseException:pass
+    # Outside the optional setup exception context: it must not become D1's
+    # apparent origin or cause an original health callback to be called twice.
+    if not configured:return resource_health_check(private,public,phase,check,status_sink)
+    try:return resource_health_check(private,public,phase,check,status_sink)
+    finally:
+        try:
+            if captured['status']=='RECORDED':
+                value=captured['records'][0];validate_resource_scan_d2(value)
+                need(value['phase']==phase,'scan_d2_phase')
+                state['capsules'].setdefault(phase,value);state['status'].setdefault(phase,'PENDING')
+            elif captured['status']=='UNAVAILABLE':state['status'].setdefault(phase,'UNAVAILABLE')
+        except BaseException:
+            try:state['status'].setdefault(phase,'UNAVAILABLE')
+            except BaseException:pass
+        finally:
+            try:_RESOURCE_SCAN_D2_CAPTURE.reset(token)
+            except BaseException:_d2_cleanup_unproven(state)
+
+def validate_resource_scan_d2_companion(value,controller_sha):
+    need(type(value) is dict and set(value)=={'kind','version','phase','predicate_site','source_commit','controller_sha256','scan'},'scan_d2_companion_fields')
+    need(value['kind']=='M0_RESOURCE_SCAN_D2_COMPANION' and type(value['version']) is int and value['version']==1,'scan_d2_companion_version')
+    validate_resource_scan_d2(value['scan'])
+    need(value['phase']==value['scan']['phase'] and value['phase'] in DIAGNOSTIC_PHASES,'scan_d2_companion_phase')
+    need(value['predicate_site']==D2_PREDICATE_SITES[value['scan']['gate']],'scan_d2_companion_predicate')
+    need(value['source_commit']==SOURCE and type(controller_sha) is str and re.fullmatch('[0-9a-f]{64}',controller_sha)
+        and value['controller_sha256']==controller_sha,'scan_d2_companion_source')
+    return True
+
+def resource_scan_d2_cleanup_barrier(state):
+    """Trusted controller ledger, not authority from arbitrary external JSON."""
+    try:
+        return (type(state) is _ResourceScanD2ExportState and state._saw_owned_return is True
+            and state._cleanup_unproven_sticky is False
+            and type(state['pending_owners']) is int and state['pending_owners']==0
+            and state['cleanup_unproven'] is False and type(state['cleanup_proofs']) is list
+            and bool(state['cleanup_proofs']) and all(type(p) is dict and set(p)=={'leader_reaped','stdout_stderr_complete','source_contract'}
+                and p['leader_reaped'] is True and p['stdout_stderr_complete'] is True and p['source_contract']==SOURCE
+                for p in state['cleanup_proofs']))
+    except BaseException:return False
+
+def write_resource_scan_d2_companion(private,public,snapshot,cleanup_state):
+    if D2_COMPANION_EXPORT_ENABLED is not True:return 'DISABLED'
+    need(resource_scan_d2_cleanup_barrier(cleanup_state),'d2_cleanup_unproven')
+    token=_D2_QUIESCENT_EXPORT.set(_D2_QUIESCENT_EXPORT_SEAL)
+    try:return _write_resource_scan_d2_companion_quiescent(private,public,snapshot)
+    finally:_D2_QUIESCENT_EXPORT.reset(token)
+
+def _write_resource_scan_d2_companion_quiescent(private,public,snapshot):
+    need(_D2_QUIESCENT_EXPORT.get() is _D2_QUIESCENT_EXPORT_SEAL,'d2_cleanup_unproven')
+    validate_resource_scan_d2(snapshot);phase=snapshot['phase']
+    controller_sha=digest(Path(__file__).resolve())
+    value={'kind':'M0_RESOURCE_SCAN_D2_COMPANION','version':1,'phase':phase,
+        'predicate_site':D2_PREDICATE_SITES[snapshot['gate']],'source_commit':SOURCE,
+        'controller_sha256':controller_sha,'scan':snapshot}
+    validate_resource_scan_d2_companion(value,controller_sha)
+    raw=(json.dumps(value,sort_keys=True,separators=(',',':'),allow_nan=False)+'\n').encode()
+    need(len(raw)<=4096,'scan_d2_companion_cap')
+    for root in (private,public):
+        info=root.lstat();need(stat.S_ISDIR(info.st_mode) and info.st_uid==os.getuid() and stat.S_IMODE(info.st_mode)&0o077==0,'diagnostic_public_directory')
+    need(_diagnostic_cleanup_bytes(private,public)+2*len(raw)<=CLEANUP_RESERVE,'diagnostic_cleanup_cap')
+    path=public/f'{D2_COMPANION_PREFIX}{phase}.json'
+    incomplete=private/f'{D2_COMPANION_PREFIX}incomplete-{phase}.json'
+    try:path.lstat()
+    except FileNotFoundError:pass
+    else:return 'ALREADY_RECORDED'
+    try:fd=os.open(incomplete,os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
+    except FileExistsError:return 'UNAVAILABLE'
+    with os.fdopen(fd,'wb') as stream:stream.write(raw);stream.flush();os.fsync(stream.fileno())
+    try:os.link(incomplete,path,follow_symlinks=False)
+    except FileExistsError:return 'ALREADY_RECORDED'
+    try:incomplete.unlink()
+    except OSError:pass
+    return 'RECORDED'
+
+def collect_resource_scan_d2_companions(public,records):
+    if D2_COMPANION_EXPORT_ENABLED is not True:return 'DISABLED'
+    status='COMPLETE'
+    try:controller_sha=digest(Path(__file__).resolve())
+    except BaseException:return 'UNAVAILABLE'
+    for phase in sorted(DIAGNOSTIC_PHASES):
+        path=public/f'{D2_COMPANION_PREFIX}{phase}.json'
+        try:
+            if path.exists():
+                value=read_json(path,4096);validate_resource_scan_d2_companion(value,controller_sha)
+                need(value['phase']==phase,'scan_d2_companion_phase')
+                records.append({'name':path.name,'bytes':path.stat().st_size,'sha256':digest(path)})
+        except BaseException:status='UNAVAILABLE'
+    return status
+
+def flush_resource_scan_d2_companions(private,public,state,records):
+    """Post-risk global finalization only, after case AND escrow ownership ends.
+
+    No new watchdog, signal, retry, or budget. fsync is not a preemptible syscall;
+    it is deliberately outside health/cleanup and within the existing job limit.
+    """
+    if D2_COMPANION_EXPORT_ENABLED is not True:return {'status':'DISABLED','phases':{}}
+    phases={}
+    try:
+        need(type(state['capsules']) is dict and set(state['capsules'])<=DIAGNOSTIC_PHASES,'scan_d2_companion_phase')
+        need(type(state['status']) is dict and set(state['status'])<=DIAGNOSTIC_PHASES,'scan_d2_companion_phase')
+        need(all(v in {'PENDING','UNAVAILABLE'} for v in state['status'].values()),'scan_d2_companion_status')
+        phases=dict(state['status'])
+        if not state['capsules']:return {'status':'UNAVAILABLE' if 'UNAVAILABLE' in phases.values() else 'NOT_OBSERVED','phases':phases}
+        if not resource_scan_d2_cleanup_barrier(state):
+            return {'status':'UNAVAILABLE','phases':{p:'CLEANUP_UNPROVEN' for p in state['capsules']}}
+        token=_D2_QUIESCENT_EXPORT.set(_D2_QUIESCENT_EXPORT_SEAL)
+        try:
+            for phase in sorted(DIAGNOSTIC_PHASES):
+                if phase not in state['capsules']:continue
+                try:
+                    need(state['capsules'][phase]['phase']==phase,'scan_d2_companion_phase')
+                    phases[phase]=write_resource_scan_d2_companion(private,public,state['capsules'][phase],state)
+                except BaseException:phases[phase]='UNAVAILABLE'
+            collected=collect_resource_scan_d2_companions(public,records)
+        finally:_D2_QUIESCENT_EXPORT.reset(token)
+        complete=collected=='COMPLETE' and all(s in {'RECORDED','ALREADY_RECORDED'} for s in phases.values())
+        return {'status':'COMPLETE' if complete else 'UNAVAILABLE','phases':phases}
+    except BaseException:return {'status':'UNAVAILABLE','phases':phases}
+
 def _take_regular_entry_proof(error):
     # Internal opaque objects never enter D1 or public records. Every read
     # consumes the proof, including rejection for a different path or scan.
@@ -359,6 +544,11 @@ def _diagnostic_cleanup_bytes(private,public):
     # Finite known cleanup slots only; no DB reads and no fallible full rescan.
     paths=[public/f'resource-diagnostic-{phase}.json' for phase in DIAGNOSTIC_PHASES]
     paths += [private/f'resource-diagnostic-incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES]
+    # D2 cannot exist legitimately until all owned risk is quiescent. Preserve
+    # the old D1 pre-stop finite I/O; count both protocols in post-stop export.
+    if _D2_QUIESCENT_EXPORT.get() is _D2_QUIESCENT_EXPORT_SEAL:
+        paths += [public/f'{D2_COMPANION_PREFIX}{phase}.json' for phase in DIAGNOSTIC_PHASES]
+        paths += [private/f'{D2_COMPANION_PREFIX}incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES]
     for case in ('B','P'):
         paths += [private/f'escrow-{stem}-{case}.json{suffix}' for stem in ('context','completed') for suffix in ('','.part')]
         paths += [private/f'escrow-owner-{case}.{suffix}' for suffix in ('stdout','stderr','owner.json')]
@@ -592,6 +782,10 @@ def _resource_usage_once(private, public, observe):
             expected={f'resource-diagnostic-{phase}.json' for phase in DIAGNOSTIC_PHASES}
             incomplete={f'resource-diagnostic-incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES}
             _resource_need(root==public and rel in expected or root==private and rel in incomplete,'diagnostic_file_scope',scope,'ENTRY_LSTAT',path);bucket='cleanup'
+        elif rel.startswith(D2_COMPANION_PREFIX):
+            expected={f'{D2_COMPANION_PREFIX}{phase}.json' for phase in DIAGNOSTIC_PHASES}
+            incomplete={f'{D2_COMPANION_PREFIX}incomplete-{phase}.json' for phase in DIAGNOSTIC_PHASES}
+            _resource_need(D2_COMPANION_EXPORT_ENABLED is True and (root==public and rel in expected or root==private and rel in incomplete),'diagnostic_file_scope',scope,'ENTRY_LSTAT',path);bucket='cleanup'
         elif rel.startswith('escrow-'):
             if re.fullmatch(r'escrow-[BP](-eligible|-safe)?/'+streams+r'\.cms',rel):bucket='escrow'
             elif re.fullmatch(r'escrow-[BP]/'+streams+r'\.openssl-private-stderr',rel):bucket='cleanup'
@@ -992,6 +1186,16 @@ def verify_public(root):
         if Path(name).name.startswith('resource-diagnostic-'):
             value=read_json(path,4096);validate_resource_diagnostic(value)
             need(name==f"resource-diagnostic-{value['phase']}.json",'diagnostic_public_name')
+        if Path(name).name.startswith(D2_COMPANION_PREFIX):
+            need(D2_COMPANION_EXPORT_ENABLED is True,'diagnostic_file_scope')
+            value=read_json(path,4096);validate_resource_scan_d2_companion(value,digest(Path(__file__).resolve()))
+            need(name==f"{D2_COMPANION_PREFIX}{value['phase']}.json",'scan_d2_companion_public_name')
+        elif safe_json is not None and not Path(name).name.startswith('resource-diagnostic-'):
+            # A companion cannot evade its fixed namespace by being renamed to
+            # an otherwise generic JSON name. Same-source public_write emits
+            # strict finite JSON; duplicate/NaN ambiguity fails closed here too.
+            candidate=read_json(path)
+            need(not (type(candidate) is dict and candidate.get('kind')=='M0_RESOURCE_SCAN_D2_COMPANION'),'scan_d2_companion_public_name')
         if safe_cipher is not None:
             spec=importlib.util.spec_from_file_location('m0_public_cipher_protocol',Path(__file__).resolve().with_name('m0_stream_escrow.py'))
             module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
@@ -1157,7 +1361,8 @@ def escrow_closed_case(owned,source,private,public,name,entry,approval,cpu_ids,h
     try:
         proof=entry.get('owner_cleanup',{})
         need(proof.get('leader_reaped') is True,'closed_case_producers_unproven')
-        usage=resource_health_check(private,public,f'ESCROW_{name}',lambda:resource_usage(private,public))
+        usage=resource_health_check_with_d2(private,public,f'ESCROW_{name}',lambda:resource_usage(private,public),
+            state=getattr(owned,'resource_scan_d2_state',None))
         capture={name:True for name in ('driver.stdout','driver.stderr')}
         capture.update({name:proof.get('stdout_stderr_complete') is True for name in ('case-owner.stdout','case-owner.stderr')})
         value={'format':1,'case':name,'private':str(private),'public':str(public),'control_commit':approval['control_commit'],
@@ -1225,6 +1430,7 @@ def main(argv=None):
         need(path.parent.resolve()==Path(os.environ['RUNNER_TEMP']).resolve(),'runner_temp_only')
     args.private.mkdir(mode=0o700);args.public.mkdir(mode=0o700)
     records=[];stage='source_preflight';result={'status':'UNKNOWN','source_commit':SOURCE,'cases':[],'production_approved':False,'capacity_10000_per_s_passed':False}
+    d2_state=new_resource_scan_d2_export_state() if D2_COMPANION_EXPORT_ENABLED is True else None
     try:
         snapshot=source_snapshot(args.source)
         control_root=Path(__file__).resolve().parents[1]
@@ -1240,6 +1446,7 @@ def main(argv=None):
         records.append(public_write(args.public,'source-manifest.json',{'source_commit':SOURCE,'source_tree':SOURCE_TREE,'files':snapshot}))
         records.append(public_write(args.public,'control.json',{'control_commit':approval['control_commit'],'controller_sha256':control_sha,'operator_approval_id':approval['operator_approval_id'],'source_commit':SOURCE,'workspace_boot_id':approval['workspace_boot_id'],'workspace_hostname_sha256':approval['workspace_hostname_sha256'],'workspace_recorded_at':approval['workspace_recorded_at'],'source_qualification_evidence_commits':EVIDENCE_COMMITS,'qualification_is_prior_root_attestation_not_reexecuted_here':True,'process_topology':'one supervisor -> owned case-worker -> one driver -> two spawn owners/native; one allowed CPU; separate sequential postcase escrow owner','registration':registration,'budget_spec':budget_spec(),'escrow_tool_sha256':digest(Path(__file__).resolve().with_name('m0_stream_escrow.py'))}))
         owned=load_owned_runner(args.source);cpus=[min(actual['cpu_affinity'])]
+        if D2_COMPANION_EXPORT_ENABLED is True:owned=ResourceScanD2OwnedObserver(owned,d2_state)
         health_phase={'value':'PREFLIGHT'};diagnostic_statuses={}
         def health_conditions(case_root=None):
             need(Path('/proc/sys/kernel/random/boot_id').read_text().strip()==actual['boot_id'],'runner_boot_changed')
@@ -1249,7 +1456,7 @@ def main(argv=None):
             resource_usage(args.private,args.public)
             if case_root:need(case_bytes(args.private,args.public,case_root.name)<=CASE_CAP,'case_output_cap')
         def health(case_root=None):
-            return resource_health_check(args.private,args.public,health_phase['value'],lambda:health_conditions(case_root),diagnostic_statuses)
+            return resource_health_check_with_d2(args.private,args.public,health_phase['value'],lambda:health_conditions(case_root),diagnostic_statuses,d2_state)
         # Before any financial driver, prove this runner's actual OpenSSL and
         # fixed public recipient support the exact authenticated protocol.
         stage='crypto_capability_probe';crypto_logs=args.private/'crypto-capability'
@@ -1300,6 +1507,10 @@ def main(argv=None):
     result.update(no_external_exchange=True,no_network_sandbox_claim=True,private_originals_uploaded=False,
         profile_binary_uploaded=False,private_raw_retention='four closed driver/case-owner streams as authenticated CMS ciphertext; subject to explicit per-case escrow result and provider artifact retention',
         speedup_claim=False,ha_approved=False)
+    # Four-stream escrow and every observed owned_run cleanup precede D2 I/O.
+    # This global evidence finalization adds no case/escrow watchdog or budget.
+    if D2_COMPANION_EXPORT_ENABLED is True:
+        result['resource_scan_d2_export']=flush_resource_scan_d2_companions(args.private,args.public,d2_state,records)
     result['resource_diagnostic_status']={phase:status for phase,status in locals().get('diagnostic_statuses',{}).items()}
     # Diagnostics are their own typed records. Original four stream files and
     # ordering are untouched. Unknown/invalid diagnostic data blocks publication.
