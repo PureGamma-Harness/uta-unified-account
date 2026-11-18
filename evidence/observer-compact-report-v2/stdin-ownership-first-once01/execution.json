@@ -1,0 +1,60 @@
+{
+  "actual_adapter_once02_execution": "NOT_RUN",
+  "argv": [
+    "taskset",
+    "-c",
+    "1",
+    "timeout",
+    "--signal=KILL",
+    "10s",
+    "python",
+    "-B",
+    "tests/test_observer_v2_stdin_ownership_pure.py",
+    "-v"
+  ],
+  "automatic_retry": false,
+  "elapsed_ns": 139695996,
+  "exit": 0,
+  "financial_6h_passed": false,
+  "finished_utc": "2026-11-18T03:29:04.715738+00:00",
+  "first_batch_only": true,
+  "frozen_HEAD": "44e298456922975529a4e7d194e0c964b9f3d01b",
+  "inputs_after": {
+    "tests/test_observer_v2_stdin_ownership_pure.py": {
+      "bytes": 13916,
+      "sha256": "65508ce14d0cab5667ceb7d8a3551627694748676adf25de459d20a34795a443"
+    },
+    "tools/probe_observer_v2_adapters.py": {
+      "bytes": 24949,
+      "sha256": "4624f4cd5181d5ef526f60cb6c2b126421eace16741537d7a021775397a12bcc"
+    }
+  },
+  "inputs_before": {
+    "tests/test_observer_v2_stdin_ownership_pure.py": {
+      "bytes": 13916,
+      "sha256": "65508ce14d0cab5667ceb7d8a3551627694748676adf25de459d20a34795a443"
+    },
+    "tools/probe_observer_v2_adapters.py": {
+      "bytes": 24949,
+      "sha256": "4624f4cd5181d5ef526f60cb6c2b126421eace16741537d7a021775397a12bcc"
+    }
+  },
+  "original_raw_bounded": true,
+  "proc_identity_not_read_or_assumed": true,
+  "production_approved": false,
+  "raw": {
+    "stderr.txt": {
+      "bytes": 1178,
+      "sha256": "01ff519ba2486a055eb0313ecdd4c69c74d013e204847f86ce8b9224d3e25d4a"
+    },
+    "stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "source": "c076b0dc1feb765686de9c78683a4e4bea5429e2",
+  "source_unchanged": true,
+  "started_utc": "2026-11-18T03:29:04.576027+00:00",
+  "system_qualification": "NO_GO",
+  "timeout_process_PID_only": 776167
+}

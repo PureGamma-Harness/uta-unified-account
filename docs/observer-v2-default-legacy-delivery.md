@@ -1,0 +1,41 @@
+# Compact observer v2：PR35 上的默认 legacy Draft
+
+本候选从 PR35 `9b61e5f35dd2196ef2fdddfa03559eca3f1322ec` 出发，只取 owner `eeaa9558df6a435f1bb2753d3d2c4390f850dfc2` 相对 frozen909 的123个observer差异路径，以及独立adapter审 `18d0036dd36fecf0f8d7f9c20a5f479a4dfa5f3a` 的6个安全docs/evidence。没有整树合入909，也没有替换PR35的UTA。129输入共634468B，目标文件均已逐项核Git blob/mode、physical regular、len、SHA；owner稀疏树的17个未物化输入只在新delivery物化，旧owner未改。完整清单在source-picks.json。
+
+新增的四个test模块共34个声明方法（8+8+12+6），三个fixture逐字节等909原observer/controller/coverage源码。标准test_*.py发现规则可找到四模块；fixture和probe CLI不自动作为测试执行。此新assembled source的tests、CI、package、watch、SQL均NOT_RUN；旧source的局部通过不能转签新tree。
+
+默认仍为legacy：缺少plan.observer.report_format时transport返回legacy；observer CLI的report-protocol默认legacy，collector-input-v2默认false。明确opt-in才改变watch stdout为full-input-v2，完整classify/Coverage与已知fatal drain先于CAS/compact写入。原2GiB聚合输出规则、额外CAS256MiB、64MiB单帧/queue2、原financial/coverage/final predicates均不放宽。逻辑字节限制不是物理hard quota或RSS证明；compact编码仍扫描历史、访问节点，不证明CPU/读取I/O增量。
+
+MANIFEST仅加两条精确literal：observer pure-once01/inputs.sha256与typed-focused-once01/inputs.sha256；PR35的两条M0 literal及其余规则保留。所有129输入和本次交付材料须静态选择闭合。wheel配置仍只含uta；repository/sdist中的tools、tests、docs、evidence不因此成为wheel内容。实际新树归档检查仍NOT_RUN。
+
+## 基线与身份兼容
+
+909与PR35的旧managed_soak_observer、run_managed_long、coverage、finance、smoke、outputbudget工具原blob相同，所以observer delta可叠加。UTA不同：909为5ab19a…，PR35/6010为4a0d5a989f0d7112454e41bbdb0162ffef34dbe4。采用PR35保留runtime修复，不把909 runtime倒退进来。
+
+逐函数边界如下。Observer.contract/check_source/validation_manifest约束producer commit、源文件、原QA报告及进程/时间身份；compact协议额外把report/transport/coverage/controller纳入同一watch/final/audit合约。read_financial仅用stdlib/Fraction及显式SQL列核内容golden、archive内容hash和关系，不importUTA，也不执行DecisionAuditStore.replay。producer_audit子进程从observer.source执行benchmarks/run_managed_soak.py audit；该脚本把自己的ROOT置于sys.path、检查meta源hash并调用verify(full=True)。它是独立golden/关系/日志audit，不是decision valuation replay。
+
+DecisionAuditStore.replay另有全uta源manifest、loaded engine与Python/SQLite严格比较。把909历史artifact交给PR35运行时不能仅靠--source旧路径宣称可重放；两个runtime树不同，必须拒绝或加载精确历史artifact/runtime。本候选首选新matched-source short profile：producer、observer、cold-audit均用新的assembled C及相同Python/SQLite和新C的真实合格报告。若另用909历史producer，必须明确双source、cold执行909，且不声称PR35 authoritative replay或909旧验收延续。
+
+## 已有证据的范围
+
+旧component8PASS、独立类型别名4RED、新typed8PASS、pipeline12PASS、stdin6PASS及所有首次失败均按原source保留。c9实际adapter pre-spawn FAIL、22e稀疏源prelaunch FAIL、fce物化恢复不被删除或改写。
+
+c076的once02只完成真实合成pipe/filesystem adapter：1184B首帧确在匹配birth子进程存活、未EOF、未release时到达；4帧、raw queue2、11CAS nodes、24个原件30330B、post-cleanup child退出及两drainer退出。独立18d审自行展开CAS/receipt/timeline并与手算Coverage一致。queue2只证明有界raw队列/背压，不证明kernel writer blocked；observed wire digest hex未独立导出，只有expected重建及source-conditioned比较。不是完整watch、SQL、producer cold audit、financial、6h、容量或production通过。
+
+## 最小真实短链路计划，尚未执行
+
+详细预算与期望分类见short-watch-plan.json。只做一个新的matched-source60s/15round、1shard、0.25round/s、worker故障每5round/parent每10round的synthetic profile，显式沿用现有managed_observer_smoke的短profile，区别于原6h/5400/30/300。先新C的真实source/runtime合格报告，缺失或不同就NOT_RUN；不复用909报告给新C签名。
+
+使用实际watch --once CLI及实际SQL/RO mount建立live baseline，compact完整帧经原Coverage后落CAS、重开并严格还原；再观察新producer自然完成/关闭，执行actual cold watch。原producer-audit CLI与final strict gate必须继续拒绝60s作为6h，期望原短blockers，不发行long receipt、不把final_evidence_eligible改true。正向cold SQL验收复用现有short-cold完整私有clone和实际producer audit CLI，short_smoke_cold_audit_passed可true而long_run_receipt_issued/final_evidence_eligible保持false。
+
+现有short-cold helper只构造legacy Observer，因此最小无产品改动路线使用单独legacy输出baseline做其正例，compact watch/final/audit在自己的输出root保持共同compact合约；两个root的receipt绝不混用。外部短launcher必须先冻结自身hash、pipe/readonly stdin/owned-child/预算guard，不修改candidate源码、不monkeypatch原final gate；它当前尚未提供执行预算。需要compact-positive cold-helper时应另作小的同协议适配CODE，不暗中借用legacy receipt。
+
+反例至少包含错误source身份CLI、原6h strict拒短run、私有副本的SQL financial projection错误、缺CAS依赖/重复attempt。原positive job保持不可变，任何首错误原样封存，不自动retry。Coverage保留12×1800s原语义，短SQL样本只按实际elapsed归属；final coverage须如实NO_GO缺时长/blocks，不把1800缩成短窗口或重置计数。原run的16stable+305inflight与producer4s无catch-up节奏是独立blocker；CAS节省不能填补缺的golden窗口，也不能证明round吞吐或6h完成。
+
+该方案是CLI/SQL/门槛正反例smoke，不是新长测审批。当前没有watch/SQL/worker/loopback TLS或native执行，未触碰10个protected PIDs；原终态6h保持。所有金融、6h、10k/s、HA、真实资金批准为false。
+
+## Draft、部署与回滚
+
+普通delivery分支Draft的base为delivery/m05-control-package-fix。root审精确新C/tree后再push/触发新CI；本组不push。CI与短smoke都必须按新source首次结果记录，失败不借旧micro/PURE改绿。部署默认legacy，原6h start/preflight仍硬编码旧注册，不能拿它启动短profile，也不能复用旧scratch或resume。
+
+回滚仅撤回observer delta及其匹配tests/fixtures，继续选择legacy；保留所有首原件、独立审与PR35 runtime/M0 package修复。两条observer literal可随对应材料撤回而不删M0 literal。原source、私有authority、10protected PIDs及old909记录不做修改。spot/borrow/linear真实E2E和持续capacity仍是另行工程目标，不能由harness或compact adapter证据替代。

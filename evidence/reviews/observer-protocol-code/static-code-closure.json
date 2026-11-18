@@ -1,0 +1,62 @@
+{
+  "finding_PIPE_CODE_01": "CLOSED_BY_COMMON_PROTOCOL_BINDING_SEPARATE_FROM_EMISSION",
+  "first_pipeline_test_status": "NOT_RUN_AT_REVIEWED_TIP",
+  "fixture": {
+    "executed": false,
+    "methods": 12,
+    "path": "tests/test_observer_v2_pipeline_pure.py",
+    "sha256": "3308a5c2365920f0e51f8c33d8c1559db0571fcd475b0dd6a905b50e3d944b7d",
+    "source_budget_sha256": "7423d478bf0d6ef7c58e0401357c524d1f104d9f9665b066c26dfa8ac3927415"
+  },
+  "original_first_CODE_finding_preserved": {
+    "all_bytes_equal": true,
+    "commit": "b79d6dffee233164ab804f9fc4372ed6130bc027",
+    "files": 3,
+    "scope": "STATIC_FINDING_NOT_EXECUTED_AUDIT_FAILURE"
+  },
+  "production_approved": false,
+  "review_type": "STATIC_CODE_ONLY_NO_TARGET_EXECUTION",
+  "reviewed_tip": "a7c9d0f8daf014efdab45d35e4cd94f2d0041cb9",
+  "reviewer_tests_FS_SQL_observer_watch_audit_original_data_crypto_network": "NOT_RUN",
+  "role_binding": {
+    "final_watch_once": "same_protocol_compact_v2_and_collector_emission",
+    "legacy_default": "unchanged_legacy_protocol_and_emission",
+    "producer_audit": "same_protocol_compact_v2_without_collector_emission",
+    "watch": "protocol_compact_v2_and_collector_emission"
+  },
+  "runtime_source_commit": "1a0998c2f7fdd93fbf49dccfa9a44d7fb80d42de",
+  "schema": "uta.observer-protocol-independent-code.v1",
+  "source_files": {
+    "tools/managed_observer_report.py": {
+      "bytes": 17733,
+      "same_at_runtime_source": true,
+      "sha256": "ae81dc4140cb7fdbfc00ed7937267b7897d050f5fee73257cbb373739d0154b1"
+    },
+    "tools/managed_observer_transport.py": {
+      "bytes": 6933,
+      "same_at_runtime_source": true,
+      "sha256": "ca393795ff3424543659a0892bdc8575472e5a27f6ebdea4e78d4fa2df5fda37"
+    },
+    "tools/managed_soak_observer.py": {
+      "bytes": 55562,
+      "same_at_runtime_source": true,
+      "sha256": "3e6536413abec22a5bda71887ce228b7d7d584bd71bd950d525d84525398adeb"
+    },
+    "tools/run_managed_long.py": {
+      "bytes": 44447,
+      "same_at_runtime_source": true,
+      "sha256": "0dfdf63ade12a5a424b6f7de59f657e2e8732f3677b36274837d41454d6e27b6"
+    }
+  },
+  "system_qualification": "NO_GO",
+  "unchanged_gates_AST": {
+    "tools/managed_soak_observer.py:final_check": true,
+    "tools/managed_soak_observer.py:original_command_coverage": true,
+    "tools/managed_soak_observer.py:producer_audit": true,
+    "tools/managed_soak_observer.py:publish": true,
+    "tools/managed_soak_observer.py:sample": true,
+    "tools/run_managed_long.py:classify_safely": true,
+    "tools/run_managed_long.py:financial_drain_before_log": true,
+    "tools/run_managed_long.py:resource_no_go": true
+  }
+}

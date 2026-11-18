@@ -1,0 +1,32 @@
+{
+  "scope": "NEW_OPT_IN_WATCH_PIPELINE_PREPARATION_ONLY",
+  "implementation_commits": ["bbf0bf49c30e6a84f4eaaf56b655ba7d16c1156e", "b4cf801e9e48602670bf13527286dc505f7f0c53", "8f43db4906fd8d01e72d98e992c86918fb4b82fc", "9cd70912d6c8c2c40f348f8d6bca1071363a47aa", "1a0998c2f7fdd93fbf49dccfa9a44d7fb80d42de"],
+  "fixture_commit": "5283abef25aa3f4aa54497e0c95f7342d6451e0a",
+  "fixture_sha256": "3308a5c2365920f0e51f8c33d8c1559db0571fcd475b0dd6a905b50e3d944b7d",
+  "source_sha256": {
+    "tools/managed_observer_report.py": "ae81dc4140cb7fdbfc00ed7937267b7897d050f5fee73257cbb373739d0154b1",
+    "tools/managed_observer_transport.py": "ca393795ff3424543659a0892bdc8575472e5a27f6ebdea4e78d4fa2df5fda37",
+    "tools/run_managed_long.py": "0dfdf63ade12a5a424b6f7de59f657e2e8732f3677b36274837d41454d6e27b6",
+    "tools/managed_soak_observer.py": "3e6536413abec22a5bda71887ce228b7d7d584bd71bd950d525d84525398adeb"
+  },
+  "proposed_argv": ["taskset", "-c", "1", "timeout", "--signal=KILL", "10s", "python", "-B", "tests/test_observer_v2_pipeline_pure.py", "-v"],
+  "proposed_test_methods": 12,
+  "proposed_max_frame_cases": 64,
+  "proposed_max_synthetic_commands": 512,
+  "proposed_max_output_bytes": 102400,
+  "max_frames_per_collect": 2,
+  "always_refilled_queue_and_latched_failure_bounded_controls": true,
+  "stdout_EOF_protocol_and_retained_completeness_are_distinct": true,
+  "actual_Observer_contract_and_observer_command_role_controls": true,
+  "baseline_protocol_mismatch_rejected_without_SQL": true,
+  "independent_pipeline_first_CODE_finding_preserved": "b79d6dffee233164ab804f9fc4372ed6130bc027",
+  "allowed_runs_without_further_root_go": 0,
+  "actual_whole_pipeline_execution": "NOT_RUN",
+  "actual_SQL_native_watch_FSadapter_observer_network_CI_crypto_keys": "NOT_AUTHORIZED",
+  "original_aggregate_output_budget_bytes": 2147483648,
+  "CAS_receipts_failures_count_in_same_budget": true,
+  "new_long_run_or_original_run_resume_authorized": false,
+  "continuous_6h_stability_passed": false,
+  "production_approved": false,
+  "system_qualification": "NO_GO"
+}

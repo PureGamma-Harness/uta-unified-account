@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/workspace/uta-observer-compact-report-v2/tools/probe_observer_v2_adapters.py", line 290, in main
+    print(json.dumps(execute(args.new_output), sort_keys=True)); return 0
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-observer-compact-report-v2/tools/probe_observer_v2_adapters.py", line 148, in execute
+    pipe = namespace['Pipes'](command, ROOT, stream_samples=True, wire_input=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tools/run_managed_long.py#adapter-selected", line 210, in __init__
+  File "/workspace/uta-observer-compact-report-v2/tools/probe_observer_v2_adapters.py", line 127, in Popen
+    child = subprocess.Popen(argv, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 992, in __init__
+    errread, errwrite) = self._get_handles(stdin, stdout, stderr)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1705, in _get_handles
+    p2cread = self._get_devnull()
+              ^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1137, in _get_devnull
+    self._devnull = os.open(os.devnull, os.O_RDWR)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/uta-observer-compact-report-v2/tools/probe_observer_v2_adapters.py", line 97, in audit
+    raise RuntimeError('adapter_write_outside_new_output')
+RuntimeError: adapter_write_outside_new_output

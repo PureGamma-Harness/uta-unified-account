@@ -496,7 +496,8 @@ def output_directory(job, output):
 
 class Observer:
     def __init__(self, job, output, source, frozen_commit, driver_pid, driver_birth, *, producer_receipt=None,
-                 max_private_clone_bytes=6 * 1024**3, min_private_free_bytes=1024**3):
+                 max_private_clone_bytes=6 * 1024**3, min_private_free_bytes=1024**3,
+                 collector_input_v2=False, report_protocol="legacy"):
         self.job, self.output = output_directory(job, output)
         self.source, self.frozen_commit = Path(source), frozen_commit
         if self.output.is_relative_to(self.source.resolve()):
@@ -508,12 +509,21 @@ class Observer:
         self.cold = False
         self.max_private_clone_bytes = integer(max_private_clone_bytes, 1)
         self.min_private_free_bytes = integer(min_private_free_bytes)
+        self.collector_input_v2 = collector_input_v2
+        if report_protocol not in {"legacy", "compact-v2"}:
+            raise ValueError("unsupported_observer_report_protocol")
+        self.report_protocol = report_protocol
 
     def contract(self, meta, cp):
         result = validate_metadata(meta, cp, self.frozen_commit)
         result.update(driver_pid=self.driver_pid, driver_birth=self.driver_birth)
         result["observer_code_sha256"] = {path.name: sha256(path.read_bytes()).hexdigest()
             for path in (Path(__file__), Path(__file__).with_name("managed_observer_finance.py"))}
+        if getattr(self, "report_protocol", "legacy") == "compact-v2":
+            result["observer_output_protocol"] = "full-input-v2-to-post-consumer-compact-v2"
+            for name in ("managed_observer_report.py", "managed_observer_transport.py",
+                         "managed_observer_coverage.py", "run_managed_long.py"):
+                result["observer_code_sha256"][name] = sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
         return result
 
     def recheck_final_contract(self, contract, progress, cp):
@@ -842,11 +852,19 @@ def main(argv=None):
     parser.add_argument("--producer-receipt", type=Path)
     parser.add_argument("--python", default=sys.executable)
     parser.add_argument("--once", action="store_true")
+    parser.add_argument("--collector-input-v2", action="store_true",
+                        help="send complete transient samples to an explicit post-consumer compact collector")
+    parser.add_argument("--report-protocol", choices=("legacy", "compact-v2"), default="legacy",
+                        help="same immutable report contract for watch/final/audit, independent of wire emission")
     parser.add_argument("--interval", type=float, default=60)
     parser.add_argument("--max-private-clone-bytes", type=int, default=6 * 1024**3)
     parser.add_argument("--min-private-free-bytes", type=int, default=1024**3)
     parser.add_argument("--max-address-space-bytes", type=int, default=2 * 1024**3)
     args = parser.parse_args(argv)
+    if args.collector_input_v2 and (args.command != "watch" or not stat.S_ISFIFO(os.fstat(1).st_mode)):
+        parser.error("collector input v2 requires watch and a pipe stdout")
+    if args.command == "watch" and args.collector_input_v2 != (args.report_protocol == "compact-v2"):
+        parser.error("watch report protocol and collector input must agree")
     if number(args.interval) < 60:
         parser.error("observation interval must be at least 60 seconds")
     integer(args.max_private_clone_bytes, 1)
@@ -866,7 +884,8 @@ def main(argv=None):
     observer = Observer(args.job, args.output, args.source, args.frozen_commit, args.driver_pid,
                         args.driver_birth, producer_receipt=args.producer_receipt,
                         max_private_clone_bytes=args.max_private_clone_bytes,
-                        min_private_free_bytes=args.min_private_free_bytes)
+                        min_private_free_bytes=args.min_private_free_bytes,
+                        collector_input_v2=args.collector_input_v2, report_protocol=args.report_protocol)
     if args.command == "producer-audit":
         try:
             print(canonical(producer_audit(observer, args.python)))
@@ -880,6 +899,7 @@ def main(argv=None):
     stop = Event()
     for sig in (signal.SIGINT, signal.SIGTERM):
         signal.signal(sig, lambda *_: stop.set())
+    input_sequence = 0
     while not stop.is_set():
         sample_started = time.monotonic()
         result = None  # Release the preceding full-CID sample before reading another.
@@ -892,9 +912,19 @@ def main(argv=None):
                 "logical_point": "unknown", "final_evidence_eligible": False,
                 "alerts": ["observation_failed_closed"], "error_type": type(error).__name__,
                 "error_digest": sha256(str(error).encode()).hexdigest(), **FLAGS}
-        observer.publish(result)
+        if args.collector_input_v2:
+            try:
+                from tools.managed_observer_transport import input_frame
+            except ModuleNotFoundError:
+                from managed_observer_transport import input_frame
+            input_sequence += 1
+            sys.stdout.buffer.write(input_frame(result, input_sequence))
+            sys.stdout.buffer.flush()
+        else:
+            observer.publish(result)
         if args.once:
-            print(canonical(result))
+            if not args.collector_input_v2:
+                print(canonical(result))
             return 0 if "observation_failed_closed" not in result["alerts"] else 1
         deadline = sample_started + args.interval
         if deadline <= time.monotonic():

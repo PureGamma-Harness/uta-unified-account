@@ -81,6 +81,8 @@ def fatal_financial_codes(sample):
     business/journal errors in a compared stable snapshot are financial alerts.
     An in-flight, deliberately un-compared golden is never an invariant failure.
     """
+    if isinstance(sample, Mapping) and sample.get("report_schema") == "uta.managed_observer.compact.v2":
+        raise ValueError("complete_legacy_report_required_before_coverage")
     if not isinstance(sample, Mapping):
         return []
     result = set()
@@ -149,6 +151,8 @@ class Coverage:
                 self._reasons.add("closed_block_" + str(index) + "_missing_stable_golden")
 
     def observe(self, sample, *, job_elapsed_seconds, sample_attempt_id):
+        if isinstance(sample, Mapping) and sample.get("report_schema") == "uta.managed_observer.compact.v2":
+            raise ValueError("complete_legacy_report_required_before_coverage")
         attempt = _integer(sample_attempt_id, 1)
         if attempt <= self._last_attempt:
             raise ValueError("attempt_id_must_increase_no_double_count")
