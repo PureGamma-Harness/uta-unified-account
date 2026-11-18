@@ -1,0 +1,754 @@
+{
+  "PR31_first_unit_failure_artifacts": [
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 84830,
+      "artifact_id": 14383109020,
+      "artifact_sha256": "97b43b9272bf66e41c0845f654290dc46b9fffccfea2cb0415d47cc00cb19d27",
+      "code_commit": "1a56d2507de88b5ff97284e1e339c346bcbe0cf1",
+      "duration_seconds": 374.991387835,
+      "errors": 0,
+      "failures": 1,
+      "finished_at": "2026-11-18T00:11:47.455652+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_managed_partial_liquidation_survives_real_worker_kill_and_reconciles (test_managed_liquidation.ManagedPartialLiquidationTests)",
+          "log_line": 2023,
+          "terminal_error_lines": [
+            "AssertionError: False is not true"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_managed_partial_liquidation_survives_real_worker_kill_and_reconciles",
+              "line": 74,
+              "path": "tests/test_managed_liquidation.py"
+            },
+            {
+              "function": "run_liquidation",
+              "line": 105,
+              "path": "tests/test_managed_liquidation.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77997,
+          "crc32": 1437496270,
+          "name": "summary.json",
+          "sha256": "71a2e1720979507bd5f04c1cfc285e9ed26ad3862c74f71e22609abeb3ecc815"
+        },
+        {
+          "bytes": 155,
+          "crc32": 3599459991,
+          "name": "worker-result.json",
+          "sha256": "16816ed58856adf673974b86742b221cac468ea717252ddc52e45c10eb9e301c"
+        },
+        {
+          "bytes": 251671,
+          "crc32": 466036659,
+          "name": "unittest.txt",
+          "sha256": "8405dc8351177c6c0ed5afd28e26f424101f8b087157dc0ef69695e68ec4d2ca"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 31,
+      "production_approved": false,
+      "python": "3.10.22 (main, Oct  1 2026, 14:32:29) [GCC 15.2.0]",
+      "run_id": 44204885012,
+      "skipped": 0,
+      "source_map_git_binding_commit": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "source_map_git_inputs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:05:32.405412+00:00",
+      "test_log_sha256": "8405dc8351177c6c0ed5afd28e26f424101f8b087157dc0ef69695e68ec4d2ca",
+      "tests_run": 1853,
+      "unittest_passed": false
+    },
+    {
+      "all_members_crc_verified": true,
+      "artifact_bytes": 94874,
+      "artifact_id": 14383372325,
+      "artifact_sha256": "83ef2a716839e62eb964f4f22991b54508b7e148e8b582a821eeba259b75cd5e",
+      "code_commit": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "duration_seconds": 449.108188193,
+      "errors": 0,
+      "failures": 2,
+      "finished_at": "2026-11-18T00:12:11.502767+00:00",
+      "first_failures": [
+        {
+          "case": "FAIL: test_pending_partial_publication_does_not_claim_a_local_market_commit (test_managed_views_reference.ManagedRouterReadReferenceTests.test_pending_partial_publication_does_not_claim_a_local_market_commit)",
+          "log_line": 2027,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_pending_partial_publication_does_not_claim_a_local_market_commit",
+              "line": 631,
+              "path": "tests/test_managed_views_reference.py"
+            },
+            {
+              "function": "activate",
+              "line": 548,
+              "path": "tests/test_managed_views_reference.py"
+            }
+          ]
+        },
+        {
+          "case": "FAIL: test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http (test_managed_views_reference.ManagedRouterReadReferenceTests.test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http)",
+          "log_line": 2039,
+          "terminal_error_lines": [
+            "AssertionError: True is not false"
+          ],
+          "traceback_frames": [
+            {
+              "function": "test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http",
+              "line": 583,
+              "path": "tests/test_managed_views_reference.py"
+            },
+            {
+              "function": "activate",
+              "line": 549,
+              "path": "tests/test_managed_views_reference.py"
+            }
+          ]
+        }
+      ],
+      "members": [
+        {
+          "bytes": 77997,
+          "crc32": 3105610050,
+          "name": "summary.json",
+          "sha256": "62ea3876278ccae8fb251dd3946fc8bffbd2a3466638c3762bcdb35b8f3b1592"
+        },
+        {
+          "bytes": 155,
+          "crc32": 2148573860,
+          "name": "worker-result.json",
+          "sha256": "b1b577ed7c2502dc095c72a7e115d53252c56761dda3abbcf95dacb697edf1f6"
+        },
+        {
+          "bytes": 371566,
+          "crc32": 1911124526,
+          "name": "unittest.txt",
+          "sha256": "a9147bff315ed6835e8d62c049173896c29394e10ef9b2260c9394ba600480db"
+        }
+      ],
+      "passed": false,
+      "platform": "Linux-7.0.0-1019-azure-x86_64-with-glibc2.43",
+      "pr": 31,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "run_id": 44204771130,
+      "skipped": 0,
+      "source_map_git_binding_commit": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "source_map_git_inputs_verified": 357,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "started_at": "2026-11-18T00:04:42.257815+00:00",
+      "test_log_sha256": "a9147bff315ed6835e8d62c049173896c29394e10ef9b2260c9394ba600480db",
+      "tests_run": 1853,
+      "unittest_passed": false
+    }
+  ],
+  "PR31_grouped_failure_context": [
+    {
+      "actual_failure": "AssertionError: False is not true",
+      "actual_financial_reconciliation_executed_in_failing_case": false,
+      "actual_tick_age_at_failure": null,
+      "actual_worker_pid_birth_generation_and_lease_snapshot_in_failed_assertion": null,
+      "case": "ManagedPartialLiquidationTests.test_managed_partial_liquidation_survives_real_worker_kill_and_reconciles",
+      "original_settings": {
+        "activation_timeout_seconds": 12,
+        "background_interval_seconds": 0.05,
+        "diagnostics_default_timeout_seconds": 1,
+        "general_wait_helper_seconds": 12,
+        "lease_seconds": 0.6,
+        "market_max_age_seconds_default": 30,
+        "poll_interval_seconds": 0.01,
+        "publish_timeout_seconds": 12
+      },
+      "phase": "initial worker-identity diagnostics after initial publication and activation; before opening orders or liquidation",
+      "preceding_assertion_reached_and_passed": "distinct worker pid count was two at line104; initial publish/activation assertions returned successfully",
+      "predicate": "all worker pid is neither None nor parent PID, and owner_pid equals pid",
+      "run_id": 44204885012,
+      "runtime": "3.10",
+      "source_line": 105,
+      "source_path": "tests/test_managed_liquidation.py"
+    },
+    {
+      "actual_failure": "AssertionError: True is not false",
+      "actual_financial_reconciliation_executed_in_failing_case": false,
+      "actual_publication_receipts_watermarks_error_reason_and_owner_snapshot_in_failure": null,
+      "actual_tick_age_at_failure": null,
+      "caller_line": 631,
+      "case": "ManagedRouterReadReferenceTests.test_pending_partial_publication_does_not_claim_a_local_market_commit",
+      "original_settings": {
+        "activation_timeout_seconds": 8,
+        "background_interval_seconds": 0.03,
+        "completion_publish_timeout_seconds": 8,
+        "external_fence_seconds": 5,
+        "http_timeout_seconds": 4,
+        "initial_partial_publish_timeout_seconds": 0.25,
+        "later_financial_ready_poll_seconds": 5,
+        "lease_seconds": 3,
+        "local_original_receipt_timeout_seconds": 1,
+        "market_max_age_seconds": 2,
+        "poll_interval_seconds": 0.01,
+        "resume_partial_publish_timeout_seconds": 0.05
+      },
+      "phase": "complete same original market publication after releasing remaining held shard fences; before activation and final financial-ready poll",
+      "predicate": "publish_market(original snapshot,timeout=8)['publishing'] is false",
+      "run_id": 44204771130,
+      "runtime": "3.13",
+      "source_line": 548,
+      "source_path": "tests/test_managed_views_reference.py"
+    },
+    {
+      "actual_activation_response_reason_and_owner_lease_snapshot_in_failure": null,
+      "actual_failure": "AssertionError: True is not false",
+      "actual_financial_reconciliation_executed_in_failing_case": false,
+      "actual_tick_age_at_failure": null,
+      "caller_line": 583,
+      "case": "ManagedRouterReadReferenceTests.test_real_partial_fanout_stale_and_recovery_remain_explicit_through_http",
+      "original_settings": {
+        "activation_timeout_seconds": 8,
+        "completion_publish_timeout_seconds": 8,
+        "external_fence_seconds": 5,
+        "http_timeout_seconds": 4,
+        "initial_partial_publish_timeout_seconds": 0.25,
+        "later_financial_ready_poll_seconds": 5,
+        "lease_seconds": 3,
+        "local_original_receipt_timeout_seconds": 1,
+        "market_max_age_seconds": 2,
+        "owner_ready_before_first_tick_timeout_seconds": 2
+      },
+      "phase": "activation after same original market publication completed; before final financial-ready loop or intentional stale-market segment",
+      "preceding_assertion_reached_and_passed": "completion publish returned publishing=false at line548",
+      "predicate": "set_kill_switch(False,timeout=8)['halted'] is false",
+      "run_id": 44204771130,
+      "runtime": "3.13",
+      "source_line": 549,
+      "source_path": "tests/test_managed_views_reference.py"
+    }
+  ],
+  "assembled_at": "2026-11-18T00:19:53.391880+00:00",
+  "capacity_10000_per_s_passed": false,
+  "case_specific_evidence_gaps": [
+    "The three failed assertions supplied no response/worker rows in their unittest message.",
+    "Phase snapshots were stored in the fixture in memory and optionally emitted only when UTA_READVIEW_PHASE_EVIDENCE is set. The fixed CI workflow does not set it; both ZIPs contain only summary, worker-result and unittest members.",
+    "No case-specific final publication/activation payload, pid/birth/generation, exact lease status, elapsed tick age or rejection reason is preserved by these failure messages. Other tests' diagnostics must not be attributed to these cases.",
+    "Observed assertion locations precede the substantive liquidation/reconciliation path or final readiness/staleness segments. A stale-quote, lease or scheduler explanation remains unverified."
+  ],
+  "gate": "NO_GO",
+  "jobs": [
+    {
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134468166563,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134468166915,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134468166999,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134468167118,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        }
+      ],
+      "pr": 31,
+      "run_id": 44204885012
+    },
+    {
+      "event": "push",
+      "jobs": [
+        {
+          "conclusion": "failure",
+          "failed_steps": [
+            {
+              "name": "Run unit tests",
+              "number": 5
+            }
+          ],
+          "id": 134467778551,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": "skipped",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134467778798,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134467778891,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "failed_steps": [],
+          "id": 134467778918,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": "success",
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "status": "completed"
+        }
+      ],
+      "pr": 31,
+      "run_id": 44204771130
+    },
+    {
+      "event": "pull_request",
+      "jobs": [
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134471474659,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134471475036,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134471475088,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134471475213,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        }
+      ],
+      "pr": 32,
+      "run_id": 44205859502
+    },
+    {
+      "event": "push",
+      "jobs": [
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134470237906,
+          "name": "test (3.13)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134470238219,
+          "name": "test (3.11)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134470238384,
+          "name": "test (3.12)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        },
+        {
+          "conclusion": null,
+          "failed_steps": [],
+          "id": 134470238541,
+          "name": "test (3.10)",
+          "package_steps": [
+            {
+              "conclusion": null,
+              "name": "Build and verify exact source distribution and wheel",
+              "number": 19,
+              "status": "pending"
+            }
+          ],
+          "status": "in_progress"
+        }
+      ],
+      "pr": 32,
+      "run_id": 44205495492
+    }
+  ],
+  "limits": [
+    "PR31's push and PR failures are different observations; source tree equality does not establish a shared root cause or clear a gate.",
+    "PR32 was in progress at the recorded observation times. A later natural completed state requires a separate labeled observation, not rewriting this first snapshot.",
+    "Only the two failed PR31 unit ZIPs were downloaded/binary checked. Successful-job artifacts and package ZIPs were not independently checked here.",
+    "No new test, CLI, process owner, SQL, audit, performance load or actual long-run metadata extraction was executed by this review."
+  ],
+  "no_ci_rerun_or_dispatch": true,
+  "no_sql_cli_worker_or_long_task_access": true,
+  "observation": "first_snapshot_not_continuously_updated",
+  "pending_at_this_snapshot": {
+    "completed_failure_artifact_inspected": false,
+    "conclusion": null,
+    "pr": 32,
+    "runs": [
+      44205495492,
+      44205859502
+    ],
+    "status": "in_progress"
+  },
+  "private_original_digests": [
+    {
+      "bytes": 10046,
+      "name": "build-first-safe-observation.py",
+      "sha256": "6ff8619907147caff7537fb05b3a184f537a30b7f444146080ee7977a60ef505"
+    },
+    {
+      "bytes": 42808,
+      "name": "first-jobs-provider-responses.json",
+      "sha256": "d0f444c3f557e2ae56dd35c4f0d4db5d82aebad47dd664f50b9a5f6c5b3418a3"
+    },
+    {
+      "bytes": 845220,
+      "name": "first-merge-commit-provider-responses.json",
+      "sha256": "c8946ee24d323f881898cefa2892e46659c28f438c9d092adc567f7f70ef9bb8"
+    },
+    {
+      "bytes": 133354,
+      "name": "first-metadata-provider-responses.json",
+      "sha256": "b6e6628addd8793adb99727be43ad41c1b334e5c71e70ff4522d01ed64c8fae1"
+    },
+    {
+      "bytes": 77997,
+      "name": "pr31-artifact-14383109020-summary.original.json",
+      "sha256": "71a2e1720979507bd5f04c1cfc285e9ed26ad3862c74f71e22609abeb3ecc815"
+    },
+    {
+      "bytes": 251671,
+      "name": "pr31-artifact-14383109020-unittest.original.txt",
+      "sha256": "8405dc8351177c6c0ed5afd28e26f424101f8b087157dc0ef69695e68ec4d2ca"
+    },
+    {
+      "bytes": 84830,
+      "name": "pr31-artifact-14383109020.original.zip",
+      "sha256": "97b43b9272bf66e41c0845f654290dc46b9fffccfea2cb0415d47cc00cb19d27"
+    },
+    {
+      "bytes": 77997,
+      "name": "pr31-artifact-14383372325-summary.original.json",
+      "sha256": "62ea3876278ccae8fb251dd3946fc8bffbd2a3466638c3762bcdb35b8f3b1592"
+    },
+    {
+      "bytes": 371566,
+      "name": "pr31-artifact-14383372325-unittest.original.txt",
+      "sha256": "a9147bff315ed6835e8d62c049173896c29394e10ef9b2260c9394ba600480db"
+    },
+    {
+      "bytes": 94874,
+      "name": "pr31-artifact-14383372325.original.zip",
+      "sha256": "83ef2a716839e62eb964f4f22991b54508b7e148e8b582a821eeba259b75cd5e"
+    },
+    {
+      "bytes": 14856,
+      "name": "pr31-first-artifact-provider-responses.json",
+      "sha256": "91c13c6d083e17592c374259afee39c61e4463ad6f75af4e41eef8c8383d24db"
+    },
+    {
+      "bytes": 4284,
+      "name": "pr31-first-unit-safe-observations.json",
+      "sha256": "20898da64ac4375d0a6134e16d249ca05393491d1e082f7573f1b0db78ea1349"
+    },
+    {
+      "bytes": 26813,
+      "name": "pr31-job-134467778551-first-response.json",
+      "sha256": "13eaf602f3d40d0a2fb48d8f453c6b27a6ac313c216139d10bd91566577dac50"
+    },
+    {
+      "bytes": 29456,
+      "name": "pr31-job-134468167118-first-response.json",
+      "sha256": "70e48a4fbef889f3463723cbe81f96e52c9e2ea3d84acc95bd222830769269ce"
+    },
+    {
+      "bytes": 0,
+      "name": "pr31-unit-reader-first.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 1188,
+      "name": "pr31-unit-reader-first.stdout",
+      "sha256": "0aed945624f36074adcbc4ad3f6133243d12edbe2eeec4992ee5c789a6d75207"
+    },
+    {
+      "bytes": 3887,
+      "name": "read-pr31-unit-artifacts-once.py",
+      "sha256": "1daf74a1731a7385c8d71f7d6a45c367327fe0ae1640816f6918f6afdc9c5ee3"
+    }
+  ],
+  "production_approved": false,
+  "pull_requests": [
+    {
+      "base_sha": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+      "draft": true,
+      "head_sha": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "merge_commit_sha": "1a56d2507de88b5ff97284e1e339c346bcbe0cf1",
+      "merged": false,
+      "pr": 31,
+      "state": "open"
+    },
+    {
+      "base_sha": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+      "draft": true,
+      "head_sha": "497c67f60901653634a96f629087f805032acec5",
+      "merge_commit_sha": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+      "merged": false,
+      "pr": 32,
+      "state": "open"
+    }
+  ],
+  "recorded_at_after_first_jobs_fetch": "2026-11-18T00:14:27Z",
+  "recorded_at_after_first_metadata_fetch": "2026-11-18T00:14:03Z",
+  "relevant_original_test_source_bindings": [
+    {
+      "base_and_PR31_git_blob": "8be9c9d38a23bbccca7d74f0692c304d1aa813ad",
+      "path": "tests/test_managed_liquidation.py",
+      "unchanged": true
+    },
+    {
+      "base_and_PR31_git_blob": "f4c35f792b81039ba3ab2f87844b2783e91fc0ce",
+      "path": "tests/test_managed_views_reference.py",
+      "unchanged": true
+    },
+    {
+      "base_and_PR31_git_blob": "9c52d9f092886ea41c1e64f36686cacfda3e08f1",
+      "path": ".github/workflows/ci.yml",
+      "unchanged": true
+    }
+  ],
+  "repository": "PureGamma-Harness/uta-unified-account",
+  "runtime_source_binding": {
+    "base": "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+    "common_uta_tree": "4a0d5a989f0d7112454e41bbdb0162ffef34dbe4",
+    "does_not_establish_failure_cause": true,
+    "product_uta_tree_identical": true,
+    "source_heads": {
+      "31": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "32": "497c67f60901653634a96f629087f805032acec5"
+    }
+  },
+  "source_merge_bindings": [
+    {
+      "actual_pr_merge_commit": "1a56d2507de88b5ff97284e1e339c346bcbe0cf1",
+      "parents": [
+        "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+        "56ecb87faa656901de9fd359f95014157d9c5585"
+      ],
+      "pr": 31,
+      "source_and_merge_tree": "f70b4e76bbc7c910835854aafecafd54f4ace433",
+      "source_commit": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "tree_equality_verified": true
+    },
+    {
+      "actual_pr_merge_commit": "c95e5e77edcdaa2f9454bad00517f1ff970cad66",
+      "parents": [
+        "6010e920a168b35fccfc9ef9ee34e030b28b11d9",
+        "497c67f60901653634a96f629087f805032acec5"
+      ],
+      "pr": 32,
+      "source_and_merge_tree": "a32ef26f47250cbdd9e240e9b597eb7314ed95d5",
+      "source_commit": "497c67f60901653634a96f629087f805032acec5",
+      "tree_equality_verified": true
+    }
+  ],
+  "workflow_runs": [
+    {
+      "conclusion": "failure",
+      "created_at": "2026-11-18T00:05:20Z",
+      "event": "pull_request",
+      "head_sha": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "id": 44204885012,
+      "pr": 31,
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-11-18T00:13:30Z"
+    },
+    {
+      "conclusion": "failure",
+      "created_at": "2026-11-18T00:04:32Z",
+      "event": "push",
+      "head_sha": "56ecb87faa656901de9fd359f95014157d9c5585",
+      "id": 44204771130,
+      "pr": 31,
+      "run_attempt": 1,
+      "status": "completed",
+      "updated_at": "2026-11-18T00:12:45Z"
+    },
+    {
+      "conclusion": null,
+      "created_at": "2026-11-18T00:12:08Z",
+      "event": "pull_request",
+      "head_sha": "497c67f60901653634a96f629087f805032acec5",
+      "id": 44205859502,
+      "pr": 32,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "updated_at": "2026-11-18T00:12:12Z"
+    },
+    {
+      "conclusion": null,
+      "created_at": "2026-11-18T00:09:36Z",
+      "event": "push",
+      "head_sha": "497c67f60901653634a96f629087f805032acec5",
+      "id": 44205495492,
+      "pr": 32,
+      "run_attempt": 1,
+      "status": "in_progress",
+      "updated_at": "2026-11-18T00:09:39Z"
+    }
+  ]
+}
