@@ -1,0 +1,428 @@
+{
+  "schema": 1,
+  "kind": "PFH_B1_B2_NORMATIVE_SPEC_AMENDMENT",
+  "spec_revision": 2,
+  "contract_id": "UTA-FUNDING-RISK-HOLD-v1",
+  "review_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+  "prior_spec_commit": "bac842516abc8f1e8af42f8624b5cf28f31b5972",
+  "base_runtime_commit": "92979e9b2cd719bfaa9d857e13c2b99239355330",
+  "status": "PROPOSED_SPEC_RESOLUTION_PENDING_INDEPENDENT_RE_REVIEW",
+  "target_execution_attempts": 0,
+  "runtime_implemented": false,
+  "production_approved": false,
+  "real_funds_approved": false,
+  "policy_attribution": "LOCAL_ROOT_SELECTED_POLICY_NOT_EXTERNAL_EXCHANGE_BEHAVIOR",
+  "unchanged_originals": [
+    {
+      "path": "evidence/designs/pending-funding-risk-hold/manual-cases.json",
+      "bytes": 16106,
+      "sha256": "0b2b27c0c2020cab320fb9844907149e4163b63cefeec6ab44d0d1fe85c72d6e",
+      "comparison_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+      "exact_original_retained": true
+    },
+    {
+      "path": "evidence/designs/pending-funding-risk-hold/source-pins.json",
+      "bytes": 7420,
+      "sha256": "c463ec99ecf526ee421d048411d4faee7d1a09e6916dac169ef7be5cb26872f1",
+      "comparison_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+      "exact_original_retained": true
+    },
+    {
+      "path": "docs/pending-funding-risk-hold-independent-review.md",
+      "bytes": 8852,
+      "sha256": "061c78ffd2470880732369ecb16ecbc2994f326adeaf133df335ad397068d543",
+      "comparison_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+      "exact_original_retained": true
+    },
+    {
+      "path": "evidence/reviews/pending-funding-risk-hold-independent/arithmetic-and-source-review.json",
+      "bytes": 13108,
+      "sha256": "8fd703aab283aa0221af18415edbd5c45ad56573601b79ceed8e45e2fcde2e57",
+      "comparison_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+      "exact_original_retained": true
+    }
+  ],
+  "review_findings": {
+    "PFH-REV-B1": "PROPOSED_SPEC_RESOLUTION_PENDING_INDEPENDENT_RE_REVIEW",
+    "PFH-REV-B2": "PROPOSED_SPEC_RESOLUTION_PENDING_INDEPENDENT_RE_REVIEW",
+    "original_report_status": "PRESERVED_NO_RETROACTIVE_SIGNOFF"
+  },
+  "identity": {
+    "format": 1,
+    "prefix": "funding-duty:v1:",
+    "digest": "sha256_of_canonical_ascii_JSON",
+    "exact_fields": [
+      "schema",
+      "authority_id",
+      "authority_generation",
+      "symbol",
+      "period_end",
+      "interval_seconds",
+      "settlement_asset",
+      "account_id",
+      "rule_scope_id"
+    ],
+    "canonicalization": "sort_keys true; separators comma/colon without whitespace; ensure_ascii true; scalar types exact; schema=1 native int not bool; all IDs bounded existing ASCII; UTC whole-second YYYY-MM-DDTHH:MM:SS+00:00; no alias/casefold/name inference",
+    "available_before_schedule": true,
+    "natural_slot_unique_fields": [
+      "authority_id",
+      "authority_generation",
+      "symbol",
+      "period_end",
+      "settlement_asset",
+      "account_id"
+    ],
+    "immutable_attributes_per_natural_slot": [
+      "interval_seconds",
+      "rule_scope_id"
+    ],
+    "rule_scope_payload_required": [
+      "approved funding rule ID/version",
+      "product policy namespace and approved version",
+      "cash rounding contract",
+      "subunit waiver contract",
+      "USD scale"
+    ],
+    "excluded_from_economic_identity": [
+      "obligation_id",
+      "schedule_command_id",
+      "quantity",
+      "mark",
+      "rate",
+      "source code hash",
+      "executor owner/nonce/claim generation/expiry",
+      "exposure_cut_sha",
+      "cap_sha",
+      "final_cut_sha"
+    ],
+    "stage_references": [
+      "typed exposure_cut_sha or null",
+      "typed cap_sha or null",
+      "typed final_cut_sha or null"
+    ],
+    "ref_binding": "Every stage content binds same duty_id, natural slot, rule scope and prior expected duty revision; no cross-duty or arbitrary archived object execution",
+    "field_types": {
+      "schema": "NATIVE_INT_EXACT1_NOT_BOOL",
+      "authority_id": "BOUNDED_ASCII_STABLE_ID",
+      "authority_generation": "BOUNDED_ASCII_STABLE_FINANCIAL_GENERATION_ID_NOT_EXECUTOR_CLAIM_COUNTER",
+      "symbol": "BOUNDED_ASCII_EXACT_CATALOG_SYMBOL",
+      "period_end": "CANONICAL_UTC_WHOLE_SECOND_TEXT",
+      "interval_seconds": "NATIVE_INT_1_TO_86400_NOT_BOOL_EQUAL_APPROVED_IMMUTABLE_CATALOG_PERIOD",
+      "settlement_asset": "EXACT_USD_STRING_IN_CURRENT_SCOPE",
+      "account_id": "BOUNDED_ASCII_STABLE_ACCOUNT_ID",
+      "rule_scope_id": "BOUNDED_ASCII_APPROVED_IMMUTABLE_RULE_SCOPE_ID"
+    }
+  },
+  "representations": [
+    {
+      "stage": "REGISTERED_UNASSESSED",
+      "active": "NO_ASSESSED_AMOUNT_NOT_ZERO_DEBT_ASSERTION",
+      "new_risk_gate": "CLOSED_IF_REQUIRED_BOUNDARY_UNASSESSED"
+    },
+    {
+      "stage": "EXPOSURE_RATE_PENDING",
+      "U": "ACTIVE",
+      "P": "ZERO",
+      "N": "ZERO",
+      "refs": [
+        "exposure_cut_sha",
+        "cap_sha"
+      ]
+    },
+    {
+      "stage": "FINAL_PAYABLE",
+      "U": "ZERO",
+      "P": "ACTIVE",
+      "N": "ZERO",
+      "refs": [
+        "final_cut_sha"
+      ],
+      "prior_U": "CONSUMED_HISTORICAL_ONLY"
+    },
+    {
+      "stage": "FINAL_RECEIVABLE",
+      "U": "ZERO",
+      "P": "ZERO",
+      "N": "ACTIVE",
+      "H": "ZERO_NO_CASH_OR_COLLATERAL_CREDIT",
+      "refs": [
+        "final_cut_sha"
+      ]
+    },
+    {
+      "stage": "FINAL_ZERO",
+      "U": "ZERO",
+      "P": "ZERO",
+      "N": "ZERO",
+      "refs": [
+        "final_cut_sha"
+      ],
+      "missing_duty": false
+    },
+    {
+      "stage": "APPLIED",
+      "U": "ZERO",
+      "P": "ZERO",
+      "N": "ZERO",
+      "refs": [
+        "final_cut_sha",
+        "cash_receipt_sha",
+        "ledger_or_zero_leg_completion_proof"
+      ],
+      "history_deleted": false
+    }
+  ],
+  "transition_contract": {
+    "one_active_representation_per_duty": "REQUIRED_PERSISTENT_UNIQUE_CONSTRAINT",
+    "natural_slot_uniqueness": "REQUIRED_PERSISTENT_UNIQUE_CONSTRAINT",
+    "CAS": [
+      "same duty_id",
+      "expected duty_revision",
+      "expected active_stage",
+      "expected cap/exposure content refs"
+    ],
+    "atomic_effects": [
+      "verify exact scope and stage refs",
+      "append immutable final content and stage transition",
+      "consume old U active contribution",
+      "create one new P/N/zero contribution",
+      "advance same duty revision and account funding version",
+      "archive complete basis and correlated command result"
+    ],
+    "crash_results": [
+      "ENTIRE_OLD_U_STATE",
+      "ENTIRE_NEW_FINAL_STATE"
+    ],
+    "forbidden": [
+      "two active stages",
+      "new duty on final-cut hash",
+      "placeholder final-cut hash as identity",
+      "temporary zero contribution while unresolved",
+      "second duty from changed rule scope/interval or caller obligation ID"
+    ],
+    "duplicates": "same command+content replays; changed content409; other resolver with stale CAS conflicts without new contribution"
+  },
+  "settlement_phase_matrix": [
+    {
+      "phase": "WAITING_ENCUMBRANCE_RELEASE",
+      "economic_representation": "FINAL_PAYABLE_UNCHANGED",
+      "P_H": "RETAINED",
+      "cash": "NOT_POSTED",
+      "receiver_N": "RETAINED_NO_CREDIT",
+      "next": "DURABLE_REAL_RELEASE_PROOF_AND_RECHECK_OR_DEFAULT_REVIEW",
+      "claim_expiry_effect": "NONE_ON_DEBT_OR_DEADLINE"
+    },
+    {
+      "phase": "BACKING_ELIGIBLE_RECHECK_REQUIRED",
+      "economic_representation": "FINAL_PAYABLE_UNCHANGED",
+      "P_H": "RETAINED",
+      "cash": "NOT_POSTED",
+      "receiver_N": "RETAINED_NO_CREDIT",
+      "next": "LATEST_SERIALIZED_VERSIONS_AND_PRIOR_CONFIRMED_FILL_BARRIER_THEN_WHOLE_PERIOD_PAYMENT"
+    },
+    {
+      "phase": "DEFAULT_REVIEW",
+      "economic_representation": "UNCHANGED_PAYABLE_RECEIVABLE",
+      "P_H": "RETAINED",
+      "cash": "NOT_POSTED_BY_TIMEOUT",
+      "receiver_N": "RETAINED_NO_CREDIT",
+      "next": "EXPLICIT_APPROVED_RECOVERY_NO_AUTOMATIC_UNLOCK_OR_BORROW"
+    },
+    {
+      "phase": "APPLIED",
+      "economic_representation": "APPLIED",
+      "P_H": "CONSUMED_ONLY_WITH_CORRESPONDING_CASH_OR_ZERO_COMPLETION",
+      "receiver_N": "REMOVED_ONLY_WITH_REAL_CREDIT",
+      "cash": "ALL_ORIGINAL_LOCAL_PERIOD_LEGS_COMMITTED",
+      "risk": "KNOWN_RESTRICTION_OR_DURABLE_RECHECK_REQUIRED_NO_FALSE_HEALTH"
+    }
+  ],
+  "backing_rule": {
+    "prior_confirmed_settlement": "ALL_AFFECTING_BACKING_OBLIGATIONS_FULFILLED_BY_ORIGINAL_AUTHORITY_BEFORE_FUNDING_PAYMENT",
+    "pending_fill_reason": "PRIOR_CONFIRMED_SETTLEMENT_UNRESOLVED",
+    "C_after": "CURRENT_SETTLED_USD_CASH_MINUS_THIS_FIXED_D",
+    "F_after": "REMAINING_PROVEN_REAL_USD_SPOT_LOCKS_AFTER_ONLY_ALREADY_CONFIRMED_ALLOCATION_CONSUMPTION",
+    "required": "F_after <= max(C_after,0)",
+    "own_H_not_an_admission_veto": true,
+    "negative_cash_allowed_if_F_zero_and_prior_obligations_closed": true,
+    "weakening_frozen_le_gross": false,
+    "allocation_overlap": "One allocation lineage; processed fill consumes own existing lock, never count both original lock and same pending fill backing twice",
+    "missing_live_quote": "FIXED_TRUSTED_USD_PAYMENT_ONLY_IF_SAME_BACKING_AND_PRIOR_CONFIRMATION_CHECKS_PASS_PLUS_DURABLE_RISK_RESTRICTION",
+    "unknown_cut_or_authority": "RETAIN_H_AND_DUTY_RECOVER_EXACT_APPROVED_AUTHORITY_NO_FALLBACK"
+  },
+  "wait_and_outbox": {
+    "atomic_wait_commit": [
+      "unchanged due payable/P/H and receiver N",
+      "account restriction and reason/blocking allocation refs",
+      "first wait start, fixed deadline, policy identity/hash and phase revision",
+      "stable idempotent cancel/query outbox intent and correlated result"
+    ],
+    "release_proof": [
+      "real authoritative local cancellation of unfilled quantity or external acknowledged cancellation",
+      "complete preceding fills through authoritative watermark",
+      "allocation lineage and exact actually released units",
+      "account/funding/encumbrance versions"
+    ],
+    "unacceptable_release_evidence": [
+      "request sent",
+      "timeout",
+      "cancelled text without fill closure",
+      "memory-only ack",
+      "predicted future release",
+      "worker restart or lease expiry"
+    ],
+    "stable_action_identity": [
+      "authority",
+      "authority_generation",
+      "encumbrance_allocation_id",
+      "approved action kind and terminal goal"
+    ],
+    "multiple_duties_same_allocation": "DEDUPLICATE_OUTBOX_ACTION_AND_REAL_RELEASE_BUT_RETAIN_ALL_SEPARATE_DUTIES_AND_DEADLINES",
+    "whole_period": "ONE_BLOCKED_PARTICIPANT_PREVENTS_ANY_PARTIAL_PERIOD_APPLIED_OR_RECEIVER_CASH_CREDIT"
+  },
+  "wait_policy": {
+    "required": true,
+    "no_defaults": true,
+    "exact_fields": [
+      "format",
+      "policy_id",
+      "clock_policy",
+      "max_wait_us",
+      "min_query_interval_us",
+      "max_query_attempts",
+      "expiry_action"
+    ],
+    "format": 1,
+    "clock_policy": "TRUSTED_UTC_PERSISTENT_HIGH_WATERMARK",
+    "expiry_action": "DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX",
+    "numeric_contract": "positive native ints not bool; min_query_interval_us<=max_wait_us; finite deployment-reviewed approved bounds and checked timestamp arithmetic; reject overflow",
+    "wait_started_at": "FIRST_DURABLY_RECORDED_BLOCKING_ATTEMPT_NO_RESTART_RESET",
+    "deadline_at": "WAIT_STARTED_AT_PLUS_APPROVED_MAX_WAIT_US",
+    "expire_on": "DEADLINE_REACHED_OR_QUERY_BUDGET_EXHAUSTED_WHICHEVER_FIRST",
+    "policy_hot_change_or_claim_extension": "FORBIDDEN",
+    "late_ack": "PERSIST_NEW_FACT_BUT_NO_AUTOMATIC_DEFAULT_REVIEW_CLEAR_OR_UNLOCK",
+    "synthetic_30s_fixture": "ONLY_M23_NOT_PRODUCTION_DEFAULT_OR_EXCHANGE_RULE",
+    "typing": "format exact native int1; policy_id bounded approved immutable string; all keys required, unknown/duplicate keys rejected; native integer parameters not bool; missing policy forbids D2 activation"
+  },
+  "accounting_once": {
+    "P": "GROSS_RECOGNIZED_UNPAID_PAYABLE",
+    "N": "GROSS_RECOGNIZED_UNPAID_RECEIVABLE_NOT_RISK_COLLATERAL",
+    "U": "PRUDENTIAL_BUFFER_NOT_RECOGNIZED_PAYABLE",
+    "H": "P_PLUS_U_RISK_OCCUPANCY_NOT_ANOTHER_LEDGER_LIABILITY",
+    "accrual_equity": "CASH_LEDGER_ACCOUNTING_EQUITY_MINUS_P_PLUS_N",
+    "payment_commit": "cash-=D AND P-=D; accrue no second loss",
+    "receipt_commit": "cash+=C AND N-=C; accrue no second gain",
+    "real_lock_release": "changes risk collateral but not accounting wealth",
+    "waiting": "NO_NEW_PRINCIPAL_INTEREST_TIME_FEE_OR_DEBT_WAIVER",
+    "capital_or_debt_substitution": "SEPARATE_AUTHORIZATION_AND_REAL_SOURCE_LEDGER_PROOF; actual discharge before P disappears; any new principal/interest/counterparty claim explicit; no mint, automatic borrow, hidden principal or duplicate same debt"
+  },
+  "new_test_gates": [
+    {
+      "test_id": "PFH-T025",
+      "kind": "STABLE_DUTY_IDENTITY",
+      "manual_case_ids": [
+        "PFH-M18"
+      ],
+      "acceptance": "Pure canonical ID before schedule, exact UTC/types and scalar bounds; cut/claim/command changes retain ID; natural-slot uniqueness rejects alternate interval/rule scope/obligation IDs.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T026",
+      "kind": "ONE_ACTIVE_REPRESENTATION_CAS",
+      "manual_case_ids": [
+        "PFH-M18",
+        "PFH-M19",
+        "PFH-M24"
+      ],
+      "acceptance": "Independent model enumerates U-to-P/N/zero, stale CAS/double resolver/changed command/crash/replay; one duty and one active representation, immutable old refs retained, no transient missing or duplicate H.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T027",
+      "kind": "ENCUMBRANCE_CROSSING_POLICY",
+      "manual_case_ids": [
+        "PFH-M20",
+        "PFH-M25"
+      ],
+      "acceptance": "cash100/F95/P12 commits WAIT plus restriction/outbox but no cash or hold release; true cancellation10 yields F85; recheck then pay88/P0 with effective risk3. F0 negative-cash cases remain valid; no frozen<=gross weakening.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T028",
+      "kind": "PRIOR_CONFIRMED_FILL_AND_CANCEL_ACK",
+      "manual_case_ids": [
+        "PFH-M21",
+        "PFH-M22"
+      ],
+      "acceptance": "Process confirmed fill/fees under original authority before funding. Incomplete CANCELLED reply or unknown fill watermark cannot release locks; actual proof consumes allocation exactly once and reprices risk at latest versions.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T029",
+      "kind": "FINITE_VERSIONED_WAIT_POLICY",
+      "manual_case_ids": [
+        "PFH-M23",
+        "PFH-M24"
+      ],
+      "acceptance": "Required exact typed wait parameters, fixed first-wait deadline, bounded queries and no restart/claim extension; deadline or budget exhaustion writes DEFAULT_REVIEW preserving debt and restriction. Late ack cannot automatically unlock.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T030",
+      "kind": "OUTBOX_WAIT_AND_PAYMENT_RECOVERY",
+      "manual_case_ids": [
+        "PFH-M20",
+        "PFH-M22",
+        "PFH-M24"
+      ],
+      "acceptance": "Bounded crash/unknown-result model covers wait+outbox commit, external cancel before durable ack, ack before payment, version race and cash commit response loss; old action IDs queried, no fake acknowledgement, release or repeat cash.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T031",
+      "kind": "ACCRUAL_ONCE_AND_CAPITAL_BOUNDARY",
+      "manual_case_ids": [
+        "PFH-M19",
+        "PFH-M20",
+        "PFH-M21",
+        "PFH-M26"
+      ],
+      "acceptance": "Independent exact arithmetic checks cash-ledger-P+N accrual continuity, U not liability and N not collateral. Capital requires real authorized source postings; debt assignment cannot mint money, hide principal, double-count or enable auto-borrow.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    },
+    {
+      "test_id": "PFH-T032",
+      "kind": "WHOLE_PERIOD_WAIT_AND_RECEIVER_PROTECTION",
+      "manual_case_ids": [
+        "PFH-M20",
+        "PFH-M27"
+      ],
+      "acceptance": "One encumbered payer keeps complete original local period unpaid, all customer P/N intact and receiver cash unchanged. Once every latest backing/confirmed-fill check passes, cash/capital/clearing/hold/accrual/APPLIED/restriction commit together; no partial per-account period receipt.",
+      "status": "NOT_RUN",
+      "independent_verification_required": true
+    }
+  ],
+  "release_status": {
+    "D0": "PROPOSED_POLICY_CORRECTION_PENDING_INDEPENDENT_RE_REVIEW",
+    "D1": "ONLY_PURE_HOLD_ARITHMETIC_RULE_MODEL_SUBSET_MAY_BE_SELECTED_AFTER_INDEPENDENT_REVIEW_AND_SEPARATE_SOURCE_EXECUTION_PLAN",
+    "D2": "BLOCKED",
+    "D2_blockers": [
+      "reliable persisted external cancel/fill acknowledgement and watermark adapter absent",
+      "persistent cancellation/query outbox and bounded deadline/recovery absent",
+      "separate original-authority priority settlement/restricted opener absent",
+      "schema capability all-entry old-writer and version fences not proven",
+      "whole-period hold/cash/accrual/restriction atomicity and reopened reconciliation not executed"
+    ],
+    "D3_D4": "NO_APPROVAL",
+    "all_gates": "NOT_RUN"
+  },
+  "rollback": "Docs/JSON revert only; immutable original17, original independent review and source pins unchanged; no runtime/data deployment or migration.",
+  "contract_deployed": false
+}

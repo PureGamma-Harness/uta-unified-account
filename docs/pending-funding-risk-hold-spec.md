@@ -1,6 +1,8 @@
 # Pending funding 统一风险预占规格
 
-状态：**PROPOSED / DOCS_ONLY / NOT_RUN / NO_GO FOR PRODUCTION**。基线为 PR53 公开提交 `92979e9b2cd719bfaa9d857e13c2b99239355330`。本轮先写人工例子，再写规则、追溯矩阵与验收编号；不修改运行时、不执行目标 import/编译/测试/SQL/进程/worker/CI。下述为本系统的明确政策选择，不是交易所行为断言。金融、账务和独立验证签字均待审。
+状态：**PROPOSED / SPEC_REVISION_2 / DOCS_ONLY / NOT_RUN / D2_BLOCKED / NO_GO FOR PRODUCTION**。基线为 PR53 公开提交 `92979e9b2cd719bfaa9d857e13c2b99239355330`。本轮先写人工例子，再写规则、追溯矩阵与验收编号；不修改运行时、不执行目标 import/编译/测试/SQL/进程/worker/CI。下述为本系统的明确政策选择，不是交易所行为断言。金融、账务和独立验证签字均待审。
+
+本规格经独立审查提出B1/B2定义缺口，原[审查报告](pending-funding-risk-hold-independent-review.md)与原17例保持原字节。修订的稳定duty、真实冻结优先及有界等待规则以[修订契约](pending-funding-risk-hold-b1-b2-amendment.md)为准；另有M18..M27十个新增纸面案例。B1/B2解决提案待独立复审，D2仍BLOCKED。
 
 ## 1. 先确定人工例子
 
@@ -36,7 +38,7 @@
 
 ## 3. 权威身份、边界与逐笔占用
 
-每条经济义务使用 `(authority_id, authority_generation, obligation_id, account_id, settlement_asset, final_cut_sha)` 唯一身份；`obligation_id` 对产品/period唯一。executor owner、nonce、claim generation、lease期限不是经济身份。claim超时、WAITING_DATA、WAITING_CAPITAL、REVIEW_REQUIRED、重领和重启都不释放占用。risk聚合不能使用客户端分页列表或只读第一页；完整闭合的相关任务集合与事件watermark是准入前置。
+每条经济义务使用schedule前即可确定的 `duty_id=funding-duty:v1:SHA256(canonical duty fields)`，exact字段为schema、authority_id/generation、symbol、规范UTC period_end、interval_seconds、settlement_asset、account_id、rule_scope_id。自然slot唯一性另排除schema/interval/rule_scope，防止换规则或period配置制造第二债权；产品/period的task obligation_id仅是分组引用。exposure_cut_sha、cap_sha、final_cut_sha是typed不可变阶段内容refs，不是经济主键；每duty唯一active U或P/N/zero，转换须同事务+CAS/唯一约束，历史阶段保留但不双占。详见修订契约。executor owner、nonce、claim generation、lease期限不是经济身份。claim超时、WAITING_DATA、WAITING_CAPITAL、REVIEW_REQUIRED、重领和重启都不释放占用。risk聚合不能使用客户端分页列表或只读第一页；完整闭合的相关任务集合与事件watermark是准入前置。
 
 可信 final cut 一旦提交，付款方金额为 `D=max(-cash_units,0)*10^-scale`，收款为 `C=max(cash_units,0)*10^-scale`。D只取原固定现金腿，不重算当前仓位、不把精确未取整数ceil为新债、不跨task/资产/period/账户/母子账户净额。子最小单位按现有规则逐期豁免，不累计隐藏债务。关仓或减少当前仓位不改变历史cut的D。
 
@@ -48,7 +50,7 @@ final cut、各账户新hold、funding_version、完整集合摘要、账户风�
 
 令 `P=sum(未APPLIED固定付款D)`、`N=sum(未APPLIED固定收款C)`、`U=sum(有可信固定exposure cut、尚未确定rate的保守buffer)`，`H=P+U`。同一身份只处于 U 或 P/N，一次转换不能同时计两份。
 
-原 cash ledger、gross assets、frozen assets、贷款本金、利息、已结算费用、负现金、PnL、订单reserve继续原样保存。**hold不是本金、利息、现金过账、现货锁或虚构抵押冻结**；不得塞入 `LoanAccount.frozen_assets`，也不得借此绕开frozen≤gross校验。冻结资金费请求也不是新贷款，不收贷款IM/利息。若将来付款显式由借款融资，必须另行授权并保留两种原始事件。
+原 cash ledger、gross assets、frozen assets、贷款本金、利息、已结算费用、负现金、PnL、订单reserve继续原样保存。H不是P之外又一份会计负债；U不是确定应付、N不是risk collateral。实付现金-P与应计P消除同事务，实收现金+N与应计N消除同事务，均不重复计量。**hold不是本金、利息、现金过账、现货锁或虚构抵押冻结**；不得塞入 `LoanAccount.frozen_assets`，也不得借此绕开frozen≤gross校验。冻结资金费请求也不是新贷款，不收贷款IM/利息。若将来付款显式由借款融资，必须另行授权并保留两种原始事件。
 
 | 字段/约束 | 规则、单位与风险方向 |
 | --- | --- |
@@ -78,11 +80,11 @@ final cut、各账户新hold、funding_version、完整集合摘要、账户风�
 
 第一批仍是完整本地period的原子应用：所有客户现金腿、真实舍入资本转移、clearing归零、账本分录、每条hold从active到consumed、P/N移除、账户/funding版本、receipt、task APPLIED、风险限制/后续风险检查事件在**同一 authority 金融事务**提交。没有部分账户APPLIED、分片中间成功或先释放hold再异步记钱。
 
-结算路径不能使用新增风险的 cash≥H、available≥0或strict-MM准入来拒绝自身付款。金额、产品/period、cut完整性、固定制品/政策、单写者与幂等必须仍成立。对付款D先按真实现金减少D，同时移除且只移除自身holdD；在相同价格/仓位下，结算前后有效风险连续。其他task的hold保留。已结算现金变负时记录原cash deficit，不能再保留已支付的P，也不能悄悄转本金、铸造资本或免除欠款。
+结算路径不能使用新增风险的 cash≥H、available≥0或strict-MM准入来拒绝自身付款，但必须尊重其它真实冻结backing和已确认成交义务。先由原权威处理影响backing的未结算确认成交，再在受保护事务重取cash/真实allocation及版本，检查 `F_after<=max(C_after,0)`。若不满足，持久保留due payable/P/H和账户限制，进入版本化 `WAITING_ENCUMBRANCE_RELEASE` 并以原子outbox请求真实本地取消或外部查询/确认；不得写cash、消耗H或APPLIED。取消意图不释放，只有真实确认且fill watermark闭合后才能释放。wait含必填版本化有限deadline/查询预算，到期转DEFAULT_REVIEW但不免债，不重启延长。完整规则及M20反例见修订契约。金额、产品/period、cut完整性、固定制品/政策、单写者与幂等必须仍成立。对付款D先按真实现金减少D，同时移除且只移除自身holdD；在相同价格/仓位下，结算前后有效风险连续。其他task的hold保留。当无真实冻结被穿透且先行确认成交已履行时，已结算现金可变负并记录原cash deficit，不能再保留已支付的P，也不能悄悄转本金、铸造资本或免除欠款。
 
 已确认收款只有现金账、receipt、APPLIED和N移除共同提交后才增加可用。rounding reserve只来自真实隔离资本和已有余额，不能用pending receivable或另一客户hold融资；不足则WAITING_CAPITAL，所有未付义务/hold仍在。任务/command/leg ID去重，旧claim不能应用，新claim不重复加hold。超时或响应丢失先查原command与cut/receipt/journal，不以新业务ID重做；同ID不同内容409，确定未提交与结果未知分开。
 
-当前PR53 `_cash` 依赖当前行情并可能回滚，不能直接宣称满足新契约。新版本应把**可信固定USD现金履约**与**实时风险是否可算**分开：若仅当前行情缺失，现金+自身hold消耗+APPLIED+持久 `RESTRICTED_RISK_RECHECK_REQUIRED`/可重试风险outbox一起提交，不发出“风险已算/已恢复”结果。quote恢复后再由受审supervisor重新计算、撤单/清算。若cut、参考权威、共享模型/制品或账本完整性不能证明，则保持义务/hold与关闸，恢复精确受审权威；未知引擎/政策不fallback，也不伪造支付成功。
+当前PR53 `_cash` 依赖当前行情并可能回滚，不能直接宣称满足新契约。新版本应把**可信固定USD现金履约**与**实时风险是否可算**分开：若仅当前行情缺失且其它backing检查和先行确认成交履行已满足，现金+自身hold消耗+APPLIED+持久 `RESTRICTED_RISK_RECHECK_REQUIRED`/可重试风险outbox一起提交，不发出“风险已算/已恢复”结果。quote恢复后再由受审supervisor重新计算、撤单/清算。若cut、参考权威、共享模型/制品或账本完整性不能证明，则保持义务/hold与关闸，恢复精确受审权威；未知引擎/政策不fallback，也不伪造支付成功。
 
 cash commit前崩溃：所有金融变化回滚，原H保留；commit后回执丢失：原receipt可查、重复不记账。cut创建前后也遵循同样原子性。重开存储先从不可变cut/状态事件/APPLIED receipt/账本重建active holds，与物化视图逐条比较；少项、多项、坏hash、orphan receipt、APPLIED仍hold、pending却现金已付均关闸并对账，不用“重算当前任务列表”静默修复历史。claim超时永不等于金融释放。旧观察UTC不保证physical COMMIT早于lease，继续明确0HA/单机故障模型。
 
@@ -108,7 +110,7 @@ P超过权益、付款造成负现金或无仓可减时，持久标注distress/�
 
 不得给旧十字段策略直接添key后称兼容，也不冒充已合PR52。新authority capability/schema、funding配置与base/credit/audit/managed consumers的精确版本映射先由独立组审；任何未知/缺失契约、旧writer或无hold入口必须在金融/能力写入前拒绝。单纯比较一条config字符串不是全入口fencing证据。新增risk引擎模块或绑定策略亦不因本文获准。source inventory、loaded artifact与运行权限需新精确版本。
 
-建议顺序：P0独立规则/人工例子审查；P1纯数学与独立oracle（不复用生产核心）和有界状态模型；P2新合成单库完整hold/准入/结算/replay与负例；P3真实撮合、故障/旧writer排斥、恢复与容量；最后才考虑新产品/信用/托管/HA。所有阶段目前NOT_RUN。测试编号见 [规则追溯矩阵](../evidence/designs/pending-funding-risk-hold/rule-traceability.json)，没有签字或生产GO。
+D2明确BLOCKED：现有基线没有可靠外部cancel-ack/outbox/优先履约opener，不能因规格或纯数学通过启用金融能力。B1/B2独立复审后先可另选D1纯hold计算与规则模型子集，仍需固定源范围和执行审查。建议顺序：P0独立规则/人工例子审查；P1纯数学与独立oracle（不复用生产核心）和有界状态模型；P2新合成单库完整hold/准入/结算/replay与负例；P3真实撮合、故障/旧writer排斥、恢复与容量；最后才考虑新产品/信用/托管/HA。所有阶段目前NOT_RUN。测试编号见 [规则追溯矩阵](../evidence/designs/pending-funding-risk-hold/rule-traceability.json)，没有签字或生产GO。
 
 部署只允许未来经审查的新合成generation，账户allowlist、不可变策略、权限、唯一写入者、磁盘/archive容量和完整period水位为前置。停机/回滚先停新增风险，保留已知良好新制品履行义务；不删hold/cut/config让旧二进制写新库。没有金融事件可销毁合成环境重建；有事件则对账并新generation显式迁移/补偿，不复制余额抹历史。节点崩溃后重开校验、旧主恢复、disk-full和结果未知均需实测，0HA不得承诺跨AZ RPO/RTO。
 

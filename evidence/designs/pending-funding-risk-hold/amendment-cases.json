@@ -1,0 +1,397 @@
+{
+  "schema": 1,
+  "kind": "PFH_B1_B2_SUPPLEMENTAL_HUMAN_CASES",
+  "spec_revision": 2,
+  "review_commit": "ade10972b8044e3c753113970db34b3c85950ca4",
+  "original_17_cases": "UNCHANGED_EXACT_BYTES",
+  "status": "PROPOSED_NOT_RUN_PENDING_INDEPENDENT_RE_REVIEW",
+  "target_execution_attempts": 0,
+  "policy_attribution": "LOCAL_ROOT_SELECTED_POLICY_NOT_EXCHANGE_BEHAVIOR",
+  "cases": [
+    {
+      "id": "PFH-M18",
+      "purpose": "Stable duty identity exists independently of schedule and cut",
+      "given": {
+        "canonical_duty_fields": {
+          "schema": 1,
+          "authority_id": "synthetic-authority",
+          "authority_generation": "synthetic-generation",
+          "symbol": "SYNTH-USD-PERP",
+          "period_end": "2026-01-01T00:00:00+00:00",
+          "interval_seconds": 28800,
+          "settlement_asset": "USD",
+          "account_id": "synthetic-payer",
+          "rule_scope_id": "synthetic-approved-funding-rules-v1"
+        }
+      },
+      "expected": {
+        "canonical_JSON": "{\"account_id\":\"synthetic-payer\",\"authority_generation\":\"synthetic-generation\",\"authority_id\":\"synthetic-authority\",\"interval_seconds\":28800,\"period_end\":\"2026-01-01T00:00:00+00:00\",\"rule_scope_id\":\"synthetic-approved-funding-rules-v1\",\"schema\":1,\"settlement_asset\":\"USD\",\"symbol\":\"SYNTH-USD-PERP\"}",
+        "duty_id": "funding-duty:v1:3608a7a0ec99683dd080f6663ad9283a965df92c46878e569c3a8c467d3f7779",
+        "schedule_id_added_or_changed": "SAME_DUTY_ID",
+        "exposure_cap_final_cut_hashes_changed": "SAME_DUTY_ID_DIFFERENT_TYPED_STAGE_REFS",
+        "claim_owner_or_generation_changed": "SAME_DUTY_ID",
+        "different_rule_scope_same_natural_slot": "REJECT_CONFLICT_NOT_SECOND_DUTY",
+        "bool_interval": "REJECT"
+      },
+      "arithmetic": "Identity hash uses exact bounded canonical scalar fields only, no quantity/rate/mark/claim/cut hash or registration timing. A separate unique natural-slot key excludes rule_scope_id so a rule-scope change cannot create a second claim."
+    },
+    {
+      "id": "PFH-M19",
+      "purpose": "U-to-P/N one-active-stage conversion with CAS",
+      "given": {
+        "duty_id": "funding-duty:v1:3608a7a0ec99683dd080f6663ad9283a965df92c46878e569c3a8c467d3f7779",
+        "duty_revision": 1,
+        "active_U": "6",
+        "P": "0",
+        "N": "0",
+        "next_final_debit": "2.46"
+      },
+      "expected_allowed_committed_states": [
+        {
+          "revision": 1,
+          "active_stage": "EXPOSURE_RATE_PENDING",
+          "U": "6",
+          "P": "0",
+          "N": "0",
+          "H": "6"
+        },
+        {
+          "revision": 2,
+          "active_stage": "FINAL_PAYABLE",
+          "U": "0",
+          "P": "2.46",
+          "N": "0",
+          "H": "2.46"
+        }
+      ],
+      "expected": {
+        "old_cap_reference": "RETAINED_IMMUTABLE_CONSUMED_NOT_ACTIVE",
+        "second_resolver_same_expected_revision": "CAS_CONFLICT_NO_EXTRA_HOLD",
+        "same_command_identical_content": "ORIGINAL_RESULT",
+        "same_command_different_content": "409",
+        "negative_rate_resolution": {
+          "U": "0",
+          "P": "0",
+          "N": "2.46",
+          "H": "0",
+          "cash_credit_before_APPLIED": "0"
+        },
+        "zero_rate_resolution": {
+          "U": "0",
+          "P": "0",
+          "N": "0",
+          "H": "0",
+          "stage": "FINAL_ZERO_NOT_MISSING_DUTY"
+        }
+      },
+      "forbidden": "U6 and P2.46 cannot both contribute, and resolution cannot create a new duty keyed by final_cut_sha."
+    },
+    {
+      "id": "PFH-M20",
+      "purpose": "Root-selected encumbrance policy for mandatory payment",
+      "given": {
+        "cash": "100",
+        "real_USD_spot_locks": "95",
+        "P": "12",
+        "other_assets_loans_fees": "NONE",
+        "receiver_cash": "0",
+        "receiver_N": "12"
+      },
+      "expected_sequence": [
+        {
+          "step": "first_backing_check",
+          "cash": "100",
+          "F": "95",
+          "P": "12",
+          "H": "12",
+          "base_risk": "5",
+          "effective_risk": "-7",
+          "accrual_equity": "88",
+          "status": "WAITING_ENCUMBRANCE_RELEASE",
+          "funding_cash_posted": false
+        },
+        {
+          "step": "cancel_request_only",
+          "cash": "100",
+          "F": "95",
+          "P": "12",
+          "effective_risk": "-7",
+          "status": "WAITING_ENCUMBRANCE_RELEASE"
+        },
+        {
+          "step": "confirmed_cancel_releases10",
+          "cash": "100",
+          "F": "85",
+          "P": "12",
+          "effective_risk": "3",
+          "accrual_equity": "88",
+          "status": "BACKING_ELIGIBLE_RECHECK_REQUIRED"
+        },
+        {
+          "step": "whole_period_APPLIED",
+          "cash": "88",
+          "F": "85",
+          "P": "0",
+          "H": "0",
+          "effective_risk": "3",
+          "accrual_equity": "88",
+          "receiver_cash": "12",
+          "receiver_N": "0"
+        }
+      ],
+      "arithmetic": "Payment at F95 would require95<=max(88,0), false; no cash or hold release. Once F85 is proven:100-85-12=3 before and88-85=3 after. Frozen amounts affect risk but not accounting equity; payable is counted once."
+    },
+    {
+      "id": "PFH-M21",
+      "purpose": "Confirmed fills have priority and cannot masquerade as cancellation",
+      "given": {
+        "initial_cash": "100",
+        "initial_F": "95",
+        "P": "12",
+        "confirmed_spot_fill_cost": "4",
+        "confirmed_fee": "1",
+        "confirmed_own_lock_consumed": "4",
+        "received_asset_accounting_value": "4",
+        "received_asset_risk_collateral_factor": "0"
+      },
+      "expected_sequence": [
+        {
+          "step": "unsettled_confirmed_fill",
+          "funding_status": "WAITING_ENCUMBRANCE_RELEASE",
+          "reason": "PRIOR_CONFIRMED_SETTLEMENT_UNRESOLVED",
+          "funding_cash_posted": false
+        },
+        {
+          "step": "original_authority_fill_and_fee_commit",
+          "cash": "95",
+          "F": "91",
+          "P": "12",
+          "funding_projected_cash": "83",
+          "backing_test": "FAIL_91_GT_83",
+          "effective_risk": "-8",
+          "accrual_equity": "87"
+        },
+        {
+          "step": "real_cancel_ack_frees10",
+          "cash": "95",
+          "F": "81",
+          "P": "12",
+          "effective_risk": "2",
+          "accrual_equity": "87"
+        },
+        {
+          "step": "funding_APPLIED",
+          "cash": "83",
+          "F": "81",
+          "P": "0",
+          "effective_risk": "2",
+          "accrual_equity": "87"
+        }
+      ],
+      "arithmetic": "100-4-1=95; F95-4=91. Received asset4 is retained in accounting but contributes zero risk collateral in this explicit synthetic fixture. After real release10:95-81-12=2; after payment83-81=2. Accrual95+4-12=87=83+4."
+    },
+    {
+      "id": "PFH-M22",
+      "purpose": "External cancellation terminal text without complete fill watermark is insufficient",
+      "given": {
+        "cash": "100",
+        "F": "95",
+        "P": "12",
+        "external_reply": "CANCELLED_WITH_UNKNOWN_PRIOR_FILL_WATERMARK"
+      },
+      "expected": {
+        "F_after_incomplete_reply": "95",
+        "P": "12",
+        "funding_status": "WAITING_ENCUMBRANCE_RELEASE",
+        "cash_posted": "0",
+        "cancel_outbox_replay": "SAME_ACTION_ID_QUERY_EXISTING_RESULT",
+        "release_requires": "AUTHORITATIVE_ACK_PLUS_COMPLETE_PRECEDING_FILLS_AND_VERSIONED_ALLOCATION_PROOF"
+      },
+      "arithmetic": "Requested cancellation10 is not confirmed release10. No projected future acknowledgement may satisfy95<=88."
+    },
+    {
+      "id": "PFH-M23",
+      "purpose": "Versioned finite wait deadlines survive retries and restart",
+      "given": {
+        "synthetic_wait_policy": {
+          "format": 1,
+          "policy_id": "SYNTHETIC-PFH-WAIT-v1",
+          "max_wait_us": 30000000,
+          "min_query_interval_us": 5000000,
+          "max_query_attempts": 4,
+          "clock_policy": "TRUSTED_UTC_PERSISTENT_HIGH_WATERMARK",
+          "expiry_action": "DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX"
+        },
+        "wait_started_offset_us": 0,
+        "P": "12",
+        "F": "95",
+        "cash": "100"
+      },
+      "expected": {
+        "deadline_offset_us": 30000000,
+        "restart_at20000000_deadline_offset_us": 30000000,
+        "claim_reassignment_deadline_offset_us": 30000000,
+        "no_valid_ack_at30000000": "DEFAULT_REVIEW",
+        "P_at_expiry": "12",
+        "cash_at_expiry": "100",
+        "F_at_expiry": "95",
+        "APPLIED_at_expiry": false,
+        "query_budget_exhaustion_before_deadline": "DEFAULT_REVIEW_AT_BUDGET_BOUND",
+        "missing_or_invalid_wait_policy": "REJECT_NEW_CAPABILITY_OR_D2_NOT_ENABLED_NO_DEFAULT"
+      },
+      "arithmetic": "30s is an explicit synthetic test parameter, not a deployment default or exchange rule. Deadline=first wait+approved policy; query budgets and deadlines do not grant debt waiver or unlock."
+    },
+    {
+      "id": "PFH-M24",
+      "purpose": "Crash-safe wait, confirmed release and payment are distinct committed stages",
+      "allowed_committed_states": [
+        {
+          "step": "WAIT_AND_OUTBOX",
+          "cash": "100",
+          "F": "95",
+          "P": "12",
+          "status": "WAITING_ENCUMBRANCE_RELEASE"
+        },
+        {
+          "step": "CONFIRMED_REAL_RELEASE",
+          "cash": "100",
+          "F": "85",
+          "P": "12",
+          "status": "BACKING_ELIGIBLE_RECHECK_REQUIRED"
+        },
+        {
+          "step": "WHOLE_PERIOD_PAYMENT",
+          "cash": "88",
+          "F": "85",
+          "P": "0",
+          "status": "APPLIED"
+        }
+      ],
+      "forbidden_committed_states": [
+        {
+          "cash": "88",
+          "F": "95",
+          "P": "0",
+          "why": "frozen backing violated"
+        },
+        {
+          "cash": "100",
+          "F": "85",
+          "P": "0",
+          "why": "debt hold released without payment"
+        },
+        {
+          "cash": "88",
+          "F": "85",
+          "P": "12",
+          "why": "cash paid but same debt still counted"
+        }
+      ],
+      "expected": {
+        "outbox_response_lost": "QUERY_SAME_ACTION_BEFORE_RETRY",
+        "ack_not_persisted_before_restart": "NO_RELEASE_FROM_MEMORY",
+        "version_change_after_backing_check": "CAS_OR_SERIALIZED_RECHECK_NO_PAYMENT_FROM_STALE_PROJECTION",
+        "cash_commit_response_lost": "QUERY_ORIGINAL_RECEIPT_NO_REPEAT_DEBIT"
+      }
+    },
+    {
+      "id": "PFH-M25",
+      "purpose": "Preserve original negative-cash cases only when no real backing is crossed",
+      "given": {
+        "cash": "3",
+        "F": "0",
+        "P": "5"
+      },
+      "expected": {
+        "cash_after": "-2",
+        "gross_positive_cash_after": "0",
+        "F_after": "0",
+        "backing_test": "0_LE_0_TRUE",
+        "cash_deficit": "2",
+        "P_after": "0",
+        "effective_risk": "-2"
+      },
+      "contrast": {
+        "cash": "5",
+        "F": "1",
+        "P": "12",
+        "other_P": "10",
+        "missing_current_quote": true,
+        "projected_cash": "-7",
+        "backing_test": "1_LE_0_FALSE",
+        "status": "WAITING_ENCUMBRANCE_RELEASE",
+        "H_retained": "22",
+        "after_real_confirmed_F1_release_to0": "M16_FIXED_CASH_PATH_MAY_APPLY_WITH_RESTRICTED_RISK_AND_OTHER_P10"
+      },
+      "arithmetic": "The backing rule is F_after<=max(cash_after,0), not cash_after>=0. Original M05/M16 implicitly have no other locks or unresolved confirmed fills and keep their original values."
+    },
+    {
+      "id": "PFH-M26",
+      "purpose": "Capital or credit substitution cannot mint money or hide principal",
+      "given": {
+        "cash": "100",
+        "F": "95",
+        "P": "12",
+        "synthetic_independently_authorized_real_cash_injection": "7"
+      },
+      "expected": {
+        "without_capital_ledger_proof": "WAIT_NO_APPLIED",
+        "approved_nonrepayable_transfer_source_debit": "-7",
+        "approved_transfer_customer_credit": "7",
+        "cash_after_confirmed_transfer": "107",
+        "cash_after_funding": "95",
+        "F_after": "95",
+        "P_after": "0",
+        "effective_risk_after_nonrepayable_injection_and_payment": "0",
+        "risk_recovered_claim": "FORBIDDEN_MM_ZERO_EQUALITY_IS_UNSAFE",
+        "if_funded_as_loan": "EXPLICIT_SEPARATELY_AUTHORIZED_PRINCIPAL7_AND_LOAN_RISK_REMAIN_NOT_A_GRANT",
+        "automatic_borrow_or_capital_assignment": "FORBIDDEN"
+      },
+      "arithmetic": "Real transfer7 can restore95 frozen backing after payment12, but must have matching source posting/approval. If loan-financed, principal7 cannot disappear, so funding risk is not cured by renaming debt. This capability remains unsupported."
+    },
+    {
+      "id": "PFH-M27",
+      "purpose": "One encumbered payer prevents false whole-period completion or receiver credit",
+      "given": {
+        "period_payers": [
+          {
+            "name": "A",
+            "D": "12",
+            "cash": "100",
+            "F": "95"
+          },
+          {
+            "name": "B",
+            "D": "8",
+            "cash": "50",
+            "F": "0"
+          }
+        ],
+        "receiver_cash": "0",
+        "receiver_N": "20"
+      },
+      "expected": {
+        "task_phase": "WAITING_ENCUMBRANCE_RELEASE",
+        "payer_A_cash": "100",
+        "payer_B_cash": "50",
+        "P_A": "12",
+        "P_B": "8",
+        "receiver_cash": "0",
+        "receiver_N": "20",
+        "any_partial_APPLIED_receipt": false,
+        "release_only_A_confirmed10_then_apply_whole_period": {
+          "A_cash": "88",
+          "A_F": "85",
+          "B_cash": "42",
+          "receiver_cash": "20",
+          "P_A": "0",
+          "P_B": "0",
+          "N": "0"
+        }
+      },
+      "arithmetic": "First supported scope preserves complete local period atomicity. Even an unencumbered payer cannot be marked period-APPLIED or precredit receiver20 while A blocks. No cross-task expected receipt is spent."
+    }
+  ],
+  "production_approved": false,
+  "financial_activation": false
+}
