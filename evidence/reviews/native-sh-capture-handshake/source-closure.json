@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "kind": "CODE_ONLY_INSTRUMENTED_SH_CAPTURE_CANDIDATE",
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "base_description": "PR35 source; no PR37 SPAWNED timeout cap",
+  "runtime_changed": false,
+  "files_sha256": {
+    "uta/durable_process.py": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219",
+    "tests/native_sh_capture_fixture.py": "a3e4894441467f449b810a70a2c5c44fbb065166efd978e413148c2dc7c7dcec",
+    "tests/test_native_sh_capture_protocol_pure.py": "e4357798e3d1e55397f7f49ecba2ba0fceb6a7c42d5b35093bc00f9fc4d0b212",
+    "tests/test_durable_faults.py": "b22629beadfd5d224d7030871f232b84604398ba3c00e13dd153b4227a934a7f",
+    "tests/test_expired_gate_failure_evidence.py": "42b38c8a721367ec562a6e7b9ec00c0e017421855edbcf4dd78ba8ce51986852",
+    "docs/native-sh-capture-handshake-plan.md": "90bb2f27270c5d21db3699e210a0ee5215059747ff23b9644a31bffc12765531",
+    "evidence/reviews/expired-gate-failure-5a/original-ast.json": "52fd579fcc903f9590da7dc9d3232e09e48bbca1e0fcc96a48587051b7339922"
+  },
+  "read_only_safe_inputs_sha256": {
+    "PR39_failure-classification.json": "ad8e025e56ae8f6a9502606d308c2bb02cdfba28369d9dec27a7a75a31c3562f",
+    "PR40_failed-push-python310-unit-audit.json": "5a65af396e9c4d8bcce808e8981563810dcc0ea43e72a8d2685b43516ee3112f",
+    "PR41_push311_unittest.txt": "97b0e1e4b7ee168f3782a0d95a94f5dbaf68826b80a284ebe42a4bf4b231dfc9",
+    "PR41_merge311_unittest.txt": "439473e38a52f96fddf1d1b02c95d3e4f1c531d3434f9ce7380f1d61b5f122cb"
+  },
+  "proposed_pure_plan": {
+    "entry": "tests/test_native_sh_capture_protocol_pure.py",
+    "cpu": 1,
+    "wall_seconds_max": 10,
+    "test_methods": 8,
+    "finite_traces_less_than": 64,
+    "native_capabilities_rejected": ["sqlite_connect", "worker_start", "process_wait", "signal", "pidfd", "thread_start", "flock", "sleep", "settrace"],
+    "root_go_required": true,
+    "executed": false
+  },
+  "actual_trace_probe_executed": false,
+  "actual_worker_sql_pid_signal_native_executed": false,
+  "original_ci_cause_proven": false,
+  "real_five_second_recovery_proven": false,
+  "production_approved": false,
+  "original_first_failures_preserved": true
+}
