@@ -34,11 +34,11 @@
     "-B",
     "evidence/reviews/matching-selection-snapshot/sqlite_once.py",
     "--run-root",
-    "/workspace/uta-matching-sqlite-d517ea2-once01",
+    "/workspace/uta-matching-sqlite-3b0c49a-once01",
     "--source-commit",
-    "d517ea250628517b22c3193afbbded6f00f48624",
+    "3b0c49a6df6773ea7cdb208945541480ea091ea8",
     "--approved-manifest-sha256",
-    "b0e982f8af66d1f59f772e36e1297ff56795621265d11eef4fef11e92fdfc0e4"
+    "de3944988def848c59c98cb8c2ab02f048d53cab406d6dc20de0f02dea6c7ada"
   ],
   "expected_matches_per_mode": 6,
   "expected_paired_fills_per_mode": 12,
@@ -63,7 +63,7 @@
     "All module origins and63 original/snapshot beforeafter SHA match.",
     "Fullfirst stdoutstderr/actual exit/reports and inventory retained; any missing/budget failure is FAILorUNKNOWN."
   ],
-  "manifest_sha256": "b0e982f8af66d1f59f772e36e1297ff56795621265d11eef4fef11e92fdfc0e4",
+  "manifest_sha256": "de3944988def848c59c98cb8c2ab02f048d53cab406d6dc20de0f02dea6c7ada",
   "modes": [
     "scan",
     "snapshot"
@@ -71,19 +71,43 @@
   "new_authorities": 8,
   "performance_accepted": false,
   "preparation_execution_authorized": false,
+  "previous_unexecuted_scope": {
+    "code_blocker": "result metadata unconditionally assumed native SQLite module had __file__",
+    "manifest_path": "evidence/reviews/matching-selection-snapshot/sqlite-source-manifest-initial-d517ea2.json",
+    "manifest_sha256": "b0e982f8af66d1f59f772e36e1297ff56795621265d11eef4fef11e92fdfc0e4",
+    "plan_path": "evidence/reviews/matching-selection-snapshot/sqlite-source-plan-initial-d517ea2.json",
+    "plan_sha256": "6f162c04c32e95d21d5150fb70346ab2219c0b4f5f5a93ec6e78fc490139b2b1",
+    "source_commit": "d517ea250628517b22c3193afbbded6f00f48624",
+    "status": "NOT_RUN_NO_SQL_OR_MODULE_ATTEMPT",
+    "target_invocations": 0
+  },
   "production_approved": false,
   "public_candidate_frozen_separately": true,
   "pure037_source_and_raw_unchanged": true,
   "retries": 0,
+  "runtime_metadata_contract": {
+    "builtin": "exact ModuleSpec/name/origin plus BuiltinImporter and sys.builtin_module_names; file/path/SHA null",
+    "current_execution_fields": [
+      "sys.version",
+      "sqlite3.sqlite_version",
+      "resolved sys.executable binary SHA"
+    ],
+    "extension": "exact ExtensionFileLoader/name plus consistent modulefile/specorigin/loaderpath, regular resolved binary length/SHA",
+    "loaded_libraries": null,
+    "loaded_libraries_status": "NOT_OBSERVED",
+    "proc_maps_read_authorized": false,
+    "runtime_attestation_complete": false,
+    "unknown_or_inconsistent_descriptor": "FAIL_CLOSED"
+  },
   "schema": 1,
-  "source_commit": "d517ea250628517b22c3193afbbded6f00f48624",
+  "source_commit": "3b0c49a6df6773ea7cdb208945541480ea091ea8",
   "source_inventory": {
     "UTA_python": 61,
     "actual_UTA_import_root": "new readonly private mini source only",
-    "materialization_record": "evidence/reviews/matching-selection-snapshot/sqlite-materialization-first.json",
+    "materialization_record": "evidence/reviews/matching-selection-snapshot/sqlite-materialization-v2.json",
     "new_runners": 2,
     "source_before_and_after": "both original and snapshot maps",
-    "total_bytes": 1326051,
+    "total_bytes": 1330100,
     "total_pinned_files": 63
   },
   "status": "CODE_ONLY_AWAITING_INDEPENDENT_REVIEW_AND_ROOT_SQLITE_ONCE_GO",

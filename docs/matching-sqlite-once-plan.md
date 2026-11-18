@@ -90,3 +90,14 @@ managed fencing、跨进程竞争、复制/HA、真实托管、全决策重放�
 新目录不覆盖既有库，不切换任何真实writer。失败时保留新库/WAL/SHM和原始raw供
 下一独立恢复任务，不删库、重新生成ID或自动重跑。代码回退仍恢复默认scan且保留
 已确认财务记录；本实验没有数据迁移，不降级既有schema/guard。
+
+## SQLite二进制描述的CODE修正（仍未执行）
+
+独立组发现d517无条件读取_sqlite3.__file__不能支持builtin。3b0c49a只改结果
+metadata：精确ModuleSpec/name/origin、BuiltinImporter和sys.builtin_module_names
+三侧一致才记builtin，path/长度/SHA为null；动态扩展须ExtensionFileLoader、
+modulefile/specorigin/loaderpath一致才哈希真实regular binary。未知组合失败关闭。
+本次执行时记录sys.version、sqlite3.sqlite_version和已解析解释器实际SHA；
+loaded_libraries=null/NOT_OBSERVED，不读proc/maps，不复制历史maps为空作当前事实，
+不声称完整runtime attestation。旧d517清单/计划/首物化记录原样保留为NOT_RUN/0attempt。
+61UTA、四个金融场景、fee/TTL/defaultclock、64MiB/30s/raw512KiB及旧PURE037均不变。
