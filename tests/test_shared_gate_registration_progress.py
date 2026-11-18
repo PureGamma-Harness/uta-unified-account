@@ -15,8 +15,8 @@ import time
 import unittest
 from unittest.mock import patch
 
-from tests import shared_gate_registration_candidate_model as focused
-from tests import shared_gate_registration_model as model
+import shared_gate_registration_candidate_model as focused
+import shared_gate_registration_model as model
 
 
 ROOT = Path(__file__).resolve().parents[1]
