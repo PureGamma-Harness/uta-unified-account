@@ -1,0 +1,395 @@
+{
+  "schema": 1,
+  "kind": "INDEPENDENT_CODE_REVIEW_OF_BOUNDED_PUBLICATION_PENDING_MODEL",
+  "model_commit": "2ff960eb7ec5b5ad19e366448237a010254c7f47",
+  "model_parent": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+  "status": "CODE_READY_FOR_SEPARATELY_APPROVED_BOUNDED_PURE_DATA_PLAN",
+  "source_execution_authorized_by_review": false,
+  "target_execution_attempts": 0,
+  "runtime_import_compile_SQL_process_network_actions": false,
+  "production_approved": false,
+  "source_pins": [
+    {
+      "path": "formal/explore_publication_pending.py",
+      "bytes": 11472,
+      "sha256": "8d6ead3a0f9c9d58c52d6659db3fac090bea9b9f9b5e57d6430eefef247f93fb",
+      "git_blob_oid": "c55dc2e9ecff9acf7f284a1daf2c4bc0f1505d5b",
+      "verified": true
+    },
+    {
+      "path": "docs/publication-pending-bounded-model.md",
+      "bytes": 3308,
+      "sha256": "1c05a352fea367d398505fdc2f2de9ebf94b40630181030c066b063f9f384086",
+      "git_blob_oid": "88685dfa517501f97daef5f4324d9df099e1f218",
+      "verified": true
+    },
+    {
+      "path": "evidence/reviews/publication-pending-model/code-manifest.json",
+      "bytes": 664,
+      "sha256": "8666fc4cd27bbf4cd9fed621d84f8f74e375ccb7ab896dd1a8c3713ab133bbc6",
+      "git_blob_oid": "c82925245a34773672100eafea5e0ba6a16fbcee",
+      "verified": true
+    }
+  ],
+  "AST_imports": [
+    {
+      "module": "collections",
+      "names": [
+        "deque"
+      ]
+    },
+    {
+      "module": "dataclasses",
+      "names": [
+        "asdict",
+        "dataclass",
+        "replace"
+      ]
+    },
+    {
+      "module": null,
+      "names": [
+        "json"
+      ]
+    }
+  ],
+  "AST_call_inventory": [
+    "AssertionError",
+    "MUTATIONS.items",
+    "RuntimeError",
+    "State",
+    "ValueError",
+    "all",
+    "asdict",
+    "baseline['coverage'].values",
+    "dataclass",
+    "deque",
+    "edges",
+    "errors.append",
+    "explore",
+    "int",
+    "invariants",
+    "json.dumps",
+    "json.loads",
+    "len",
+    "list",
+    "plain",
+    "print",
+    "queue.append",
+    "queue.popleft",
+    "range",
+    "replace",
+    "replay",
+    "result.append",
+    "reversed",
+    "run",
+    "set",
+    "sorted",
+    "str",
+    "trace",
+    "tuple"
+  ],
+  "checks": [
+    {
+      "id": "PPM-C01",
+      "result": "STATIC_COHERENT_NOT_RUN",
+      "detail": "Initial state is safe: generation0 has two installed/observed0 receipts, pending false, original CID PENDING and no attempts/reservation. Finite publication path and fatal/operator-halt paths satisfy baseline invariants by direct reading."
+    },
+    {
+      "id": "PPM-C02",
+      "result": "STATIC_NONEMPTY_WITNESSES_NOT_RUN",
+      "detail": "Every required coverage counter has a concrete manual reachable path. Counters measure states, not event order completeness or cardinality of distinct interleavings."
+    },
+    {
+      "id": "PPM-C03",
+      "result": "STATIC_CAUSAL_PATHS_NOT_RUN",
+      "detail": "Each mutation has a direct manually reasoned path to its named invariant. run requires that exact tag; an unrelated first violation alone causes assertion failure, not success."
+    },
+    {
+      "id": "PPM-C04",
+      "result": "REPLAY_RECOMPUTES_LEGAL_EDGES",
+      "detail": "replay starts from actual State(), regenerates edges from current state, requires one candidate matching both action and full JSON state, checks all preterminal states safe, then evaluates the named final invariant. It never restores State from supplied trace or trusts a passed field."
+    },
+    {
+      "id": "PPM-C05",
+      "result": "BASELINE_EXHAUSTION_AND_LIMIT_FAILURE_EXPLICIT",
+      "detail": "Baseline only succeeds after BFS queue exhausts with no invariant error and all coverage counters positive. Each novel state enforces<=25000; overflow raises INCOMPLETE and no final passed report. Negative variants intentionally stop at first violation with complete=false and require replay, so that flag is not a negative-search-exhaustion claim."
+    },
+    {
+      "id": "PPM-C06",
+      "result": "OPERATOR_INTENT_DISTINCT_FROM_MARKET_GENERATION",
+      "detail": "market is0/1 snapshot identity, operator_revision is independent0/1 intent; publication and activation capture different durable operator revisions. Halt can occur while market remains unchanged, and baseline old completion cannot revive pause or reopen gate."
+    },
+    {
+      "id": "PPM-C07",
+      "result": "PURE_DATA_SCOPE_STATIC",
+      "detail": "Only collections/dataclasses/json plus builtins; no UTA/SQL/filesystem/process/clock/thread/network calls, eval/exec/compile or dynamic imports in script. Stdlib/interpreter source loading is an external trusted runtime assumption, not a sandbox guarantee."
+    },
+    {
+      "id": "PPM-C08",
+      "result": "LIMITS_AND_ATTRIBUTION_EXPLICIT",
+      "detail": "Only exception_without_freeze references the retained static source6057/3a finding. Seven other mutations are hypothetical controls. Atomic stop/admission/receipts/revision and restart persistence are assumed; stop-write failure, physical fsync age, FIFO/cancellation/repayment, finance/fills/matching, refinement and liveness remain unproved."
+    }
+  ],
+  "manual_coverage_paths": [
+    {
+      "counter": "paused_CIDs",
+      "manual_path": [
+        "begin_one_publication"
+      ],
+      "reason": "pending=True and original CID remains PENDING"
+    },
+    {
+      "counter": "activation_gap",
+      "manual_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap"
+      ],
+      "reason": "complete receipts enter gap with pending true"
+    },
+    {
+      "counter": "halted_during_publication",
+      "manual_path": [
+        "begin_one_publication",
+        "operator_halt_durably_clears_pause"
+      ],
+      "reason": "publishing true and operator halt true coexist; pending has been durably cleared"
+    },
+    {
+      "counter": "inflight_activation_halt",
+      "manual_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "operator_halt_durably_clears_pause"
+      ],
+      "reason": "phase validating with newer operator intent; baseline cannot activate it"
+    },
+    {
+      "counter": "recovered_pause",
+      "manual_path": [
+        "begin_one_publication",
+        "restart_from_durable_control_and_original_CID"
+      ],
+      "reason": "baseline restart preserves pending; note the same state counter may also arise from restarting before publication"
+    },
+    {
+      "counter": "admitted",
+      "manual_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "last_validation_and_activate_atomically",
+        "last_checkpoint_and_one_CID_reservation"
+      ],
+      "reason": "post-activation original CID can reserve exactly once; admission in initial generation0 is another reachable state"
+    },
+    {
+      "counter": "fatal_observed",
+      "manual_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "fatal_validation_exit"
+      ],
+      "reason": "baseline fatal exit has halted true and pending false"
+    }
+  ],
+  "manual_negative_control_paths": [
+    {
+      "mutation": "exception_without_freeze",
+      "required_invariant": "fatal_exit_clears_temporary_pause",
+      "manual_action_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "fatal_validation_exit"
+      ],
+      "terminal_reasoning": "fatal_observed=True, halted=True, pending=True; phase failed excludes the temporary-phase invariant.",
+      "source_attribution": "ONLY_THIS_CONTROL_LINKED_TO_STATIC_6057_SOURCE_3a_NOT_EXECUTED_RUNTIME_PROOF",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "late_publication_revives_pause",
+      "required_invariant": "operator_halt_dominates_old_control",
+      "manual_action_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "operator_halt_durably_clears_pause",
+        "complete_publication_keep_activation_gap"
+      ],
+      "terminal_reasoning": "publication revision0 is older than durable operator revision1; mutated completion sets pending=True despite halt.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "late_activation_reopens_gate",
+      "required_invariant": "operator_halt_dominates_old_control",
+      "manual_action_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "operator_halt_durably_clears_pause",
+        "last_validation_and_activate_atomically"
+      ],
+      "terminal_reasoning": "operator revision changes0->1 after activation capture; mutated activation clears halted and records stale revision/operator witness.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "partial_fanout_visible",
+      "required_invariant": "visible_market_has_both_durable_receipts",
+      "manual_action_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "complete_publication_keep_activation_gap"
+      ],
+      "terminal_reasoning": "market1 becomes visible with installed/observed=(1,0), while normal completion requires both=(1,1).",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "paused_poll_charges_attempt",
+      "required_invariant": "paused_pending_command_is_unchanged",
+      "manual_action_path": [
+        "begin_one_publication",
+        "poll_paused_CID"
+      ],
+      "terminal_reasoning": "pending=True and command=PENDING, but mutation increments attempts to1; reservation remains0.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "duplicate_admission_reserves_twice",
+      "required_invariant": "one_CID_reserves_once",
+      "manual_action_path": [
+        "last_checkpoint_and_one_CID_reservation",
+        "duplicate_CID_query"
+      ],
+      "terminal_reasoning": "initial generation0 authority admits once with reservations1; mutated duplicate yields reservations2 while command remains SUCCEEDED.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "activation_ignores_stale_quote",
+      "required_invariant": "activation_has_final_freshness_check",
+      "manual_action_path": [
+        "begin_one_publication",
+        "install_shard_0",
+        "query_durable_receipt_shard_0",
+        "install_shard_1",
+        "query_durable_receipt_shard_1",
+        "complete_publication_keep_activation_gap",
+        "begin_activation_capture_operator_revision",
+        "quote_expires",
+        "last_validation_and_activate_atomically"
+      ],
+      "terminal_reasoning": "fresh=False, lease=True, operator unchanged; mutation activates and records a false freshness witness.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    },
+    {
+      "mutation": "restart_forgets_pending",
+      "required_invariant": "temporary_pause_survives_restart",
+      "manual_action_path": [
+        "begin_one_publication",
+        "restart_from_durable_control_and_original_CID"
+      ],
+      "terminal_reasoning": "phase publishing, operator/fatal false, but restart drops pending.",
+      "source_attribution": "ABSTRACT_HYPOTHETICAL_CONTROL_NOT_RUNTIME_FINDING",
+      "expected_unrelated_violation_on_this_manual_path": false,
+      "method": "HAND_READ_OF_EDGES_AND_INVARIANTS_NOT_EXECUTED_TRACE",
+      "execution_status": "NOT_RUN"
+    }
+  ],
+  "nonblocking_notes": [
+    {
+      "id": "PPM-N01",
+      "issue": "Coverage counters are state predicates, not event counters. recovered_pause can also be counted after restart occurred before publication; admitted includes initial-generation admission.",
+      "requirement": "Describe actual output as bounded reachable-state coverage. Do not infer each crash point or specifically post-activation admission from a positive aggregate counter alone. Exhaustive baseline BFS still checks reachable restart transitions; extra witnesses would be a later enhancement."
+    },
+    {
+      "id": "PPM-N02",
+      "issue": "A future result reader must not interpret complete=false in a negative control as the same condition as hitting the state limit.",
+      "requirement": "Require successful external exit, complete parse, baseline complete/no violations, all eight named terminal violations and replayed true, fixed pins and finite budget evidence. Any bound/output/time/unknown failure is not a model pass."
+    }
+  ],
+  "proposed_first_run_budget_NOT_AUTHORIZATION": {
+    "data_scope": "EXACT_MODEL_FILE_AND_TRUSTED_STDLIB_ONLY_NO_UTA_OR_OTHER_FORMAL_MODELS",
+    "variants": 9,
+    "states_per_variant_max": 25000,
+    "aggregate_discovered_state_ceiling": 225000,
+    "parallelism": 1,
+    "cpu_affinity": "ONE_PRESELECTED_CPU",
+    "wall_time_s_max": 60,
+    "memory_bytes_max": 536870912,
+    "stdout_bytes_max": 1048576,
+    "stderr_bytes_max": 65536,
+    "capture_files_max": 8,
+    "capture_total_bytes_max": 8388608,
+    "interpreter": "EXACT_PATH_AND_SHA_RUNTIME_APPROVED_BY_NEW_PLAN_WITH_-I_-S_-B",
+    "namespace": "NEW_UNIQUE_SYNTHETIC_DATA_OUTPUT_NAMESPACE_NO_OLD_ROOT_REUSE",
+    "attempts": 1,
+    "requires_before_run": [
+      "root decision and new independent exact plan",
+      "exact source/runtime identity and external exit witness",
+      "bounded output retention and complete EOF",
+      "stop on first failure/limit/unknown without automatic retry"
+    ],
+    "acceptance": "External exit0 plus complete JSON, baseline BFS exhaustion and positive counters, all8 required violations/replayed traces, fixed source bytes and no runtime claims. Caps/nonzero exit/partial JSON/missing trace or source mismatch are FAIL_OR_UNKNOWN and retained as first sample.",
+    "can_guarantee_finishes_within_budget_from_static_review": false
+  },
+  "excluded_claims": [
+    "runtime refinement",
+    "liveness/fairness",
+    "physical lease/fsync-age/stop-write failure",
+    "multi-account FIFO or emergency cancellation/repayment capacity",
+    "financial amounts/margin/funds conservation",
+    "matching/partial fills/unknown batch recovery",
+    "native/process/controller/HA/production/real-funds performance"
+  ],
+  "validation": "Administrative Git-byte/hash/AST/JSON/diff checks only; no exploration, replay, model function call, target import/compile/test or SQL/proc action.",
+  "rollback": "Revert the two independent review files only; reviewed model and original static finding remain exact and unchanged."
+}
