@@ -1,8 +1,10 @@
-# M05 控制面整合 PREP：6010 runtime 不变，尚未执行
+# M05 控制面整合：d58 首次 PURE 已通过，实际 M05 未授权
 
-本页保存 a365f37 的历史 PREVIEW；后续 component CODE 闭合、dispatch 单行依赖修复和独立一次 combined 的当前状态见 `m05-combined-first-source.md` 与 current `policy.json`。原 `policy-first-pending.json`、原 static 首记录及本页中的未跑描述不回写成新结果。
+**最新状态，supersedes 下方 a365 PREVIEW：**固定 source `d58e2445a851c11c9cb7f06eebd0cf496da1d268` 的首次 combined 已执行并通过：九模块219 tests、0 failures/errors/skips、exit0，CPU2，1.360591174秒；恰六个 guarded 标准Python child全部exit0/reaped，two-negative/four-positive proof闭合。首原件封存于 `027fc1b7180d2b868dd0817c670cda871417c865`，独立只读artifact review已CLOSED/PASS，仅适用于source-bound guarded PURE。详见 `m05-d58-first-combined.md` 和当前policy。
 
-next_run_permitted=false。本树基于6010e920a168b35fccfc9ef9ee34e030b28b11d9，保留其已交付ff814业务runtime；只整合M0控制、测试、公共打包选择和证据。没有执行combined PURE、导入业务/控制模块、SQL/native/crypto/网络/CI、创建M05 marker或触发ref、push。component旧结果不转移成该整合树的通过记录。
+实际M05尚无GO：`execution_authorized=false`、`next_run_permitted=false`；只有root授权的本地C/M候选准备及只读ref核对，没有push/dispatch/实际SQL、业务、worker、OpenSSL或网络probe。原4e首次4PASS+8ImportERROR/0child/exit1和G首次28case纯桩/AST结果完整保留，均不被新通过覆盖。下方所有“尚未执行combined”“NOT_RUN”“review pending”均为a365当时的历史快照，已被上述最新事实supersede，不描述当前执行事实，也不构成实际M05权限。
+
+**a365历史记录：**本树基于6010e920a168b35fccfc9ef9ee34e030b28b11d9，保留其已交付ff814业务runtime；当时只整合M0控制、测试、公共打包选择和证据，尚未执行combined PURE、导入业务/控制模块、SQL/native/crypto/网络/CI、创建M05 marker或触发ref、push。原 `policy-first-pending.json`、原 static 首记录及下文均保留原阶段含义，component旧结果不转移成新树通过记录。
 
 ## 来源与安全合并边界
 
