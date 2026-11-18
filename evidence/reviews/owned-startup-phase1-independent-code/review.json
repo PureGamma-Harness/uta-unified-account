@@ -1,0 +1,108 @@
+{
+  "kind": "INDEPENDENT_STARTUP_PHASE1_STATIC_CODE_REVIEW",
+  "version": 1,
+  "status": "CODE_ONLY_CLOSED_NO_EXECUTION_AUTHORIZATION",
+  "reviewer": "/root/m05_final_integration/m05_post_run_evidence_review/kernel_cap_design_review",
+  "reviewed_commit": "6303ed46d946138c08551e30387abd3de18ab146",
+  "reviewed_tree": "7c58612afc97d1814aa00fa50df511e087c170f4",
+  "comparison_baseline": "09627fdedabd2aff0b8635cf0f6b68c95e5b6409",
+  "original_runtime_source": "9b4fcf5df3615c8bcddc8dc37cb35f9a24d21439",
+  "method": "Read-only Git, source text and AST parsing; no target import, executable target code or tests run",
+  "source_pins": {
+    "uta/writer_fence.py": {
+      "bytes": 55394,
+      "sha256": "f9411ee681ec2f014cc0c744434b384fe6b0b6e0962207eafd96644bf8640ee2"
+    },
+    "uta/startup.py": {
+      "bytes": 23653,
+      "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+    },
+    "tools/run_validation.py": {
+      "bytes": 12185,
+      "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+    }
+  },
+  "findings_and_repairs": [
+    {
+      "first_source": "73dd5e338cd38f133d04ab1fd49c659ccfca7b6d",
+      "finding": "After creating lease_expired, optional dictionary construction and field access were outside the annotation protection and could replace that primary error.",
+      "repair_commit": "24a8cf74ab6ab861d2dec7e5f2ff5656bf504f91",
+      "verified_repair": "The entire optional dictionary construction and annotation are protected by BaseException handling; original clock, identity and expiry decisions stay outside; the same error is raised afterward."
+    },
+    {
+      "first_source": "24a8cf74ab6ab861d2dec7e5f2ff5656bf504f91",
+      "finding": "assert_writer's optional annotation calls lacked caller-level protection while an original WriterFenceError was propagating.",
+      "repair_commit": "c315241a4caa9c69d7ff6782a719fe8b1af8d567",
+      "verified_repair": "Only the optional annotation block is protected; the original exception is propagated by bare raise."
+    },
+    {
+      "first_source": "c315241a4caa9c69d7ff6782a719fe8b1af8d567",
+      "finding": "The optional _renew_diagnostic import was outside its metadata Exception boundary.",
+      "repair_commit": "6303ed46d946138c08551e30387abd3de18ab146",
+      "verified_repair": "The optional helper import is inside that boundary. The original mandatory WriterFence import is unchanged; successful-path BaseException cancellation still propagates."
+    }
+  ],
+  "static_checks": {
+    "original_clock_observed_ttl_AST_equal": true,
+    "load_AST_equal_after_removing_only_new_telemetry_and_optional_parameter": true,
+    "assert_token_AST_equal_after_replacing_only_expired_diagnostic_body_with_original_raise": true,
+    "SQL_execute_executemany_call_argument_AST_multisets_equal": true,
+    "SQL_multiset_is_not_itself_a_runtime_order_or_count_measurement": true,
+    "manual_path_review_one_original_load_no_SQL_retry_or_extra_query": true,
+    "original_tests_storage_service_credit_durable_process_unchanged": true,
+    "startup_lifecycle_AST_equal": [
+      "check", "_keep", "finish", "_stop_keeper", "_cleanup", "_require",
+      "_check_identity", "__enter__", "__exit__", "prepare_schema", "take_worker"
+    ],
+    "original_full_ledger_credit_verification_and_final_fenced_COMMIT_retained": true
+  },
+  "known_renewal_boundary": {
+    "uses_original_post_UPDATE_load_for_original_event": true,
+    "receipt_only_after_original_transaction_context_returns_successfully": true,
+    "startup_copy_only_after_exact_renew_call_returns_and_private_token_is_self_token": true,
+    "BEGIN_UPDATE_event_COMMIT_or_reply_failure_does_not_grant_known_return": true,
+    "post_COMMIT_wrapper_error_does_not_upgrade_startup_known_return": true,
+    "current_attempt_and_last_known_receipt_are_separate": true,
+    "keeper_poison_and_original_failure_propagation_unchanged": true,
+    "diagnostics_not_consumed_by_authorization_check_finish_READY_or_retry": true
+  },
+  "diagnostic_boundary": {
+    "runtime_and_collector_allowlist_sets_equal": true,
+    "ordinary_int_not_bool_range": "0..2**63-1",
+    "booleans_and_clock_phase_attempt_state_enums_are_explicit": true,
+    "snapshot_time_known_accepts_only_false": true,
+    "row_fetch_and_load_intervals_are_not_SQLite_snapshot_establishment_time": true,
+    "fence_clock_and_monotonic_clock_are_distinct_labels_not_subtractable": true,
+    "no_raw_nonce_authority_or_boot_value_field": true,
+    "no_arbitrary_exception_message_repr_or_private_path_projection": true,
+    "private_token_reference_stays_on_fence_instance_not_error_or_public_payload": true,
+    "immutable_copied_primitive_maps_and_private_origin_tag": true,
+    "unknown_existing_exception_attribute_is_not_overwritten": true,
+    "original_error_identity_args_code_cause_context_not_mutated": true,
+    "original_addError_bookkeeping_and_traceback_happen_once_before_optional_collection": true,
+    "optional_fields_can_be_absent_no_complete_capture_claim": true,
+    "collector_limits": {
+      "max_records": 16,
+      "max_compact_bytes_per_lease_fields": 4096,
+      "max_sum_compact_record_bytes": 65536,
+      "limits_are_not_a_claim_about_total_indented_worker_file_or_physical_allocation": true
+    }
+  },
+  "scope_and_limits": {
+    "all_read_transactions_including_unmanaged_or_unbound_gain_monotonic_load_fetch_validation_overhead": true,
+    "timing_or_performance_equivalence_proven": false,
+    "actual_SQLite_WAL_snapshot_keeper_contention_or_OS_pause_behavior_verified": false,
+    "new_source_tests_or_pure_executed_by_review": false,
+    "new_12_method_48_trace_fixture_or_driver_reviewed_here": false,
+    "received_later_fixture_commit_not_covered": "72dcebf9d6a7f4f5755489afb6bc6329c1f9f3b0",
+    "old_CI_error_causes": "UNDETERMINED_INDEPENDENT_HISTORIES",
+    "conditional_baseline_RED_does_not_prove_original_CI_histories": true,
+    "same_token_new_head_does_not_authorize_old_financial_snapshot": true,
+    "phase2": "NO_GO_COMPLETE_ACTOR_EXCLUSION_OR_SUFFICIENT_COMPOSITE_WATERMARK_NOT_PROVEN",
+    "owner_thread_financial_writes_and_post_ledger_policy_writes_remain_proof_obligations": true
+  },
+  "execution_authorized": false,
+  "next_run_permitted": false,
+  "production_approved": false,
+  "old_findings_and_original_CI_PURE_M05_evidence_changed": false
+}
