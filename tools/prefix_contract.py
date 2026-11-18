@@ -19,6 +19,9 @@ QUALIFICATION = {name: False for name in ("complete_original_job", "continuous_6
 CHECKS = ("source_manifest_verified", "quiescence_verified", "coherent_private_snapshot_verified",
     "original_prefix_boundary_verified", "all_commands_and_controls_resolved", "segmented_logs_verified",
     "financial_journal_and_positions_reconciled", "independent_reopen_same_watermark")
+LIMITATIONS_V1 = {"ORIGINAL_JOB_INCOMPLETE", "NOT_FULL_DURATION_ACCEPTANCE", "NO_FULL_RISK_REEXECUTION",
+    "NO_WHOLE_BUSINESS_EVENT_REEXECUTION", "NO_PRODUCTION_APPROVAL", "SOURCE_OR_BOUNDARY_UNPROVEN",
+    "UNRESOLVED_OBLIGATION", "PRIVATE_SNAPSHOT_NOT_CREATED", "AUDIT_NOT_EXECUTED", "METHOD_NOT_INDEPENDENTLY_APPROVED"}
 RECORD_FIELDS = {
     "rounds": {"sequence", "state"},
     "commands": {"command_id", "round", "step", "account", "state", "result_known"},
@@ -311,6 +314,12 @@ def _journal(value, budget, errors):
             ("liability:principal:"+ACCOUNTS[2],"BTC",2),("system:credit-principal-receivable","BTC",-2)])
     require(set(business)==set(expected_events),"journal_business_coverage_gap_or_extra")
     projected=defaultdict(int)
+    bootstrap={"deposit-alice-usd","deposit-bob-usd","deposit-credit-usd","deposit-credit-btc","initial-pool","initial-loan"}
+    bootstrap_seen=set();round_fills=set();current_round=1
+    fill_stage={"f:"+command_id(job,r,step):(r,phase)
+        for r in range(1,value["original"]["completed_prefix_rounds"]+1)
+        for phase,steps in (("open",("open-buy","open-sell")),("close",("close-buy","close-sell"))) for step in steps}
+    repayment_rounds={command_id(job,r,"repay"):r for r in range(1,value["original"]["completed_prefix_rounds"]+1)}
     for eid,event in events.items():
         rows=postings[eid];totals=defaultdict(int)
         require(len(rows)>=2 and strict_equal([r["ordinal"] for r in rows],list(range(len(rows)))),"posting_ordinal_gap_or_duplicate")
@@ -323,6 +332,36 @@ def _journal(value, budget, errors):
         require(expected is not None and event["kind"]==expected[0] and primitives
                 and Counter((r["owner"],r["asset"],r["units"]) for r in rows)==Counter(expected[1]),
                 "per_business_posting_shape_or_amount_mismatch")
+        # This profile has zero genesis: every asset and debt is introduced by
+        # an explicit bootstrap event. Existing-debt snapshots need a different
+        # version, not a universal rule forbidding repayment before new credit.
+        principal=-projected.get(("liability:principal:"+ACCOUNTS[2],"BTC"),0)
+        receivable=projected.get(("system:credit-principal-receivable","BTC"),0)
+        require(principal>=0 and receivable>=0 and principal==receivable,
+                "intermediate_principal_or_receivable_invalid")
+        require(projected.get(("system:credit-pool","BTC"),0)>=0
+                and all(projected.get(("customer:"+account,asset),0)>=0
+                        for account in ACCOUNTS for asset in ("USD","BTC")),
+                "intermediate_customer_or_pool_asset_negative")
+        bid=event["business_id"]
+        if identifier(bid) and bid in bootstrap:
+            require(current_round==1 and not round_fills,"bootstrap_after_round_business")
+            bootstrap_seen.add(bid)
+        elif identifier(bid) and bid in fill_stage:
+            round_number,phase=fill_stage[bid]
+            require(bootstrap_seen==bootstrap and round_number==current_round,"round_before_bootstrap_or_prior_round_complete")
+            opens={"f:"+command_id(job,current_round,step) for step in ("open-buy","open-sell")}
+            closes={"f:"+command_id(job,current_round,step) for step in ("close-buy","close-sell")}
+            require((phase=="open" and not (round_fills & closes))
+                    or (phase=="close" and opens<=round_fills),"close_before_open_pair_or_open_after_close")
+            round_fills.add(bid)
+        elif identifier(bid) and bid in repayment_rounds:
+            expected_fills={"f:"+command_id(job,current_round,step) for step in ("open-buy","open-sell","close-buy","close-sell")}
+            require(bootstrap_seen==bootstrap and repayment_rounds[bid]==current_round and round_fills==expected_fills,
+                    "repayment_before_complete_round_or_out_of_order")
+            current_round+=1;round_fills=set()
+    require(bootstrap_seen==bootstrap and current_round==value["original"]["completed_prefix_rounds"]+1
+            and not round_fills,"journal_causal_prefix_incomplete")
     actual={}
     for row in value["balances"]:
         key=(row["owner"],row["asset"])
@@ -345,7 +384,7 @@ def _journal(value, budget, errors):
         require(integer(row["amount_satoshi"],1),"credit_amount_not_integer")
         if row["kind"]=="POOL_FUNDED":require(cid=="initial-pool" and row["amount_satoshi"]==SCALE,"pool_budget_mismatch")
         elif row["kind"]=="BORROWED":require(cid=="initial-loan" and row["amount_satoshi"]==2*value["original"]["planned_rounds"],"original_borrow_budget_mismatch")
-        elif row["kind"]=="REPAID":require(cid in {r["command_id"] for r in value["commands"] if r["step"]=="repay"} and row["amount_satoshi"]==2,"repayment_budget_mismatch")
+        elif row["kind"]=="REPAID":require(cid in repayment_rounds and row["amount_satoshi"]==2,"repayment_budget_mismatch")
         else:require(False,"unknown_credit_kind")
     require(Counter(r["kind"] for r in value["credit_events"])==Counter({"POOL_FUNDED":1,"BORROWED":1,"REPAID":value["original"]["completed_prefix_rounds"]}),"credit_kind_coverage_mismatch")
 
@@ -379,6 +418,8 @@ def _receipt(value, n, k, errors):
     if not (type(limitations) is list and all(type(x) is str for x in limitations)
             and len(limitations)==len(set(limitations)) and {"ORIGINAL_JOB_INCOMPLETE","NO_PRODUCTION_APPROVAL"}<=set(limitations)):
         errors.append("receipt_required_limitations_missing")
+    elif not set(limitations)<=LIMITATIONS_V1:
+        errors.append("receipt_unknown_limitation_for_version")
 
 
 def parse_and_validate(raw):
