@@ -1,0 +1,71 @@
+{
+  "SQL_clock": "EXPLICIT_SYNTHETIC_REFERENCE_CLOCK_NOT_NATIVE_TIME_ACCEPTANCE",
+  "SQL_execution_budget": "NOT_GRANTED_REQUIRES_SEPARATE_ROOT_EXACT_RUNNER_AND_SCOPE",
+  "SQL_methods": [
+    "FundingLocalSQLTests.test_fresh_period_retry_reopen_and_period_uniqueness",
+    "FundingLocalSQLTests.test_mandatory_debit_uses_cash_deficit_and_real_risk_state",
+    "FundingLocalSQLTests.test_corrupt_reserved_id_rejects_atomically_and_late_freeze_is_not_backdated"
+  ],
+  "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
+  "code_binding_negative_case": "SQL method includes transient unknown uppercase object constant; expected strict CreditArtifactError before any new settlement and original receipt remains queryable.",
+  "fault_injection": "Balanced orphan reserved journal ID, preflight rejection; not a second-leg or COMMIT-failure claim.",
+  "future_reproduction_command_after_full_SQL_approval": "PYTHONPATH=. python -m unittest discover -s tests -p test_perpetual_funding_local.py -v",
+  "independent_review_required": [
+    "financial rounding/capital ownership",
+    "schema/catalogue/fencing boundary",
+    "loaded functions/constants/source binding",
+    "standard case oracle",
+    "actual SQLite risk state and reopen reconciliation"
+  ],
+  "inputs": {
+    "tests/test_perpetual_funding_local.py": {
+      "ast_parse_only": true,
+      "bytes": 13587,
+      "sha256": "fdd7f26594c6a44b2d8486a78d4f7c22cf98b25681c6b77efe8cb0d3934759dd"
+    },
+    "uta/funding_local.py": {
+      "ast_parse_only": true,
+      "bytes": 34565,
+      "sha256": "d3143986fe1b9b6ddd4718dce39cc8bc33d7a8a6ad5e0e55266e956e502c4387"
+    },
+    "uta/perpetual_funding.py": {
+      "ast_parse_only": true,
+      "bytes": 7981,
+      "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd"
+    }
+  },
+  "kind": "FUNDING_LOCAL_CODE_ONLY_TEST_PLAN_NOT_AUTHORIZATION",
+  "metadata_script_preparation": "An earlier outer JS template parse failed before any nested tool started; no target or shell execution occurred. Corrected quoting only.",
+  "open_acceptance": [
+    "production authentication/approval/custody",
+    "durable schedule/pending obligation registry",
+    "historical catchup snapshot authority",
+    "commit/crash/concurrency fault injection",
+    "managed/multi-shard/HA integration",
+    "stress calibration and capacity"
+  ],
+  "pending_obligations": "Explicit no-success/needs-reconciliation error metadata; durable scheduler/obligation registry remains OPEN",
+  "planned_fresh_SQL_authorities": 5,
+  "planned_normal_confirmed_matches": 6,
+  "planned_normal_paired_fills": 12,
+  "production_approved": false,
+  "pure_execution_budget": "NOT_GRANTED_REQUIRES_ROOT_EXACT_RUNNER_AND_SCOPE",
+  "pure_methods": [
+    "FundingArithmeticTests.test_two_sides_negative_and_zero_rates_use_manual_cash",
+    "FundingArithmeticTests.test_three_accounts_need_real_segregated_rounding_capital",
+    "FundingArithmeticTests.test_invalid_inventory_and_decimal_context_do_not_change_policy"
+  ],
+  "rounding_capital": "NO_SYSTEM_MINT; actual transfer of previously confirmed deposit cash from immutable configured operator treasury; proof UNIQUE across periods",
+  "run_root_optional_env": "UTA_FUNDING_CASE_ROOT; existing canonical root, exclusive fixed child names, retains fresh test-owned DBs.",
+  "runtime_source_manifest": {
+    "bytes": 11199,
+    "path": "evidence/reviews/perpetual-funding-local/runtime-inputs.json",
+    "sha256": "d7e0b68d0af0e404ef7d72862c08098066e5ee857f6fc3daec10b16cd0b0eb86",
+    "source_bytes": 1325255,
+    "source_files": 63
+  },
+  "schema": 1,
+  "source_artifact": "core decision artifact plus fixed credit_artifact._loaded_modules(perpetual_funding,funding_local), preserving original credit format and unknown-type rejection",
+  "target_compile_import_tests_SQL_attempts": 0,
+  "total_methods": 6
+}
