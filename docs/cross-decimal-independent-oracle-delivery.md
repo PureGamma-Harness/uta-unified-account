@@ -60,3 +60,9 @@ removes these validation files and preserves first failures and golden/source
 records. Broader model domains, simultaneous borrowing, service integration,
 loaded-engine binding, inverse/options/PM, precision-tail calibration, SQL,
 matching, performance, HA and real-funds/production enablement remain OPEN.
+
+## First normal CI and independent RAW review
+
+First push run 44313484420 and PR run 44313787694 produced seven successful jobs and one failure (200 steps: 183 success, one failure, 16 skipped). The two fixed Python 3.13 unit samples each ran 2140 tests: the push sample had one failure and no errors; the PR sample passed. The failure was the existing readiness-sampling halted assertion after publication returned publishing=false; its cause remains undetermined. No replacement run is used.
+
+Collector 2bbef737 and independent RAW review 9c77fd51 bind 26 originals, two ZIPs, both 385-entry source maps, 40 selected plain-ok observations, and the exact public golden bytes. Those observations do not establish a new CI count of 538 oracle callbacks. The fixed failed job has no package artifact; installed/binary/golden package coverage remains unverified. This evidence update changes no runtime, tests, benchmarks, tools or CI configuration. Production and capacity remain NO_GO. The root integration guard first rejected a docs/evidence path-list assumption before any mutation; its corrected allowlist includes the two reviewed documentation files.
