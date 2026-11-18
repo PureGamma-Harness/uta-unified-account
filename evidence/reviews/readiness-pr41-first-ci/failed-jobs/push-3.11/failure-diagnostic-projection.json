@@ -1,0 +1,399 @@
+{
+  "diagnostics": [
+    {
+      "payload": {
+        "boottime_ns": 333357666152,
+        "drop_counts": {
+          "chain_links_at_least": 0,
+          "fields": 12,
+          "frames_at_least": 0,
+          "items": 82,
+          "payload_items": 0,
+          "values": 0
+        },
+        "event": "uta.expired_gate_failure.v1",
+        "max_bytes": 32768,
+        "monotonic_ns": 333357664269,
+        "observation": {
+          "api_phase_timeout_seconds": 5,
+          "capture_attempts_count": 2,
+          "capture_horizon_seconds": 5,
+          "captured_at": 323.811940242,
+          "captured_lease": {
+            "active": true,
+            "expires_ns": 328598484296,
+            "generation": 1,
+            "now_ns": 323817422731,
+            "owner_pid": 3016
+          },
+          "cleanup_errors_count": 0,
+          "cleanup_forced_kill": false,
+          "fixture_lease_seconds": 5,
+          "injection_undos_count": 1,
+          "last_capture": {
+            "at": 323.811443775,
+            "candidate_count": 1,
+            "retained_after_stop_count": 1,
+            "stop_sent_at": 323.810551543,
+            "writer_availability_probe": {
+              "available": true,
+              "native_errorcode": null
+            }
+          },
+          "lease_reads_count": 90,
+          "lease_reads_tail": [
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328023562336,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328081769696,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328138284230,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328192346804,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328246117398,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328299817487,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328352160644,
+                "owner_pid": 3016
+              }
+            },
+            {
+              "observed": true,
+              "value": {
+                "active": true,
+                "expires_ns": 328598484296,
+                "generation": 1,
+                "now_ns": 328355511305,
+                "owner_pid": 3016
+              }
+            }
+          ],
+          "publication_called_api_at": 328.356510568,
+          "publication_entry_lease": {
+            "active": true,
+            "expires_ns": 328598484296,
+            "generation": 1,
+            "now_ns": 328352160644,
+            "owner_pid": 3016
+          },
+          "publication_finished_at": 333.356772587,
+          "publication_lifecycle_watchdog_seconds": 15,
+          "publication_started_at": 328.353302652,
+          "publication_thread_entry_lease": {
+            "active": true,
+            "expires_ns": 328598484296,
+            "generation": 1,
+            "now_ns": 328355511305,
+            "owner_pid": 3016
+          },
+          "recovery_horizon_seconds": 5,
+          "selected_binding": {
+            "pid": 3016,
+            "start_ticks": 32336,
+            "uid": 1001
+          },
+          "unexpired_control_lease": {
+            "active": true,
+            "expires_ns": 328598484296,
+            "generation": 1,
+            "now_ns": 323925298184,
+            "owner_pid": 3016
+          }
+        },
+        "phase": "before_original_cleanup",
+        "primary": [
+          {
+            "frames": [
+              {
+                "file": "tests.test_durable_faults",
+                "function": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+                "line": 1525
+              },
+              {
+                "file": "stdlib.unittest.case",
+                "function": "<unlisted>",
+                "line": 715
+              }
+            ],
+            "type": "AssertionError"
+          }
+        ],
+        "publisher_errors": [
+          [
+            {
+              "code": "router_busy",
+              "frames": [
+                {
+                  "file": "tests.test_durable_faults",
+                  "function": "publish",
+                  "line": 1512
+                },
+                {
+                  "file": "uta.durable_process",
+                  "function": "publish_market",
+                  "line": 1532
+                },
+                {
+                  "file": "stdlib.contextlib",
+                  "function": "__enter__",
+                  "line": 137
+                },
+                {
+                  "file": "tests.test_durable_faults",
+                  "function": "<unlisted>",
+                  "line": 1499
+                },
+                {
+                  "file": "stdlib.contextlib",
+                  "function": "__enter__",
+                  "line": 137
+                },
+                {
+                  "file": "uta.sharding",
+                  "function": "_lock",
+                  "line": 267
+                }
+              ],
+              "type": "ServiceError"
+            },
+            {
+              "frames": [
+                {
+                  "file": "uta.sharding",
+                  "function": "_lock",
+                  "line": 263
+                }
+              ],
+              "type": "<unlisted>"
+            }
+          ]
+        ],
+        "threads": {
+          "main": {
+            "alive": true,
+            "frames": [
+              {
+                "file": "tests.expired_gate_failure_evidence",
+                "function": "_threads",
+                "line": 163
+              },
+              {
+                "file": "tests.expired_gate_failure_evidence",
+                "function": "build_failure_diagnostic",
+                "line": 186
+              },
+              {
+                "file": "tests.expired_gate_failure_evidence",
+                "function": "emit_expired_gate_failure",
+                "line": 212
+              },
+              {
+                "file": "tests.test_durable_faults",
+                "function": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+                "line": 1587
+              },
+              {
+                "file": "stdlib.unittest.case",
+                "function": "_callTestMethod",
+                "line": 579
+              },
+              {
+                "file": "stdlib.unittest.case",
+                "function": "run",
+                "line": 623
+              },
+              {
+                "file": "stdlib.unittest.case",
+                "function": "<unlisted>",
+                "line": 678
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 122
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 84
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 122
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 84
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 122
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 84
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 217
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 27
+              },
+              {
+                "file": "<unlisted>",
+                "function": "<unlisted>",
+                "line": 82
+              }
+            ]
+          },
+          "monitor": {
+            "alive": true,
+            "frames": [
+              {
+                "file": "uta.storage",
+                "function": "_connect",
+                "line": 147
+              },
+              {
+                "file": "uta.storage",
+                "function": "<unlisted>",
+                "line": 202
+              },
+              {
+                "file": "stdlib.contextlib",
+                "function": "__enter__",
+                "line": 137
+              },
+              {
+                "file": "uta.storage",
+                "function": "<unlisted>",
+                "line": 192
+              },
+              {
+                "file": "stdlib.contextlib",
+                "function": "__enter__",
+                "line": 137
+              },
+              {
+                "file": "uta.storage",
+                "function": "transaction",
+                "line": 159
+              },
+              {
+                "file": "stdlib.contextlib",
+                "function": "__enter__",
+                "line": 137
+              },
+              {
+                "file": "uta.durable_process",
+                "function": "_record_process",
+                "line": 419
+              },
+              {
+                "file": "uta.durable_process",
+                "function": "_spawn",
+                "line": 1127
+              },
+              {
+                "file": "uta.durable_process",
+                "function": "_supervise",
+                "line": 1356
+              },
+              {
+                "file": "stdlib.threading",
+                "function": "run",
+                "line": 982
+              },
+              {
+                "file": "stdlib.threading",
+                "function": "<unlisted>",
+                "line": 1045
+              },
+              {
+                "file": "stdlib.threading",
+                "function": "<unlisted>",
+                "line": 1002
+              }
+            ]
+          },
+          "monitor_stop": false,
+          "publisher": {
+            "alive": false,
+            "frames": []
+          }
+        },
+        "truncated": true,
+        "utc_ns": 1794980378808157877
+      },
+      "prefix": "UTA_EXPIRED_GATE_FAILURE_DIAGNOSTIC",
+      "unittest_line": 488
+    }
+  ],
+  "job_id": 134603055355,
+  "origin": "Exact JSON after the same-test UTA_EXPIRED_GATE_FAILURE_DIAGNOSTIC marker; original unittest bytes retained. No local probe or causal inference.",
+  "schema": 1,
+  "source_commit": "cdfa1844fe7ae515b5d69b495a0593d337223e77"
+}

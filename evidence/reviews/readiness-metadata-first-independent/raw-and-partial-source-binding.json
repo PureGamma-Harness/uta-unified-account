@@ -1,0 +1,1096 @@
+{
+  "actual_exit_status": 1,
+  "captured_executions": {
+    "actual_native_case": 0,
+    "extra_python_probe": 0,
+    "metadata_preflight_invocations": 1,
+    "old_tests_or_fixtures": 0,
+    "retries": 0,
+    "run_subcommand": 0
+  },
+  "captured_tool_wait_seconds": 0.128415273,
+  "conclusion": "FIRST_METADATA_FAIL_RAW_SOURCE_BINDING_PASS_FAILURE_PRESERVED",
+  "exception": {
+    "message": "module '_sqlite3' has no attribute '__file__'",
+    "observed_site": "native_once_common.py:267 binary_info sqlite_module Path(_sqlite3.__file__).resolve()",
+    "trace": "Complete original929-byte traceback retained unchanged in stderr.txt.",
+    "type": "AttributeError"
+  },
+  "intent_parent": "ba515773c51d1541b2b078de4ff61601dd82c391",
+  "limits": [
+    "Only new owned source snapshot files and safe captured evidence were read; no old PID or old business data was inspected",
+    "Physical read establishes current snapshot-file consistency, not observations of the terminated metadata interpreter",
+    "Actual birth/affinity/binary/resources are not persisted and remain null; no inference from isolated pure1 or future attempts",
+    "First pure20 stays RED; isolated pure1 stays separately PASS",
+    "Metadata failure is not an original readiness test result or either original CI cause evidence"
+  ],
+  "native_GO": false,
+  "new_partial_source_only_physical_read": {
+    "empty_business_raw_safe_pycache": true,
+    "files": [
+      {
+        "bytes": 13306,
+        "mode_octal": "400",
+        "path_relative_to_source": "evidence/reviews/process-readiness-engineering/native-source-manifest.json",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "9c5778c4b8595b1cb81055e9766e490f283fd17c4866315d76ddd8d586c71721"
+      },
+      {
+        "bytes": 27151,
+        "mode_octal": "400",
+        "path_relative_to_source": "evidence/reviews/process-readiness-engineering/native_case_once.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c"
+      },
+      {
+        "bytes": 29008,
+        "mode_octal": "400",
+        "path_relative_to_source": "evidence/reviews/process-readiness-engineering/native_once.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820"
+      },
+      {
+        "bytes": 11010,
+        "mode_octal": "400",
+        "path_relative_to_source": "evidence/reviews/process-readiness-engineering/native_once_common.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75"
+      },
+      {
+        "bytes": 31623,
+        "mode_octal": "400",
+        "path_relative_to_source": "evidence/reviews/process-readiness-engineering/native_safe_export.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e"
+      },
+      {
+        "bytes": 5388,
+        "mode_octal": "400",
+        "path_relative_to_source": "tests/readiness_before_quote.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f1c9de2ff1cf6b115752d099f4c9461ce840c5f0697bb76e41750a305485a390"
+      },
+      {
+        "bytes": 99428,
+        "mode_octal": "400",
+        "path_relative_to_source": "tests/test_durable_faults.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba"
+      },
+      {
+        "bytes": 16258,
+        "mode_octal": "400",
+        "path_relative_to_source": "tests/test_process_readiness.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f74db65c632f2c40ea7bfdffe281f308864cc37c56ec3493750fc85d3b48294d"
+      },
+      {
+        "bytes": 21831,
+        "mode_octal": "400",
+        "path_relative_to_source": "tests/test_readiness_sampling.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "20d8745f6ced5515d35fd83729711a2045b19d02db64347e4b8790690e68577e"
+      },
+      {
+        "bytes": 104,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/__init__.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+      },
+      {
+        "bytes": 12953,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/__main__.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+      },
+      {
+        "bytes": 4920,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/acceptance.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7"
+      },
+      {
+        "bytes": 14604,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/admission.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47"
+      },
+      {
+        "bytes": 6832,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/api.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2"
+      },
+      {
+        "bytes": 4624,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/bridge.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432"
+      },
+      {
+        "bytes": 824,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/configuration.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68"
+      },
+      {
+        "bytes": 31349,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+      },
+      {
+        "bytes": 18651,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_artifact.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9"
+      },
+      {
+        "bytes": 54033,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_audit_v2.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588"
+      },
+      {
+        "bytes": 20499,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_audit_v2_replay.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af"
+      },
+      {
+        "bytes": 18118,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_fifo_v2.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca"
+      },
+      {
+        "bytes": 24552,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_native.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "088d6b6b0879124c122cb674d9b347f9688657d7b35019ed643dbeaf1ed19a99"
+      },
+      {
+        "bytes": 103836,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_native_v2.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
+      },
+      {
+        "bytes": 16925,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_policy.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a"
+      },
+      {
+        "bytes": 13967,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_transition.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99"
+      },
+      {
+        "bytes": 3716,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/credit_v2_payload_contract.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7"
+      },
+      {
+        "bytes": 27630,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/cutover.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+      },
+      {
+        "bytes": 27494,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/decision_audit.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6"
+      },
+      {
+        "bytes": 27968,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_batches.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+      },
+      {
+        "bytes": 17842,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_cli.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "69334c3d1c209ed2a721d594ed53882f98fedb6d0010de70c185b8687b5c6bde"
+      },
+      {
+        "bytes": 29291,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_commands.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8"
+      },
+      {
+        "bytes": 25775,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_gateway.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+      },
+      {
+        "bytes": 20142,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_liquidation.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826"
+      },
+      {
+        "bytes": 106136,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_process.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+      },
+      {
+        "bytes": 26768,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/durable_views.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+      },
+      {
+        "bytes": 1444,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/examples.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90"
+      },
+      {
+        "bytes": 16790,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/existing_services.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f"
+      },
+      {
+        "bytes": 6366,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/failure_diagnostics.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "953ec1dd75ffadcb44f560e4042c92162f7302ac753034bb7f7c5a91a46f0f32"
+      },
+      {
+        "bytes": 33412,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/gateway.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+      },
+      {
+        "bytes": 7272,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/ledger.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66"
+      },
+      {
+        "bytes": 8904,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/liquidation.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f"
+      },
+      {
+        "bytes": 8465,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/market.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+      },
+      {
+        "bytes": 3877,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/market_cache.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211"
+      },
+      {
+        "bytes": 21921,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/matching.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+      },
+      {
+        "bytes": 9596,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/migration.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5"
+      },
+      {
+        "bytes": 6034,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/models.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+      },
+      {
+        "bytes": 9854,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/ops.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da"
+      },
+      {
+        "bytes": 24042,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/portfolio.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+      },
+      {
+        "bytes": 21647,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/private_stream_codec.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2"
+      },
+      {
+        "bytes": 12043,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/products.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+      },
+      {
+        "bytes": 17911,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/reconciliation.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8"
+      },
+      {
+        "bytes": 23518,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/request_signing.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+      },
+      {
+        "bytes": 5501,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/reservations.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b"
+      },
+      {
+        "bytes": 4923,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/reserve_kernel.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+      },
+      {
+        "bytes": 7535,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/risk.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+      },
+      {
+        "bytes": 7092,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/scenario_margin.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+      },
+      {
+        "bytes": 9654,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/server.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c"
+      },
+      {
+        "bytes": 85864,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/service.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+      },
+      {
+        "bytes": 4672,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/shadow_adapter.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064"
+      },
+      {
+        "bytes": 11755,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/shard_admission.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c"
+      },
+      {
+        "bytes": 51451,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/sharding.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+      },
+      {
+        "bytes": 21532,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/simulator.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae"
+      },
+      {
+        "bytes": 37264,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/spot.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+      },
+      {
+        "bytes": 18728,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/startup.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d"
+      },
+      {
+        "bytes": 30225,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/storage.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+      },
+      {
+        "bytes": 19174,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/store.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c"
+      },
+      {
+        "bytes": 15243,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/supervisor.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e"
+      },
+      {
+        "bytes": 7134,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/vertical.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0"
+      },
+      {
+        "bytes": 6412,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/worker.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b"
+      },
+      {
+        "bytes": 46393,
+        "mode_octal": "400",
+        "path_relative_to_source": "uta/writer_fence.py",
+        "regular_canonical_noatime_stable": true,
+        "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+      }
+    ],
+    "manifest_files": 1,
+    "no_other_files_or_symlinks": true,
+    "read_mode": "O_RDONLY|O_NOFOLLOW|O_CLOEXEC|O_NOATIME; stable fstat, no retained writes",
+    "regular_file_bytes_total": 1538204,
+    "root": "/workspace/readiness-native-once-59efb56-first",
+    "root_mode_octal": "700",
+    "source_files": 69,
+    "source_regular_files_total": 70
+  },
+  "null_fields_verified": [
+    "preflight_sha256",
+    "actual_interpreter_birth",
+    "actual_interpreter_affinity",
+    "binary_and_sqlite_metadata_payload",
+    "resource_payload"
+  ],
+  "original_git_bindings": [
+    {
+      "bytes": 104,
+      "path": "uta/__init__.py",
+      "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+    },
+    {
+      "bytes": 12953,
+      "path": "uta/__main__.py",
+      "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+    },
+    {
+      "bytes": 4920,
+      "path": "uta/acceptance.py",
+      "sha256": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7"
+    },
+    {
+      "bytes": 14604,
+      "path": "uta/admission.py",
+      "sha256": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47"
+    },
+    {
+      "bytes": 6832,
+      "path": "uta/api.py",
+      "sha256": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2"
+    },
+    {
+      "bytes": 4624,
+      "path": "uta/bridge.py",
+      "sha256": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432"
+    },
+    {
+      "bytes": 824,
+      "path": "uta/configuration.py",
+      "sha256": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68"
+    },
+    {
+      "bytes": 31349,
+      "path": "uta/credit.py",
+      "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+    },
+    {
+      "bytes": 18651,
+      "path": "uta/credit_artifact.py",
+      "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9"
+    },
+    {
+      "bytes": 54033,
+      "path": "uta/credit_audit_v2.py",
+      "sha256": "eb0f3ef61245e19d4fc6b9e2734cf60cc6e008922e9607c5fa5c4449dfbd5588"
+    },
+    {
+      "bytes": 20499,
+      "path": "uta/credit_audit_v2_replay.py",
+      "sha256": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af"
+    },
+    {
+      "bytes": 18118,
+      "path": "uta/credit_fifo_v2.py",
+      "sha256": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca"
+    },
+    {
+      "bytes": 24552,
+      "path": "uta/credit_native.py",
+      "sha256": "088d6b6b0879124c122cb674d9b347f9688657d7b35019ed643dbeaf1ed19a99"
+    },
+    {
+      "bytes": 103836,
+      "path": "uta/credit_native_v2.py",
+      "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
+    },
+    {
+      "bytes": 16925,
+      "path": "uta/credit_policy.py",
+      "sha256": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a"
+    },
+    {
+      "bytes": 13967,
+      "path": "uta/credit_transition.py",
+      "sha256": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99"
+    },
+    {
+      "bytes": 3716,
+      "path": "uta/credit_v2_payload_contract.py",
+      "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7"
+    },
+    {
+      "bytes": 27630,
+      "path": "uta/cutover.py",
+      "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+    },
+    {
+      "bytes": 27494,
+      "path": "uta/decision_audit.py",
+      "sha256": "50671902d688cfe371e320d79d6fd5c329014ce9291dc522e5bc8f828424d5e6"
+    },
+    {
+      "bytes": 27968,
+      "path": "uta/durable_batches.py",
+      "sha256": "8eb8cb4cada987269b3588a6c76b41971b6e4e43218f4f167d1c659c593a3df9"
+    },
+    {
+      "bytes": 17842,
+      "path": "uta/durable_cli.py",
+      "sha256": "69334c3d1c209ed2a721d594ed53882f98fedb6d0010de70c185b8687b5c6bde"
+    },
+    {
+      "bytes": 29291,
+      "path": "uta/durable_commands.py",
+      "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8"
+    },
+    {
+      "bytes": 25775,
+      "path": "uta/durable_gateway.py",
+      "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+    },
+    {
+      "bytes": 20142,
+      "path": "uta/durable_liquidation.py",
+      "sha256": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826"
+    },
+    {
+      "bytes": 106136,
+      "path": "uta/durable_process.py",
+      "sha256": "46905e06af8e6ee12e16b71ad6ebce50847a7d77c03c1e7fb3e73fd165897219"
+    },
+    {
+      "bytes": 26768,
+      "path": "uta/durable_views.py",
+      "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+    },
+    {
+      "bytes": 1444,
+      "path": "uta/examples.py",
+      "sha256": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90"
+    },
+    {
+      "bytes": 16790,
+      "path": "uta/existing_services.py",
+      "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f"
+    },
+    {
+      "bytes": 6366,
+      "path": "uta/failure_diagnostics.py",
+      "sha256": "953ec1dd75ffadcb44f560e4042c92162f7302ac753034bb7f7c5a91a46f0f32"
+    },
+    {
+      "bytes": 33412,
+      "path": "uta/gateway.py",
+      "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+    },
+    {
+      "bytes": 7272,
+      "path": "uta/ledger.py",
+      "sha256": "492e48c3c1648f32c199f97a1606aded7f17f564f026ab8cd08744fb56a43a66"
+    },
+    {
+      "bytes": 8904,
+      "path": "uta/liquidation.py",
+      "sha256": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f"
+    },
+    {
+      "bytes": 8465,
+      "path": "uta/market.py",
+      "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+    },
+    {
+      "bytes": 3877,
+      "path": "uta/market_cache.py",
+      "sha256": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211"
+    },
+    {
+      "bytes": 21921,
+      "path": "uta/matching.py",
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+    },
+    {
+      "bytes": 9596,
+      "path": "uta/migration.py",
+      "sha256": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5"
+    },
+    {
+      "bytes": 6034,
+      "path": "uta/models.py",
+      "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+    },
+    {
+      "bytes": 9854,
+      "path": "uta/ops.py",
+      "sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da"
+    },
+    {
+      "bytes": 24042,
+      "path": "uta/portfolio.py",
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+    },
+    {
+      "bytes": 21647,
+      "path": "uta/private_stream_codec.py",
+      "sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2"
+    },
+    {
+      "bytes": 12043,
+      "path": "uta/products.py",
+      "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+    },
+    {
+      "bytes": 17911,
+      "path": "uta/reconciliation.py",
+      "sha256": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8"
+    },
+    {
+      "bytes": 23518,
+      "path": "uta/request_signing.py",
+      "sha256": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+    },
+    {
+      "bytes": 5501,
+      "path": "uta/reservations.py",
+      "sha256": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b"
+    },
+    {
+      "bytes": 4923,
+      "path": "uta/reserve_kernel.py",
+      "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+    },
+    {
+      "bytes": 7535,
+      "path": "uta/risk.py",
+      "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+    },
+    {
+      "bytes": 7092,
+      "path": "uta/scenario_margin.py",
+      "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+    },
+    {
+      "bytes": 9654,
+      "path": "uta/server.py",
+      "sha256": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c"
+    },
+    {
+      "bytes": 85864,
+      "path": "uta/service.py",
+      "sha256": "9c68ee82b07b66d5272cb820399c7bf6971759bfe1497acf46ac839e95ba7034"
+    },
+    {
+      "bytes": 4672,
+      "path": "uta/shadow_adapter.py",
+      "sha256": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064"
+    },
+    {
+      "bytes": 11755,
+      "path": "uta/shard_admission.py",
+      "sha256": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c"
+    },
+    {
+      "bytes": 51451,
+      "path": "uta/sharding.py",
+      "sha256": "b4bf4c2a22c54387852e243d5d2fe774b47d8fd2a1b841c954de159f67a171bb"
+    },
+    {
+      "bytes": 21532,
+      "path": "uta/simulator.py",
+      "sha256": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae"
+    },
+    {
+      "bytes": 37264,
+      "path": "uta/spot.py",
+      "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+    },
+    {
+      "bytes": 18728,
+      "path": "uta/startup.py",
+      "sha256": "177ab69e4354c58ed63f9059a799ed9d5a72f50dd45512a13b14384f92061c6d"
+    },
+    {
+      "bytes": 30225,
+      "path": "uta/storage.py",
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+    },
+    {
+      "bytes": 19174,
+      "path": "uta/store.py",
+      "sha256": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c"
+    },
+    {
+      "bytes": 15243,
+      "path": "uta/supervisor.py",
+      "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e"
+    },
+    {
+      "bytes": 7134,
+      "path": "uta/vertical.py",
+      "sha256": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0"
+    },
+    {
+      "bytes": 6412,
+      "path": "uta/worker.py",
+      "sha256": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b"
+    },
+    {
+      "bytes": 46393,
+      "path": "uta/writer_fence.py",
+      "sha256": "9e7f9e7bc382fedd96a38ec11db2fb0550c16d527146ee9039477675c167d13c"
+    },
+    {
+      "bytes": 16258,
+      "path": "tests/test_process_readiness.py",
+      "sha256": "f74db65c632f2c40ea7bfdffe281f308864cc37c56ec3493750fc85d3b48294d"
+    },
+    {
+      "bytes": 21831,
+      "path": "tests/test_readiness_sampling.py",
+      "sha256": "20d8745f6ced5515d35fd83729711a2045b19d02db64347e4b8790690e68577e"
+    },
+    {
+      "bytes": 99428,
+      "path": "tests/test_durable_faults.py",
+      "sha256": "bb3216c8ef17c6bfe9bead884a77c743d2a51161f8696f8c7b9b69f1d26c2cba"
+    },
+    {
+      "bytes": 5388,
+      "path": "tests/readiness_before_quote.py",
+      "sha256": "f1c9de2ff1cf6b115752d099f4c9461ce840c5f0697bb76e41750a305485a390"
+    },
+    {
+      "bytes": 29008,
+      "path": "evidence/reviews/process-readiness-engineering/native_once.py",
+      "sha256": "bb2576f279e362332be85ff57f46c3a1fb080e818393e30d69cd0b4be3526820"
+    },
+    {
+      "bytes": 11010,
+      "path": "evidence/reviews/process-readiness-engineering/native_once_common.py",
+      "sha256": "054a0cd2524643515ead366c367a98793656f7f0046638623038f9973245bf75"
+    },
+    {
+      "bytes": 27151,
+      "path": "evidence/reviews/process-readiness-engineering/native_case_once.py",
+      "sha256": "45bf864ee6a30781f07807cfa5322ce09866215a579c11410331e47f1ddbd38c"
+    },
+    {
+      "bytes": 31623,
+      "path": "evidence/reviews/process-readiness-engineering/native_safe_export.py",
+      "sha256": "f980a3f8dcd9ae774a1eedbfd64018450936991f67948e51e1730a60dff7468e"
+    },
+    {
+      "bytes": 13306,
+      "path": "evidence/reviews/process-readiness-engineering/native-source-manifest.json",
+      "sha256": "9c5778c4b8595b1cb81055e9766e490f283fd17c4866315d76ddd8d586c71721"
+    },
+    {
+      "bytes": 4833,
+      "path": "docs/readiness-native-case-independent-review.md",
+      "sha256": "034349879786ec1883a1957e0f520f94ed2dc2674cc2a55acc03eceb340d7c6a"
+    },
+    {
+      "bytes": 7500,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/REVIEW.md",
+      "sha256": "f06d55c4a03c429fc5403196e4f42f114bf697163ab93b1e8583aeb89ba834dc"
+    },
+    {
+      "bytes": 517,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/first-synthetic-2e84ac1/SHA256SUMS",
+      "sha256": "e4feb84badd94c3cd7133b1588fe9f602d6c604c59eaa7390aedb9f2d88f8a0c"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/first-synthetic-2e84ac1/exit.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/first-synthetic-2e84ac1/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 6049,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/first-synthetic-2e84ac1/stdout.txt",
+      "sha256": "0e54a91cff1f3078cd10114e8ed30b7963cc84fa00a39ebcdaeaa2d89f696e4a"
+    },
+    {
+      "bytes": 10054,
+      "path": "evidence/reviews/process-readiness-engineering/native-guard-independent/guard_counterexamples_once.py",
+      "sha256": "e26240b7403910fb32befd4b3370695fd3fc3c48cdd235e92b70704f0089e196"
+    },
+    {
+      "bytes": 1642,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/README.md",
+      "sha256": "d67eee61c6a911eacf4829fc5aa236871e62b66b605f1f0813ebfb7460cb2e99"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/exit-status.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    {
+      "bytes": 901,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/intent.json",
+      "sha256": "ad9a76b17ef7b07bc7a0c6fc96aedfae2f91b22e077f01584d0298a70fd58ac4"
+    },
+    {
+      "bytes": 2709,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/result.json",
+      "sha256": "499690689fab7389a3dc10d4f1c416286f2c34576b05cb73aad439b7d5e0b87b"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 3098,
+      "path": "evidence/reviews/process-readiness-engineering/pure-once-v2/stdout.txt",
+      "sha256": "62426f2cc7beea2f069f68891762c7af958c2906dce30bbcdfd96ef8708822a0"
+    },
+    {
+      "bytes": 1002,
+      "path": "evidence/reviews/readiness-native-case-independent/first.execution.json",
+      "sha256": "1d2c7f91d6f5097f9839547aadc6de7db7fe84a194939c86d2bfd5ddce99ef91"
+    },
+    {
+      "bytes": 7573,
+      "path": "evidence/reviews/readiness-native-case-independent/first.stderr.txt",
+      "sha256": "5b5148f0fc6591f5ace15f2c0302bd666c793536408099f54b4532f6c6e3cb83"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/reviews/readiness-native-case-independent/first.stdout.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 10844,
+      "path": "evidence/reviews/readiness-native-case-independent/journal_and_start_once.py",
+      "sha256": "d9d51a6682c678fd433008582f93cf9f4085d930afb0adf6c29123877b55d683"
+    },
+    {
+      "bytes": 1618,
+      "path": "evidence/reviews/readiness-native-case-independent/manifest.json",
+      "sha256": "95c36721f74d2cb9ed78e38cc3f2a692edfa4d6597bde4237db78fc2f3e2754d"
+    },
+    {
+      "bytes": 728,
+      "path": "evidence/reviews/readiness-native-case-independent/result.json",
+      "sha256": "ac6151b3ace20e02bf6c0f9450dae57618cac4c7d005f3d49f4efa4e1a54e536"
+    },
+    {
+      "bytes": 11543,
+      "path": "evidence/reviews/readiness-native-case-independent/source-contract-bindings.json",
+      "sha256": "76982e382fd32a7a395a0b3b230abf8f69574637fa22126f441af0bab378d646"
+    },
+    {
+      "bytes": 867,
+      "path": "evidence/reviews/readiness-native-case-independent/source-plan.json",
+      "sha256": "3f98d87e50a318cf24213c10358e36b2a23218f5bf578f96daee2cd79b3c6f4d"
+    },
+    {
+      "bytes": 1342,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/README.md",
+      "sha256": "5d0ba4f46aa6d90f360b1b6726e66381fe8386783df59c3d7cb033f74bea8101"
+    },
+    {
+      "bytes": 1092,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/intent.json",
+      "sha256": "c8bd261d069bb8ee75cd3c2eb33e847f5a49f1b99957fbb471c3940d92922b8c"
+    },
+    {
+      "bytes": 14559,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/result.json",
+      "sha256": "af9d6dc53e623b186ea37d0692d3803ead030d90febdb899fa14954c39a25739"
+    },
+    {
+      "bytes": 8678,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/stdout.txt",
+      "sha256": "9e045d03be1fed1c7e35378f0882bfc8d95102dd67c2b97a990b8fdad6e191ed"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/exit-status.txt",
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    {
+      "bytes": 1044,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/README.md",
+      "sha256": "12be34e0bd06c408f64bee886dd1e59b2f0cc9a46806e96a7a6e5570aeeebcfd"
+    },
+    {
+      "bytes": 1575,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/intent.json",
+      "sha256": "32087a00b7ea2a81b4288f819f577578697f787fd641c24f9143be050b657b29"
+    },
+    {
+      "bytes": 14933,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/result.json",
+      "sha256": "b9cfd3a40efb2f6241eedc44312da75ef0a2e28b9bbe5ed58b76e6ab72273457"
+    },
+    {
+      "bytes": 2089,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/stdout.txt",
+      "sha256": "71c7abbaea27c03f7a6566dabc1d0153824f8770fc177cadcbaca27d01134e6a"
+    },
+    {
+      "bytes": 0,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 2,
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-sticky-7052446/exit-status.txt",
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    }
+  ],
+  "preflight_json_present_captured": false,
+  "preflight_json_present_now": false,
+  "prior_103_beforeafter_equal": true,
+  "production_approved": false,
+  "raw": {
+    "README.md": {
+      "bytes": 1519,
+      "sha256": "7d4860832bde4567162f3e0531103e1c8f48880b2e97e9786f72a1c94de6f423"
+    },
+    "exit-status.txt": {
+      "bytes": 2,
+      "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+    },
+    "intent.json": {
+      "bytes": 14013,
+      "sha256": "1204845aa34f8dcf5e9bc4de74f61eb012772c21dd9ca55f2180f52e1b03a725"
+    },
+    "partial-snapshot-and-source-bindings.json": {
+      "bytes": 48173,
+      "sha256": "bb6c6c7edb7a809126d4f7523c3edce5b101d834e12480f394fd2a4177ef62a6"
+    },
+    "result.json": {
+      "bytes": 3074,
+      "sha256": "8c1fb63781ab06a38c4814f8b981f1bc812358ee94b353d8526d34de6b8799f1"
+    },
+    "stderr.txt": {
+      "bytes": 929,
+      "sha256": "17e64e90c36bfbf35bfe6c3f61cc51412d4cb6530965ba46d809dd0ff3048b85"
+    },
+    "stdout.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "reviewed_tip": "2d17fc878edce8bfa59d2a498178999da8d6bc00",
+  "reviewer_target_probe_native_SQL_child_PID_signal_network": 0,
+  "runtime_source": "59efb56f86de49c51bbea7407c3be447332df216",
+  "schema": "uta.readiness-metadata-first-independent.v1",
+  "stderr_bytes": 929,
+  "stdout_bytes": 0,
+  "tool_wait_not_internal_full_runtime": true
+}

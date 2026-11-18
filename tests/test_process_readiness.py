@@ -12,6 +12,7 @@ import unittest
 from unittest.mock import patch
 
 import test_readiness_sampling as readiness_fixtures
+from readiness_before_quote import current_quote_after_owner_ready
 
 from uta import durable_process
 from uta.durable_process import DurableProcessRouter
@@ -68,9 +69,11 @@ class ProcessReadinessTests(unittest.TestCase):
     def activate(self, snapshot=None):
         if self.router._monitor is None:
             self.router.start()
-        # Explicit snapshots retain their exact SID/time/content; only a new
-        # default quote is created after the real worker start call.
-        snapshot = snapshot or self.market()
+        # Explicit snapshots retain their exact SID/time/content. A new default
+        # quote starts its real freshness clock after one native owner witness,
+        # not merely after start() returns from spawning the children.
+        if snapshot is None:
+            snapshot = current_quote_after_owner_ready(self, self.router, self.market)
         self.assertFalse(self.router.publish_market(snapshot, timeout=8)["publishing"])
         self.assertFalse(self.router.set_kill_switch(False, timeout=8)["halted"])
         self.wait_ready()
@@ -155,7 +158,10 @@ class ProcessReadinessTests(unittest.TestCase):
         self.assertEqual(result["workers"][0]["reason"], "market_barrier_mismatch")
         self.assertEqual(self.payload(0), changed.to_json())
         self.activate(self.market(2, mark="102"))
-        self.assertTrue(self.router.diagnostics()["financial_ready"])
+        # This remains a new observation; activation's successful sample cannot
+        # stand in for it. Retain its payload if any independent predicate fails.
+        recovery_observation = self.router.diagnostics()
+        self.assertTrue(recovery_observation["financial_ready"], recovery_observation)
 
     def test_malformed_missing_and_oversize_persistent_quotes_fail_closed(self):
         self.development_fault_profile()

@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "attempt": 1,
+  "source_commit": "cb35a277d3f77c1bcb9ef9ab7efae398beae2c4f",
+  "source_parent": "2d12a2e488bd1d2df3599f8c8e15cb9217573264",
+  "previous_candidate_executed": false,
+  "authorization": "Parent agent authorized one CPU1/wall10s standard-library/helper-only batch, at most eight methods; first raw retained; failure not retried.",
+  "command": ["python", "-I", "evidence/reviews/process-readiness-engineering/run_pure_once.py", "cb35a277d3f77c1bcb9ef9ab7efae398beae2c4f"],
+  "selector": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests",
+  "selected_methods": 7,
+  "cpu_count": 1,
+  "wall_budget_seconds": 10,
+  "stdout": "stdout.txt",
+  "stderr": "stderr.txt",
+  "exit_status": "exit-status.txt",
+  "native_execution_authorized": false,
+  "forbidden": ["UTA import", "SQLite import/use", "actual router/worker/service", "signals", "network", "rerun"]
+}

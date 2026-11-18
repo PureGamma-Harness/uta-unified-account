@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "exceptions": [
+    {
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/first-focused-59efb56/stdout.txt",
+      "sha256": "9e045d03be1fed1c7e35378f0882bfc8d95102dd67c2b97a990b8fdad6e191ed",
+      "reason": "Original first20 RED raw includes unittest progress trailing whitespace; immutable raw is not reformatted."
+    },
+    {
+      "path": "evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py",
+      "sha256": "f2c59f7490204bf257646d9950b6f9d60e1f0141fa0cb5760d15e1511eea407e",
+      "reason": "Executed isolated fixture has original EOF blank line; changing it would change the frozen source pin."
+    },
+    {
+      "path": "evidence/reviews/process-readiness-engineering/source-capsules/59efb56f86de49c51bbea7407c3be447332df216/evidence/reviews/process-readiness-engineering/native-focused-v2/terminal_fakes.py",
+      "sha256": "95aff3dd889a8ba27159822e253f316e5f66eb56a0370c92d15e6387b89f0f1f",
+      "reason": "Archived executed first20 fixture has its original EOF blank line; historical source bytes are retained."
+    }
+  ],
+  "policy": "Exact paths/hashes only. No general style waiver; all newly authored and product/test changes must pass diff --check. No original byte is rewritten to make a check green."
+}

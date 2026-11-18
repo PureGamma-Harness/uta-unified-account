@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "attempt": 1,
+  "execution": "unique isolated selected-AST pure fixture; never native",
+  "authorized_plan_commit": "705244611e1f33fdb8e4f8e520c109edd7d4b630",
+  "plan_sha256": "1b3767d1b247aa61a7efb764f7c96196f94136876f94170bba3ee3971b4a4888",
+  "target_source_commit": "59efb56f86de49c51bbea7407c3be447332df216",
+  "materialization_commit": "51cb8c68a964ef659c735e9f120df2df1cb39b4e",
+  "materialization_record_sha256": "c8b1e2f992949d020c1e13720613208821f35c28cbe3f67e955379a10d048dda",
+  "independent_code_own": "7a87bd220bc70ddce5464626b2b8d86cdeffa093",
+  "root_budget_received": true,
+  "command": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/process-readiness-engineering/native-focused-v2/run_sticky_once.py",
+    "59efb56f86de49c51bbea7407c3be447332df216"
+  ],
+  "methods": 1,
+  "traces": 4,
+  "maximum_traces": 8,
+  "wall_seconds": 10,
+  "actual_cpu": "driver chooses one allowed CPU and records its real ID",
+  "combined_raw_cap_bytes": 262144,
+  "raw_trailer_reserved_bytes": 512,
+  "before_run_all7_materialized_and69_native_unchanged": true,
+  "preserved_old21_and_first20six": true,
+  "forbidden": [
+    "old19 methods",
+    "original whole20 batch",
+    "original pure7/guard6/terminal8 executables",
+    "actual target child/helper/worker",
+    "proc/pidfd/signal",
+    "SQL",
+    "network",
+    "target module import",
+    "rerun"
+  ],
+  "first_outcome_policy": "Keep complete raw stdout/stderr and actual exit; preserve any failure/error/cap without retry.",
+  "preflight_authorized": false,
+  "native_authorized": false
+}

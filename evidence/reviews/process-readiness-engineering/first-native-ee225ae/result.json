@@ -1,0 +1,284 @@
+{
+  "schema": 1,
+  "attempt": 1,
+  "conclusion": "PASS_CANDIDATE_LOCAL_NATIVE_DIAGNOSTIC_ONLY",
+  "source_commit": "ee225ae59474daa094b210e97be99d6a9325acce",
+  "authority_intent_commit": "d42f9a4a56399bd187c1216589492f22f13e6202",
+  "approved_preflight_sha256": "ea959fd66330ff29f6329ac9c3d4b27aaab9b917a084d294fe05a8c11de1f6d0",
+  "selector": "test_process_readiness.ProcessReadinessTests.test_malformed_missing_and_oversize_persistent_quotes_fail_closed",
+  "actual_outer_exit_status": 0,
+  "completion_outer_status": 0,
+  "actual_case_returncode": 0,
+  "tests_run": 1,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "diagnostic_calls": 5,
+  "original_controls_reached": 3,
+  "original_controls_passed": 3,
+  "subtests": [
+    {
+      "control_index": 0,
+      "diagnostic_calls": [
+        2
+      ],
+      "error_kind": null,
+      "expected": "market_invalid",
+      "missing": false,
+      "passed": true
+    },
+    {
+      "control_index": 1,
+      "diagnostic_calls": [
+        3
+      ],
+      "error_kind": null,
+      "expected": "market_missing",
+      "missing": true,
+      "passed": true
+    },
+    {
+      "control_index": 2,
+      "diagnostic_calls": [
+        4
+      ],
+      "error_kind": null,
+      "expected": "market_invalid",
+      "missing": false,
+      "passed": true
+    }
+  ],
+  "case_journal_records": 52,
+  "case_journal_sequences_continuous": true,
+  "case_journal_first_last": [
+    "case_begin",
+    "case_end"
+  ],
+  "complete_original_diagnostic_pairs": 5,
+  "safe_evidence": {
+    "journal_complete": true,
+    "before_quote_unknown": false,
+    "case_result_matches_trace": true,
+    "pass_evidence_complete": true,
+    "failure_evidence_complete": false,
+    "trace_errors": []
+  },
+  "before_quote_observation": [
+    {
+      "call": 0,
+      "ready": false,
+      "financial_ready": false,
+      "workers": [
+        {
+          "shard": 0,
+          "pid": 794220,
+          "generation": 1,
+          "reason": "market_missing",
+          "owner_ready": true
+        },
+        {
+          "shard": 1,
+          "pid": 794221,
+          "generation": 1,
+          "reason": "market_missing",
+          "owner_ready": true
+        }
+      ]
+    }
+  ],
+  "later_observations": [
+    {
+      "call": 1,
+      "control_index": null,
+      "ready": true,
+      "financial_ready": true,
+      "reasons": [
+        "ready",
+        "ready"
+      ]
+    },
+    {
+      "call": 2,
+      "control_index": 0,
+      "ready": false,
+      "financial_ready": false,
+      "reasons": [
+        "market_invalid",
+        "ready"
+      ]
+    },
+    {
+      "call": 3,
+      "control_index": 1,
+      "ready": false,
+      "financial_ready": false,
+      "reasons": [
+        "market_missing",
+        "ready"
+      ]
+    },
+    {
+      "call": 4,
+      "control_index": 2,
+      "ready": false,
+      "financial_ready": false,
+      "reasons": [
+        "market_invalid",
+        "ready"
+      ]
+    }
+  ],
+  "elapsed_before_finalizers_seconds": 3.7716006289992947,
+  "elapsed_after_finalizers_seconds": 3.7733522150083445,
+  "unittest_seconds": 2.86,
+  "actual_affinity": [
+    0
+  ],
+  "runtime": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "sqlite_version": "3.53.1",
+  "thresholds_unchanged": {
+    "market_age_seconds": 2,
+    "lease_seconds": 1,
+    "publish_timeout_seconds": 8,
+    "activation_timeout_seconds": 8,
+    "sampling_seconds": 1,
+    "real_clocks": true,
+    "original_quote_sid_and_explicit_timestamps": true
+  },
+  "processes": {
+    "case_sessions": 1,
+    "worker_births_total": 8,
+    "maximum_logged_live_bound_workers": 2,
+    "worker_start_live_counts": [
+      1,
+      2,
+      1,
+      2,
+      1,
+      2,
+      1,
+      2
+    ],
+    "tracker_births_total": 1,
+    "owned_roles": [
+      {
+        "name": "uta-shard-0",
+        "pid": 794220,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-1",
+        "pid": 794221,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-0",
+        "pid": 794226,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-1",
+        "pid": 794227,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-0",
+        "pid": 794229,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-1",
+        "pid": 794230,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-0",
+        "pid": 794232,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": "uta-shard-1",
+        "pid": 794233,
+        "reaped": true,
+        "role": "financial_worker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": null
+      },
+      {
+        "name": null,
+        "pid": 794219,
+        "reaped": true,
+        "role": "multiprocessing.resource_tracker",
+        "session": 794218,
+        "terminal": true,
+        "wait_status": 0
+      }
+    ],
+    "all_declared_terminal_and_reaped": true,
+    "tracker_wait_status": 0,
+    "remaining_direct_children": [],
+    "case_leader_reaped_returncode": 0,
+    "actual_signal_receipt_pairs": 0,
+    "forced_signal_paths_exercised": false
+  },
+  "resources": {
+    "observed_peak_business_bytes": 2547768,
+    "observed_peak_log_bytes": 81808,
+    "final_raw_and_safe_log_bytes": 91387,
+    "business_data_cap_is_monitor_not_kernel_quota": true,
+    "final_business_files": 0
+  },
+  "unknown_codes": [],
+  "technical_unknowns": [],
+  "source_binary_and_prior_evidence": {
+    "source69_snapshot_and_manifest_unchanged": true,
+    "source73_before_after_equal": true,
+    "old40_evidence_and_old_partial70_unchanged": true,
+    "metadata_first8_originals_unchanged": true,
+    "case_binary_descriptor_equals_approved_preflight": true,
+    "post_run_declared_executable_and10stdlib_file_hashes_unchanged": true,
+    "no_after_exit_pid_or_maps_probe": true
+  },
+  "raw_policy": "Complete raw/controller.jsonl, raw/native.jsonl, raw/case-result.json and original reports remain private and are bound by path/length/SHA in source-binary-and-private-raw-bindings.json; committed diagnostics.json is the existing safe allowlist export, copied without reserialization.",
+  "private_run_root": "/workspace/readiness-native-once-ee225ae-first",
+  "safe_diagnostics_sha256": "2ec27e7cfd0a7d8930a4efdb3bf4aea461455e5c549a8f0b89a797ff04220ffa",
+  "executions": {
+    "this_native_case": 1,
+    "retries": 0,
+    "second_original_readiness_case": 0,
+    "whole_suite": 0,
+    "old_pure_batches": 0,
+    "additional_binary_metadata_probe": 0
+  },
+  "original_ci_two_failures_unresolved": true,
+  "interpretation_limit": "One local candidate diagnostic with a new owner-READY-before-default-quote fixture and unchanged original negative controls. Python3.12.14/SQLite3.53.1 differs from original CI3.12.16. No original CI cause, production/funds/throughput, original whole-suite success or post-PASS guarantee is established; the second original failing case was not run. The first20 RED, isolated1 PASS, first metadata FAIL/nulls and new metadata PASS remain distinct."
+}

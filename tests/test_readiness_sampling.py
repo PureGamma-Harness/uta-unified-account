@@ -38,6 +38,7 @@ class ReadinessSamplingTests(unittest.TestCase):
 
     def wait_ready(self, router, *, timeout=1):
         deadline, samples = monotonic() + timeout, []
+        self.readiness_observations = samples
         while monotonic() < deadline:
             report = router.diagnostics(timeout=min(.1, max(.001, deadline - monotonic())))
             samples.append(report)
@@ -50,9 +51,9 @@ class ReadinessSamplingTests(unittest.TestCase):
             inactive = [row for row in report["workers"]
                         if row["generation"] is not None and row["owner_pid"] == row["pid"]
                         and row["owner_pid"] is not None and not row["lease_active"]]
-            self.assertFalse(inactive, "observed inactive native lease: " + json.dumps(report, sort_keys=True))
+            self.assertFalse(inactive, "observed inactive native lease: " + json.dumps(samples, sort_keys=True))
             if report.get("reason") not in {"worker_unready", "diagnostic_timeout"}:
-                self.fail("non-transient readiness observation: " + json.dumps(report, sort_keys=True))
+                self.fail("non-transient readiness observation: " + json.dumps(samples, sort_keys=True))
             sleep(min(.01, max(0, deadline - monotonic())))
         self.fail("readiness did not become true within the observation budget: " + json.dumps(samples, sort_keys=True))
 

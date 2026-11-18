@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "source_C": "cdfa1844fe7ae515b5d69b495a0593d337223e77",
+  "observations": [
+    {
+      "event": "push",
+      "run_id": 44245414846,
+      "job_id": 134603055355,
+      "checkout_commit": "cdfa1844fe7ae515b5d69b495a0593d337223e77",
+      "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+      "sqlite": "3.46.1",
+      "tests_run": 1842,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "unittest_seconds": 388.104,
+      "wrapper_duration_seconds": 389.684632222,
+      "selected": [
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_first_unknown_is_retained_without_a_second_observation_or_quote"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_complete_owner_witness_precedes_factory_without_promoting_financial_ready"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_stale_generation_and_inactive_owner_are_not_a_complete_witness"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unknown_after_owner_fields_were_read_still_fails_the_single_attempt"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unconsumed_current_ready_frame_cannot_trigger_diagnostic_or_quote"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_late_native_return_retains_report_without_quote_or_second_observation"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_identity_equality_requires_native_integer_types"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_process_readiness.ProcessReadinessTests.test_malformed_missing_and_oversize_persistent_quotes_fail_closed"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused"
+        }
+      ],
+      "all_selected_9_single_ok": true,
+      "failure_headers": [
+        {
+          "kind": "FAIL",
+          "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+          "qualified": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+        }
+      ]
+    },
+    {
+      "event": "pull_request",
+      "run_id": 44245591070,
+      "job_id": 134603644122,
+      "checkout_commit": "72a2fabe12e2adcd9c0c37928b7181eb7b587250",
+      "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+      "sqlite": "3.46.1",
+      "tests_run": 1842,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "unittest_seconds": 379.916,
+      "wrapper_duration_seconds": 381.355220387,
+      "selected": [
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_first_unknown_is_retained_without_a_second_observation_or_quote"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_complete_owner_witness_precedes_factory_without_promoting_financial_ready"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_stale_generation_and_inactive_owner_are_not_a_complete_witness"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unknown_after_owner_fields_were_read_still_fails_the_single_attempt"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unconsumed_current_ready_frame_cannot_trigger_diagnostic_or_quote"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_late_native_return_retains_report_without_quote_or_second_observation"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_identity_equality_requires_native_integer_types"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_process_readiness.ProcessReadinessTests.test_malformed_missing_and_oversize_persistent_quotes_fail_closed"
+        },
+        {
+          "raw_statuses": [
+            "ok"
+          ],
+          "test": "test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused"
+        }
+      ],
+      "all_selected_9_single_ok": true,
+      "failure_headers": [
+        {
+          "kind": "FAIL",
+          "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+          "qualified": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+        }
+      ]
+    }
+  ],
+  "new_reference_methods_count": 7,
+  "original_readiness_methods_count": 2,
+  "success_unit_artifact_downloads": 0,
+  "other_success_jobs_method_level_outcomes": "Not individually collected; unit step success is recorded separately in terminal metadata. No successful unit artifacts were acquired.",
+  "qualification_limit": "These exact per-method outcomes come from each failed Python3.11 job's original complete unittest text. They do not prove either original PR34 CI cause was fixed, qualify a whole matrix, or replace any local/native/previous first result."
+}

@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native_once.py", line 560, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native_once.py", line 539, in main
+    return preflight(args)
+           ^^^^^^^^^^^^^^^
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native_once.py", line 144, in preflight
+    binary = binary_info()
+             ^^^^^^^^^^^^^
+  File "/workspace/uta-pr34-readiness-design/evidence/reviews/process-readiness-engineering/native_once_common.py", line 267, in binary_info
+    "sqlite_module": str(Path(_sqlite3.__file__).resolve()),
+                              ^^^^^^^^^^^^^^^^^
+AttributeError: module '_sqlite3' has no attribute '__file__'. Did you mean: '__name__'?

@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "attempt": 1,
+  "conclusion": "METADATA_PREFLIGHT_FAILED_PARTIAL_PREPARATION_RETAINED_NO_NATIVE_GO",
+  "intent_commit": "ba515773c51d1541b2b078de4ff61601dd82c391",
+  "source_commit": "59efb56f86de49c51bbea7407c3be447332df216",
+  "command": [
+    "python",
+    "-I",
+    "-B",
+    "evidence/reviews/process-readiness-engineering/native_once.py",
+    "preflight",
+    "--run-root",
+    "/workspace/readiness-native-once-59efb56-first",
+    "--source-commit",
+    "59efb56f86de49c51bbea7407c3be447332df216"
+  ],
+  "actual_exit_status": 1,
+  "stdout_bytes": 0,
+  "stderr_bytes": 929,
+  "tool_wait_wall_seconds": 0.128415273,
+  "tool_wait_is_not_an_internal_full_runtime_measurement": true,
+  "preflight_json_present": false,
+  "preflight_sha256": null,
+  "actual_interpreter_birth": null,
+  "actual_interpreter_affinity": null,
+  "binary_and_sqlite_metadata_payload": null,
+  "resource_payload": null,
+  "metadata_unknown_reason": "The failure occurred before preflight.json and final stdout metadata were written; these observations were computed transiently but were not persisted. No extra interpreter probe or retry was used to reconstruct them.",
+  "exception": {
+    "type": "AttributeError",
+    "message": "module '_sqlite3' has no attribute '__file__'",
+    "observed_site": "native_once_common.py:267 binary_info sqlite_module Path(_sqlite3.__file__).resolve()",
+    "trace": "Complete original929-byte traceback retained unchanged in stderr.txt."
+  },
+  "partial_preparation": {
+    "run_root": "/workspace/readiness-native-once-59efb56-first",
+    "root_mode_octal": "700",
+    "source_files": 69,
+    "manifest_files": 1,
+    "all70_files_mode_octal": "400",
+    "source_directories_mode_octal": "500",
+    "total_regular_file_bytes": 1538204,
+    "source_bytes_excluding_manifest": 1524898,
+    "source_snapshot_matches_approved_source": true,
+    "business_raw_safe_empty_pycache_directories": "Present and empty; inventory includes all70 regular files under source only.",
+    "preserved_in_place": true
+  },
+  "source_before_after_equal": true,
+  "prior33_evidence_files_before_after_equal": true,
+  "first_raw_sha256": {
+    "intent.json": "1204845aa34f8dcf5e9bc4de74f61eb012772c21dd9ca55f2180f52e1b03a725",
+    "stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr.txt": "17e64e90c36bfbf35bfe6c3f61cc51412d4cb6530965ba46d809dd0ff3048b85",
+    "exit-status.txt": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+  },
+  "executions": {
+    "metadata_preflight_invocations": 1,
+    "retries": 0,
+    "actual_native_case": 0,
+    "run_subcommand": 0,
+    "old_tests_or_fixtures": 0,
+    "extra_python_probe": 0
+  },
+  "interpretation_limit": "A local metadata collection failure, not an original readiness-test result or evidence for either original CI failure's cause. The first pure20 remains RED and isolated pure1 remains separately PASS. No valid approved preflight hash exists, and native execution remains unauthorized. Do not rerun against this partial runroot or remove it."
+}

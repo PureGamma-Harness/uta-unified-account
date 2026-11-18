@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "method": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+  "push": {
+    "job_id": 134603055355,
+    "source_line": 1525,
+    "assertion": "original bound PID did not exit within the unchanged five-second recovery horizon",
+    "diagnostic_json": "failed-jobs/push-3.11/failure-diagnostic-projection.json"
+  },
+  "PR_merge": {
+    "job_id": 134603644122,
+    "source_line": 1456,
+    "assertion": "bound child did not leave SH after undo within original capture horizon",
+    "diagnostic_json": "failed-jobs/prmerge-3.11/failure-diagnostic-projection.json"
+  },
+  "same_test_marker": "UTA_EXPIRED_GATE_FAILURE_DIAGNOSTIC",
+  "exact_one_marker_in_each_original_unittest": true,
+  "diagnostics_not_limited_to_FAIL_tail": true,
+  "collector_correction": "Initial review looked only at FAIL tails and missed the earlier same-test diagnostic JSON. The complete original text and archives were always retained; exact marker projections now preserve the available thread/monitor/publisher/lease/timestamp observations.",
+  "causal_conclusion": null,
+  "limit": "The failures occur at different checkpoints and are preserved separately. Frame samples/lease timestamps are observations, not proof of the duration/cause of any storage operation or a common HOL cause. No local replay/PID/probe was performed."
+}
