@@ -1,0 +1,73 @@
+{
+  "acceptance_flags": {
+    "component_profile_pass": false,
+    "default_scan_regression_accepted": false,
+    "production_approved": false,
+    "throughput_capacity_accepted": false
+  },
+  "fake_contracts": {
+    "SQL_and_UTA_imports": 0,
+    "cases": 4,
+    "claims": "Synthetic fault diagnostics only, not native SQLite lifecycle validation",
+    "execution_authorized": false,
+    "future_exact_argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "-I",
+      "-S",
+      "-B",
+      "/workspace/uta-matching-profile-observer-fix/benchmarks/test_matching_profile_observer.py"
+    ],
+    "source": "benchmarks/test_matching_profile_observer.py",
+    "source_sha256": "055eadfb15c46b753eee2ec684e0e9a8902930a0c67801be1dd26ecbe37f8870"
+  },
+  "first_fault_bounds": {
+    "expanded_SQL_statement_argument_copied": false,
+    "message_UTF8_bytes": 512,
+    "private_until_targeted_filter_review": true,
+    "stack_filename_UTF8_bytes": 256,
+    "stack_frames": 6,
+    "stack_function_UTF8_bytes": 128,
+    "truncation_explicit": true,
+    "type_UTF8_bytes": 128
+  },
+  "historical_first_cause": "UNKNOWN_IMMUTABLE",
+  "kind": "FIRST_FAULT_CODE_REVIEW_AND_FUTURE_SETUP_DIAGNOSTIC_PLAN",
+  "native_target_invocations": 0,
+  "next_native_scope_proposal": {
+    "accounts": 2,
+    "aggregate_calls": 0,
+    "authorities": 1,
+    "book_size": 32,
+    "exact_argv": null,
+    "execution_authorized": false,
+    "fee_TTL_clock_audit_and_WAL_FULL": "original unchanged",
+    "incomplete_observer_fault": "retain first category/type/message/stack/event/counters, actual exit, no green profile",
+    "maximum_proposed_logical_bytes": 33554432,
+    "maximum_proposed_raw_bytes": 66560,
+    "maximum_proposed_seconds": 20,
+    "mode": "scan",
+    "non_reproduction": "stop after setup and report NO_MATCHING_CALLED, no profile acceptance",
+    "old_private_DB_open_or_SQL": 0,
+    "original_scan_baseline_calls": 0,
+    "profiler_enabled": false,
+    "reason": "Must first freeze an explicit setup-only entry that cannot fall through to matching on non-reproduction",
+    "retries": 0,
+    "setup_quote_cadence": "original once before each submit, unchanged",
+    "synthetic_USD_deposit_each": "1000000",
+    "timed_matching_calls": 0,
+    "warmup": 0
+  },
+  "private_failure_commits_not_ancestors": true,
+  "public_base": "c7a266002fb7db996e1b7bedc1b86bc0364e32dd",
+  "pure_fake_test_invocations": 0,
+  "rollback": "Drop only diagnostic source additions; retain all private failed originals and history; no runtime deployment.",
+  "schema": 1,
+  "source_commit": "876709f96668e9dd9108cb05d981ec3d838ce346",
+  "source_manifest": {
+    "bytes": 16524,
+    "inputs": 63,
+    "path": "evidence/reviews/matching-component-profile/observer-first-fault-source.json",
+    "sha256": "3fe4c6c5be877961e1ed18ce70c9820e8968505247283033f6d548980288f9e0"
+  },
+  "status": "CODE_ONLY_PENDING_INDEPENDENT_REVIEW_SETUP_ONLY_ENTRY_NOT_YET_BOUND"
+}
