@@ -1,0 +1,590 @@
+﻿2026-11-18T07:11:04.0726954Z Current runner version: '2.338.2'
+2026-11-18T07:11:04.0747546Z ##[group]Runner Image Provisioner
+2026-11-18T07:11:04.0748498Z Hosted Compute Agent
+2026-11-18T07:11:04.0749055Z Version: 20261103.629
+2026-11-18T07:11:04.0749574Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-18T07:11:04.0750402Z Build Date: 2026-11-03T17:26:59Z
+2026-11-18T07:11:04.0751035Z Worker ID: {c5e14bc6-d7b4-487f-bf19-34a2c674c85c}
+2026-11-18T07:11:04.0751633Z Region: eastus
+2026-11-18T07:11:04.0752130Z Cloud: Azure
+2026-11-18T07:11:04.0752573Z ##[endgroup]
+2026-11-18T07:11:04.0753877Z ##[group]Operating System
+2026-11-18T07:11:04.0754402Z Ubuntu
+2026-11-18T07:11:04.0754839Z 26.04.1
+2026-11-18T07:11:04.0755299Z LTS
+2026-11-18T07:11:04.0755728Z ##[endgroup]
+2026-11-18T07:11:04.0756211Z ##[group]Runner Image
+2026-11-18T07:11:04.0756762Z Image: ubuntu-26.04
+2026-11-18T07:11:04.0757266Z Version: 20261111.196.1
+2026-11-18T07:11:04.0758302Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-18T07:11:04.0759611Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-18T07:11:04.0760789Z ##[endgroup]
+2026-11-18T07:11:04.0761969Z ##[group]GITHUB_TOKEN Permissions
+2026-11-18T07:11:04.0763806Z Contents: read
+2026-11-18T07:11:04.0764320Z Metadata: read
+2026-11-18T07:11:04.0764855Z ##[endgroup]
+2026-11-18T07:11:04.0766508Z Secret source: Actions
+2026-11-18T07:11:04.0767300Z Cache mode: write
+2026-11-18T07:11:04.0768264Z Prepare workflow directory
+2026-11-18T07:11:04.1021708Z Prepare all required actions
+2026-11-18T07:11:04.1059728Z Getting action download info
+2026-11-18T07:11:04.2460461Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-18T07:11:04.3552384Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-11-18T07:11:04.5216646Z Complete job name: test (3.12)
+2026-11-18T07:11:04.5942150Z ##[group]Run actions/checkout@v4
+2026-11-18T07:11:04.5942874Z with:
+2026-11-18T07:11:04.5943292Z   repository: PureGamma-Harness/uta-unified-account
+2026-11-18T07:11:04.5946625Z   token: ***
+2026-11-18T07:11:04.5946983Z   ssh-strict: true
+2026-11-18T07:11:04.5947339Z   ssh-user: git
+2026-11-18T07:11:04.5947698Z   persist-credentials: true
+2026-11-18T07:11:04.5948093Z   clean: true
+2026-11-18T07:11:04.5948455Z   sparse-checkout-cone-mode: true
+2026-11-18T07:11:04.5948890Z   fetch-depth: 1
+2026-11-18T07:11:04.5949244Z   fetch-tags: false
+2026-11-18T07:11:04.5949606Z   show-progress: true
+2026-11-18T07:11:04.5950107Z   lfs: false
+2026-11-18T07:11:04.5950448Z   submodules: false
+2026-11-18T07:11:04.5950813Z   set-safe-directory: true
+2026-11-18T07:11:04.5951216Z   allow-unsafe-pr-checkout: false
+2026-11-18T07:11:04.5951792Z ##[endgroup]
+2026-11-18T07:11:04.7748209Z Syncing repository: PureGamma-Harness/uta-unified-account
+2026-11-18T07:11:04.7750691Z ##[group]Getting Git version info
+2026-11-18T07:11:04.7751845Z Working directory is '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-18T07:11:04.7753326Z [command]/usr/bin/git version
+2026-11-18T07:11:04.7753797Z git version 2.56.1
+2026-11-18T07:11:04.7755665Z ##[endgroup]
+2026-11-18T07:11:04.7764607Z Temporarily overriding HOME='/home/runner/work/_temp/466677b6-9dbd-4144-92c7-7d66dfd97f3b' before making global git config changes
+2026-11-18T07:11:04.7766684Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T07:11:04.7768415Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T07:11:04.7816777Z Deleting the contents of '/home/runner/work/uta-unified-account/uta-unified-account'
+2026-11-18T07:11:04.7823619Z ##[group]Initializing the repository
+2026-11-18T07:11:04.7826989Z [command]/usr/bin/git init /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T07:11:04.7894251Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-18T07:11:04.7896106Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-18T07:11:04.7897690Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-18T07:11:04.7899019Z hint: call:
+2026-11-18T07:11:04.7900131Z hint:
+2026-11-18T07:11:04.7901064Z hint: 	git config --global init.defaultBranch <name>
+2026-11-18T07:11:04.7902170Z hint:
+2026-11-18T07:11:04.7903250Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-18T07:11:04.7904797Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-18T07:11:04.7906070Z hint:
+2026-11-18T07:11:04.7906826Z hint: 	git branch -m <name>
+2026-11-18T07:11:04.7907681Z hint:
+2026-11-18T07:11:04.7908764Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-18T07:11:04.7910757Z Initialized empty Git repository in /home/runner/work/uta-unified-account/uta-unified-account/.git/
+2026-11-18T07:11:04.7913399Z [command]/usr/bin/git remote add origin https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-18T07:11:04.7953218Z ##[endgroup]
+2026-11-18T07:11:04.7954387Z ##[group]Disabling automatic garbage collection
+2026-11-18T07:11:04.7956284Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-18T07:11:04.7998745Z ##[endgroup]
+2026-11-18T07:11:04.7999732Z ##[group]Setting up auth
+2026-11-18T07:11:04.8000926Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T07:11:04.8022716Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-18T07:11:04.8382569Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T07:11:04.8417434Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-18T07:11:04.8661379Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T07:11:04.8689560Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T07:11:04.8920613Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-18T07:11:04.8955076Z ##[endgroup]
+2026-11-18T07:11:04.8955765Z ##[group]Fetching the repository
+2026-11-18T07:11:04.8962979Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d8a6c7b4a150c7bd2fa07ce28272840089e47dfc:refs/remotes/origin/fix/ledger-replay-native-sequence
+2026-11-18T07:11:05.1148632Z From https://github.com/PureGamma-Harness/uta-unified-account
+2026-11-18T07:11:05.1151526Z  * [new ref]         d8a6c7b4a150c7bd2fa07ce28272840089e47dfc -> origin/fix/ledger-replay-native-sequence
+2026-11-18T07:11:05.1156594Z ##[endgroup]
+2026-11-18T07:11:05.1158373Z ##[group]Determining the checkout info
+2026-11-18T07:11:05.1160301Z ##[endgroup]
+2026-11-18T07:11:05.1162267Z [command]/usr/bin/git sparse-checkout disable
+2026-11-18T07:11:05.1218305Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-18T07:11:05.1250044Z ##[group]Checking out the ref
+2026-11-18T07:11:05.1252381Z [command]/usr/bin/git checkout --progress --force -B fix/ledger-replay-native-sequence refs/remotes/origin/fix/ledger-replay-native-sequence
+2026-11-18T07:11:05.1351642Z Switched to a new branch 'fix/ledger-replay-native-sequence'
+2026-11-18T07:11:05.1357964Z branch 'fix/ledger-replay-native-sequence' set up to track 'origin/fix/ledger-replay-native-sequence'.
+2026-11-18T07:11:05.1362526Z ##[endgroup]
+2026-11-18T07:11:05.1398254Z [command]/usr/bin/git log -1 --format=%H
+2026-11-18T07:11:05.1420694Z d8a6c7b4a150c7bd2fa07ce28272840089e47dfc
+2026-11-18T07:11:05.1759335Z ##[group]Run actions/setup-python@v5
+2026-11-18T07:11:05.1760645Z with:
+2026-11-18T07:11:05.1761399Z   python-version: 3.12
+2026-11-18T07:11:05.1762258Z   check-latest: false
+2026-11-18T07:11:05.1770740Z   token: ***
+2026-11-18T07:11:05.1771527Z   update-environment: true
+2026-11-18T07:11:05.1772435Z   allow-prereleases: false
+2026-11-18T07:11:05.1773319Z   freethreaded: false
+2026-11-18T07:11:05.1774133Z ##[endgroup]
+2026-11-18T07:11:05.2878685Z ##[group]Installed versions
+2026-11-18T07:11:05.2960615Z (node:2289) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T07:11:05.2963857Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T07:11:05.2966160Z Successfully set up CPython (3.12.16)
+2026-11-18T07:11:05.2968237Z ##[endgroup]
+2026-11-18T07:11:05.3219671Z ##[group]Run python -m unittest discover -s tests -v
+2026-11-18T07:11:05.3221507Z [36;1mpython -m unittest discover -s tests -v[0m
+2026-11-18T07:11:05.3288630Z shell: /usr/bin/bash -e {0}
+2026-11-18T07:11:05.3289570Z env:
+2026-11-18T07:11:05.3290723Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:05.3292242Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig
+2026-11-18T07:11:05.3293742Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:05.3295102Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:05.3296472Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:05.3297851Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib
+2026-11-18T07:11:05.3299016Z ##[endgroup]
+2026-11-18T07:11:05.5857938Z test_input_missing_specs_and_numeric_precision_fail_closed (test_api.APITests.test_input_missing_specs_and_numeric_precision_fail_closed) ... ok
+2026-11-18T07:11:05.5902550Z test_real_http_json_success_and_bad_request (test_api.APITests.test_real_http_json_success_and_bad_request) ... ok
+2026-11-18T07:11:05.5905192Z test_risk_sample_and_order_check (test_api.APITests.test_risk_sample_and_order_check) ... ok
+2026-11-18T07:11:05.5907131Z test_asset_and_borrow_haircut_separately (test_gross_liabilities.GrossLiabilityTests.test_asset_and_borrow_haircut_separately) ... ok
+2026-11-18T07:11:05.5908754Z test_legacy_negative_balance_and_new_liabilities (test_gross_liabilities.GrossLiabilityTests.test_legacy_negative_balance_and_new_liabilities) ... ok
+2026-11-18T07:11:05.5910513Z test_atomic_rejection_for_unbalanced_or_invalid_events (test_ledger.LedgerTests.test_atomic_rejection_for_unbalanced_or_invalid_events) ... ok
+2026-11-18T07:11:05.5940279Z test_concurrent_retries_commit_once (test_ledger.LedgerTests.test_concurrent_retries_commit_once) ... ok
+2026-11-18T07:11:05.5942103Z test_cross_asset_event_requires_balance_for_each_asset (test_ledger.LedgerTests.test_cross_asset_event_requires_balance_for_each_asset) ... ok
+2026-11-18T07:11:05.5943989Z test_exactness_is_independent_of_decimal_context (test_ledger.LedgerTests.test_exactness_is_independent_of_decimal_context) ... ok
+2026-11-18T07:11:05.5945892Z test_replay_and_idempotency_with_reordered_postings (test_ledger.LedgerTests.test_replay_and_idempotency_with_reordered_postings) ... ok
+2026-11-18T07:11:05.5947644Z test_replay_rejects_gaps_and_duplicate_ids (test_ledger.LedgerTests.test_replay_rejects_gaps_and_duplicate_ids) ... ok
+2026-11-18T07:11:05.5949818Z test_consecutive_native_sequences_recover_exact_two_asset_balances (test_ledger_sequence_integrity.LedgerSequenceIntegrityTests.test_consecutive_native_sequences_recover_exact_two_asset_balances) ... ok
+2026-11-18T07:11:05.5952604Z test_gaps_ordering_and_duplicate_business_ids_still_reject (test_ledger_sequence_integrity.LedgerSequenceIntegrityTests.test_gaps_ordering_and_duplicate_business_ids_still_reject) ... ok
+2026-11-18T07:11:05.5955057Z test_live_receipts_and_retries_keep_native_sequences (test_ledger_sequence_integrity.LedgerSequenceIntegrityTests.test_live_receipts_and_retries_keep_native_sequences) ... ok
+2026-11-18T07:11:05.5957427Z test_numeric_aliases_reject_before_any_posting (test_ledger_sequence_integrity.LedgerSequenceIntegrityTests.test_numeric_aliases_reject_before_any_posting) ... ok
+2026-11-18T07:11:05.5959883Z test_cancel_then_reduce_and_recover_with_new_snapshots (test_liquidation.LiquidationTests.test_cancel_then_reduce_and_recover_with_new_snapshots) ... ok
+2026-11-18T07:11:05.5962012Z test_no_data_stale_and_invalid_are_blocked (test_liquidation.LiquidationTests.test_no_data_stale_and_invalid_are_blocked) ... ok
+2026-11-18T07:11:05.5963810Z test_recovery_buffer_and_position_bounds (test_liquidation.LiquidationTests.test_recovery_buffer_and_position_bounds) ... ok
+2026-11-18T07:11:05.5965670Z test_stale_data_does_not_discard_pending_action (test_liquidation.LiquidationTests.test_stale_data_does_not_discard_pending_action) ... ok
+2026-11-18T07:11:05.5967847Z test_unknown_ack_fails_and_healthy_can_trade (test_liquidation.LiquidationTests.test_unknown_ack_fails_and_healthy_can_trade) ... ok
+2026-11-18T07:11:05.5970107Z test_decimal_digest_preserves_precision_beyond_default_context (test_migration.MigrationTests.test_decimal_digest_preserves_precision_beyond_default_context) ... ok
+2026-11-18T07:11:05.5972103Z test_idempotency_and_version_ordering (test_migration.MigrationTests.test_idempotency_and_version_ordering) ... ok
+2026-11-18T07:11:05.5973968Z test_incomplete_invalid_or_stale_snapshot_fails_closed (test_migration.MigrationTests.test_incomplete_invalid_or_stale_snapshot_fails_closed) ... ok
+2026-11-18T07:11:05.5976098Z test_reconciles_each_field_and_preserves_source_compartment (test_migration.MigrationTests.test_reconciles_each_field_and_preserves_source_compartment) ... ok
+2026-11-18T07:11:05.5977891Z test_retry_must_still_be_fresh (test_migration.MigrationTests.test_retry_must_still_be_fresh) ... ok
+2026-11-18T07:11:05.5985153Z test_gross_asset_debt_and_position_stress_matches_hand_calculation (test_portfolio.PortfolioTests.test_gross_asset_debt_and_position_stress_matches_hand_calculation) ... ok
+2026-11-18T07:11:05.5993739Z test_joint_offset_survives_but_decorrelation_preserves_margin (test_portfolio.PortfolioTests.test_joint_offset_survives_but_decorrelation_preserves_margin) ... ok
+2026-11-18T07:11:05.5998396Z test_numeric_context_and_invalid_universe (test_portfolio.PortfolioTests.test_numeric_context_and_invalid_universe) ... ok
+2026-11-18T07:11:05.7555711Z test_position_change_bound_covers_floor_and_scenario_regimes (test_portfolio.PortfolioTests.test_position_change_bound_covers_floor_and_scenario_regimes) ... ok
+2026-11-18T07:11:05.7563420Z test_usd_settlement_moves_all_equities_equally_and_does_not_change_margin (test_portfolio.PortfolioTests.test_usd_settlement_moves_all_equities_equally_and_does_not_change_margin) ... ok
+2026-11-18T07:11:05.7566327Z test_arithmetic_ignores_callers_low_decimal_precision (test_reference_validation.ReferenceValidationTests.test_arithmetic_ignores_callers_low_decimal_precision) ... ok
+2026-11-18T07:11:05.7573947Z test_hand_computed_golden_case (test_reference_validation.ReferenceValidationTests.test_hand_computed_golden_case) ... ok
+2026-11-18T07:11:05.7575390Z test_out_of_range_inputs_rejected (test_reference_validation.ReferenceValidationTests.test_out_of_range_inputs_rejected) ... ok
+2026-11-18T07:11:05.7576930Z test_ratio_rounding_is_fixed_at_34_significant_digits (test_reference_validation.ReferenceValidationTests.test_ratio_rounding_is_fixed_at_34_significant_digits) ... ok
+2026-11-18T07:11:05.8321789Z test_seeded_differential_order_checks (test_reference_validation.ReferenceValidationTests.test_seeded_differential_order_checks) ... ok
+2026-11-18T07:11:05.8325214Z test_capacity_drop_blocks_new_orders_but_keeps_reserve (test_reservations.ReservationTests.test_capacity_drop_blocks_new_orders_but_keeps_reserve) ... ok
+2026-11-18T07:11:05.8350435Z test_concurrent_orders_cannot_reserve_same_capacity (test_reservations.ReservationTests.test_concurrent_orders_cannot_reserve_same_capacity) ... ok
+2026-11-18T07:11:05.8352578Z test_decimal_arithmetic_not_affected_by_low_caller_precision (test_reservations.ReservationTests.test_decimal_arithmetic_not_affected_by_low_caller_precision) ... ok
+2026-11-18T07:11:05.8354412Z test_idempotency_release_and_replay_cannot_reopen (test_reservations.ReservationTests.test_idempotency_release_and_replay_cannot_reopen) ... ok
+2026-11-18T07:11:05.8355552Z test_stale_version_and_invalid_amounts_fail_without_mutation (test_reservations.ReservationTests.test_stale_version_and_invalid_amounts_fail_without_mutation) ... ok
+2026-11-18T07:11:05.8356586Z test_collateral_liability_unrealized_pnl_and_margins (test_risk.RiskEngineTest.test_collateral_liability_unrealized_pnl_and_margins) ... ok
+2026-11-18T07:11:05.8358022Z test_crossing_position_uses_resulting_absolute_notional (test_risk.RiskEngineTest.test_crossing_position_uses_resulting_absolute_notional) ... ok
+2026-11-18T07:11:05.8359604Z test_invalid_values_rejected (test_risk.RiskEngineTest.test_invalid_values_rejected) ... ok
+2026-11-18T07:11:05.8360780Z test_large_order_is_rejected (test_risk.RiskEngineTest.test_large_order_is_rejected) ... ok
+2026-11-18T07:11:05.8361706Z test_marked_short_position (test_risk.RiskEngineTest.test_marked_short_position) ... ok
+2026-11-18T07:11:05.8362953Z test_missing_specs_fail_closed (test_risk.RiskEngineTest.test_missing_specs_fail_closed) ... ok
+2026-11-18T07:11:05.8364140Z test_negative_asset_balance_is_not_discounted (test_risk.RiskEngineTest.test_negative_asset_balance_is_not_discounted) ... ok
+2026-11-18T07:11:05.8366098Z test_order_reduction_accounts_for_execution_and_fee (test_risk.RiskEngineTest.test_order_reduction_accounts_for_execution_and_fee) ... ok
+2026-11-18T07:11:05.8579572Z test_full_worker_pool_rejects_overload_and_remains_responsive (test_server.AdmissionTests.test_full_worker_pool_rejects_overload_and_remains_responsive) ... ok
+2026-11-18T07:11:05.9133158Z test_batch_keeps_input_order_and_isolates_command_rejections (test_server.SimulatorHttpTests.test_batch_keeps_input_order_and_isolates_command_rejections) ... ok
+2026-11-18T07:11:05.9418457Z test_import_and_guard_reject_ambiguous_or_external_requests (test_server.SimulatorHttpTests.test_import_and_guard_reject_ambiguous_or_external_requests) ... ok
+2026-11-18T07:11:05.9814178Z test_order_and_fill_persist_with_an_idempotent_receipt (test_server.SimulatorHttpTests.test_order_and_fill_persist_with_an_idempotent_receipt) ... ok
+2026-11-18T07:11:05.9818233Z test_exact_gross_projection_and_source_reference (test_shadow_adapter.ShadowAdapterTests.test_exact_gross_projection_and_source_reference) ... ok
+2026-11-18T07:11:05.9829828Z test_locked_balance_fails_without_order_reconciliation (test_shadow_adapter.ShadowAdapterTests.test_locked_balance_fails_without_order_reconciliation) ... ok
+2026-11-18T07:11:05.9831417Z test_multiple_positions_never_net (test_shadow_adapter.ShadowAdapterTests.test_multiple_positions_never_net) ... ok
+2026-11-18T07:11:05.9832710Z test_unmapped_assets_and_instruments_reject (test_shadow_adapter.ShadowAdapterTests.test_unmapped_assets_and_instruments_reject) ... ok
+2026-11-18T07:11:05.9942808Z test_classic_seed_preserves_gross_balances_and_lot_cost (test_simulator.SimulatorTests.test_classic_seed_preserves_gross_balances_and_lot_cost) ... ok
+2026-11-18T07:11:06.0646768Z test_extreme_price_move_executes_liquidation_and_replays (test_simulator.SimulatorTests.test_extreme_price_move_executes_liquidation_and_replays) ... ok
+2026-11-18T07:11:06.0979522Z test_fifo_partial_fills_and_reversal_keep_exact_cost (test_simulator.SimulatorTests.test_fifo_partial_fills_and_reversal_keep_exact_cost) ... ok
+2026-11-18T07:11:06.1252995Z test_market_shock_cancels_and_settles_in_one_command (test_simulator.SimulatorTests.test_market_shock_cancels_and_settles_in_one_command) ... ok
+2026-11-18T07:11:06.1375789Z test_parallel_checks_cannot_admit_orders_using_same_margin (test_simulator.SimulatorTests.test_parallel_checks_cannot_admit_orders_using_same_margin) ... ok
+2026-11-18T07:11:06.1554995Z test_stale_quotes_block_fills_and_invalid_limit_preserves_reservation (test_simulator.SimulatorTests.test_stale_quotes_block_fills_and_invalid_limit_preserves_reservation) ... ok
+2026-11-18T07:11:06.1692144Z test_batch_is_independent_per_shard_and_preserves_input_order (test_store.ShardedStoreTests.test_batch_is_independent_per_shard_and_preserves_input_order) ... ok
+2026-11-18T07:11:06.1735380Z test_existing_single_database_is_not_replaced_by_shards (test_store.ShardedStoreTests.test_existing_single_database_is_not_replaced_by_shards) ... ok
+2026-11-18T07:11:06.1890460Z test_independent_shards_can_write_while_same_account_conflicts (test_store.ShardedStoreTests.test_independent_shards_can_write_while_same_account_conflicts) ... ok
+2026-11-18T07:11:06.2129459Z test_stable_routing_and_manifest_checked_on_reopen (test_store.ShardedStoreTests.test_stable_routing_and_manifest_checked_on_reopen) ... ok
+2026-11-18T07:11:06.2223393Z test_audit_and_retries_survive_reopening_database (test_store.StoreTests.test_audit_and_retries_survive_reopening_database) ... ok
+2026-11-18T07:11:06.2286118Z test_audit_write_failure_rolls_back_snapshot (test_store.StoreTests.test_audit_write_failure_rolls_back_snapshot) ... ok
+2026-11-18T07:11:06.2365417Z test_batch_commits_successes_and_replays_exact_receipts_in_order (test_store.StoreTests.test_batch_commits_successes_and_replays_exact_receipts_in_order) ... ok
+2026-11-18T07:11:06.2417679Z test_batch_database_failure_rolls_back_earlier_commands (test_store.StoreTests.test_batch_database_failure_rolls_back_earlier_commands) ... ok
+2026-11-18T07:11:06.2517681Z test_command_ids_are_scoped_to_account (test_store.StoreTests.test_command_ids_are_scoped_to_account) ... ok
+2026-11-18T07:11:06.2615803Z test_compare_and_swap_serializes_independent_connections (test_store.StoreTests.test_compare_and_swap_serializes_independent_connections) ... ok
+2026-11-18T07:11:06.2681863Z test_failed_transition_and_unserializable_result_do_not_mutate_storage (test_store.StoreTests.test_failed_transition_and_unserializable_result_do_not_mutate_storage) ... ok
+2026-11-18T07:11:06.2682522Z 
+2026-11-18T07:11:06.2682857Z ----------------------------------------------------------------------
+2026-11-18T07:11:06.2685048Z Ran 73 tests in 0.683s
+2026-11-18T07:11:06.2685545Z 
+2026-11-18T07:11:06.2685672Z OK
+2026-11-18T07:11:06.2902015Z ##[group]Run python -m uta demo
+2026-11-18T07:11:06.2902316Z [36;1mpython -m uta demo[0m
+2026-11-18T07:11:06.2947833Z shell: /usr/bin/bash -e {0}
+2026-11-18T07:11:06.2948083Z env:
+2026-11-18T07:11:06.2948352Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.2948753Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig
+2026-11-18T07:11:06.2949146Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.2949511Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.2949865Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.2950410Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib
+2026-11-18T07:11:06.2950711Z ##[endgroup]
+2026-11-18T07:11:06.3693193Z {
+2026-11-18T07:11:06.3693589Z   "classic_shadow": {
+2026-11-18T07:11:06.3694021Z     "account_id": "classic-demo",
+2026-11-18T07:11:06.3694437Z     "source_version": 1,
+2026-11-18T07:11:06.3694904Z     "captured_at": "2026-11-18T07:11:06.368832+00:00",
+2026-11-18T07:11:06.3695369Z     "balances": [
+2026-11-18T07:11:06.3695699Z       {
+2026-11-18T07:11:06.3696020Z         "compartment": "spot",
+2026-11-18T07:11:06.3696397Z         "asset": "USD",
+2026-11-18T07:11:06.3696741Z         "free": "1000",
+2026-11-18T07:11:06.3697085Z         "locked": "0",
+2026-11-18T07:11:06.3697436Z         "borrowed": "0",
+2026-11-18T07:11:06.3697787Z         "interest": "0"
+2026-11-18T07:11:06.3698133Z       }
+2026-11-18T07:11:06.3698361Z     ],
+2026-11-18T07:11:06.3698585Z     "positions": [],
+2026-11-18T07:11:06.3698957Z     "source_digest": "8ee850bd241a8b1f523b0903881d5a9c0d5592f1449a684f1d007f7b6b70801a"
+2026-11-18T07:11:06.3699480Z   },
+2026-11-18T07:11:06.3699802Z   "disclaimer": "Illustrative only; no real orders or exchange connection",
+2026-11-18T07:11:06.3700413Z   "risk": {
+2026-11-18T07:11:06.3700944Z     "equity": "1100",
+2026-11-18T07:11:06.3701203Z     "initial_margin": "210",
+2026-11-18T07:11:06.3701471Z     "maintenance_margin": "105",
+2026-11-18T07:11:06.3701774Z     "open_order_margin": "0",
+2026-11-18T07:11:06.3702073Z     "available_margin": "890",
+2026-11-18T07:11:06.3702366Z     "margin_ratio": "10.47619047619047619047619047619048"
+2026-11-18T07:11:06.3702662Z   },
+2026-11-18T07:11:06.3702890Z   "order_check": {
+2026-11-18T07:11:06.3703130Z     "accepted": true,
+2026-11-18T07:11:06.3703389Z     "projected_equity": "1099.3798",
+2026-11-18T07:11:06.3703677Z     "projected_initial_margin": "252",
+2026-11-18T07:11:06.3703978Z     "projected_available_margin": "847.3798",
+2026-11-18T07:11:06.3704292Z     "reason": "sufficient initial margin"
+2026-11-18T07:11:06.3704572Z   },
+2026-11-18T07:11:06.3704802Z   "distressed_account_action": {
+2026-11-18T07:11:06.3705084Z     "action_id": "demo:1:1",
+2026-11-18T07:11:06.3705351Z     "kind": "cancel_all_orders",
+2026-11-18T07:11:06.3705619Z     "symbol": null,
+2026-11-18T07:11:06.3705853Z     "side": null,
+2026-11-18T07:11:06.3706084Z     "quantity": null,
+2026-11-18T07:11:06.3706331Z     "reduce_only": false
+2026-11-18T07:11:06.3706572Z   }
+2026-11-18T07:11:06.3706780Z }
+2026-11-18T07:11:06.3813247Z ##[group]Run python -m uta scenario --shards 4
+2026-11-18T07:11:06.3813603Z [36;1mpython -m uta scenario --shards 4[0m
+2026-11-18T07:11:06.3857642Z shell: /usr/bin/bash -e {0}
+2026-11-18T07:11:06.3857896Z env:
+2026-11-18T07:11:06.3858168Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.3858569Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig
+2026-11-18T07:11:06.3858955Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.3859325Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.3859672Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.3860141Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib
+2026-11-18T07:11:06.3860453Z ##[endgroup]
+2026-11-18T07:11:06.5307264Z {
+2026-11-18T07:11:06.5307580Z   "initial_equity": "14800",
+2026-11-18T07:11:06.5307856Z   "steps": [
+2026-11-18T07:11:06.5308071Z     {
+2026-11-18T07:11:06.5308342Z       "version": 1,
+2026-11-18T07:11:06.5308574Z       "action": "order_placed",
+2026-11-18T07:11:06.5308827Z       "health": "HEALTHY",
+2026-11-18T07:11:06.5309060Z       "equity": "14800",
+2026-11-18T07:11:06.5309275Z       "fills": []
+2026-11-18T07:11:06.5309475Z     },
+2026-11-18T07:11:06.5309661Z     {
+2026-11-18T07:11:06.5309874Z       "version": 2,
+2026-11-18T07:11:06.5310391Z       "action": "order_filled",
+2026-11-18T07:11:06.5310728Z       "health": "HEALTHY",
+2026-11-18T07:11:06.5311073Z       "equity": "14746",
+2026-11-18T07:11:06.5311416Z       "fills": [
+2026-11-18T07:11:06.5311735Z         {
+2026-11-18T07:11:06.5312026Z           "fee": "54",
+2026-11-18T07:11:06.5312335Z           "journal": [
+2026-11-18T07:11:06.5312642Z             {
+2026-11-18T07:11:06.5312981Z               "account": "fees",
+2026-11-18T07:11:06.5313356Z               "amount": "54.000000000000000000",
+2026-11-18T07:11:06.5313753Z               "asset": "USD"
+2026-11-18T07:11:06.5314077Z             },
+2026-11-18T07:11:06.5314364Z             {
+2026-11-18T07:11:06.5314665Z               "account": "user_net_usd",
+2026-11-18T07:11:06.5315081Z               "amount": "-54.000000000000000000",
+2026-11-18T07:11:06.5315382Z               "asset": "USD"
+2026-11-18T07:11:06.5315607Z             }
+2026-11-18T07:11:06.5315801Z           ],
+2026-11-18T07:11:06.5316003Z           "price": "60000",
+2026-11-18T07:11:06.5316238Z           "quantity": "0.9",
+2026-11-18T07:11:06.5316483Z           "realized_pnl": "0",
+2026-11-18T07:11:06.5316732Z           "symbol": "BTC-PERP"
+2026-11-18T07:11:06.5317045Z         }
+2026-11-18T07:11:06.5317239Z       ]
+2026-11-18T07:11:06.5317427Z     },
+2026-11-18T07:11:06.5317625Z     {
+2026-11-18T07:11:06.5317820Z       "version": 3,
+2026-11-18T07:11:06.5318038Z       "action": "order_placed",
+2026-11-18T07:11:06.5318558Z       "health": "HEALTHY",
+2026-11-18T07:11:06.5318787Z       "equity": "14746",
+2026-11-18T07:11:06.5319004Z       "fills": []
+2026-11-18T07:11:06.5319200Z     },
+2026-11-18T07:11:06.5319390Z     {
+2026-11-18T07:11:06.5319582Z       "version": 4,
+2026-11-18T07:11:06.5319807Z       "action": "prices_updated",
+2026-11-18T07:11:06.5320297Z       "health": "INSOLVENT",
+2026-11-18T07:11:06.5320541Z       "equity": "-4854",
+2026-11-18T07:11:06.5320758Z       "fills": []
+2026-11-18T07:11:06.5320958Z     },
+2026-11-18T07:11:06.5321143Z     {
+2026-11-18T07:11:06.5321329Z       "version": 5,
+2026-11-18T07:11:06.5321549Z       "action": "liquidation_cancel",
+2026-11-18T07:11:06.5321805Z       "health": "INSOLVENT",
+2026-11-18T07:11:06.5322027Z       "equity": "-4854",
+2026-11-18T07:11:06.5322238Z       "fills": []
+2026-11-18T07:11:06.5322431Z     },
+2026-11-18T07:11:06.5322612Z     {
+2026-11-18T07:11:06.5322799Z       "version": 6,
+2026-11-18T07:11:06.5323024Z       "action": "liquidation_fill",
+2026-11-18T07:11:06.5323281Z       "health": "INSOLVENT",
+2026-11-18T07:11:06.5323504Z       "equity": "-5105.64",
+2026-11-18T07:11:06.5323726Z       "fills": [
+2026-11-18T07:11:06.5323925Z         {
+2026-11-18T07:11:06.5324296Z           "fee": "71.64",
+2026-11-18T07:11:06.5324517Z           "journal": [
+2026-11-18T07:11:06.5324724Z             {
+2026-11-18T07:11:06.5324931Z               "account": "fees",
+2026-11-18T07:11:06.5325178Z               "amount": "71.640000000000000000",
+2026-11-18T07:11:06.5325446Z               "asset": "USD"
+2026-11-18T07:11:06.5325678Z             },
+2026-11-18T07:11:06.5325874Z             {
+2026-11-18T07:11:06.5326088Z               "account": "simulated_clearing",
+2026-11-18T07:11:06.5326367Z               "amount": "18180.000000000000000000",
+2026-11-18T07:11:06.5326633Z               "asset": "USD"
+2026-11-18T07:11:06.5326857Z             },
+2026-11-18T07:11:06.5327056Z             {
+2026-11-18T07:11:06.5327266Z               "account": "user_net_usd",
+2026-11-18T07:11:06.5327537Z               "amount": "-18180.000000000000000000",
+2026-11-18T07:11:06.5327797Z               "asset": "USD"
+2026-11-18T07:11:06.5328014Z             },
+2026-11-18T07:11:06.5328208Z             {
+2026-11-18T07:11:06.5328414Z               "account": "user_net_usd",
+2026-11-18T07:11:06.5328675Z               "amount": "-71.640000000000000000",
+2026-11-18T07:11:06.5328932Z               "asset": "USD"
+2026-11-18T07:11:06.5329149Z             }
+2026-11-18T07:11:06.5329338Z           ],
+2026-11-18T07:11:06.5329572Z           "price": "39800",
+2026-11-18T07:11:06.5329807Z           "quantity": "-0.9",
+2026-11-18T07:11:06.5330249Z           "realized_pnl": "-18180",
+2026-11-18T07:11:06.5330499Z           "symbol": "BTC-PERP"
+2026-11-18T07:11:06.5330727Z         }
+2026-11-18T07:11:06.5330928Z       ]
+2026-11-18T07:11:06.5331112Z     }
+2026-11-18T07:11:06.5331293Z   ],
+2026-11-18T07:11:06.5331484Z   "ending_account": {
+2026-11-18T07:11:06.5331700Z     "state": {
+2026-11-18T07:11:06.5331937Z       "as_of": "2026-11-18T07:11:06.496296+00:00",
+2026-11-18T07:11:06.5332198Z       "asset_factors": {
+2026-11-18T07:11:06.5332416Z         "BTC": "0.8",
+2026-11-18T07:11:06.5332619Z         "ETH": "0.75",
+2026-11-18T07:11:06.5332835Z         "USD": "1"
+2026-11-18T07:11:06.5333035Z       },
+2026-11-18T07:11:06.5333237Z       "balances": {
+2026-11-18T07:11:06.5333439Z         "BTC": "0.1",
+2026-11-18T07:11:06.5333642Z         "USD": "0"
+2026-11-18T07:11:06.5333839Z       },
+2026-11-18T07:11:06.5334037Z       "instruments": {
+2026-11-18T07:11:06.5334251Z         "BTC-PERP": {
+2026-11-18T07:11:06.5334474Z           "initial_margin_rate": "0.10",
+2026-11-18T07:11:06.5334745Z           "maintenance_margin_rate": "0.06"
+2026-11-18T07:11:06.5335000Z         },
+2026-11-18T07:11:06.5335197Z         "ETH-PERP": {
+2026-11-18T07:11:06.5335416Z           "initial_margin_rate": "0.12",
+2026-11-18T07:11:06.5335678Z           "maintenance_margin_rate": "0.07"
+2026-11-18T07:11:06.5335924Z         }
+2026-11-18T07:11:06.5336248Z       },
+2026-11-18T07:11:06.5336440Z       "liabilities": {
+2026-11-18T07:11:06.5336657Z         "USD": "8305.64"
+2026-11-18T07:11:06.5336876Z       },
+2026-11-18T07:11:06.5337064Z       "lots": {},
+2026-11-18T07:11:06.5337274Z       "marks": {
+2026-11-18T07:11:06.5337487Z         "BTC-PERP": "40000",
+2026-11-18T07:11:06.5337730Z         "ETH-PERP": "2100"
+2026-11-18T07:11:06.5337950Z       },
+2026-11-18T07:11:06.5338137Z       "orders": {
+2026-11-18T07:11:06.5338346Z         "entry": {
+2026-11-18T07:11:06.5338556Z           "closed_version": 2,
+2026-11-18T07:11:06.5338794Z           "fee_rate": "0.001",
+2026-11-18T07:11:06.5339026Z           "limit_price": "60000",
+2026-11-18T07:11:06.5339292Z           "quantity": "0.9",
+2026-11-18T07:11:06.5339521Z           "remaining": "0",
+2026-11-18T07:11:06.5339754Z           "status": "FILLED",
+2026-11-18T07:11:06.5340100Z           "symbol": "BTC-PERP"
+2026-11-18T07:11:06.5340419Z         },
+2026-11-18T07:11:06.5340616Z         "resting": {
+2026-11-18T07:11:06.5340845Z           "closed_version": 5,
+2026-11-18T07:11:06.5341070Z           "fee_rate": "0.001",
+2026-11-18T07:11:06.5341341Z           "limit_price": "60000",
+2026-11-18T07:11:06.5341583Z           "quantity": "0.1",
+2026-11-18T07:11:06.5341959Z           "remaining": "0.1",
+2026-11-18T07:11:06.5342200Z           "status": "CANCELED",
+2026-11-18T07:11:06.5342440Z           "symbol": "BTC-PERP"
+2026-11-18T07:11:06.5342657Z         }
+2026-11-18T07:11:06.5342852Z       },
+2026-11-18T07:11:06.5343048Z       "positions": {},
+2026-11-18T07:11:06.5343258Z       "prices": {
+2026-11-18T07:11:06.5343462Z         "BTC": "40000",
+2026-11-18T07:11:06.5343677Z         "ETH": "2100",
+2026-11-18T07:11:06.5343885Z         "USD": "1"
+2026-11-18T07:11:06.5344087Z       },
+2026-11-18T07:11:06.5344281Z       "source": null,
+2026-11-18T07:11:06.5344501Z       "version": 6
+2026-11-18T07:11:06.5344715Z     },
+2026-11-18T07:11:06.5344905Z     "risk": {
+2026-11-18T07:11:06.5345113Z       "equity": "-5105.64",
+2026-11-18T07:11:06.5345354Z       "initial_margin": "576",
+2026-11-18T07:11:06.5345598Z       "maintenance_margin": "460.8",
+2026-11-18T07:11:06.5345855Z       "open_order_margin": "0",
+2026-11-18T07:11:06.5346106Z       "available_margin": "-5681.64",
+2026-11-18T07:11:06.5346395Z       "margin_ratio": "-11.07994791666666666666666666666667",
+2026-11-18T07:11:06.5346698Z       "model_version": "linear-pm-v1",
+2026-11-18T07:11:06.5346954Z       "stress_loss": "576",
+2026-11-18T07:11:06.5347236Z       "worst_scenario": "collateral_gap_down",
+2026-11-18T07:11:06.5347547Z       "initial_margin_floor": "0",
+2026-11-18T07:11:06.5347804Z       "maintenance_margin_floor": "0",
+2026-11-18T07:11:06.5348057Z       "scenarios": [
+2026-11-18T07:11:06.5348267Z         {
+2026-11-18T07:11:06.5348471Z           "name": "market_down",
+2026-11-18T07:11:06.5348710Z           "equity": "-5585.64",
+2026-11-18T07:11:06.5348942Z           "loss": "480",
+2026-11-18T07:11:06.5349172Z           "collateral_change": "-480",
+2026-11-18T07:11:06.5349431Z           "liability_change": "0",
+2026-11-18T07:11:06.5349680Z           "position_change": "0",
+2026-11-18T07:11:06.5350120Z           "asset_shocks": {
+2026-11-18T07:11:06.5350377Z             "USD": "0",
+2026-11-18T07:11:06.5350603Z             "BTC": "-0.15",
+2026-11-18T07:11:06.5350830Z             "ETH": "-0.2"
+2026-11-18T07:11:06.5351047Z           },
+2026-11-18T07:11:06.5351254Z           "mark_shocks": {
+2026-11-18T07:11:06.5351481Z             "BTC-PERP": "-0.15",
+2026-11-18T07:11:06.5351737Z             "ETH-PERP": "-0.2"
+2026-11-18T07:11:06.5351965Z           }
+2026-11-18T07:11:06.5352151Z         },
+2026-11-18T07:11:06.5352339Z         {
+2026-11-18T07:11:06.5352542Z           "name": "market_up",
+2026-11-18T07:11:06.5352771Z           "equity": "-4625.64",
+2026-11-18T07:11:06.5353001Z           "loss": "-480",
+2026-11-18T07:11:06.5353230Z           "collateral_change": "480",
+2026-11-18T07:11:06.5353486Z           "liability_change": "0",
+2026-11-18T07:11:06.5353730Z           "position_change": "0",
+2026-11-18T07:11:06.5354085Z           "asset_shocks": {
+2026-11-18T07:11:06.5354306Z             "USD": "0",
+2026-11-18T07:11:06.5354683Z             "BTC": "0.15",
+2026-11-18T07:11:06.5354968Z             "ETH": "0.2"
+2026-11-18T07:11:06.5355180Z           },
+2026-11-18T07:11:06.5355392Z           "mark_shocks": {
+2026-11-18T07:11:06.5355614Z             "BTC-PERP": "0.15",
+2026-11-18T07:11:06.5355847Z             "ETH-PERP": "0.2"
+2026-11-18T07:11:06.5356070Z           }
+2026-11-18T07:11:06.5356256Z         },
+2026-11-18T07:11:06.5356443Z         {
+2026-11-18T07:11:06.5356647Z           "name": "btc_down_eth_up",
+2026-11-18T07:11:06.5356891Z           "equity": "-5489.64",
+2026-11-18T07:11:06.5357119Z           "loss": "384",
+2026-11-18T07:11:06.5357345Z           "collateral_change": "-384",
+2026-11-18T07:11:06.5357605Z           "liability_change": "0",
+2026-11-18T07:11:06.5357858Z           "position_change": "0",
+2026-11-18T07:11:06.5358095Z           "asset_shocks": {
+2026-11-18T07:11:06.5358316Z             "USD": "0",
+2026-11-18T07:11:06.5358525Z             "BTC": "-0.12",
+2026-11-18T07:11:06.5358736Z             "ETH": "0.12"
+2026-11-18T07:11:06.5358941Z           },
+2026-11-18T07:11:06.5359259Z           "mark_shocks": {
+2026-11-18T07:11:06.5359489Z             "BTC-PERP": "-0.12",
+2026-11-18T07:11:06.5359723Z             "ETH-PERP": "0.12"
+2026-11-18T07:11:06.5360084Z           }
+2026-11-18T07:11:06.5360282Z         },
+2026-11-18T07:11:06.5360471Z         {
+2026-11-18T07:11:06.5360673Z           "name": "btc_up_eth_down",
+2026-11-18T07:11:06.5360922Z           "equity": "-4721.64",
+2026-11-18T07:11:06.5361149Z           "loss": "-384",
+2026-11-18T07:11:06.5361374Z           "collateral_change": "384",
+2026-11-18T07:11:06.5361620Z           "liability_change": "0",
+2026-11-18T07:11:06.5361867Z           "position_change": "0",
+2026-11-18T07:11:06.5362103Z           "asset_shocks": {
+2026-11-18T07:11:06.5362327Z             "USD": "0",
+2026-11-18T07:11:06.5362537Z             "BTC": "0.12",
+2026-11-18T07:11:06.5362762Z             "ETH": "-0.12"
+2026-11-18T07:11:06.5362968Z           },
+2026-11-18T07:11:06.5363165Z           "mark_shocks": {
+2026-11-18T07:11:06.5363388Z             "BTC-PERP": "0.12",
+2026-11-18T07:11:06.5363620Z             "ETH-PERP": "-0.12"
+2026-11-18T07:11:06.5363838Z           }
+2026-11-18T07:11:06.5364022Z         },
+2026-11-18T07:11:06.5364206Z         {
+2026-11-18T07:11:06.5364412Z           "name": "collateral_gap_down",
+2026-11-18T07:11:06.5364666Z           "equity": "-5681.64",
+2026-11-18T07:11:06.5364891Z           "loss": "576",
+2026-11-18T07:11:06.5365126Z           "collateral_change": "-576",
+2026-11-18T07:11:06.5365372Z           "liability_change": "0",
+2026-11-18T07:11:06.5365610Z           "position_change": "0",
+2026-11-18T07:11:06.5365847Z           "asset_shocks": {
+2026-11-18T07:11:06.5366065Z             "USD": "0",
+2026-11-18T07:11:06.5366277Z             "BTC": "-0.18",
+2026-11-18T07:11:06.5366489Z             "ETH": "-0.25"
+2026-11-18T07:11:06.5366706Z           },
+2026-11-18T07:11:06.5366905Z           "mark_shocks": {
+2026-11-18T07:11:06.5367119Z             "BTC-PERP": "0.08",
+2026-11-18T07:11:06.5367353Z             "ETH-PERP": "0.12"
+2026-11-18T07:11:06.5367580Z           }
+2026-11-18T07:11:06.5367766Z         },
+2026-11-18T07:11:06.5367952Z         {
+2026-11-18T07:11:06.5368157Z           "name": "collateral_gap_up",
+2026-11-18T07:11:06.5368404Z           "equity": "-4529.64",
+2026-11-18T07:11:06.5368626Z           "loss": "-576",
+2026-11-18T07:11:06.5368847Z           "collateral_change": "576",
+2026-11-18T07:11:06.5369095Z           "liability_change": "0",
+2026-11-18T07:11:06.5369331Z           "position_change": "0",
+2026-11-18T07:11:06.5369565Z           "asset_shocks": {
+2026-11-18T07:11:06.5369777Z             "USD": "0",
+2026-11-18T07:11:06.5370077Z             "BTC": "0.18",
+2026-11-18T07:11:06.5370369Z             "ETH": "0.25"
+2026-11-18T07:11:06.5370585Z           },
+2026-11-18T07:11:06.5370789Z           "mark_shocks": {
+2026-11-18T07:11:06.5371154Z             "BTC-PERP": "-0.08",
+2026-11-18T07:11:06.5371398Z             "ETH-PERP": "-0.12"
+2026-11-18T07:11:06.5371620Z           }
+2026-11-18T07:11:06.5371815Z         }
+2026-11-18T07:11:06.5372004Z       ]
+2026-11-18T07:11:06.5372193Z     },
+2026-11-18T07:11:06.5372395Z     "health": "INSOLVENT"
+2026-11-18T07:11:06.5372612Z   },
+2026-11-18T07:11:06.5372807Z   "replay": {
+2026-11-18T07:11:06.5373009Z     "account_id": "demo",
+2026-11-18T07:11:06.5373225Z     "version": 6,
+2026-11-18T07:11:06.5373440Z     "events_verified": 7
+2026-11-18T07:11:06.5373661Z   }
+2026-11-18T07:11:06.5373845Z }
+2026-11-18T07:11:06.5505754Z ##[group]Run python formal/explore_reservation.py
+2026-11-18T07:11:06.5506114Z [36;1mpython formal/explore_reservation.py[0m
+2026-11-18T07:11:06.5555913Z shell: /usr/bin/bash -e {0}
+2026-11-18T07:11:06.5556247Z env:
+2026-11-18T07:11:06.5556620Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.5557018Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib/pkgconfig
+2026-11-18T07:11:06.5557410Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.5557752Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.5558103Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.16/x64
+2026-11-18T07:11:06.5558456Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.16/x64/lib
+2026-11-18T07:11:06.5558754Z ##[endgroup]
+2026-11-18T07:11:06.6053139Z Safe abstraction: 2628 reachable states, invariants hold.
+2026-11-18T07:11:06.6053683Z Unsafe snapshot-only mutation: total held exceeds capacity (362 states found).
+2026-11-18T07:11:06.6054088Z   begin(o1, 1): held=(0, 0, 0), version=0
+2026-11-18T07:11:06.6054369Z   begin(o2, 2): held=(0, 0, 0), version=0
+2026-11-18T07:11:06.6054634Z   commit(o1): held=(1, 0, 0), version=1
+2026-11-18T07:11:06.6054899Z   commit(o2): held=(1, 2, 0), version=2
+2026-11-18T07:11:06.6186651Z Post job cleanup.
+2026-11-18T07:11:06.7180080Z (node:2373) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-11-18T07:11:06.7180814Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-18T07:11:06.7376196Z Post job cleanup.
+2026-11-18T07:11:06.8061036Z [command]/usr/bin/git version
+2026-11-18T07:11:06.8095479Z git version 2.56.1
+2026-11-18T07:11:06.8127903Z Temporarily overriding HOME='/home/runner/work/_temp/aa245896-384b-41b3-b4c2-ce688ac6a321' before making global git config changes
+2026-11-18T07:11:06.8128721Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-18T07:11:06.8132613Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/uta-unified-account/uta-unified-account
+2026-11-18T07:11:06.8168006Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-18T07:11:06.8198211Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-18T07:11:06.8467008Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-18T07:11:06.8507239Z http.https://github.com/.extraheader
+2026-11-18T07:11:06.8531827Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-18T07:11:06.8542291Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-18T07:11:06.8893289Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-18T07:11:06.8925189Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-18T07:11:06.9308917Z Cleaning up orphan processes
+2026-11-18T07:11:06.9611758Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

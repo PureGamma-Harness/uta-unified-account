@@ -1,0 +1,99 @@
+{
+  "base_commit": "02549e5d662caa7156dc30e95f1d5e2dce18215c",
+  "bounded_examples": 14,
+  "bounds": {
+    "CPU": 1,
+    "SQL": 0,
+    "hard_timeout_seconds": 10,
+    "network": 0,
+    "reserved_trailer_bytes": 512,
+    "shared_raw_bytes": 262144,
+    "target_subprocesses": 0,
+    "worker_threads": 0
+  },
+  "expected_behavior": {
+    "alias_result": "LedgerError before first posting, original message unchanged",
+    "alias_sequences": [
+      "True",
+      "1.0",
+      "Decimal(1)",
+      "Fraction(1)",
+      "int subclass",
+      "equality-only object"
+    ],
+    "gap_order_duplicate": "LedgerError",
+    "live_retry_manual_balances": {
+      "clearing/USD": "-3",
+      "customer/USD": "3"
+    },
+    "native_trade_manual_balances": {
+      "clearing/BTC": "-0.00123456",
+      "clearing/USD": "100",
+      "customer/BTC": "0.00123456",
+      "customer/USD": "-100.25",
+      "fees/USD": "0.25"
+    }
+  },
+  "expected_runtime": {
+    "affinity": [
+      1
+    ],
+    "executable_bytes": 30894944,
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "flags": {
+      "dont_write_bytecode": 1,
+      "isolated": 1,
+      "no_site": 1
+    },
+    "resolved_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sys_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+  },
+  "host_argv_template": [
+    "/usr/bin/timeout",
+    "--signal=KILL",
+    "10s",
+    "/usr/bin/taskset",
+    "-c",
+    "1",
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "-I",
+    "-S",
+    "-B",
+    "/workspace/uta-account-ledger-sequence/tools/run_ledger_sequence_once.py",
+    "--plan-sha256",
+    "<PLAN_SHA256>",
+    "--source-commit",
+    "<FROZEN_COMMIT>",
+    "--private-directory",
+    "<NEW_PRIVATE_DIRECTORY>"
+  ],
+  "input_files": {
+    "tests/test_ledger_sequence_integrity.py": {
+      "bytes": 3917,
+      "sha256": "553320ab8a51ecf45463519f1b9381a29beb6b3a52bdf2f02f59d61009304244"
+    },
+    "tools/run_ledger_sequence_once.py": {
+      "bytes": 6792,
+      "sha256": "91a3a90d230d87e260ad0c57c1b41aa46e68b6fb2a7265f1830b86e36fea4da9"
+    },
+    "uta/ledger.py": {
+      "bytes": 6835,
+      "sha256": "43da258f8411dd6022e7253e51af7236cf0dd3a060acb7e0eb2e2be090083d17"
+    }
+  },
+  "kind": "REFERENCE_LEDGER_NATIVE_SEQUENCE_FOCUSED_PURE_ONCE",
+  "methods": [
+    "test_numeric_aliases_reject_before_any_posting",
+    "test_consecutive_native_sequences_recover_exact_two_asset_balances",
+    "test_gaps_ordering_and_duplicate_business_ids_still_reject",
+    "test_live_receipts_and_retries_keep_native_sequences"
+  ],
+  "planned_methods": 4,
+  "production_approved": false,
+  "root_once_GO_required": true,
+  "schema": 1,
+  "scope": "Four reference-ledger methods in memory only; caller owns actual argv/exit/reap/elapsed and Git binding. Not SQL, finance acceptance, benchmark or OS sandbox.",
+  "status": "NOT_RUN",
+  "target_attempts": 0
+}

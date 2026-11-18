@@ -140,7 +140,8 @@ class Ledger:
     def replay(cls, scales: Mapping[str, int], events: Sequence[JournalEvent]) -> Ledger:
         result = cls(scales)
         for expected, event in enumerate(events, 1):
-            if not isinstance(event, JournalEvent) or event.sequence != expected:
+            if (not isinstance(event, JournalEvent) or type(event.sequence) is not int
+                    or event.sequence != expected):
                 raise LedgerError("journal sequence is missing or out of order")
             posted = result.post(event.event_id, event.postings)
             if posted.sequence != expected:
