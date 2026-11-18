@@ -15,6 +15,7 @@ import pstats
 import random
 import resource
 import sys
+import traceback
 from time import perf_counter_ns, process_time_ns
 
 from uta.market import MarketSnapshot
@@ -148,8 +149,8 @@ class SqlObserver:
                     connection = arguments[0]
                     connection.set_trace_callback(self._trace)
                     self.connections[self.phase] += 1
-                except BaseException:
-                    self.failure = "sqlite_trace_install_failed"
+                except BaseException as error:
+                    self._first_fault("sqlite_trace_install_failed", "sqlite3.connect/handle", error)
         sys.addaudithook(audit)
 
     def _trace(self, statement):
@@ -163,14 +164,41 @@ class SqlObserver:
             self.events[(self.phase, category)] += 1
             self.total_events += 1
             if self.total_events > 1000000:
-                self.failure = "sqlite_trace_event_budget_exceeded"
-        except BaseException:
-            # SQLite swallows trace callback errors, so latch and fail at the
-            # application's next checked boundary instead of claiming success.
-            self.failure = "sqlite_trace_callback_failed"
+                self._first_fault("sqlite_trace_event_budget_exceeded", "sqlite_trace_counter_limit")
+        except BaseException as error:
+            # SQLite swallows trace callback errors. Preserve the first fault,
+            # never SQL text, and keep the original incomplete-observation gate.
+            self._first_fault("sqlite_trace_callback_failed", "sqlite_trace_callback", error)
+
+    @staticmethod
+    def _bounded(value, limit):
+        data = value.encode("utf-8", "backslashreplace")
+        return {"text": data[:limit].decode("utf-8", "ignore"), "truncated": len(data) > limit,
+                "limit_bytes": limit}
+
+    def _first_fault(self, category, event, error=None):
+        if self.failure is not None:
+            return
+        fault = {"category": category, "phase": self.phase, "event": event,
+            "total_trace_events": self.total_events, "connections_in_phase": self.connections[self.phase],
+            "trace_events_in_phase": {name: count for (phase, name), count in self.events.items() if phase == self.phase},
+            "exception": None, "expanded_SQL_statement_copied": False, "first_fault_never_overwritten": True}
+        # Latch before formatting so even diagnostics failures cannot erase the
+        # incomplete state. All details stay private until an explicit filter.
+        self.failure = fault
+        if error is not None:
+            try:
+                fault["exception"] = {"type": self._bounded(type(error).__module__ + "." + type(error).__qualname__, 128),
+                    "message": self._bounded(str(error), 512), "stack_limit_frames": 6,
+                    "stack": [{"file": self._bounded(frame.filename, 256), "function": self._bounded(frame.name, 128),
+                               "line": frame.lineno} for frame in traceback.extract_tb(error.__traceback__, limit=6)]}
+            except BaseException as detail_error:
+                fault["detail_capture_failed"] = self._bounded(type(detail_error).__name__, 128)
 
     def snapshot(self):
-        require(self.failure is None, "SQLite trace observation became incomplete")
+        if self.failure is not None:
+            raise AssertionError("SQLite trace observation became incomplete; first_fault="
+                                 + canonical(self.failure).decode("ascii"))
         return {"phase": self.phase, "events": {category: count for (phase, category), count in self.events.items()
                 if phase == self.phase}, "connections": self.connections[self.phase],
                 "counts_are_trace_events_including_trigger_repeats": True}
