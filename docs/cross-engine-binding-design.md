@@ -2,6 +2,8 @@
 
 状态：**DESIGN_ONLY，未实现、未运行、未激活、未获生产批准**。本提交只增加设计与规则契约；不修改金融运行时，不读取数据库或进程，不执行目标 import、编译、测试、CI、worker 或外部服务。规则均为本系统选择；这里没有把公开交易所行为推定为已验证事实。
 
+本版为 D0 修订2，整合固定审查提交 [金融审查](cross-engine-binding-financial-review.md) `40bee5ff668c20e31492ea5b2964242a31ad9b40` 与 [独立验证审查](cross-engine-binding-independent-verification.md) `5b00e14b7eca382d7e9c8022437f0d5ced1fc38b`，审查原对象仍是 `53acece53d27fb118c89286c10e5be41bb2ca5e7`，不改写原审查结论。**D2 金融 shadow 明确 BLOCKED**：下述恢复、关闸、绑定及最终行情时点都是待实现/待证的契约；补充规格不等于关闭 EBD-FIN-001/002 或 EVG-001..008。D1 纯绑定可另行审代码和执行计划；本文不给任何目标执行 GO。
+
 ## 1. 建议与边界
 
 建议先交付固定可调用对象的执行绑定，再为**新建、合成数据、单机独占写入者**增加显式版本化的同步 shadow 契约。默认仍是 Fraction 参考实现；shadow 的权威结果仍来自参考实现，Decimal 候选只做逐字段验证。Decimal 权威接入必须使用另一个不可变契约，重新通过数值、账务、重启、故障和容量门槛，不能通过修改默认值或配置热更新启用。
@@ -50,13 +52,13 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 
 ## 3. 执行身份：必须绑定实际调用
 
-新增有限模块 `uta/risk_engine.py`，只负责本系统 Cross 估值器的固定解析、输入域验证、调用与精确比较。推荐函数：`resolve_valuation_contract`、`capture_engine_binding`、`assert_engine_binding`、`evaluate_cross_contract`。名称是实施提案，不是已经存在的 API。
+分阶段新增有限模块：D1 纯绑定提案使用 `uta/risk_engine_binding.py`，只产出固定图证据并检查/解析已知函数；D2 才考虑 `uta/risk_engine.py` 的契约解析、输入域验证、实际调用与精确比较。后者推荐 `resolve_valuation_contract/evaluate_cross_contract`，前者的 capture/assert/resolve API 随独立 D1 CODE 审查固定。名称是实施提案，不是已经存在或已授权接入的 API。
 
 `cross_fraction_v1` 固定到 `portfolio.calculate_cross_risk`；`cross_decimal_v1` 固定到 `cross_decimal_kernel.calculate_cross_risk_decimal`。默认参考路径不因读取归档内任意字符串而导入模块；实验 opt-in 才由固定代码导入候选。归档中的 engine ID 只选择封闭集合，模块路径、类名、函数名、callable 参数和动态 import 一律不作为执行输入。
 
 ### 3.1 新 binding artifact 的精确范围
 
-另设 `RISK_ENGINE_BINDING_FORMAT = 1`，与现有 credit artifact format 分离。对实验决策增加新的 artifact envelope；legacy format 1 的解析语义不变。外层必须精确列出 `format`、`base_artifact`、`engine_binding`；`engine_binding` 精确列出 binding 格式、契约 ID、可调用对象图、常量与别名、类布局、runtime capsule 和摘要算法。不能接受未知 key、未知对象类型、无界递归、重复 JSON key 或丢失字段。
+另设 `RISK_ENGINE_BINDING_FORMAT = 1`，与现有 credit artifact format 分离。对实验决策增加新的 artifact envelope；legacy format 1 的解析语义不变。外层必须精确列出 `format`、`base_artifact`、`engine_binding`；`engine_binding` 精确列出 binding 格式、契约 ID、可调用对象图、常量与别名、类布局、runtime capsule、摘要算法及 `trust_partitions`。这是尚未部署的 D0 草案修订，不是对已存在 format 1 的隐式兼容升级。不能接受未知 key、未知对象类型、无界递归、重复 JSON key 或丢失字段。
 
 必须覆盖以下事实，而不只是模块名：
 
@@ -75,9 +77,23 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 
 ### 3.2 校验时点与威胁假设
 
-构造器在打开/创建金融 authority **之前**解析并验证契约与 binding；只读打开再次验证。每个估值决策取得单次 `now`、同一 immutable account/market/rules/catalog 后校验，在提交接纳回执和预占前再次校验。发现函数、常量、类、registry 或 selected ID 漂移即阻断新风险并记录告警。不能只在启动计算一次，再永久信任缓存。
+构造器在开放正常金融/新增风险 authority **之前**解析并验证契约与完整 binding；只读打开再次验证。既有实验库的启动恢复先经独立 authority/reference 验证与持久关闭新风险闸门，再做 candidate 检查，不走自动修表/安装的正常构造器；首建失败也不得产生可写资金账户。每个估值决策取得单次 `now`、同一 immutable account/market/rules/catalog 后校验，在提交接纳回执和预占前再次校验。发现函数、常量、类、registry 或 selected ID 漂移即阻断新风险并记录告警。不能只在启动计算一次，再永久信任缓存。
 
 该机制检测受信进程中可观测的错误绑定或变更，**不保证防御可同时修改检查器和目标、或在两次检查间任意写内存的攻击者**。进程、OS、镜像和源码不可变是明确假设。Python 同进程 hash 不是沙箱、签名、远程证明或 writer 权限。单写者、fencing token、账户版本、事务和既有控制面验证仍须分别成立。禁止以这个提案绕过现存受阻的 AuthDB probe 或既有运行授权范围。
+
+### 3.3 稳定图、真实查找 anchor 与信任分区
+
+进程内身份和持久身份分开。可信启动时从固定、受审模块建立对象 anchor：每个函数必须是预定模块/registry 指向的函数，其 `__globals__` 必须是该模块受检的实际 globals dict；其自身 `__builtins__` 实际查找映射及每个使用的 builtin 必须匹配受信 runtime anchor。只比较模块 `__builtins__` 不够，另一个 FunctionType 可以持有不同 builtins。沿 helper 的执行边重复相同检查；已变更对象本身不能在重启时自动成为新的可信 expected 值。预期制品/binding 由另行受审发布输入固定，不从历史归档提供的函数名加载。
+
+持久 graph 使用固定逻辑节点名 `(module, qualified_name, object_kind)`，边记录来源节点、静态成员/lookup 标签、目标节点；同一共享对象使用同一逻辑节点。节点和边按规范 UTF-8 字节排序。primitive 使用显式类型标签，区分 bool/int、finite Decimal tuple、字节和字符串；code object 使用固定 runtime 下的规范字段编码。字符串不通过 repr、内存地址或隐式 Unicode 归一化改变。canonical JSON 使用 sort_keys、紧凑分隔符、allow_nan=False，再加固定格式域前缀计算 SHA-256。`id()`/is 可以用于本进程临时去重或身份断言，绝不能进入持久 ID、manifest、名字或排序依据；绝对路径、时间和缓存插入顺序也不进入 ID。
+
+D1 必须先固定数字上限与规范字节，与当前纯绑定 CODE 提案对齐的待审预算为 nodes2048、edges32768、depth24、每容器2048项、canonical4MiB、unwrap8。它们不是实际覆盖或性能通过结果，装不下须明确新 schema 修订而非自动扩容。任何改变须连同 encoding version 明确评审。已知逻辑节点间的共享边/回边只能来自固定已审清单；未知环、wrapper、default_factory、descriptor 或越界图有界失败。类方法/property accessor/dataclass default/default_factory 的执行边不能因“生成代码”被统称排除。跨两次干净可信启动相同制品须得相同 digest，同时 mutation 负例证明 actual identity 漂移会拒绝。各分区先对不含自身 `binding_id` 的规范 payload 求摘要，再把派生 ID 纳入外层；禁止摘要自引用。
+
+上述 D1 提案精确固定为 `f34644bd8300e94d39d8782b04bcca0673023da1`，基线 `d1fd381bde923dc4010977058b76e34d6162e9a9`；提案文件为 `docs/cross-engine-binding-d1-protocol.md` 和 `evidence/designs/cross-engine-binding-d1/proposal.json`，其不可变摘要另列于 source evidence。该提交本身只有文档/JSON，未合入此分支，也没有新模块实现或目标运行。它提出2个 engine、23个 named own functions、22个 own classes及更小 scalar/code 上限；外部 runtime capsule 不由纯 binding 自认证。D1 evidence format 与这里未来 D2 的完整 audit/recovery envelope 不是同一对象，不能互相冒充；返回一个固定 callable 也不证明 service 最终实际调用它。新模块使现行 V3 inventory65py/66runtime 变为未来66py/67runtime，仍需另行新版本清单审查，不能复用旧 normal CI GO。
+
+`trust_partitions` 在 D2 必须精确区分 `authority` 和 `candidate`。authority 闭包覆盖参考计算、共享模型/runtime、账户/订单/费用/预占/资金/仓位、fencing、控制、结算与参考审计；candidate 仅包含候选专属函数、类、常量和文件，引用共享节点时指向 authority 的固定节点。两分区都列出逻辑节点/边和精确 source scope 并有独立稳定 digest；任一未知依赖或跨分区边不明确，按共享/未知故障处理。resolver、实际权威 selector 和恢复审计逻辑属于 authority，不能归入可忽略的候选分区。
+
+完整 shadow artifact 仍需全量一致才能批准新风险。仅 candidate 分区失败时，正常 constructor/opener/audit 的全量校验不能被偷偷放宽；必须另有固定、受限的 reference-settlement opener 和新的恢复审计种类（5.2）。参考/共享分区、runtime、契约或 writer 权限无法确证时，该入口也拒绝。D1 纯绑定不要求实现这些金融恢复入口；在 D2 实现并独立证明之前，它们保持 BLOCKED。
 
 ## 4. 持久策略与历史版本
 
@@ -132,6 +148,7 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 - `existing_services._source_arguments` 按明确版本读取；持久风险契约、order archive、base valuation、artifact、cache options 和 engine binding 必须唯一且一致。零个或多个候选均拒绝，禁止按最近时间或默认配置猜测。新增 exchange-only 打开路径，实验库的旧 `open_existing_services` 明确拒绝，不能意外构造 CreditService。
 - `DecisionAudit` 构造时机须在契约解析后；实验 artifact 只能在新 envelope 下写入。`_replay_state` 由 archive 版本明确分派：v1 固定参考；v2 固定 shadow，完整重算两侧。未知版本、缺失 candidate artifact、runtime/code 不匹配拒绝，不导入 archive 指定的模块，不重算后改写旧结果。
 - 实验决策输入新增严格的 `valuation_evaluation` 记录，精确字段为 `format=1/evaluated_at/max_age_us/market_snapshot_id/contract_id/binding_id`，记录本次唯一 UTC 估值时间、原 market snapshot 与 binding identity；max age 必须与政策一致。v2 重放按这个时间做 freshness 检验。现有 v1 数值重放使用 `market.observed_at`，不能凭数值匹配宣称已复核历史行情新鲜度、历史 lease 或撮合；保留这个限制，不补造旧时间。
+- 同一 valuation time 只固定参考/候选及同一决策 before/after 的数值，不替代最终准入时效检查。实验新风险在双算、审计和排队之后，原账户与 market 版本未变、原 fencing/precommit guard 仍成立的最终准入点，再采集 `admission_checked_at` 并用同一 snapshot 复核：`age <= max_age`、`age >= -max_future_skew`；当前参考 `MarketSnapshot.validate` 的 future-skew 默认1秒，等号允许。新契约归档 `admission_freshness={format:1,checked_at,market_snapshot_id,max_age_us,max_future_skew_us,check_result}`，版本/值精确固定。新契约另要求 checked_at 不早于本命令 captured evaluated_at；越界时钟回退或超过明确 future-skew 的报价拒绝。最终检查后仅完成其证据写入、原最终 writer guard 与 COMMIT，不再执行新计算或换市场；不能用重新取行情、重置 valuation time 或延长 TTL 修复已过期决策。记录的 checked_at 是 guard 时点，不是物理 COMMIT 证明。双算后超时拒绝新增风险，历史数值重放与时效验证结果分报。
 - Credit V2 的 `BASE_POLICY_FIELDS` 十字段、两缓存参数和受审 format 不变。`audit_policy`、`_persisted_policy`、安装和新 borrow 入口在实验契约下提前拒绝；必须发生在资金池、借贷账、能力或权威状态变化之前。未来信用候选需单独新模型/政策版本和独立审查，不偷升级现有 V2 authority。
 - 受管 worker、sharded/native router、takeover、descriptor seal、supervisor cache proof 在未完整传播新契约前显式拒绝实验。不能只增加 API 参数而在接管时回落到参考或丢失 selector。
 - PR52 的完整持久风险策略字符串比较说明旧普通构造器具有静态不匹配拒绝路径；这**不是所有旧写入者已失效的证明**。必须用固定旧二进制覆盖构造、只读打开、worker 接管、直接金融入口，比较金融表/账本/预占前后。允许的控制租约尝试须单独记录。若任何入口可越过契约执行金融写入，需先追加 schema/capability fence；不得启用 shadow authority。
@@ -155,9 +172,44 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 
 先在原账户事务里捕获一份现有逻辑生成的 LoanAccount（含原 reserve）、同一 market snapshot/catalog/rules 与单次 `now/max_age`。参考和候选读取相同值，不二次查询账户、不取新行情、不改 fees/reserve/仓位投影。比较 CrossRisk 全部金额、borrowable 键/值、status、rule/catalog/market 版本与 market ID；要求精确数值及既有 canonical text 一致，不使用容差、浮点或当前 Decimal context。未知输出类型、少字段或额外字段拒绝。差异报告保留输入摘要与字段，不把客户敏感数据写入公共仓库。
 
-新增风险路径遇到 unsupported、mismatch 或 binding drift，原接纳与预占事务回滚，返回确定错误并用独立可审计控制记录冻结新增风险。冻结记录如何与金融回滚保持关联须实现并故障测试，不能在已回滚事务中声称告警已持久化。未取得接纳回执的命令仍按原命令 ID 查询结果，不能盲目重提。
+新增风险路径遇到候选 unsupported、mismatch 或 binding drift，立即关闸并按5.3的持久顺序回滚原接纳/预占，完成冻结后才返回确定失败。不得使用“先回滚，随后尽力写冻结”的窗口。未取得确定回执的命令仍按原命令 ID 查询结果，不能盲目重提。
 
 **已确认成交及其他必须履行的结算义务不能因 shadow 失败被丢弃。** 此时参考一直是声明的权威，不存在从候选临时切换；照原规则持久结算，同时记录 candidate 失败、停止新增风险并进入人工调查。撤单等不增加风险且无需新估值的路径继续执行。若当前服务无法区分新增风险与必须结算义务，首次同步 shadow 只能用于只读/离线验证，直到这一区分经过独立验收。
+
+### 5.2 D2 阻断：操作可信来源、结算与重开矩阵
+
+固定 PR52 `service.apply_fill`（923行）明确是**尚未对外执行的本地授权并结算**，不是外部确认成交摄入；其 projected risk（979附近）、audit-before（994附近）和 audit-after（1033行）都可能抛错。`storage._role_transaction` 对任意异常回滚；`matching.match_once` 将两侧 `_apply_fill` 与 match receipt 放在同一事务，整笔 COMMIT 后才返回确认，异常可回滚两腿和此前 batch。上述现有代码不能证明候选错误时已确认外部义务仍会入账，不能把本地返回名称 `FILL_CONFIRMED` 当独立撮合已先确认的证据。
+
+新操作分类只能来自可信调用链和持久撮合义务，不接受客户 `mandatory=true`、运维临时 flag 或任意 fill ID 升权。未来 `settle_confirmed_obligation(obligation_id)` 必须只消费受 fencing/权限保护、不可改条款的持久义务；唯一来源成交 ID、两侧结算责任、费用/预占与完成状态在本地事务恰好一次关联。现有本地 matching 继续在确认前拒绝失败；要接受确认已先发生的义务，必须先实现新义务/摄入契约并独立验收，不能复用 `apply_fill` 冒充。
+
+| 故障类别 | 新风险/未确认本地执行 | 已持久确认义务 | 查询、撤单与重开 |
+| --- | --- | --- | --- |
+| 完整可信、两算一致 | 仅通过全部原有门槛及最终行情检查后接纳 | 按原权威幂等入账 | 正常；完整重放仍匹配完整 artifact |
+| **仅 candidate** 数值差异、超域、缺失或 binding 漂移；authority/shared/runtime/契约及权限独立确证 | 立即关闸；拒绝/回滚；本地尚未确认 matching 不得先宣布成交 | 固定参考权威处理；原费用、仓位、资金和预占一次性提交；独立恢复审计记录候选失败，不调用候选 audit-after 阻断入账 | reference-only 受限 opener 只提供确定义务、已确认撤单及标明 degraded 的查询；不提供新单/借款/划转/模式切换；不自动解冻 |
+| reference、shared 模型/账务/runtime、authority binding 或 writer 权限不可信 | 拒绝，不能选择默认参考 | 保留义务/预占和结果未知状态，停止不可信金融写入；用受审精确参考制品恢复后查询原义务再履行，不能伪报已结算 | 受限 opener 也拒绝；仅可信读取层可报告“待恢复”，不得修复源或隐式升级 |
+| 未知 contract/version、分区不清、来源义务不可信、无法证明只坏 candidate | 按未知权威拒绝 | 不把客户请求转成强制义务；保留已有可信义务，不释放预占、不宣称完成 | 不 fallback，不用 inner十字段绕过完整契约；需要明确恢复审查 |
+| 控制/金融存储不可用、冻结提交失败或结果未知 | 持续关闸；不得把未落盘冻结称成功 | 保存已存在的持久义务；不能写账时保持 pending/unknown，恢复后按原 ID 查询 | 本地闸门不开放，重启默认关闭；不盲目重投业务影响 |
+
+已知共享风险输入无报价/过期不属于 candidate-only；本阶段也不因此获得未经审查的结算降级能力。确认条款与结算账务不依赖当前行情的独立路径，必须单独明确其 risk-audit-pending 语义后验收；在此之前保留义务待恢复，不能宣称生产可用或强制结算完整性已过关。
+
+新增 `open_existing_settlement_services` 是**待实现的封闭入口提案**：仅已知 shadow 契约、原 authority 分区与 fencing/schema/义务均可信时打开，绝不调用普通构造器去补表/补 archive/安装信用能力。candidate 单独不可用不要求伪造完整 artifact 相等；新恢复审计必须明确 scope 为 `reference_settlement_recovery_v1`，固定原契约、原完整 artifact 引用、authority digest、候选失败类别、义务 ID、原始/结果状态和账务关联。before/after 使用参考权威，不再进入会因候选失败回滚的原 audit-after。无法可靠执行参考审计则保持 pending，不能跳过全部审计后声称成功。
+
+此类恢复记录的 replay 分别输出 reference 数值/账务结果、shadow 未复算/失败与 freshness/权限证据范围；不得把 reference-only replay 标为完整 shadow replay 成功。修复候选后仍须匹配完整原代码/规则/时间才能复算原候选结果。**这些入口、分区及恢复审计目前均未实现，EBD-FIN-001/EVG-006 继续 OPEN，D2 BLOCKED。**
+
+### 5.3 D2 阻断：先持久关闸，再进入可失败的金融计算
+
+为消除回滚到冻结的崩溃窗口，建议在同一账户数据库增加有限 `uta_valuation_gate` 状态（`OPEN/EVALUATING/FROZEN`），以已知 authority/account、fencing token、命令 ID、expected account version、gate revision 和失败摘要关联。不是另建服务；其写入必须受同一唯一 writer 和原控制/金融权限审查。D2 只支持单机，不声称跨分片原子性。
+
+1. 调度器在账户 lane 中取得独占权，先检查全局/账户闸门。新风险只有 OPEN 可选择；结算义务与确认撤单使用不同可信队列类别，客户不能自标。已存在实验库重启/接管先经 authority-only 路径持久关闭新风险，再检查 candidate；未完成 EVALUATING 或已有 FROZEN 不能自动恢复 OPEN，不能把启动内存 latch 当持久关闭。未知库或 authority 不可信时完全拒绝，不能借恢复开新库。
+2. **任何本次新增风险命令的 candidate 检查/双算前**，先用受信 authority 路径将该命令的 EVALUATING 意图独立持久提交，并 latch 本地新风险闸门；未持久成功不得开始金融事务。这个意图即使后续金融回滚也存在；不是回滚事务里的日志。账户 lane 不得在中间选择另一条新风险。
+3. 金融事务校验 gate/command/account version/fencing 完全匹配，再捕获输入、计算、审计、检查最终 freshness。成功时，接纳回执、预占、账户变化和该命令 EVALUATING→OPEN **在同一金融事务提交**，提交确认后才释放本地 latch 并选择下条新风险。控制面另行冻结/版本变化必须使 CAS 或 precommit guard 失败。
+4. 发现失败即保持 latch 关闭，然后回滚金融事务。原持久 EVALUATING 仍在，故进程即使此时终止也不会在重启漏掉关闸。再在独立受信事务将同一命令 EVALUATING→FROZEN，写入失败摘要及原命令的确定 `NOT_ADMITTED` 关联结果；两者提交确认后才返回确定 shadow 拒绝。这不等于现有 durable inbox 的业务 REJECTED，不能只因HTTP503就改写其 PENDING/技术重试协议；新实验契约的查询与队列阻断必须显式整合。冻结存储不可用时继续 fail-closed，返回可查询 UNKNOWN/服务不可用，不能返回“持久冻结成功”。
+5. 恢复先查原命令、gate、接纳/预占及义务。原成功事务已提交应同时见到唯一成功与 OPEN；失败回滚或未开始事务则残留 EVALUATING，转换为受审冻结/恢复状态，不自动重算并批准。若成功与 gate 状态不一致，作为损坏拒绝；同 ID 永不生成第二影响。响应丢失只查原 ID。
+6. 清理、必要结算和确认撤单不能被新风险 latch 一并丢弃；按5.2的可信类别恢复处理。解冻是独立受审控制操作，需完整 binding/存储/账务/未完成命令校验并记录操作者，不能因为候选下一次算对就自动开放。
+
+上述冻结针对 shadow/绑定/未知技术失败；已明确完成完整可信估值的正常业务拒绝仍遵守原业务契约。它必须在无金融影响的已回滚状态下，将该命令的业务拒绝终态与 EVALUATING→OPEN 放在同一受信事务确认后，才选择下一条新风险。不能仅凭HTTP状态码把 engine故障当业务拒绝释放闸门；异常分类、CAS及回执丢失也须同等故障测试。未能确定类别的残留意图保持关闭。
+
+崩溃边界必须逐一验收：意图写入前后、金融 BEGIN/比较/最终 guard 前后、成功 COMMIT 前后、失败回滚前后、FROZEN 提交前后、响应丢失、重启/接管与下一条排队新风险。断电/存储失败后重开验证无额外接纳、失败预占残留、重复分录或遗漏确认义务。`EVALUATING` 的存储/事务角色、幂等结果与既有 durable command savepoint/终态写入如何兼容尚未实现，不能把此处顺序当故障验证。**EBD-FIN-002/EVG-007 保持 OPEN；D2 BLOCKED。**
 
 建议错误契约（未实现）：未知 opt-in 参数/engine 为 400 `valuation_contract_unsupported`；已有库不匹配为 409 `valuation_migration_required`；runtime/binding/持久 archive 缺失或不一致为 503 `valuation_binding_unavailable`；新风险 shadow 数值差异为 503 `valuation_shadow_mismatch`；超出实验支持域为 422 `valuation_domain_unsupported`。不得将这些错误转成成功的零结果、旧模式成功结果或无日志 fallback。业务已有错误契约须在实现 PR 中逐项映射，不能悄悄改变 409/超时/结果未知的重试语义。
 
@@ -167,8 +219,8 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 
 1. **Gross debt 与折扣，M02。** BTC=2，价格100，抵押因子0.8，LTV0.5；本金1.25 BTC、利息0.05 BTC；borrow IM/MM=0.1/0.05。原始资产200，债务130；会计权益70；抵押160；风险权益30；loan value80；IM13，MM6.5，可用17，可借0。不能先净成0.7 BTC再折扣；利息不能被藏入本金。
 2. **冻结、分层与组合，M01（纯模型，不是 multiplier=1 服务用例）。** USD1000+BTC2@100；冻结BTC0.5；BTC首100抵押0.8、其后0.5，故 BTC 抵押105、总抵押1105；USD/BTC LTV分别0.8/0.5，loan value852.5。本金USD100+BTC0.1=110，利息USD1+BTC0.01=2。线性 q2、multiplier2、mark110、cost400，PnL40。会计权益1128，风险权益1033。USD borrow IM/MM0.1/0.05、BTC0.2/0.1、线性0.1/0.05，IM=101×0.1+11×0.2+440×0.1=56.3，MM28.15。order10，可用966.7。总债务上限500时单独 USD quote388、BTC quote3.88；**二者不是可叠加的同时授权**。
-3. **MM 等号，M09。** USD11，抵押/LTV=1，借款IM=MM=0.1，step1，上限100。借10后权益1等于MM1，故拒绝，最大quote9。USD11.01 时借10后1.01>1，可以通过这一边界；其他限额仍要独立满足。零权益/零MM同样是清算边界，不能因分母零返回安全。
-4. **费用与存量预占，EBD-M04。** USD100，线性数量1、limit100、multiplier1，IM0.1/MM0.05，fee0.0004，USD最小单位0.01。成交0.5收0.02，现金99.98、仓位0.5/cost50。剩余原单预占5.02；新 reduce-only0.5在同价位还须保留fee0.02，合计order margin5.04。当前IM5、MM2.5、available89.94。投影该reduce-only完全成交后现金99.96、仓位0、原单reserve5.02，可用94.94。实际测试必须使用现有 cumulative-fee 和 reserve 函数的受审规则并由独立组复算；若前置假设不成立则拒绝此 fixture，不能改期望迎合实现。
+3. **MM 等号，M09。** USD11，抵押/LTV=1，借款IM=MM=0.1，step1，上限100。这是**借款所得立即离开抵押品的保守 quote**：quote10对应压力权益1等于MM1，故拒绝，最大quote9；USD11.01 对应1.01>1，quote10可以通过这一边界。它不是借款现金仍记到账内时的实际 post-borrow equity，也不是借款授权；其他限额仍要独立满足。零权益/零MM同样是清算边界，不能因分母零返回安全。
+4. **费用与存量预占，EBD-M04。** USD100，线性数量1、limit/mark/fill均100、multiplier1，IM0.1/MM0.05，fee0.0004，USD最小单位0.01，且无其他资产、债务、订单、义务或费用。成交0.5收0.02，现金99.98、仓位0.5/cost50。剩余原单预占5.02；新 reduce-only0.5在同价位还须保留fee0.02，合计order margin5.04。当前IM5、MM2.5、available89.94。**RO已确认完全成交、其自身fee reserve终结后**现金99.96、仓位0、原单reserve5.02，可用94.94；若某个成交前投影仍保留该RO fee reserve0.02，则可用94.92，不能标成同一逻辑时点。实际测试必须使用现有 cumulative-fee 和 reserve 函数的受审规则并由独立组复算；若前置假设不成立则拒绝此 fixture，不能改期望迎合实现。
 
 多次部分成交的累计费用进位、signed cost dust、负现金、同币资产/债务、冻结原因与 reserve 取整必须分别保留。候选只替换估值计算，不重写资金最小单位、成交费用累计进位或原 admission 投影。
 
@@ -177,8 +229,8 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 | 阶段 | 最小改动位置 | 验收后可以做什么 |
 | --- | --- | --- |
 | D0 静态设计（本提交） | 本文、machine contract、source evidence | 仅审查，不运行目标 |
-| D1 绑定与纯计算 | 新 `uta/risk_engine.py`；`DecisionAudit` 新 artifact envelope；新 bounded binding tests；独立 oracle 保持独立，不复用生产核心函数 | 在单独批准的源范围运行纯计算/变更负例，不能写金融 authority |
-| D2 新建库同步 shadow | `ExchangeService.__init__/_risk/_policy_versions`；`DecisionAudit` policy/install/replay；`existing_services._source_arguments` 与 exchange-only opener；Credit V2 显式拒绝 | 仅新建合成单机账户，完整新风险/既有结算区分验证通过后才可用 |
+| D1 纯绑定 CODE（可另审，无执行GO） | 提案 `uta/risk_engine_binding.py` 与 bounded pure contracts；不接 service/DecisionAudit/DB；后续数值验证保持独立 oracle 不复用生产核心 | 先独立审源与新 inventory/执行计划；本文不批准目标 import/测试或金融 authority |
+| D2 新建库同步 shadow：**BLOCKED** | `ExchangeService.__init__/_risk/_policy_versions`；`DecisionAudit` policy/install/replay及受限恢复审计；`existing_services._source_arguments`、exchange-only/settlement opener；持久gate与可信义务入口；Credit V2 显式拒绝 | 规格已细化但未实现/未验收；EBD-FIN-001/002、EVG-003..007与EBD-001..012全部取得所需证据前只读/离线，不授GO |
 | D3 系统集成 | managed options/config/descriptor/takeover、sharding、supervisor/cache/precommit、信用新版本的各自独立 PR | 各路径单独验收；不能因 D2通过就启用 |
 | D4 候选权威 | 新 `UTA-CROSS-DECIMAL-AUTH-v1` 固定契约；只读到小批新 generation；业务/金融/独立组共同批准 | 仅明确批准的产品和账户，默认仍不变；真实资金还需明确上线审批 |
 
@@ -221,4 +273,4 @@ PR52 对 PR49 有六个 `uta/` 文件变化：`credit_audit_v2.py`、`decision_a
 - 候选的有限 exact-domain 数值证据不是 PM 校准、市场事故回放、流动性清算、复制/RPO/RTO 或容量准入证据。
 - 外部交易所 haircut、净额、PM 风险单元、API 生命周期等规则未经本轮一手证据验证，不归因给任何交易所。这里选择 gross debt、严格 MM 等号、封闭 selector 与不可变账户契约，理由是保持现有可审计模型并避免隐式授权。
 
-金融规则负责人、独立验证组和上线批准人均未签字；本提交不会生成伪签名或把文档评审标作生产验收。
+金融组与独立组已对原53ace的 D0 边界作静态审查；这不是新实现数值签字、D2缺口关闭或上线审批。修订2的新增规格尚待再次审阅。没有伪签名、目标执行 GO 或生产验收。

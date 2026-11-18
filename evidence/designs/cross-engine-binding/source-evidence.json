@@ -220,5 +220,214 @@
     "evidence/designs/cross-engine-binding/source-evidence.json"
   ],
   "financial_runtime_changes": [],
-  "external_exchange_rule_assertions": []
+  "external_exchange_rule_assertions": [],
+  "design_revision": 2,
+  "original_source_pins_preserved": true,
+  "original_design_commit": "53acece53d27fb118c89286c10e5be41bb2ca5e7",
+  "delivery_scope_semantics": "ORIGINAL_D0_THREE_FILES_SCOPE_PRESERVED_REVISION_AND_IMPORTED_REVIEWS_LISTED_SEPARATELY",
+  "revision_delivery_scope": [
+    "docs/cross-engine-binding-design.md",
+    "evidence/designs/cross-engine-binding/contract.json",
+    "evidence/designs/cross-engine-binding/source-evidence.json",
+    "docs/cross-engine-binding-financial-review.md",
+    "evidence/reviews/cross-engine-binding-financial/review.json",
+    "docs/cross-engine-binding-independent-verification.md",
+    "evidence/designs/cross-engine-binding-independent-verification/review-53acece.json"
+  ],
+  "review_source_reads": [
+    {
+      "commit": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "path": "docs/cross-engine-binding-financial-review.md",
+      "git_blob_oid": "346ccba697d5ebf0e49f2232a71c69251e9d3e60",
+      "bytes": 6155,
+      "sha256": "85c4e29f00da702bf325c36a1cab7265dc5321950dff176012afbbe79d2d311a",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    },
+    {
+      "commit": "40bee5ff668c20e31492ea5b2964242a31ad9b40",
+      "path": "evidence/reviews/cross-engine-binding-financial/review.json",
+      "git_blob_oid": "40f45ab4a5ead276e535b5ff151b45b00d106d50",
+      "bytes": 21055,
+      "sha256": "4320d5418eb881aeb9eb27667b57e944258b7774ede09279193471148a78dc2f",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    },
+    {
+      "commit": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "path": "docs/cross-engine-binding-independent-verification.md",
+      "git_blob_oid": "ae6694040f6d4ca8755eb8aa77759a646b784919",
+      "bytes": 5581,
+      "sha256": "d08d65e5482ef951d500a2db1bb69291429f6aa82417cb5b68ef34175dd70c13",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    },
+    {
+      "commit": "5b00e14b7eca382d7e9c8022437f0d5ced1fc38b",
+      "path": "evidence/designs/cross-engine-binding-independent-verification/review-53acece.json",
+      "git_blob_oid": "ec5cf7f0b41694ce0a7292af62c04d2fa4814639",
+      "bytes": 9938,
+      "sha256": "34990e725101364e9af9cf74bcc59395654a12936743da806031b42da07a0669",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    }
+  ],
+  "revision_additional_source_reads": [
+    {
+      "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "path": "uta/storage.py",
+      "git_blob_oid": "ca3ba49f0eaef671de022fd99c2d400b26f6cd32",
+      "bytes": 30225,
+      "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3",
+      "review_anchors": [
+        157,
+        209,
+        214,
+        216,
+        220
+      ],
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    },
+    {
+      "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "path": "uta/matching.py",
+      "git_blob_oid": "e53eddde90398b59d20df2fecf019287b6f2d94e",
+      "bytes": 21921,
+      "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d",
+      "review_anchors": [
+        93,
+        100,
+        108,
+        151,
+        154,
+        156,
+        190,
+        196
+      ],
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    },
+    {
+      "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "path": "uta/durable_commands.py",
+      "git_blob_oid": "127ae8481a980c832f25da6443c58af7ed6ac7eb",
+      "bytes": 29291,
+      "sha256": "64e49fe427506bfd22031b31e35d0e9665b2eb3a9d2b32ec89ffab2eb3c15fd8",
+      "review_anchors": [
+        377,
+        380,
+        385,
+        395
+      ],
+      "access": "STATIC_GIT_OBJECT_READ_ONLY"
+    }
+  ],
+  "revision_anchors_in_original_pins": [
+    {
+      "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "path": "uta/service.py",
+      "lines": [
+        923,
+        979,
+        994,
+        1033
+      ],
+      "purpose": "LOCAL_EXECUTION_AUTHORIZATION_AND_RISK_AUDIT_ROLLBACK_BOUNDARIES"
+    },
+    {
+      "commit": "e7fa6e41eff8dda28c9f4cd64d7e4df7ab45867c",
+      "path": "uta/market.py",
+      "lines": [
+        120,
+        121,
+        131,
+        133
+      ],
+      "purpose": "STALE_FUTURE_SKEW_EQUALITY_AND_FIXED_CURRENT_DEFAULT"
+    }
+  ],
+  "revision_runtime_approval": false,
+  "D2_status": "BLOCKED_UNIMPLEMENTED_UNVERIFIED_RECOVERY_AND_CRASH_SAFE_GATE",
+  "D1_protocol_read_only_references": [
+    {
+      "commit": "f34644bd8300e94d39d8782b04bcca0673023da1",
+      "path": "docs/cross-engine-binding-d1-protocol.md",
+      "git_blob_oid": "d877f46c1b89bfd46364e623f91a03011f543181",
+      "bytes": 3144,
+      "sha256": "e24eb771150051792cdf53387fc855f20f6ed725389f24ebc62d92b5a1f4c625",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "merged_into_design_branch": false
+    },
+    {
+      "commit": "f34644bd8300e94d39d8782b04bcca0673023da1",
+      "path": "evidence/designs/cross-engine-binding-d1/proposal.json",
+      "git_blob_oid": "56c8f5736770eae817cc3967cc25440e4d40537d",
+      "bytes": 6774,
+      "sha256": "efb446734da6df0ae003412e4f64a7b2fe87e50fc94f20360fbc3f836025adf3",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "merged_into_design_branch": false
+    }
+  ],
+  "D1_protocol_fixed_source_reads": [
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/cross_decimal_kernel.py",
+      "git_blob_oid": "3d8bb0952426da36d9dc3636c021576cd01ac87e",
+      "bytes": 16411,
+      "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    },
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/market.py",
+      "git_blob_oid": "6589acc7a877e8d403186554f4a24505661e8fdb",
+      "bytes": 8465,
+      "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    },
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/models.py",
+      "git_blob_oid": "f91ddee7ba1f6389991a4cb0aa3848900f051b11",
+      "bytes": 6034,
+      "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    },
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/portfolio.py",
+      "git_blob_oid": "e685f0acfa81708efe9984769667fb199d4625e0",
+      "bytes": 24042,
+      "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    },
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/products.py",
+      "git_blob_oid": "d6a7f0a03bafd853e4b5b5f2e17a7ad7baa74d59",
+      "bytes": 12043,
+      "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    },
+    {
+      "commit": "d1fd381bde923dc4010977058b76e34d6162e9a9",
+      "path": "uta/risk.py",
+      "git_blob_oid": "26910411f6951c26cbc688440176bfbbc209a42d",
+      "bytes": 7535,
+      "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264",
+      "access": "STATIC_GIT_OBJECT_READ_ONLY",
+      "loaded_runtime_proof": false
+    }
+  ],
+  "revision_static_validation": {
+    "own_JSON_parsed": true,
+    "original_21_source_pin_records_preserved": true,
+    "original_default_contract_and_published_evidence_citations_preserved": true,
+    "both_imported_reviews_byte_identical": true,
+    "new_15_source_and_review_tuples_verified_against_exact_Git_objects": true,
+    "financial_runtime_or_native_scope_changes": false,
+    "target_execution_attempts": 0,
+    "D1_execution_GO": false,
+    "D2": "BLOCKED_SPEC_REFINED_NOT_IMPLEMENTED_OR_VERIFIED"
+  }
 }
