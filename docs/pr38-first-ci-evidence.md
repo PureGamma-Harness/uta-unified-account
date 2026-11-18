@@ -17,6 +17,6 @@ push 的两个独立 ERROR 是 owned_startup 的 credit projection corruption �
 
 失败unit ZIP各仅取一次：push101078B/SHA `df928133099dd661620a88206136b67fe31e3fc646ef2c8cb54e5535e0206010`；PR90632B/SHA `f6db01c0b775453ca7beeba0a7cdfb8cb4dcd48ad8c75350a8b9d8835863d95f`。digest/长度与provider匹配，各3members首CRC全过，unit.txt SHA与summary一致，source-before/after maps相等，76闭包四文件SHA逐一等发布head。首原job logs、ZIP、摘要及metadata均不裁剪或重写。
 
-安全OWN在 `evidence/runs/pr38-first-ci/`：59份原件/投影共1364766B，加seal与本说明。provider JSON按connector返回的UTF-8内容保存；job log为connector解码文本，receipt明确没有HTTP wire headers。查询实际时间与间隔均在observations-index保留，artifact处理产生的较长间隔不改写。签名下载引用只留私有0700/0600目录，OWN仅含其bytes/SHA；小package ZIP留私有，仅两个安全JSON与CRC manifest导出。固定PEM/credential/signedURL模式计数为0，这不是安全审计。独立只读review尚待闭合。
+安全OWN在 `evidence/runs/pr38-first-ci/`：59份原件/投影共1364766B，加seal与本说明；后续独立closure单列。provider JSON按connector返回的UTF-8内容保存；job log为connector解码文本，receipt明确没有HTTP wire headers。查询实际时间与间隔均在observations-index保留，artifact处理产生的较长间隔不改写。签名下载引用只留私有0700/0600目录，OWN仅含其bytes/SHA；小package ZIP留私有，仅两个安全JSON与CRC manifest导出。固定PEM/credential/signedURL模式计数为0，这不是安全审计。独立只读review已闭合（EVIDENCE_PASS），见independent-review-closure.json；首seal/final-status里的PENDING是历史原件，保留不回写。
 
 controller仍为 `D2_COMPANION_EXPORT_ENABLED=False` / SHA67a97e55…，runtime UTA tree仍等6010。发布前的20flags是原冻结快照，本collector不回写；ordinary CI的实际执行另在final-status记录，不产生actualM06授权。kernel backend仍NOT_IMPLEMENTED/NOT_VERIFIED，M05仍UNKNOWN/P_NOT_RUN/05spent；production、10k/s、HA、真实资金与actualM06全部false。新safeOWN不push，由root用skip-ci方式另行整合。
