@@ -1,0 +1,67 @@
+{
+  "schema": "funding-hold-target-adapter-v2-code/v1",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "target_implementation": "ed81c424e3be7c004331bcd8340421d60063fcb6",
+  "wire_commit": "a33da70026a5b0d36d5df57ae8a5736a64914ab1",
+  "wire_sha256": "c7f1ead652921b983bab170ed3a57c984f9e3ff06495cd395af6ab617ed456c0",
+  "reference_core_read_or_imported": false,
+  "financial_equations_included": false,
+  "pins": [
+    {
+      "path": "tests/funding_hold_target_adapter_v2.py",
+      "bytes": 14978,
+      "sha256": "409dace5731a8a323f8e27c2cd765e18f8e6e72fd339fd71bb76f7e28a4a7eb9"
+    },
+    {
+      "path": "tests/test_funding_hold_target_adapter_v2.py",
+      "bytes": 5082,
+      "sha256": "d4a64a4421649410cd45bc401f4e3727ac159a0924f0aaebd8b958188130aac3"
+    },
+    {
+      "path": "docs/funding-hold-target-adapter-v2-code.md",
+      "bytes": 2863,
+      "sha256": "5fa6c89060e19e103c6e8c9c19283262e0973501badf115fae74dad25e3d2af9"
+    },
+    {
+      "path": "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json",
+      "bytes": 29887,
+      "sha256": "c7f1ead652921b983bab170ed3a57c984f9e3ff06495cd395af6ab617ed456c0"
+    }
+  ],
+  "operations": [
+    "duty_identity",
+    "policy_identity",
+    "action_identity",
+    "stage_advance",
+    "aggregate",
+    "decompose",
+    "payment_precondition",
+    "wait_preview",
+    "wait_records",
+    "unsupported"
+  ],
+  "DTO_count": 13,
+  "new_test_methods": [
+    "test_codec_rejects_duplicate_nonfinite_BOM_and_inferred_UTF16",
+    "test_complete_DTO_output_and_original_request_are_preserved",
+    "test_finite_float_and_bool_are_not_coerced_into_valid_integer_inputs",
+    "test_known_input_rejection_retains_valid_case_identity",
+    "test_legacy_single_reference_is_unsupported_without_inference",
+    "test_malformed_target_returns_are_technical_failures",
+    "test_transport_never_fabricates_response_for_invalid_envelope",
+    "test_unexpected_target_and_constructor_exceptions_remain_technical",
+    "test_validator_actual_return_order_is_not_sorted_or_replaced_by_adapter"
+  ],
+  "target_reference_import_compile_execution_attempts": 0,
+  "SQL_actors_CI": 0,
+  "additional_decoder_bounds": {
+    "depth": 32,
+    "visited_nodes": 250000,
+    "integer_digits": 128,
+    "reference_decoder_equivalence": "PENDING_EXPLICIT_REVIEW"
+  },
+  "full_field_differential": "NOT_IMPLEMENTED_NOT_RUN",
+  "activation_permission": false,
+  "D2": "BLOCKED",
+  "rollback": "REMOVE_NEW_ADAPTER_ARTIFACTS_ONLY"
+}
