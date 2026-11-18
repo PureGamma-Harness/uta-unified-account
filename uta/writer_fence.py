@@ -442,11 +442,14 @@ def _assert_token(database, state, token):
         raise WriterFenceError("writer_fenced", "transaction does not own the current authority generation in this process")
     if state["expires_ns"] <= now:
         error = WriterFenceError("lease_expired", "writer lease expired; renew cannot revive it")
-        _lease_annotation(error, {"version": 1, "lease_clock": "fence_clock_ns",
-                                 "assert_generation": state["generation"],
-                                 "assert_row_observed_ns": state["observed_ns"],
-                                 "assert_row_expires_ns": state["expires_ns"], "assert_now_ns": now,
-                                 "identity_matches": True, "snapshot_time_known": False})
+        try:
+            _lease_annotation(error, {"version": 1, "lease_clock": "fence_clock_ns",
+                                     "assert_generation": state["generation"],
+                                     "assert_row_observed_ns": state["observed_ns"],
+                                     "assert_row_expires_ns": state["expires_ns"], "assert_now_ns": now,
+                                     "identity_matches": True, "snapshot_time_known": False})
+        except BaseException:
+            pass  # The original expired error already exists; metadata cannot replace it.
         raise error
     return now, boot
 
