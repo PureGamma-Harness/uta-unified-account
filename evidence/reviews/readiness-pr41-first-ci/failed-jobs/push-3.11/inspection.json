@@ -1,0 +1,165 @@
+{
+  "bounded_sensitive_scan": {
+    "summary.json": {
+      "aws_access_key": 0,
+      "bearer": 0,
+      "github_token": 0,
+      "private_key": 0,
+      "signed_url": 0
+    },
+    "unittest.txt": {
+      "aws_access_key": 0,
+      "bearer": 0,
+      "github_token": 0,
+      "private_key": 0,
+      "signed_url": 0
+    },
+    "worker-result.json": {
+      "aws_access_key": 0,
+      "bearer": 0,
+      "github_token": 0,
+      "private_key": 0,
+      "signed_url": 0
+    }
+  },
+  "failure_headers": [
+    {
+      "kind": "FAIL",
+      "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+      "qualified": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+    }
+  ],
+  "json_keys": {
+    "summary.json": [
+      "code_commit",
+      "command_argv",
+      "duration_seconds",
+      "errors",
+      "expected_failures",
+      "failures",
+      "finished_at",
+      "passed",
+      "platform",
+      "production_approved",
+      "python",
+      "skipped",
+      "source_sha256",
+      "source_sha256_after",
+      "source_unchanged",
+      "sqlite",
+      "started_at",
+      "test_log_sha256",
+      "tests_run",
+      "tracked_source_clean_after",
+      "tracked_source_clean_before",
+      "unexpected_successes",
+      "unittest_passed",
+      "worker_exit_code"
+    ],
+    "worker-result.json": [
+      "errors",
+      "expected_failures",
+      "failures",
+      "skipped",
+      "tests_run",
+      "unexpected_successes",
+      "unittest_passed"
+    ]
+  },
+  "members": [
+    {
+      "CRC_matches": true,
+      "bytes": 77763,
+      "compressed_bytes": 32988,
+      "crc32": "2b9d3cfa",
+      "name": "summary.json",
+      "sha256": "2c2e7dacbe110f71010babc32d428c1c124c55710c79be6774ac6f49a495b313"
+    },
+    {
+      "CRC_matches": true,
+      "bytes": 155,
+      "compressed_bytes": 98,
+      "crc32": "1de4e94b",
+      "name": "worker-result.json",
+      "sha256": "c8c1e5509e7553c43591f545bc9f1b8935823e1cb32802361471358b27e21507"
+    },
+    {
+      "CRC_matches": true,
+      "bytes": 375247,
+      "compressed_bytes": 61970,
+      "crc32": "f70869f0",
+      "name": "unittest.txt",
+      "sha256": "97b0e1e4b7ee168f3782a0d95a94f5dbaf68826b80a284ebe42a4bf4b231dfc9"
+    }
+  ],
+  "mode": "unit",
+  "selected_test_outcomes": [
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_first_unknown_is_retained_without_a_second_observation_or_quote"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_complete_owner_witness_precedes_factory_without_promoting_financial_ready"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_stale_generation_and_inactive_owner_are_not_a_complete_witness"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unknown_after_owner_fields_were_read_still_fails_the_single_attempt"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_unconsumed_current_ready_frame_cannot_trigger_diagnostic_or_quote"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_late_native_return_retains_report_without_quote_or_second_observation"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_readiness_before_quote_reference.BeforeQuoteReferenceTests.test_identity_equality_requires_native_integer_types"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_process_readiness.ProcessReadinessTests.test_malformed_missing_and_oversize_persistent_quotes_fail_closed"
+    },
+    {
+      "raw_statuses": [
+        "ok"
+      ],
+      "test": "test_process_readiness.ProcessReadinessTests.test_same_version_changed_persistent_content_is_not_reused"
+    }
+  ],
+  "sensitive_scan_clear": true,
+  "source_bytes": 95438,
+  "source_name": "artifact-14401902025-connector.zip",
+  "source_sha256": "7af56177530b3c3345f9c8410839c6a67270e1d9c93be321334e4624ad5d207c",
+  "unittest_result_lines": [
+    "FAILED (failures=1)"
+  ],
+  "unittest_totals": [
+    [
+      "1842",
+      "388.104"
+    ]
+  ]
+}
