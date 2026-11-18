@@ -24,7 +24,7 @@ import unittest
 import _thread
 
 GUARD_CODE = r'''
-import sys, os, signal, socket, _thread, threading
+import sys, os, signal, socket, _thread, threading, subprocess, _posixsubprocess, importlib.machinery
 _scope_denials=[]
 _scope_checks=[]
 class ScopeDenied(BaseException):pass
@@ -32,8 +32,6 @@ def _scope_deny(name):
     _scope_denials.append(name)
     raise ScopeDenied(name)
 def _scope_audit(event, args):
-    if event == 'import' and args[0].split('.')[0] in {'ctypes','_ctypes','multiprocessing','concurrent'}:
-        _scope_deny(event+':'+args[0].split('.')[0])
     if event == 'subprocess.Popen':
         if not globals().get('_scope_launch_allowed',False):_scope_deny(event)
     elif event.startswith(('socket.','sqlite3.','ctypes.')) and event not in {'socket.gethostname'}:
@@ -48,11 +46,40 @@ def _scope_block(name):
 for _name in ('system','fork','forkpty','posix_spawn','posix_spawnp','kill','killpg',
               'execl','execle','execlp','execlpe','execv','execve','execvp','execvpe'):
     if hasattr(os,_name):setattr(os,_name,_scope_block('os.'+_name))
-for _name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait'):
+for _name in ('signal','raise_signal','pthread_kill','pidfd_send_signal','setitimer','alarm','pthread_sigmask','sigwait','sigwaitinfo','sigtimedwait','set_wakeup_fd','siginterrupt','pause'):
     if hasattr(signal,_name):setattr(signal,_name,_scope_block('signal.'+_name))
 _thread.start_new_thread=_scope_block('_thread.start_new_thread')
 _thread.start_new=_scope_block('_thread.start_new')
+_thread.interrupt_main=_scope_block('_thread.interrupt_main')
 threading._start_new_thread=_scope_block('threading._start_new_thread')
+threading.Thread.start=_scope_block('threading.Thread.start')
+_scope_real_fork_exec=subprocess._fork_exec
+def _scope_fork_exec(*args,**kwargs):
+    if not globals().get('_scope_launch_allowed',False):_scope_deny('raw_fork_exec')
+    return _scope_real_fork_exec(*args,**kwargs)
+subprocess._fork_exec=_scope_fork_exec
+_posixsubprocess.fork_exec=_scope_fork_exec
+subprocess.Popen=_scope_block('subprocess.Popen')
+def _scope_patch_module(module):
+    targets={
+        'concurrent.futures.thread':('ThreadPoolExecutor',('submit','_adjust_thread_count')),
+        'concurrent.futures.process':('ProcessPoolExecutor',('submit','_spawn_process','_launch_processes','_start_executor_manager_thread')),
+        'multiprocessing.process':('BaseProcess',('start',)),
+        'multiprocessing.pool':('Pool',('__init__',)),
+    }
+    target=targets.get(module.__name__)
+    if target:
+        cls=getattr(module,target[0],None)
+        if cls is not None:
+            for name in target[1]:
+                if hasattr(cls,name):setattr(cls,name,_scope_block(module.__name__+'.'+target[0]+'.'+name))
+_scope_real_loader=importlib.machinery.SourceFileLoader.exec_module
+def _scope_exec_module(loader,module):
+    _scope_real_loader(loader,module)
+    _scope_patch_module(module)
+importlib.machinery.SourceFileLoader.exec_module=_scope_exec_module
+for _module in tuple(sys.modules.values()):
+    if _module is not None:_scope_patch_module(_module)
 for _event in ('sqlite3.connect','socket.connect','os.kill','os.fork','subprocess.Popen'):
     try:sys.audit(_event)
     except ScopeDenied:_scope_checks.append(_event)
@@ -87,7 +114,6 @@ def main():
     helper_ast=ast.parse((source/'tools/cold_import_contract.py').read_bytes())
     helper_code=ast.literal_eval(next(n.value for n in helper_ast.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='CHILD_CODE' for t in n.targets)))
     original_popen=subprocess.Popen
-    original_loader=importlib.machinery.SourceFileLoader.exec_module
     original_fork_exec=subprocess._fork_exec
     records=[];probes=[];launches=[]
     expected=['deny_sqlite3','deny_uta','controller','escrow','escrow','controller']
@@ -95,6 +121,7 @@ def main():
     sys.path.insert(0,str(source/'tests'))
     # Guards become active before any controller, helper or test import.
     exec(GUARD_CODE,globals())
+    original_loader=importlib.machinery.SourceFileLoader.exec_module
     class ProductFinder:
         def find_spec(self,fullname,path=None,target=None):
             if fullname.split('.')[0] in {'sqlite3','_sqlite3','uta'}:_scope_deny('import:'+fullname)
