@@ -67,5 +67,9 @@ Pending funding is not yet reserved in order/withdraw/transfer budgets. The
 fixtures do not cross MM or demonstrate negative-cash liquidation recovery;
 persistent partial-market faults, crash/HA recovery, timer operation, custody,
 multi-settlement assets, human financial signoff and sustained capacity remain
-OPEN. This local prototype is NO_GO for production or real funds. First normal
-CI of the public delivery is pending.
+OPEN. This local prototype is NO_GO for production or real funds. First normal CI completed with a remaining blocker, detailed below.
+
+
+First source118f7a6f push44307367546 failed only its Python3.13 unit job; PR44307604140 succeeded across all four jobs (7 successful/1 failed overall). Fixed push/PR3.13 logs each ran2061 tests: push1 failure/0 errors/skips, PR0 failures/errors/skips. All6 funding-obligation method IDs are plain ok in both selected logs; these12 observations are not independent local SQL6 RAW re-executions. The push failure is the existing bounded SH-capture precondition at test_durable_faults.py:1461, before the intended recovery case; cause remains unresolved and the first CI gate remains BLOCKED.
+
+Collectore0dd90e2 and independent RAW104baa69 bind33 originals1577194B/two ZIPs6CRC,377-pin source maps and provider merge-tree evidence. The fixed push3.13 package is NOT_PRESENT because downstream stages were skipped; no alternative green package was substituted. New installed funding-module execution is NOT_VERIFIED and full qualification is null. This evidence-only integration changes no runtime, tests, tools, benchmark or CI files from source118f7a6f.
