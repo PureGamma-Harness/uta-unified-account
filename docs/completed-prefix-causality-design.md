@@ -14,7 +14,7 @@
 
 limitations 的版本边界应使用固定 19f schema 的完整枚举，未知标签按不支持版本拒绝；不靠“保留两个 required 字符串”接受任意新含义。该规则仅约束合成声明形状，输出仍不能授予实际审计、quiescence 或生产资格。
 
-新增 focused 批次最多 10 个 methods，复用已审独立文件的纯 literal 定义及 oracle，不调用其原 8 个 test methods，也不重跑作者原 25 项。涵盖三个已证因果负控、未知枚举、合法入金交换、合法每对 fill 双侧交换、完整合法 false-authority 结果，以及 fixed workload 内 close/repay 次序与不支持 opening-state 的边界。代码冻结后再按 root 的唯一 CPU1/10s 预算执行，首次结果全部保留；当前尚未执行本修订测试。
+新增 focused 批次为 10 个 methods，复用已审独立文件的纯 literal 定义及 oracle，不调用其原 8 个 test methods，也不重跑作者原 25 项。涵盖三个已证因果负控、未知枚举、合法入金交换、合法每对 fill 双侧交换、完整合法 false-authority 结果，以及 fixed workload 内 close/repay 次序与不支持 opening-state 的边界。代码先固定为 `0c04590c8e8bcf75c7fb7e5b69b430031a24160e` 并向 root 报告 provenance，随后按唯一 CPU1/10s 预算执行首次批次：**10/10 PASS**，unittest 0.011s、完整耗时 114,441,964ns，exit 0。原 stdout/stderr 和 Git blob 输入在 `evidence/completed-prefix-causality-fix`；全部首失败保留。当前仍待另一工作组对修订代码与原始证据绑定的审查，作者不自行签署。
 
 ## 真实只读输入前置的具体交付物
 
