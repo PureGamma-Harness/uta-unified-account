@@ -123,11 +123,21 @@ def deterministic_cases(count):
 class CrossDecimalEnumerationTests(unittest.TestCase):
     def setUp(self):
         self.completed_vectors = []
+        self.active_vector = None
 
     def check(self, parameters):
+        current = dict(inputs=dict(parameters), stage="before_model_construction")
+        self.active_vector = current
         account, market, catalog, rules = models(**parameters)
         expected, feasible = independent_values(account, market)
+        current.update(stage="before_candidate", feasible_units=feasible,
+            expected={k: ({a: str(v) for a, v in x.items()} if k == "borrowable" else str(x))
+                      for k, x in expected.items()})
         actual = calculate_cross_risk_decimal(account, market, catalog, rules, now=NOW)
+        current.update(stage="before_comparison",
+            actual={k: ({a: str(F(v)) for a, v in actual.borrowable.items()} if k == "borrowable"
+                        else actual.status if k == "status" else str(F(getattr(actual, k))))
+                    for k in expected})
         for name, value in expected.items():
             if name == "borrowable":
                 self.assertEqual({a: F(v) for a, v in actual.borrowable.items()}, value)
@@ -140,12 +150,8 @@ class CrossDecimalEnumerationTests(unittest.TestCase):
         self.assertEqual(actual.market_id, "market-11@" + NOW.isoformat())
         # Finite exact values can be archived by a future retained entry; no
         # production calls or side effects are introduced by this test module.
-        self.completed_vectors.append(dict(inputs=parameters, feasible_units=feasible,
-            expected={k: ({a: str(v) for a, v in x.items()} if k == "borrowable" else str(x))
-                      for k, x in expected.items()},
-            actual={k: ({a: str(F(v)) for a, v in actual.borrowable.items()} if k == "borrowable"
-                        else actual.status if k == "status" else str(F(getattr(actual, k))))
-                    for k in expected}))
+        current["stage"] = "verified"
+        self.completed_vectors.append(current)
 
     def test_512_seeded_values_and_exhaustively_maximal_quotes(self):
         for index, parameters in enumerate(deterministic_cases(512)):
@@ -176,22 +182,28 @@ class CrossDecimalEnumerationTests(unittest.TestCase):
                     self.check(parameters)
         self.assertEqual(len(self.completed_vectors), 8)
 
-    def test_zero_rate_strict_borrow_boundary_is_not_inclusive(self):
-        for cash, maximum in ((1000, 9), (1001, 10)):
-            with self.subTest(cash=cash):
+    def test_zero_and_equal_rate_strict_borrow_boundaries(self):
+        for cash, rate, maximum in ((1000, "0", 9), (1001, "0", 10),
+                                    (1100, ".1", 9), (1101, ".1", 10)):
+            with self.subTest(cash=cash, rate=rate):
+                current = dict(inputs=dict(cash=cash, equal_loan_rates=rate), stage="before_model_construction")
+                self.active_vector = current
                 account, market, catalog, rules = models(cash=cash, btc=0)
                 rules = replace(rules, collaterals={**rules.collaterals,
                     "USD": CollateralRule("USD", (CollateralTier(None, D(1)),), D(1))},
-                    borrow_limits={"USD": BorrowLimits("USD", D(20), D(0), D(0), D(1))})
+                    borrow_limits={"USD": BorrowLimits("USD", D(20), D(rate), D(rate), D(1))})
                 equity = F(cash, 100)
-                feasible = [n for n in range(21) if n <= equity and (n == 0 or equity - n > 0)]
+                feasible = [n for n in range(21) if n + n * F(D(rate)) <= equity and
+                            (n == 0 or equity - n > n * F(D(rate)))]
+                current.update(stage="before_candidate", feasible_units={"USD": feasible},
+                               expected={"borrowable_USD": str(maximum)})
                 self.assertEqual(max(feasible), maximum)
                 actual = calculate_cross_risk_decimal(account, market, catalog, rules, now=NOW)
+                current.update(stage="before_comparison", actual={"borrowable_USD": str(F(actual.borrowable["USD"]))})
                 self.assertEqual(actual.borrowable["USD"], D(maximum))
-                self.completed_vectors.append(dict(inputs=dict(cash=cash, zero_rate_boundary=True),
-                    feasible_units={"USD": feasible}, expected={"borrowable_USD": str(maximum)},
-                    actual={"borrowable_USD": str(F(actual.borrowable["USD"]))}))
-        self.assertEqual(len(self.completed_vectors), 2)
+                current["stage"] = "verified"
+                self.completed_vectors.append(current)
+        self.assertEqual(len(self.completed_vectors), 4)
 
 
 if __name__ == "__main__":
