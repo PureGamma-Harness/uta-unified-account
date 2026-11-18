@@ -115,6 +115,9 @@ class NativeSHCaptureProtocolPureTests(unittest.TestCase):
 
     def test_exact_original_source_codeobject_and_unique_callsite_required(self):
         source = (ROOT / "uta/durable_process.py").read_bytes()
+        self.assertEqual(fixture.RUNTIME_BINDING_REVISION, 2)
+        self.assertEqual(hashlib.sha256(source).hexdigest(), fixture.RUNTIME_SHA256)
+        self.assertNotEqual(fixture.RUNTIME_SHA256, fixture.PREVIOUS_RUNTIME_SHA256)
         code = compile(source, str(ROOT / "uta/durable_process.py"), "exec", dont_inherit=True)
         original = next(value for value in code.co_consts if isinstance(value, CodeType)
                         and value.co_name == "_run_worker")
