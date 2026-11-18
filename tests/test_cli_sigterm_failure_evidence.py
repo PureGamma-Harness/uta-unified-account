@@ -196,9 +196,12 @@ class CliFailureEvidencePureTests(unittest.TestCase):
             self.assertEqual(notice.getvalue(), "")
 
     def test_original_business_case_is_preserved_except_documented_observation(self):
-        expected = json.loads((ROOT / "evidence/reviews/cli-sigterm-failure-evidence/original-case-ast.json").read_text())
+        expected = json.loads((ROOT / "evidence/reviews/cli-sigterm-failure-evidence/original-case-source.json").read_text())
+        self.assertEqual(sha256(expected["method_source"].encode()).hexdigest(), expected["method_source_sha256"])
         actual = normalized_method((ROOT / "tests/test_runtime_review.py").read_text())
-        self.assertEqual(sha256(actual.encode()).hexdigest(), expected["normalized_method_sha256"])
+        # AST fields and dump formatting vary across supported interpreters.
+        # Parse both frozen source and current source with this same interpreter.
+        self.assertEqual(actual, normalized_method(expected["method_source"]))
         tree = ast.parse((ROOT / "tests/test_runtime_review.py").read_text())
         method = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)
                       and node.name == expected["method"])
@@ -206,6 +209,21 @@ class CliFailureEvidencePureTests(unittest.TestCase):
                      and isinstance(node.func, ast.Attribute) and node.func.attr == "Popen")
         self.assertNotIn("text", {item.arg for item in popen.keywords})
         self.assertEqual(next(item.value.value for item in popen.keywords if item.arg == "bufsize"), 0)
+
+    def test_business_preservation_rejects_changed_shutdown_deadline(self):
+        expected = json.loads((ROOT / "evidence/reviews/cli-sigterm-failure-evidence/original-case-source.json").read_text())
+        current = (ROOT / "tests/test_runtime_review.py").read_text()
+        changed = current.replace("self.assertEqual(process.wait(timeout=5), 0)",
+                                  "self.assertEqual(process.wait(timeout=6), 0)")
+        self.assertNotEqual(changed, current)
+        self.assertNotEqual(normalized_method(changed), normalized_method(expected["method_source"]))
+
+    def test_business_preservation_rejects_changed_business_argv(self):
+        expected = json.loads((ROOT / "evidence/reviews/cli-sigterm-failure-evidence/original-case-source.json").read_text())
+        current = (ROOT / "tests/test_runtime_review.py").read_text()
+        changed = current.replace('"--automate", "--port", "0"', '"--automate", "--port", "8080"')
+        self.assertNotEqual(changed, current)
+        self.assertNotEqual(normalized_method(changed), normalized_method(expected["method_source"]))
 
 
 class CliIdentityBoundaryPureTests(unittest.TestCase):
