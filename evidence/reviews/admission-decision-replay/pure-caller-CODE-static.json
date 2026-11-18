@@ -1,12 +1,13 @@
 {
   "all_retained_input_bytes_Git_physical_equal": true,
-  "caller_code_origin_commit": "68b650e21f26140e6d8f70ec477f75868bfa7399",
+  "caller_code_origin_commit": "a14d09058a64a7948bfb4ba8985006d116c75752",
   "caller_control_pin": {
-    "bytes": 18696,
-    "sha256": "e2ea7f486f650cbdcb95edc555bd78098f6be818fb83e04a4ecea08f2661192f"
+    "bytes": 19502,
+    "sha256": "4bb62a4f6ff5070f8ad9cf03d316e04692163ce7691d515049a526112a0f9152"
   },
   "caller_gate": "PENDING independent finite caller delta CODE and rootGO",
-  "caller_plan_sha256": "d81205f9f81033e6488e58bf0402ea77ab4f5aa2f4e6c05f6bb0f041cbf66fb4",
+  "caller_plan_sha256": "abf192409daeb4c0a9f155eb657fb58cc67b502d880b7165c1c148c76a75dc94",
+  "corrects_finding": "PURE7-CALLER-LATE-EOF-001",
   "entry_and_pure_plan_delta_from_first_entry_owner": [],
   "entry_control_pin": {
     "bytes": 23947,
@@ -14,10 +15,22 @@
   },
   "financial_and_test_delta_from_be3": [],
   "independent_entry_review": "f4af44caa3a85c039a12ac12bd659bda274d202d",
+  "late_EOF_correction": {
+    "finding": "PURE7-CALLER-LATE-EOF-001",
+    "new_target_attempts": 0,
+    "original_owner": "cb649be08f7d0d67ad5d1558a9c6b16352e30c19",
+    "original_plan_copy": "pure-caller-plan-cb649be-NOT_RUN.json",
+    "original_plan_sha256": "d81205f9f81033e6488e58bf0402ea77ab4f5aa2f4e6c05f6bb0f041cbf66fb4",
+    "original_status": "NOT_CLOSED_NOT_RUN_ZERO_ATTEMPTS",
+    "qualification": "Only original normal EOF plus actual wait/reap observed strictly before30s can latch timely_completion true. Deadline expiry or missing normal EOF permanently disqualifies. Finally updates actual EOF/rc/reap only; it cannot restore timeliness. Preserve actual rc0 even when classification UNKNOWN.",
+    "resource_changes": 0
+  },
+  "original_caller_code_review": "2043075d163f5f2b33bbc55e4be6280c0b4b8552",
   "preparation_history": "Earlier caller metadata5af352f8 was NOT_RUN0; concrete caller argv retention added and self control pin rebound. No entry, financial, test or original pure-plan bytes changed.",
   "pure_input_bytes": 1337823,
   "pure_input_count": 64,
   "pure_plan_sha256": "c7c1e913d1c686202ec549b3be5e14b29451319482d9519f671174c6ecbeabb2",
+  "resource_changes": 0,
   "schema": 1,
   "status": "CODE_ONLY_NOT_RUN",
   "target_SQL": 0,
