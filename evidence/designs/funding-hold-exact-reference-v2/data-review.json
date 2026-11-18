@@ -1,0 +1,126 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "actual_seed_generation": 0,
+  "actual_tests": 0,
+  "decoder_equivalence": "PENDING_CODE_AND_EXECUTION",
+  "full_differential": "NOT_RUN",
+  "imports_AST_only": {
+    "tests/funding_hold_d1_reference_cases_v2.py": [
+      "hashlib",
+      "json"
+    ],
+    "tests/reference_funding_hold_d1_v2.py": [
+      "datetime",
+      "fractions",
+      "hashlib",
+      "json",
+      "math",
+      "re"
+    ],
+    "tests/test_funding_hold_exact_reference_v2.py": [
+      "json",
+      "pathlib",
+      "re",
+      "unittest",
+      "unittest.mock",
+      "reference_funding_hold_d1_v2",
+      "funding_hold_d1_reference_cases_v2"
+    ]
+  },
+  "kind": "V2_REFERENCE_CODE_ADMINISTRATIVE_DATA_CHECKS",
+  "literal_hash_vectors": {
+    "action_digest": "32676d7af47822bbfecc62ae7f27acd113028657d7fbb0a7865f7466cb372469",
+    "action_payload_bytes": 217,
+    "origin": "Stdlib SHA256 over explicit new-policy raw literal data only, not production or reference execution",
+    "policy_digest": "5124f316d0767fa0354ead3466d522f0d740c8d6134b4608a98352efb0cfd662",
+    "policy_payload_bytes": 246
+  },
+  "manual_data": "Exact original hand-entered17decompose+11payment+2special27matrix retained; no new financial expected values",
+  "new_production_core_sources_read": [],
+  "old_reference_artifacts_unchanged": [
+    {
+      "bytes": 7390,
+      "new_branch_Git_byte_identical": true,
+      "path": "docs/funding-hold-exact-reference.md",
+      "sha256": "64f594310233e1a7af070b28c10942ac7fb5817d1a30adf151a94c333deb4b09"
+    },
+    {
+      "bytes": 20678,
+      "new_branch_Git_byte_identical": true,
+      "path": "tests/reference_funding_hold_d1.py",
+      "sha256": "2cd5389ea55960d42c20675ba683e72d50aa4acc1dd286af1a671b2b559a4614"
+    },
+    {
+      "bytes": 16314,
+      "new_branch_Git_byte_identical": true,
+      "path": "tests/funding_hold_d1_reference_cases.py",
+      "sha256": "2c5687da1ade4a03bd43777494555756c6e28655a0841a6fd09afbe009c3a425"
+    },
+    {
+      "bytes": 16030,
+      "new_branch_Git_byte_identical": true,
+      "path": "tests/test_funding_hold_exact_reference.py",
+      "sha256": "088998516c94446b2da17ff52b9abcc711acac1270a6336e08a64560817c8145"
+    },
+    {
+      "bytes": 3897,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/proposal.json",
+      "sha256": "f7f9d94497d71f833051f0422ee4756c68583220076906ef3e72e203b7bede85"
+    },
+    {
+      "bytes": 13853,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/manual-slices.json",
+      "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c"
+    },
+    {
+      "bytes": 2277,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/wire-scope.json",
+      "sha256": "efb3439c1534e393067b17f7e665001d269f921b337b056f273a251b6bb4b99d"
+    },
+    {
+      "bytes": 2343,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/execution-gates.json",
+      "sha256": "231a6855b94e5f88f439f32331566ab0bd14bbfb5ffa9b44da14e0cd22793718"
+    },
+    {
+      "bytes": 1454,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/data-review.json",
+      "sha256": "6eeade5a4e7c6dc2bc2fb84a77fefc1ddce356eb4c6915c5661318734cad6248"
+    },
+    {
+      "bytes": 4252,
+      "new_branch_Git_byte_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/source-manifest.json",
+      "sha256": "729bb8a45ab0fcdc440dcbf71d51b03eaac1de46adf9dac4c9cd4c44bc3c1f1e"
+    }
+  ],
+  "operation_enum_AST_matches_wire": 10,
+  "own_old_financial_bodies_AST_equal": [
+    "_money",
+    "_major",
+    "_units",
+    "_aggregate",
+    "_base",
+    "operation:aggregate",
+    "operation:decompose",
+    "operation:payment_precondition"
+  ],
+  "production_algorithms_helpers_builders_answers_used": false,
+  "reference_generator_target_import_compile_execution": 0,
+  "schema": 1,
+  "source_AST_files": 3,
+  "status": "NOT_RUN",
+  "test_methods_AST": 30,
+  "transport_resource_contract": "Public061580ce independent resource-rule implementation; no adapter core read",
+  "wire_period_regex_data_check": {
+    "decoded_backslashes": 1,
+    "literal_plus_fullmatch": true,
+    "suspected2a_typo": "NOT_REPRODUCED_DO_NOT_REWRITE_HISTORY"
+  }
+}
