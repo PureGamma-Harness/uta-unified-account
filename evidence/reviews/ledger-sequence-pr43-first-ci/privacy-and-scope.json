@@ -1,0 +1,42 @@
+{
+  "logs": [
+    {
+      "Authorization_values_masked_only": true,
+      "content_transformation": "none; exact decoded UTF8 copy",
+      "finite_counts": {
+        "JSON_sensitive_value": 0,
+        "github_token": 0,
+        "private_key_PEM": 0,
+        "secret_env_assignment": 0,
+        "signed_URL_value": 0
+      },
+      "log": "push-python312-first.log",
+      "masked_header_occurrences": 1
+    },
+    {
+      "Authorization_values_masked_only": true,
+      "content_transformation": "none; exact decoded UTF8 copy",
+      "finite_counts": {
+        "JSON_sensitive_value": 0,
+        "github_token": 0,
+        "private_key_PEM": 0,
+        "secret_env_assignment": 0,
+        "signed_URL_value": 0
+      },
+      "log": "pr-python312-first.log",
+      "masked_header_occurrences": 1
+    }
+  ],
+  "no_actual_nonce_secret_signature_credential_values_found": true,
+  "not_comprehensive_security_audit": true,
+  "patterns": {
+    "JSON_sensitive_value": "(?i)[\\\"\\x27](?:owner_nonce|nonce|secret|signature|private[_-]?key|password|api[_-]?key|access[_-]?token)[\\\"\\x27]\\s*:\\s*[\\\"\\x27]([^\\\"\\x27]+)[\\\"\\x27]",
+    "github_token": "\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\\b",
+    "private_key_PEM": "-----BEGIN[ A-Z0-9_-]*PRIVATE KEY-----",
+    "secret_env_assignment": "(?im)(?:^|\\s)(?:GH_TOKEN|GITHUB_TOKEN|[A-Z0-9_]*SECRET|[A-Z0-9_]*PASSWORD|[A-Z0-9_]*PRIVATE_KEY)\\s*[:=]\\s*([A-Za-z0-9_+/=-]{12,})",
+    "signed_URL_value": "(?i)https?://[^\\s\\\"\\x27<>]*[?&](?:x-amz-(?:signature|credential|security-token)|x-goog-(?:signature|credential)|signature|sig|access_token|token)=[^\\s\\\"\\x27<>]+"
+  },
+  "private_carrier_JSON_not_published": true,
+  "schema": 1,
+  "scope": "two exact directed job logs only"
+}
