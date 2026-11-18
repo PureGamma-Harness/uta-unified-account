@@ -26,8 +26,8 @@ The first diagnostic budget is split before execution:
 
 The total is at most120s of the planned active sequence,128MiB logical data
 and512KiB raw. All phases use one allowed CPU and record its actual number.
-Root must supply the measured outer lifecycle; summing target internal times
-does not establish a whole-call wall time. SQLite C I/O and the finite profiled
+The separate root host producer supplies a continuous outer timer; summing
+target internal times does not establish a whole-call wall time. SQLite C I/O and the finite profiled
 call cannot be interrupted by the Python line guard. Late or incomplete phases
 are UNKNOWN/FAIL, never an accepted sample. File-length monitoring is not a
 kernel quota and can observe C-side growth only at application boundaries.
@@ -37,8 +37,11 @@ Source files are copied0400 under0500 directories. Databases/reports are new
 FD writes, retains reservation on partial/failure, latches failure and exits125;
 each phase reserves512 bytes for one failure trailer. No warmup, retry, old
 authority access, old suite rerun or deletion of a previous run is permitted.
-The task has no product workers, application children/new threads, network,
-socket/TLS/AuthDB, explicit proc/PID/pidfd operations or signals. These are a
+Each target has no product workers, application children/new threads, network,
+socket/TLS/AuthDB, explicit proc/PID/pidfd operations or signals. The separately
+authorized host owns exactly two new target child processes; its only pidfd
+handles and possible timeout signals address those children. It never opens
+/proc or inspects or signals any pre-existing process. These are a
 reviewed-source/audit-hook boundary, not an OS sandbox or kernel attestation.
 
 ## Fixed synthetic workload and independent finance checks
@@ -75,8 +78,32 @@ independent rational cashflow replay and one historical FILL valuation replay
 per authority must pass. This last check is a sample, not all decisions.
 
 Across paired authorities, only created_at on order/match rows is excluded from
-economic equality; raw originals retain it. All financial fields and complete
-ledger rows remain exact. Audit/source metadata differ between runtime C and B
+table economic equality; raw originals retain it. No *_at pattern is stripped.
+The new uta_config and uta_liquidation_accounts captures use every raw column
+and compare exactly outside the profiled window. Their schemas are respectively
+{key,value} and {account_id,state,cycle,revision,plan_market_version,
+plan_position_digest}; ordinary fixture liquidation rows are empty. All financial
+fields, policy limits/state and complete ledger rows remain exact.
+
+The native legacy-reference risk schema is exhaustively ten fields: account_version,
+equity, initial_margin, maintenance_margin, open_order_margin, available_margin,
+margin_ratio, market_version, observed_at, risk_mode. Unknown/missing fields fail;
+configured policy risk dictionaries are unsupported here. Nine non-temporal fields
+retain exact canonical JSON types and values. The sole risk exception is observed_at:
+service._risk copies market.observed_at.isoformat(), so it is quote asof and never
+calculation time. Fresh authorities necessarily have different real quote times.
+Full original risks, actual current quote JSON, observed_at, archived payload,
+market_snapshot_id and SHA remain raw. The quote's version/assets/instruments
+compare exactly; only its asof and resulting content-addressed ID/SHA are separate
+provenance. Each capture checks current and archived quote bytes in the same
+transaction as native risk/fresh validation. Independent JSON aggregation repeats
+schema/hash/reference/asof checks rather than trusting a stripped projection.
+The recorded original UTC validation clock is sampled after risk; integer age is
+computed from timedelta days/seconds/microseconds and must lie in [-1000000,
+5000000] microseconds, including equality, matching native future skew1s and TTL5s.
+This extra verification may fail; it never refreshes or retries a failed sample.
+Setup already publishes once before every submitted order, with the same fixed
+price/version sequence in all modes, so no new cadence or workload is added. Audit/source metadata differ between runtime C and B
 and remain individually verified/retained rather than removed from raw DBs.
 Business IDs intentionally repeat in paired authorities, so their sum is not a
 global unique-trade capacity result. There are no liquidation fills in this plan.
@@ -145,3 +172,45 @@ under their explicit script entry points. Importing a controller as a module
 does not replace the caller's streams/trace or parse its argv. Preparation
 control870 and its manifests were never executed; their original JSONs remain
 as named preparation snapshots when the entry-point guard was added.
+
+
+## Continuous root host producer and finite receipt boundary
+
+`benchmarks/matching_profile_host.py` is CODE only until root authorizes the exact
+plan digest and both exact target argv arrays as one uninterrupted scope. It
+creates two owned child targets sequentially, records real wait/reap/exit and
+strict integer monotonic start/end/elapsed fields, and retains separate raw FD
+captures. Missing handles, timeouts, late completion, incomplete raw or unknown
+results stop the sequence. A held pidfd is obtained only for an unreaped child
+created by this producer; timeout handling uses that handle, never a raw PID.
+There is no capability probe. Missing required APIs reject before starting a
+child. An OS failure obtaining a child handle is retained and cannot qualify;
+blocked/unreapable C I/O has no hard realtime guarantee.
+
+The JSON aggregate runs in the host interpreter through its explicit main
+function, without a third child, UTA import, SQL or target-module replacement.
+It checks both external phase receipts, exact argv, continuous scope context,
+60/45s child limits,10s aggregate limit and120s total with at most5s of host
+control overhead. Every integer rejects bool. End minus start must equal elapsed;
+late, missing, incomplete or unknown cannot qualify. The external host then
+records a completion receipt, invokes the aggregate's read-only final sequence
+validator, durably publishes that receipt and checks the publication tail against
+the same total/control budget. Comparison JSON alone is pending final host evidence.
+
+Target receipts use actual_exit_status from wait(); the in-process aggregate
+uses actual_return_status. The host cannot know its own future process exit and
+records actual_outer_exit_status=null plus a mandatory caller observation. Root
+must retain its actual host process exit0 and complete END event; an internal
+return-status field cannot substitute. The measured sequence begins at host main
+entry, includes plan reads, namespace creation, captures, receipts and aggregate,
+and excludes interpreter startup before that entry. The final receipt's timestamp
+precedes its own publication; the separately reported tail guard includes that
+fsync/readback. The root tool's complete outer elapsed/exit remains mandatory.
+Data-length checks remain logical monitoring, not a kernel quota. The host reserves
+1MiB for the final receipt within its2MiB allocation and checks all four namespace
+allocations and the joint128MiB bound. No setup, target, SQL or producer has run.
+
+Controls53739d1 and final materialization3b28fa1, their exact old plan/manifests,
+and earlier870 preparations are retained as NOT_RUN_ZERO_TARGET_ATTEMPTS. This
+revision corrects an exact status mismatch and the explicitly identified quote
+provenance comparison; it does not turn a prior attempted failure into a pass.

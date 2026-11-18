@@ -420,7 +420,7 @@ def main():
                    "data_cap_limitation": "Python report bytes reserve before write; SQLite C files are checked at application boundaries. Python line tracing is disabled only in the finite matching profiling region, then restored. The declared phase deadline is checked at boundaries; no kernel quota, blocked-I/O interruption or hard realtime completion guarantee.",
                    "forbidden_imports": forbidden, "active_threads_at_end": 1,
                    "thread_observation_limit": "No application thread start in reviewed source; Python end-state is not kernel thread enumeration.",
-                   "status": "LOCAL_MATCHING_PROFILE_FUNCTIONAL_PASS_PENDING_INDEPENDENT_REVIEW"})
+                   "status": "LOCAL_MATCHING_COMPONENT_PROFILE_PASS_PENDING_INDEPENDENT_REVIEW"})
     write_new_json(reports / "result.json", result)
     inventory = {}
     # All native transactions/connections have ended before reading DB bytes.

@@ -37,6 +37,7 @@ TABLES = {
     "uta_orders": "rowid", "uta_positions": "account_id,symbol",
     "uta_fills": "account_id,fill_id", "uta_matches": "sequence",
     "uta_liabilities": "account_id,asset", "uta_deposits": "account_id,event_id",
+    "uta_config": "key", "uta_liquidation_accounts": "account_id",
 }
 
 
@@ -47,6 +48,36 @@ def require(value, message):
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode()
+
+
+
+# Exhaustive native legacy-reference schema, service.py _risk. Configured PM
+# schemas are outside this profile and must fail rather than lose new fields.
+RISK_FINANCIAL_KEYS = ("account_version", "equity", "initial_margin", "maintenance_margin",
+    "open_order_margin", "available_margin", "margin_ratio", "market_version", "risk_mode")
+
+
+def risk_contract(risks, quote):
+    require(type(risks) is dict and set(risks) == {"buyer", "seller"}, "risk accounts changed")
+    financial = {}
+    for account, risk in risks.items():
+        require(type(risk) is dict and set(risk) == set(RISK_FINANCIAL_KEYS) | {"observed_at"},
+                "unknown/missing native legacy risk field")
+        require(type(risk["account_version"]) is int and risk["account_version"] >= 0
+                and type(risk["market_version"]) is int and risk["market_version"] == quote["version"]
+                and risk["risk_mode"] == "legacy_reference"
+                and type(risk["observed_at"]) is str and risk["observed_at"] == quote["observed_at"],
+                "risk version/mode/quote-asof differs")
+        for key in ("equity", "initial_margin", "maintenance_margin", "open_order_margin", "available_margin", "margin_ratio"):
+            value = risk[key]
+            require((key == "margin_ratio" and value is None)
+                    or (type(value) is str and Decimal(value).is_finite()), "untyped/nonfinite risk value")
+        financial[account] = {key: risk[key] for key in RISK_FINANCIAL_KEYS}
+    return financial
+
+
+def microseconds(delta):
+    return (delta.days * 86400 + delta.seconds) * 1000000 + delta.microseconds
 
 
 def whole(value):
@@ -235,6 +266,28 @@ class Fixture:
             ledger_count = self.exchange.ledger.verify(connection=connection)
             market = self.exchange._market(connection)
             risks = {account: self.exchange._risk(connection, account, market) for account in ("buyer", "seller")}
+            # Same transaction as native fresh validation/risk; preserve the real
+            # current quote bytes and immutable audit reference, not a normalized ID.
+            payload = connection.execute("SELECT payload FROM uta_market WHERE singleton=1").fetchone()[0]
+            digest = sha256(payload.encode()).hexdigest()
+            history = connection.execute("SELECT * FROM uta_market_history WHERE snapshot_id=?", ("market:" + digest,)).fetchone()
+            require(history is not None and history["payload"] == payload and history["content_digest"] == digest,
+                    "current quote differs from archived quote")
+            quote = json.loads(payload)
+            require(set(quote) == {"version", "observed_at", "assets", "instruments"}
+                    and canonical(quote) == canonical(json.loads(market.to_json())), "quote field/source mismatch")
+            validation_clock = self.exchange._now()
+            age_us = microseconds(validation_clock - market.observed_at)
+            max_age_us = microseconds(self.exchange.max_price_age)
+            require(max_age_us == 5000000 and -1000000 <= age_us <= max_age_us,
+                    "verification quote stale/future; original TTL, no retry")
+            risk_financial = risk_contract(risks, quote)
+            market_provenance = {"payload": payload, "sha256": digest, "market_snapshot_id": "market:" + digest,
+                "history": dict(history), "observed_at": quote["observed_at"],
+                "validation_clock_after_risk": validation_clock.isoformat(), "age_us": age_us,
+                "max_age_us": max_age_us, "max_future_skew_us": 1000000,
+                "observed_at_semantics": "quote_asof_not_calculation_time"}
+            market_financial = {key: quote[key] for key in ("version", "assets", "instruments")}
             decisions = [dict(row) for row in connection.execute(
                 "SELECT decision_id,kind,market_snapshot_id FROM uta_risk_decisions ORDER BY decision_id")]
         require(settings == {"journal_mode": "wal", "synchronous": 2}, "WAL/FULL writer settings changed")
@@ -245,6 +298,7 @@ class Fixture:
                        for row in rows] for table, rows in tables.items()}
         accounts = {account: self.exchange.account(account) for account in ("buyer", "seller")}
         return {"tables": tables, "economic_projection": projection, "risks": risks,
+                "risk_financial": risk_financial, "market_financial": market_financial, "market_provenance": market_provenance,
                 "accounts": accounts, "ledger_count": ledger_count, "settings": settings, "decisions": decisions}
 
     def verify(self, expected):
@@ -352,8 +406,10 @@ def run_profile(business, checkpoint, save_report, profiling_window, profile_set
         scan, snapshot = reports[str(size) + "-scan"], reports[str(size) + "-snapshot"]
         a, b = scan["verification"]["after_reopen"], snapshot["verification"]["after_reopen"]
         require(canonical(a["economic_projection"]) == canonical(b["economic_projection"]), "paired financial projection differs")
-        require(canonical(a["risks"]) == canonical(b["risks"]), "paired fresh risk differs")
-        pairs.append({"book_size": size, "economic_projection_equal": True, "fresh_risk_equal": True,
+        require(canonical(a["risk_financial"]) == canonical(b["risk_financial"]), "paired non-temporal risk differs")
+        require(canonical(a["market_financial"]) == canonical(b["market_financial"]), "paired quote finance/version differs")
+        pairs.append({"book_size": size, "economic_projection_equal": True, "risk_nine_non_temporal_fields_equal": True, "quote_finance_and_version_equal": True,
+                      "only_risk_observed_at_is_separate_quote_provenance": True,
                       "scan_matching_wall_ns": scan["matching"]["wall_ns_including_commit_and_observer"],
                       "snapshot_matching_wall_ns": snapshot["matching"]["wall_ns_including_commit_and_observer"],
                       "single_pair_only_no_statistical_significance": True})
