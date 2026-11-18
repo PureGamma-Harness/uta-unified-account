@@ -1,0 +1,147 @@
+{
+  "base_pr49": "7665253ced0888e8204b9806b63c4163f2cafe42",
+  "delivery_choice": "finite fail-only parent-memory diagnostic; native synthetic baseline/cap not implemented",
+  "diagnostic": {
+    "all_thread_snapshot_refs_created_by_cpython": true,
+    "api_timeout_seconds": 4,
+    "capture_failure_input_limit": {
+      "causes": 8,
+      "frames_per_cause": 8
+    },
+    "existing_primary_helper_global_metadata": "bounded __name__ only; final module labels allowlisted",
+    "failure_only": true,
+    "fd_flags_changed": false,
+    "fixed_test_selector": "test_durable_process.DurableProcessTests.test_expired_stopped_owner_holding_shared_gate_is_killed_and_publication_recovers",
+    "hard_wall_time_guarantee": false,
+    "hook_calls_per_failure": 1,
+    "live_stack_reads_f_globals": false,
+    "live_thread_roles": [
+      "case_parent",
+      "supervisor"
+    ],
+    "maximum_frames_each": 8,
+    "maximum_live_threads_projected": 2,
+    "new_child_processes": 0,
+    "new_threads": 0,
+    "original_body_ast_equal": true,
+    "original_elapsed_assert_seconds": 5,
+    "original_exception_bare_raise": true,
+    "original_lease_seconds": 0.6,
+    "other_thread_frames_inspected": false,
+    "output": "one unbuffered write to existing regular unittest FD; blocking pipe/TTY declined; short write not retried",
+    "packet_or_stack_is_causal_timing_proof": false,
+    "pid_lookups": 0,
+    "primary_projection_limit": {
+      "causes": 2,
+      "frames_per_cause": 8
+    },
+    "process_directory_or_proc_reads": 0,
+    "python_stream_lock_acquisitions": 0,
+    "raw_output_bytes_including_prefix_newline": 32768,
+    "reads_f_locals": false,
+    "router_mutex_acquisitions": 0,
+    "signals": 0,
+    "sql_operations": 0,
+    "unlocked_thread_identity_is_native_owner_proof": false,
+    "worker_or_registration_cache_reads": 0
+  },
+  "execution_authorized": false,
+  "gates": {
+    "capacity": "NO_GO",
+    "ha": "NO_GO",
+    "independent_code": "PENDING",
+    "ordinary_ci_first_run": "NOT_REQUESTED",
+    "physical_materialization": "OPEN",
+    "production": "NO_GO",
+    "pure_raw": "NOT_RUN",
+    "real_funds": "NO_GO",
+    "synthetic_native_baseline_cap": "NOT_RUN_NOT_IMPLEMENTED"
+  },
+  "native_synthetic": {
+    "baseline_attempts": 0,
+    "baseline_first_error_preserved": true,
+    "cap_candidate_attempts": 0,
+    "implemented": false,
+    "jammer_release": "actual selected target terminal event OR preserved baseline first original publication failure; bounded own-thread release required",
+    "jammer_scope": "only a new synthetic coordinator/registry DB; AuthDB and H1 explicitly excluded",
+    "registration_shard_before_target_kill": 0,
+    "require_real_stopped_SH_owner_and_registered_phase_before_kill": true,
+    "root_go_and_independent_code_each_required": true,
+    "specification": "docs/monitor-registry-serial-blocking-diagnostic.md",
+    "target_stopped_shard": 1
+  },
+  "privacy": {
+    "entire_original_ci_unit_safe_to_publish": false,
+    "nonce_or_messages_exported": false,
+    "only_independently_cleared_finite_projection_public": true,
+    "pid_bindings_exported": false,
+    "thread_ids_exported": false
+  },
+  "proposed_pure": {
+    "financial_imports": 0,
+    "fixed_methods": [
+      "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+      "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+      "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+      "test_monitor_registry_failure_evidence_pure.MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output"
+    ],
+    "frozen_bounded_entrypoint": "OPEN_NOT_SELECTED",
+    "method_count": 4,
+    "pid_or_proc_lookups": 0,
+    "real_fd_writes": 0,
+    "real_thread_starts": 0,
+    "sql_connections": 0,
+    "target_attempts": 0
+  },
+  "protected_scope": {
+    "diagnostic_target_pid_operations": 0,
+    "existing_original_test_pid_control": "unchanged; no newly authorized manual native run",
+    "future_native_host": "all new births/held pidfds/gates/supervisor/teardown require same denial and ownership closure",
+    "old_pid_deny_values": [
+      4471,
+      8784,
+      122905,
+      122907,
+      123007,
+      123009,
+      310035,
+      310039,
+      310266,
+      310269
+    ]
+  },
+  "schema": "uta.monitor-registry-failure-code-plan.v1",
+  "source_commit": "4f23633b418b817be594cc2ae014379058540b04",
+  "source_conditions": {
+    "cap_present_in_base_or_candidate": false,
+    "dead_selected_owner_cannot_retain_SH_after_kill": "registration after its kill cannot alone explain its retained SH",
+    "dead_worker_replacement_registration_precedes_next_worker_visit": true,
+    "historical_cap_seconds": 0.1,
+    "historical_cap_source": "748990bce104920237867755c4571c35467e1cee",
+    "pending_retry_loop_precedes_worker_scan": true,
+    "real_pr47_first_ci_cause": "UNDETERMINED",
+    "registry_default_database_timeout_seconds": 10.0,
+    "serial_monitor_under_parent_mutex": true
+  },
+  "source_manifest_sha256": "d92eda08887c70ace7dfdbfdca7b62dd406cd2870e9db3871c6b3d59184bb094",
+  "status": "CODE_ONLY_NOT_RUN",
+  "worker9_binding": {
+    "actual_output": null,
+    "actual_worker_execution": false,
+    "field_count": 9,
+    "field_names": [
+      "tests_run",
+      "failures",
+      "errors",
+      "skipped",
+      "expected_failures",
+      "unexpected_successes",
+      "unittest_passed",
+      "lease_observations",
+      "lease_observations_truncated"
+    ],
+    "native_types_and_values_require_future_raw_review": true,
+    "path": "tools/run_validation.py",
+    "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "methods": [
+    {
+      "expected": [
+        "two projected roles",
+        "eight frames per role; both truncated",
+        "supervisor ownership label matched_unlocked_samples only",
+        "mock snapshot dictionary cleared",
+        "rendered packet <=32768 bytes",
+        "exception text, synthetic path, fake thread IDs absent"
+      ],
+      "name": "MonitorRegistryFailureEvidenceTests.test_two_owned_threads_have_eight_frames_and_no_arbitrary_payload",
+      "scope": "Fake frames and unstarted native Thread object; _primary mocked."
+    },
+    {
+      "expected": [
+        "same original Primary instance re-raised",
+        "original args unchanged",
+        "write mock called once with fixed fallback"
+      ],
+      "name": "MonitorRegistryFailureEvidenceTests.test_original_exception_object_survives_diagnostic_failure",
+      "scope": "build_packet and write_packet mocked; no real FD write."
+    },
+    {
+      "expected": [
+        "router_mutex not_acquired",
+        "worker_cache not_read",
+        "supervisor ownership unverified"
+      ],
+      "name": "MonitorRegistryFailureEvidenceTests.test_busy_mutex_and_worker_cache_are_never_acquired_or_read",
+      "scope": "Fake current-frame dictionary, no actual mutex acquisition; _primary mocked."
+    },
+    {
+      "expected": [
+        "oversize payload renders fixed quota packet",
+        "blocking FIFO writes zero times",
+        "short regular-file write returns short_write and mock called once"
+      ],
+      "name": "MonitorRegistryFailureEvidenceTests.test_quota_or_blocking_sink_denial_never_retries_output",
+      "scope": "fstat/get_blocking/write all patched; no real helper FD write."
+    }
+  ],
+  "not_proven": [
+    "real diagnostic primary projection",
+    "native failure path",
+    "SH/process/thread incarnation ownership",
+    "registry blocking causal timing",
+    "original CI cause",
+    "production or performance"
+  ],
+  "schema": 1,
+  "status": "MANUAL_EXPECTATIONS_CODE_ONLY_NOT_RUN",
+  "success_gate": {
+    "errors": 0,
+    "expectedFailures": 0,
+    "failures": 0,
+    "forbidden_listed_attempts": [],
+    "helper_test_function_identities_unchanged": true,
+    "no_UTA_or_SQLite_modules": true,
+    "ordered_success_IDs": 4,
+    "skipped": 0,
+    "unexpectedSuccesses": 0
+  },
+  "target_attempts": 0
+}

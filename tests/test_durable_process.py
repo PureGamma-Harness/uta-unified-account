@@ -24,6 +24,7 @@ from uta.service import ServiceError
 from uta.sharding import ShardRouter, ShardWorkerView, _BoundShardDatabase
 from uta.writer_fence import WriterFence, WriterFenceError
 from uta.service import ExchangeService
+from monitor_registry_failure_evidence import emit_once
 
 
 _REAL_RUN_WORKER = durable_process._run_worker
@@ -421,11 +422,18 @@ class DurableProcessTests(unittest.TestCase):
         # No manual SIGCONT: supervisor must observe expiry and kill its own
         # stopped child so an EX publication gate can actually be acquired.
         before = monotonic()
-        publication = self.router.publish_market(self.market(2), timeout=4)
-        self.assertLess(monotonic() - before, 5)
-        self.assertFalse(publication["publishing"])
-        self.eventually(lambda: self.router.worker_pid(0) not in (None, pid))
-        self.assertTrue(publication["halted"])
+        try:
+            publication = self.router.publish_market(self.market(2), timeout=4)
+            self.assertLess(monotonic() - before, 5)
+            self.assertFalse(publication["publishing"])
+            self.eventually(lambda: self.router.worker_pid(0) not in (None, pid))
+            self.assertTrue(publication["halted"])
+        except BaseException as primary_error:
+            try:
+                emit_once(self.router, primary_error)
+            except BaseException:
+                pass  # Observation failure never replaces the original failure.
+            raise
 
     def test_real_new_pid_repayments_use_same_fenced_credit_and_stable_receipts(self):
         path = Path(self.temporary.name) / "credit-managed"
