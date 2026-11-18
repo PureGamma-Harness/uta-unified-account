@@ -94,3 +94,8 @@ Matcher 构造器与停市前段提取为 AST，在内存行和不可执行的�
 回滚先按既有入口排空及 writer 停止手册完成停机，再使用匹配账务格式的候选版本
 恢复 scan 构造。保留所有已确认成交、订单、分录和审计，不删除数据库、不重建 ID，
 不降级持久 guard/schema。因为本变更无数据迁移，模式切换本身不需要财务补偿。
+
+首pure计划的raw边界由新driver在任何fixture/main输出前同时替换stdout/stderr及fallbackstream：
+合计256KiB，其中512B独立保留给一次失败trailer；每次先保留完整UTF-8请求字节再写FD，
+部分写或写失败不退回额度并sticky own-exit125。这个有限已冻结fixture没有native FD输出。
+原04c计划因该CODE缺口未执行，按NOT_RUN原样保留；新source88baf3b单独冻结，不计重跑。

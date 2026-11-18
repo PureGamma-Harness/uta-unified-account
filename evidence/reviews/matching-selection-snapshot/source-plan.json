@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "status": "CODE_ONLY_AWAITING_INDEPENDENT_REVIEW_AND_ROOT_ONCE_SCOPE",
-  "source_commit": "04c23bd4ed0b16d9c6a3f5ea330f04df1a74455f",
+  "source_commit": "88baf3b32aa8b30e5432d2a59fa0729bf4f1d174",
   "base_commit": "9b61e5f35dd2196ef2fdddfa03559eca3f1322ec",
   "inputs": {
     "uta/matching.py": {
@@ -17,8 +17,8 @@
       "sha256": "96034eb3635b147ab2d5029f1d269c3a61862c8b63d6d8d95f93f5a66cd7025e"
     },
     "evidence/reviews/matching-selection-snapshot/run_once.py": {
-      "bytes": 4574,
-      "sha256": "e148f59b5b257b108a5f260f706304e683a51285a9e79258f76bef0827f1b973"
+      "bytes": 6807,
+      "sha256": "e07928d9fbf59bbfc33157c12e1bd3d1d59abccc88a9722ae819fa7d67c7d15a"
     }
   },
   "command": [
@@ -26,7 +26,7 @@
     "-I",
     "-B",
     "evidence/reviews/matching-selection-snapshot/run_once.py",
-    "04c23bd4ed0b16d9c6a3f5ea330f04df1a74455f"
+    "88baf3b32aa8b30e5432d2a59fa0729bf4f1d174"
   ],
   "selector": {
     "class": "SnapshotSelectionTests",
@@ -83,5 +83,21 @@
     "all budget outcomes"
   ],
   "operation_count_scope": "One128-row memory adapter and20iterations: only full-read/point-read request counts; not SQL query-plan, walltime, TPS or settlement evidence.",
-  "acceptance_limit": "Any pure PASS is selector/guard component evidence only. Real SQLite matching, risk, fees, two-leg settlement, concurrent writer exclusion, restart reconciliation, performance and production activation remain NOT_RUN/NO_GO."
+  "acceptance_limit": "Any pure PASS is selector/guard component evidence only. Real SQLite matching, risk, fees, two-leg settlement, concurrent writer exclusion, restart reconciliation, performance and production activation remain NOT_RUN/NO_GO.",
+  "previous_plan": {
+    "source_commit": "04c23bd4ed0b16d9c6a3f5ea330f04df1a74455f",
+    "preserved_path": "evidence/reviews/matching-selection-snapshot/source-plan-initial-04c23bd.json",
+    "sha256": "8bea9073865972c4340020d728e096e7ece5b397de0439e10f4a33545ca8797b",
+    "execution_status": "NOT_RUN_NO_TARGET_ATTEMPT"
+  },
+  "raw_capture_contract": {
+    "combined_cap_bytes": 262144,
+    "normal_capacity_bytes": 261632,
+    "trailer_reserve_bytes": 512,
+    "reserve_full_UTF8_request_before_FD_write": true,
+    "partial_or_failed_write": "reservation remains consumed; sticky failure; one bounded trailer attempt then own os._exit125",
+    "streams": "sys.stdout,sys.stderr and both Python fallback streams replaced before fixture/import/main execution",
+    "domain": "frozen memory-only fixture uses Python streams; no native FD emitter or child",
+    "pre_execution_scope": "interpreter startup/missing-source failures separate; no fixture invocation when source preparation fails"
+  }
 }
