@@ -27,3 +27,5 @@ To roll back a new test deployment, stop its ingress and authority using its doc
 ## Release gates
 
 Independent source/interaction review and this tree's own first CI are pending. Further gates include full matching-to-ledger reconciliation, restart and fault injection, pending-obligation encumbrance, market-publication liveness, loaded-engine identity, product-specific settlement, replicated recovery, open-loop sustained 10000/s order and unique-liquidation-fill workloads, 30-minute and longer stability runs, and explicit real-funds approval. No capacity, HA, production or funds approval is granted.
+
+Independent pre-CI review identified a deterministic integration mismatch: the ordinary source-inventory test still declared the62-module PR51 deployment, while this tree has65 Python modules. Inventory V3 explicitly adds the three funding modules and preserves the historical V2 tuple. Exact-set and fixed-count assertions remain strict; frozen historical runs retain their original source/test bytes and pins. Static AST/Git verification confirms all65 names; this is not an executed test result.
