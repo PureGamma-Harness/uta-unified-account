@@ -1,0 +1,46 @@
+{
+  "candidate": "b689b42455c458c63677ca7e30a9aa3ea53bb047",
+  "findings": [
+    {
+      "id": "B1",
+      "kind": "cleanup barrier lifecycle contract",
+      "locations": [
+        "uta/durable_process.py:1187",
+        "uta/durable_process.py:1279",
+        "uta/durable_process.py:1164",
+        "uta/durable_process.py:1604"
+      ],
+      "summary": "Unknown cleanup blocks only supervisor-loop entries. close/start on the same object can launch again without proving that old cleanup became complete; successful new registration discards the old blocked marker.",
+      "scope": "static interleaving, not a demonstrated financial double writer or original CI cause"
+    },
+    {
+      "id": "B2",
+      "kind": "resource recovery inventory",
+      "locations": [
+        "uta/durable_process.py:1141",
+        "uta/durable_process.py:1143",
+        "uta/durable_process.py:1145",
+        "uta/durable_process.py:1146",
+        "uta/durable_process.py:1150"
+      ],
+      "summary": "Workers/start-gate references are removed before all handle/process close operations complete. A later close error leaves cleanup false/blocked but no router-owned handle inventory for subsequent cleanup.",
+      "scope": "child exit was checked first, so this alone is not a claim of an active second financial writer"
+    },
+    {
+      "id": "B3",
+      "kind": "shutdown retry race",
+      "locations": [
+        "uta/durable_process.py:1289",
+        "uta/durable_process.py:1291",
+        "uta/durable_process.py:1295",
+        "uta/durable_process.py:1320",
+        "uta/durable_process.py:1600"
+      ],
+      "summary": "New retry loop does not recheck stop after acquiring mutex, unlike the existing dead-child respawn guard. A waiting monitor can create/release a fresh actor after close has requested stop.",
+      "scope": "static possible interleaving; no native testcase or SQL was executed"
+    }
+  ],
+  "original_CI_record_unchanged": true,
+  "root_cause": "UNPROVEN",
+  "production_approved": false
+}

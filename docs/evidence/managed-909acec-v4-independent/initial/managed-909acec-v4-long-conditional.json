@@ -1,0 +1,122 @@
+{
+  "amendment": "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-observer-amendment.json",
+  "amendment_sha256": "48442a12634b85cd5a79b0dbadf7a15a380140e33545f39859e80210ca26cf22",
+  "capacity_10000_approved": false,
+  "continuous_24h_stability_passed": false,
+  "continuous_6h_stability_passed": false,
+  "count_successor_version_required": false,
+  "current_execution_authorized": false,
+  "execution_authorized": false,
+  "financial_6h_passed": false,
+  "live_coverage_passed": false,
+  "long_preflight_executed": false,
+  "long_scratch": "/workspace/uta-managed-observer-runs/909acec-six-hours-20261117",
+  "long_service_started": false,
+  "long_start_executed": false,
+  "original_v1_profile_sha256": "e0f6920149395d006b40cdf946a52f9ceb46e69b5ee88ce4f613c1f81db5f5be",
+  "phase_execution_authorized": false,
+  "phase_policy": {
+    "allowed_future_phases": [
+      "long-preflight",
+      "long-start"
+    ],
+    "consume_wall_and_boottime_rollback_rejected": true,
+    "each_phase_requires_new_fresh_immutable_snapshot": true,
+    "each_phase_requires_root_exact_three_SHA_GO": true,
+    "no_execution_in_this_preregistration": true,
+    "original_f96_latest_effective_HB_max_seconds": 30,
+    "original_producer_effective_HB_max_seconds": 15,
+    "preflight_does_not_authorize_start": true,
+    "snapshot_TTL_seconds": 15,
+    "snapshot_is_not_reservation_or_blanket_permission": true
+  },
+  "plan": "/workspace/uta-managed-909acec-prepare/benchmarks/plans/20261117-managed-909acec-six-hours-v4-smoke02-conditional.json",
+  "plan_sha256": "95f5c3e612f9eb77114edaedef4f09c5f01679b81bfe08230d13e7ebbfc2fa67",
+  "preregistered_at_utc": "2026-11-17T19:01:06.252398+00:00",
+  "previous_profile_sha256": "8f48d7835c3b3d3ad53fbebfe955c611ba815adbddfe3281fb008fdd4b99c87a",
+  "production_approved": false,
+  "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+  "qualification": {
+    "actual_executed_tests_each": 1801,
+    "all_eight_ci_passed": true,
+    "all_three_local_passed": true,
+    "blocked_reason": null,
+    "ci_actual_attempt": 1,
+    "ci_evidence_commit": "85e96b63813e0b993e532f054ef97740e64176cd",
+    "ci_status_at_preregistration": "ORIGINAL_ATTEMPT1_BOTH_SUCCESS_EIGHT_COMPLETE_JOBS",
+    "independent_new_package_passed": true,
+    "local_evidence_commit": "841b5cc908e7e15e9461c0ecc91a173e2162cada",
+    "original_ci_runs": [
+      44132222411,
+      44132321549
+    ],
+    "package_author_commit": "721e9d02308d900cd39db2a209d0130394f78338",
+    "package_peer_commit": "5c98110359f293413ebe561b3cb2f5683ee26863",
+    "qualification_inherited": false,
+    "status": "COMPLETE_ALL_GATES_PASSED"
+  },
+  "resource_review": {
+    "current_combined_gap_bytes": null,
+    "current_free_bytes": null,
+    "external_phase_specific_fresh_admission_and_root_GO_required": true,
+    "old_observer_floor_approved": true,
+    "old_observer_floor_bytes": 268435456,
+    "old_observer_floor_conditional": true,
+    "operator_record": "/workspace/uta-managed-909acec-prepare/evidence/preparations/managed-909acec-v2/conditional-floor-policy.json",
+    "operator_record_sha256": "c8c3c81d1d5a5e203c97667f297fb056948b3ec61eb706ed130a91f807349fcf"
+  },
+  "scope": "standard_managed_low_rate_synthetic_only; no newCreditV2/public newborrow501/H0/10k/HA/production",
+  "service_started": false,
+  "smoke02_evidence": {
+    "actual_active_seconds": 60.145987524,
+    "actual_component_scope": "TLS/matching/settlement/seeded repayment/worker+parent restart/full journal+owner-asset projection+required order-fill-business joins/FK/same-watermark private cold/strict-long refusal",
+    "actual_first_Popen_to_recorded_outer_endpoint_seconds": 64.379813724,
+    "actual_parent_fault_signals": 1,
+    "actual_rounds_done": 15,
+    "actual_worker_fault_signals": 3,
+    "author_evidence_commit": "a97483d89fed2d440cc36bdf850be34e179d1cb1",
+    "full_business_event_or_every_decision_risk_reexecution_passed": null,
+    "independent_actual_result_acceptance_commit": null,
+    "long_authorized": false,
+    "references": {
+      "manifest.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/manifest.json",
+        "sha256": "721cfd50782d914445b46b7cf4fbdc9d115d23d5f15fe20fae6ab914e314f90c"
+      },
+      "outcome.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/outcome.json",
+        "sha256": "c4a11e0c9734a0fae87ad10833090c36fb3aa3fde0f7b1705ff994b719957905"
+      },
+      "root--final-outer-attestation.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--final-outer-attestation.json",
+        "sha256": "f113d859fc0ebdd6748be951cd79a02efa767ae7213f80dccff0825aca2b6723"
+      },
+      "root--timing-boundary-erratum.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/root--timing-boundary-erratum.json",
+        "sha256": "6aa14e1d585179e5e24b6f27c2c2cc0b8f415e676a16fb1ecc4703feda0df71e"
+      },
+      "timing-boundary-addendum-manifest.json": {
+        "path": "/workspace/uta-managed-909acec-prepare/evidence/runs/managed-909acec-smoke-02/timing-boundary-addendum-manifest.json",
+        "sha256": "581914b9af181f3cc0876701bb5f1b921f9a9af144b292f46ec3996ee3e9d955"
+      }
+    },
+    "root_auxiliary_hash_and_final_attestation_full_latency_seconds": null,
+    "seven_stage_states": {
+      "cold": "PASS",
+      "fault-live": "PASS",
+      "final": "PASS",
+      "normal-live": "PASS",
+      "produce": "PASS",
+      "startup": "PASS",
+      "strict-negative": "PASS"
+    },
+    "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+    "status": "AUTHOR_SEVEN_STAGE_ACTUAL_PASS_INDEPENDENT_RESULT_ACCEPTANCE_PENDING",
+    "timing_addendum_commit": "bf8492534d69a64ad2e859b9423c63473d16eb88"
+  },
+  "smoke_scratch": "/workspace/uta-managed-observer-runs/909acec-smoke-20261117-02",
+  "source_commit": "909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0",
+  "source_root": "/workspace/uta-credit-v2-py310-candidate",
+  "static_source_qualification_complete": true,
+  "validation_report": "/workspace/uta-combined-validation/final-909acec/python312/summary.json"
+}
