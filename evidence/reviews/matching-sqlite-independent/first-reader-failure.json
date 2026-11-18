@@ -1,0 +1,15 @@
+{
+  "SQL_connections": 0,
+  "cause": "Reviewer reference wrongly waived adverse execution loss for reduce-only; documented rule only waives IM.",
+  "chunk_id": "027948",
+  "corrected_expression": "loss = max(-remaining * (100 - limit), 0)",
+  "exit_code": 1,
+  "kind": "INDEPENDENT_READONLY_REVIEWER_REFERENCE_FAILURE_NOT_TARGET_RUN",
+  "original_expression": "loss = 0 if order['reduce_only'] else max(-remaining * (100 - limit), 0)",
+  "original_token_count": 275,
+  "output": "Traceback (most recent call last):\n  File \"/workspace/uta-matching-sqlite-independent-code/evidence/reviews/matching-sqlite-independent/read_actual_once.py\", line 378, in <module>\n    print(json.dumps(main(), sort_keys=True, indent=2))\n                     ^^^^^^\n  File \"/workspace/uta-matching-sqlite-independent-code/evidence/reviews/matching-sqlite-independent/read_actual_once.py\", line 356, in main\n    outcomes.append(financial_check(report))\n                    ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/uta-matching-sqlite-independent-code/evidence/reviews/matching-sqlite-independent/read_actual_once.py\", line 255, in financial_check\n    rebuilt = economic_from_rows(capture['tables'], capture['accounts'])\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/uta-matching-sqlite-independent-code/evidence/reviews/matching-sqlite-independent/read_actual_once.py\", line 175, in economic_from_rows\n    assert rational(item['summary']['risk_' + side][key]) == amount\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "policy_source": "3b0c49a:docs/kernel-validation.md:11-15 and docs/reserve-kernel.md:31-38",
+  "reader_source_sha256": "8c4cd53ef8cc6a2718df3cb7bb71bdfbc820d25da48cb62499e91b2d0783ab67",
+  "target_reexecution": false,
+  "wall_time_seconds": 0.028722154
+}

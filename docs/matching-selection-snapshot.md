@@ -1,0 +1,128 @@
+# 事务内盘口选择实验：默认关闭
+
+本分支基于 PR35 `9b61e5f35dd2196ef2fdddfa03559eca3f1322ec`。
+`Matcher(exchange)` 仍逐轮全量读取和排序。仅直接构造
+`Matcher(exchange, book_selection="snapshot")` 请求新选择器；worker、HTTP、
+CLI 和产品配置均没有开启入口。本轮没有数据库迁移。
+
+源码冻结时是 CODE 候选；下文保留其未执行阶段。新首pure结果单列，SQLite链路及性能仍未执行，不能声称提高吞吐、
+通过生产验收或可用于真实资金。原 PR35 的失败与其他组的证据保持原样。
+
+## 改动和可复算例子
+
+原 `match_once` 每轮对同一交易对查询全部活动订单，再做精确数值排序。若有 N 条
+挂单、M 次尝试，其盘口读取/排序工作重复 M 次。新实验在同一个写事务内读取并
+排序一次，每次取首单时按 `(account_id, order_id)` 重新读取数据库。它不缓存
+账户、市场、风险、手续费、预占或成交结果。
+
+例如三个买单按时间序号 1、2、3，价格为 9、100、100.00000001，卖单序号4，
+价格99。买侧顺序为3、2、1。若成交后只减仓校验连带取消买单3，新选择器先读取
+单3的终态、丢弃其首指针，再读取单2。它不会使用缓存中的活动状态。相同精确
+价格仍按 SQLite rowid 排序，maker 价格仍由原成交代码决定。
+
+生产选择器使用 `Fraction(Decimal(price))` 精确排序；独立测试的预期值每次重新
+全排序，使用 Decimal 比较及 `copy_negate()`，避免浮点及环境精度下的取负运算。
+
+## 安全前提及拒绝
+
+本模式只支持固定、已审查的原生调用图与无副作用的常规配置，不是同 UID Python
+代码的隔离沙箱。`ExchangeService`、`Database`、`DurableLedger` 和可选的
+`DecisionAudit` 必须为精确原生类型；有限的相关入口必须仍绑定原方法，同一账本和
+审计必须引用同一 database。构造时和每次实际 `match_once` 前都检查这些条件。
+Matcher 子类、相关实例覆写、自定义服务时钟及自定义 fence 时钟明确拒绝。
+时钟识别只检查原构造器中两段默认 lambda 的代码身份、globals、closure/defaults，
+不会调用时钟来猜测其安全性。
+
+第一版实验还拒绝所有已配置 `ProductCatalog` / `PortfolioRules`。这些公共输入
+允许子类及模型虚派发，本轮未证明其无副作用；仍可使用默认 scan。后续真实产品
+目录必须另行扩展合同并验收，不能把此实验当作首批产品已可启用。
+
+不满足上述条件返回 `ServiceError(code="matching_snapshot_unsupported", status=409)`，
+不开始金融事务，不隐式回落到 scan。无效选择字符串、字符串子类或非字符串在
+构造时抛出 `ValueError`。省略参数的 scan 路径保持原兼容行为。
+
+在当前原生调用图中：
+
+| 路径 | 对 `uta_orders` 的影响 | 选择器处理 |
+| --- | --- | --- |
+| `Database._role_transaction_body` | 在 yield 前 `BEGIN IMMEDIATE`，结束时原 guard/COMMIT | 与外部 writer 串行；缓存不跨事务 |
+| `Matcher.match_once` → `_apply_fill` | 更新当前订单 filled/status/version/累计费用 | 每次首单重读剩余数量 |
+| `_apply_fill` → `_invalidate_reductions` | 取消同账户其他不再合格的只减仓单 | 重读首单并惰性丢弃终态 |
+| STP 或已知执行拒绝 → `_cancel_locked` | 取消被选中的订单 | 下一轮重读终态 |
+| 第二侧执行失败 | 原 savepoint 回滚两侧，再取消拒绝侧 | 回滚期间不推进任何首指针 |
+| 非预期异常或 COMMIT 失败 | 原外围事务回滚整个批次 | 事务内缓存随调用销毁，无成功回执 |
+
+原生插单仅在 `submit_order` 路径；它不在本次匹配调用图内。
+原生匹配没有删除、改单、改变订单键/方向/数量上限/价格/rowid 或插入新订单的路径。
+收到的首单若身份、不可变字段、方向或剩余量上限变化，新模式以
+`matching_corruption` /503 中止并回滚。
+
+未来新增改单、事务内插单、恢复终态单、用户 SQL callback、额外触发器或新的扩展
+回调时，旧初始库存可能遗漏更优订单，不能继续启用这个模式。首单检查不是全库
+变更检测器。必须先更新合同及验证，或继续 scan。任意私有字段篡改、全局 monkeypatch
+及恶意同进程代码不由有限入口检查防御，不能宣称这些场景已被拒绝。
+
+## 验证计划与证据范围
+
+新 discoverable 测试为 `tests/test_matching_selection_snapshot.py`，12 个方法，
+最多384条合成场景（含256个固定 seed 的12步轨迹）。它只将实际选择器、准入检查、
+Matcher 构造器与停市前段提取为 AST，在内存行和不可执行的原生组件替身上运行；
+不 import UTA，不连接 SQLite，不创建线程/子进程，不读进程身份，不发送信号，
+不访问网络。原 `ExchangeService.__init__` 只编译声明以取得两段原 clock code，
+不调用构造器或时钟。完整代码和范围将由另一工作组独立审查。
+
+覆盖精确价格/FIFO、24种输入排列、空/单侧/不交叉盘口、部分成交、只减仓连带撤单、
+第二侧失败回滚模型、STP撤新单模型、跨事务重新建库存、身份/优先级/数量异常、
+未知组件和回调拒绝。实际 `match_once` 的市场不可用前段在替身上执行，检查不读取
+盘口。其余成交状态变更由显式内存模型提供，不构成真实撮合/金融/锁的验证。
+
+128条挂单/20轮的案例只统计内存适配器收到的全量读取和点读调用，是组件工作量
+性质；它不是时间测量、SQLite 查询计划或吞吐结果。
+
+冻结后向 root 提交一次首跑计划：一颗允许 CPU、10秒、完整首 stdout/stderr/exit、
+前后源码 SHA。未获明确范围前不执行。失败原件不重写、不自动重跑。
+
+后续门槛仍包括真实 SQLite 双模式差分、两侧结算/审计/账本重开对账、并发/故障、
+同硬件公平短测和至少30分钟开放环测试。不得用本纯组件结果替代这些门槛。
+
+## 部署与回滚
+
+默认发布和所有已有服务使用 scan，不改变持久格式。仅在新的合成 authority 和独立
+实验脚本中显式构造 snapshot，并记录精确提交、模式与运行范围。现有 authority
+不可通过替换正在运行的 writer 二进制测试本实验。
+
+本提交改变 `uta/matching.py` 的源码指纹，选择 scan 时也必须遵守 managed
+authority 的代码绑定。已有 authority 的离线升级与旧决策的精确 artifact 回放
+须按各自契约独立验证；本 PR 没有提供该升级，也不允许改写 marker 或伪造历史
+manifest 来接管旧库。以下回滚操作仍须满足目标 authority 的代码与格式兼容门槛。
+
+回滚先按既有入口排空及 writer 停止手册完成停机，再使用匹配账务格式的候选版本
+恢复 scan 构造。保留所有已确认成交、订单、分录和审计，不删除数据库、不重建 ID，
+不降级持久 guard/schema。因为本变更无数据迁移，模式切换本身不需要财务补偿。
+
+首pure计划的raw边界由新driver在任何fixture/main输出前同时替换stdout/stderr及fallbackstream：
+合计256KiB，其中512B独立保留给一次失败trailer；每次先保留完整UTF-8请求字节再写FD，
+部分写或写失败不退回额度并sticky own-exit125。这个有限已冻结fixture没有native FD输出。
+原04c计划因该CODE缺口未执行，按NOT_RUN原样保留；新source88baf3b单独冻结，不计重跑。
+
+独立CODE审发现88b夹具在创建原构造器声明时，默认参数仍立即求值，缺少
+标准库timedelta/Decimal名称；7a737e3只补这两个namespace名称，不调用构造器。
+旧88b计划与v2物化记录原样保留为NOT_RUN/0attempt，新v3计划单独绑定四源。
+
+独立组另指出原排列例子没有同价逆rowid输入，无法防止误删时间键。26fa628在
+现有FIFO方法内增加双边同价逆rowid及撤首单的手工断言，12方法和384场景上界不变。
+7a计划同样未执行并原样保留，新v4记录绑定四源。
+
+## 首次纯组件运行：12/12，独立原件审查待闭合
+
+唯一调用source26fa628，Python3.12.14，实际affinity[0]（一颗CPU），exit0。
+unittest报告2.093s；driver自有时钟2.191063063990441s；外层全生命周期monotonic
+未采集，仅保留两段tool等待与秒级UTC观察，不能把driver时长标成外层E2E。
+stdout3954B/d51f6e7ac311ea8b23d422fec51d667e24164a44c77d6dadcbc1bcb785bbbffd，
+stderr0B；完整原件/intent/四源前后/exit见对应first-pure-26fa628-once01目录。
+
+12方法0FAIL/ERROR/skip，未importUTA/sqlite或执行SQL/child/network/旧suite。
+256seed、各12步与其它例子由冻结源码和方法成功绑定，未导出逐场景计数。
+内存128行/20轮的full1/point78断言通过；这不是实际SQL或TPS。
+源码与默认scan行为未再修改。实际模块导入、双侧结算、账务重开、并发故障、性能
+及产品/真实资金启用全部仍NOT_RUN或NO_GO；独立组只读核首原件后另列结论。

@@ -15,15 +15,132 @@ from hashlib import sha256
 import json
 import sqlite3
 import time
+from types import CodeType, FunctionType, MethodType
 from uuid import uuid4
 
+from .decision_audit import DecisionAudit
 from .service import ExchangeService, ServiceError, _exact, _key, _name, _text
+from .storage import Database, DurableLedger
 
 
 _LIVE = ("OPEN", "PARTIALLY_FILLED")
 _TRANSIENT = {"market_unavailable", "invalid_clock", "storage_unavailable", "trading_halted"}
 _CANCEL_REJECTIONS = {"account_frozen", "insufficient_margin", "reduce_only_violation",
                       "unsafe_reduction", "position_limit", "order_closed", "invalid_fill"}
+
+_BOOK_QUERY = """SELECT rowid AS book_sequence,* FROM uta_orders
+                    WHERE symbol=? AND status IN ('OPEN','PARTIALLY_FILLED')"""
+_BOOK_POINT_QUERY = """SELECT rowid AS book_sequence,* FROM uta_orders
+                    WHERE account_id=? AND order_id=?"""
+_BOOK_FIXED_FIELDS = ("book_sequence", "account_id", "order_id", "symbol", "quantity",
+                      "limit_price", "reduce_only", "created_at")
+
+
+def _native_bindings(cls, names):
+    return tuple((name, getattr(cls, name), type(vars(cls)[name]) is staticmethod)
+                 for name in names)
+
+
+# This is a closed, reviewed native call graph, not a Python sandbox. The finite
+# entry-point checks reject the supported extension hooks which could mutate a
+# book behind the transaction-local ordering. Same-UID arbitrary monkeypatches
+# and mutating SQL callbacks are outside this experimental mode's contract.
+_BOOK_SERVICE_BINDINGS = _native_bindings(ExchangeService, (
+    "_transaction", "_market", "_now", "_apply_fill", "_cancel_locked",
+    "_invalidate_reductions", "_event", "_risk", "_audit_state", "_fill_fee",
+    "_project_fill", "_check_product", "_reserve"))
+_BOOK_DATABASE_BINDINGS = _native_bindings(Database, (
+    "transaction", "_role_transaction_body", "_connect", "_using"))
+_BOOK_LEDGER_BINDINGS = _native_bindings(DurableLedger, ("post",))
+_BOOK_AUDIT_BINDINGS = _native_bindings(DecisionAudit, ("market_ref", "record"))
+_BOOK_CLOCK_CODES = tuple(value for value in ExchangeService.__init__.__code__.co_consts
+                         if type(value) is CodeType and value.co_name == "<lambda>"
+                         and value.co_names == ("datetime", "now", "timezone", "utc")
+                         and not value.co_freevars)
+
+
+def _require_native_bindings(instance, cls, bindings):
+    if type(instance) is not cls:
+        raise ServiceError("matching_snapshot_unsupported", "snapshot selection requires native components", 409)
+    for name, original, static in bindings:
+        current = getattr(instance, name)
+        valid = current is original if static else (
+            type(current) is MethodType and current.__self__ is instance
+            and current.__func__ is original)
+        if not valid:
+            raise ServiceError("matching_snapshot_unsupported", "snapshot selection rejects component overrides", 409)
+
+
+def _require_snapshot_native(exchange):
+    _require_native_bindings(exchange, ExchangeService, _BOOK_SERVICE_BINDINGS)
+    # Public policy-model subclasses can dispatch caller-defined callbacks.
+    # The first experimental scope is the callback-free legacy USD policy.
+    if exchange.product_catalog is not None or exchange.portfolio_rules is not None:
+        raise ServiceError("matching_snapshot_unsupported", "snapshot selection does not support configured policy models", 409)
+    _require_native_bindings(exchange.database, Database, _BOOK_DATABASE_BINDINGS)
+    _require_native_bindings(exchange.ledger, DurableLedger, _BOOK_LEDGER_BINDINGS)
+    if exchange.ledger.database is not exchange.database:
+        raise ServiceError("matching_snapshot_unsupported", "snapshot selection requires one native authority", 409)
+    if exchange.audit is not None:
+        _require_native_bindings(exchange.audit, DecisionAudit, _BOOK_AUDIT_BINDINGS)
+        if exchange.audit.database is not exchange.database:
+            raise ServiceError("matching_snapshot_unsupported", "snapshot selection requires one audit authority", 409)
+    clock = exchange.clock
+    if (type(clock) is not FunctionType or not any(clock.__code__ is code for code in _BOOK_CLOCK_CODES)
+            or clock.__globals__ is not ExchangeService.__init__.__globals__
+            or clock.__closure__ is not None or clock.__defaults__ is not None
+            or clock.__kwdefaults__ is not None or exchange.database._fence_clock_ns is not None):
+        raise ServiceError("matching_snapshot_unsupported", "snapshot selection rejects custom clocks", 409)
+
+
+class _TransactionBook:
+    """Exact initial priority; fresh row state on every peek, in one write txn.
+
+    Native matching can only decrease remaining quantities or cancel existing
+    orders. It never inserts an order or changes these immutable priority fields.
+    A future amend/insert path requires a new contract before enabling this mode.
+    """
+
+    def __init__(self, connection, symbol):
+        if not connection.in_transaction:
+            raise ServiceError("matching_corruption", "snapshot selection requires an active transaction", 503)
+        self._connection = connection
+        self._sides = {1: [], -1: []}
+        self._heads = {1: 0, -1: 0}
+        for row in connection.execute(_BOOK_QUERY, (symbol,)).fetchall():
+            remaining = Fraction(Decimal(row["quantity"])) - Fraction(Decimal(row["filled_quantity"]))
+            if not remaining:
+                continue
+            side = 1 if remaining > 0 else -1
+            fixed = tuple(row[field] for field in _BOOK_FIXED_FIELDS)
+            self._sides[side].append((-side * Fraction(Decimal(row["limit_price"])),
+                                      row["book_sequence"], fixed, abs(remaining)))
+        for rows in self._sides.values():
+            rows.sort(key=lambda item: (item[0], item[1]))
+
+    def best(self, side):
+        if side not in (1, -1) or type(side) is not int:
+            raise ValueError("book side must be exactly 1 or -1")
+        if not self._connection.in_transaction:
+            raise ServiceError("matching_corruption", "snapshot selection outlived its transaction", 503)
+        rows = self._sides[side]
+        while self._heads[side] < len(rows):
+            priority, sequence, fixed, maximum = rows[self._heads[side]]
+            row = self._connection.execute(_BOOK_POINT_QUERY, (fixed[1], fixed[2])).fetchone()
+            if row is None or tuple(row[field] for field in _BOOK_FIXED_FIELDS) != fixed:
+                raise ServiceError("matching_corruption", "snapshot book identity or priority changed", 503)
+            if row["status"] not in _LIVE:
+                self._heads[side] += 1
+                continue
+            remaining = Fraction(Decimal(row["quantity"])) - Fraction(Decimal(row["filled_quantity"]))
+            if not remaining:
+                self._heads[side] += 1
+                continue
+            if (remaining > 0) != (side > 0) or abs(remaining) > maximum:
+                raise ServiceError("matching_corruption", "snapshot book remaining quantity increased or reversed", 503)
+            rows[self._heads[side]] = (priority, sequence, fixed, abs(remaining))
+            return row
+        return None
 
 
 class Matcher:
@@ -35,12 +152,20 @@ class Matcher:
     never a caller timestamp. No cross-database or multi-shard atomicity is claimed.
     """
 
-    def __init__(self, exchange: ExchangeService, *, initialize: bool = True):
+    def __init__(self, exchange: ExchangeService, *, initialize: bool = True,
+                 book_selection: str = "scan"):
         if not isinstance(exchange, ExchangeService):
             raise ValueError("exchange must be an ExchangeService")
         if type(initialize) is not bool:
             raise ValueError("initialize must be boolean")
+        if type(book_selection) is not str or book_selection not in ("scan", "snapshot"):
+            raise ValueError("book_selection must be 'scan' or 'snapshot'")
+        if book_selection == "snapshot":
+            if type(self) is not Matcher:
+                raise ServiceError("matching_snapshot_unsupported", "snapshot selection rejects matcher subclasses", 409)
+            _require_snapshot_native(exchange)
         self.exchange = exchange
+        self._book_selection = book_selection
         if not initialize:
             # Reconciliation must never recreate missing guards before checking
             # them, or its attempt to inspect corruption could mask the problem.
@@ -102,6 +227,10 @@ class Matcher:
         _name(symbol, "symbol")
         if type(max_matches) is not int or not 1 <= max_matches <= 1000:
             raise ServiceError("invalid_input", "max_matches must be an integer in 1..1000")
+        if self._book_selection == "snapshot":
+            if type(self) is not Matcher or any(name in vars(self) for name in ("_remaining", "_identity", "_receipt")):
+                raise ServiceError("matching_snapshot_unsupported", "snapshot selection rejects matcher overrides", 409)
+            _require_snapshot_native(self.exchange)
         result = {"symbol": symbol, "trades": [], "confirmed_trades": 0,
                   "cancelled_orders": [], "blocked": [], "market_version": None,
                   "attempts": 0, "batch_exhausted": False}
@@ -119,16 +248,21 @@ class Matcher:
             # An adversarial book full of invalid/self-crossing orders must not
             # hold the global write authority indefinitely.
             budget = max_matches * 2 + 1
+            book = _TransactionBook(connection, symbol) if self._book_selection == "snapshot" else None
             while result["confirmed_trades"] < max_matches and result["attempts"] < budget:
-                rows = connection.execute("""SELECT rowid AS book_sequence,* FROM uta_orders
-                    WHERE symbol=? AND status IN ('OPEN','PARTIALLY_FILLED')""", (symbol,)).fetchall()
-                buys = sorted((row for row in rows if self._remaining(row) > 0),
-                              key=lambda row: (-Fraction(Decimal(row["limit_price"])), row["book_sequence"]))
-                sells = sorted((row for row in rows if self._remaining(row) < 0),
-                               key=lambda row: (Fraction(Decimal(row["limit_price"])), row["book_sequence"]))
-                if not buys or not sells:
-                    break
-                buy, sell = buys[0], sells[0]
+                if book is None:
+                    rows = connection.execute(_BOOK_QUERY, (symbol,)).fetchall()
+                    buys = sorted((row for row in rows if self._remaining(row) > 0),
+                                  key=lambda row: (-Fraction(Decimal(row["limit_price"])), row["book_sequence"]))
+                    sells = sorted((row for row in rows if self._remaining(row) < 0),
+                                   key=lambda row: (Fraction(Decimal(row["limit_price"])), row["book_sequence"]))
+                    if not buys or not sells:
+                        break
+                    buy, sell = buys[0], sells[0]
+                else:
+                    buy, sell = book.best(1), book.best(-1)
+                    if buy is None or sell is None:
+                        break
                 if Decimal(buy["limit_price"]) < Decimal(sell["limit_price"]):
                     break
                 result["attempts"] += 1
