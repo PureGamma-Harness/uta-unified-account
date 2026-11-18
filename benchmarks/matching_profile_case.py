@@ -395,12 +395,15 @@ def usage():
 
 
 class Fixture:
-    def __init__(self, business, size, mode, checkpoint, observer):
+    def __init__(self, business, size, mode, checkpoint, observer, *, reserve_cache_size=0):
+        require(type(reserve_cache_size) is int and reserve_cache_size in (0, 128), "candidate cache must be exactly 0 or 128")
+        self.reserve_cache_size = reserve_cache_size
         self.size, self.mode, self.checkpoint, self.observer = size, mode, checkpoint, observer
         self.case = "book-" + str(size)
         self.path = Path(business) / (self.case + "-" + mode + ".sqlite3")
         require(not self.path.exists(), "authority path must be new")
-        self.exchange = ExchangeService(Database(self.path), {"USD": 8}, decision_audit=True)
+        self.exchange = ExchangeService(Database(self.path), {"USD": 8}, decision_audit=True,
+                                        reserve_cache_size=self.reserve_cache_size)
         self.matcher = (Matcher(self.exchange) if mode == "original-scan"
                         else Matcher(self.exchange, book_selection=mode))
         self.version = 0
@@ -493,7 +496,8 @@ class Fixture:
             fills = [row for row in before["tables"]["uta_fills"] if row["account_id"] == account]
             require(sum((Fraction(row["fee"]) for row in fills), Fraction()) == expected["fee_per_account"], "fill fees differ")
             require(all(Fraction(row["realized_pnl"]) == 0 for row in fills), "opening trade created PnL")
-        self.exchange = self.step("reopen-native", ExchangeService, Database(self.path), {"USD": 8}, decision_audit=True)
+        self.exchange = self.step("reopen-native", ExchangeService, Database(self.path), {"USD": 8}, decision_audit=True,
+                                       reserve_cache_size=self.reserve_cache_size)
         self.matcher = (Matcher(self.exchange, initialize=False) if self.mode == "original-scan"
                         else Matcher(self.exchange, initialize=False, book_selection=self.mode))
         after = self.step("post-reopen-financial-capture", self.capture)
@@ -548,6 +552,122 @@ def _run_observer_setup_observed(business, checkpoint, *, book_size, mode, obser
     # continuation even when the observer fault is not reproduced.
     return result
 
+
+
+
+def run_reserve_reuse_pair(business, checkpoint, save_report, profiling_window, *, book_size, mode):
+    """Experimental existing cache0/128, two fresh identical native scan books.
+
+    This never changes a production default or implements different arithmetic.
+    Only current economic inputs can hit the native bounded ReserveKernel.
+    """
+    require(type(book_size) is int and book_size == 32 and mode == "scan", "reserve pair requires exactly 32 scan")
+    observer = SqlObserver()
+    results = {}
+    try:
+        observer.install()
+        for label, capacity in (("reference0", 0), ("candidate128", 128)):
+            directory = Path(business) / label
+            directory.mkdir(mode=0o700)
+            observer.phase = "setup-" + label
+            wall, cpu = perf_counter_ns(), process_time_ns()
+            fixture = Fixture(directory, 32, "scan", checkpoint, observer, reserve_cache_size=capacity)
+            fixture.case = "reserve-32-" + label
+            fixture.setup(workload(32))
+            setup = {"wall_ns": perf_counter_ns() - wall, "cpu_ns": process_time_ns() - cpu,
+                     "cache_stats": fixture.exchange.reserve_cache_stats(), "sqlite_observation": observer.snapshot()}
+            if capacity:
+                require(setup["cache_stats"]["misses"] == setup["cache_stats"]["size"] == 6
+                        and setup["cache_stats"]["hits"] > 0 and setup["cache_stats"]["evictions"] == 0,
+                        "fixed initial economic-key cardinality differs from manual six-key oracle")
+            else:
+                require(all(setup["cache_stats"][name] == 0 for name in ("size", "hits", "misses", "evictions")),
+                        "reference service must stay on uncached original Fraction path")
+            fixture.quote()  # Same one genuine fresh quote before each timed call.
+            before_cache = fixture.exchange.reserve_cache_stats()
+            observer.phase = "matching-" + label
+            checkpoint(fixture.case, "scan", "timed-region", "before")
+            profiler = cProfile.Profile()
+            profiling_window(True)
+            try:
+                profiler.enable()
+                wall, cpu = perf_counter_ns(), process_time_ns()
+                try:
+                    matched = fixture.matcher.match_once("BTC-PERP", BATCH_MATCHES)
+                finally:
+                    matching_wall, matching_cpu = perf_counter_ns() - wall, process_time_ns() - cpu
+            finally:
+                profiler.disable()
+                profiling_window(False)
+            checkpoint(fixture.case, "scan", "timed-region", "after")
+            require(matched["confirmed_trades"] == 8 and len(matched["trades"]) == 8
+                    and not matched["blocked"] and not matched["cancelled_orders"], "incomplete first reserve-reuse sample; no retry")
+            after_cache = fixture.exchange.reserve_cache_stats()
+            delta = {name: after_cache[name] - before_cache[name] for name in ("hits", "misses", "evictions")}
+            if capacity:
+                require(delta["hits"] > 0 and 0 <= delta["misses"] <= 16 and delta["evictions"] == 0
+                        and after_cache["size"] <= 22, "actual matching cache counts violate fixed workload bounds")
+            else:
+                require(all(value == 0 for value in delta.values()) and after_cache["size"] == 0,
+                        "reference cache unexpectedly changed")
+            observation = observer.snapshot()
+            require(observation["events"].get("COMMIT", 0) >= 1, "matching financial COMMIT unobserved")
+            matching = {"wall_ns_including_commit_and_observer": matching_wall, "cpu_ns": matching_cpu, "result": matched,
+                        "cache_before": before_cache, "cache_after": after_cache, "cache_delta": delta,
+                        "sqlite_observation": observation, "cprofile": profile_rows(profiler),
+                        "timing_has_observer_and_profiler_overhead": True,
+                        "not_per_fill_latency_or_open_loop_throughput": True}
+            observer.phase = "verification-" + label
+            verify_wall, verify_cpu = perf_counter_ns(), process_time_ns()
+            verification = fixture.verify(reference_matches(workload(32)))
+            policy = fixture.exchange.audit.policy_record(fixture.exchange.audit.policy_id)
+            require(set(policy) == {"format", "risk_mode", "catalog", "rules", "scales", "fee_rate", "max_price_age_us",
+                    "order_precision", "reserve_formula", "execution_options"}, "unknown/missing audited policy field")
+            require(policy["execution_options"] == {"reserve_cache_size": capacity, "market_cache_size": 0},
+                    "audited execution options differ from actual fixed candidate")
+            verification["audit_policy"] = {"policy_id": fixture.exchange.audit.policy_id, "payload": policy,
+                                           "artifact_id": fixture.exchange.audit.artifact_id}
+            verification["sqlite_observation"] = observer.snapshot()
+            verification["wall_ns"] = perf_counter_ns() - verify_wall
+            verification["cpu_ns"] = process_time_ns() - verify_cpu
+            verification["cache_stats_after_reopen_and_checks"] = fixture.exchange.reserve_cache_stats()
+            require(verification["cache_stats_after_reopen_and_checks"]["capacity"] == capacity,
+                    "reopen lost explicit execution option")
+            result = {"label": label, "reserve_cache_size": capacity, "market_cache_size": 0,
+                      "book_size": 32, "mode": "scan", "setup": setup, "matching": matching,
+                      "verification": verification, "actions": fixture.actions,
+                      "workload": {"seed": SEED + 32, "orders": workload(32), "deposit_per_account": "1000000",
+                           "account_count": 2, "quantity_distribution_units": [1, 2, 5], "audit": True,
+                           "fee_rate": ".0004", "USD_scale": 8, "native_clock": True, "market_cache_size": 0},
+                      "production_approved": False}
+            save_report("reserve-" + label + ".json", result)
+            results[label] = result
+        for stage in ("before_reopen", "after_reopen"):
+            a, b = (results[label]["verification"][stage] for label in ("reference0", "candidate128"))
+            for key in ("economic_projection", "risk_financial", "market_financial", "accounts"):
+                require(canonical(a[key]) == canonical(b[key]), "reserve option changed typed financial state: " + stage + "/" + key)
+        for label in ("reference0", "candidate128"):
+            a, b = (results[label]["verification"][stage] for stage in ("before_reopen", "after_reopen"))
+            for key in ("economic_projection", "risk_financial", "market_financial", "accounts"):
+                require(canonical(a[key]) == canonical(b[key]), "reopen changed typed financial state: " + label + "/" + key)
+        pa, pb = (results[label]["verification"]["audit_policy"] for label in ("reference0", "candidate128"))
+        require(pa["artifact_id"] == pb["artifact_id"], "paired immutable financial runtime artifacts differ")
+        for key in pa["payload"]:
+            if key != "execution_options":
+                require(canonical(pa["payload"][key]) == canonical(pb["payload"][key]), "economic policy differs: " + key)
+        require(pa["policy_id"] != pb["policy_id"], "explicit execution-option policy change was not archived")
+    finally:
+        lifecycle = observer.close()
+        save_report("observer-lifecycle.json", lifecycle)
+    observer.raise_fault()
+    return {"kind": "EXPERIMENTAL_EXACT_RESERVE_OPTION_PAIR_NOT_PRODUCTION_CAPACITY", "profile_set": "reserve-reuse",
+            "authorities": 2, "book_sizes": [32], "mode": "scan", "capacities": [0, 128],
+            "financial_fields_exact": True, "all_functional_checks_passed": True,
+            "observer_lifecycle": lifecycle, "matching_calls": 2, "confirmed_matches_by_authority": [8, 8],
+            "paired_fills_by_authority": [16, 16], "cache_counts_recorded_actual_not_inferred": True,
+            "differences_allowed_only": ["execution option/cache diagnostics", "audit policy execution_options and derived policy identity", "existing explicit time provenance"],
+            "default_scan_regression_accepted": False, "throughput_capacity_accepted": False,
+            "statistical_significance_claimed": False, "production_approved": False}
 
 
 def run_observer_setup(business, checkpoint, save_report, *, book_size, mode):

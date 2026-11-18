@@ -1,0 +1,282 @@
+{
+  "independent_raw_review_commit": "f3fb0b707421f99110e0984b5ffe5fa7255459df",
+  "kind": "READ_ONLY_STORED_CPROFILE_HOTSPOT_EXTRACTION",
+  "limitations": [
+    "existing single serial profiled batch per case; no significance or default-regression conclusion",
+    "cumulative times nest and must not be added",
+    "cProfile plus SQL trace and local LINE monitoring overhead included symmetrically",
+    "COMMIT/fsync cannot be separated from Connection.execute native timing",
+    "no TPS, per-fill latency percentiles, open-loop, 30min or production-capacity acceptance"
+  ],
+  "native_runtime_commit": "a2434bdfe711ead1d202f6c1527e527f73e2dfa2",
+  "new_SQL": 0,
+  "new_target_runs": 0,
+  "profile_source": "4d0e2563479a5839a77c174ee82096c1290f55d9",
+  "reports": [
+    {
+      "book_size": 32,
+      "matching_wall_ns": 116710878,
+      "mode": "scan",
+      "nonoverlapping_self_seconds_by_group": {
+        "audit_python": 0.004380029000000001,
+        "book_selection_and_ordering": 0.00111035,
+        "exact_fraction_arithmetic": 0.026183531000000006,
+        "json_serialization": 0.0046079250000000006,
+        "matching_orchestration_python": 0.000735404,
+        "other": 0.05763204600000001,
+        "profile_sql_counter_instrumentation": 0.0022228020000000003,
+        "risk_and_reserve": 6.053400000000001e-05,
+        "sqlite_native_including_execution_and_commit": 0.019602117000000002
+      },
+      "selected_functions": [
+        {
+          "cumulative_seconds": 0.10011244700000001,
+          "file_basename": "service.py",
+          "function": "_apply_fill",
+          "line": 917,
+          "primitive_calls": 16,
+          "self_seconds": 0.0013125440000000001,
+          "total_calls": 16
+        },
+        {
+          "cumulative_seconds": 0.059386562000000004,
+          "file_basename": "service.py",
+          "function": "_risk",
+          "line": 521,
+          "primitive_calls": 48,
+          "self_seconds": 0.0018533900000000001,
+          "total_calls": 48
+        },
+        {
+          "cumulative_seconds": 0.039960512000000004,
+          "file_basename": "service.py",
+          "function": "_reserve",
+          "line": 466,
+          "primitive_calls": 568,
+          "self_seconds": 0.00044038700000000004,
+          "total_calls": 568
+        },
+        {
+          "cumulative_seconds": 0.039459591,
+          "file_basename": "service.py",
+          "function": "_reserve_reference",
+          "line": 495,
+          "primitive_calls": 568,
+          "self_seconds": 0.006191263000000001,
+          "total_calls": 568
+        },
+        {
+          "cumulative_seconds": 0.018477764,
+          "file_basename": "fractions.py",
+          "function": "__new__",
+          "line": 186,
+          "primitive_calls": 10058,
+          "self_seconds": 0.008870156,
+          "total_calls": 10058
+        }
+      ],
+      "source_bytes": 342062,
+      "source_logical_name": "profile-32-scan.json",
+      "source_sha256": "f3a51b56c484f88d83e1c468a894749136e45efbc73bb86035600c6d3d11ece6"
+    },
+    {
+      "book_size": 32,
+      "matching_wall_ns": 103657367,
+      "mode": "snapshot",
+      "nonoverlapping_self_seconds_by_group": {
+        "audit_python": 0.004068885,
+        "book_selection_and_ordering": 0.000499616,
+        "exact_fraction_arithmetic": 0.022624559000000002,
+        "json_serialization": 0.004526195,
+        "matching_orchestration_python": 0.0005751980000000001,
+        "other": 0.05331528600000001,
+        "profile_sql_counter_instrumentation": 0.0019713720000000003,
+        "risk_and_reserve": 5.8696e-05,
+        "sqlite_native_including_execution_and_commit": 0.015815333
+      },
+      "selected_functions": [
+        {
+          "cumulative_seconds": 0.09331339000000001,
+          "file_basename": "service.py",
+          "function": "_apply_fill",
+          "line": 917,
+          "primitive_calls": 16,
+          "self_seconds": 0.001098982,
+          "total_calls": 16
+        },
+        {
+          "cumulative_seconds": 0.055780299000000005,
+          "file_basename": "service.py",
+          "function": "_risk",
+          "line": 521,
+          "primitive_calls": 48,
+          "self_seconds": 0.002044325,
+          "total_calls": 48
+        },
+        {
+          "cumulative_seconds": 0.037267804,
+          "file_basename": "service.py",
+          "function": "_reserve",
+          "line": 466,
+          "primitive_calls": 568,
+          "self_seconds": 0.00040073100000000004,
+          "total_calls": 568
+        },
+        {
+          "cumulative_seconds": 0.036808377,
+          "file_basename": "service.py",
+          "function": "_reserve_reference",
+          "line": 495,
+          "primitive_calls": 568,
+          "self_seconds": 0.005514794,
+          "total_calls": 568
+        },
+        {
+          "cumulative_seconds": 0.01629662,
+          "file_basename": "fractions.py",
+          "function": "__new__",
+          "line": 186,
+          "primitive_calls": 9218,
+          "self_seconds": 0.007454545000000001,
+          "total_calls": 9218
+        }
+      ],
+      "source_bytes": 345429,
+      "source_logical_name": "profile-32-snapshot.json",
+      "source_sha256": "31bf61d21b9a2fa18908e2bc26a545c8db6af3a6d6c646c22d67f351c2c9144b"
+    },
+    {
+      "book_size": 128,
+      "matching_wall_ns": 358132562,
+      "mode": "scan",
+      "nonoverlapping_self_seconds_by_group": {
+        "audit_python": 0.005162002000000001,
+        "book_selection_and_ordering": 0.0049837860000000005,
+        "exact_fraction_arithmetic": 0.11843706700000003,
+        "json_serialization": 0.009395965000000003,
+        "matching_orchestration_python": 0.002282872,
+        "other": 0.18421108399999997,
+        "profile_sql_counter_instrumentation": 0.0024906290000000003,
+        "risk_and_reserve": 0.00028230400000000004,
+        "sqlite_native_including_execution_and_commit": 0.030561029000000003
+      },
+      "selected_functions": [
+        {
+          "cumulative_seconds": 0.311532438,
+          "file_basename": "service.py",
+          "function": "_apply_fill",
+          "line": 917,
+          "primitive_calls": 16,
+          "self_seconds": 0.001815565,
+          "total_calls": 16
+        },
+        {
+          "cumulative_seconds": 0.24874953600000002,
+          "file_basename": "service.py",
+          "function": "_risk",
+          "line": 521,
+          "primitive_calls": 48,
+          "self_seconds": 0.002258602,
+          "total_calls": 48
+        },
+        {
+          "cumulative_seconds": 0.203396858,
+          "file_basename": "service.py",
+          "function": "_reserve",
+          "line": 466,
+          "primitive_calls": 2872,
+          "self_seconds": 0.002236646,
+          "total_calls": 2872
+        },
+        {
+          "cumulative_seconds": 0.20087790800000002,
+          "file_basename": "service.py",
+          "function": "_reserve_reference",
+          "line": 495,
+          "primitive_calls": 2872,
+          "self_seconds": 0.031114060000000002,
+          "total_calls": 2872
+        },
+        {
+          "cumulative_seconds": 0.08644903500000001,
+          "file_basename": "fractions.py",
+          "function": "__new__",
+          "line": 186,
+          "primitive_calls": 43850,
+          "self_seconds": 0.039562496,
+          "total_calls": 43850
+        }
+      ],
+      "source_bytes": 628256,
+      "source_logical_name": "profile-128-scan.json",
+      "source_sha256": "63b5dc09e12e57d2811e8d66974ac46455a1a1d22a516a5bcf4ea3e1ec3925db"
+    },
+    {
+      "book_size": 128,
+      "matching_wall_ns": 327185506,
+      "mode": "snapshot",
+      "nonoverlapping_self_seconds_by_group": {
+        "audit_python": 0.005020823,
+        "book_selection_and_ordering": 0.0013848350000000003,
+        "exact_fraction_arithmetic": 0.10296484,
+        "json_serialization": 0.009061612999999998,
+        "matching_orchestration_python": 0.0012756920000000001,
+        "other": 0.16253420899999996,
+        "profile_sql_counter_instrumentation": 0.002553339,
+        "risk_and_reserve": 0.00028912100000000004,
+        "sqlite_native_including_execution_and_commit": 0.041786856000000004
+      },
+      "selected_functions": [
+        {
+          "cumulative_seconds": 0.29331658800000004,
+          "file_basename": "service.py",
+          "function": "_apply_fill",
+          "line": 917,
+          "primitive_calls": 16,
+          "self_seconds": 0.0017192720000000002,
+          "total_calls": 16
+        },
+        {
+          "cumulative_seconds": 0.233606698,
+          "file_basename": "service.py",
+          "function": "_risk",
+          "line": 521,
+          "primitive_calls": 48,
+          "self_seconds": 0.001808537,
+          "total_calls": 48
+        },
+        {
+          "cumulative_seconds": 0.19372272000000001,
+          "file_basename": "service.py",
+          "function": "_reserve",
+          "line": 466,
+          "primitive_calls": 2872,
+          "self_seconds": 0.001982675,
+          "total_calls": 2872
+        },
+        {
+          "cumulative_seconds": 0.19145092400000002,
+          "file_basename": "service.py",
+          "function": "_reserve_reference",
+          "line": 495,
+          "primitive_calls": 2872,
+          "self_seconds": 0.029234071,
+          "total_calls": 2872
+        },
+        {
+          "cumulative_seconds": 0.0720007,
+          "file_basename": "fractions.py",
+          "function": "__new__",
+          "line": 186,
+          "primitive_calls": 39554,
+          "self_seconds": 0.032881917000000004,
+          "total_calls": 39554
+        }
+      ],
+      "source_bytes": 631475,
+      "source_logical_name": "profile-128-snapshot.json",
+      "source_sha256": "d0033dd2e1cb113b4e700ab5d76e9aad48bfeccfdd00cf854043b8902e8c047f"
+    }
+  ],
+  "safe_first_raw_commit": "13a25363ede7fcfcd61d0b1f33b1b539ca9e3cab"
+}

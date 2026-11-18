@@ -283,14 +283,23 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host-start-gate-stdin", action="store_true")
     parser.add_argument("--setup-only", action="store_true")
+    parser.add_argument("--reserve-reuse-pair", action="store_true")
     parser.add_argument("--book-size", type=int)
     parser.add_argument("--book-selection", choices=("scan",))
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--source-commit", required=True)
     parser.add_argument("--approved-manifest-sha256", required=True)
-    parser.add_argument("--profile-set", choices=("current", "original-scan", "observer-setup"), required=True)
+    parser.add_argument("--profile-set", choices=("current", "original-scan", "observer-setup", "reserve-reuse"), required=True)
     args = parser.parse_args()
-    if args.setup_only:
+    if args.reserve_reuse_pair:
+        if (args.setup_only or args.profile_set != "reserve-reuse" or args.book_size != 32
+                or args.book_selection != "scan" or args.host_start_gate_stdin
+                or sys.argv.count("--reserve-reuse-pair") != 1):
+            raise ValueError("reserve pair requires exactly reserve-reuse/32/scan and no other execution mode")
+        seconds, RAW_CAP, DATA_CAP = 30, 255 * 1024, 48 * 1024 * 1024
+        SUBTREE_CAPS = {"business": 32 * 1024 * 1024, "source": 2 * 1024 * 1024, "reports": 4 * 1024 * 1024}
+        book_sizes, authority_count = [32], 2
+    elif args.setup_only:
         if (args.profile_set != "observer-setup" or args.book_size != 32 or args.book_selection != "scan"
                 or args.host_start_gate_stdin or sys.argv.count("--setup-only") != 1):
             raise ValueError("setup-only requires exactly observer-setup/32/scan, no host gate or profile fallthrough")
@@ -298,7 +307,7 @@ def main():
         SUBTREE_CAPS = {"business": 16 * 1024 * 1024, "source": 2 * 1024 * 1024, "reports": 1024 * 1024}
         book_sizes, authority_count = [32], 1
     else:
-        if (args.profile_set == "observer-setup" or args.book_size is not None or args.book_selection is not None
+        if (args.profile_set in ("observer-setup", "reserve-reuse") or args.book_size is not None or args.book_selection is not None
                 or not args.host_start_gate_stdin):
             raise ValueError("full profile and setup-only invocation contracts cannot be mixed")
         seconds = 60 if args.profile_set == "current" else 45
@@ -370,6 +379,7 @@ def main():
                    "runtime": sys.version, "affinity_before_pinning": affinity_before,
                    "actual_affinity": sorted(os.sched_getaffinity(0)), "source_pins": pins,
                    "book_sizes": book_sizes, "authority_count": authority_count, "setup_only": args.setup_only,
+                   "reserve_reuse_pair": args.reserve_reuse_pair,
                    "subtree_caps": SUBTREE_CAPS,
                    "profile_set": args.profile_set, "wall_seconds": seconds, "raw_cap_bytes": RAW_CAP,
                    "target_runtime_commit": manifest["target_runtime_commit"],
@@ -410,7 +420,11 @@ def main():
 
     case_path = source / "benchmarks/matching_profile_case.py"
     values = runpy.run_path(str(case_path), run_name="matching_component_profile_once")
-    if args.setup_only:
+    if args.reserve_reuse_pair:
+        result = values["run_reserve_reuse_pair"](business, checkpoint, save_report, profiling_window,
+                                                  book_size=args.book_size, mode=args.book_selection)
+        exit_status, status = 0, "RESERVE_REUSE_PAIR_DIFFERENTIAL_COMPLETE_PENDING_INDEPENDENT_REVIEW"
+    elif args.setup_only:
         result = values["run_observer_setup"](business, checkpoint, save_report, book_size=args.book_size, mode=args.book_selection)
         exit_status = result["exit_status"]
         if type(exit_status) is not int or exit_status not in (0, 1) or result["matching_calls"] != 0:
@@ -477,7 +491,10 @@ def main():
 def script_entry():
     # No main/mini materialization, UTA import or SQL before the root-owned
     # host has durably recorded this new child and its held pidfd. EOF rejects.
-    if "--setup-only" in sys.argv:
+    if "--reserve-reuse-pair" in sys.argv:
+        if sys.argv.count("--reserve-reuse-pair") != 1 or "--setup-only" in sys.argv or "--host-start-gate-stdin" in sys.argv:
+            return 126
+    elif "--setup-only" in sys.argv:
         # The separately authorized root timeout/taskset scope owns this one
         # diagnostic process. No child, thread or gate operation occurs here.
         if sys.argv.count("--setup-only") != 1 or "--host-start-gate-stdin" in sys.argv:
