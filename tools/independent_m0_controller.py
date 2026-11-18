@@ -29,8 +29,8 @@ import time
 
 SOURCE = '909acecd153e2e89dfe2238e3ed3a3d9a3d3c9f0'
 SOURCE_TREE = 'cee60bc0b5413551030300e065d0dcaac6a7ff55'
-APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-04'
-REGISTRATION_ID = 'independent-m0-20261117-04'
+APPROVED_BRANCH = 'refs/heads/perf/approved-m0-20261117-05'
+REGISTRATION_ID = 'independent-m0-20261117-05'
 APPROVAL_PATH = 'config/independent-m0-approved.json'
 ONCE_WORKFLOW = '.github/workflows/independent-m0-once.yml'
 TRACKED = 5518
