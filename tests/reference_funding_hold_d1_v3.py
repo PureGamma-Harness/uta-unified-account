@@ -238,10 +238,12 @@ def _allowed_step(before, after):
                 or (after["kind"] in ("FINAL_PAYABLE", "FINAL_RECEIVABLE", "FINAL_ZERO")
                     and after["exposure_ref"] is None and after["cap_ref"] is None))
     if before["kind"] == "EXPOSURE_RATE_PENDING":
-        return (after["kind"] in ("FINAL_PAYABLE", "FINAL_RECEIVABLE", "FINAL_ZERO")
-                and after["amount_units"] <= before["amount_units"]
-                and after["exposure_ref"] == before["exposure_ref"]
-                and after["cap_ref"] == before["cap_ref"])
+        linked = (after["kind"] in ("FINAL_PAYABLE", "FINAL_RECEIVABLE", "FINAL_ZERO")
+                  and after["exposure_ref"] == before["exposure_ref"]
+                  and after["cap_ref"] == before["cap_ref"])
+        if linked and after["amount_units"] > before["amount_units"]:
+            raise ReferenceUnsupported("CAP_BREACH_PRESERVES_PRIOR_STATE")
+        return linked
     return False
 
 
@@ -267,9 +269,9 @@ def _state(value):
 
 def _same_scope(state, scope):
     key = state["key"]
-    _require(all(key[n] == scope[n] for n in ("authority_id", "authority_generation",
-                 "account_id", "settlement_asset"))
-             and state["usd_scale"] == scope["usd_scale"], "SCOPE_MISMATCH")
+    if (any(key[n] != scope[n] for n in ("authority_id", "authority_generation",
+            "account_id", "settlement_asset")) or state["usd_scale"] != scope["usd_scale"]):
+        raise ReferenceUnsupported("CROSS_SCOPE_OR_SCALE_UNSUPPORTED")
 
 
 def _major(units, scope):
@@ -285,7 +287,8 @@ def _units(amount, scope):
 
 def _aggregate(states, scope, complete):
     _scope(scope)
-    _require(_flag(complete), "INCOMPLETE_PROVIDED_BASIS")
+    if not _flag(complete):
+        raise ReferenceUnsupported("INCOMPLETE_PROVIDED_BASIS")
     _require(type(states) is list and len(states) <= 1000, "DUTY_COUNT_BOUND")
     duties, slots = set(), set()
     values = {"P": Fraction(0), "U": Fraction(0), "N": Fraction(0)}
@@ -297,7 +300,8 @@ def _aggregate(states, scope, complete):
         duties.add(identity)
         slots.add(slot)
         stage = state["active"]
-        _require(stage["kind"] != "REGISTERED_UNASSESSED", "UNASSESSED_REQUIRED_DUTY")
+        if stage["kind"] == "REGISTERED_UNASSESSED":
+            raise ReferenceUnsupported("UNASSESSED_REQUIRED_DUTY")
         component = {"EXPOSURE_RATE_PENDING": "U", "FINAL_PAYABLE": "P",
                      "FINAL_RECEIVABLE": "N"}.get(stage["kind"])
         if component is not None:
@@ -316,7 +320,9 @@ def _base(value):
                     "order_reserve_units", "cash_units", "spot_frozen_units",
                     "funding_components"))
     _scope(value["scope"])
-    _require(value["funding_components"] == "EXCLUDED", "BASE_ALREADY_CONTAINS_FUNDING")
+    _require(type(value["funding_components"]) is str, "FUNDING_COMPONENTS_TEXT_REQUIRED")
+    if value["funding_components"] != "EXCLUDED":
+        raise ReferenceUnsupported("BASE_ALREADY_CONTAINS_FUNDING")
     for name in ("accounting_equity_units", "risk_equity_units", "cash_units"):
         _money(value[name])
     for name in ("initial_margin_units", "maintenance_margin_units",
@@ -408,8 +414,12 @@ def _wait_preview(data):
     new["observed_highwater_us"] = now
     if record["default_review"] or now >= record["deadline_us"] or record["attempts"] >= record["policy"]["max_query_attempts"]:
         new["default_review"] = True
-    elif dispatch and (record["last_dispatch_us"] is None
-                       or now - record["last_dispatch_us"] >= record["policy"]["min_query_interval_us"]):
+    elif dispatch:
+        # An explicit pre-dispatch request must satisfy the interval. A caller
+        # that only observes WAIT uses dispatch_query=False instead.
+        _require(record["last_dispatch_us"] is None
+                 or now - record["last_dispatch_us"] >= record["policy"]["min_query_interval_us"],
+                 "QUERY_INTERVAL_NOT_REACHED")
         new["attempts"] += 1
         new["last_dispatch_us"] = now
         counted = True
@@ -453,6 +463,8 @@ def _evaluate(op, data):
         active = state["active"]
         _require(data["expected_revision"] == state["revision"]
                  and expected == active, "STAGE_REVISION_COMPLETE_STAGE_CAS")
+        if active["kind"] in ("FINAL_PAYABLE", "FINAL_RECEIVABLE", "FINAL_ZERO"):
+            raise ReferenceUnsupported("FINAL_STAGE_IMMUTABLE")
         _require(_allowed_step(active, proposed), "IMMUTABLE_STAGE_OR_CAP_BOUND")
         new = _copy(state)
         new["history"].append(new["active"])
@@ -490,7 +502,9 @@ def _evaluate(op, data):
         prior = _flag(data["prior_confirmed_settlements_clear"])
         quote = _flag(data["quote_available"])
         own = [state for state in data["states"] if _duty_id(state["key"]) == data["own_duty_id"]]
-        _require(len(own) == 1 and own[0]["active"]["kind"] == "FINAL_PAYABLE", "OWN_FIXED_PAYABLE_REQUIRED")
+        _require(len(own) == 1, "OWN_DUTY_REQUIRED")
+        if own[0]["active"]["kind"] != "FINAL_PAYABLE":
+            raise ReferenceUnsupported("OWN_FIXED_PAYABLE_REQUIRED")
         debit = own[0]["active"]["amount_units"]
         after = _units(_major(cash, data["scope"]) - _major(debit, data["scope"]), data["scope"])
         eligible = prior and frozen <= max(after, 0)

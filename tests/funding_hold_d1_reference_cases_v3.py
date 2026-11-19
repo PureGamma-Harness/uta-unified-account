@@ -1,4 +1,4 @@
-"""Version3 closed synthetic 1024-seed proposal; definitions, never run.
+"""Version3 closed synthetic 1024-seed fixtures; no financial activation.
 
 The generator imports neither the oracle nor production.  It constructs raw
 wire data, with expectation limited to the declared OK/REJECT/UNSUPPORTED
@@ -215,7 +215,13 @@ def _valid(family, variant, case_id):
         if variant == 63:
             record.update(default_review=True, revision=MAX_TIME)
             now = record["observed_highwater_us"]
-        return wait_request(case_id, record, now, variant % 3 != 0)
+        dispatch = variant % 3 != 0
+        # Before the next permitted query, a declared-valid request is an
+        # observation. Explicit early dispatches are rejection regressions.
+        if (0 < attempts < record["policy"]["max_query_attempts"]
+                and now - record["last_dispatch_us"] < record["policy"]["min_query_interval_us"]):
+            dispatch = False
+        return wait_request(case_id, record, now, dispatch)
     if family == "shared_action":
         records = [wait_record(index, attempts=variant % 4) for index in range(variant % 9)]
         return request(case_id, "wait_records", {"records": records})
@@ -277,10 +283,13 @@ def _negative(family, variant, case_id):
                 q["input"]["expected_active_stage"]["amount_units"] = 599
             else:
                 proposed["amount_units"] = 601
+                status = "UNSUPPORTED"
         elif option == 3:
             q = stage_request(case_id, state(0, "FINAL_PAYABLE", 246, cap=600), proposed)
             if variant >= 32:
                 q["input"]["expected_active_stage"]["kind"] = "FINAL_RECEIVABLE"
+            else:
+                status = "UNSUPPORTED"
         elif option == 4:
             proposed["amount_units"] = 0
         elif option == 5:
@@ -306,10 +315,13 @@ def _negative(family, variant, case_id):
             states.append(state(kind="FINAL_PAYABLE", amount=700, key_value=other_key))
         elif option == 2:
             q["input"]["basis_complete"] = False
+            status = "UNSUPPORTED"
         elif option == 3:
             states[0] = state(0, "REGISTERED_UNASSESSED")
+            status = "UNSUPPORTED"
         elif option == 4:
             states[0]["usd_scale"] = 8
+            status = "UNSUPPORTED"
         elif option == 5:
             # Only eight such boundary cases; no broad Cartesian expansion.
             q["input"]["states"] = [state(i, "FINAL_ZERO", 0) for i in range(1001)]
@@ -324,6 +336,7 @@ def _negative(family, variant, case_id):
         b = q["input"]["base"]
         if option == 0:
             b["funding_components"] = "INCLUDED"
+            status = "UNSUPPORTED"
         elif option == 1:
             b["cash_units"] = True
         elif option == 2:
@@ -346,6 +359,7 @@ def _negative(family, variant, case_id):
             d["own_duty_id"] = duty_id(key(999))
         elif option == 1:
             d["states"][0] = state(kind="FINAL_RECEIVABLE")
+            status = "UNSUPPORTED"
         elif option == 2:
             d["spot_frozen_units"] = -1
         elif option == 3:
@@ -356,6 +370,7 @@ def _negative(family, variant, case_id):
             d["quote_available"] = "true"
         elif option == 6:
             d["basis_complete"] = False
+            status = "UNSUPPORTED"
         else:
             d["cash_units"] = LEG
         return q, status

@@ -1,5 +1,7 @@
 # Combined market control and independent funding verification
 
+本页保留原组合源码的 CODE 冻结与部署边界。原 `7a4f41a6` 的首轮 push / PR 均已失败，实际摘要见 [首轮 CI 记录](funding-hold-v3-first-ci.md)；下文的待执行表述仅属于原冻结时点。后续参考契约修复、生成器变化和验证路径见 [参考契约与回归](funding-hold-reference-contract.md)。目标运行时、原保护测试、适配器和完整比较驱动未因该修复改变；原源码、审查与失败记录继续保留，不能移用为新候选通过证据。
+
 This candidate combines reviewed market-control deliverye409db54 with pure
 funding model16f64fec, finite readiness diagnosticsd128ee6e and independently
 developed V3 verification. It is a new combined source; previous CI successes

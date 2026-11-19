@@ -1,4 +1,4 @@
-"""Unexecuted independent reference test definitions; no production import.
+"""Independent reference contract and transport tests; no production import.
 
 These tests do not constitute differential execution against production.
 The hand-entered expected fields are deliberately labeled partial slices.
@@ -172,7 +172,7 @@ class FundingHoldExactReferenceDefinitions(unittest.TestCase):
 
     def test_unassessed_required_duty_never_zero(self):
         self.rejected(cases.aggregate_request("UNASSESSED", [
-            cases.state(kind="REGISTERED_UNASSESSED")]))
+            cases.state(kind="REGISTERED_UNASSESSED")]), "UNSUPPORTED")
         empty = self.ok(cases.aggregate_request("EMPTY-SUPPLIED-COMPLETE", []))
         self.assertEqual((empty["P"], empty["U"], empty["N"], empty["H"]), (0, 0, 0, 0))
         # The caller's complete flag is not authenticated completeness evidence.
@@ -215,7 +215,7 @@ class FundingHoldExactReferenceDefinitions(unittest.TestCase):
     def test_final_representation_immutable_and_stale_cap_rejected(self):
         final = cases.state(kind="FINAL_PAYABLE", amount=246)
         self.rejected(cases.stage_request("FINAL-IMMUTABLE", final,
-            cases.stage(final["key"], "FINAL_RECEIVABLE", 246)))
+            cases.stage(final["key"], "FINAL_RECEIVABLE", 246)), "UNSUPPORTED")
         cap = cases.state(kind="EXPOSURE_RATE_PENDING", amount=600)
         q = cases.stage_request("CAP-STALE", cap,
             cases.stage(cap["key"], "FINAL_PAYABLE", 246, lineage=cap["active"]))
@@ -369,16 +369,17 @@ class FundingHoldExactReferenceDefinitions(unittest.TestCase):
 
     def test_v3_normal_noop_retains_revision_and_query_budget(self):
         record = cases.wait_record(attempts=1)
-        for dispatch in (False, True):
-            response = self.ok(cases.wait_request("V3-NOOP", record, now=0, dispatch=dispatch))
-            self.assertEqual(response["record"], record)
-            self.assertEqual(response["record"]["revision"], 1)
-            self.assertFalse(response["query_counted"])
+        response = self.ok(cases.wait_request("V3-NOOP", record, now=0, dispatch=False))
+        self.assertEqual(response["record"], record)
+        self.assertEqual(response["record"]["revision"], 1)
+        self.assertFalse(response["query_counted"])
+        self.rejected(cases.wait_request("V3-EARLY-DISPATCH", record, now=0, dispatch=True))
         charged = self.ok(cases.wait_request("V3-DISPATCH", record, now=5000000))
         self.assertEqual((charged["record"]["attempts"], charged["record"]["revision"]), (2, 2))
-        retried = self.ok(cases.wait_request("V3-UNKNOWN-RESULT", charged["record"], now=5000000))
+        retried = self.ok(cases.wait_request("V3-UNKNOWN-RESULT", charged["record"], now=5000000, dispatch=False))
         self.assertEqual(retried["record"], charged["record"])
         self.assertFalse(retried["query_counted"])
+        self.rejected(cases.wait_request("V3-UNKNOWN-REDISPATCH", charged["record"], now=5000000))
 
     def test_v3_maximum_revision_only_genuine_noop_permitted(self):
         for default in (False, True):
@@ -395,7 +396,8 @@ class FundingHoldExactReferenceDefinitions(unittest.TestCase):
 
     def test_v3_deadline_interval_equality_and_default_at_maxrevision(self):
         record = cases.wait_record(attempts=1)
-        not_due = self.ok(cases.wait_request("V3-INTERVAL-BEFORE", record, now=4999999))
+        self.rejected(cases.wait_request("V3-INTERVAL-BEFORE", record, now=4999999))
+        not_due = self.ok(cases.wait_request("V3-OBSERVE-BEFORE", record, now=4999999, dispatch=False))
         self.assertFalse(not_due["query_counted"])
         due = self.ok(cases.wait_request("V3-INTERVAL-EQUAL", record, now=5000000))
         self.assertTrue(due["query_counted"])
@@ -570,6 +572,6 @@ class FundingHoldExactReferenceDefinitions(unittest.TestCase):
                     self.assertEqual(q, before)
         pending = cases.state(kind="EXPOSURE_RATE_PENDING", amount=600)
         too_large = cases.stage(pending["key"], "FINAL_PAYABLE", 601, lineage=pending["active"])
-        self.rejected(cases.stage_request("D1V3-CAP-BOUND", pending, too_large))
+        self.rejected(cases.stage_request("D1V3-CAP-BOUND", pending, too_large), "UNSUPPORTED")
         # Coherent wholesale replacement cannot be authenticated by supplied-data D1.
         # This test promises internal history equality only, never global provenance.
