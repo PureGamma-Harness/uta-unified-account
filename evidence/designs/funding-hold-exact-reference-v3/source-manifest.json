@@ -1,0 +1,467 @@
+{
+  "AST_imports": {
+    "tests/funding_hold_d1_reference_cases_v3.py": [
+      "from hashlib import sha256",
+      "import json"
+    ],
+    "tests/reference_funding_hold_d1_v3.py": [
+      "from datetime import datetime",
+      "from fractions import Fraction",
+      "from hashlib import sha256",
+      "import json",
+      "import math",
+      "import re"
+    ],
+    "tests/test_funding_hold_exact_reference_v3.py": [
+      "import json",
+      "from pathlib import Path",
+      "import re",
+      "import unittest",
+      "from unittest.mock import patch",
+      "import reference_funding_hold_d1_v3 as reference",
+      "import funding_hold_d1_reference_cases_v3 as cases"
+    ]
+  },
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "actual_checks": "AST parse, Git frozen blobs, JSON parsing and bytes/SHA only. No module import, compile, request generation or oracle/target/test execution.",
+  "decoder_equivalence": "PENDING_OTHER_GROUP_CODE_AND_FIRST_EXECUTION",
+  "exact_export_file_count_including_manifest": 11,
+  "exact_export_file_list_including_manifest": [
+    "tests/reference_funding_hold_d1_v3.py",
+    "tests/funding_hold_d1_reference_cases_v3.py",
+    "tests/test_funding_hold_exact_reference_v3.py",
+    "docs/funding-hold-exact-reference-v3.md",
+    "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+    "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+    "evidence/designs/funding-hold-exact-reference-v3/proposal.json",
+    "evidence/designs/funding-hold-exact-reference-v3/execution-gates.json",
+    "evidence/designs/funding-hold-exact-reference-v3/data-review.json",
+    "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+    "evidence/designs/funding-hold-exact-reference-v3/source-manifest.json"
+  ],
+  "execution_ready": false,
+  "financial_core_independence": "Own previous Fraction source plus public rules only; no new production core/DTO validators/helpers/builders/target-adapter core or running answers read/reused",
+  "forward_final_lineage_policy": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+  "forward_test_definition_count": 30,
+  "frozen_wire_commit": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+  "governing_policy_commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+  "hash_wire": "CODE_CONTRACT_IMPLEMENTED_NOT_RUN",
+  "historical_state": "Old e6/061/612 and their BLOCKED or NOT_RUN records retain original bytes and meaning; none becomes a passing result through this new version",
+  "independent_final_lineage_rule_review": "54af0876ab48b5a5fb50627062f753ac0128c288",
+  "kind": "INDEPENDENT_FRACTION_V3_IMMUTABLE_SOURCE_MANIFEST",
+  "manifest_freeze_F": "This manifest is the sole change in a follow-up commit whose parent is C; pin that immutable F commit externally. No circular self hash.",
+  "manual_copy": {
+    "byte_identical": true,
+    "bytes": 13853,
+    "destination_path": "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+    "financial_expected_values_modified": 0,
+    "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c",
+    "source_commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+    "source_path": "evidence/designs/funding-hold-exact-reference/manual-slices.json"
+  },
+  "new_lineage_definition_group_count": 3,
+  "own_bytes_excluding_manifest": 147694,
+  "own_files_excluding_manifest": [
+    {
+      "bytes": 26396,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "f773999cc082c85088bab69d7a87834a54f66514",
+      "path": "tests/reference_funding_hold_d1_v3.py",
+      "sha256": "63c5deda6cdc1799eeae470f615c09ce5842a9e26acdad6fa23a8924fea79135"
+    },
+    {
+      "bytes": 19835,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "858740d0ddc156839c8d51d2e3868c1122649742",
+      "path": "tests/funding_hold_d1_reference_cases_v3.py",
+      "sha256": "f5b7d11e106a5fe7b9c9892f0896a03c6efaddd0d3f42f3642ffca1018493c2a"
+    },
+    {
+      "bytes": 33813,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "99e77f3a627d31558033cf29e3690cea0e8f9477",
+      "path": "tests/test_funding_hold_exact_reference_v3.py",
+      "sha256": "6b5186a3f245f72ffac4e1b721c49e6e63d0665a04d76199a1de71f8aec7075a"
+    },
+    {
+      "bytes": 6533,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "be821a7f78d60a64624459f9a06077a232179295",
+      "path": "docs/funding-hold-exact-reference-v3.md",
+      "sha256": "b8b5157fae21be1a9d3d819c2ea42544cf278811cf4a8127b263311236385f58"
+    },
+    {
+      "bytes": 33268,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "a4881b666708666f50291ce521210f927ca9514b",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+      "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+    },
+    {
+      "bytes": 13853,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "57216e005ca4d835f090f03a26c12ddcc5ec164f",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+      "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c"
+    },
+    {
+      "bytes": 2671,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "4a029eb7a5e8ae6e175c0e50fa38b77fa09933e1",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/proposal.json",
+      "sha256": "ff4b2e9bd35e7bc83ef7e20636c3da214cb726c7b1b0c22e7eecf15721747251"
+    },
+    {
+      "bytes": 5915,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "63917e81645209f56b3b2b51fa31705d58120183",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/execution-gates.json",
+      "sha256": "14ad5b850b3362456c691b038742a34eee0b624743ff154ea09e285ab1002e74"
+    },
+    {
+      "bytes": 2108,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "0a3bcc9cdd27af8857597e069e4e2047204ba1e8",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/data-review.json",
+      "sha256": "acf2fc86d07fe95ee1a9b4eb3d99e421ce21b30d31d33fecbd51c86a0b00343b"
+    },
+    {
+      "bytes": 3302,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "git_blob": "5600dca3914a2a58aca80e1830b1ee69e141e17d",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+      "sha256": "27909eb345f7f8c14f655681cffd3b893bd4e4ef462eb05d6f3af5116e3b68b2"
+    }
+  ],
+  "own_nonmanifest_file_count": 10,
+  "preserved_old_artifact_bytes": 219896,
+  "preserved_old_artifact_count": 22,
+  "preserved_old_artifacts": [
+    {
+      "bytes": 7390,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "docs/funding-hold-exact-reference.md",
+      "sha256": "64f594310233e1a7af070b28c10942ac7fb5817d1a30adf151a94c333deb4b09"
+    },
+    {
+      "bytes": 20678,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/reference_funding_hold_d1.py",
+      "sha256": "2cd5389ea55960d42c20675ba683e72d50aa4acc1dd286af1a671b2b559a4614"
+    },
+    {
+      "bytes": 16314,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/funding_hold_d1_reference_cases.py",
+      "sha256": "2c5687da1ade4a03bd43777494555756c6e28655a0841a6fd09afbe009c3a425"
+    },
+    {
+      "bytes": 16030,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/test_funding_hold_exact_reference.py",
+      "sha256": "088998516c94446b2da17ff52b9abcc711acac1270a6336e08a64560817c8145"
+    },
+    {
+      "bytes": 3897,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/proposal.json",
+      "sha256": "f7f9d94497d71f833051f0422ee4756c68583220076906ef3e72e203b7bede85"
+    },
+    {
+      "bytes": 13853,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/manual-slices.json",
+      "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c"
+    },
+    {
+      "bytes": 2277,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/wire-scope.json",
+      "sha256": "efb3439c1534e393067b17f7e665001d269f921b337b056f273a251b6bb4b99d"
+    },
+    {
+      "bytes": 2343,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/execution-gates.json",
+      "sha256": "231a6855b94e5f88f439f32331566ab0bd14bbfb5ffa9b44da14e0cd22793718"
+    },
+    {
+      "bytes": 1454,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/data-review.json",
+      "sha256": "6eeade5a4e7c6dc2bc2fb84a77fefc1ddce356eb4c6915c5661318734cad6248"
+    },
+    {
+      "bytes": 4252,
+      "commit": "e6c2c3e5075665d9f61cfc752ccc04d7a6b16e0f",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference/source-manifest.json",
+      "sha256": "729bb8a45ab0fcdc440dcbf71d51b03eaac1de46adf9dac4c9cd4c44bc3c1f1e"
+    },
+    {
+      "bytes": 25775,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/reference_funding_hold_d1_v2.py",
+      "sha256": "8458d7c3ebb95b06869e5a60a3de89d3f058716fb5ecdc703fd5fbc0bf3fead7"
+    },
+    {
+      "bytes": 18049,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/funding_hold_d1_reference_cases_v2.py",
+      "sha256": "64c61687ef96e2905cf4cff7ff5bc49c1cd70b19c98996474adb61e79fb4208f"
+    },
+    {
+      "bytes": 27956,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "tests/test_funding_hold_exact_reference_v2.py",
+      "sha256": "c71a48321ef028ffab01b1c90a39dcff25aee842e60bdc8a0e0b63db176cc8bb"
+    },
+    {
+      "bytes": 8883,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "docs/funding-hold-exact-reference-v2.md",
+      "sha256": "9e9df38969066e36b643261b766e952f949fb199525f70835045450a865f3ed1"
+    },
+    {
+      "bytes": 1461,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/proposal.json",
+      "sha256": "91d28137218e51034672fb3dc24984e29086608abcfc4dd4f5885452517d46d3"
+    },
+    {
+      "bytes": 31492,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/wire-contract.json",
+      "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+    },
+    {
+      "bytes": 1029,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/wire-revision.json",
+      "sha256": "d078a100599a6f528b6d3fd438408e56333194a1f606e6484c67763ef9a5358c"
+    },
+    {
+      "bytes": 543,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/transport-revision.json",
+      "sha256": "d91c7c5419c2eedb706a238e002ec1599645c6e7f2e15b2d9d3b46b88dfbf0f6"
+    },
+    {
+      "bytes": 2006,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/resource-revision.json",
+      "sha256": "b4dc8b409d59794c83b1be3b117c6ce2872cc7bd10cea3e84fb41125dd69b922"
+    },
+    {
+      "bytes": 4760,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/execution-gates.json",
+      "sha256": "8bce5c4be92e60fe1f11053d8de4f37150fc2663868f41cd864c2222deb38c81"
+    },
+    {
+      "bytes": 4440,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/data-review.json",
+      "sha256": "919503e080c2b5057b8dddbd9a5f8d9d0a000fad616e2b1844348e5f826ab703"
+    },
+    {
+      "bytes": 5014,
+      "commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+      "current_source_Git_blob_identical": true,
+      "path": "evidence/designs/funding-hold-exact-reference-v2/source-manifest.json",
+      "sha256": "195be5c6837acd3701f4797c6015fa77c0e546641d23f4e6576c2e01a03ed5d4"
+    }
+  ],
+  "prior_reference_commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+  "prior_reference_review": "04dfc2d2bc136b6770913e32c1cd6d4d0f1e7ad4",
+  "production": "NO_GO",
+  "public_entrypoint_AST_signatures": {
+    "case_for_seed": "seed",
+    "evaluate_request": "request",
+    "iter_cases": "",
+    "load_request": "raw"
+  },
+  "public_export_path": "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+  "public_spec_review_pins": [
+    {
+      "bytes": 6921,
+      "commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+      "path": "docs/funding-hold-d1-contract-v2.md",
+      "purpose": "PUBLIC_SPEC_OR_RULE_REVIEW_DATA_NOT_PRODUCTION_CORE",
+      "sha256": "9103e84dff6f2d93cf9daf226a57cdb1e274a7d99dfaf0cf3a98b6b0f7f80b96"
+    },
+    {
+      "bytes": 2037,
+      "commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+      "path": "evidence/designs/funding-hold-contract-v2/decision.json",
+      "purpose": "PUBLIC_SPEC_OR_RULE_REVIEW_DATA_NOT_PRODUCTION_CORE",
+      "sha256": "16644260ecb43351b047a0786174f09b038ff950581bc0d4f104ec5876709275"
+    },
+    {
+      "bytes": 34543,
+      "commit": "895bcf51d9a39f126c1feecdcdb47daaa0a6f05b",
+      "path": "evidence/designs/funding-hold-wire-contract-proposal/contract.json",
+      "purpose": "PUBLIC_SPEC_OR_RULE_REVIEW_DATA_NOT_PRODUCTION_CORE",
+      "sha256": "287cf5f5fe73cc3d9a22f33dd82c4283f933d86c2c476c965f11724d7bc96f20"
+    },
+    {
+      "bytes": 17604,
+      "commit": "8008a0b24e8dc0095420b18f6b154c9db655a183",
+      "path": "evidence/designs/pending-funding-risk-hold/amendment-contract.json",
+      "purpose": "PUBLIC_SPEC_OR_RULE_REVIEW_DATA_NOT_PRODUCTION_CORE",
+      "sha256": "041fa3abc54b3881086049fe5963d321aafd0f3421f95a9c53c5f8e8e63da29b"
+    },
+    {
+      "bytes": 13704,
+      "commit": "86b3c2ac0b41b526cf8ebba2b3babda0b4b97ad1",
+      "path": "evidence/reviews/funding-hold-contract-v2-independent/review.json",
+      "purpose": "PUBLIC_SPEC_OR_RULE_REVIEW_DATA_NOT_PRODUCTION_CORE",
+      "sha256": "4dbe9eb53c20ed9c7237de9683e3c630077170c9ac2e3a3c075385567db723b5"
+    },
+    {
+      "bytes": 31492,
+      "commit": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+      "path": "evidence/designs/funding-hold-exact-reference-v2/wire-contract.json",
+      "purpose": "PUBLIC_PRIOR_TRANSPORT_RULE_DATA",
+      "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+    },
+    {
+      "bytes": 10981,
+      "commit": "04dfc2d2bc136b6770913e32c1cd6d4d0f1e7ad4",
+      "path": "docs/funding-hold-reference-v2-independent-code-review.md",
+      "purpose": "PUBLIC_PRIOR_REFERENCE_BLOCKING_REVIEW",
+      "sha256": "103bf33e013430271700831d719725ba8df5813dbd72abef5006ffccdb7cf3c0"
+    },
+    {
+      "bytes": 20497,
+      "commit": "04dfc2d2bc136b6770913e32c1cd6d4d0f1e7ad4",
+      "path": "evidence/reviews/funding-hold-reference-v2-independent/review-61259db9.json",
+      "purpose": "PUBLIC_PRIOR_REFERENCE_BLOCKING_REVIEW",
+      "sha256": "22d441edf0fc48f1656abf182e7c7656628dfbccab22613b3d47bc425dce8d4e"
+    },
+    {
+      "bytes": 3090,
+      "commit": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+      "path": "docs/funding-hold-final-lineage-rule.md",
+      "purpose": "PUBLIC_FORWARD_FINAL_LINEAGE_POLICY",
+      "sha256": "219deb9b2f619596f6c96ea2fa413824b619ab92cb3e6c57d44dd14e86c043ce"
+    },
+    {
+      "bytes": 1189,
+      "commit": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+      "path": "evidence/designs/funding-hold-final-lineage/decision.json",
+      "purpose": "PUBLIC_FORWARD_FINAL_LINEAGE_POLICY",
+      "sha256": "041daa07a9a4fb12d6813ab16e43d65cff6b09940333f4dd37ba064bcab64508"
+    },
+    {
+      "bytes": 4073,
+      "commit": "54af0876ab48b5a5fb50627062f753ac0128c288",
+      "path": "docs/funding-hold-final-lineage-independent-rule-review.md",
+      "purpose": "PUBLIC_LIMITED_RULE_REVIEW",
+      "sha256": "b650f17596539bed6388cc1c55128dae04e9fa35c397a172a2072aaa8fccda9b"
+    },
+    {
+      "bytes": 5845,
+      "commit": "54af0876ab48b5a5fb50627062f753ac0128c288",
+      "path": "evidence/reviews/funding-hold-final-lineage-independent/review-69a3e32e.json",
+      "purpose": "PUBLIC_LIMITED_RULE_REVIEW",
+      "sha256": "695b44cecca86483c8af8a805f2203d2b55946fdfe40e930cc21339b6e439bf0"
+    },
+    {
+      "bytes": 33268,
+      "commit": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+      "purpose": "PUBLIC_FROZEN_V3_WIRE_RULE_DATA",
+      "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+    }
+  ],
+  "reference_generator_target_import_compile_execution": 0,
+  "request_response_schema": 3,
+  "root_bridge_boundary": "Public full wire and public-export interface only; oracle algorithm and expected-program source must not be used to implement the target-side bridge",
+  "runtime_delta": 0,
+  "schema": 1,
+  "seed_definitions": {
+    "actual_statuses_checked": "NOT_RUN",
+    "actually_generated": "NOT_RUN",
+    "closed_domain": [
+      0,
+      1023
+    ],
+    "negative_or_unsupported": 512,
+    "per_family_valid_negative": [
+      64,
+      64
+    ],
+    "valid": 512,
+    "valid_identity_definitions": {
+      "action": 16,
+      "duty": 32,
+      "policy": 16
+    },
+    "version": "D1V3"
+  },
+  "source_base_commit": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+  "source_freeze_commit_C": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+  "source_freeze_tree_C": "e413d0cfb3b9f2e47c9c3f393cabfe316b0b7b24",
+  "sql_actor_proc_network_CI_execution": 0,
+  "status": "CODE_ONLY_PENDING_OTHER_GROUP_REVIEW_NOT_RUN",
+  "target_adapter_in_export": false,
+  "test_definition_count": 33,
+  "test_definition_names": [
+    "test_manual_decomposition_hand_entered_fields_only",
+    "test_manual_payment_hand_entered_fields_only",
+    "test_original_27_matrix_is_slice_only_or_unsupported",
+    "test_m10_provided_cap_to_each_final_not_rate_derivation",
+    "test_m23_queries_are_charged_before_unknown_results",
+    "test_all_1024_declared_statuses_no_target_comparison",
+    "test_seed_wire_determinism_and_two_mib_bound",
+    "test_seed_domain_is_closed_native_integer",
+    "test_duty_canonical_literal_and_natural_slot",
+    "test_unassessed_required_duty_never_zero",
+    "test_receivable_does_not_offset_hold_or_spend",
+    "test_conditional_external_payment_accrual_identity",
+    "test_spot_freeze_only_counted_in_supplied_base_once",
+    "test_final_representation_immutable_and_stale_cap_rejected",
+    "test_large_units_exact_without_i64_or_float",
+    "test_backing_equality_other_hold_and_zero_lock_negative_cash",
+    "test_prior_unresolved_and_crossing_wait_have_no_effect",
+    "test_wait_deadline_boundary_no_automatic_release",
+    "test_shared_action_dedup_does_not_select_larger_policy",
+    "test_json_closed_keys_duplicates_and_native_money",
+    "test_unsupported_borrowable_and_d2_never_return_success",
+    "test_unknown_internal_exception_is_not_business_rejection",
+    "test_v3_policy_identity_literal_payload_and_digest",
+    "test_v3_action_identity_payload_and_scale_exclusion",
+    "test_v3_epoch_and_period_alignment",
+    "test_v3_complete_expected_stage_and_legacy_keyword",
+    "test_v3_normal_noop_retains_revision_and_query_budget",
+    "test_v3_maximum_revision_only_genuine_noop_permitted",
+    "test_v3_deadline_interval_equality_and_default_at_maxrevision",
+    "test_v3_full_output_schema_action_ids_and_transport_boundaries",
+    "test_lineage_direct_and_via_U_all_final_kinds_compare_complete_stage",
+    "test_lineage_missing_partial_changed_and_foreign_pairs_reject",
+    "test_lineage_context_and_provided_immutable_history_must_agree"
+  ],
+  "wire_protocol": "PFH-D1-INDEPENDENT-WIRE-v3"
+}

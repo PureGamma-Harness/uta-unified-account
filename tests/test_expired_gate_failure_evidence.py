@@ -64,7 +64,8 @@ class FailureDiagnosticTests(unittest.TestCase):
         tree = ast.parse((ROOT / 'tests/test_durable_faults.py').read_text())
         # Remove only the exact reviewed test scheduling additions. The frozen
         # original module reference, recovery/financial assertions and cleanup
-        # remain unchanged; this is not a new golden recovery result.
+        # remain unchanged. A separate exact ordinary-case delta below permits
+        # only the reviewed revision2 pending-order oracle, not recovery edits.
         owner = next(node for node in tree.body if isinstance(node, ast.ClassDef)
                      and node.name == 'ManagedProcessFaultTests')
         setup = next(node for node in owner.body if isinstance(node, ast.FunctionDef) and node.name == 'setUp')
@@ -116,7 +117,51 @@ self._native_sh_capture.arm(identity, bound_generation, capture_deadline)
         self.assertIsInstance(block.finalbody[index - 1], ast.Assign)
         del block.finalbody[index]
         reference = json.loads((ROOT / 'evidence/reviews/expired-gate-failure-5a/original-ast.json').read_text())
+        delta = json.loads((ROOT / 'evidence/reviews/expired-gate-failure-5a/approved-market-pause-v2-ast-delta.json').read_text())
+        self.assertEqual(set(delta), {'schema', 'original_reference', 'original_module_ast_sha256',
+            'approved_method', 'previous_method_ast_sha256', 'previous_method_source',
+            'reviewed_method_ast_sha256', 'reviewed_method_source_commit', 'reviewed_compatibility_CODE'})
+        self.assertIs(type(delta['schema']), int)
+        self.assertEqual(delta['schema'], 1)
+        self.assertEqual(delta['original_reference'],
+                         'evidence/reviews/expired-gate-failure-5a/original-ast.json')
+        self.assertEqual(delta['original_module_ast_sha256'], reference['canonical_module_ast_sha256'])
+        self.assertEqual(delta['approved_method'],
+                         'test_partial_publication_stays_halted_until_exact_publication_replay_completes')
+        ordinary = [(index, node) for index, node in enumerate(owner.body)
+                    if isinstance(node, ast.FunctionDef) and node.name == delta['approved_method']]
+        self.assertEqual(len(ordinary), 1)
+        ordinary_index, ordinary_method = ordinary[0]
+        self.assertEqual(ast_sha(ordinary_method), delta['reviewed_method_ast_sha256'])
+        previous = ast.parse(delta['previous_method_source']).body
+        self.assertEqual(len(previous), 1)
+        self.assertIsInstance(previous[0], ast.FunctionDef)
+        self.assertEqual(previous[0].name, delta['approved_method'])
+        self.assertEqual(ast_sha(previous[0]), delta['previous_method_ast_sha256'])
+        # Data-only normalization restores this one known earlier method.
+        # No restored AST is executed; the real test still runs the new oracle.
+        # Every other module node, including recovery and cleanup, must still
+        # match the original unmodified whole-module reference below.
+        owner.body[ordinary_index] = previous[0]
         self.assertEqual(ast_sha(tree), reference['canonical_module_ast_sha256'])
+
+    def test_approved_ordinary_delta_does_not_allow_other_ast_edits(self):
+        path = ROOT / 'tests/test_durable_faults.py'
+        source = path.read_text()
+        original_reader = Path.read_text
+        for selected in ('test_partial_publication_stays_halted_until_exact_publication_replay_completes', METHOD):
+            with self.subTest(selected=selected):
+                tree = ast.parse(source)
+                self.assertEqual(canonical(ast.parse(ast.unparse(tree))), canonical(tree))
+                method = next(node for node in ast.walk(tree)
+                              if isinstance(node, ast.FunctionDef) and node.name == selected)
+                method.body.append(ast.Pass())
+                changed = ast.unparse(ast.fix_missing_locations(tree))
+                def supplied_source(candidate, *args, **kwargs):
+                    return changed if candidate == path else original_reader(candidate, *args, **kwargs)
+                with patch.object(Path, 'read_text', supplied_source):
+                    with self.assertRaises(AssertionError):
+                        self.test_complete_original_ast_is_preserved_except_exact_failure_hook()
 
     def test_success_hook_does_not_import_collect_or_write(self):
         tree = ast.parse((ROOT / 'tests/test_durable_faults.py').read_text())

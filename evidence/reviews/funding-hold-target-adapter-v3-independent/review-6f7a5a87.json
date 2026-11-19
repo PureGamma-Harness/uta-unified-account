@@ -1,0 +1,446 @@
+{
+  "schema": "funding-hold-target-adapter-v3-independent-code-review/v1",
+  "artifact_class": "SAFE_CODE_REVIEW_ONLY",
+  "status": "CODE_CLOSED_FOR_EXPLICIT_V3_MARSHALLING_DELTA_NOT_RUN",
+  "reviewed_commit": "6f7a5a872b05a3787a347e164ae7075d1282aca9",
+  "reviewed_parent": "8e3db069b2aa0f19a1ac4fd62d32ae79afe6f267",
+  "worktree": "/workspace/uta-funding-hold-target-v3-6f7-code",
+  "branch": "review/funding-hold-target-v3-6f7-code",
+  "review_scope": "Five immutable candidate blobs; exact V2-to-V3 marshalling/source delta and preservation of wrapper guards only",
+  "blocking_findings_in_scoped_delta": [],
+  "not_a_functional_acceptance": true,
+  "source_files": [
+    {
+      "path": "docs/funding-hold-target-adapter-v3-code.md",
+      "bytes": 2147,
+      "sha256": "4b01abb0f88fa33d8b239f42bdbbc2ce113949537a7f74fe1f4b859c652edf90",
+      "git_blob": "6404a76e365fa82d5ae53c71e0da6df96d03b68b",
+      "physical_equals_git": true,
+      "explicit_pin_present": true,
+      "explicit_pin_matches": true
+    },
+    {
+      "path": "evidence/designs/funding-hold-target-adapter-v3/code-candidate.json",
+      "bytes": 1677,
+      "sha256": "d0aa4a8d17c03fdd6d3ec75a4b4f7a974673f1774b798f76751f7774ebf287b1",
+      "git_blob": "3fbb1875063c4bcce8e62eede82ac555585486dd",
+      "physical_equals_git": true,
+      "explicit_pin_present": false,
+      "explicit_pin_matches": null
+    },
+    {
+      "path": "evidence/designs/funding-hold-target-adapter-v3/wire-contract.json",
+      "bytes": 33268,
+      "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd",
+      "git_blob": "a4881b666708666f50291ce521210f927ca9514b",
+      "physical_equals_git": true,
+      "explicit_pin_present": true,
+      "explicit_pin_matches": true
+    },
+    {
+      "path": "tests/funding_hold_target_adapter_v3.py",
+      "bytes": 24999,
+      "sha256": "5953f9b5ccc1730f1ebb2d57707d73b339376a9a96159f244a1e256241eb6821",
+      "git_blob": "6c34aebf728ccb8c5cc180e09d66724dfdadda86",
+      "physical_equals_git": true,
+      "explicit_pin_present": true,
+      "explicit_pin_matches": true
+    },
+    {
+      "path": "tests/test_funding_hold_target_adapter_v3.py",
+      "bytes": 12022,
+      "sha256": "c42d2a813ff59963ffbeb3ca09f89cc42abc47c7302d02201411ab9006e9546f",
+      "git_blob": "9c6787fa9b4bb7005d9f35e7957ba533c8c4da7a",
+      "physical_equals_git": true,
+      "explicit_pin_present": true,
+      "explicit_pin_matches": true
+    }
+  ],
+  "lineage": {
+    "origin_marshaller": "f8ece4c2257f2340e4b59fc0a113ac2b96ff9115",
+    "origin_limited_CODE_review": "35c5b22b1a3bce27f8a0f019a04b89233fb6e92c",
+    "wire_source": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+    "prior_typed_wire": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+    "local_forward_final_lineage_rule": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+    "limited_rule_review": "54af0876ab48b5a5fb50627062f753ac0128c288",
+    "origin_and_rule_reviews_are_ancestors_of_parent": true,
+    "older_CODE_used_as_runtime_or_financial_proof": false
+  },
+  "module_delta": {
+    "literal_changes": [
+      {
+        "name": "module_doc_protocol",
+        "old": "PFH-D1-INDEPENDENT-WIRE-v2",
+        "new": "PFH-D1-INDEPENDENT-WIRE-v3",
+        "candidate_line": 1
+      },
+      {
+        "name": "wire_sha256",
+        "old": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be",
+        "new": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd",
+        "candidate_line": 19
+      },
+      {
+        "name": "wire_path",
+        "old": "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json",
+        "new": "evidence/designs/funding-hold-target-adapter-v3/wire-contract.json",
+        "candidate_line": 150
+      },
+      {
+        "name": "required_envelope_version",
+        "old": "request[\"schema\"] != 2",
+        "new": "request[\"schema\"] != 3",
+        "candidate_line": 415
+      },
+      {
+        "name": "envelope_error_label",
+        "old": "schema_2_required",
+        "new": "schema_3_required",
+        "candidate_line": 416
+      },
+      {
+        "name": "emitted_envelope_version",
+        "old": "return {\"schema\": 2",
+        "new": "return {\"schema\": 3",
+        "candidate_line": 444
+      }
+    ],
+    "literal_change_count": 6,
+    "inverse_literal_source_bytes_equal_origin": true,
+    "inverse_literal_AST_equal_origin": true,
+    "AST_operation": "Data parse/dump only; no candidate import, eval, exec or byte compilation",
+    "V2_module_and_tests_unchanged_from_origin": true,
+    "financial_equations_added": false,
+    "reference_core_case_generator_or_answers_read": false
+  },
+  "tests": {
+    "definitions": 19,
+    "ported_origin_definitions": 18,
+    "new_method": "test_previous_envelope_version_is_not_implicitly_translated",
+    "new_method_line": 23,
+    "inverse_port_AST_equal_origin_after_removing_new_method": true,
+    "inverse_port_changes": [
+      "adapter ImportFrom module",
+      "test class V3 to V2 name",
+      "request envelope version3 to2",
+      "synthetic case ID V3 toV2",
+      "two encoder patch target strings"
+    ],
+    "methods": [
+      {
+        "name": "test_previous_envelope_version_is_not_implicitly_translated",
+        "line": 23,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_all_schema_branches_are_checked_before_value_selection",
+        "line": 29,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_supported_alternatives_preserve_exact_native_integer_rules",
+        "line": 46,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_action_ID_elements_have_wire_native_type_and_format",
+        "line": 53,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_query_counted_integer_zero_is_not_boolean_false",
+        "line": 59,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_encoding_known_target_exception_is_not_business_rejection",
+        "line": 78,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_invalid_intermediate_type_never_reaches_downstream_target",
+        "line": 90,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_intermediate_bad_field_or_downstream_rejection_is_technical",
+        "line": 99,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_native_natural_slot_is_not_coerced_from_another_iterable",
+        "line": 115,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_unsupported_schema_cannot_be_hidden_by_another_oneof_branch",
+        "line": 125,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_transport_never_fabricates_response_for_invalid_envelope",
+        "line": 129,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_codec_rejects_duplicate_nonfinite_BOM_and_inferred_UTF16",
+        "line": 138,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_known_input_rejection_retains_valid_case_identity",
+        "line": 145,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_unexpected_target_and_constructor_exceptions_remain_technical",
+        "line": 152,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_complete_DTO_output_and_original_request_are_preserved",
+        "line": 167,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_validator_actual_return_order_is_not_sorted_or_replaced_by_adapter",
+        "line": 178,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_malformed_target_returns_are_technical_failures",
+        "line": 185,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_finite_float_and_bool_are_not_coerced_into_valid_integer_inputs",
+        "line": 196,
+        "status": "NOT_RUN"
+      },
+      {
+        "name": "test_legacy_single_reference_is_unsupported_without_inference",
+        "line": 202,
+        "status": "NOT_RUN"
+      }
+    ],
+    "tests_run": 0,
+    "test_result": "NOT_RUN",
+    "definition_count_is_functional_evidence": false
+  },
+  "wire": {
+    "bytes": 33268,
+    "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd",
+    "byte_equal_to_independent_d358_source": true,
+    "protocol": "PFH-D1-INDEPENDENT-WIRE-v3",
+    "request_schema": 3,
+    "response_schema": 3,
+    "old_envelope_schema2_rejected_before_target_call_source_path": true,
+    "schema3_to2_translation": false,
+    "nested_DutyKey_schema1_preserved": true,
+    "unchanged_061_subtrees": [
+      "$defs",
+      "operations",
+      "bounds",
+      "resource_contract",
+      "hashes",
+      "natural_slot_order",
+      "response_cases",
+      "native_rules"
+    ],
+    "all_selected_output_graph_stats": [
+      {
+        "operation": "action_identity",
+        "expanded_schema_nodes": 18,
+        "max_depth": 5
+      },
+      {
+        "operation": "aggregate",
+        "expanded_schema_nodes": 25,
+        "max_depth": 5
+      },
+      {
+        "operation": "decompose",
+        "expanded_schema_nodes": 37,
+        "max_depth": 5
+      },
+      {
+        "operation": "duty_identity",
+        "expanded_schema_nodes": 23,
+        "max_depth": 5
+      },
+      {
+        "operation": "payment_precondition",
+        "expanded_schema_nodes": 30,
+        "max_depth": 5
+      },
+      {
+        "operation": "policy_identity",
+        "expanded_schema_nodes": 15,
+        "max_depth": 5
+      },
+      {
+        "operation": "stage_advance",
+        "expanded_schema_nodes": 99,
+        "max_depth": 9
+      },
+      {
+        "operation": "unsupported",
+        "expanded_schema_nodes": 1,
+        "max_depth": 0
+      },
+      {
+        "operation": "wait_preview",
+        "expanded_schema_nodes": 47,
+        "max_depth": 9
+      },
+      {
+        "operation": "wait_records",
+        "expanded_schema_nodes": 8,
+        "max_depth": 4
+      }
+    ],
+    "max_selected_output_expanded_schema_nodes": 99,
+    "max_selected_output_depth": 9,
+    "graph_counts_are_static_JSON_bookkeeping_not_validator_execution": true,
+    "lineage_semantics_encoded_as_general_JSONschema": false,
+    "ContentRef_typed_shape_is_content_authentication": false
+  },
+  "source_guards": [
+    {
+      "name": "output native type and complete DTO fields",
+      "lines": [
+        120,
+        132,
+        140,
+        440,
+        443
+      ],
+      "evidence": "Exact native DTO/type and declared-field checks; full selected operation value encoding and schema path remain outside business catch."
+    },
+    {
+      "name": "identity and wait result preservation",
+      "lines": [
+        325,
+        332,
+        366,
+        371
+      ],
+      "evidence": "Six-string native natural_slot tuple required; policy payload remains actual DTO; actual wait validator tuple and order serialize without sorting, replacement or count-only reduction."
+    },
+    {
+      "name": "intermediate and downstream technical failure",
+      "lines": [
+        301,
+        305,
+        307,
+        349,
+        354
+      ],
+      "evidence": "Actual Totals exact type, complete encoding/schema checked before decompose; malformed intermediates and accepted-input downstream HoldError remain technical."
+    },
+    {
+      "name": "all-branch schema meta before matcher",
+      "lines": [
+        158,
+        182,
+        226,
+        231,
+        296
+      ],
+      "evidence": "Meta closure has no candidate value; all oneOf/properties/items paths checked before matcher; exact keyword native types, local refs, active ref cycles, depth32 and work8192 retained."
+    },
+    {
+      "name": "strict envelope and precise business taxonomy",
+      "lines": [
+        411,
+        415,
+        427,
+        431,
+        442
+      ],
+      "evidence": "Schema3 native integer and other envelope checks precede business catch; only exact known InputReject/HoldError/HoldUnsupported classify; unknown subclasses, target/constructor/encoder/bad-return errors stay technical."
+    },
+    {
+      "name": "no history/lineage repair",
+      "lines": [
+        94,
+        109,
+        112,
+        145,
+        341
+      ],
+      "evidence": "Construct every supplied Stage and history entry using full closed DTO mappings; do not restore, infer or erase exposure/cap/final references or rewrite envelopes."
+    },
+    {
+      "name": "bounded contract and transport",
+      "lines": [
+        148,
+        153,
+        376,
+        384,
+        422,
+        448
+      ],
+      "evidence": "Exact V3 hash/path; bounded JSON native walker/decoder and original raw/decoded caps retained; no runtime resource-hard-quota claim."
+    }
+  ],
+  "runtime_Git_identity_only": {
+    "uta_tree": "344a63fa30e18079b335ad69bd326f92324f279c",
+    "files": 67,
+    "bytes": 1479474,
+    "equal_to_parent": true,
+    "equal_to_public_PR64_commit": "d128ee6e40802482162dbc1f7716441ba91e5e0f",
+    "equal_to_target_pure_commit": "ed81c424e3be7c004331bcd8340421d60063fcb6",
+    "pure_module_path": "uta/funding_hold_pure.py",
+    "pure_module_Git_blob": "15c91c4c9ca109db906bc7c8a434751afbe78159",
+    "pure_module_bytes": 23348,
+    "pure_module_algorithm_contents_read": false,
+    "runtime_tests_or_integration_acceptance": false
+  },
+  "activity": {
+    "repository_adapter_reference_validator_imports": 0,
+    "repository_adapter_reference_validator_calls": 0,
+    "repository_byte_compile_attempts": 0,
+    "test_runs": 0,
+    "case_generation_attempts": 0,
+    "SQL_attempts": 0,
+    "proc_PID_lookups_or_signals": 0,
+    "actor_or_service_operations": 0,
+    "network_or_CI_operations": 0,
+    "protected_processes_inspected_or_signaled": false,
+    "old_H1_AuthDB_rejection": "Preserved NOT_RUN; no retry or bypass",
+    "old_raw_outcomes_rewritten": false
+  },
+  "administration": {
+    "author_worktree_modified": false,
+    "author_HEAD_checked_read_only": "6f7a5a872b05a3787a347e164ae7075d1282aca9",
+    "author_status_clean_at_read_only_check": true,
+    "main_index_read_tree_or_sparse_reapply_used": false,
+    "shared_sparse_configuration_observation": "Five new tracked candidate paths initially had skip-worktree S and were physically absent in new worktree",
+    "materialization": "Exact Git blobs written only into new independent worktree; sparse configuration and author files untouched",
+    "review_delivery_files": [
+      "docs/funding-hold-target-adapter-v3-independent-code-review.md",
+      "evidence/reviews/funding-hold-target-adapter-v3-independent/review-6f7a5a87.json"
+    ],
+    "pushed": false,
+    "rollback": "Revert review commit only; preserve candidate, historical sources, plans, raw outcomes and confirmed economic records"
+  },
+  "limitations": [
+    "Source facts only; no actual full-field differential PASS, financial correctness, codec equivalence or execution acceptance.",
+    "Selected fixed output closures only; not general JSON Schema or unselected input/root validation.",
+    "Fixed native JSON schema graph assumed unchanged between meta and match; malicious mutable/concurrent schema objects are outside scope.",
+    "No regex semantic/performance, parser native-allocation, RSS, CPU or hostile-output hard quota acceptance.",
+    "EOF/IO transport framing and future differential caller remain separate review work.",
+    "69/54af governs supplied-history consistency only; no content authenticity, approval, external completeness, persistent CAS or atomic settlement proof."
+  ],
+  "gates": {
+    "differential_execution": "NOT_RUN",
+    "financial_semantic_acceptance": "NOT_RUN",
+    "all_field_comparison_PASS": false,
+    "execution_GO": false,
+    "activation_permission": false,
+    "D2": "BLOCKED_UNCONDITIONALLY",
+    "capacity": "NOT_ACCEPTED",
+    "real_funds_production": "NO_GO"
+  }
+}

@@ -70,6 +70,8 @@ python -m uta.matching --database /var/lib/uta/exchange.sqlite3 \
 
 ## 证据与验收
 
+独立 D1 资金费预占参考的模块边界、等待/查询区别及完整拒绝分类见 [参考契约与回归](docs/funding-hold-reference-contract.md)。该纯数据模型未连接金融执行；原首轮失败和新候选验证分别记录。
+
 本系统政策不等于 Bybit、Binance 或 CME 的生产参数。参见 [证据库](docs/evidence-register.md)、[规则矩阵](evidence/rules.csv)、[目标架构](docs/target-architecture.md)、[账务规格](docs/accounting-spec.md)、[保证金规则](docs/margin-rules.md)、[清算及违约](docs/liquidation-rules.md)。金融负责人签核和真实资金审批尚未完成。
 
 开放环工具区分纯计算、持久接纳及模拟清算，保留计划到达时间、逐请求结果、profile、环境与校验清单：

@@ -1,0 +1,1198 @@
+{
+  "$defs": {
+    "ActionID": {
+      "pattern": "^funding-action:v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ActionIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "$ref": "#/$defs/ActionID"
+        },
+        "activation_permission": {
+          "const": false
+        },
+        "payload": {
+          "$ref": "#/$defs/ActionPayload"
+        }
+      },
+      "required": [
+        "action_id",
+        "payload",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "ActionKey": {
+      "additionalProperties": false,
+      "properties": {
+        "allocation_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        }
+      },
+      "required": [
+        "scope",
+        "allocation_id"
+      ],
+      "type": "object"
+    },
+    "ActionPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "action": {
+          "const": "CANCEL_QUERY"
+        },
+        "allocation_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_generation": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "settlement_asset": {
+          "const": "USD"
+        },
+        "terminal_goal": {
+          "const": "CONFIRMED_CLOSED"
+        }
+      },
+      "required": [
+        "authority_id",
+        "authority_generation",
+        "account_id",
+        "settlement_asset",
+        "allocation_id",
+        "action",
+        "terminal_goal"
+      ],
+      "type": "object"
+    },
+    "AggregateUnits": {
+      "maximum": 99999999999999999999999999999999999999000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "BaseValues": {
+      "additionalProperties": false,
+      "properties": {
+        "accounting_equity_units": {
+          "$ref": "#/$defs/Money"
+        },
+        "cash_units": {
+          "$ref": "#/$defs/Money"
+        },
+        "funding_components": {
+          "const": "EXCLUDED"
+        },
+        "initial_margin_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "maintenance_margin_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "order_reserve_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "risk_equity_units": {
+          "$ref": "#/$defs/Money"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "spot_frozen_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        }
+      },
+      "required": [
+        "scope",
+        "accounting_equity_units",
+        "risk_equity_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "cash_units",
+        "spot_frozen_units",
+        "funding_components"
+      ],
+      "type": "object"
+    },
+    "ContentRef": {
+      "additionalProperties": false,
+      "properties": {
+        "digest": {
+          "$ref": "#/$defs/SHA256"
+        },
+        "duty_id": {
+          "$ref": "#/$defs/DutyID"
+        },
+        "kind": {
+          "enum": [
+            "EXPOSURE",
+            "CAP",
+            "FINAL_CUT"
+          ]
+        },
+        "rule_scope_id": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "required": [
+        "kind",
+        "digest",
+        "duty_id",
+        "rule_scope_id"
+      ],
+      "type": "object"
+    },
+    "Decomposition": {
+      "additionalProperties": false,
+      "properties": {
+        "H": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "N": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "P": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "U": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "accrual_equity_units": {
+          "$ref": "#/$defs/DerivedUnits"
+        },
+        "activation_permission": {
+          "const": false
+        },
+        "available_margin_units": {
+          "$ref": "#/$defs/DerivedUnits"
+        },
+        "initial_margin_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "maintenance_margin_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "order_reserve_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "ordinary_spend_raw_units": {
+          "$ref": "#/$defs/DerivedUnits"
+        },
+        "ordinary_spendable_units": {
+          "maximum": 400000000000000000000000000000000000000000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "risk_equity_units": {
+          "$ref": "#/$defs/DerivedUnits"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        }
+      },
+      "required": [
+        "scope",
+        "P",
+        "U",
+        "N",
+        "H",
+        "accrual_equity_units",
+        "risk_equity_units",
+        "available_margin_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "ordinary_spend_raw_units",
+        "ordinary_spendable_units",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "DerivedUnits": {
+      "maximum": 400000000000000000000000000000000000000000,
+      "minimum": -400000000000000000000000000000000000000000,
+      "type": "integer"
+    },
+    "DutyID": {
+      "pattern": "^funding-duty:v1:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "DutyIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_permission": {
+          "const": false
+        },
+        "duty_id": {
+          "$ref": "#/$defs/DutyID"
+        },
+        "natural_slot": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 6,
+          "type": "array"
+        },
+        "payload": {
+          "$ref": "#/$defs/DutyKey"
+        }
+      },
+      "required": [
+        "duty_id",
+        "natural_slot",
+        "payload",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "DutyKey": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_generation": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "interval_seconds": {
+          "maximum": 86400,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "period_end": {
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\+00:00$",
+          "type": "string"
+        },
+        "rule_scope_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "schema": {
+          "const": 1,
+          "type": "integer"
+        },
+        "settlement_asset": {
+          "const": "USD"
+        },
+        "symbol": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "required": [
+        "schema",
+        "authority_id",
+        "authority_generation",
+        "symbol",
+        "period_end",
+        "interval_seconds",
+        "settlement_asset",
+        "account_id",
+        "rule_scope_id"
+      ],
+      "type": "object"
+    },
+    "DutyState": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_permission": {
+          "const": false
+        },
+        "active": {
+          "$ref": "#/$defs/Stage"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "maxItems": 2,
+          "type": "array"
+        },
+        "key": {
+          "$ref": "#/$defs/DutyKey"
+        },
+        "revision": {
+          "maximum": 2,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "usd_scale": {
+          "$ref": "#/$defs/Scale"
+        }
+      },
+      "required": [
+        "key",
+        "usd_scale",
+        "revision",
+        "active",
+        "history",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "Identifier": {
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$",
+      "type": "string"
+    },
+    "Money": {
+      "exclusiveMaximum": 100000000000000000000000000000000000000,
+      "exclusiveMinimum": -100000000000000000000000000000000000000,
+      "type": "integer"
+    },
+    "NonnegativeMoney": {
+      "exclusiveMaximum": 100000000000000000000000000000000000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "PaymentProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_permission": {
+          "const": false
+        },
+        "other_H_units": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "outcome": {
+          "enum": [
+            "PREVIEW_BACKING_ELIGIBLE",
+            "WAITING_ENCUMBRANCE_RELEASE"
+          ]
+        },
+        "own_duty_id": {
+          "$ref": "#/$defs/DutyID"
+        },
+        "projected_H": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "projected_N": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "projected_P": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "projected_U": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "projected_cash_units": {
+          "$ref": "#/$defs/DerivedUnits"
+        },
+        "risk_recheck_required": {
+          "type": "boolean"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        }
+      },
+      "required": [
+        "scope",
+        "outcome",
+        "own_duty_id",
+        "projected_cash_units",
+        "projected_P",
+        "projected_U",
+        "projected_N",
+        "projected_H",
+        "other_H_units",
+        "risk_recheck_required",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "PolicyIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_permission": {
+          "const": false
+        },
+        "digest": {
+          "$ref": "#/$defs/SHA256"
+        },
+        "payload": {
+          "$ref": "#/$defs/WaitPolicy"
+        }
+      },
+      "required": [
+        "digest",
+        "payload",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "SHA256": {
+      "maxLength": 64,
+      "minLength": 64,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "Scale": {
+      "maximum": 8,
+      "minimum": 2,
+      "type": "integer"
+    },
+    "Scope": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_generation": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "authority_id": {
+          "$ref": "#/$defs/Identifier"
+        },
+        "settlement_asset": {
+          "const": "USD"
+        },
+        "usd_scale": {
+          "$ref": "#/$defs/Scale"
+        }
+      },
+      "required": [
+        "authority_id",
+        "authority_generation",
+        "account_id",
+        "usd_scale",
+        "settlement_asset"
+      ],
+      "type": "object"
+    },
+    "Stage": {
+      "additionalProperties": false,
+      "properties": {
+        "amount_units": {
+          "$ref": "#/$defs/NonnegativeMoney"
+        },
+        "cap_ref": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ContentRef"
+            }
+          ]
+        },
+        "exposure_ref": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ContentRef"
+            }
+          ]
+        },
+        "final_ref": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/ContentRef"
+            }
+          ]
+        },
+        "kind": {
+          "enum": [
+            "REGISTERED_UNASSESSED",
+            "EXPOSURE_RATE_PENDING",
+            "FINAL_PAYABLE",
+            "FINAL_RECEIVABLE",
+            "FINAL_ZERO"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "amount_units",
+        "exposure_ref",
+        "cap_ref",
+        "final_ref"
+      ],
+      "type": "object"
+    },
+    "Time": {
+      "maximum": 9223372036854775807,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Totals": {
+      "additionalProperties": false,
+      "properties": {
+        "H": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "N": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "P": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "U": {
+          "$ref": "#/$defs/AggregateUnits"
+        },
+        "activation_permission": {
+          "const": false
+        },
+        "duty_ids": {
+          "items": {
+            "$ref": "#/$defs/DutyID"
+          },
+          "maxItems": 1000,
+          "type": "array"
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        }
+      },
+      "required": [
+        "scope",
+        "duty_ids",
+        "P",
+        "U",
+        "N",
+        "H",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "WaitPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "clock_policy": {
+          "const": "TRUSTED_UTC_PERSISTENT_HIGH_WATERMARK"
+        },
+        "expiry_action": {
+          "const": "DEFAULT_REVIEW_PRESERVE_DEBT_FREEZE_AND_OUTBOX"
+        },
+        "format": {
+          "const": 1,
+          "type": "integer"
+        },
+        "max_query_attempts": {
+          "maximum": 10000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_wait_us": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "min_query_interval_us": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "policy_id": {
+          "$ref": "#/$defs/Identifier"
+        }
+      },
+      "required": [
+        "format",
+        "policy_id",
+        "clock_policy",
+        "max_wait_us",
+        "min_query_interval_us",
+        "max_query_attempts",
+        "expiry_action"
+      ],
+      "type": "object"
+    },
+    "WaitProjection": {
+      "additionalProperties": false,
+      "properties": {
+        "activation_permission": {
+          "const": false
+        },
+        "holds_unchanged": {
+          "const": true
+        },
+        "outcome": {
+          "enum": [
+            "WAIT",
+            "DEFAULT_REVIEW"
+          ]
+        },
+        "query_counted": {
+          "type": "boolean"
+        },
+        "record": {
+          "$ref": "#/$defs/WaitRecord"
+        }
+      },
+      "required": [
+        "record",
+        "outcome",
+        "query_counted",
+        "holds_unchanged",
+        "activation_permission"
+      ],
+      "type": "object"
+    },
+    "WaitRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/ActionKey"
+        },
+        "attempts": {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "deadline_us": {
+          "$ref": "#/$defs/Time"
+        },
+        "default_review": {
+          "type": "boolean"
+        },
+        "last_dispatch_us": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Time"
+            }
+          ]
+        },
+        "observed_highwater_us": {
+          "$ref": "#/$defs/Time"
+        },
+        "policy": {
+          "$ref": "#/$defs/WaitPolicy"
+        },
+        "revision": {
+          "$ref": "#/$defs/Time"
+        },
+        "started_us": {
+          "$ref": "#/$defs/Time"
+        }
+      },
+      "required": [
+        "action",
+        "policy",
+        "revision",
+        "started_us",
+        "deadline_us",
+        "observed_highwater_us",
+        "attempts",
+        "last_dispatch_us",
+        "default_review"
+      ],
+      "type": "object"
+    },
+    "WaitRecordsValidation": {
+      "additionalProperties": false,
+      "properties": {
+        "action_ids": {
+          "items": {
+            "$ref": "#/$defs/ActionID"
+          },
+          "maxItems": 1000,
+          "type": "array"
+        },
+        "activation_permission": {
+          "const": false
+        },
+        "holds_unchanged": {
+          "const": true
+        },
+        "record_count": {
+          "maximum": 1000,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "action_ids",
+        "record_count",
+        "holds_unchanged",
+        "activation_permission"
+      ],
+      "type": "object"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "bounds": {
+    "derived_inclusive_abs": 400000000000000000000000000000000000000000,
+    "financial_leg_exclusive_abs": 100000000000000000000000000000000000000,
+    "joint_aggregate_max": 99999999999999999999999999999999999999000,
+    "max_duties": 1000,
+    "max_wait_records": 1000,
+    "request_bytes": 2097152,
+    "usd_scale": [
+      2,
+      8
+    ]
+  },
+  "execution_ready": false,
+  "final_lineage_semantics": {
+    "DTO_fields_and_nullability": "Unchanged Stage fields; direct/via reachability constraints supplied separately",
+    "accounting": "Only active.kind/amount contributes; references/history never retain extraU",
+    "all_final_kinds": [
+      "FINAL_PAYABLE",
+      "FINAL_RECEIVABLE",
+      "FINAL_ZERO"
+    ],
+    "authenticity": "Internal supplied-history consistency only; no authentic content/global history/persistentCAS proof",
+    "bridge": "Never repair null/partial/changed lineage or infer refs from currentstate/history; construct/serialize all supplied fields exactly",
+    "direct_registered_to_final": "E/C both null and independent typed FINAL_CUT final_ref required",
+    "rejections": [
+      "missing both viaU refs",
+      "partial pair",
+      "changed same-duty reference",
+      "foreign duty/rulescope",
+      "lineage on direct final withoutU",
+      "inconsistent replaced provided history"
+    ],
+    "source": "New local69 forward clarification, independently reviewed54af; no production answer or earlier061 semantic inference",
+    "via_U_to_all_finals": "Retain complete exposure_ref and cap_ref exactly equal to immutable previousU; final_ref additionally required"
+  },
+  "forward_semantic_gap_review": "04dfc2d2bc136b6770913e32c1cd6d4d0f1e7ad4",
+  "governing_final_lineage_policy": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+  "governing_policy_commit": "2bb8095faa76ca7d18f957590c7816ba44018554",
+  "hashes": {
+    "action": "7 exact ActionPayload fields; funding-action:v1: outside hashed JSON",
+    "canonical": "sorted keys, separators comma/colon, ensure_ascii true, allow_nan false, ASCII,no BOM/no trailing newline",
+    "duty": "9 exact DutyKey fields; funding-duty:v1: outside hashed JSON",
+    "policy": "7 exact WaitPolicy fields; bare lowercase SHA256"
+  },
+  "independent_final_lineage_rule_review": "54af0876ab48b5a5fb50627062f753ac0128c288",
+  "independent_rule_review": "86b3c2ac0b41b526cf8ebba2b3babda0b4b97ad1",
+  "kind": "INDEPENDENT_FUNDING_D1_SERIALIZED_WIRE_CONTRACT_V3",
+  "native_rules": [
+    "Exact native JSON str/dict/list/bool/null/int and finite float only; integer excludes bool/int subclasses; finite float never becomes money through conversion",
+    "Reject duplicate JSON keys, NaN/Infinity, unknown/missing keys, binary64 money, invalid UTF-8 and oversize requests",
+    "Tuple-typed target fields decode from wire arrays by explicit full-field mapping, never by lossy financial conversion",
+    "Fixed output-only activation/holds flags in supplied objects must validate before omitted from target constructor init=False arguments",
+    "Old expected_active_ref keyword is explicitly UNSUPPORTED; never inferred into a complete Stage",
+    "Well-formed unsupported settlement assets are UNSUPPORTED; malformed native types and invalid supported preconditions REJECT",
+    "Unexpected target/reference/constructor errors are TECHNICAL_FAILURE outside this response contract, never an expected matching business result",
+    "Only exact known HoldError/HoldUnsupported or explicit known wire-decode rejection may be classified by target adapter; do not catch all ValueError/TypeError/Exception as business outcomes",
+    "wait_records action_ids must contain every actual returned ID in its actual order; count-only summaries cannot claim full-output equality",
+    "Malformed transport/top-level envelope has no valid response correlation and must raise exact WireReject outside the business-classification catch",
+    "Transport resource walker counts dict keys and values, aliases by path and rejects cycles; raw and decoded compactASCII byte caps both apply before business classification"
+  ],
+  "natural_slot_order": [
+    "authority_id",
+    "authority_generation",
+    "symbol",
+    "period_end",
+    "settlement_asset",
+    "account_id"
+  ],
+  "operations": {
+    "action_identity": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "$ref": "#/$defs/ActionKey"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "type": "object"
+      },
+      "target_call": "ActionKey.action_id; payload copies exact scope/allocation plus contract constants",
+      "value": {
+        "$ref": "#/$defs/ActionIdentity"
+      }
+    },
+    "aggregate": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "basis_complete": {
+            "type": "boolean"
+          },
+          "scope": {
+            "$ref": "#/$defs/Scope"
+          },
+          "states": {
+            "items": {
+              "$ref": "#/$defs/DutyState"
+            },
+            "maxItems": 1000,
+            "type": "array"
+          }
+        },
+        "required": [
+          "states",
+          "scope",
+          "basis_complete"
+        ],
+        "type": "object"
+      },
+      "target_call": "aggregate(states exact tuple, scope, basis_complete=...)",
+      "value": {
+        "$ref": "#/$defs/Totals"
+      }
+    },
+    "decompose": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "base": {
+            "$ref": "#/$defs/BaseValues"
+          },
+          "basis_complete": {
+            "type": "boolean"
+          },
+          "states": {
+            "items": {
+              "$ref": "#/$defs/DutyState"
+            },
+            "maxItems": 1000,
+            "type": "array"
+          }
+        },
+        "required": [
+          "base",
+          "states",
+          "basis_complete"
+        ],
+        "type": "object"
+      },
+      "target_call": "target aggregate(states,base.scope,...) then target decompose(base,totals); adapter supplies no financial equations",
+      "value": {
+        "$ref": "#/$defs/Decomposition"
+      }
+    },
+    "duty_identity": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/DutyKey"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "target_call": "DutyKey.payload / .duty_id / .natural_slot; only field/property serialization",
+      "value": {
+        "$ref": "#/$defs/DutyIdentity"
+      }
+    },
+    "payment_precondition": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "basis_complete": {
+            "type": "boolean"
+          },
+          "cash_units": {
+            "$ref": "#/$defs/Money"
+          },
+          "own_duty_id": {
+            "$ref": "#/$defs/DutyID"
+          },
+          "prior_confirmed_settlements_clear": {
+            "type": "boolean"
+          },
+          "quote_available": {
+            "type": "boolean"
+          },
+          "scope": {
+            "$ref": "#/$defs/Scope"
+          },
+          "spot_frozen_units": {
+            "$ref": "#/$defs/NonnegativeMoney"
+          },
+          "states": {
+            "items": {
+              "$ref": "#/$defs/DutyState"
+            },
+            "maxItems": 1000,
+            "type": "array"
+          }
+        },
+        "required": [
+          "states",
+          "scope",
+          "own_duty_id",
+          "cash_units",
+          "spot_frozen_units",
+          "prior_confirmed_settlements_clear",
+          "quote_available",
+          "basis_complete"
+        ],
+        "type": "object"
+      },
+      "target_call": "backing_precondition with all listed fields",
+      "value": {
+        "$ref": "#/$defs/PaymentProjection"
+      }
+    },
+    "policy_identity": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "policy": {
+            "$ref": "#/$defs/WaitPolicy"
+          }
+        },
+        "required": [
+          "policy"
+        ],
+        "type": "object"
+      },
+      "target_call": "WaitPolicy.digest; payload is exact serialization of already validated input policy",
+      "value": {
+        "$ref": "#/$defs/PolicyIdentity"
+      }
+    },
+    "stage_advance": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "expected_active_stage": {
+            "$ref": "#/$defs/Stage"
+          },
+          "expected_revision": {
+            "maximum": 2,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "proposed": {
+            "$ref": "#/$defs/Stage"
+          },
+          "state": {
+            "$ref": "#/$defs/DutyState"
+          }
+        },
+        "required": [
+          "state",
+          "proposed",
+          "expected_revision",
+          "expected_active_stage"
+        ],
+        "type": "object"
+      },
+      "target_call": "advance_stage(... expected_revision=..., expected_active_stage=...)",
+      "value": {
+        "$ref": "#/$defs/DutyState"
+      }
+    },
+    "unsupported": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "$ref": "#/$defs/Identifier"
+          }
+        },
+        "required": [
+          "operation"
+        ],
+        "type": "object"
+      },
+      "target_call": "unsupported_request; known unsupported exception required, normal return is a technical contract violation",
+      "value": {
+        "type": "null"
+      }
+    },
+    "wait_preview": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "dispatch_query": {
+            "type": "boolean"
+          },
+          "expected_policy_digest": {
+            "$ref": "#/$defs/SHA256"
+          },
+          "expected_revision": {
+            "$ref": "#/$defs/Time"
+          },
+          "now_us": {
+            "$ref": "#/$defs/Time"
+          },
+          "record": {
+            "$ref": "#/$defs/WaitRecord"
+          }
+        },
+        "required": [
+          "record",
+          "now_us",
+          "expected_revision",
+          "expected_policy_digest",
+          "dispatch_query"
+        ],
+        "type": "object"
+      },
+      "target_call": "preview_wait with all listed keyword fields",
+      "value": {
+        "$ref": "#/$defs/WaitProjection"
+      }
+    },
+    "wait_records": {
+      "input": {
+        "additionalProperties": false,
+        "properties": {
+          "records": {
+            "items": {
+              "$ref": "#/$defs/WaitRecord"
+            },
+            "maxItems": 1000,
+            "type": "array"
+          }
+        },
+        "required": [
+          "records"
+        ],
+        "type": "object"
+      },
+      "target_call": "Serialize the actual exact sorted action-ID tuple returned by target validate_wait_records as action_ids array, without sorting/deduplicating/replacing it; record_count is provided input count; remaining flags constants only",
+      "value": {
+        "$ref": "#/$defs/WaitRecordsValidation"
+      }
+    }
+  },
+  "prior_reference_commit": "61259db94051ff40b1882f6d17ab24c107e3527d",
+  "prior_wire_commit": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+  "protocol": "PFH-D1-INDEPENDENT-WIRE-v3",
+  "request": {
+    "additionalProperties": false,
+    "properties": {
+      "case_id": {
+        "$ref": "#/$defs/Identifier"
+      },
+      "input": {
+        "type": "object"
+      },
+      "op": {
+        "enum": [
+          "duty_identity",
+          "policy_identity",
+          "action_identity",
+          "stage_advance",
+          "aggregate",
+          "decompose",
+          "payment_precondition",
+          "wait_preview",
+          "wait_records",
+          "unsupported"
+        ]
+      },
+      "schema": {
+        "const": 3,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "schema",
+      "case_id",
+      "op",
+      "input"
+    ],
+    "type": "object"
+  },
+  "resource_contract": {
+    "alias_and_cycles": "Count alias again at each path; reject ancestor-path cycles, do not reject ordinary repeated aliases",
+    "budget_violation": "WireReject escapes before correlated business response",
+    "compact_encoding": "json.dumps ensure_ascii=True allow_nan=False separators comma/colon indent=None; key sorting does not affect byte length",
+    "decoded_compact_ASCII_bytes_max_inclusive": 2097152,
+    "depth_max_inclusive": 32,
+    "floats": "Finite native float may pass transport then be rejected by exact typed DTO fields; any NaN/Infinity including overflow from1e999 is transport WireReject",
+    "integer_digits": "Base-ten digits excluding negative sign;0 has1; applies to integer tokens/nativeints, not finite float token mantissa",
+    "integer_digits_max_inclusive": 128,
+    "node_definition": "Each container and scalar occurrence counts1; each dict string key and corresponding value is a separate scalar/subtree at parentdepth+1; each listitem parentdepth+1",
+    "node_occurrences_max_inclusive": 250000,
+    "proof_boundary": "Validation caps, not a parser native-allocation/RSS hard quota; complete decoder equivalence remains pending independent CODE/execution",
+    "raw_UTF8_bytes_max_inclusive": 2097152,
+    "root_depth": 0,
+    "status": "NEW_PUBLIC_TRANSPORT_RULE_CODE_ONLY_NOT_EQUIVALENCE_PROOF"
+  },
+  "response": {
+    "additionalProperties": false,
+    "properties": {
+      "activation_permission": {
+        "const": false
+      },
+      "case_id": {
+        "$ref": "#/$defs/Identifier"
+      },
+      "diagnostic_code": {
+        "enum": [
+          null,
+          "REJECTED_INPUT_OR_PRECONDITION",
+          "UNSUPPORTED_OPERATION_OR_CAPABILITY"
+        ]
+      },
+      "hash_wire": {
+        "const": "CODE_CONTRACT_IMPLEMENTED_NOT_RUN"
+      },
+      "schema": {
+        "const": 3,
+        "type": "integer"
+      },
+      "status": {
+        "enum": [
+          "OK",
+          "REJECT",
+          "UNSUPPORTED"
+        ]
+      },
+      "value": {}
+    },
+    "required": [
+      "schema",
+      "case_id",
+      "status",
+      "value",
+      "diagnostic_code",
+      "activation_permission",
+      "hash_wire"
+    ],
+    "type": "object"
+  },
+  "response_cases": {
+    "OK": "diagnostic_code null; value exact operation value schema; unknown or omitted output fields fail",
+    "REJECT": "value null; diagnostic_code REJECTED_INPUT_OR_PRECONDITION",
+    "UNSUPPORTED": "value null; diagnostic_code UNSUPPORTED_OPERATION_OR_CAPABILITY"
+  },
+  "semantic_rules_not_encoded_as_JSONschema": [
+    "Duty >=1970 canonical UTC and exact integer interval alignment",
+    "Stage/ref link validation, reachable immutable history and complete expectedStage CAS",
+    "Gross totals, completeness, provided scope and once-only accounting/backing projections",
+    "Wait policy dynamic bounds, fixed first deadline, highwater, shared action conflict and only-change revision",
+    "69 context-sensitive complete final lineage: direct bothnull; viaU retainedfullE/C equals priorU; oneactive contribution and no content authenticity"
+  ],
+  "status": "FROZEN_V3_FINAL_LINEAGE_RULE_BEFORE_CODE_NOT_RUN",
+  "support_slice": "Pure reachable DutyState histories0..2 transitions; all external authority/approval/completeness/history facts unauthenticated; no APPLIED or real dispatch",
+  "target_reference_runs": 0,
+  "transport_rejection": {
+    "UTF8": "Decode bytes explicitly UTF8; reject BOM/invalid UTF8/duplicate keys/nonfinite JSON; no UTF16 inference",
+    "business_input_negative": "Within validated envelope, only exact known wire-input/HoldError/HoldUnsupported classifications yield response",
+    "case_id": "Echo only validated original case_id; never fabricate INVALID or another substitute",
+    "envelope_validation": "Top exact keys, native schema3 only, valid case_id, known op enum and input native object before business catch; schema2 not accepted or rewritten",
+    "generator_1024": "D1V3 versioned envelopes all wellformed schema3; negatives alter input only",
+    "malformed_JSON_or_envelope": "Exact WireReject escapes; no business response is emitted",
+    "unexpected_error": "Technical failure outside successful differential result, never normalized into business rejection"
+  }
+}

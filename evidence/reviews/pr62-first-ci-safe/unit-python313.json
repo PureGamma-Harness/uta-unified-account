@@ -1,0 +1,672 @@
+{
+  "additional_first_failed_matrix": {
+    "all_source_hashes_match_fixed_git": true,
+    "code_commit": "72dd3a17d7a8e363d95854ee8c4f361e0a24d901",
+    "complete_log_plain_ok_count": 2162,
+    "component_explicit_plain_ok_observations": [
+      {
+        "method": "test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown"
+      },
+      {
+        "method": "test_old_waiter_cannot_change_new_operator_or_publication_identity",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_old_waiter_cannot_change_new_operator_or_publication_identity"
+      },
+      {
+        "method": "test_quote_timeout_busy_and_superseded_are_narrowly_classified",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_quote_timeout_busy_and_superseded_are_narrowly_classified"
+      },
+      {
+        "method": "test_late_activation_exception_does_not_overwrite_later_operator_halt",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_activation_exception_does_not_overwrite_later_operator_halt"
+      },
+      {
+        "method": "test_late_publication_exception_does_not_overwrite_later_operator_halt",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_publication_exception_does_not_overwrite_later_operator_halt"
+      },
+      {
+        "method": "test_late_successful_activation_receipts_cannot_reopen_integrity_freeze",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_successful_activation_receipts_cannot_reopen_integrity_freeze"
+      },
+      {
+        "method": "test_managed_bad_local_generation_after_receipts_clears_pending",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_bad_local_generation_after_receipts_clears_pending"
+      },
+      {
+        "method": "test_managed_funding_reconcile_only_in_second_EX_clears_pending",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_funding_reconcile_only_in_second_EX_clears_pending"
+      },
+      {
+        "method": "test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown"
+      },
+      {
+        "method": "test_sync_bad_local_generation_records_stop_before_original_raise",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_bad_local_generation_records_stop_before_original_raise"
+      },
+      {
+        "method": "test_sync_funding_reconcile_error_records_stop_and_preserves_original",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_funding_reconcile_error_records_stop_and_preserves_original"
+      },
+      {
+        "method": "test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen"
+      },
+      {
+        "method": "test_force_halt_during_publication_keeps_router_halted_terminal_rejection",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_force_halt_during_publication_keeps_router_halted_terminal_rejection"
+      },
+      {
+        "method": "test_integrity_freeze_clears_pending_marker_without_risk_acceptance",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_integrity_freeze_clears_pending_marker_without_risk_acceptance"
+      },
+      {
+        "method": "test_legacy_and_malformed_persisted_marker_fail_closed",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_legacy_and_malformed_persisted_marker_fail_closed"
+      },
+      {
+        "method": "test_original_cid_payload_conflict_is_rejected_while_submission_is_paused",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_original_cid_payload_conflict_is_rejected_while_submission_is_paused"
+      },
+      {
+        "method": "test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo"
+      },
+      {
+        "method": "test_paused_selection_still_requires_the_original_live_writer_token",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_paused_selection_still_requires_the_original_live_writer_token"
+      },
+      {
+        "method": "test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn"
+      },
+      {
+        "method": "test_stale_quote_after_activation_cannot_accept_the_deferred_order",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_stale_quote_after_activation_cannot_accept_the_deferred_order"
+      },
+      {
+        "method": "test_all_control_writes_clear_activation_and_unrelated_stops",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_all_control_writes_clear_activation_and_unrelated_stops"
+      },
+      {
+        "method": "test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected",
+        "result": "plain_ok",
+        "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected"
+      }
+    ],
+    "component_source_method_counts": {
+      "tests/test_market_transition_activation_failures.py": 11,
+      "tests/test_market_transition_pending.py": 11
+    },
+    "custom_component_receipt_capture": "NOT_RUN",
+    "errors": 1,
+    "event": "push_first_failed_matrix",
+    "expected_failures": 0,
+    "failures": 3,
+    "failures_detail": {
+      "first_failure_cause": "UNDETERMINED",
+      "lease_observation_count": 0,
+      "lease_observations_truncated": false,
+      "observations": [
+        {
+          "exception_type": "uta.service.ServiceError",
+          "frames": [
+            {
+              "function": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+              "line": 338,
+              "path": "tests/test_process_readiness.py"
+            },
+            {
+              "function": "_write_state",
+              "line": 446,
+              "path": "uta/sharding.py"
+            }
+          ],
+          "kind": "ERROR",
+          "method": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+          "public_literal_message": "market transition marker is invalid",
+          "test_id": "test_process_readiness.ProcessReadinessTests.test_incomplete_watermarks_and_invalid_control_flags_are_unready"
+        },
+        {
+          "exception_type": "AssertionError",
+          "frames": [
+            {
+              "function": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+              "line": 1411,
+              "path": "tests/test_durable_faults.py"
+            }
+          ],
+          "kind": "FAIL",
+          "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+          "public_literal_message": "no bound native router SH descriptor within capture horizon",
+          "test_id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+        },
+        {
+          "exception_type": "AssertionError",
+          "frames": [
+            {
+              "function": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+              "line": 1632,
+              "path": "tests/test_durable_faults.py"
+            },
+            {
+              "function": "wait",
+              "line": 1286,
+              "path": "tests/test_durable_faults.py"
+            }
+          ],
+          "kind": "FAIL",
+          "method": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+          "public_literal_message": null,
+          "test_id": "test_durable_faults.ManagedProcessFaultTests.test_partial_publication_stays_halted_until_exact_publication_replay_completes"
+        },
+        {
+          "exception_type": "native_sh_capture_fixture.CaptureFixtureError",
+          "frames": [
+            {
+              "function": "test_exact_original_source_codeobject_and_unique_callsite_required",
+              "line": 122,
+              "path": "tests/test_native_sh_capture_protocol_pure.py"
+            },
+            {
+              "function": "exact_worker_boundary",
+              "line": 98,
+              "path": "tests/native_sh_capture_fixture.py"
+            }
+          ],
+          "kind": "FAIL",
+          "method": "test_exact_original_source_codeobject_and_unique_callsite_required",
+          "public_literal_message": "fixture source belongs to another runtime",
+          "test_id": "test_native_sh_capture_protocol_pure.NativeSHCaptureProtocolPureTests.test_exact_original_source_codeobject_and_unique_callsite_required"
+        }
+      ],
+      "raw_failure_tracebacks_retained_privately": true
+    },
+    "passed": false,
+    "production_approved": false,
+    "python": "3.11.18 (main, Oct 26 2026, 02:48:29) [GCC 15.2.0]",
+    "role": "additional_first_failed_matrix_diagnostic",
+    "skipped": 0,
+    "source_files": 410,
+    "source_unchanged": true,
+    "sqlite": "3.46.1",
+    "test_log_bytes": 434545,
+    "test_log_sha256": "d0d0c7584072693205d5a233eec0a9970338efa237e2b3972ab76d46529d7ebe",
+    "tests_run": 2193,
+    "tracked_source_clean_after": true,
+    "tracked_source_clean_before": true,
+    "unexpected_successes": 0,
+    "unittest_passed": false,
+    "worker_exit_code": 1,
+    "worker_summary_fields_match": true
+  },
+  "fixed_records": [
+    {
+      "all_source_hashes_match_fixed_git": true,
+      "code_commit": "72dd3a17d7a8e363d95854ee8c4f361e0a24d901",
+      "complete_log_plain_ok_count": 2162,
+      "component_explicit_plain_ok_observations": [
+        {
+          "method": "test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown"
+        },
+        {
+          "method": "test_old_waiter_cannot_change_new_operator_or_publication_identity",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_old_waiter_cannot_change_new_operator_or_publication_identity"
+        },
+        {
+          "method": "test_quote_timeout_busy_and_superseded_are_narrowly_classified",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_quote_timeout_busy_and_superseded_are_narrowly_classified"
+        },
+        {
+          "method": "test_late_activation_exception_does_not_overwrite_later_operator_halt",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_activation_exception_does_not_overwrite_later_operator_halt"
+        },
+        {
+          "method": "test_late_publication_exception_does_not_overwrite_later_operator_halt",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_publication_exception_does_not_overwrite_later_operator_halt"
+        },
+        {
+          "method": "test_late_successful_activation_receipts_cannot_reopen_integrity_freeze",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_successful_activation_receipts_cannot_reopen_integrity_freeze"
+        },
+        {
+          "method": "test_managed_bad_local_generation_after_receipts_clears_pending",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_bad_local_generation_after_receipts_clears_pending"
+        },
+        {
+          "method": "test_managed_funding_reconcile_only_in_second_EX_clears_pending",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_funding_reconcile_only_in_second_EX_clears_pending"
+        },
+        {
+          "method": "test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown"
+        },
+        {
+          "method": "test_sync_bad_local_generation_records_stop_before_original_raise",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_bad_local_generation_records_stop_before_original_raise"
+        },
+        {
+          "method": "test_sync_funding_reconcile_error_records_stop_and_preserves_original",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_funding_reconcile_error_records_stop_and_preserves_original"
+        },
+        {
+          "method": "test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen"
+        },
+        {
+          "method": "test_force_halt_during_publication_keeps_router_halted_terminal_rejection",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_force_halt_during_publication_keeps_router_halted_terminal_rejection"
+        },
+        {
+          "method": "test_integrity_freeze_clears_pending_marker_without_risk_acceptance",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_integrity_freeze_clears_pending_marker_without_risk_acceptance"
+        },
+        {
+          "method": "test_legacy_and_malformed_persisted_marker_fail_closed",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_legacy_and_malformed_persisted_marker_fail_closed"
+        },
+        {
+          "method": "test_original_cid_payload_conflict_is_rejected_while_submission_is_paused",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_original_cid_payload_conflict_is_rejected_while_submission_is_paused"
+        },
+        {
+          "method": "test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo"
+        },
+        {
+          "method": "test_paused_selection_still_requires_the_original_live_writer_token",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_paused_selection_still_requires_the_original_live_writer_token"
+        },
+        {
+          "method": "test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn"
+        },
+        {
+          "method": "test_stale_quote_after_activation_cannot_accept_the_deferred_order",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_stale_quote_after_activation_cannot_accept_the_deferred_order"
+        },
+        {
+          "method": "test_all_control_writes_clear_activation_and_unrelated_stops",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_all_control_writes_clear_activation_and_unrelated_stops"
+        },
+        {
+          "method": "test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected"
+        }
+      ],
+      "component_source_method_counts": {
+        "tests/test_market_transition_activation_failures.py": 11,
+        "tests/test_market_transition_pending.py": 11
+      },
+      "custom_component_receipt_capture": "NOT_RUN",
+      "errors": 1,
+      "event": "push",
+      "expected_failures": 0,
+      "failures": 3,
+      "failures_detail": {
+        "first_failure_cause": "UNDETERMINED",
+        "lease_observation_count": 0,
+        "lease_observations_truncated": false,
+        "observations": [
+          {
+            "exception_type": "uta.service.ServiceError",
+            "frames": [
+              {
+                "function": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+                "line": 338,
+                "path": "tests/test_process_readiness.py"
+              },
+              {
+                "function": "_write_state",
+                "line": 446,
+                "path": "uta/sharding.py"
+              }
+            ],
+            "kind": "ERROR",
+            "method": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+            "public_literal_message": "market transition marker is invalid",
+            "test_id": "test_process_readiness.ProcessReadinessTests.test_incomplete_watermarks_and_invalid_control_flags_are_unready"
+          },
+          {
+            "exception_type": "AssertionError",
+            "frames": [
+              {
+                "function": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+                "line": 1411,
+                "path": "tests/test_durable_faults.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+            "public_literal_message": "no bound native router SH descriptor within capture horizon",
+            "test_id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+          },
+          {
+            "exception_type": "AssertionError",
+            "frames": [
+              {
+                "function": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+                "line": 1632,
+                "path": "tests/test_durable_faults.py"
+              },
+              {
+                "function": "wait",
+                "line": 1286,
+                "path": "tests/test_durable_faults.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+            "public_literal_message": null,
+            "test_id": "test_durable_faults.ManagedProcessFaultTests.test_partial_publication_stays_halted_until_exact_publication_replay_completes"
+          },
+          {
+            "exception_type": "native_sh_capture_fixture.CaptureFixtureError",
+            "frames": [
+              {
+                "function": "test_exact_original_source_codeobject_and_unique_callsite_required",
+                "line": 122,
+                "path": "tests/test_native_sh_capture_protocol_pure.py"
+              },
+              {
+                "function": "exact_worker_boundary",
+                "line": 98,
+                "path": "tests/native_sh_capture_fixture.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_exact_original_source_codeobject_and_unique_callsite_required",
+            "public_literal_message": "fixture source belongs to another runtime",
+            "test_id": "test_native_sh_capture_protocol_pure.NativeSHCaptureProtocolPureTests.test_exact_original_source_codeobject_and_unique_callsite_required"
+          }
+        ],
+        "raw_failure_tracebacks_retained_privately": true
+      },
+      "passed": false,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "role": "fixed_full_unit_observation",
+      "skipped": 0,
+      "source_files": 410,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "test_log_bytes": 434431,
+      "test_log_sha256": "4944ce74da14f26aa941bd89b881655f17a960d86f2282c8a75737b8d24c5094",
+      "tests_run": 2193,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": false,
+      "worker_exit_code": 1,
+      "worker_summary_fields_match": true
+    },
+    {
+      "all_source_hashes_match_fixed_git": true,
+      "code_commit": "c20b5aaaa64f72aa432d58d8c0fbc58d28fd72f5",
+      "complete_log_plain_ok_count": 2162,
+      "component_explicit_plain_ok_observations": [
+        {
+          "method": "test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown"
+        },
+        {
+          "method": "test_old_waiter_cannot_change_new_operator_or_publication_identity",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_old_waiter_cannot_change_new_operator_or_publication_identity"
+        },
+        {
+          "method": "test_quote_timeout_busy_and_superseded_are_narrowly_classified",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ActivationFailureStateContracts.test_quote_timeout_busy_and_superseded_are_narrowly_classified"
+        },
+        {
+          "method": "test_late_activation_exception_does_not_overwrite_later_operator_halt",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_activation_exception_does_not_overwrite_later_operator_halt"
+        },
+        {
+          "method": "test_late_publication_exception_does_not_overwrite_later_operator_halt",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_publication_exception_does_not_overwrite_later_operator_halt"
+        },
+        {
+          "method": "test_late_successful_activation_receipts_cannot_reopen_integrity_freeze",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_late_successful_activation_receipts_cannot_reopen_integrity_freeze"
+        },
+        {
+          "method": "test_managed_bad_local_generation_after_receipts_clears_pending",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_bad_local_generation_after_receipts_clears_pending"
+        },
+        {
+          "method": "test_managed_funding_reconcile_only_in_second_EX_clears_pending",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_funding_reconcile_only_in_second_EX_clears_pending"
+        },
+        {
+          "method": "test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.ManagedActivationFailureSQLContracts.test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown"
+        },
+        {
+          "method": "test_sync_bad_local_generation_records_stop_before_original_raise",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_bad_local_generation_records_stop_before_original_raise"
+        },
+        {
+          "method": "test_sync_funding_reconcile_error_records_stop_and_preserves_original",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_activation_failures.SyncActivationFailureSQLContracts.test_sync_funding_reconcile_error_records_stop_and_preserves_original"
+        },
+        {
+          "method": "test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen"
+        },
+        {
+          "method": "test_force_halt_during_publication_keeps_router_halted_terminal_rejection",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_force_halt_during_publication_keeps_router_halted_terminal_rejection"
+        },
+        {
+          "method": "test_integrity_freeze_clears_pending_marker_without_risk_acceptance",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_integrity_freeze_clears_pending_marker_without_risk_acceptance"
+        },
+        {
+          "method": "test_legacy_and_malformed_persisted_marker_fail_closed",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_legacy_and_malformed_persisted_marker_fail_closed"
+        },
+        {
+          "method": "test_original_cid_payload_conflict_is_rejected_while_submission_is_paused",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_original_cid_payload_conflict_is_rejected_while_submission_is_paused"
+        },
+        {
+          "method": "test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo"
+        },
+        {
+          "method": "test_paused_selection_still_requires_the_original_live_writer_token",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_paused_selection_still_requires_the_original_live_writer_token"
+        },
+        {
+          "method": "test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn"
+        },
+        {
+          "method": "test_stale_quote_after_activation_cannot_accept_the_deferred_order",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionPendingSQLContracts.test_stale_quote_after_activation_cannot_accept_the_deferred_order"
+        },
+        {
+          "method": "test_all_control_writes_clear_activation_and_unrelated_stops",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_all_control_writes_clear_activation_and_unrelated_stops"
+        },
+        {
+          "method": "test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected",
+          "result": "plain_ok",
+          "test_id": "test_market_transition_pending.MarketTransitionStateContracts.test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected"
+        }
+      ],
+      "component_source_method_counts": {
+        "tests/test_market_transition_activation_failures.py": 11,
+        "tests/test_market_transition_pending.py": 11
+      },
+      "custom_component_receipt_capture": "NOT_RUN",
+      "errors": 1,
+      "event": "pull_request",
+      "expected_failures": 0,
+      "failures": 3,
+      "failures_detail": {
+        "first_failure_cause": "UNDETERMINED",
+        "lease_observation_count": 0,
+        "lease_observations_truncated": false,
+        "observations": [
+          {
+            "exception_type": "uta.service.ServiceError",
+            "frames": [
+              {
+                "function": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+                "line": 338,
+                "path": "tests/test_process_readiness.py"
+              },
+              {
+                "function": "_write_state",
+                "line": 446,
+                "path": "uta/sharding.py"
+              }
+            ],
+            "kind": "ERROR",
+            "method": "test_incomplete_watermarks_and_invalid_control_flags_are_unready",
+            "public_literal_message": "market transition marker is invalid",
+            "test_id": "test_process_readiness.ProcessReadinessTests.test_incomplete_watermarks_and_invalid_control_flags_are_unready"
+          },
+          {
+            "exception_type": "AssertionError",
+            "frames": [
+              {
+                "function": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+                "line": 1411,
+                "path": "tests/test_durable_faults.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover",
+            "public_literal_message": "no bound native router SH descriptor within capture horizon",
+            "test_id": "test_durable_faults.ManagedProcessFaultTests.test_expired_sigstopped_shared_gate_owner_is_killed_so_publication_can_recover"
+          },
+          {
+            "exception_type": "AssertionError",
+            "frames": [
+              {
+                "function": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+                "line": 1632,
+                "path": "tests/test_durable_faults.py"
+              },
+              {
+                "function": "wait",
+                "line": 1286,
+                "path": "tests/test_durable_faults.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_partial_publication_stays_halted_until_exact_publication_replay_completes",
+            "public_literal_message": null,
+            "test_id": "test_durable_faults.ManagedProcessFaultTests.test_partial_publication_stays_halted_until_exact_publication_replay_completes"
+          },
+          {
+            "exception_type": "native_sh_capture_fixture.CaptureFixtureError",
+            "frames": [
+              {
+                "function": "test_exact_original_source_codeobject_and_unique_callsite_required",
+                "line": 122,
+                "path": "tests/test_native_sh_capture_protocol_pure.py"
+              },
+              {
+                "function": "exact_worker_boundary",
+                "line": 98,
+                "path": "tests/native_sh_capture_fixture.py"
+              }
+            ],
+            "kind": "FAIL",
+            "method": "test_exact_original_source_codeobject_and_unique_callsite_required",
+            "public_literal_message": "fixture source belongs to another runtime",
+            "test_id": "test_native_sh_capture_protocol_pure.NativeSHCaptureProtocolPureTests.test_exact_original_source_codeobject_and_unique_callsite_required"
+          }
+        ],
+        "raw_failure_tracebacks_retained_privately": true
+      },
+      "passed": false,
+      "production_approved": false,
+      "python": "3.13.18 (main, Oct 26 2026, 14:19:33) [GCC 15.2.0]",
+      "role": "fixed_full_unit_observation",
+      "skipped": 0,
+      "source_files": 410,
+      "source_unchanged": true,
+      "sqlite": "3.46.1",
+      "test_log_bytes": 434431,
+      "test_log_sha256": "f9fd719275a28ac6e401eba70ec9a9a1f1ccf3a9e110ff06a4ce23144db8db25",
+      "tests_run": 2193,
+      "tracked_source_clean_after": true,
+      "tracked_source_clean_before": true,
+      "unexpected_successes": 0,
+      "unittest_passed": false,
+      "worker_exit_code": 1,
+      "worker_summary_fields_match": true
+    }
+  ],
+  "independent_RAW_review": "PENDING",
+  "target_execution_by_collector": 0
+}

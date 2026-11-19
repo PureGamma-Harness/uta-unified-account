@@ -1,0 +1,1390 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "administrative_review": {
+    "H1_AuthDB8": "Previous automatic-review rejection remains NOT_RUN; no retry or bypass.",
+    "allowed_budget": {
+      "bytes": 134217728,
+      "files": 512
+    },
+    "budget_claim": "The corrected helper ledger is exact for that attempt only; earlier display/diff/search and failed-helper reads have no unified exact I/O ledger. No strict noarchive or whole-session I/O proof is claimed.",
+    "corrected_helper_reads": {
+      "bytes": 711209,
+      "count": 35,
+      "ledger": [
+        {
+          "bytes": 18956,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "c4779c71fe6b6ef59fecb213529f2e3a73ed2a15",
+          "path": "evidence/integrations/funding-hold-v3/combined-manifest.json",
+          "sha256": "0d60ec370ba5439a7cb14a3152f56c294b57ecc22b7027a87b4113390b0890e6"
+        },
+        {
+          "bytes": 2687,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "694e2ec94334e6e10d49463adc210d239db6b9a8",
+          "path": "evidence/designs/funding-hold-full-field-v3/reference-export.json",
+          "sha256": "a7a1b9b9b1126841c9bf3af0a3ad220369af4e7fb59a1ea8dabf7a8c05a2225e"
+        },
+        {
+          "bytes": 33268,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "a4881b666708666f50291ce521210f927ca9514b",
+          "path": "evidence/designs/funding-hold-target-adapter-v3/wire-contract.json",
+          "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+        },
+        {
+          "bytes": 33268,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "a4881b666708666f50291ce521210f927ca9514b",
+          "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+          "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+        },
+        {
+          "bytes": 24999,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "6c34aebf728ccb8c5cc180e09d66724dfdadda86",
+          "path": "tests/funding_hold_target_adapter_v3.py",
+          "sha256": "5953f9b5ccc1730f1ebb2d57707d73b339376a9a96159f244a1e256241eb6821"
+        },
+        {
+          "bytes": 24999,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "01f82bf3e09d4176b6507b29d6239b6f84971074",
+          "path": "tests/funding_hold_target_adapter_v2.py",
+          "sha256": "104b92d6de6f0dafd28b71827501ffad23d9d2c97da666a2ffab995ae9a39fa3"
+        },
+        {
+          "bytes": 23348,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "15c91c4c9ca109db906bc7c8a434751afbe78159",
+          "path": "uta/funding_hold_pure.py",
+          "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+        },
+        {
+          "bytes": 19835,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "858740d0ddc156839c8d51d2e3868c1122649742",
+          "path": "tests/funding_hold_d1_reference_cases_v3.py",
+          "sha256": "f5b7d11e106a5fe7b9c9892f0896a03c6efaddd0d3f42f3642ffca1018493c2a"
+        },
+        {
+          "bytes": 26396,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "f773999cc082c85088bab69d7a87834a54f66514",
+          "path": "tests/reference_funding_hold_d1_v3.py",
+          "sha256": "63c5deda6cdc1799eeae470f615c09ce5842a9e26acdad6fa23a8924fea79135"
+        },
+        {
+          "bytes": 33813,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "99e77f3a627d31558033cf29e3690cea0e8f9477",
+          "path": "tests/test_funding_hold_exact_reference_v3.py",
+          "sha256": "6b5186a3f245f72ffac4e1b721c49e6e63d0665a04d76199a1de71f8aec7075a"
+        },
+        {
+          "bytes": 14215,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "80c6b36368fb2e37bbee607e09aca5292732ef31",
+          "path": "tests/test_funding_hold_full_field_v3.py",
+          "sha256": "b6c82ad93093c4c67d55ef3945924b779a36cf86b45e6fc5fc28176199f43dd9"
+        },
+        {
+          "bytes": 11823,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "055fb2245960b43d74aa10eed8163d5879453979",
+          "path": "tests/test_funding_hold_target_adapter_v2.py",
+          "sha256": "6741029e150a9455af1f75c1e1b71c3d478474a175cc24118ec671c983c6670e"
+        },
+        {
+          "bytes": 12022,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "9c6787fa9b4bb7005d9f35e7957ba533c8c4da7a",
+          "path": "tests/test_funding_hold_target_adapter_v3.py",
+          "sha256": "c42d2a813ff59963ffbeb3ca09f89cc42abc47c7302d02201411ab9006e9546f"
+        },
+        {
+          "bytes": 17453,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "e343d015f7fe802661e55a05f8f1d6aa17fd2f35",
+          "path": "tests/test_market_transition_activation_failures.py",
+          "sha256": "a0063e98f0372bffe46fd3d326cce3186cd162395c112149ec65982aad01edcf"
+        },
+        {
+          "bytes": 18475,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "7b816f8c86bbc71bbda3af60c53950e5d0a89536",
+          "path": "tests/test_market_transition_pending.py",
+          "sha256": "45d7b99ceee8bb0fdbcb08f34e0daddf709fc6c6b5a77ffa26597b8cb253ef5e"
+        },
+        {
+          "bytes": 11660,
+          "commit": "27e9442d4939465482f191fef318380dd131a2e2",
+          "git_blob": "e028c22e9e70d7143570e01b87337b6c075f191d",
+          "path": "tests/native_sh_capture_fixture.py",
+          "sha256": "a3e4894441467f449b810a70a2c5c44fbb065166efd978e413148c2dc7c7dcec"
+        },
+        {
+          "bytes": 11936,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "212ce4989fc1f8cdddf45eb261c903007e4215a1",
+          "path": "tests/native_sh_capture_fixture.py",
+          "sha256": "ec3dfa68259bbc238e75993e6c45f4cc24495a96df1f1edbf7d68f8f4f7d62a8"
+        },
+        {
+          "bytes": 100270,
+          "commit": "27e9442d4939465482f191fef318380dd131a2e2",
+          "git_blob": "a02e62af6e22b36af05780f30707ec28de9ec6c9",
+          "path": "tests/test_durable_faults.py",
+          "sha256": "b22629beadfd5d224d7030871f232b84604398ba3c00e13dd153b4227a934a7f"
+        },
+        {
+          "bytes": 101002,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "15cb410ad1c65422c56b3a388a15911f371159b9",
+          "path": "tests/test_durable_faults.py",
+          "sha256": "d3f24a76c49744124c898dac2fdb29df446fd4ff01c1da538c302321c0d603f2"
+        },
+        {
+          "bytes": 13275,
+          "commit": "27e9442d4939465482f191fef318380dd131a2e2",
+          "git_blob": "47fd1c55b28218578f4338e902fcac159f828db8",
+          "path": "tests/test_expired_gate_failure_evidence.py",
+          "sha256": "42b38c8a721367ec562a6e7b9ec00c0e017421855edbcf4dd78ba8ce51986852"
+        },
+        {
+          "bytes": 16496,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "17b10ebd69f5b8c34dd92f0093cc5453fa825718",
+          "path": "tests/test_expired_gate_failure_evidence.py",
+          "sha256": "8a3e1a30dbcf5cf539ae97278ceae6077e6a79e56ed0d32f7838473e7ba48200"
+        },
+        {
+          "bytes": 12236,
+          "commit": "27e9442d4939465482f191fef318380dd131a2e2",
+          "git_blob": "b1d47d25dbd011b3a83a694bdc7f31bcc30cf758",
+          "path": "tests/test_native_sh_capture_protocol_pure.py",
+          "sha256": "e4357798e3d1e55397f7f49ecba2ba0fceb6a7c42d5b35093bc00f9fc4d0b212"
+        },
+        {
+          "bytes": 12547,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "deb0a7942ff5b16104f697c8fad9e5361030b506",
+          "path": "tests/test_native_sh_capture_protocol_pure.py",
+          "sha256": "5be7ad6c8fc691a794044b30cfd7c36e1588c9558f81eede1a74416f3876739e"
+        },
+        {
+          "bytes": 18451,
+          "commit": "27e9442d4939465482f191fef318380dd131a2e2",
+          "git_blob": "22185db35793ba414bbb16fc4947d5fc8c1cf1c6",
+          "path": "tests/test_process_readiness.py",
+          "sha256": "fd0e20e858fef5bdcfa7542d037a3b6d4c937550dd55f7fe9dd8cc40e2101d7d"
+        },
+        {
+          "bytes": 19564,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "ede7844ce8df0f7029ae9ca2bc56cf5ca442b12b",
+          "path": "tests/test_process_readiness.py",
+          "sha256": "f06ac51982ee3768762ddc2d0907aed4e63822c5d5b1105ac2be6914cebe8b64"
+        },
+        {
+          "bytes": 12287,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "f5305a20df4682839175e425bd4e76f4ca6eef94",
+          "path": "tests/test_credit_lease_observation_tag.py",
+          "sha256": "805c0e60ae951b2d14b7adee993ec09d44a90defda05461ec6eef65556e0d798"
+        },
+        {
+          "bytes": 19495,
+          "commit": "e409db543ed652928d9e9e55097c873b020be410",
+          "git_blob": "b5f3af32169460a3cf8554efe68bcc6d2826563c",
+          "path": "tests/test_process_readiness.py",
+          "sha256": "a78221d0db4993408c66e3dace8dba59f84e772b39ff080aac6420d9fb24630d"
+        },
+        {
+          "bytes": 387,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "94b5b4eba45cc3a356392c2b722f4c4d4c00e422",
+          "path": "evidence/reviews/expired-gate-failure-5a/original-ast.json",
+          "sha256": "52fd579fcc903f9590da7dc9d3232e09e48bbca1e0fcc96a48587051b7339922"
+        },
+        {
+          "bytes": 1786,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "0375e950e87c92b886b172439f32120ffe9ae671",
+          "path": "evidence/reviews/expired-gate-failure-5a/approved-market-pause-v2-ast-delta.json",
+          "sha256": "786f27197cad5947d943d0d5b3ff2ce5cb31031e1846c2e4051b33229c6006b7"
+        },
+        {
+          "bytes": 941,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "43f7b01b51dd45d1f65e33eb7f03f9459031d164",
+          "path": "pyproject.toml",
+          "sha256": "fbfbaebcb92f4fa4fbe37cd0c53965437ba559072eab1745ce58e916ebb0315c"
+        },
+        {
+          "bytes": 962,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "d8205409bd41b97ed1a331234980da2ce016cd15",
+          "path": "MANIFEST.in",
+          "sha256": "5481cbc4ef214bd62f5dbf32e3de24eecbcf083512762988da27c7ef3f7fe909"
+        },
+        {
+          "bytes": 6291,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "9c52d9f092886ea41c1e64f36686cacfda3e08f1",
+          "path": ".github/workflows/ci.yml",
+          "sha256": "aec9acb103184c984cda33d17c6dd1641db1f652131cb9aa13857b5397347edc"
+        },
+        {
+          "bytes": 10388,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "69b11f2dbcc67883fbf50be4dc68c16f45324ec8",
+          "path": "tools/verify_release_archives.py",
+          "sha256": "5e45cd110df625db900435336d4e906f3ab6ccfc10ff362d1c7034de67afbfbc"
+        },
+        {
+          "bytes": 13493,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "db6bcfde2c8f827e44957a9331a43287f93126d2",
+          "path": "tools/validate_installed_release.py",
+          "sha256": "4bd057848f445d6750c83527020f7d49e8a6645aa7584781a7fb1d03d9eeda0c"
+        },
+        {
+          "bytes": 12185,
+          "commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+          "git_blob": "787fd08c6a21c54430d28f4ead4d739ddbc42e20",
+          "path": "tools/run_validation.py",
+          "sha256": "3c5d06501d07a389cca2cdba9e2c4260968e8b625e00692b05da07a298d93973"
+        }
+      ]
+    },
+    "full_physical_IO_compliance_attestation": false,
+    "helper_attempts": [
+      {
+        "attempt": 1,
+        "completed_before_error": [
+          "all67_runtime_bytes_SHA_and_origin_blobs",
+          "all15_verification_pin_bytes_SHA_AST",
+          "all11_reference_export_bytes_SHA_exact_F",
+          "wire_copies_equal"
+        ],
+        "ledger_saved": false,
+        "outcome": "ADMIN_ERROR_LITERAL_EVAL_CONSTRUCTORS",
+        "source_bytes_conservative_upper_bound": 2500000,
+        "source_reads_conservative_upper_bound": 100,
+        "target_runs": 0
+      },
+      {
+        "attempt": 2,
+        "no_target_execution": true,
+        "outcome": "STATIC_DATA_ASSERTIONS_SATISFIED"
+      }
+    ],
+    "initial_HEAD_exact_and_status_clean": true,
+    "main_index_or_author_source_mutations": 0,
+    "network_CI_calls": 0,
+    "protected_process_lookup_signal": 0,
+    "read_tree_reset_clean_sparse_reapply": 0,
+    "reads_used_Git_blobs_without_restoring_source": true,
+    "scope_deviation": {
+      "actual_internal_grep_bytes": "UNKNOWN",
+      "archive_binary_matches_reported": 3,
+      "archive_extract_or_execute": 0,
+      "archive_scope": {
+        "tests/fixtures/legacy_4608ffe_uta.tar.gz": {
+          "bytes": 219986,
+          "mode": "100644",
+          "oid": "3f764292941fea52689f4da9b406397bcc403910"
+        },
+        "tests/fixtures/legacy_ad3f5b8_uta.tar.gz": {
+          "bytes": 144930,
+          "mode": "100644",
+          "oid": "df57b4677df19700cb3918b59758d12235d7d068"
+        },
+        "tests/fixtures/legacy_credit_45818c0_uta.tar.gz": {
+          "bytes": 230316,
+          "mode": "100644",
+          "oid": "b5658ae3caa7ba71892af1843c40fff537432482"
+        },
+        "tests/fixtures/legacy_credit_899c91d_uta.tar.gz": {
+          "bytes": 251429,
+          "mode": "100644",
+          "oid": "504f9e479999645fb288db2ccaa2793311a2fd9c"
+        }
+      },
+      "possible_input_blob_count_upper_bound": 312,
+      "possible_input_bytes_upper_bound": 5064097,
+      "strict_explicit_path_no_archive_compliance": false
+    },
+    "scope_deviation_explanation": "One git grep across tools/tests was broader than declared explicit source paths. Its possible full scope is312 blobs/5064097B including4 compressed fixture blobs (3 reported binary matches). No archive was extracted, parsed, installed or executed. Exact grep internal I/O is unknown. No archive content was reread to repair this administrative deviation.",
+    "source_program_mutations": 0,
+    "sparse_physical_missing_inputs": true,
+    "strict_explicit_source_no_archive_compliance": false,
+    "worktree": "/workspace/uta-funding-hold-v3-combined-2b1b-code-review"
+  },
+  "capacity_claim": false,
+  "combined_CI_pass": false,
+  "control_and_readiness_merge": {
+    "TTL_lease_quote_wait_or_predicate_softening": false,
+    "all_other_runtime_exact_public_base": true,
+    "corrupt_fixture": "Offline closed authority; valid original state restored before each corruption; bad halted/pending writes still assert ServiceError(control_corruption) and original state preservation; only test raw SQL installs corruption for independent read path.",
+    "delta": "Replace one self.assertTrue(self.router.diagnostics()[financial_ready]) with one recovered snapshot and the same predicate plus _readiness_failure_message(recovered).",
+    "exact_current_ordinary_AST_sha256": "086bfd15b452dbfe134da509fb1ff2bf1fc45ae82b857edef38ba9ea37007e8e",
+    "exact_previous_ordinary_AST_sha256": "860dbe3535fd7305fd8ae64307c71c446468ab55bf63a122411998988c839907",
+    "guard_and_delta_exact_market_source": true,
+    "guard_scope": "Current ordinary method must match exact086 hash, previous function exact860 hash, replace that one node only, then compare whole normalized module to original6158 hash. Protected recovery/financial/capture/cleanup nodes remain in full comparison.",
+    "native_capture_source_binding": "revision2 durable_process SHA9b346b... retained exactly from e409; old binding remains historical; no native capture ran.",
+    "negative_definition_retained": "Appended Pass in approved ordinary method or protected recovery method must fail the actual whole-module guard; NOT_RUN.",
+    "original_AST_reference_file_sha256": "52fd579fcc903f9590da7dc9d3232e09e48bbca1e0fcc96a48587051b7339922",
+    "original_AST_reference_unchanged_from_both_public_sources": true,
+    "original_module_AST_sha256": "6158b76f0c38eb9aa7acf7a4c28c88357cb3223a0f875bcb63f2db08b513b1d6",
+    "pending_order_oracle": "PENDING, attempts0, result/error null and unchanged financial snapshot while partial; after explicit full publication and activation actual acceptance and idempotent snapshot checked.",
+    "process_readiness_exact_market_source_plus_reviewed_diagnostic_delta": true,
+    "three_runtime_modules_exact_market_source": true
+  },
+  "decision": "CODE_SOURCE_READY_NO_NEW_COMBINATION_BLOCKER_NOT_RUN_WITH_ADMIN_SCOPE_DEVIATION",
+  "executed_activity": {
+    "AST_parse_dump_literal_data_only": true,
+    "CI": 0,
+    "Git_metadata_blob_diff": true,
+    "JSON_parse_SHA": true,
+    "SQL": 0,
+    "actors_observers": 0,
+    "bytecompile": 0,
+    "local_target_imports": 0,
+    "network": 0,
+    "new_threads": 0,
+    "target_reference_generator_validator_calls": 0,
+    "tests": 0
+  },
+  "execution_GO": false,
+  "historical_evidence_limits": [
+    "Public PR62 first adb source2194 summaries and8 success jobs remain that earlier source evidence with its RAW I/O limits; not combined acceptance.",
+    "Public PR63 first16f64 push312 failure persists despite PR success; causeUNDETERMINED.",
+    "Public PR64 first d128 success preserves prior diagnostics changes; failed recovery formatter branch text was not observed.",
+    "Old blocked reference and marshaller reports, prior failed CI and original AST/reference data are retained. New forward policy and source do not rewrite them as passing."
+  ],
+  "next_gate": "Root may decide a separate first normal push and PR CI on this exact combined source plus these SAFE reports, retain Python3.10-3.13 actual summaries/full-field stream or first failure and package/source reports, and obtain independent RAW review. This report grants no execution GO.",
+  "packaging_and_defaults": {
+    "V4_matches_runtime_python_names": true,
+    "V4_unchanged": true,
+    "activation_permission": false,
+    "binary_qualification": null,
+    "default_kernel_policy": "Unchanged via exact reviewed origins and unchanged public declarations; no new hold activation.",
+    "explicit_V4_python_allowlist_count": 66,
+    "installed_new_components_directly_qualified": false,
+    "market_cache_size_default": 0,
+    "normal_CI": "Existing unittest discovery sees all test_ modules in tests and their same-directory helpers; source map reads tracked Python and fixtures; first actual workflow still required.",
+    "pyproject_MANIFEST_CI_package_verifiers_and_validation_runner_unchanged_from_base": true,
+    "reserve_cache_size_default": 0,
+    "sdist": "Existing recursive tests/evidence/docs patterns cover every newly added .py/.json/.md path; verifier required paths derives from all tracked paths, so report additions remain within exact-source archive obligation.",
+    "wheel": "Only uta package and dashboard HTML; no new verification runtime entrypoint."
+  },
+  "production": "NO_GO",
+  "real_funds_approved": false,
+  "review_commit_parent": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+  "reviewed_source_commit": "2b1b2a6d493c3258ce0446b45959f76318cb17d6",
+  "rollback": "Revert only these two SAFE review artifacts. Preserve immutable sources, original failures, raw records and all confirmed economic effects.",
+  "root_may_consider_first_normal_CI": true,
+  "runtime": {
+    "all_manifest_SHA_and_origin_checks_satisfied_before_admin_literal_error": true,
+    "bytes": 1494225,
+    "changed_paths": [
+      "uta/durable_commands.py",
+      "uta/durable_process.py",
+      "uta/sharding.py"
+    ],
+    "count": 67,
+    "html_count": 1,
+    "origins": {
+      "27e9442d4939465482f191fef318380dd131a2e2": 64,
+      "e409db543ed652928d9e9e55097c873b020be410": 3
+    },
+    "physical_whole_checkout_equality_claimed": false,
+    "pins": [
+      {
+        "bytes": 104,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/__init__.py",
+        "sha256": "ab0d0533d85fd1d23fcf6cfe9f1d3cbf3d4bfd28096c21f27fcc659fb0f7fd43"
+      },
+      {
+        "bytes": 12953,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/__main__.py",
+        "sha256": "f562209d05967e0dc344dfa846bf7c493c47866f1515cd7198e2e9a1111f3131"
+      },
+      {
+        "bytes": 4920,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/acceptance.py",
+        "sha256": "34ce81c20910551b60f3fbf9b8f638cac6a56458d735945611988b6a89c92eb7"
+      },
+      {
+        "bytes": 14604,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/admission.py",
+        "sha256": "016f67bfa6e07508347429a2c7bc03bfc26bd93b4a4a7c8359be653ae4851a47"
+      },
+      {
+        "bytes": 6832,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/api.py",
+        "sha256": "706ca61fae5a7a45cceb9746ca91d20ef459b5586b0cab3c43504481479c15a2"
+      },
+      {
+        "bytes": 4624,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/bridge.py",
+        "sha256": "6b02a10020bd4273634ecfa886455f1e857e5a597d4917c15e6cf607910ac432"
+      },
+      {
+        "bytes": 824,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/configuration.py",
+        "sha256": "581a25883398f5ea5a06f9a857755b69697e6f5eef56a394ed8d5781e67dee68"
+      },
+      {
+        "bytes": 31349,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit.py",
+        "sha256": "9515caf8dee64ed4b2ee2e60762396af5e7a2bd127356cff21fc4b9f9ca3e89a"
+      },
+      {
+        "bytes": 18651,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_artifact.py",
+        "sha256": "7cd909bf0b84716f5bdf376149d7ccfdcb26bece9912112b5b82061bfb910ea9"
+      },
+      {
+        "bytes": 54043,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_audit_v2.py",
+        "sha256": "d455b8417bd3938f9aca14eda5dd0a0f366b1da0e60638c83324085cbc7eb83a"
+      },
+      {
+        "bytes": 20499,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_audit_v2_replay.py",
+        "sha256": "95b9b94b00864b02a642a1ff76cdafa300b241fd4c2161f89337e64d9369e8af"
+      },
+      {
+        "bytes": 18118,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_fifo_v2.py",
+        "sha256": "5d6eda51afe8906dba1e0a00a0ea697c3228738469ff1debb0859bf4cad7f4ca"
+      },
+      {
+        "bytes": 24552,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_native.py",
+        "sha256": "088d6b6b0879124c122cb674d9b347f9688657d7b35019ed643dbeaf1ed19a99"
+      },
+      {
+        "bytes": 103836,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_native_v2.py",
+        "sha256": "0e6c628749653021f54d327696fed9d8eebbf2d3b72c3ea586c45e881ff1aa26"
+      },
+      {
+        "bytes": 16925,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_policy.py",
+        "sha256": "18d9aa7e255aa4c0f4969848936a5e149b2a6dbe7acfa120a01d5fadab53c47a"
+      },
+      {
+        "bytes": 13967,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_transition.py",
+        "sha256": "86161437f604cf2c2b19484575bdd3d03bb307b6714a4f28c48ab5dc667efb99"
+      },
+      {
+        "bytes": 3716,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/credit_v2_payload_contract.py",
+        "sha256": "6be1e17ff97737a09d39fbb23dcfab89156610d9992fa3f053fc3ba063de30d7"
+      },
+      {
+        "bytes": 16411,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/cross_decimal_kernel.py",
+        "sha256": "21dcaf1098a8dbe423727a4e4c2cfebb2c1abd6700caab83a51942b5f607eb53"
+      },
+      {
+        "bytes": 27630,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/cutover.py",
+        "sha256": "fb9be3190d4a899570e4dcaa3e97b79fe30599d8d8ad4364f820d38321e1012b"
+      },
+      {
+        "bytes": 23977,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/dashboard.html",
+        "sha256": "97e2668bde9b292eb3ee0310b48f836b63c3e69e119c6a64321b1afb81223c07"
+      },
+      {
+        "bytes": 38983,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/decision_audit.py",
+        "sha256": "0046dc943ddb1e075841e81e3c58c939c7468cfd8e0c5595c8a4d4d7ac27e514"
+      },
+      {
+        "bytes": 27476,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/durable_batches.py",
+        "sha256": "14d80716062832b3529512ca14cc9df03043a50f5550197b0a30af261ea11d32"
+      },
+      {
+        "bytes": 17842,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/durable_cli.py",
+        "sha256": "69334c3d1c209ed2a721d594ed53882f98fedb6d0010de70c185b8687b5c6bde"
+      },
+      {
+        "bytes": 29719,
+        "origin": "e409db543ed652928d9e9e55097c873b020be410",
+        "path": "uta/durable_commands.py",
+        "sha256": "bf6710212553d2d8c7f5536c9f186b218f00f577d8f7ed0f13d6ed030a0897ab"
+      },
+      {
+        "bytes": 25775,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/durable_gateway.py",
+        "sha256": "2f5bb1e4ab1160989c054ba9fd494079b35565ebe60861bdb4cb7cb2999c8962"
+      },
+      {
+        "bytes": 20142,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/durable_liquidation.py",
+        "sha256": "7329f95eee5cea5cfbf3212af0ed2f0b01ad38895e1723a91fd8a940fc401826"
+      },
+      {
+        "bytes": 110134,
+        "origin": "e409db543ed652928d9e9e55097c873b020be410",
+        "path": "uta/durable_process.py",
+        "sha256": "9b346b3888a162141699926f6c4505b6804a5982a82af7ef3c017cac6ed1053e"
+      },
+      {
+        "bytes": 26768,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/durable_views.py",
+        "sha256": "af62906f9fae5501f16f239a9d6e167cb92946634b0481f4d1304bc1e00cf352"
+      },
+      {
+        "bytes": 1444,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/examples.py",
+        "sha256": "50417fb213b4c0d21515e47794fed5e8f6eea958ce74e65c28b8a848a3eebc90"
+      },
+      {
+        "bytes": 16790,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/existing_services.py",
+        "sha256": "2c36f61a0fb623fb46f5a84ea9f9c734232df7e10057d04b62be9e94052aca7f"
+      },
+      {
+        "bytes": 6366,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/failure_diagnostics.py",
+        "sha256": "953ec1dd75ffadcb44f560e4042c92162f7302ac753034bb7f7c5a91a46f0f32"
+      },
+      {
+        "bytes": 23348,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/funding_hold_pure.py",
+        "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+      },
+      {
+        "bytes": 34952,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/funding_local.py",
+        "sha256": "bad3e82d347351e52caac0eb757e6ae7ff73956bbbae64726511b27e026cf2cd"
+      },
+      {
+        "bytes": 63141,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/funding_obligations.py",
+        "sha256": "13e3f7d35b2aeefdb8bb5852280bb2cb65e40c3a62858ec4cc37b4fc3eb51e97"
+      },
+      {
+        "bytes": 33412,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/gateway.py",
+        "sha256": "8793376c615ed371eab852c6696b7f6c3f8d5161619b040bf833a9b1251a9ab7"
+      },
+      {
+        "bytes": 7329,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/ledger.py",
+        "sha256": "ec20cb64ea5bc4d8a3e09144e91771f665ff03f82ea615910f102633031e1571"
+      },
+      {
+        "bytes": 8904,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/liquidation.py",
+        "sha256": "629a7399b5fa0701425128cf8aabceaa26969a4c97f64ed7abdca9def001581f"
+      },
+      {
+        "bytes": 8465,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/market.py",
+        "sha256": "df5a19a33e1b1867b514d0d191918b3a2aa12286be6dcc8b1b36dd62c5d3cadb"
+      },
+      {
+        "bytes": 3877,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/market_cache.py",
+        "sha256": "67ae6ad7df441b39e96b6ac651afa29ff2ebd9d3d92d7dabd653c6d230ae0211"
+      },
+      {
+        "bytes": 21921,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/matching.py",
+        "sha256": "d94c31a760e17faaaea64da89ba3a181e3c48e44094a5ecf2af126515264786d"
+      },
+      {
+        "bytes": 9596,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/migration.py",
+        "sha256": "589dce64c24cd2b01f8ce0be8893de2f26418ea8ffdd3b3b96056811cd466cf5"
+      },
+      {
+        "bytes": 6034,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/models.py",
+        "sha256": "5d1d75551e010376a587aad6b4ac1ec514fa8928e0e1995793e65e39662f67ff"
+      },
+      {
+        "bytes": 9854,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/ops.py",
+        "sha256": "039206f3f82823380004ccb57288ba3945a3f8c3fb74ad4604b5f91282f474da"
+      },
+      {
+        "bytes": 7981,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/perpetual_funding.py",
+        "sha256": "b49f35e1028ae583c651b12c781b3e9683015ed0791f1db98f53d438924ca7bd"
+      },
+      {
+        "bytes": 24042,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/portfolio.py",
+        "sha256": "c707d1bc45d8e73e671552bcd31fba582780974f1bb0da434ac2b8cee7c46879"
+      },
+      {
+        "bytes": 21647,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/private_stream_codec.py",
+        "sha256": "15e1bd6cee256e976d86b7ef2f4c5c2357a84cb421e7e7784618f77c528e57a2"
+      },
+      {
+        "bytes": 12043,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/products.py",
+        "sha256": "c50ca57ffb206f2996aaef49b1eb198066582a573db93b96adcd61c2c5350f29"
+      },
+      {
+        "bytes": 17911,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/reconciliation.py",
+        "sha256": "3a1b73e1d93935899fa87881870b609d2a0a07a81120d0e7bf11192cb88045a8"
+      },
+      {
+        "bytes": 23518,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/request_signing.py",
+        "sha256": "136af22131e5ea222b63468016552d8cf1150fb4cfa4e9d119a26b8b5e4af5bd"
+      },
+      {
+        "bytes": 5501,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/reservations.py",
+        "sha256": "a771f1e356911cbfb7aaa87d55c6f50a7bc163e6f8d405ff4045880ba2e32f8b"
+      },
+      {
+        "bytes": 4923,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/reserve_kernel.py",
+        "sha256": "49aead358d91ce8287ba6e26fbc31368ba6578574ec1eb323d69a270e9c64e95"
+      },
+      {
+        "bytes": 7535,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/risk.py",
+        "sha256": "f84aa231929b64e65ede338197a6129428c2ef0d2042ad7f3149199e8a1e8264"
+      },
+      {
+        "bytes": 7092,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/scenario_margin.py",
+        "sha256": "debfd1e1c2269440b030ef3f5eb568fa063465f5e35e0b1b20a806f0ada77bd4"
+      },
+      {
+        "bytes": 9654,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/server.py",
+        "sha256": "78100f5085d03cbebea07ed520939460d646c3e16a41096618be8f7d16129d5c"
+      },
+      {
+        "bytes": 87079,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/service.py",
+        "sha256": "15a927e9feffc05d49991d5191c0aec19b1d2de30f922c13a3cb2b5dd8bc8a48"
+      },
+      {
+        "bytes": 4672,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/shadow_adapter.py",
+        "sha256": "4862858a0c1e71bb81f57ecee1c7a0e89963fed34dd449c4a78bd82982d92064"
+      },
+      {
+        "bytes": 11755,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/shard_admission.py",
+        "sha256": "689786aeed7bfe819211970170e2a5114e99c00f7f91b8b7a0ce4ee54508cd3c"
+      },
+      {
+        "bytes": 61776,
+        "origin": "e409db543ed652928d9e9e55097c873b020be410",
+        "path": "uta/sharding.py",
+        "sha256": "00f370cc10d67cc3d76fabd63d7f92179fdd38c7f0794a59dc3d4812edcdf880"
+      },
+      {
+        "bytes": 21532,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/simulator.py",
+        "sha256": "583a084a2aa3f37b63cf36bb4685617f7f6ea1de7142d807c3ab00412a86b8ae"
+      },
+      {
+        "bytes": 37264,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/spot.py",
+        "sha256": "f5fbceb13268da214ee93782b9a38517a8cb4023bacccc52f68f9cf002162e26"
+      },
+      {
+        "bytes": 23653,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/startup.py",
+        "sha256": "f8e5698634e8e5e3ef00dc724e97da0c259ca488f6041f2d970f764ba33f9864"
+      },
+      {
+        "bytes": 30225,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/storage.py",
+        "sha256": "0ba11910d2b4896da60024dfad785c68f27b059d1110f2df46b8023bb71b23e3"
+      },
+      {
+        "bytes": 19174,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/store.py",
+        "sha256": "3336b4d7fdf35b05545505273258d2fff114cb7e6b32ddfb57f3d260a7c24c8c"
+      },
+      {
+        "bytes": 15243,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/supervisor.py",
+        "sha256": "30b440433ffb4c9ba483ef62ee3857028614a263d7cb0d05d05407a74d3b1e4e"
+      },
+      {
+        "bytes": 7134,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/vertical.py",
+        "sha256": "182ffdfb2909af967e040c8070e66cd55d2b50568925ff7fe8e8ff970fbf50d0"
+      },
+      {
+        "bytes": 6412,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/worker.py",
+        "sha256": "1e7648531c541d0b470d781b2b16b1b001e104d97d601c05ac94710ea51e2c0b"
+      },
+      {
+        "bytes": 55652,
+        "origin": "27e9442d4939465482f191fef318380dd131a2e2",
+        "path": "uta/writer_fence.py",
+        "sha256": "50a18c661d82770b2028edeb5e6ad8229979331ed2dfcbfc72346743bbb45d41"
+      }
+    ],
+    "python_count": 66
+  },
+  "schema": "funding-hold-v3-combined-independent-CODE/v1",
+  "scope": "Immutable combined source provenance, merged control/test compatibility, current public APIs, independent reference/target/driver wiring, packaging and frozen allowlist. No security audit, target execution, resource acceptance or financial approval.",
+  "source_basis": {
+    "component_CODE_is_combined_PASS": false,
+    "driver": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+    "driver_CODE": "6c777874bbc3a0a1255921ec94acdc8a22ed9a47",
+    "forward_lineage_policy": "69a3e32e9d267295f223671e62f17b2f9e71eb70",
+    "forward_lineage_review": "54af0876ab48b5a5fb50627062f753ac0128c288",
+    "framework_review": "35c5b22b1a3bce27f8a0f019a04b89233fb6e92c",
+    "funding_pure_blob": "15c91c4c9ca109db906bc7c8a434751afbe78159",
+    "funding_pure_original": "ed81c424e3be7c004331bcd8340421d60063fcb6",
+    "market_control": "e409db543ed652928d9e9e55097c873b020be410",
+    "marshaller_framework": "f8ece4c2257f2340e4b59fc0a113ac2b96ff9115",
+    "public_base": "27e9442d4939465482f191fef318380dd131a2e2",
+    "reference_C": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+    "reference_CODE": "e0d6b3b266fb58e1491c6a24ffd9731cd6eeab04",
+    "reference_F": "cab03a380d1bac48eebd398d7ba77a912bc6517c",
+    "target_v3": "6f7a5a872b05a3787a347e164ae7075d1282aca9",
+    "target_v3_review": "abaa526cc7b9c70af3a4dd66773dc937fd296760"
+  },
+  "source_blockers": [],
+  "test_definitions": {
+    "added_test_method_definitions": 98,
+    "breakdown": {
+      "AST_negative": 1,
+      "V2_mapper": 18,
+      "V3_mapper": 19,
+      "driver": 5,
+      "market_transition": 22,
+      "reference": 33
+    },
+    "expected_count_is_execution_evidence": false,
+    "expected_discovery_count_if_base2200_unchanged": 2298,
+    "new_methods_run": 0,
+    "new_python_files": 10,
+    "per_changed_file": {
+      "tests/funding_hold_d1_reference_cases_v3.py": {
+        "added": [],
+        "after": 0,
+        "before": 0,
+        "removed": []
+      },
+      "tests/funding_hold_target_adapter_v2.py": {
+        "added": [],
+        "after": 0,
+        "before": 0,
+        "removed": []
+      },
+      "tests/funding_hold_target_adapter_v3.py": {
+        "added": [],
+        "after": 0,
+        "before": 0,
+        "removed": []
+      },
+      "tests/native_sh_capture_fixture.py": {
+        "added": [],
+        "after": 0,
+        "before": 0,
+        "removed": []
+      },
+      "tests/reference_funding_hold_d1_v3.py": {
+        "added": [],
+        "after": 0,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_durable_faults.py": {
+        "added": [],
+        "after": 38,
+        "before": 38,
+        "removed": []
+      },
+      "tests/test_expired_gate_failure_evidence.py": {
+        "added": [
+          "test_approved_ordinary_delta_does_not_allow_other_ast_edits"
+        ],
+        "after": 13,
+        "before": 12,
+        "removed": []
+      },
+      "tests/test_funding_hold_exact_reference_v3.py": {
+        "added": [
+          "test_all_1024_declared_statuses_no_target_comparison",
+          "test_backing_equality_other_hold_and_zero_lock_negative_cash",
+          "test_conditional_external_payment_accrual_identity",
+          "test_duty_canonical_literal_and_natural_slot",
+          "test_final_representation_immutable_and_stale_cap_rejected",
+          "test_json_closed_keys_duplicates_and_native_money",
+          "test_large_units_exact_without_i64_or_float",
+          "test_lineage_context_and_provided_immutable_history_must_agree",
+          "test_lineage_direct_and_via_U_all_final_kinds_compare_complete_stage",
+          "test_lineage_missing_partial_changed_and_foreign_pairs_reject",
+          "test_m10_provided_cap_to_each_final_not_rate_derivation",
+          "test_m23_queries_are_charged_before_unknown_results",
+          "test_manual_decomposition_hand_entered_fields_only",
+          "test_manual_payment_hand_entered_fields_only",
+          "test_original_27_matrix_is_slice_only_or_unsupported",
+          "test_prior_unresolved_and_crossing_wait_have_no_effect",
+          "test_receivable_does_not_offset_hold_or_spend",
+          "test_seed_domain_is_closed_native_integer",
+          "test_seed_wire_determinism_and_two_mib_bound",
+          "test_shared_action_dedup_does_not_select_larger_policy",
+          "test_spot_freeze_only_counted_in_supplied_base_once",
+          "test_unassessed_required_duty_never_zero",
+          "test_unknown_internal_exception_is_not_business_rejection",
+          "test_unsupported_borrowable_and_d2_never_return_success",
+          "test_v3_action_identity_payload_and_scale_exclusion",
+          "test_v3_complete_expected_stage_and_legacy_keyword",
+          "test_v3_deadline_interval_equality_and_default_at_maxrevision",
+          "test_v3_epoch_and_period_alignment",
+          "test_v3_full_output_schema_action_ids_and_transport_boundaries",
+          "test_v3_maximum_revision_only_genuine_noop_permitted",
+          "test_v3_normal_noop_retains_revision_and_query_budget",
+          "test_v3_policy_identity_literal_payload_and_digest",
+          "test_wait_deadline_boundary_no_automatic_release"
+        ],
+        "after": 33,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_funding_hold_full_field_v3.py": {
+        "added": [
+          "test_comparison_preserves_native_types_array_order_and_all_fields",
+          "test_escaped_implementation_exception_is_technical",
+          "test_full_declared_stream_matches_complete_typed_responses",
+          "test_matching_rejection_cannot_pass_a_declared_valid_case",
+          "test_missing_stream_case_is_technical_with_seed_context"
+        ],
+        "after": 5,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_funding_hold_target_adapter_v2.py": {
+        "added": [
+          "test_action_ID_elements_have_wire_native_type_and_format",
+          "test_all_schema_branches_are_checked_before_value_selection",
+          "test_codec_rejects_duplicate_nonfinite_BOM_and_inferred_UTF16",
+          "test_complete_DTO_output_and_original_request_are_preserved",
+          "test_encoding_known_target_exception_is_not_business_rejection",
+          "test_finite_float_and_bool_are_not_coerced_into_valid_integer_inputs",
+          "test_intermediate_bad_field_or_downstream_rejection_is_technical",
+          "test_invalid_intermediate_type_never_reaches_downstream_target",
+          "test_known_input_rejection_retains_valid_case_identity",
+          "test_legacy_single_reference_is_unsupported_without_inference",
+          "test_malformed_target_returns_are_technical_failures",
+          "test_native_natural_slot_is_not_coerced_from_another_iterable",
+          "test_query_counted_integer_zero_is_not_boolean_false",
+          "test_supported_alternatives_preserve_exact_native_integer_rules",
+          "test_transport_never_fabricates_response_for_invalid_envelope",
+          "test_unexpected_target_and_constructor_exceptions_remain_technical",
+          "test_unsupported_schema_cannot_be_hidden_by_another_oneof_branch",
+          "test_validator_actual_return_order_is_not_sorted_or_replaced_by_adapter"
+        ],
+        "after": 18,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_funding_hold_target_adapter_v3.py": {
+        "added": [
+          "test_action_ID_elements_have_wire_native_type_and_format",
+          "test_all_schema_branches_are_checked_before_value_selection",
+          "test_codec_rejects_duplicate_nonfinite_BOM_and_inferred_UTF16",
+          "test_complete_DTO_output_and_original_request_are_preserved",
+          "test_encoding_known_target_exception_is_not_business_rejection",
+          "test_finite_float_and_bool_are_not_coerced_into_valid_integer_inputs",
+          "test_intermediate_bad_field_or_downstream_rejection_is_technical",
+          "test_invalid_intermediate_type_never_reaches_downstream_target",
+          "test_known_input_rejection_retains_valid_case_identity",
+          "test_legacy_single_reference_is_unsupported_without_inference",
+          "test_malformed_target_returns_are_technical_failures",
+          "test_native_natural_slot_is_not_coerced_from_another_iterable",
+          "test_previous_envelope_version_is_not_implicitly_translated",
+          "test_query_counted_integer_zero_is_not_boolean_false",
+          "test_supported_alternatives_preserve_exact_native_integer_rules",
+          "test_transport_never_fabricates_response_for_invalid_envelope",
+          "test_unexpected_target_and_constructor_exceptions_remain_technical",
+          "test_unsupported_schema_cannot_be_hidden_by_another_oneof_branch",
+          "test_validator_actual_return_order_is_not_sorted_or_replaced_by_adapter"
+        ],
+        "after": 19,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_market_transition_activation_failures.py": {
+        "added": [
+          "test_fatal_stop_write_failure_keeps_original_error_and_first_cause_unknown",
+          "test_late_activation_exception_does_not_overwrite_later_operator_halt",
+          "test_late_publication_exception_does_not_overwrite_later_operator_halt",
+          "test_late_successful_activation_receipts_cannot_reopen_integrity_freeze",
+          "test_managed_bad_local_generation_after_receipts_clears_pending",
+          "test_managed_funding_reconcile_only_in_second_EX_clears_pending",
+          "test_managed_source_error_only_in_second_EX_is_persisted_and_rethrown",
+          "test_old_waiter_cannot_change_new_operator_or_publication_identity",
+          "test_quote_timeout_busy_and_superseded_are_narrowly_classified",
+          "test_sync_bad_local_generation_records_stop_before_original_raise",
+          "test_sync_funding_reconcile_error_records_stop_and_preserves_original"
+        ],
+        "after": 11,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_market_transition_pending.py": {
+        "added": [
+          "test_all_control_writes_clear_activation_and_unrelated_stops",
+          "test_fanout_and_activation_gap_keep_original_row_then_commit_once_and_reopen",
+          "test_force_halt_during_publication_keeps_router_halted_terminal_rejection",
+          "test_integrity_freeze_clears_pending_marker_without_risk_acceptance",
+          "test_legacy_and_malformed_persisted_marker_fail_closed",
+          "test_missing_marker_is_legacy_false_and_invalid_marker_is_rejected",
+          "test_original_cid_payload_conflict_is_rejected_while_submission_is_paused",
+          "test_other_account_cancel_repay_progress_and_same_account_successors_stay_fifo",
+          "test_paused_selection_still_requires_the_original_live_writer_token",
+          "test_prepared_batch_race_recovers_all_members_without_failure_charge_or_poll_churn",
+          "test_stale_quote_after_activation_cannot_accept_the_deferred_order"
+        ],
+        "after": 11,
+        "before": 0,
+        "removed": []
+      },
+      "tests/test_native_sh_capture_protocol_pure.py": {
+        "added": [],
+        "after": 8,
+        "before": 8,
+        "removed": []
+      },
+      "tests/test_process_readiness.py": {
+        "added": [],
+        "after": 12,
+        "before": 12,
+        "removed": []
+      }
+    },
+    "removed_test_method_definitions": 0
+  },
+  "verification_composition": {
+    "actual_full_field_compared_cases": 0,
+    "actual_generated_cases": 0,
+    "all11_exact_F_blobs": true,
+    "dependency_closure": "Reference and generator use only stdlib; selfcheck uses those two modules and new V3 manual/wire data. V2/V3 mappers use only stdlib plus uta.funding_hold_pure. Driver imports the fixed V3 generator/reference/mapper directly. All test directory modules resolve under ordinary unittest discovery. No legacy e6/v2 program dependency or version3-to2 translation.",
+    "full_response_contract": "All seven envelope fields and complete operation value are compared through native typed canonical bytes; False differs from0, list order and additional fields survive comparison. Exact case classification is required in both responses. Unknown escaped exceptions are chained technical failures, never matching business rejection.",
+    "known_limits": [
+      "Driver does not add an independent per-operation JSON Schema validator; target encoder/output contract and reference definitions retain their own checks.",
+      "D1V3 prefix is supplied by the fixed generator; driver checks uniqueness and schema3 rather than a separate prefix assertion.",
+      "Logical transport caps are not RSS/CPU/kernel quotas; complete codec equivalence and arbitrary malicious mutable object behavior are unproved.",
+      "Typed refs and supplied history do not authenticate source contents, approval, actual dispatch, durable ownership or economic history."
+    ],
+    "mapper_delta_from_frozen_V2": [
+      {
+        "line": 1,
+        "new": "CODE-only target marshalling for PFH-D1-INDEPENDENT-WIRE-v3.\n\nNo reference implementation, financial equation, expected answer or service\nhook belongs here. Unexpected target/constructor failures remain technical.\n",
+        "old": "CODE-only target marshalling for PFH-D1-INDEPENDENT-WIRE-v2.\n\nNo reference implementation, financial equation, expected answer or service\nhook belongs here. Unexpected target/constructor failures remain technical.\n"
+      },
+      {
+        "line": 19,
+        "new": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd",
+        "old": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+      },
+      {
+        "line": 150,
+        "new": "evidence/designs/funding-hold-target-adapter-v3/wire-contract.json",
+        "old": "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json"
+      },
+      {
+        "line": 444,
+        "new": 3,
+        "old": 2
+      },
+      {
+        "line": 415,
+        "new": 3,
+        "old": 2
+      },
+      {
+        "line": 416,
+        "new": "schema_3_required",
+        "old": "schema_2_required"
+      }
+    ],
+    "mapper_nonconstant_AST_preserved": true,
+    "new_test_imports": {
+      "tests/funding_hold_d1_reference_cases_v3.py": [
+        "from hashlib import sha256",
+        "import json"
+      ],
+      "tests/funding_hold_target_adapter_v2.py": [
+        "from dataclasses import fields",
+        "from functools import lru_cache",
+        "from hashlib import sha256",
+        "import json",
+        "import math",
+        "from pathlib import Path",
+        "import re",
+        "from uta import funding_hold_pure as target"
+      ],
+      "tests/funding_hold_target_adapter_v3.py": [
+        "from dataclasses import fields",
+        "from functools import lru_cache",
+        "from hashlib import sha256",
+        "import json",
+        "import math",
+        "from pathlib import Path",
+        "import re",
+        "from uta import funding_hold_pure as target"
+      ],
+      "tests/reference_funding_hold_d1_v3.py": [
+        "from datetime import datetime",
+        "from fractions import Fraction",
+        "from hashlib import sha256",
+        "import json",
+        "import math",
+        "import re"
+      ],
+      "tests/test_funding_hold_exact_reference_v3.py": [
+        "import json",
+        "from pathlib import Path",
+        "import re",
+        "import unittest",
+        "from unittest.mock import patch",
+        "import reference_funding_hold_d1_v3 as reference",
+        "import funding_hold_d1_reference_cases_v3 as cases"
+      ],
+      "tests/test_funding_hold_full_field_v3.py": [
+        "from collections import Counter",
+        "import hashlib",
+        "import json",
+        "import math",
+        "import unittest",
+        "from unittest.mock import patch",
+        "from funding_hold_d1_reference_cases_v3 import iter_cases",
+        "from reference_funding_hold_d1_v3 import evaluate_request, load_request",
+        "from funding_hold_target_adapter_v3 import decode_request, evaluate"
+      ],
+      "tests/test_funding_hold_target_adapter_v2.py": [
+        "from copy import deepcopy",
+        "import unittest",
+        "from unittest.mock import PropertyMock, patch",
+        "from funding_hold_target_adapter_v2 import AdapterContractError, CONSTRUCTORS, DTO_FIELDS, WireReject, decode_request, evaluate, target, _validate_output"
+      ],
+      "tests/test_funding_hold_target_adapter_v3.py": [
+        "from copy import deepcopy",
+        "import unittest",
+        "from unittest.mock import PropertyMock, patch",
+        "from funding_hold_target_adapter_v3 import AdapterContractError, CONSTRUCTORS, DTO_FIELDS, WireReject, decode_request, evaluate, target, _validate_output"
+      ],
+      "tests/test_market_transition_activation_failures.py": [
+        "from datetime import datetime, timezone",
+        "from decimal import Decimal as D",
+        "import json",
+        "from pathlib import Path",
+        "import sqlite3",
+        "import sys",
+        "from tempfile import TemporaryDirectory",
+        "from types import SimpleNamespace",
+        "import unittest",
+        "from unittest.mock import patch",
+        "import test_market_transition_pending as fixtures",
+        "from uta.market import MarketSnapshot",
+        "from uta.models import AssetSpec, InstrumentSpec, RiskInputError",
+        "from uta.service import ServiceError",
+        "from uta.sharding import ShardRouter, _record_transition_failure, _transition_failure_cause, _transition_identity"
+      ],
+      "tests/test_market_transition_pending.py": [
+        "from contextlib import contextmanager",
+        "from datetime import datetime, timedelta, timezone",
+        "from decimal import Decimal as D",
+        "from hashlib import sha256",
+        "import json",
+        "from pathlib import Path",
+        "import sys",
+        "from tempfile import TemporaryDirectory",
+        "from types import SimpleNamespace",
+        "import unittest",
+        "from unittest.mock import patch",
+        "from uta.durable_batches import BatchStore",
+        "from uta.durable_commands import CommandExecutionError, QueueStore",
+        "from uta.durable_process import DurableProcessRouter, _options",
+        "from uta.market import MarketSnapshot",
+        "from uta.models import AssetSpec, InstrumentSpec",
+        "from uta.service import ServiceError",
+        "from uta.sharding import ShardRouter, ShardWorkerView, _market_transition_pending",
+        "from uta.storage import Database",
+        "from uta.writer_fence import WriterFence, WriterFenceError"
+      ]
+    },
+    "reference_export": [
+      {
+        "bytes": 26396,
+        "path": "tests/reference_funding_hold_d1_v3.py",
+        "sha256": "63c5deda6cdc1799eeae470f615c09ce5842a9e26acdad6fa23a8924fea79135"
+      },
+      {
+        "bytes": 19835,
+        "path": "tests/funding_hold_d1_reference_cases_v3.py",
+        "sha256": "f5b7d11e106a5fe7b9c9892f0896a03c6efaddd0d3f42f3642ffca1018493c2a"
+      },
+      {
+        "bytes": 33813,
+        "path": "tests/test_funding_hold_exact_reference_v3.py",
+        "sha256": "6b5186a3f245f72ffac4e1b721c49e6e63d0665a04d76199a1de71f8aec7075a"
+      },
+      {
+        "bytes": 6533,
+        "path": "docs/funding-hold-exact-reference-v3.md",
+        "sha256": "b8b5157fae21be1a9d3d819c2ea42544cf278811cf4a8127b263311236385f58"
+      },
+      {
+        "bytes": 33268,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+        "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+      },
+      {
+        "bytes": 13853,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/manual-slices.json",
+        "sha256": "930cc07f583f2ad5b0a51084a15005f50981293ecd16e0b38e0618790348994c"
+      },
+      {
+        "bytes": 2671,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/proposal.json",
+        "sha256": "ff4b2e9bd35e7bc83ef7e20636c3da214cb726c7b1b0c22e7eecf15721747251"
+      },
+      {
+        "bytes": 5915,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/execution-gates.json",
+        "sha256": "14ad5b850b3362456c691b038742a34eee0b624743ff154ea09e285ab1002e74"
+      },
+      {
+        "bytes": 2108,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/data-review.json",
+        "sha256": "acf2fc86d07fe95ee1a9b4eb3d99e421ce21b30d31d33fecbd51c86a0b00343b"
+      },
+      {
+        "bytes": 3302,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+        "sha256": "27909eb345f7f8c14f655681cffd3b893bd4e4ef462eb05d6f3af5116e3b68b2"
+      },
+      {
+        "bytes": 20984,
+        "path": "evidence/designs/funding-hold-exact-reference-v3/source-manifest.json",
+        "sha256": "f98e53481f7d4bec1121dc06c0bfdceeddcf0370812b170821d992e235f7a1eb"
+      }
+    ],
+    "reference_export_bytes": 168678,
+    "reference_export_count": 11,
+    "source_definition_cases": 1024,
+    "stream_contract": "Fixed seeds0..1023, exact7-key wrappers, schema3, unique case IDs,10 operations,512valid/512negative; independent loader paths receive identical serialized bytes, request immutability checked, final length-framed hashes printed only after complete stream.",
+    "target_DTO_layouts": {
+      "ActionKey": [
+        "scope",
+        "allocation_id"
+      ],
+      "BaseValues": [
+        "scope",
+        "accounting_equity_units",
+        "risk_equity_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "cash_units",
+        "spot_frozen_units",
+        "funding_components"
+      ],
+      "ContentRef": [
+        "kind",
+        "digest",
+        "duty_id",
+        "rule_scope_id"
+      ],
+      "Decomposition": [
+        "scope",
+        "P",
+        "U",
+        "N",
+        "H",
+        "accrual_equity_units",
+        "risk_equity_units",
+        "available_margin_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "ordinary_spend_raw_units",
+        "ordinary_spendable_units",
+        "activation_permission"
+      ],
+      "DutyKey": [
+        "authority_id",
+        "authority_generation",
+        "symbol",
+        "period_end",
+        "interval_seconds",
+        "settlement_asset",
+        "account_id",
+        "rule_scope_id",
+        "schema"
+      ],
+      "DutyState": [
+        "key",
+        "usd_scale",
+        "revision",
+        "active",
+        "history",
+        "activation_permission"
+      ],
+      "PaymentProjection": [
+        "scope",
+        "outcome",
+        "own_duty_id",
+        "projected_cash_units",
+        "projected_P",
+        "projected_U",
+        "projected_N",
+        "projected_H",
+        "other_H_units",
+        "risk_recheck_required",
+        "activation_permission"
+      ],
+      "Scope": [
+        "authority_id",
+        "authority_generation",
+        "account_id",
+        "usd_scale",
+        "settlement_asset"
+      ],
+      "Stage": [
+        "kind",
+        "amount_units",
+        "exposure_ref",
+        "cap_ref",
+        "final_ref"
+      ],
+      "Totals": [
+        "scope",
+        "duty_ids",
+        "P",
+        "U",
+        "N",
+        "H",
+        "activation_permission"
+      ],
+      "WaitPolicy": [
+        "format",
+        "policy_id",
+        "clock_policy",
+        "max_wait_us",
+        "min_query_interval_us",
+        "max_query_attempts",
+        "expiry_action"
+      ],
+      "WaitProjection": [
+        "record",
+        "outcome",
+        "query_counted",
+        "holds_unchanged",
+        "activation_permission"
+      ],
+      "WaitRecord": [
+        "action",
+        "policy",
+        "revision",
+        "started_us",
+        "deadline_us",
+        "observed_highwater_us",
+        "attempts",
+        "last_dispatch_us",
+        "default_review"
+      ]
+    },
+    "target_public_signatures": {
+      "advance_stage": "state, proposed, *, expected_revision, expected_active_stage",
+      "aggregate": "states, scope, *, basis_complete",
+      "backing_precondition": "states, scope, own_duty_id, *, cash_units, spot_frozen_units, prior_confirmed_settlements_clear, quote_available, basis_complete",
+      "decompose": "base, totals",
+      "preview_wait": "record, *, now_us, expected_revision, expected_policy_digest, dispatch_query",
+      "unsupported_request": "operation",
+      "validate_wait_records": "records"
+    },
+    "wire_bytes": 33268,
+    "wire_copies_equal": true,
+    "wire_sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+  }
+}

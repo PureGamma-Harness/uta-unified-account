@@ -27,22 +27,27 @@ python -m uta scenario --shards 4
 python formal/explore_reservation.py
 ```
 
-上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10、3.11、3.12、3.13 的独立作业中还执行源码编译、认证交易验收、其余有界模型，以及 wheel 构建和源码目录之外的安装验证。任一步失败会阻止该作业继续：
+上面四条是贡献基础检查。当前 [CI 工作流](../.github/workflows/ci.yml) 在 Python 3.10–3.13 各自运行；`tools/run_validation.py` 保留完整 unittest 日志与结果，证据上传使用 `always()`，失败后下游编译、情景和打包步骤会跳过。实际检查还包含八个 Python 有界模型脚本、精确 sdist/wheel 文件核验及源码目录之外的安装验证：
 
 ```mermaid
 flowchart TD
-    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13 各自运行"] --> Tests["unittest 测试"]
-    Tests --> Compile["编译 uta / formal / tests"]
-    Compile --> Demo["固定费率 demo"]
-    Demo --> Scenario["4 分片情景、重开与回放"]
-    Scenario --> Acceptance["认证交易 acceptance"]
-    Acceptance --> Model["预占、双侧结算、组提交、分片、持久命令有界枚举"]
-    Model --> Wheel["构建 wheel，独立目录安装与 CLI 验证"]
+    Matrix["Python 3.10 / 3.11 / 3.12 / 3.13"] --> Tests["完整 unittest 与原始证据"]
+    Tests --> Compile["编译检查"]
+    Compile --> Scenarios["demo / 4 分片 replay / acceptance"]
+    Scenarios --> Models["八个 Python 有界模型脚本"]
+    Models --> Package["精确 sdist / wheel 文件核验"]
+    Package --> Installed["隔离安装与 CLI / 安装包验证"]
 ```
 
-额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 `formal/explore_settlement.py`、`formal/explore_group_commit.py`、`formal/explore_shard_admission.py`、`formal/explore_durable_commands.py` 各自的 Python 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，并初始化、inspect、status 一个新的 managed 目录；完整顺序以工作流为准。
+额外源码检查命令为 `python -m compileall -q uta formal tests`、`python -m uta acceptance`，以及 formal 下 reservation、settlement、group_commit、shard_admission、durable_commands、managed_authority、market_epochs、durable_batches 各自的 `explore_*.py` 入口。安装验证还运行安装包的 demo、acceptance、scenario 和 CLI，初始化、inspect、status 一个新的 managed 目录，并核对精确包清单；完整顺序以工作流为准。
 
 本地单一 Python 版本通过，不等于整个 CI 矩阵已通过。`scenario` 未指定数据库时使用临时目录并清理；要保存并再次回放，使用 [流程文档](workflows.md) 中带 `--db` 的命令。Python 枚举器与 TLA+ TLC 是不同工具；当前 CI 没有执行 TLC，范围见 [形式化模型说明](../formal/README.md)。
+
+## 独立资金费预占的完整响应契约
+
+独立 D1 资金费预占模型不接入上述模拟器或金融执行路径。其 V3 比较逐项核对 1024 个请求的原生类型、完整字段、有效/负例声明及 OK / REJECT / UNSUPPORTED 分类。观察等待状态与申请新查询的语义不同；原首轮失败、边界手算、模块图和修复范围见 [参考契约与回归](funding-hold-reference-contract.md)。
+
+运行 `python -m unittest discover -s tests -p 'test_funding_hold*.py' -v` 可执行参考、适配器、目标保护、完整流和新增契约边界回归。完整流通过仍不证明真实 ACK、持久 action 预算、金融集成或安装后新组件功能已完成；各版本及原始失败须按对应源码分别记录。
 
 ## 认证链路的 SQLite 锁回归
 

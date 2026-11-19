@@ -116,4 +116,6 @@ flowchart TD
 | `ReservationBook` | 单进程独立预留簿，未用于持久化模拟器的下单路径 |
 | `ShadowMigrationStore` | 只读镜像的独立内存版本与幂等示例，不是持续导入服务 |
 
+本候选另含独立 D1 [funding_hold_pure](../uta/funding_hold_pure.py)，只对给定 USD 数据做阶段、聚合和等待投影，没有接入上图的 Simulator 或认证交易服务。参考、适配器和完整比较驱动的依赖图见 [资金费预占参考契约](funding-hold-reference-contract.md)；返回的 CAS、query_counted 或摘要不构成金融写入、真实查询或外部 ACK。
+
 主链路的导入、清算和审计回放见 [关键业务流程](workflows.md)；输入与重试见 [本地运行与 API](simulator.md)。系统没有真实撮合、资金转移、外部行情认证、多副本共识或跨主机故障恢复。扩容仍需账户写入所有权、热账户与清算队列、行情版本扇出、分片迁移和端到端持续负载验收；当前证据见 [性能测试](performance.md) 与 [验证范围](verification.md)。

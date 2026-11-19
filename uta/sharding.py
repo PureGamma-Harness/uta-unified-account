@@ -12,6 +12,7 @@ from decimal import Decimal
 import fcntl
 from hashlib import sha256
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -24,6 +25,7 @@ from .credit import CreditService
 from .ledger import Ledger
 from .market import MarketSnapshot
 from .matching import Matcher
+from .models import RiskInputError
 from .service import ExchangeService, ServiceError, _name, _text
 from .storage import Database
 
@@ -37,6 +39,137 @@ def _json(value):
 
 _INTEGRITY_FAULTS = {"shard_unavailable", "shard_identity_conflict", "funding_registry_conflict",
                      "market_barrier_mismatch"}
+
+
+def _market_transition_pending(state):
+    """Only an explicitly recorded market transition may defer queued risk.
+
+    Legacy controls have no such provenance and retain the existing halt
+    rejection. Active or independently failed controls cannot retain a pause.
+    """
+    pending = state.get("market_transition_pending", False)
+    if (type(pending) is not bool or pending and (
+            state.get("halted") is not True or state.get("error") not in
+            (None, "market_fanout_incomplete", "halt_fanout_incomplete"))):
+        raise ServiceError("control_corruption", "market transition marker is invalid", 503)
+    return pending
+
+
+def _transition_identity(state):
+    """Revision 2: immutable canonical identity of the complete control payload.
+
+    Only a missing legacy pending marker is normalized. The bounds reject
+    unsupported/cyclic/nonfinite data; no field is stripped or coerced.
+    """
+    if type(state) is not dict:
+        raise ServiceError("control_corruption", "control identity requires a native object", 503)
+    values = dict(state)
+    values["market_transition_pending"] = _market_transition_pending(state)
+    stack, nodes, text_bytes = [(values, 0)], 0, 0
+    while stack:
+        value, depth = stack.pop()
+        nodes += 1
+        if nodes > 4096 or depth > 16:
+            raise ServiceError("control_corruption", "control identity exceeds structural bounds", 503)
+        kind = type(value)
+        if kind is dict:
+            if nodes + len(stack) + 2 * len(value) > 4096:
+                raise ServiceError("control_corruption", "control identity exceeds structural bounds", 503)
+            for key, item in value.items():
+                if type(key) is not str:
+                    raise ServiceError("control_corruption", "control identity keys must be native text", 503)
+                stack.append((key, depth + 1))
+                stack.append((item, depth + 1))
+        elif kind is list:
+            if nodes + len(stack) + len(value) > 4096:
+                raise ServiceError("control_corruption", "control identity exceeds structural bounds", 503)
+            stack.extend((item, depth + 1) for item in value)
+        elif kind is str:
+            if len(value) > 1048576:
+                raise ServiceError("control_corruption", "control identity exceeds text bounds", 503)
+            try:
+                text_bytes += len(value.encode("utf-8"))
+            except UnicodeError as error:
+                raise ServiceError("control_corruption", "control identity text is invalid", 503) from error
+            if text_bytes > 1048576:
+                raise ServiceError("control_corruption", "control identity exceeds text bounds", 503)
+        elif kind is int:
+            if not -(2**63) <= value < 2**63:
+                raise ServiceError("control_corruption", "control identity integer is out of range", 503)
+        elif kind is float:
+            if not math.isfinite(value):
+                raise ServiceError("control_corruption", "control identity number is nonfinite", 503)
+        elif kind not in (bool, type(None)):
+            raise ServiceError("control_corruption", "control identity contains unsupported values", 503)
+    encoded = _json(values)
+    if len(encoded.encode("utf-8")) > 1048576:
+        raise ServiceError("control_corruption", "control identity exceeds serialized bounds", 503)
+    return encoded
+
+
+def _transition_failure_cause(error, phase):
+    """Return a finite fatal cause; None means retryable or superseded.
+
+    Quote-only errors are retryable only after the same local snapshot has
+    passed integrity/version/digest checks. Unknown errors close the pause.
+    """
+    code = getattr(error, "code", None)
+    code = code if type(code) is str else None
+    if isinstance(error, ServiceError):
+        if ((code == "control_superseded" and error.status == 409) or
+                code in {"router_busy", "durable_queue_overloaded", "publication_incomplete"}
+                and error.status == 503):
+            return None
+        if phase == "quote_freshness" and code == "market_unavailable" and error.status == 503:
+            return None
+    if phase == "quote_freshness" and isinstance(error, RiskInputError):
+        return None
+    if phase in ("publication_receipts", "halt_receipts") and isinstance(error, TimeoutError):
+        return None
+    if isinstance(error, sqlite3.Error):
+        native = getattr(error, "sqlite_errorcode", None)
+        if type(native) is int and 0 <= native < 2**31 and (native & 0xff) in (5, 6):
+            return None
+        if (not hasattr(error, "sqlite_errorcode") and type(error) is sqlite3.OperationalError
+                and len(error.args) == 1 and type(error.args[0]) is str
+                and error.args[0] in {"database is locked", "database table is locked"}):
+            return None  # Python 3.10: exact native canonical text only.
+    known = _INTEGRITY_FAULTS | {
+        "managed_spot_state_unsupported", "spot_corrupt", "activation_incomplete",
+        "writer_fenced", "lease_expired", "wrong_authority", "control_corruption",
+        "layout_corruption", "configuration_conflict", "configuration_corrupt",
+        "decision_audit_capability_mismatch", "managed_authority_conflict"}
+    return code if type(code) is str and code in known else "control_transition_failed"
+
+
+def _raise_transition_unknown(error, stop_error):
+    note = "control stop observation/persistence failed; outcome UNKNOWN; query original control and command IDs"
+    if callable(getattr(error, "add_note", None)):
+        error.add_note(note)
+    else:
+        error.__notes__ = [note]  # Bounded diagnostic fallback for Python 3.10.
+    if stop_error is error:
+        raise error
+    if error.__cause__ is not None:
+        stop_error.__cause__ = error.__cause__
+    raise error from stop_error
+
+
+def _record_transition_failure(control, state, error, *, phase, expected=None):
+    """Caller holds EX; preserve the original exception and never stop a successor.
+
+    A failed stop COMMIT is UNKNOWN. It is chained to the same original error;
+    no caller is told that the marker was durably cleared in that case.
+    """
+    cause = _transition_failure_cause(error, phase)
+    if cause is None or expected is not None and _transition_identity(state) != expected:
+        return False
+    state.update(halted=True, market_transition_pending=False, error=cause)
+    try:
+        control._write_state(state)
+    except BaseException as stop_error:
+        _raise_transition_unknown(error, stop_error)
+    return True
 
 
 class _BoundShardDatabase(Database):
@@ -167,11 +300,13 @@ class ShardRouter:
                         raise ServiceError("layout_missing", "existing shard files have no trustworthy layout descriptor", 503)
                     connection.execute("INSERT INTO router_layout VALUES (1,?)", (self._descriptor,))
                     connection.execute("INSERT INTO router_state VALUES (1,?)", (_json({
-                        "halted": True, "publishing": False, "epoch": 0, "market_version": None,
+                        "halted": True, "publishing": False, "market_transition_pending": False,
+                        "epoch": 0, "market_version": None,
                         "market_digest": None, "watermarks": {}, "error": None}),))
             if not fresh and any(not self._intact_file(index) for index in range(shard_count)):
                 state = self._state()
-                self._write_state({**state, "halted": True, "error": "missing_shard"})
+                self._write_state({**state, "halted": True, "market_transition_pending": False,
+                                   "error": "missing_shard"})
                 raise ServiceError("shard_unavailable", "a persisted shard is missing; automatic recreation is forbidden", 503)
             try:
                 for index in range(shard_count):
@@ -188,7 +323,7 @@ class ShardRouter:
                     self._services.append(service)
                 self._reconcile_funding()
             except BaseException as exc:
-                self._write_state({**self._state(), "halted": True,
+                self._write_state({**self._state(), "halted": True, "market_transition_pending": False,
                     "error": exc.code if isinstance(exc, ServiceError) else "shard_initialization_failed"})
                 raise
 
@@ -297,11 +432,20 @@ class ShardRouter:
             if not state["halted"] and (state["publishing"] or version is None or
                 state["watermarks"] != {str(index): version for index in range(self.layout["shard_count"])}):
                 raise ServiceError("control_corruption", "active router has no complete publication barrier", 503)
+            _market_transition_pending(state)
             return state
         finally:
             connection.close()
 
     def _write_state(self, state):
+        # Every control writer uses this path except the fresh INSERT above.
+        # Preserve a typed market pause only across publication/activation;
+        # activation and unrelated stops always clear it in the same COMMIT.
+        pending = state.get("market_transition_pending", False)
+        if type(pending) is not bool or type(state.get("halted")) is not bool:
+            raise ServiceError("control_corruption", "market transition marker is invalid", 503)
+        state["market_transition_pending"] = (pending and state["halted"] and
+            state.get("error") in (None, "market_fanout_incomplete", "halt_fanout_incomplete"))
         with self.control.transaction() as connection:
             connection.execute("UPDATE router_state SET payload=? WHERE singleton=1", (_json(state),))
 
@@ -309,7 +453,7 @@ class ShardRouter:
         # Call only after releasing a shared gate, or while already owning the
         # exclusive control lock. Persist the global stop before local attempts.
         state = self._state()
-        self._write_state({**state, "halted": True, "error": reason})
+        self._write_state({**state, "halted": True, "market_transition_pending": False, "error": reason})
         for service in self._services:
             try:
                 service.set_kill_switch(True)
@@ -605,10 +749,12 @@ class ShardRouter:
             if previous is not None and (snapshot.version < previous or
                 snapshot.version == previous and digest != state["market_digest"]):
                 raise ServiceError("market_conflict", "global market version regressed or changed content", 409)
-            state.update(halted=True, publishing=True, epoch=state["epoch"] + 1,
+            pending = not state["halted"] or _market_transition_pending(state)
+            state.update(halted=True, publishing=True, market_transition_pending=pending,
+                         epoch=state["epoch"] + 1,
                          target_version=snapshot.version, target_digest=digest, watermarks={}, error=None)
-            self._write_state(state)
             try:
+                self._write_state(state)
                 for index, service in enumerate(self._services):
                     service.set_kill_switch(True)
                 for index, service in enumerate(self._services):
@@ -617,9 +763,13 @@ class ShardRouter:
                     self._write_state(state)
                 state.update(publishing=False, market_version=snapshot.version, market_digest=digest)
                 self._write_state(state)
-            except BaseException:
-                state.update(halted=True, publishing=True, error="market_fanout_incomplete")
-                self._write_state(state)
+            except BaseException as error:
+                if not _record_transition_failure(self, state, error, phase="publication_integrity"):
+                    state.update(halted=True, publishing=True, error="market_fanout_incomplete")
+                    try:
+                        self._write_state(state)
+                    except BaseException as stop_error:
+                        _raise_transition_unknown(error, stop_error)
                 raise
             return dict(state)
 
@@ -631,21 +781,31 @@ class ShardRouter:
             # Any activation validation failure must retain a durable stop,
             # including when an operator repeats activation on an active layout.
             state.update(halted=True, error=None)
-            self._write_state(state)
+            if enabled:
+                state["market_transition_pending"] = False
+            try:
+                self._write_state(state)
+            except BaseException as error:
+                _record_transition_failure(self, state, error, phase="control_persistence")
+                raise
             if not enabled:
+                phase = "activation_integrity"
                 try:
                     self._reconcile_funding()
-                except ServiceError as exc:
-                    if exc.code in _INTEGRITY_FAULTS:
-                        self._freeze(exc.code)
+                    if state["publishing"] or state["market_version"] is None:
+                        raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
+                    for service in self._services:
+                        phase = "activation_integrity"
+                        with service._transaction() as connection:
+                            market = service._market(connection, fresh=False)
+                            if market.version != state["market_version"] or sha256(market.to_json().encode()).hexdigest() != state["market_digest"]:
+                                raise ServiceError("market_barrier_mismatch", "shard market does not match global barrier", 503)
+                            phase = "quote_freshness"
+                            service._market(connection)  # Same original freshness/clock policy.
+                            phase = "activation_integrity"  # Transaction exit/COMMIT is not a quote failure.
+                except BaseException as error:
+                    _record_transition_failure(self, state, error, phase=phase)
                     raise
-                if state["publishing"] or state["market_version"] is None:
-                    raise ServiceError("publication_incomplete", "complete market fanout before activation", 503)
-                for service in self._services:
-                    with service._transaction() as connection:
-                        market = service._market(connection)
-                        if market.version != state["market_version"] or sha256(market.to_json().encode()).hexdigest() != state["market_digest"]:
-                            raise ServiceError("market_barrier_mismatch", "shard market does not match global barrier", 503)
             # Persist halted first. Only after all shards successfully activate
             # is the global gate opened in its final durable commit.
             try:
@@ -653,9 +813,13 @@ class ShardRouter:
                     service.set_kill_switch(enabled)
                 state["halted"] = enabled
                 self._write_state(state)
-            except BaseException:
-                state.update(halted=True, error="halt_fanout_incomplete")
-                self._write_state(state)
+            except BaseException as error:
+                if not _record_transition_failure(self, state, error, phase="halt_fanout"):
+                    state.update(halted=True, error="halt_fanout_incomplete")
+                    try:
+                        self._write_state(state)
+                    except BaseException as stop_error:
+                        _raise_transition_unknown(error, stop_error)
                 raise
             return dict(state)
 
@@ -836,7 +1000,7 @@ class ShardWorkerView:
     def _freeze(self, reason):
         with self._control._lock(exclusive=True):
             state = self._control._state()
-            self._control._write_state({**state, "halted": True, "error": reason})
+            self._control._write_state({**state, "halted": True, "market_transition_pending": False, "error": reason})
 
     def process_one(self, store):
         try:
@@ -845,7 +1009,7 @@ class ShardWorkerView:
                 claims = self._control._batch_funding_claims()
                 return store.process_one(self._exchange,
                     guard=lambda connection, record: self._command_guard(connection, record, state, claims),
-                    credit=self._exchange.credit)
+                    credit=self._exchange.credit, allow_submit=not _market_transition_pending(state))
         except BaseException as exc:
             cause = getattr(exc, "cause", exc)
             if isinstance(cause, ServiceError) and cause.code in _INTEGRITY_FAULTS:
@@ -855,6 +1019,17 @@ class ShardWorkerView:
     def process_batch(self, store, batches, *, size):
         """Prepare outside the router gate; execute one financial txn under SH."""
         try:
+            # Do not create/recover a new immutable batch on every paused poll.
+            # Cancellation/repayment heads and control commands retain their
+            # original lane and FIFO; paused same-account successors do not.
+            with self._control._lock():
+                state = self._control._state()
+                if _market_transition_pending(state):
+                    claims = self._control._batch_funding_claims()
+                    receipt = store.process_one(self._exchange,
+                        guard=lambda connection, record: self._command_guard(connection, record, state, claims),
+                        credit=self._exchange.credit, allow_submit=False)
+                    return [] if receipt is None else [receipt]
             attempt_id = batches.prepare(size=size)
             if attempt_id is None:
                 receipt = self.process_one(store)
@@ -862,6 +1037,15 @@ class ShardWorkerView:
             with self._control._lock():
                 state = self._control._state()
                 claims = self._control._batch_funding_claims()
+                if _market_transition_pending(state):
+                    # Publication may start after preparation. Resolve every
+                    # original member without executing or charging failure,
+                    # then serve the still-eligible original single lane.
+                    batches.recover(attempt_id)
+                    receipt = store.process_one(self._exchange,
+                        guard=lambda connection, record: self._command_guard(connection, record, state, claims),
+                        credit=self._exchange.credit, allow_submit=False)
+                    return [] if receipt is None else [receipt]
                 return batches.process(self._exchange, attempt_id,
                     guard=lambda connection, record: self._command_guard(connection, record, state, claims),
                     credit=self._exchange.credit)

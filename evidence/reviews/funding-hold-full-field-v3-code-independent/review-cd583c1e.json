@@ -1,0 +1,290 @@
+{
+  "AST_function_locations": {
+    "_canonical": {
+      "end_line": 67,
+      "line": 61
+    },
+    "_declared_status": {
+      "end_line": 100,
+      "line": 97
+    },
+    "_first_difference": {
+      "end_line": 123,
+      "line": 103
+    },
+    "_frame": {
+      "end_line": 128,
+      "line": 126
+    },
+    "_native_tree": {
+      "end_line": 58,
+      "line": 35
+    },
+    "_ordered_cases": {
+      "end_line": 141,
+      "line": 131
+    },
+    "_response": {
+      "end_line": 94,
+      "line": 79
+    },
+    "_technical_call": {
+      "end_line": 76,
+      "line": 70
+    },
+    "broken": {
+      "end_line": 224,
+      "line": 223
+    },
+    "test_comparison_preserves_native_types_array_order_and_all_fields": {
+      "end_line": 218,
+      "line": 214
+    },
+    "test_escaped_implementation_exception_is_technical": {
+      "end_line": 227,
+      "line": 220
+    },
+    "test_full_declared_stream_matches_complete_typed_responses": {
+      "end_line": 212,
+      "line": 145
+    },
+    "test_matching_rejection_cannot_pass_a_declared_valid_case": {
+      "end_line": 231,
+      "line": 229
+    },
+    "test_missing_stream_case_is_technical_with_seed_context": {
+      "end_line": 237,
+      "line": 233
+    }
+  },
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "actual_checks": [
+    "Read immutable Git blobs and bounded selected local driver/doc/metadata",
+    "AST parse only of driver and frozen generator wrapper metadata; no compile or import",
+    "JSON parse and bytes/SHA data comparisons",
+    "Current context pins agree; historical candidate remains byte-identical",
+    "New review worktree source files agree with fixed Git blobs"
+  ],
+  "actual_test_methods_run": 0,
+  "blockers": [],
+  "capacity_claim": false,
+  "checks": [
+    {
+      "claim": "Request is canonical native JSON bytes, independently loaded and evaluated by each side. Neither side receives the other decoded object or result.",
+      "functions": [
+        "test_full_declared_stream_matches_complete_typed_responses",
+        "_technical_call"
+      ],
+      "id": "DFV3-C01",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Exact seven envelope fields and fixed schema/correlation/status/diagnostic/flag/tag checks precede comparison. Canonical output rejects floats and nonnative trees, preserves native bool versus int and array order, sorts object keys only, removes no value fields.",
+      "functions": [
+        "_native_tree",
+        "_canonical",
+        "_response"
+      ],
+      "id": "DFV3-C02",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Full canonical response bytes are compared. First-difference lookup traverses dict fields and ordered array elements only to diagnose an already failed complete comparison; it is not the equality algorithm.",
+      "functions": [
+        "_first_difference",
+        "test_full_declared_stream_matches_complete_typed_responses"
+      ],
+      "id": "DFV3-C03",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Both actual statuses must equal each concrete generator declaration. Valid versus negative consistency is checked first, so equal blanket rejection cannot pass valid cases. Actual side counters are incremented from validated returned statuses and separately reported on success.",
+      "functions": [
+        "_declared_status",
+        "test_full_declared_stream_matches_complete_typed_responses"
+      ],
+      "id": "DFV3-C04",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Exactly1024 ordered native integer seeds and unique schema3 case IDs are required; all10 operation names and512/512 input partitions are asserted. Premature next failure is technical with seed; an extra element or exhaustion error prevents successful completion.",
+      "functions": [
+        "_ordered_cases",
+        "test_full_declared_stream_matches_complete_typed_responses"
+      ],
+      "id": "DFV3-C05",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Canonical decoded inputs must equal original request bytes before evaluation and their own original decoded bytes afterward. No returned response equality can override an input mutation failure.",
+      "functions": [
+        "test_full_declared_stream_matches_complete_typed_responses"
+      ],
+      "id": "DFV3-C06",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Loader/evaluator/serialization exceptions become DifferentialTechnicalFailure with chained cause and seed/case context; no exception is normalized into a business response. Declared-status, stream and structural failures also stop the gate.",
+      "functions": [
+        "_technical_call",
+        "_response",
+        "_ordered_cases",
+        "_declared_status"
+      ],
+      "id": "DFV3-C07",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Complete-success summary lies after stream exhaustion and all final count/coverage assertions. It reports actual classifications and length-framed request/reference/target SHA256 streams; source makes no runtime/capacity/D2 claim.",
+      "functions": [
+        "_frame",
+        "test_full_declared_stream_matches_complete_typed_responses"
+      ],
+      "id": "DFV3-C08",
+      "result": "CLOSED_CODE_ONLY"
+    },
+    {
+      "claim": "Five definitions include typed/order/extra-field, unknown-exception, reject-all and premature-exhaustion negative controls. Source contains no financial formula, expected money constant or DTO builder.",
+      "functions": [
+        "test_full_declared_stream_matches_complete_typed_responses",
+        "test_comparison_preserves_native_types_array_order_and_all_fields",
+        "test_escaped_implementation_exception_is_technical",
+        "test_matching_rejection_cannot_pass_a_declared_valid_case",
+        "test_missing_stream_case_is_technical_with_seed_context"
+      ],
+      "id": "DFV3-C09",
+      "result": "CLOSED_CODE_ONLY"
+    }
+  ],
+  "conclusion": "CLOSED_LIMITED_DRIVER_CODE_NOT_RUN",
+  "current_candidate_pins_match": true,
+  "delivery": "Exactly two new SAFE review artifacts only; source files and both reference C/F freezes unchanged. Local review commit only, no push.",
+  "execution_GO": false,
+  "execution_ready": false,
+  "failure_evidence_scope": {
+    "complete_response_byte_mismatch": "Reports seed, case ID/family/op, completed count, input and both response hashes, bounded difference path/type, and observed partial actual-status counters; immediately fails",
+    "raw_capture": "Actual traceback/output, launcher status, source/module identity, child exit/reap and EOF remain responsibilities of a separately reviewed first-execution caller",
+    "success_summary": "Emitted only after exactly1024 cases, exhaustion, mutation checks and final coverage checks. No fabricated prefix summary is success.",
+    "technical_and_contract_failures": "Have seed and available bounded case-ID prefix/hash context; technical cause is chained. They do not all emit three stream hashes or a successful summary."
+  },
+  "historical_candidate_preserved": {
+    "byte_identical_at_reviewed_source": true,
+    "commit": "9da76b4dba71b71cba507ca342be0ef4cc3a8c92",
+    "meaning": "Old four-definition/12259B driver metadata remains historical; current context candidate pins the five-definition/14215B driver",
+    "path": "evidence/designs/funding-hold-full-field-v3/code-candidate.json"
+  },
+  "kind": "INDEPENDENT_FUNDING_HOLD_V3_FULL_FIELD_DRIVER_CODE_REVIEW",
+  "production": "NO_GO",
+  "prohibited_activity_counts": {
+    "SQL": 0,
+    "actor_or_thread": 0,
+    "driver_import_compile_generate_run": 0,
+    "network_or_CI": 0,
+    "proc_or_PID_inspection_or_signal": 0,
+    "reference_import_compile_generate_run": 0,
+    "target_or_adapter_import_compile_run": 0,
+    "validator_or_test_execution": 0
+  },
+  "public_interface_data_pins": [
+    {
+      "bytes": 3302,
+      "commit": "cab03a380d1bac48eebd398d7ba77a912bc6517c",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/public-export.json",
+      "purpose": "PUBLIC_REFERENCE_API_AND_WRAPPER_INTERFACE_ONLY",
+      "sha256": "27909eb345f7f8c14f655681cffd3b893bd4e4ef462eb05d6f3af5116e3b68b2"
+    },
+    {
+      "bytes": 19835,
+      "commit": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+      "path": "tests/funding_hold_d1_reference_cases_v3.py",
+      "purpose": "AST_WRAPPER_RETURN_KEYS_TAG_PARTITION_ID_METADATA_ONLY_NOT_FINANCIAL_EXPECTED_ALGORITHM",
+      "sha256": "f5b7d11e106a5fe7b9c9892f0896a03c6efaddd0d3f42f3642ffca1018493c2a"
+    },
+    {
+      "bytes": 33268,
+      "commit": "d3586666377d2d4bfcf61fbba0f0c51e08eca64d",
+      "path": "evidence/designs/funding-hold-exact-reference-v3/wire-contract.json",
+      "purpose": "PUBLIC_WIRE_HEADER_RESPONSE_ENVELOPE_AND_NATIVE_DATA_RULES",
+      "sha256": "6dd60f660a9a16c836b3572c7183d5a2085f2ff3ffae82fa66c7d4bdbf2b3bcd"
+    }
+  ],
+  "reviewed_source_commit": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+  "rollback": "Revert only these two SAFE review files; preserve all old candidates, reference freezes and historical results",
+  "schema": 1,
+  "scope": "Driver routing, native complete-response comparison, declared wrapper classifications, finite stream closure and bounded failure context only. No target financial core, adapter algorithm or financial expected program was reviewed.",
+  "scope_limits_and_remaining_gates": [
+    "cd583 tree has not yet integrated the three reference export Python blobs; this immutable driver candidate is not a runnable source closure by itself. Integrate exact C/F export and freeze the resulting complete source before any GO.",
+    "Reference source financial correctness and the target marshaller/core are separate reviews. This report does not review their algorithms or close their CODE gates.",
+    "Driver independently checks the response envelope and native-tree discipline and compares every response field relative to the reference. It does not independently validate every operation value against its full JSON Schema or prove financial semantics.",
+    "Driver asserts unique ordered seed/case IDs and schema3; the literal D1V3-SEED prefix comes from the pinned generator declaration, not a separate prefix assertion in the driver.",
+    "Family and identity detailed coverage assertions belong to the fixed reference definitions; this driver prints actual families and asserts total partitions and operation names.",
+    "A new combined-source manifest and exact caller/import provenance/resource/capture review plus separate root first-execution authorization remain required. No automatic retry or execution is authorized by this report."
+  ],
+  "source_pins": [
+    {
+      "bytes": 14215,
+      "commit": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+      "path": "tests/test_funding_hold_full_field_v3.py",
+      "purpose": "REVIEWED_DRIVER_SOURCE",
+      "sha256": "b6c82ad93093c4c67d55ef3945924b779a36cf86b45e6fc5fc28176199f43dd9"
+    },
+    {
+      "bytes": 2805,
+      "commit": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+      "path": "docs/funding-hold-full-field-v3-code.md",
+      "purpose": "REVIEWED_SCOPE_AND_FAILURE_CLAIMS",
+      "sha256": "d442fa0652344dd82c83391a2099caad7988623eef7ce4478623ef687f71a906"
+    },
+    {
+      "bytes": 1220,
+      "commit": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+      "path": "evidence/designs/funding-hold-full-field-v3/driver-context-candidate.json",
+      "purpose": "CURRENT_CONTEXT_CANDIDATE_PINS",
+      "sha256": "95c40a57b5b2c0a544ed262ac02687157f0f60cfc212dd171e8ebd0f613b2c7f"
+    },
+    {
+      "bytes": 1571,
+      "commit": "cd583c1e816ec9b9f65c237b2da457dea1d2638b",
+      "path": "evidence/designs/funding-hold-full-field-v3/code-candidate.json",
+      "purpose": "IMMUTABLE_HISTORICAL_METADATA_NOT_CURRENT_DRIVER_PINS",
+      "sha256": "a81f2d3a253c4ba542df70b7874fd7765fd95340129d693bc0dfc61b2ad07577"
+    }
+  ],
+  "test_definitions": [
+    "test_full_declared_stream_matches_complete_typed_responses",
+    "test_comparison_preserves_native_types_array_order_and_all_fields",
+    "test_escaped_implementation_exception_is_technical",
+    "test_matching_rejection_cannot_pass_a_declared_valid_case",
+    "test_missing_stream_case_is_technical_with_seed_context"
+  ],
+  "worktree_administration": "Created a new --no-checkout review worktree at cd583. Sparse configuration alone left its known new index empty; initialized only that owned index from immutable ls-tree mode/OID/path metadata using update-index, marked omitted paths skip-worktree, and copied four reviewed Git blobs with exclusive-create. No read-tree/reset/clean/restore/reapply, no author source or main-index mutation.",
+  "wrapper_contract_confirmed": {
+    "activation_permission": false,
+    "case_id_declaration": "D1V3-SEED- plus decimal seed zero-padded to4",
+    "expected_status_values": [
+      "OK",
+      "REJECT",
+      "UNSUPPORTED"
+    ],
+    "hash_wire": "CODE_CONTRACT_IMPLEMENTED_NOT_RUN",
+    "keys": [
+      "seed",
+      "family",
+      "partition",
+      "expected_status",
+      "request",
+      "hash_wire",
+      "activation_permission"
+    ],
+    "negative_status": "Each case declares its concrete REJECT or UNSUPPORTED; no allowed-set or REJECT_OR_UNSUPPORTED",
+    "partition_values": [
+      "valid",
+      "negative"
+    ],
+    "request_location": "item[request] is the complete schema3 request envelope",
+    "root_assumption_about_wrapper_tag": "MATCHES_ACTUAL_FROZEN_DECLARATION_NO_GENERATOR_ADAPTATION",
+    "source": "Frozen generator AST Return Dict metadata and public export; no generator call",
+    "valid_status": "OK"
+  }
+}

@@ -1,0 +1,403 @@
+{
+  "DTO_mapping": {
+    "ActionKey": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "scope",
+        "allocation_id"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "BaseValues": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "scope",
+        "accounting_equity_units",
+        "risk_equity_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "cash_units",
+        "spot_frozen_units",
+        "funding_components"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "ContentRef": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "kind",
+        "digest",
+        "duty_id",
+        "rule_scope_id"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "Decomposition": {
+      "init_false_flags": {
+        "activation_permission": {
+          "default": false,
+          "init": false
+        }
+      },
+      "target_field_order": [
+        "scope",
+        "P",
+        "U",
+        "N",
+        "H",
+        "accrual_equity_units",
+        "risk_equity_units",
+        "available_margin_units",
+        "initial_margin_units",
+        "maintenance_margin_units",
+        "order_reserve_units",
+        "ordinary_spend_raw_units",
+        "ordinary_spendable_units",
+        "activation_permission"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "DutyKey": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "authority_id",
+        "authority_generation",
+        "symbol",
+        "period_end",
+        "interval_seconds",
+        "settlement_asset",
+        "account_id",
+        "rule_scope_id",
+        "schema"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "DutyState": {
+      "init_false_flags": {
+        "activation_permission": {
+          "default": false,
+          "init": false
+        }
+      },
+      "target_field_order": [
+        "key",
+        "usd_scale",
+        "revision",
+        "active",
+        "history",
+        "activation_permission"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "PaymentProjection": {
+      "init_false_flags": {
+        "activation_permission": {
+          "default": false,
+          "init": false
+        }
+      },
+      "target_field_order": [
+        "scope",
+        "outcome",
+        "own_duty_id",
+        "projected_cash_units",
+        "projected_P",
+        "projected_U",
+        "projected_N",
+        "projected_H",
+        "other_H_units",
+        "risk_recheck_required",
+        "activation_permission"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "Scope": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "authority_id",
+        "authority_generation",
+        "account_id",
+        "usd_scale",
+        "settlement_asset"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "Stage": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "kind",
+        "amount_units",
+        "exposure_ref",
+        "cap_ref",
+        "final_ref"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "Totals": {
+      "init_false_flags": {
+        "activation_permission": {
+          "default": false,
+          "init": false
+        }
+      },
+      "target_field_order": [
+        "scope",
+        "duty_ids",
+        "P",
+        "U",
+        "N",
+        "H",
+        "activation_permission"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "WaitPolicy": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "format",
+        "policy_id",
+        "clock_policy",
+        "max_wait_us",
+        "min_query_interval_us",
+        "max_query_attempts",
+        "expiry_action"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "WaitProjection": {
+      "init_false_flags": {
+        "activation_permission": {
+          "default": false,
+          "init": false
+        },
+        "holds_unchanged": {
+          "default": true,
+          "init": false
+        }
+      },
+      "target_field_order": [
+        "record",
+        "outcome",
+        "query_counted",
+        "holds_unchanged",
+        "activation_permission"
+      ],
+      "wire_required_field_set_exact": true
+    },
+    "WaitRecord": {
+      "init_false_flags": {},
+      "target_field_order": [
+        "action",
+        "policy",
+        "revision",
+        "started_us",
+        "deadline_us",
+        "observed_highwater_us",
+        "attempts",
+        "last_dispatch_us",
+        "default_review"
+      ],
+      "wire_required_field_set_exact": true
+    }
+  },
+  "activity": {
+    "AST_modules": 3,
+    "SQL": 0,
+    "actors_proc_PID": 0,
+    "executable_compilations": 0,
+    "metadata_scope_adjustment": "JSONschema required arrays are field sets; target DTO declaration order checked separately, not assumed equal to required-array ordering",
+    "network_CI": 0,
+    "target_reference_calls": 0,
+    "target_reference_imports": 0
+  },
+  "adapter_import_AST": [
+    "dataclasses:fields",
+    "json",
+    "math",
+    "re",
+    "uta:funding_hold_pure"
+  ],
+  "authority": {
+    "D2": "BLOCKED",
+    "execution_authorized": false,
+    "production_approved": false,
+    "source_edits_or_push": false
+  },
+  "blockers": [
+    {
+      "executed": false,
+      "finding": "No complete operation-value/field schema validation; exact DTO class or tuple type is insufficient",
+      "id": "FTA-V2-B1",
+      "inert_conditions": [
+        "validate_wait_records exact tuple(0,) -> OK action_ids[0] integer",
+        "exact WaitProjection query_counted=0 -> OK integer in boolean field",
+        "wrong natural_slot six-character string -> list() masks native-return type"
+      ],
+      "required": "Nonfinancial strict complete wire output validation outside business catch; preserve real data, reject unexpected native source return types",
+      "source": "tests/funding_hold_target_adapter_v2.py:112",
+      "status": "OPEN"
+    },
+    {
+      "additional_source": "tests/funding_hold_target_adapter_v2.py:184",
+      "executed": false,
+      "finding": "Inner encoding occurs under evaluate business classifier",
+      "id": "FTA-V2-B2",
+      "inert_condition": "Encoder exact known error is classified as REJECT/UNSUPPORTED instead of technical escape; fault injection definition only, not an observed native error",
+      "required": "Move serialization entirely outside business catches or narrowly isolate target/input calls",
+      "source": "tests/funding_hold_target_adapter_v2.py:151",
+      "status": "OPEN"
+    },
+    {
+      "executed": false,
+      "finding": "Unchecked aggregate intermediate can be reclassified by target.decompose input validation",
+      "id": "FTA-V2-B3",
+      "inert_condition": "aggregate bad return {} -> target exact Totals HoldError -> REJECT before final output validation",
+      "required": "Technical exact-type/full-structure check on intermediate total before downstream target call",
+      "source": "tests/funding_hold_target_adapter_v2.py:168",
+      "status": "OPEN"
+    }
+  ],
+  "candidate_five_add_only_Git_physical_pins": {
+    "docs/funding-hold-target-adapter-v2-code.md": {
+      "bytes": 2863,
+      "sha256": "5fa6c89060e19e103c6e8c9c19283262e0973501badf115fae74dad25e3d2af9"
+    },
+    "evidence/designs/funding-hold-target-adapter-v2/code-candidate.json": {
+      "bytes": 2484,
+      "sha256": "212cb96f8fa483476d01f2ce1176b9a99f6bd68324c2eea815fc56d23a262763"
+    },
+    "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json": {
+      "bytes": 29887,
+      "sha256": "c7f1ead652921b983bab170ed3a57c984f9e3ff06495cd395af6ab617ed456c0"
+    },
+    "tests/funding_hold_target_adapter_v2.py": {
+      "bytes": 14978,
+      "sha256": "409dace5731a8a323f8e27c2cd765e18f8e6e72fd339fd71bb76f7e28a4a7eb9"
+    },
+    "tests/test_funding_hold_target_adapter_v2.py": {
+      "bytes": 5082,
+      "sha256": "d4a64a4421649410cd45bc401f4e3727ac159a0924f0aaebd8b958188130aac3"
+    }
+  },
+  "complete_public_wait_ids_original_order_preserved": true,
+  "declared_four_pins_exact": true,
+  "deferred_decoder_contract": {
+    "depth": 32,
+    "full_codec_pass_claim": false,
+    "integer_digits": 128,
+    "reference_equivalence": "PENDING_EXPLICIT_REVIEW",
+    "resource_rejections_equal_business_rejections": false,
+    "visited_nodes": 250000
+  },
+  "financial_equation_clone_found": false,
+  "fixed_input_output_flags_exact_bool": true,
+  "kind": "INDEPENDENT_FUNDING_HOLD_TARGET_ADAPTER_V2_CODE_REVIEW",
+  "operation_input_fields": {
+    "action_identity": [
+      "action"
+    ],
+    "aggregate": [
+      "states",
+      "scope",
+      "basis_complete"
+    ],
+    "decompose": [
+      "base",
+      "states",
+      "basis_complete"
+    ],
+    "duty_identity": [
+      "key"
+    ],
+    "payment_precondition": [
+      "states",
+      "scope",
+      "own_duty_id",
+      "cash_units",
+      "spot_frozen_units",
+      "prior_confirmed_settlements_clear",
+      "quote_available",
+      "basis_complete"
+    ],
+    "policy_identity": [
+      "policy"
+    ],
+    "stage_advance": [
+      "state",
+      "proposed",
+      "expected_revision",
+      "expected_active_stage"
+    ],
+    "unsupported": [
+      "operation"
+    ],
+    "wait_preview": [
+      "record",
+      "now_us",
+      "expected_revision",
+      "expected_policy_digest",
+      "dispatch_query"
+    ],
+    "wait_records": [
+      "records"
+    ]
+  },
+  "operations": [
+    "duty_identity",
+    "policy_identity",
+    "action_identity",
+    "stage_advance",
+    "aggregate",
+    "decompose",
+    "payment_precondition",
+    "wait_preview",
+    "wait_records",
+    "unsupported"
+  ],
+  "parent": "479f8ff28309e4c2b479c14ff253fed096d5135e",
+  "reference_algorithm_read_or_imported": false,
+  "review_document": {
+    "bytes": 9138,
+    "path": "docs/funding-hold-target-adapter-v2-independent-review.md",
+    "sha256": "c0f7c643c716534229efe898b733d004ebd3240de30f03294851d2965bf8a097"
+  },
+  "reviewed_commit": "fc1da5a704896dae63afe309ec8807a9df0f2029",
+  "rollback": "Remove only new test adapter artifacts; preserve immutable fc1da5a7/wire/history; no financial migration.",
+  "schema": 1,
+  "source_input_mutation_found": false,
+  "status": "BLOCKED",
+  "target": {
+    "bytes": 23348,
+    "implementation_commit": "ed81c424e3be7c004331bcd8340421d60063fcb6",
+    "path": "uta/funding_hold_pure.py",
+    "public_and_reviewed_Git_physical_exact": true,
+    "public_source_prefix": "16f64",
+    "sha256": "181232185386a9611e79d66600de8b1816ad9ad2f755f54aa33d8e862b1f1a14"
+  },
+  "tests": {
+    "actual_fault_injections": 0,
+    "count": 9,
+    "definitions": [
+      "test_transport_never_fabricates_response_for_invalid_envelope",
+      "test_codec_rejects_duplicate_nonfinite_BOM_and_inferred_UTF16",
+      "test_known_input_rejection_retains_valid_case_identity",
+      "test_unexpected_target_and_constructor_exceptions_remain_technical",
+      "test_complete_DTO_output_and_original_request_are_preserved",
+      "test_validator_actual_return_order_is_not_sorted_or_replaced_by_adapter",
+      "test_malformed_target_returns_are_technical_failures",
+      "test_finite_float_and_bool_are_not_coerced_into_valid_integer_inputs",
+      "test_legacy_single_reference_is_unsupported_without_inference"
+    ],
+    "full_field_differential": "NOT_IMPLEMENTED_NOT_RUN",
+    "status": "NOT_RUN"
+  },
+  "unrelated_unknown_exception_subclasses_escape": true,
+  "wire": {
+    "bytes": 29887,
+    "commit": "a33da70026a5b0d36d5df57ae8a5736a64914ab1",
+    "copied_Git_and_physical_exact": true,
+    "path": "evidence/designs/funding-hold-exact-reference-v2/wire-contract.json",
+    "sha256": "c7f1ead652921b983bab170ed3a57c984f9e3ff06495cd395af6ab617ed456c0"
+  }
+}

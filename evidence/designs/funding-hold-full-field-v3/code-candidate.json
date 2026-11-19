@@ -1,0 +1,43 @@
+{
+  "schema": "funding-hold-full-field-v3-code/v1",
+  "status": "CODE_CANDIDATE_PENDING_INDEPENDENT_REVIEW",
+  "target_marshaller": "6f7a5a872b05a3787a347e164ae7075d1282aca9",
+  "marshaller_review": "abaa526cc7b9c70af3a4dd66773dc937fd296760",
+  "reference_source": "7975266d1f336974ce90b73c5ab0706532a4dcd9",
+  "reference_manifest": "cab03a380d1bac48eebd398d7ba77a912bc6517c",
+  "reference_review": "PENDING",
+  "pins": [
+    {
+      "path": "tests/test_funding_hold_full_field_v3.py",
+      "bytes": 12259,
+      "sha256": "ad43d6c5f29e4f3fa8aaa87ce77b9a2308e9bd71709b8663e63463785f19234d"
+    },
+    {
+      "path": "docs/funding-hold-full-field-v3-code.md",
+      "bytes": 2429,
+      "sha256": "6af8f58d41eaf97023bc61c7a9494f5f70e082fa1489da18cac496a4664eaa60"
+    }
+  ],
+  "tests_defined": [
+    "test_comparison_preserves_native_types_array_order_and_all_fields",
+    "test_escaped_implementation_exception_is_technical",
+    "test_full_declared_stream_matches_complete_typed_responses",
+    "test_matching_rejection_cannot_pass_a_declared_valid_case"
+  ],
+  "expected_stream_cases": 1024,
+  "case_wrapper_fields": [
+    "seed",
+    "family",
+    "partition",
+    "expected_status",
+    "request",
+    "hash_wire",
+    "activation_permission"
+  ],
+  "api_basis": "public-export and explicit generator metadata enum contract only; reference financial algorithm not read",
+  "actual_reference_target_generator_import_compile_execution_attempts": 0,
+  "full_field_execution": "NOT_RUN",
+  "capacity_claim": false,
+  "activation_permission": false,
+  "D2": "BLOCKED"
+}

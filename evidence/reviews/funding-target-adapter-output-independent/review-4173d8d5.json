@@ -1,0 +1,290 @@
+{
+  "D2": "BLOCKED",
+  "activation_permission": false,
+  "administrative_reader_events": [
+    {
+      "correction": "explicitly classify this generic transport input; per-operation values remain closed",
+      "event": "first checker applied closed-output object grammar to transport request.properties.input",
+      "observed": "AssertionError",
+      "target_execution_or_retry": false
+    }
+  ],
+  "candidate": "4173d8d5315b02b5427d225718310016dfd26656",
+  "candidate_validator_or_adapter_or_tests_executed": false,
+  "changed_adapter_defs": [
+    "_call",
+    "evaluate"
+  ],
+  "changes": "two new SAFE review files only",
+  "closed_previous_findings": [
+    {
+      "id": "FTA-V2-B1",
+      "limits": "new B4 remains; no validator or target call executed",
+      "status": "STATIC_CLOSED_FOR_ORIGINAL_CONCRETE_VALUE_FAULTS"
+    },
+    {
+      "evidence": "policy and wait no inner encode; final encode/validate outside business catch; intermediate encode failures technical",
+      "id": "FTA-V2-B2",
+      "status": "STATIC_CLOSED"
+    },
+    {
+      "evidence": "exact intermediate Totals and full serialized validation before downstream; downstream HoldError remains technical with cause",
+      "id": "FTA-V2-B3",
+      "status": "STATIC_CLOSED"
+    }
+  ],
+  "decision": "BLOCKED",
+  "declared_four_pins_match": true,
+  "execution_status": "NOT_RUN",
+  "expanded_output_schema_depth": {
+    "action_identity": 5,
+    "aggregate": 5,
+    "decompose": 5,
+    "duty_identity": 5,
+    "payment_precondition": 5,
+    "policy_identity": 5,
+    "stage_advance": 9,
+    "unsupported": 0,
+    "wait_preview": 9,
+    "wait_records": 4
+  },
+  "findings": [
+    {
+      "actual_candidate_validator_execution": false,
+      "actual_financial_output_loss_demonstrated": false,
+      "current_pinned061_output_schema_contains_demonstrated_unsupported_feature": false,
+      "id": "FTA-V3-B4",
+      "issue": "Unsupported or malformed schema metadata can be treated as a value mismatch or remain unvisited inside nonmatching alternatives",
+      "lines": [
+        158,
+        163,
+        174,
+        181,
+        189,
+        193,
+        195,
+        198,
+        201,
+        203,
+        212
+      ],
+      "path": "tests/funding_hold_target_adapter_v2.py",
+      "required_correction": "Separate complete schema-meta validation, including all referenced and nonmatching nested branches, from value matching; unsupported schema errors must not be _OutputMismatch",
+      "static_conditions": [
+        {
+          "id": "B4-A",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "static_path": "unsupported type takes _OutputMismatch and is swallowed; separate null branch remains one match",
+          "value": null
+        },
+        {
+          "id": "B4-B",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "additionalProperties": false,
+                "properties": {
+                  "x": {
+                    "unknown_feature": true
+                  }
+                },
+                "required": [
+                  "x"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "static_path": "object type mismatch precedes nested child inspection; unknown child never visited",
+          "value": null
+        },
+        {
+          "id": "B4-C",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "additionalProperties": false,
+            "properties": {
+              "x": {
+                "type": "integer"
+              }
+            },
+            "required": "x",
+            "type": "object"
+          },
+          "static_path": "required string iterated and converted to set as if a one-item list",
+          "value": {
+            "x": 1
+          }
+        },
+        {
+          "id": "B4-D",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "oneOf": []
+              }
+            ]
+          },
+          "static_path": "empty inner oneOf yields mismatch that outer handler discards",
+          "value": null
+        },
+        {
+          "id": "B4-E",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "minimum": "0",
+                "type": "integer"
+              }
+            ]
+          },
+          "static_path": "mismatching native type stops before malformed bound metadata is inspected",
+          "value": null
+        },
+        {
+          "id": "B4-F",
+          "observed_execution": "NOT_RUN",
+          "schema": {
+            "enum": "abc",
+            "type": "string"
+          },
+          "static_path": "enum string is iterated as values; metadata native list shape not validated",
+          "value": "a"
+        }
+      ],
+      "status": "OPEN_CODE_BLOCKER"
+    }
+  ],
+  "independent_schema_data_walk": {
+    "nodes": 219,
+    "oneOf": 4,
+    "patterns": 5,
+    "refs": 108
+  },
+  "new_adapter_defs": [
+    "_OutputMismatch",
+    "_checked_intermediate",
+    "_validate_output",
+    "_wire_contract"
+  ],
+  "new_test_methods": [
+    "test_action_ID_elements_have_wire_native_type_and_format",
+    "test_encoding_known_target_exception_is_not_business_rejection",
+    "test_intermediate_bad_field_or_downstream_rejection_is_technical",
+    "test_invalid_intermediate_type_never_reaches_downstream_target",
+    "test_native_natural_slot_is_not_coerced_from_another_iterable",
+    "test_query_counted_integer_zero_is_not_boolean_false",
+    "test_unsupported_schema_cannot_be_hidden_by_another_oneof_branch"
+  ],
+  "old_test_methods_unchanged": 9,
+  "output_schema_node_scope": {
+    "all_data_nodes": 219,
+    "definitions": 154,
+    "operation_inputs": 42,
+    "operation_values": 10,
+    "relevant_output_contract_nodes": 164,
+    "request": 5,
+    "response": 8
+  },
+  "parent": "1b456fd1e397ad77ba4a821c47ab6e867dae8ba0",
+  "pins": [
+    {
+      "author_physical_matches_Git": true,
+      "bytes": 2857,
+      "path": "docs/funding-hold-target-adapter-output-fix.md",
+      "sha256": "03ddf0076ab064310f32fd7ad5d44f713de552793600ff991a077280dfe35a21"
+    },
+    {
+      "author_physical_matches_Git": true,
+      "bytes": 2018,
+      "path": "evidence/designs/funding-hold-target-adapter-v2/code-candidate-v3.json",
+      "sha256": "1810bf11f8d40ffc4f2c3936eb031b9ff036410c803b1a84dbdbbcde74d219c0"
+    },
+    {
+      "author_physical_matches_Git": true,
+      "bytes": 31492,
+      "path": "evidence/designs/funding-hold-target-adapter-v2/wire-contract.json",
+      "sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+    },
+    {
+      "author_physical_matches_Git": true,
+      "bytes": 20482,
+      "path": "tests/funding_hold_target_adapter_v2.py",
+      "sha256": "ce62d95f8e7c51137f5ff98a6bc6e5e03d3f91252ceae4a0cebb289196069fb1"
+    },
+    {
+      "author_physical_matches_Git": true,
+      "bytes": 10575,
+      "path": "tests/test_funding_hold_target_adapter_v2.py",
+      "sha256": "d9f7368382294793e513c2abc30a39dd407e13ad9ac941cfecbda222bdbd6895"
+    }
+  ],
+  "production": "NO_GO",
+  "rollback": "revert review files; preserve source, wire, historical findings and all confirmed history",
+  "schema": "funding-target-output-independent-code/v1",
+  "schema_actual_number_type_nodes": 0,
+  "schema_primitive_types": [
+    "array",
+    "boolean",
+    "integer",
+    "null",
+    "object",
+    "string"
+  ],
+  "scope_limits": [
+    "immutable current061 output schemas themselves passed independent data inspection",
+    "structural output validation does not prove financial correctness",
+    "no executed schema faults, adapter tests, reference differential or decoder equivalence",
+    "no installed capability, global history ownership, financial activation or D2 proof"
+  ],
+  "target_blob_exact_ed81": true,
+  "target_reference_core_functions_read_or_imported": false,
+  "total_test_definitions": 16,
+  "transport_generic_nodes_outside_output_validation": [
+    "request.properties.input"
+  ],
+  "unchanged_adapter_defs": [
+    "AdapterContractError",
+    "InputReject",
+    "WireReject",
+    "_array",
+    "_closed",
+    "_dto",
+    "_encode",
+    "_native_tree",
+    "_states",
+    "decode_request"
+  ],
+  "uta_tree_exact_public16f64": true,
+  "wire_JSON_data_parse": {
+    "candidate_loader_executed": false,
+    "duplicate_keys": 0,
+    "key_value_pairs": 647,
+    "nonfinite_constants": 0
+  },
+  "wire_bytes": 31492,
+  "wire_origin": "061580ce8c13120751bde4c4ce631b9dff25aa67",
+  "wire_sha256": "d7d782e8007a0b4f9602483fb5ea2a373ac4bc42324f0fef94ba311bc7c2e3be"
+}
