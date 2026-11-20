@@ -105,4 +105,4 @@ python -m uta scenario --db exercise.sqlite3 --account shock-demo --shards 4
 python -m uta replay --db exercise.sqlite3 --account shock-demo --shards 4
 ```
 
-情景会创建新账户；同名账户已存在时不会覆盖，需选择新账户 ID。纯内存 `LiquidationController` 的动作确认和 1.10 倍恢复缓冲不属于上述流程，其边界见 [风险模型](risk-model.md)。
+情景会创建新账户；同名账户已存在时不会覆盖，需选择新账户 ID。纯内存 `LiquidationController` 的动作确认和 1.10 倍恢复缓冲不属于上述流程，其决策流程、确认时序与精确边界见 [独立清算控制器](liquidation-controller.md)。
