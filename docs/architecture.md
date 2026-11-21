@@ -32,6 +32,7 @@ flowchart TD
 | 组合风险 | 六场景联合重估、IM/MM 底线与订单 IM 变化上界 | [portfolio.py](../uta/portfolio.py)、[risk.py](../uta/risk.py) |
 | 分录校验 | 每种资产分别平衡，成交损益和费用生成对手科目 | [Ledger.post](../uta/ledger.py)、[模拟成交](../uta/simulator.py) |
 | 事务与路由 | 账户版本、快照与回执原子提交；按账户固定路由 | [Store._apply / ShardedStore](../uta/store.py) |
+| 回放读取 | 同一读事务捕获单账户快照和有序历史，关闭事务后重算 | [Store.read_for_replay](../uta/store.py)、[Simulator.verify_replay](../uta/simulator.py) |
 
 ## 单条命令的事务时序
 
@@ -101,6 +102,12 @@ flowchart TD
 ```
 
 图中 SQLite 失败分支代表整个分片事务期间的数据库错误，包括提交失败。单库或同一分片内按输入顺序处理；分片组可并行提交，最多使用 8 个组工作线程。一个分片失败不会回滚其他分片，批量接口没有跨分片的全局原子性。实现与故障测试分别见 [Store.apply_many / ShardedStore.apply_many](../uta/store.py)、[test_store.py](../tests/test_store.py)。
+
+## 回放的读事务范围
+
+`Store.read_for_replay(account_id)` 用同一连接的 `BEGIN` 读事务取得账户快照，再读取全部按版本排序的事件。WAL 中的读取视图由首次账户查询建立：另一连接随后提交新命令，已捕获的快照与历史仍属于同一视图。返回这对数据前，读事务已提交并关闭连接；`Simulator.verify_replay` 的状态重算和比较在事务外完成，时序见 [审计回放](workflows.md)。
+
+`ShardedStore.read_for_replay` 将整个读取交给账户所属的同一 `Store`；这里没有跨分片一致快照。结果中的 `version` 是所核对的捕获版本，返回时账户可能已推进。独立调用 `view` 与 `events` 仍是两次读取，不提供上述成对读取语义。
 
 ## 独立示例与生产化边界
 

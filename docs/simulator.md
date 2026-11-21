@@ -23,7 +23,9 @@
 | POST | `/v1/accounts/demo/commands` | `{"command_id":"my-command","expected_version":0,"command":{...}}` |
 | POST | `/v1/commands/batch` | `{"items":[{"account_id":"demo","command_id":"c1","expected_version":0,"command":{...}}]}`。每条独立回执，最多 100 条。 |
 | GET | `/v1/accounts/demo/events` | 审计事件与分录 |
-| GET | `/v1/accounts/demo/replay` | 重算快照并比较每条回执 |
+| GET | `/v1/accounts/demo/replay` | 捕获一致版本的快照与历史，重算并比较每条回执 |
+
+`replay` 的 `version` 是本次读事务捕获并核对的账户版本，`events_verified` 包含版本 0 创世事件。读取结束后其他命令可以继续提交，因此成功结果不承诺返回时仍是最新版本；后续提交由下一次回放核对。检查使用原命令的 `evaluated_at`，完整事务范围与不一致错误见 [审计回放](workflows.md)。
 
 以下每行分别是一条命令的 `command` 对象，调用 `/commands` 时还须提供命令 ID 和预期版本：
 

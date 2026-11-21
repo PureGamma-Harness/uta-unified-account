@@ -80,25 +80,39 @@ sequenceDiagram
     participant C as 调用方
     participant R as Simulator.verify_replay
     participant D as Store
+    participant DB as SQLite WAL
+    participant W as 另一命令连接
     participant T as _transition
     C->>R: account_id
-    R->>D: 按账户版本读取已提交事件前缀
-    D-->>R: 版本 0 创世状态与后续命令、回执
+    R->>D: read_for_replay(account_id)
+    D->>DB: BEGIN 读事务
+    D->>DB: SELECT 账户快照与版本 V
+    DB-->>D: 快照 V，建立本次读取视图
+    opt 另一连接在读取期间提交新命令
+        W->>DB: BEGIN IMMEDIATE，写快照与事件 V+1
+        W->>DB: COMMIT
+    end
+    D->>DB: SELECT 同一账户全部事件，按 version 排序
+    DB-->>D: 同一读取视图的创世事件与历史
+    D->>DB: COMMIT 读事务并关闭连接
+    D-->>R: 已捕获的快照 V 与事件
     loop 每个后续事件
         R->>R: 检查 expected_version 与连续版本
         R->>T: 原 command_id、command、记录的 evaluated_at
         T-->>R: 重算状态与回执
         R->>R: 逐字段比较重算回执与已存回执
     end
-    R->>D: 读取当前账户快照
-    D-->>R: 当前状态与版本
-    R->>R: 比较回放状态与当前快照
-    R-->>C: account_id、version、events_verified 或错误
+    R->>R: 比较回放状态与已捕获的快照 V
+    R-->>C: account_id、version=V、events_verified 或错误
 ```
 
-回放使用命令原来的决策时间，避免重启后把历史行情误判为过期；它只重算，不重新下单或写事件。事件读取与最后的快照读取不是同一次只读事务，期间有新命令提交可能导致比较失败，错误会提示重试。回放依赖当前代码对历史模型、参数和命令的兼容性；不能把成功回放当作外部行情或会计真实性证明。
+回放在同一只读事务内获取快照与事件，关闭事务后使用命令原来的决策时间重算，避免重启后把历史行情误判为过期。读取期间另一连接可以提交新版本，本轮仍核对捕获的版本 V；后续提交在下一次回放中核对。返回成功不表示账户在响应时仍停留于 V，也不会重新下单或写事件。
 
-依据：[Simulator.verify_replay](../uta/simulator.py)、[Store.events](../uta/store.py)。可运行以下完整情景；第二条命令使用保留下来的数据库、账户和相同分片数：
+后续事件版本不连续、重算回执不同或最终状态与所捕获快照不同，仍按现有检查拒绝。版本比较使用这次成对读取的数据，不再把正常并发提交造成的新快照当作历史不一致。单库与四分片的确定性并发回归、三类不一致注入见 [test_simulator.py](../tests/test_simulator.py)。
+
+核对范围是当前模型、参数与已记录命令、回执、快照之间的一致性；它不认证外部行情或外部会计事实，不保证任意历史模型兼容。一次读取包含该账户全部事件，分片模式只读取该账户所属数据库，未提供跨账户或跨分片一致快照。
+
+下面的第二条命令使用保留下来的数据库、账户和相同分片数。实现见 [Simulator.verify_replay](../uta/simulator.py)、[Store.read_for_replay / _events / _transaction](../uta/store.py)。
 
 ```bash
 python -m uta scenario --db exercise.sqlite3 --account shock-demo --shards 4
