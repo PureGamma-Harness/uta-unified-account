@@ -106,3 +106,9 @@ python -m uta replay --db exercise.sqlite3 --account shock-demo --shards 4
 ```
 
 情景会创建新账户；同名账户已存在时不会覆盖，需选择新账户 ID。纯内存 `LiquidationController` 的动作确认和 1.10 倍恢复缓冲不属于上述流程，其边界见 [风险模型](risk-model.md)。
+
+## 分片初始化与重开失败
+
+新分片目录先固化路由，再创建各片；只有全部初始化成功，manifest 才提交 `ready=1`。`ready=0` 的中断初始化可继续补齐空分片。就绪布局重开使用原分片数与原文件，检查后才消失的文件也必须导致打开失败；程序不会通过新建空库补回账户、命令或回执。
+
+分片缺失后的历史恢复需另行核对，启动入口不修复已丢失的数据。`ready` 不应被当成可随意重置的修复开关。实际打开模式与 manifest 事务图见 [分片创建与重开](architecture.md)，文件删除及初始化边界验证见 [test_store_reopen.py](../tests/test_store_reopen.py)。

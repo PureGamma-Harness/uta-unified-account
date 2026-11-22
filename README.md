@@ -40,6 +40,8 @@ python -m uta lab --db data.sqlite3 --port 8765
 
 部署在单台机器时，也可以用固定的 SHA-256 账户路由分到多个 SQLite WAL 文件。使用新的数据库基名，之后以同样的分片数重开。
 
+已就绪的分片布局要求原文件保持完整：重开时缺片，或文件在检查后、打开前消失，都会拒绝启动，不会自动创建空库替代原账户历史。首次初始化未完成时的补齐规则见 [分片创建与重开](docs/architecture.md)。
+
 ```bash
 python -m uta lab --db lab-multi.sqlite3 --shards 8
 python -m uta scenario --shards 4

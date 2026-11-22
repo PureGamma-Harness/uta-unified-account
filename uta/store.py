@@ -120,13 +120,16 @@ class Store:
     Version 0 is the original snapshot. Each successful new command increments
     the version by one. Callers should retain each command ID, payload, and
     expected version together so retries recover the original result.
+
+    create_if_missing=False requires an existing database file at construction;
+    it does not prevent writes to an existing store.
     """
 
-    def __init__(self, path: str | os.PathLike[str]):
+    def __init__(self, path: str | os.PathLike[str], *, create_if_missing: bool = True):
         self.path = _path(path)
         if self.path.with_name(self.path.name + ".shards").exists():
             raise StoreConflict("a shard directory already exists at this path; open with the stored shard count")
-        with _transaction(self.path, write=True, initialize=True, enable_wal=True) as db:
+        with _transaction(self.path, write=True, initialize=create_if_missing, enable_wal=True) as db:
             db.execute("""
                 CREATE TABLE IF NOT EXISTS uta_accounts (
                     account_id TEXT PRIMARY KEY NOT NULL,
@@ -339,7 +342,9 @@ class ShardedStore:
             ready = db.execute("SELECT ready FROM layout WHERE id = 1").fetchone()[0]
             if ready and any(not path.is_file() for path in paths):
                 raise StoreError("one or more configured shard files are missing")
-            self._stores = tuple(Store(path) for path in paths)
+            # A ready shard may disappear after the check. Let SQLite's open
+            # mode reject that absence instead of silently creating an empty DB.
+            self._stores = tuple(Store(path, create_if_missing=not ready) for path in paths)
             if not ready:
                 db.execute("UPDATE layout SET ready = 1 WHERE id = 1")
 

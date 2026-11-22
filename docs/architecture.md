@@ -102,6 +102,31 @@ flowchart TD
 
 图中 SQLite 失败分支代表整个分片事务期间的数据库错误，包括提交失败。单库或同一分片内按输入顺序处理；分片组可并行提交，最多使用 8 个组工作线程。一个分片失败不会回滚其他分片，批量接口没有跨分片的全局原子性。实现与故障测试分别见 [Store.apply_many / ShardedStore.apply_many](../uta/store.py)、[test_store.py](../tests/test_store.py)。
 
+## 分片创建与重开
+
+`manifest.sqlite3` 保存固定的分片数、`sha256-mod-v1` 路由及 `ready` 标志。首次初始化先提交布局和 `ready=0`，再在另一笔 manifest 写事务内逐片初始化；全部成功后才将 `ready` 置为 1 并提交。中途退出可能留下未补齐的空分片，下一次初始化可继续完成。下面聚焦布局校验、路由提交之后的第二笔 manifest 事务：
+
+```mermaid
+flowchart TD
+    Layout["布局校验与固定路由已提交"] --> Begin["manifest BEGIN IMMEDIATE"]
+    Begin --> Ready{"ready=1？"}
+    Ready -->|是| Exists{"既定分片文件全部存在？"}
+    Exists -->|否| Fail["StoreError，拒绝构造成功<br/>关闭未提交的 manifest 事务"]
+    Exists -->|是| Open["逐片 Store，create_if_missing=false<br/>SQLite mode=rw，仅打开已有文件"]
+    Open -->|检查后文件消失或打开失败| Fail
+    Open -->|全部成功| Commit["COMMIT manifest 事务"]
+    Ready -->|否| Initialize["逐片初始化，允许创建缺失文件<br/>SQLite mode=rwc"]
+    Initialize -->|失败| Fail
+    Initialize -->|全部成功| Mark["写入 ready=1"]
+    Mark --> Commit
+    Commit -->|成功| Done["返回分片存储"]
+    Commit -->|失败| Fail
+```
+
+依据：[ShardedStore.__init__ / Store.__init__ / _transaction](../uta/store.py)。已就绪布局的存在性检查只是提前报告缺片；实际打开也必须使用 `mode=rw`，保证文件在检查后消失时 SQLite 报错，而非通过 `mode=rwc` 创建空库。`Store(..., create_if_missing=False)` 只禁止创建主数据库文件，仍可读写已有数据库。单库默认创建行为保持不变。
+
+manifest 锁串行化合作初始化者，但各分片使用自己的 SQLite 事务，不构成跨文件原子事务。重开失败不会把 `ready=1` 改回零；程序也不应通过重置布局来掩盖丢失的账户和事件。此处的保证针对缺失路径，不校验已有文件的身份或内容完整性，也不恢复丢失记录。确定性文件删除回归和未完成初始化的恢复范围见 [test_store_reopen.py](../tests/test_store_reopen.py)。
+
 ## 独立示例与生产化边界
 
 | 路径 | 状态与职责 |
