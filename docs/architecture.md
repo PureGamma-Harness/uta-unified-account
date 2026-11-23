@@ -32,7 +32,7 @@ flowchart TD
 | 组合风险 | 六场景联合重估、IM/MM 底线与订单 IM 变化上界 | [portfolio.py](../uta/portfolio.py)、[risk.py](../uta/risk.py) |
 | 分录校验 | 每种资产分别平衡，成交损益和费用生成对手科目 | [Ledger.post](../uta/ledger.py)、[模拟成交](../uta/simulator.py) |
 | 事务与路由 | 账户版本、快照与回执原子提交；按账户固定路由 | [Store._apply / ShardedStore](../uta/store.py) |
-| 回放读取 | 同一读事务捕获单账户快照和有序历史，关闭事务后重算 | [Store.read_for_replay](../uta/store.py)、[Simulator.verify_replay](../uta/simulator.py) |
+| 回放读取与核对 | 同一读事务捕获单账户快照和有序历史；关闭事务后校验创世记录，再重算后续命令 | [Store.read_for_replay](../uta/store.py)、[Simulator.verify_replay](../uta/simulator.py) |
 
 ## 单条命令的事务时序
 
@@ -106,6 +106,8 @@ flowchart TD
 ## 回放的读事务范围
 
 `Store.read_for_replay(account_id)` 用同一连接的 `BEGIN` 读事务取得账户快照，再读取全部按版本排序的事件。WAL 中的读取视图由首次账户查询建立：另一连接随后提交新命令，已捕获的快照与历史仍属于同一视图。返回这对数据前，读事务已提交并关闭连接；`Simulator.verify_replay` 的状态重算和比较在事务外完成，时序见 [审计回放](workflows.md)。
+
+回放必须从版本 0 开始；建户事件的命令标识和预期版本应为空，命令只能包含 `type=create` 与版本为整数 0 的状态对象，回执必须恰为 `{"version":0}` 且版本为整数。创世记录缺失或不符合这些约定会先行拒绝，不计入成功核对的事件数。它核对记录的一致性，不认证初始资产与行情来源。
 
 `ShardedStore.read_for_replay` 将整个读取交给账户所属的同一 `Store`；这里没有跨分片一致快照。结果中的 `version` 是所核对的捕获版本，返回时账户可能已推进。独立调用 `view` 与 `events` 仍是两次读取，不提供上述成对读取语义。
 

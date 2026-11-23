@@ -96,6 +96,10 @@ sequenceDiagram
     DB-->>D: 同一读取视图的创世事件与历史
     D->>DB: COMMIT 读事务并关闭连接
     D-->>R: 已捕获的快照 V 与事件
+    R->>R: 校验版本 0 创世事件、命令形状与回执
+    break 创世记录缺失或不符合约定
+        R-->>C: SimulatorError，拒绝本次回放
+    end
     loop 每个后续事件
         R->>R: 检查 expected_version 与连续版本
         R->>T: 原 command_id、command、记录的 evaluated_at
@@ -106,7 +110,17 @@ sequenceDiagram
     R-->>C: account_id、version=V、events_verified 或错误
 ```
 
-回放在同一只读事务内获取快照与事件，关闭事务后使用命令原来的决策时间重算，避免重启后把历史行情误判为过期。读取期间另一连接可以提交新版本，本轮仍核对捕获的版本 V；后续提交在下一次回放中核对。返回成功不表示账户在响应时仍停留于 V，也不会重新下单或写事件。
+回放在同一只读事务内获取快照与事件，关闭事务后先校验创世记录，再使用命令原来的决策时间重算，避免重启后把历史行情误判为过期。读取期间另一连接可以提交新版本，本轮仍核对捕获的版本 V；后续提交在下一次回放中核对。返回成功不表示账户在响应时仍停留于 V，也不会重新下单或写事件。
+
+创世检查对应 [Store.create](../uta/store.py) 写入的记录约定，普通建户和经典导入均适用：
+
+| 检查 | 不符合时的 `SimulatorError` |
+| --- | --- |
+| 历史非空且首条事件版本为 0 | `account creation event is missing` |
+| `command_id`、`expected_version` 均为 NULL；命令恰含 `type=create` 和 `state` 对象，状态版本为整数 0 | `account creation event is invalid` |
+| 回执恰为 `{"version":0}` 且版本为整数，不能用 `false` 或 `0.0` 替代 | `receipt differs at version 0` |
+
+上述错误不会自动补写创世记录或重置快照。经典来源的 `source.version` 可以是其他值，它与目标模拟账户从 0 开始的版本分别保留。
 
 后续事件版本不连续、重算回执不同或最终状态与所捕获快照不同，仍按现有检查拒绝。版本比较使用这次成对读取的数据，不再把正常并发提交造成的新快照当作历史不一致。单库与四分片的确定性并发回归、三类不一致注入见 [test_simulator.py](../tests/test_simulator.py)。
 

@@ -357,7 +357,24 @@ class Simulator:
     def verify_replay(self, account_id):
         """Replay a stable event prefix with the recorded decision times."""
         snapshot, events = self.store.read_for_replay(_id(account_id))
-        state = events[0]["command"]["state"]
+        if not events or events[0]["version"] != 0:
+            raise SimulatorError("account creation event is missing")
+        creation = events[0]
+        command, receipt = creation["command"], creation["result"]
+        state = command.get("state")
+        if (
+            creation["command_id"] is not None
+            or creation["expected_version"] is not None
+            or command.keys() != {"type", "state"}
+            or command["type"] != "create"
+            or not isinstance(state, dict)
+            or type(state.get("version")) is not int
+            or state["version"] != 0
+        ):
+            raise SimulatorError("account creation event is invalid")
+        if type(receipt.get("version")) is not int or receipt != {"version": 0}:
+            raise SimulatorError("receipt differs at version 0")
+
         for event in events[1:]:
             command, original = event["command"], event["result"]
             if event["expected_version"] != state["version"] or event["version"] != state["version"] + 1:

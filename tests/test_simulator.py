@@ -180,6 +180,33 @@ class SimulatorTests(unittest.TestCase):
                     with self.assertRaisesRegex(SimulatorError, message):
                         sim.verify_replay("account")
 
+    def test_replay_reports_missing_account_creation_event(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("DELETE FROM uta_events WHERE account_id = ? AND version = 0", ("account",))
+
+        with self.assertRaisesRegex(SimulatorError, "account creation event is missing"):
+            self.sim.verify_replay("account")
+
+    def test_replay_checks_account_creation_metadata(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE uta_events SET expected_version = 0 WHERE account_id = ? AND version = 0",
+                       ("account",))
+
+        with self.assertRaisesRegex(SimulatorError, "account creation event is invalid"):
+            self.sim.verify_replay("account")
+
+    def test_replay_checks_account_creation_receipt(self):
+        self.assertEqual(self.sim.verify_replay("account"),
+                         {"account_id": "account", "version": 0, "events_verified": 1})
+        for receipt in ('{"version": 1}', '{"version": false}'):
+            with self.subTest(receipt=receipt):
+                with sqlite3.connect(self.path) as db:
+                    db.execute("UPDATE uta_events SET result = ? WHERE account_id = ? AND version = 0",
+                               (receipt, "account"))
+
+                with self.assertRaisesRegex(SimulatorError, "receipt differs at version 0"):
+                    self.sim.verify_replay("account")
+
     def test_fifo_partial_fills_and_reversal_keep_exact_cost(self):
         self.place("buy-A", "0.03", "60000", "0")
         self.fill("buy-A", "fill-A", "0.03")
