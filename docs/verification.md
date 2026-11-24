@@ -16,6 +16,7 @@
 | 回放读取期间另一连接提交新版本，单库与四分片仍核对一致前缀 | `test_replay_verifies_its_captured_version_during_another_commit`，见同一测试文件 | 首次账户查询后注入另一真实连接的成功 COMMIT；本轮核对版本 1，下一轮核对版本 2，无时间等待或碰运气的调度 |
 | 捕获历史中的跳号、回执差异与快照差异仍被拒绝 | `test_replay_rejects_inconsistent_captured_data`，见同一测试文件 | 对单库与四分片各注入三类不一致；不涵盖所有数据库损坏或存储故障 |
 | 创世事件缺失、元数据或回执不符时拒绝回放，布尔或浮点零不能代替版本整数零 | [test_simulator.py](../tests/test_simulator.py) 的三项 `account_creation` 回归、[test_replay_genesis.py](../tests/test_replay_genesis.py) | 单库与四分片均注入持久化记录差异；覆盖仍有后续命令但缺失创世事件，以及正常建户和经典导入的版本 0、1 回放与无写入检查；不认证初始资金或外部报价 |
+| 后续回执及嵌套快照保留 JSON 类型，字段顺序和空白变化仍可通过 | [test_replay_json_types.py](../tests/test_replay_json_types.py) | 单库与四分片共注入 8 个回执类型差异、2 个嵌套 `closed_version` 差异；正常格式变化核对版本 1、2 个事件，比较回放前后的原始 SQL 行以确认没有改写 |
 | 分片路由固定、丢失分片拒绝、组提交保存点与分片独立失败 | [test_store.py](../tests/test_store.py) | 无跨分片原子事务或在线重新分片 |
 | HTTP 信封、同源校验、批量逐项回执与过载退避 | [test_server.py](../tests/test_server.py) | 本机 HTTP 测试，不证明互联网服务鉴权或持续容量 |
 

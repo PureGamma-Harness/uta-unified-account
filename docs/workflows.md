@@ -104,9 +104,12 @@ sequenceDiagram
         R->>R: 检查 expected_version 与连续版本
         R->>T: 原 command_id、command、记录的 evaluated_at
         T-->>R: 重算状态与回执
-        R->>R: 逐字段比较重算回执与已存回执
+        R->>R: 按存储 JSON 编码比较回执的值与类型
+        break 回执不一致
+            R-->>C: SimulatorError，拒绝本次回放
+        end
     end
-    R->>R: 比较回放状态与已捕获的快照 V
+    R->>R: 按存储 JSON 编码比较回放状态与捕获快照 V
     R-->>C: account_id、version=V、events_verified 或错误
 ```
 
@@ -123,6 +126,8 @@ sequenceDiagram
 上述错误不会自动补写创世记录或重置快照。经典来源的 `source.version` 可以是其他值，它与目标模拟账户从 0 开始的版本分别保留。
 
 后续事件版本不连续、重算回执不同或最终状态与所捕获快照不同，仍按现有检查拒绝。版本比较使用这次成对读取的数据，不再把正常并发提交造成的新快照当作历史不一致。单库与四分片的确定性并发回归、三类不一致注入见 [test_simulator.py](../tests/test_simulator.py)。
+
+回执与最终快照按 [_encode](../uta/store.py) 的规范 JSON 比较，对象键顺序和空白变化可接受，布尔、整数和浮点数保留区别。例如把已存回执的版本 `1` 改为 `true`、把 `liquidation_pending=false` 改为 `0`，或把已撤订单的 `closed_version=2` 改为 `2.0`，都会拒绝核对。测试直接修改合成数据库记录，见 [test_replay_json_types.py](../tests/test_replay_json_types.py)；拒绝或成功回放均不改写这些记录。
 
 核对范围是当前模型、参数与已记录命令、回执、快照之间的一致性；它不认证外部行情或外部会计事实，不保证任意历史模型兼容。一次读取包含该账户全部事件，分片模式只读取该账户所属数据库，未提供跨账户或跨分片一致快照。
 

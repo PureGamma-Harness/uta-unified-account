@@ -14,7 +14,7 @@ from .models import Account, AssetSpec, InstrumentSpec, Position, RiskInputError
 from .portfolio import calculate_portfolio, position_im_bound
 from .risk import _decimal_exact, _ratio
 from .shadow_adapter import convert_shadow
-from .store import AccountNotFound, ShardedStore, Store, StoreConflict, StoreError
+from .store import AccountNotFound, ShardedStore, Store, StoreConflict, StoreError, _encode
 
 ASSETS = {
     "USD": AssetSpec(Decimal("1"), Decimal("1")),
@@ -382,9 +382,10 @@ class Simulator:
             recorded = datetime.fromisoformat(original["evaluated_at"])
             state, computed = self._transition(state, event["command_id"], command, now=recorded)
             state["version"] = computed["version"] = event["version"]
-            if computed != original:
+            # JSON booleans and numbers must not alias through Python equality.
+            if _encode(computed) != _encode(original):
                 raise SimulatorError(f"receipt differs at version {event['version']}")
-        if state != snapshot:
+        if _encode(state) != _encode(snapshot):
             raise SimulatorError("snapshot differs from replay")
         return {"account_id": account_id, "version": state["version"], "events_verified": len(events)}
 
