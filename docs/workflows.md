@@ -102,7 +102,11 @@ sequenceDiagram
     end
     loop 每个后续事件
         R->>R: 检查 expected_version 与连续版本
-        R->>T: 原 command_id、command、记录的 evaluated_at
+        R->>R: _prepare 校验 ID、命令类型、字段与版本范围
+        break 命令信封不合法
+            R-->>C: SimulatorError，拒绝本次回放
+        end
+        R->>T: 已校验 command_id、command、记录的 evaluated_at
         T-->>R: 重算状态与回执
         R->>R: 按存储 JSON 编码比较回执的值与类型
         break 回执不一致
@@ -114,6 +118,8 @@ sequenceDiagram
 ```
 
 回放在同一只读事务内获取快照与事件，关闭事务后先校验创世记录，再使用命令原来的决策时间重算，避免重启后把历史行情误判为过期。读取期间另一连接可以提交新版本，本轮仍核对捕获的版本 V；后续提交在下一次回放中核对。返回成功不表示账户在响应时仍停留于 V，也不会重新下单或写事件。
+
+每个后续命令在重算前复用 [Simulator._prepare](../uta/simulator.py) 的提交校验。未知类型、非字符串类型、多余字段和无效命令 ID 都会拒绝；即使它们携带有效成交字段，也不能直接进入 `_transition` 的成交分支。回放仅使用校验后的 ID 与命令，不执行该方法返回的实时钟闭包。单库与四分片的拒绝、无写入检查，以及实时时钟已推进一天但历史回放仍成功的对照见 [test_replay_commands.py](../tests/test_replay_commands.py)。
 
 创世检查对应 [Store.create](../uta/store.py) 写入的记录约定，普通建户和经典导入均适用：
 

@@ -379,8 +379,11 @@ class Simulator:
             command, original = event["command"], event["result"]
             if event["expected_version"] != state["version"] or event["version"] != state["version"] + 1:
                 raise SimulatorError("event sequence is inconsistent")
+            _, command_id, _, command, _ = self._prepare(
+                account_id, event["command_id"], event["expected_version"], command)
             recorded = datetime.fromisoformat(original["evaluated_at"])
-            state, computed = self._transition(state, event["command_id"], command, now=recorded)
+            # Validate the envelope without invoking the live-clock callback.
+            state, computed = self._transition(state, command_id, command, now=recorded)
             state["version"] = computed["version"] = event["version"]
             # JSON booleans and numbers must not alias through Python equality.
             if _encode(computed) != _encode(original):

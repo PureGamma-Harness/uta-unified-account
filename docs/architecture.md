@@ -32,7 +32,7 @@ flowchart TD
 | 组合风险 | 六场景联合重估、IM/MM 底线与订单 IM 变化上界 | [portfolio.py](../uta/portfolio.py)、[risk.py](../uta/risk.py) |
 | 分录校验 | 每种资产分别平衡，成交损益和费用生成对手科目 | [Ledger.post](../uta/ledger.py)、[模拟成交](../uta/simulator.py) |
 | 事务与路由 | 账户版本、快照与回执原子提交；按账户固定路由 | [Store._apply / ShardedStore](../uta/store.py) |
-| 回放读取与核对 | 同一读事务捕获单账户快照和有序历史；关闭事务后校验创世记录，再重算后续命令 | [Store.read_for_replay](../uta/store.py)、[Simulator.verify_replay](../uta/simulator.py) |
+| 回放读取与核对 | 同一读事务捕获单账户快照和有序历史；关闭事务后校验创世记录及后续命令信封，再重算状态 | [Store.read_for_replay](../uta/store.py)、[Simulator.verify_replay / _prepare](../uta/simulator.py) |
 
 ## 单条命令的事务时序
 
@@ -108,6 +108,8 @@ flowchart TD
 `Store.read_for_replay(account_id)` 用同一连接的 `BEGIN` 读事务取得账户快照，再读取全部按版本排序的事件。WAL 中的读取视图由首次账户查询建立：另一连接随后提交新命令，已捕获的快照与历史仍属于同一视图。返回这对数据前，读事务已提交并关闭连接；`Simulator.verify_replay` 的状态重算和比较在事务外完成，时序见 [审计回放](workflows.md)。
 
 回放必须从版本 0 开始；建户事件的命令标识和预期版本应为空，命令只能包含 `type=create` 与版本为整数 0 的状态对象，回执必须恰为 `{"version":0}` 且版本为整数。创世记录缺失或不符合这些约定会先行拒绝，不计入成功核对的事件数。它核对记录的一致性，不认证初始资产与行情来源。
+
+后续事件先检查版本连续，再复用正常提交的 `Simulator._prepare` 校验账户和命令 ID、已知字符串命令类型、精确字段集合及预期版本范围。校验完成后直接调用 `_transition(..., now=recorded)`，不调用 `_prepare` 返回的实时钟转换闭包，也不调用存储写入接口；历史行情按原 `evaluated_at` 判断时效。
 
 后续重算回执和最终快照使用存储层 [_encode](../uta/store.py) 的同一套 JSON 编码后比较。对象键顺序和空白不影响结果；布尔值、整数与浮点数的差异会保留，例如 `true`、`1`、`1.0` 各不相同。金额字符串逐字比较，数组保持原顺序。编码与比较在读事务关闭后进行，只影响回放核对。
 
