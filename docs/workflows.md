@@ -86,14 +86,17 @@ sequenceDiagram
     C->>R: account_id
     R->>D: read_for_replay(account_id)
     D->>DB: BEGIN 读事务
+    Note over D,R: 任一 JSON 解码失败即关闭连接并抛 StoreError<br/>HTTP 映射为 503，不进入重算
     D->>DB: SELECT 账户快照与版本 V
     DB-->>D: 快照 V，建立本次读取视图
+    D->>D: _decode 快照，校验字段唯一与有限数
     opt 另一连接在读取期间提交新命令
         W->>DB: BEGIN IMMEDIATE，写快照与事件 V+1
         W->>DB: COMMIT
     end
     D->>DB: SELECT 同一账户全部事件，按 version 排序
     DB-->>D: 同一读取视图的创世事件与历史
+    D->>D: _decode 每条命令与回执，执行同一校验
     D->>DB: COMMIT 读事务并关闭连接
     D-->>R: 已捕获的快照 V 与事件
     R->>R: 校验版本 0 创世事件、命令形状与回执
@@ -118,6 +121,8 @@ sequenceDiagram
 ```
 
 回放在同一只读事务内获取快照与事件，关闭事务后先校验创世记录，再使用命令原来的决策时间重算，避免重启后把历史行情误判为过期。读取期间另一连接可以提交新版本，本轮仍核对捕获的版本 V；后续提交在下一次回放中核对。返回成功不表示账户在响应时仍停留于 V，也不会重新下单或写事件。
+
+读取中的 [_decode](../uta/store.py) 先拒绝重复字段和非有限数，嵌套对象及数组内的对象也受检查。失败会关闭读事务并抛出 `StoreError`，不会把重复字段的最后一个值当作原始记录继续核对。该检查也用于普通账户/事件读取和幂等旧回执读取；错误映射与合成记录回归见 [API](simulator.md)、[test_store_json.py](../tests/test_store_json.py)。
 
 每个后续命令在重算前复用 [Simulator._prepare](../uta/simulator.py) 的提交校验。未知类型、非字符串类型、多余字段和无效命令 ID 都会拒绝；即使它们携带有效成交字段，也不能直接进入 `_transition` 的成交分支。回放仅使用校验后的 ID 与命令，不执行该方法返回的实时钟闭包。单库与四分片的拒绝、无写入检查，以及实时时钟已推进一天但历史回放仍成功的对照见 [test_replay_commands.py](../tests/test_replay_commands.py)。
 

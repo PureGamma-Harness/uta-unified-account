@@ -7,6 +7,7 @@ Multiple instances may share the same database file on a local filesystem.
 
 import hashlib
 import json
+import math
 import os
 import sqlite3
 from collections.abc import Callable, Iterator, Sequence
@@ -57,9 +58,27 @@ def _encode(value: JsonObject) -> str:
         raise StoreError("snapshot, command and result must be valid JSON") from exc
 
 
+def _unique_object(pairs: list[tuple[str, Any]]) -> JsonObject:
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate stored JSON field")
+        result[key] = value
+    return result
+
+
+def _finite_float(value: str) -> float:
+    result = float(value)
+    if not math.isfinite(result):
+        raise ValueError("non-finite stored JSON number")
+    return result
+
+
 def _decode(value: str) -> JsonObject:
     try:
-        decoded = json.loads(value)
+        # Reject ambiguity before duplicate fields can disappear in a dict.
+        decoded = json.loads(value, object_pairs_hook=_unique_object,
+                             parse_constant=_finite_float, parse_float=_finite_float)
     except (TypeError, ValueError, RecursionError) as exc:
         raise StoreError("stored JSON is invalid") from exc
     if not isinstance(decoded, dict):

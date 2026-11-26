@@ -29,7 +29,9 @@
 
 回放先核对创世事件的元数据、命令形状和回执，再校验并重算后续命令。后续事件复用提交入口的 `_prepare` 校验：未知或非字符串命令类型、多余或缺失字段、无效命令 ID 均拒绝，不会作为成交继续处理。命令类型或字段不符报 `unrecognized command or incorrect fields`，ID 不符报 `IDs require 1–64 ...`，均为 `SimulatorError`，HTTP 返回 400。版本 0 缺失、创世元数据不符、版本不连续、重算回执或最终快照不同也按 `SimulatorError` 拒绝。
 
-后续回执和快照比较保留 JSON 类型差异：版本整数 `1` 改为 `true` 或 `1.0`、布尔 `liquidation_pending=false` 改为数字 `0`，均不能算作一致。对象键顺序和空白变化可接受。检查不修复记录、不写入账户或事件。非法存储 JSON 或不能编码为有限存储 JSON 的对象由存储层按 `StoreError` 处理，HTTP 返回 503。错误映射见 [Handler._handle](../uta/server.py)。
+后续回执和快照比较保留 JSON 类型差异：版本整数 `1` 改为 `true` 或 `1.0`、布尔 `liquidation_pending=false` 改为数字 `0`，均不能算作一致。对象键顺序和空白变化可接受。检查不修复记录、不写入账户或事件。
+
+存储层读取快照、命令和回执时先拒绝重复字段（含嵌套对象和转义后相同的键）、`NaN`、正负 `Infinity` 及解析后溢出为无穷的数值。例如已存回执 `{"version":999,"version":0}` 不会按最后一个版本 0 接受。上述非法记录由 [_decode](../uta/store.py) 抛出 `StoreError`，HTTP 返回 503；不能编码为有限存储 JSON 的对象也按存储错误处理。金额字符串及合法有限值仍按原规则读取，不自动修复记录。错误映射见 [Handler._handle](../uta/server.py)。
 
 以下每行分别是一条命令的 `command` 对象，调用 `/commands` 时还须提供命令 ID 和预期版本：
 
