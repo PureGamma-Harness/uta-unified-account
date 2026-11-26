@@ -12,7 +12,13 @@
 | 经典账户导入、总资产与借款分别保留、冻结余额拒绝 | [test_shadow_adapter.py](../tests/test_shadow_adapter.py)、[test_simulator.py](../tests/test_simulator.py) | 导入是新模拟账户创世，不证明来源接口构成原子快照 |
 | 独立连接争抢相同账户版本，审计失败时状态回滚 | [test_store.py](../tests/test_store.py) | 本地 SQLite 并发与故障注入；未覆盖断电或跨主机共识 |
 | FIFO 部分成交、反向开仓、撤单和清算分录 | [test_simulator.py](../tests/test_simulator.py) | 人工注入成交与固定滑点，未接入真实撮合 |
-| 重开数据库后的命令幂等、记录时间回放和快照比较 | [test_store.py](../tests/test_store.py)、[test_simulator.py](../tests/test_simulator.py) | 兼容当前模型和命令历史，不是外部会计真实性证明 |
+| 重开数据库后的命令幂等、记录时间回放和同一事务读取的快照比较 | [test_store.py](../tests/test_store.py)、[test_simulator.py](../tests/test_simulator.py) | 核对捕获版本与当前模型、命令历史的一致性；不认证外部会计事实 |
+| 回放读取期间另一连接提交新版本，单库与四分片仍核对一致前缀 | `test_replay_verifies_its_captured_version_during_another_commit`，见同一测试文件 | 首次账户查询后注入另一真实连接的成功 COMMIT；本轮核对版本 1，下一轮核对版本 2，无时间等待或碰运气的调度 |
+| 捕获历史中的跳号、回执差异与快照差异仍被拒绝 | `test_replay_rejects_inconsistent_captured_data`，见同一测试文件 | 对单库与四分片各注入三类不一致；不涵盖所有数据库损坏或存储故障 |
+| 创世事件缺失、元数据或回执不符时拒绝回放，布尔或浮点零不能代替版本整数零 | [test_simulator.py](../tests/test_simulator.py) 的三项 `account_creation` 回归、[test_replay_genesis.py](../tests/test_replay_genesis.py) | 单库与四分片均注入持久化记录差异；覆盖仍有后续命令但缺失创世事件，以及正常建户和经典导入的版本 0、1 回放与无写入检查；不认证初始资金或外部报价 |
+| 后续回执及嵌套快照保留 JSON 类型，字段顺序和空白变化仍可通过 | [test_replay_json_types.py](../tests/test_replay_json_types.py) | 单库与四分片共注入 8 个回执类型差异、2 个嵌套 `closed_version` 差异；正常格式变化核对版本 1、2 个事件，比较回放前后的原始 SQL 行以确认没有改写 |
+| 后续历史命令须通过正常提交的信封校验，继续使用记录时间回放 | [test_replay_commands.py](../tests/test_replay_commands.py) | 单库与四分片共注入 18 个无效命令类型、字段或 ID，逐项确认正常提交和回放均拒绝；实时时钟推进一天后，合法历史仍核对版本 2、3 个事件。比较原始 SQL 行确认拒绝和成功均不改写；不是对任意损坏记录的完整检测保证 |
+| 读取持久记录先拒绝重复 JSON 字段与非有限数，不返回歧义回执或误报回放成功 | [test_store_json.py](../tests/test_store_json.py) | 单库与四分片共注入 16 个快照、14 个回执异常及 8 个重复字段回放用例，另有 4 个 HTTP 用例核对 503；包含嵌套、转义同名键、非有限字面量与浮点溢出。原始 SQL 行无改写；正常有限值、字符串和不同对象内的同名键保留，不构成任意损坏检测保证 |
 | 分片路由固定、丢失分片拒绝、组提交保存点与分片独立失败 | [test_store.py](../tests/test_store.py) | 无跨分片原子事务或在线重新分片 |
 | HTTP 信封、同源校验、批量逐项回执与过载退避 | [test_server.py](../tests/test_server.py) | 本机 HTTP 测试，不证明互联网服务鉴权或持续容量 |
 

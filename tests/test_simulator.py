@@ -1,10 +1,13 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+import json
 from pathlib import Path
+import sqlite3
 from tempfile import TemporaryDirectory
 from threading import Barrier
 import unittest
+from unittest.mock import patch
 
 from uta.simulator import Simulator, SimulatorError
 from uta.store import StoreConflict
@@ -107,6 +110,102 @@ class SimulatorTests(unittest.TestCase):
         self.assertFalse(receipt["liquidation_pending"])
         self.assertFalse(self.sim.view("account")["state"]["positions"])
         self.assertEqual(self.sim.verify_replay("account")["events_verified"], 5)
+
+    def test_replay_verifies_its_captured_version_during_another_commit(self):
+        for shards in (1, 4):
+            with self.subTest(shards=shards):
+                path = self.path.with_name(f"concurrent-{shards}.sqlite3")
+                reader = Simulator(path, clock=lambda: self.now, shards=shards)
+                writer = Simulator(path, clock=lambda: self.now, shards=shards)
+                reader.bootstrap("account")
+                reader.execute("account", "buy", 0, {
+                    "type": "place_order", "symbol": "BTC-PERP", "quantity": "0.1",
+                    "limit_price": "60000", "fee_rate": "0.001",
+                })
+                store = reader.store if shards == 1 else reader.store._for_account("account")
+                read_account = store._account
+                committed = []
+
+                def read_with_concurrent_commit(db, account_id):
+                    row = read_account(db, account_id)
+                    if row["version"] == 1:
+                        committed.append(writer.execute("account", "cancel", 1, {
+                            "type": "cancel_order", "order_id": "buy",
+                        }))
+                    return row
+
+                with patch.object(store, "_account", side_effect=read_with_concurrent_commit):
+                    self.assertEqual(reader.verify_replay("account"),
+                                     {"account_id": "account", "version": 1, "events_verified": 2})
+                self.assertEqual(len(committed), 1)
+                self.assertEqual(committed[0]["version"], 2)
+                self.assertEqual(writer.view("account")["state"]["orders"]["buy"]["status"], "CANCELED")
+                self.assertEqual(reader.verify_replay("account"),
+                                 {"account_id": "account", "version": 2, "events_verified": 3})
+
+    def test_replay_rejects_inconsistent_captured_data(self):
+        for shards in (1, 4):
+            for kind, message in (("sequence", "event sequence is inconsistent"),
+                                  ("receipt", "receipt differs at version 1"),
+                                  ("snapshot", "snapshot differs from replay")):
+                with self.subTest(shards=shards, corruption=kind):
+                    path = self.path.with_name(f"corrupt-{shards}-{kind}.sqlite3")
+                    sim = Simulator(path, clock=lambda: self.now, shards=shards)
+                    sim.bootstrap("account")
+                    sim.execute("account", "buy", 0, {
+                        "type": "place_order", "symbol": "BTC-PERP", "quantity": "0.1",
+                        "limit_price": "60000", "fee_rate": "0.001",
+                    })
+                    sim.execute("account", "cancel", 1, {"type": "cancel_order", "order_id": "buy"})
+                    store = sim.store if shards == 1 else sim.store._for_account("account")
+                    with sqlite3.connect(store.path) as db:
+                        if kind == "sequence":
+                            db.execute("DELETE FROM uta_events WHERE account_id = ? AND version = 1",
+                                       ("account",))
+                        elif kind == "receipt":
+                            result = json.loads(db.execute(
+                                "SELECT result FROM uta_events WHERE account_id = ? AND version = 1",
+                                ("account",),
+                            ).fetchone()[0])
+                            result["action"] = "tampered"
+                            db.execute("UPDATE uta_events SET result = ? WHERE account_id = ? AND version = 1",
+                                       (json.dumps(result), "account"))
+                        else:
+                            snapshot = json.loads(db.execute(
+                                "SELECT snapshot FROM uta_accounts WHERE account_id = ?", ("account",),
+                            ).fetchone()[0])
+                            snapshot["balances"]["USD"] = "9999"
+                            db.execute("UPDATE uta_accounts SET snapshot = ? WHERE account_id = ?",
+                                       (json.dumps(snapshot), "account"))
+                    with self.assertRaisesRegex(SimulatorError, message):
+                        sim.verify_replay("account")
+
+    def test_replay_reports_missing_account_creation_event(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("DELETE FROM uta_events WHERE account_id = ? AND version = 0", ("account",))
+
+        with self.assertRaisesRegex(SimulatorError, "account creation event is missing"):
+            self.sim.verify_replay("account")
+
+    def test_replay_checks_account_creation_metadata(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE uta_events SET expected_version = 0 WHERE account_id = ? AND version = 0",
+                       ("account",))
+
+        with self.assertRaisesRegex(SimulatorError, "account creation event is invalid"):
+            self.sim.verify_replay("account")
+
+    def test_replay_checks_account_creation_receipt(self):
+        self.assertEqual(self.sim.verify_replay("account"),
+                         {"account_id": "account", "version": 0, "events_verified": 1})
+        for receipt in ('{"version": 1}', '{"version": false}'):
+            with self.subTest(receipt=receipt):
+                with sqlite3.connect(self.path) as db:
+                    db.execute("UPDATE uta_events SET result = ? WHERE account_id = ? AND version = 0",
+                               (receipt, "account"))
+
+                with self.assertRaisesRegex(SimulatorError, "receipt differs at version 0"):
+                    self.sim.verify_replay("account")
 
     def test_fifo_partial_fills_and_reversal_keep_exact_cost(self):
         self.place("buy-A", "0.03", "60000", "0")

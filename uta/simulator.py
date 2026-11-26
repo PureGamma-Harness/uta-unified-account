@@ -14,7 +14,7 @@ from .models import Account, AssetSpec, InstrumentSpec, Position, RiskInputError
 from .portfolio import calculate_portfolio, position_im_bound
 from .risk import _decimal_exact, _ratio
 from .shadow_adapter import convert_shadow
-from .store import AccountNotFound, ShardedStore, Store, StoreConflict, StoreError
+from .store import AccountNotFound, ShardedStore, Store, StoreConflict, StoreError, _encode
 
 ASSETS = {
     "USD": AssetSpec(Decimal("1"), Decimal("1")),
@@ -356,20 +356,40 @@ class Simulator:
 
     def verify_replay(self, account_id):
         """Replay a stable event prefix with the recorded decision times."""
-        events = self.events(account_id)
-        state = events[0]["command"]["state"]
+        snapshot, events = self.store.read_for_replay(_id(account_id))
+        if not events or events[0]["version"] != 0:
+            raise SimulatorError("account creation event is missing")
+        creation = events[0]
+        command, receipt = creation["command"], creation["result"]
+        state = command.get("state")
+        if (
+            creation["command_id"] is not None
+            or creation["expected_version"] is not None
+            or command.keys() != {"type", "state"}
+            or command["type"] != "create"
+            or not isinstance(state, dict)
+            or type(state.get("version")) is not int
+            or state["version"] != 0
+        ):
+            raise SimulatorError("account creation event is invalid")
+        if type(receipt.get("version")) is not int or receipt != {"version": 0}:
+            raise SimulatorError("receipt differs at version 0")
+
         for event in events[1:]:
             command, original = event["command"], event["result"]
             if event["expected_version"] != state["version"] or event["version"] != state["version"] + 1:
                 raise SimulatorError("event sequence is inconsistent")
+            _, command_id, _, command, _ = self._prepare(
+                account_id, event["command_id"], event["expected_version"], command)
             recorded = datetime.fromisoformat(original["evaluated_at"])
-            state, computed = self._transition(state, event["command_id"], command, now=recorded)
+            # Validate the envelope without invoking the live-clock callback.
+            state, computed = self._transition(state, command_id, command, now=recorded)
             state["version"] = computed["version"] = event["version"]
-            if computed != original:
+            # JSON booleans and numbers must not alias through Python equality.
+            if _encode(computed) != _encode(original):
                 raise SimulatorError(f"receipt differs at version {event['version']}")
-        current = self.store.read(_id(account_id))
-        if state != current:
-            raise SimulatorError("snapshot differs from replay or changed during verification; retry")
+        if _encode(state) != _encode(snapshot):
+            raise SimulatorError("snapshot differs from replay")
         return {"account_id": account_id, "version": state["version"], "events_verified": len(events)}
 
     def execute(self, account_id, command_id, expected_version, command):
