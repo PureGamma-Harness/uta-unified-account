@@ -120,7 +120,8 @@ class LiquidationController:
     def _valid(self, snapshot: TimedRisk | None, now: datetime) -> bool:
         if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:
             return False
-        if snapshot is None or not snapshot.complete or not isinstance(snapshot.observed_at, datetime):
+        if (snapshot is None or snapshot.complete is not True
+                or not isinstance(snapshot.observed_at, datetime)):
             return False
         observed = snapshot.observed_at
         if observed.tzinfo is None or observed.utcoffset() is None:
@@ -196,7 +197,10 @@ class LiquidationController:
         Failure leaves the same action pending for retry. Callers must ensure the
         external venue uses the action ID as an idempotency key and reconcile
         ambiguous outcomes before retrying. This simulator does not do that.
+        success must be a native bool, including for already completed actions.
         """
+        if type(success) is not bool:
+            raise ValueError("a boolean success is required")
         if action_id in self._completed:
             return False
         if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:

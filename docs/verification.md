@@ -51,6 +51,7 @@ flowchart LR
 | 镜像版本、重试、数据字段完整性 | `tests/test_migration.py` | 不保证不同来源接口构成原子快照，本行验证独立镜像。另见模拟器导入及 PM 集成验证 |
 | 清算撤单、再评估、动作确认、过期快照 | [test_liquidation.py](../tests/test_liquidation.py)、[控制器流程](liquidation-controller.md) | 内存状态机；无实际执行、成交、重启恢复和跨进程幂等 |
 | 独立控制器精确恢复阈值、减仓上限与 Decimal 上下文隔离 | 同一文件的 `test_recovery_threshold_uses_exact_product`、`test_reduction_uses_exact_absolute_position_size`、`test_recovery_comparison_preserves_caller_context`、`test_recovery_threshold_below_context_exponent_range` | 覆盖低精度、严格相等边界、不同舍入方向、窄指数范围、陷阱与标志保留，以及紧凑表示的极小指数；不证明上游风险计算、持久化清算或真实执行正确 |
+| 独立控制器完整性与确认标志必须为原生布尔值 | [test_liquidation_flags.py](../tests/test_liquidation_flags.py) | 14 种非布尔值覆盖健康/待确认快照、撤单/减仓确认及已确认 ID 重试；验证拒绝后待确认动作、时间记录与阶段不被误推进，并检查合法 `False` 重试和 `True` 确认。仅覆盖内存控制器，不证明外部动作成功或持久化模拟器链路正确 |
 | 每个资产的分录平衡、幂等与按序重放 | `tests/test_ledger.py` | 内存账本允许负余额，不提供真实结算或授信约束 |
 | 同进程内重复占用 | `tests/test_reservations.py` 的多线程竞争 | 基于进程内锁；不验证跨进程、数据库隔离或交易网关的原子性 |
 | API 示例和错误输入 | `tests/test_api.py` | 仅本机无认证演示；不是生产 API |

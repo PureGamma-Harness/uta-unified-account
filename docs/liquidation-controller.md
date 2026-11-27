@@ -4,12 +4,12 @@
 
 ## 决策顺序与状态
 
-`TimedRisk` 包含 `risk.equity`、`risk.maintenance_margin`、带时区的 `observed_at` 和完整性标志。权益、MM 必须是有限 `Decimal`，MM 非负。默认最大年龄为 10 秒，恰好 10 秒有效；未来、缺失时区、不完整、早于已见快照，或不严格晚于上次成功确认时间的数据均被阻断。
+`TimedRisk` 包含 `risk.equity`、`risk.maintenance_margin`、带时区的 `observed_at` 和完整性标志。`complete` 只有原生 `True` 才表示完整；`False`、字符串 `"true"` / `"false"`、整数 `1` 等其他值均被阻断。权益、MM 必须是有限 `Decimal`，MM 非负。默认最大年龄为 10 秒，恰好 10 秒有效；未来、缺失时区、不完整、早于已见快照，或不严格晚于上次成功确认时间的数据均被阻断。
 
 ```mermaid
 flowchart TD
-    Start["next_action：先关闭 trading_allowed"] --> Valid{"_valid：完整、新鲜、数值和时间有效？"}
-    Valid -->|否| Block["phase=BLOCKED，返回 None<br/>保留活动阶段和待确认动作"]
+    Start["next_action：先关闭 trading_allowed"] --> Valid{"_valid：complete 为原生 True<br/>且新鲜、数值和时间有效？"}
+    Valid -->|否| Block["phase=BLOCKED，返回 None<br/>保留活动阶段、待确认动作和已接纳时间"]
     Valid -->|是| Pending{"有待确认动作？"}
     Pending -->|是| Retry["返回原动作与原 action_id<br/>禁止交易，不评估恢复"]
     Pending -->|否| Normal{"活动阶段是 NORMAL 或 RECOVERED？"}
@@ -41,27 +41,36 @@ sequenceDiagram
     C-->>U: cancel_all_orders，action_id=A
     U->>C: next_action(有效快照，动作未确认)
     C-->>U: 原动作 A，仍禁止交易
-    U->>C: acknowledge(A, success=false, now=t0)
-    C-->>U: false，保留 A
+    Note over C: success 先校验原生 bool，再检查已确认 ID
+    U->>C: acknowledge(A, success="false", now=t0)
+    C-->>U: ValueError，状态和 A 不变
+    U->>C: acknowledge(A, success=False, now=t0)
+    C-->>U: False，保留 A
     Note over U: 核对撤单结果后确认；控制器不执行动作
-    U->>C: acknowledge(A, success=true, now=t0)
-    C-->>U: true，清除 A，进入 REDUCE_EXPOSURE
+    U->>C: acknowledge(A, success=True, now=t0)
+    C-->>U: True，清除 A，进入 REDUCE_EXPOSURE
+    U->>C: acknowledge(A, success=True, now=t0)
+    C-->>U: False，已确认 ID 不重复推进状态
     U->>C: next_action(s0，observed_at=t0)
     C-->>U: None，BLOCKED，快照须严格晚于 t0
     U->>C: next_action(s1：t1大于t0，权益=MM=100，仓位=-1.96，减仓=1.96)
     C-->>U: 动作 B：buy，quantity=1.96，reduce_only=true
     Note over U: 核对减仓结果后确认；确认不更新余额或风险
-    U->>C: acknowledge(B, success=true, now=t1)
-    C-->>U: true，等待严格晚于 t1 的新风险快照
+    U->>C: acknowledge(B, success=True, now=t1)
+    C-->>U: True，等待严格晚于 t1 的新风险快照
     U->>C: next_action(s2：t2大于t1，权益=101.2，MM=92)
     C-->>U: None，REDUCE_EXPOSURE，仍禁止交易
     U->>C: next_action(s3：t3大于t2，权益=101.201，MM=92)
     C-->>U: None，RECOVERED，本次允许交易
 ```
 
-依据：[next_action / acknowledge](../uta/liquidation.py)、[test_cancel_then_reduce_and_recover_with_new_snapshots](../tests/test_liquidation.py)。图中各快照均完整、未过期，`now` 等于观察时间，缓冲使用默认 1.10。
+依据：[next_action / acknowledge](../uta/liquidation.py)、[test_cancel_then_reduce_and_recover_with_new_snapshots](../tests/test_liquidation.py) 与 [布尔标志回归](../tests/test_liquidation_flags.py)。图中各快照均完整、未过期，`now` 等于观察时间，缓冲使用默认 1.10。
 
-`acknowledge` 的 `False` 可表示失败确认或重复确认。失败保留同一动作；成功 ID 的再次确认是内存中的无操作。未知或乱序 ID、无时区的确认时间、早于已见快照的确认时间抛出 `ValueError`。调用方必须串行访问控制器，并核对结果不明的动作；进程重启会丢失阶段和 ID，该模块没有跨进程幂等保证。
+`acknowledge` 首先要求 `success` 为原生 `bool`。字符串、整数、浮点数、`Decimal`、`None`、列表或字典均抛出 `ValueError`，包括已成功确认 ID 的重试；这一步不改变阶段、待确认动作、已确认 ID 或时间记录。通过该校验后，已成功确认 ID 直接返回 `False`，早于确认时间及待确认动作的校验。
+
+对仍待确认的动作，控制器继续检查确认时间和 ID。原生 `False` 表示失败确认，保留同一动作；原生 `True` 才记录成功 ID 和确认时间，并清除待确认动作。未知或乱序 ID、无时区的确认时间、早于已见快照的确认时间抛出 `ValueError`。因此返回 `False` 可表示失败确认或重复确认，调用方须结合动作记录判断。
+
+无效 `complete` 使状态进入 `BLOCKED`，保留待确认动作，也不推进已接纳快照时间；下一次有效且未过期的旧快照仍可用于重试，但须满足已有时间边界。布尔类型校验不能证明外部撤单或减仓已执行。调用方必须串行访问控制器，并核对结果不明的动作；进程重启会丢失阶段和 ID，该模块没有跨进程幂等保证。
 
 ## 精确阈值和减仓上限
 
@@ -82,7 +91,7 @@ sequenceDiagram
 定向验证：
 
 ```bash
-python -m unittest discover -s tests -p test_liquidation.py -v
+python -m unittest discover -s tests -p 'test_liquidation*.py' -v
 ```
 
 测试及完整贡献检查见 [验证与证据](verification.md)。这些证据覆盖内存决策与比较边界，不包括真实撤单、成交、外部幂等、重启恢复或持久化模拟器的端到端验收。

@@ -108,7 +108,7 @@ flowchart TD
 | --- | --- |
 | `lab`、`scenario`、`replay` | SQLite 持久化模拟主链路，使用六场景 PM |
 | `serve` / `uta.api` | 固定费率无状态计算，未接入账户事务 |
-| [`LiquidationController`](liquidation-controller.md) | 内存动作提议与确认，默认恢复缓冲为 1.10 倍 MM；精确比较恢复阈值和减仓上限，不负责模拟器清算成交 |
+| [`LiquidationController`](liquidation-controller.md) | 内存动作提议与确认，严格校验完整性和确认布尔标志；默认恢复缓冲为 1.10 倍 MM，精确比较恢复阈值和减仓上限，不负责模拟器清算成交 |
 | `ReservationBook` | 单进程独立预留簿，未用于持久化模拟器的下单路径 |
 | `ShadowMigrationStore` | 只读镜像的独立内存版本与幂等示例，不是持续导入服务 |
 
