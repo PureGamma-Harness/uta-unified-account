@@ -10,6 +10,7 @@
 | [关键业务流程](docs/workflows.md) | 经典账户如何导入，下单和清算如何推进，重启后如何回放 |
 | [本地运行与 API](docs/simulator.md) | 命令格式、状态、错误码与重试方式 |
 | [风险模型](docs/risk-model.md) | 六场景 PM、订单预占及旧版固定费率公式的适用范围 |
+| [独立清算控制器](docs/liquidation-controller.md) | 内存动作提议、布尔标志校验、确认后的新快照与精确恢复边界 |
 | [验证与证据](docs/verification.md) | 可复算案例、测试覆盖和未验证的边界 |
 | [性能测试](docs/performance.md) | 计算、提交、清算成交的不同计数口径 |
 | [有界预占模型](formal/README.md) | 固定容量抽象的状态转换与证明边界 |
@@ -76,6 +77,8 @@ python -m uta demo
 # 运行测试
 python -m unittest discover -s tests -v
 ```
+
+`demo` 只展示独立 `LiquidationController` 的撤单建议。完整性标志仅接受原生 `True`；动作确认的 `success` 必须是原生布尔值，字符串 `"false"` 会被拒绝。确认流程、严格恢复阈值和减仓上限见 [独立清算控制器](docs/liquidation-controller.md)；该控制器没有接入 `lab` 的 SQLite 清算事务。
 
 本地 JSON 演示 API：
 
